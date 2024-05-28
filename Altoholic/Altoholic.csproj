@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="Dalamud.Plugin.Bootstrap.targets" />
+
+  <PropertyGroup>
+    <Authors>Sohtoren</Authors>
+    <Company></Company>
+    <Version>0.0.0.1</Version>
+    <Description>Altoholic plugin</Description>
+    <Copyright></Copyright>
+    <PackageProjectUrl>https://github.com/sohtoren/Altoholic</PackageProjectUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="LiteDB" Version="5.0.19" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Assets\" />
+  </ItemGroup>
+</Project>

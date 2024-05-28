@@ -1,0 +1,17 @@
+* Add character blacklist : Don't record characters that are in the blacklist (prevent low levels alts with little to no money for example)
+
+Currencies window :
+* Clicking icon from characterwindow just select/open the correct character
+
+
+    
+    Allowances
+    Timers
+    MSQ Progress
+    Location
+
+
+Add checkboxes in config window to allow selection of which column are displayed from on main window (First/Last names are mandatory)
+
+https://www.codeproject.com/Tips/5278903/Automatic-Copying-of-Release-Executables-to-a-Spec
+https://stackoverflow.com/questions/12577496/pre-build-event-copy-folder-and-its-subfolders-and-files-into-build-directory
