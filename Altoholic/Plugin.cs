@@ -21,6 +21,9 @@ using FFXIVClientStructs.FFXIV.Client.System.String;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using FFXIVClientStructs.FFXIV.Client.System.Framework;
 using static FFXIVClientStructs.FFXIV.Client.UI.RaptureAtkModule;
+using ImGuiNET;
+using Dalamud.Interface.Internal.Notifications;
+using Dalamud.Interface.ImGuiNotification;
 
 namespace Altoholic
 {
@@ -36,6 +39,7 @@ namespace Altoholic
         private readonly IPluginLog pluginLog;
         private readonly IDataManager dataManager;
         private readonly ITextureProvider textureProvider;
+        private readonly INotificationManager notificationManager;
 
         [PluginService] public static ISigScanner SigScanner { get; private set; } = null!;
         [PluginService] public static IGameInteropProvider Hook { get; private set; } = null!;
@@ -74,7 +78,8 @@ namespace Altoholic
             IFramework framework,
             IPluginLog pluginLog,
             IDataManager dataManager,
-            ITextureProvider textureProvider
+            ITextureProvider textureProvider,
+            INotificationManager notificationManager
         )
         {
             var playtimePtr = SigScanner.ScanText(PlaytimeSig);
@@ -104,6 +109,7 @@ namespace Altoholic
             this.pluginLog = pluginLog;
             this.dataManager = dataManager;
             this.textureProvider = textureProvider;
+            this.notificationManager = notificationManager;
 
             currentLocale = ClientLanguage.English;
 
@@ -114,7 +120,7 @@ namespace Altoholic
                 () => this.localPlayer,
                 () => this.otherCharacters);
 
-            ConfigWindow = new ConfigWindow(this);
+            ConfigWindow = new ConfigWindow(this, $"{Name} configuration");
             CharactersWindow = new CharactersWindow(this, $"{Name} characters", pluginLog, textureProvider, currentLocale, db)
             {
                 GetPlayer = () => this.altoholicService.GetPlayer(),
@@ -162,6 +168,7 @@ namespace Altoholic
 
             PluginInterface.UiBuilder.Draw += DrawUI;
             PluginInterface.UiBuilder.OpenConfigUi += DrawConfigUI;
+            PluginInterface.UiBuilder.OpenMainUi += DrawMainUI;
 
             // Todo: On retainers retainer window close
             clientState.Login += OnCharacterLogin;
@@ -193,6 +200,27 @@ namespace Altoholic
         private void OnCommand(string command, string args)
         {
             pluginLog.Debug("OnCommand called");
+            DrawMainUI();
+        }
+ 
+        private void DrawUI()
+        {
+            WindowSystem.Draw();
+        }
+        private void DrawMainUI()
+        {
+            if (!clientState.IsLoggedIn)
+            {
+                pluginLog.Error("No character logged in, doing nothing");
+                notificationManager.AddNotification(new Notification() {
+                    Title = "Altoholic",
+                    Content = "This plugin need a character to be logged in",
+                    Type = NotificationType.Error,
+                    Minimized = false,
+                    InitialDuration = TimeSpan.FromSeconds(3)
+                });
+                return;
+            }
             // in response to the slash command, just display our main ui
             //pluginLog.Debug($"localPlayerName : {localPlayer.FirstName} {localPlayer.LastName}");
             if (localPlayer == null || localPlayer.FirstName == null)
@@ -276,7 +304,7 @@ namespace Altoholic
                     GetPlayerCompletedQuest();
                 }
 
-                /*pluginLog.Debug($"Gladiator : {localPlayer.Jobs.Gladiator.Level}");
+                pluginLog.Debug($"Gladiator : {localPlayer.Jobs.Gladiator.Level}");
                 pluginLog.Debug($"Pugilist : {localPlayer.Jobs.Pugilist.Level}");
                 pluginLog.Debug($"Marauder : {localPlayer.Jobs.Marauder.Level}");
                 pluginLog.Debug($"Lancer : {localPlayer.Jobs.Lancer.Level}");
@@ -315,15 +343,10 @@ namespace Altoholic
                 pluginLog.Debug($"Gunbreaker : {localPlayer.Jobs.Gunbreaker.Level}");
                 pluginLog.Debug($"Dancer : {localPlayer.Jobs.Dancer.Level}");
                 pluginLog.Debug($"Reaper : {localPlayer.Jobs.Reaper.Level}");
-                pluginLog.Debug($"Sage : {localPlayer.Jobs.Sage.Level}");*/
+                pluginLog.Debug($"Sage : {localPlayer.Jobs.Sage.Level}");
             }
             //CharactersWindow.IsOpen = true;
             MainWindow.IsOpen = true;
-        }
- 
-        private void DrawUI()
-        {
-            WindowSystem.Draw();
         }
 
         public void DrawConfigUI()

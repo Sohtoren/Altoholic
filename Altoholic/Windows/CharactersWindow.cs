@@ -234,6 +234,10 @@ public class CharactersWindow : Window, IDisposable
 
     private static string GeneratePlaytimeString(TimeSpan time, bool withSeconds = false)
     {
+        if (time == TimeSpan.Zero)
+        {
+            return "No playtime found, use /playtime";
+        }
         var formatted =
             $"{(time.Days > 0 ? $"{time.Days:n0} {(time.Days == 1 ? "Day" : "Days")}, " : string.Empty)}" +
             $"{(time.Hours > 0 ? $"{time.Hours:n0} {(time.Hours == 1 ? "Hour" : "Hours")}, " : string.Empty)}" +
@@ -250,6 +254,7 @@ public class CharactersWindow : Window, IDisposable
 
     private void DrawCharacters(List<Character> characters)
     {
+        if(characters.Count == 0) return;
         TotalGils = characters.Select(c => c.Currencies.Gil).Sum();
         TotalPlayed = 0;
         TotalCharacters = characters.Count;
