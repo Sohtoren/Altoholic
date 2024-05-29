@@ -304,7 +304,7 @@ namespace Altoholic
                     GetPlayerCompletedQuest();
                 }
 
-                pluginLog.Debug($"Gladiator : {localPlayer.Jobs.Gladiator.Level}");
+                /*pluginLog.Debug($"Gladiator : {localPlayer.Jobs.Gladiator.Level}");
                 pluginLog.Debug($"Pugilist : {localPlayer.Jobs.Pugilist.Level}");
                 pluginLog.Debug($"Marauder : {localPlayer.Jobs.Marauder.Level}");
                 pluginLog.Debug($"Lancer : {localPlayer.Jobs.Lancer.Level}");
@@ -343,7 +343,7 @@ namespace Altoholic
                 pluginLog.Debug($"Gunbreaker : {localPlayer.Jobs.Gunbreaker.Level}");
                 pluginLog.Debug($"Dancer : {localPlayer.Jobs.Dancer.Level}");
                 pluginLog.Debug($"Reaper : {localPlayer.Jobs.Reaper.Level}");
-                pluginLog.Debug($"Sage : {localPlayer.Jobs.Sage.Level}");
+                pluginLog.Debug($"Sage : {localPlayer.Jobs.Sage.Level}");*/
             }
             //CharactersWindow.IsOpen = true;
             MainWindow.IsOpen = true;
@@ -820,11 +820,9 @@ namespace Altoholic
 
             //PlaytimeCommand();
             CleanLastLocalCharacter();
-            //CharactersWindow.IsOpen = false;
 
             MainWindow.IsOpen = false;
             periodicTimer?.Dispose();
-            /*periodicTimer2?.Dispose();*/
         }
 
         /*private void PlaytimeCommand()
@@ -895,15 +893,15 @@ namespace Altoholic
         public Character? GetCharacterFromGameOrDB()
         {
             var player = GetLocalPlayerNameWorldRegion();
-            pluginLog.Debug("Altoholic : Character names => 0: {0}\uE05D{1}", player.Item1, player.Item2);
+            //pluginLog.Debug("Altoholic : Character names => 0: {0}\uE05D{1}", player.Item1, player.Item2);
             var names = player.Item1.Split(' '); // Todo: recheck when Dalamud API7 is out https://discord.com/channels/581875019861328007/653504487352303619/1061422333748850708
             if (names.Length == 2)
             {
-                pluginLog.Debug("Altoholic : Character names : 0 : {0}, 1: {1}, 2: {2}, 3: {3}", names[0], names[1], player.Item2, player.Item3);
+                //pluginLog.Debug("Altoholic : Character names : 0 : {0}, 1: {1}, 2: {2}, 3: {3}", names[0], names[1], player.Item2, player.Item3);
                 Character? chara = Database.Database.GetCharacter(db, pluginLog, clientState.LocalContentId);
                 if (chara != null)
                 {
-                    pluginLog.Debug($"GetCharacterFromDB : id = {chara.Id}, FirstName = {chara.FirstName}, LastName = {chara.LastName}, HomeWorld = {chara.HomeWorld}, DataCenter = {chara.Datacenter}, LastJob = {chara.LastJob}, LastJobLevel = {chara.LastJobLevel}, FCTag = {chara.FCTag}, FreeCompany = {chara.FreeCompany}, LastOnline = {chara.LastOnline}, PlayTime = {chara.PlayTime}, LastPlayTimeUpdate = {chara.LastPlayTimeUpdate}");
+                    //pluginLog.Debug($"GetCharacterFromDB : id = {chara.Id}, FirstName = {chara.FirstName}, LastName = {chara.LastName}, HomeWorld = {chara.HomeWorld}, DataCenter = {chara.Datacenter}, LastJob = {chara.LastJob}, LastJobLevel = {chara.LastJobLevel}, FCTag = {chara.FCTag}, FreeCompany = {chara.FreeCompany}, LastOnline = {chara.LastOnline}, PlayTime = {chara.PlayTime}, LastPlayTimeUpdate = {chara.LastPlayTimeUpdate}");
                     return chara;
                 }
                 else
