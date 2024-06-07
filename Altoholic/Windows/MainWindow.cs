@@ -48,6 +48,12 @@ public class MainWindow : Window, IDisposable
         this.currentLocale = currentLocale;
     }
 
+    public override void OnClose()
+    {
+        pluginLog.Debug("MainWindow, OnClose() called");
+        detailsWindow.IsOpen = false;
+    }
+
     public void Dispose()
     {
     }

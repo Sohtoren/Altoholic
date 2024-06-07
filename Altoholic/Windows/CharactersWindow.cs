@@ -1,10 +1,7 @@
 using Altoholic.Models;
 using Dalamud;
-using Dalamud.Interface;
-using Dalamud.Interface.Internal;
 using Dalamud.Interface.Windowing;
 using Dalamud.Plugin.Services;
-using FFXIVClientStructs.FFXIV.Client.Game.Fate;
 using ImGuiNET;
 using LiteDB;
 using System;
@@ -82,7 +79,9 @@ public class CharactersWindow : Window, IDisposable
                 ImGui.TableHeadersRow();
 
                 var chars = new List<Character>();
-                chars.Insert(0, GetPlayer.Invoke());
+                Character? current_character = GetPlayer.Invoke();
+                if (current_character is null) return;
+                chars.Insert(0, current_character);
                 chars.AddRange(
                     GetOthersCharactersList.Invoke()
                     //.OrderByDescending(c => c.LastOnline)
@@ -106,7 +105,7 @@ public class CharactersWindow : Window, IDisposable
                 ImGui.TableNextRow();
                 ImGui.TableNextColumn();
                 ImGui.Separator();
-                ImGui.Text($"Characters: {TotalCharacters}, Worlds: {TotalWorlds} ");
+                ImGui.TextUnformatted($"Characters: {TotalCharacters}, Worlds: {TotalWorlds}");
                 ImGui.TableNextColumn();
                 ImGui.Separator();
                 ImGui.BeginTable("Gils", 2);
@@ -120,7 +119,7 @@ public class CharactersWindow : Window, IDisposable
                     var posX = ImGui.GetCursorPosX() + ImGui.GetColumnWidth() - ImGui.CalcTextSize(gilText.ToString()).X - ImGui.GetScrollX() - (2 * ImGui.GetStyle().ItemSpacing.X);
                     if (posX > ImGui.GetCursorPosX())
                         ImGui.SetCursorPosX(posX);
-                    ImGui.Text($"{gilText}");
+                    ImGui.TextUnformatted($"{gilText}");
 
                 // Ending Gils Table
                 ImGui.EndTable();
@@ -129,14 +128,13 @@ public class CharactersWindow : Window, IDisposable
                 ImGui.Separator();
                 ImGui.TableNextColumn();
                 ImGui.Separator();
-                ImGui.Text($"{GeneratePlaytime(TimeSpan.FromMinutes(TotalPlayed))}");
+                ImGui.TextUnformatted($"{GeneratePlaytime(TimeSpan.FromMinutes(TotalPlayed))}");
                 if (ImGui.IsItemHovered())
                     ImGui.SetTooltip(
                         "as of the last auto /playtime check"
                     );
                 ImGui.EndTable();
             }
-
         }
         catch (Exception e)
         {
@@ -147,25 +145,25 @@ public class CharactersWindow : Window, IDisposable
     {
         ImGui.TableNextRow();
         ImGui.TableNextColumn();
-        ImGui.Text($"{character.FirstName}");
+        ImGui.TextUnformatted($"{((character.IsSprout == true)? (char)SpecialIcon.GARDEN : "")}{character.FirstName}");
         ImGui.TableNextColumn();
-        ImGui.Text($"{character.LastName}");
+        ImGui.TextUnformatted($"{character.LastName}");
         ImGui.TableNextColumn();
-        ImGui.Text($"{character.HomeWorld}");
+        ImGui.TextUnformatted($"{character.HomeWorld}");
         ImGui.TableNextColumn();
-        ImGui.Text($"{Utils.GetRegionFromWorld(character.HomeWorld)}");
+        ImGui.TextUnformatted($"{Utils.GetRegionFromWorld(character.HomeWorld)}");
         if (ImGui.IsItemHovered())
             ImGui.SetTooltip(
                 Utils.GetDatacenterFromWorld(character.HomeWorld)
             );
         ImGui.TableNextColumn();
-        ImGui.Text($"{character.LastJobLevel}");
+        ImGui.TextUnformatted($"{character.LastJobLevel}");
         if (ImGui.IsItemHovered())
             ImGui.SetTooltip(
                 Enum.GetName(typeof(ClassJob), character.LastJob)
             );
         ImGui.TableNextColumn();
-        ImGui.Text($"{character.FCTag}");
+        ImGui.TextUnformatted($"{character.FCTag}");
         ImGui.TableNextColumn();
 
             ImGui.BeginTable("Gils", 2);
@@ -174,29 +172,31 @@ public class CharactersWindow : Window, IDisposable
                 ImGui.TableNextColumn();
                 Utils.DrawIcon(textureProvider, pluginLog, new Vector2(18, 18), false, 065002);
                 ImGui.TableNextColumn();
-                var gilText = $"{character.Currencies.Gil:N0}";
-                var posX = ImGui.GetCursorPosX() + ImGui.GetColumnWidth() - ImGui.CalcTextSize(gilText.ToString()).X - ImGui.GetScrollX() - (2 * ImGui.GetStyle().ItemSpacing.X);
-                if (posX > ImGui.GetCursorPosX())
-                    ImGui.SetCursorPosX(posX);
-                ImGui.Text($"{gilText}");
+                if (character.Currencies is not null)
+                {
+                    var gilText = $"{character.Currencies.Gil:N0}";
+                    var posX = ImGui.GetCursorPosX() + ImGui.GetColumnWidth() - ImGui.CalcTextSize(gilText.ToString()).X - ImGui.GetScrollX() - (2 * ImGui.GetStyle().ItemSpacing.X);
+                    if (posX > ImGui.GetCursorPosX())
+                        ImGui.SetCursorPosX(posX);
+                    ImGui.TextUnformatted($"{gilText}");
+                }
             ImGui.EndTable();// Ending Gils Table
 
         ImGui.TableNextColumn();
-        ImGui.Text($"{GetLastOnlineFormatted(character.LastOnline/*, character.FirstName*/)}");
+        ImGui.TextUnformatted($"{GetLastOnlineFormatted(character.LastOnline/*, character.FirstName*/)}");
         if(pos > 0)
             if (ImGui.IsItemHovered())
                 ImGui.SetTooltip(
                     UnixTimeStampToDateTime(character.LastOnline)
                 );
         ImGui.TableNextColumn();
-        ImGui.Text($"{GeneratePlaytime(TimeSpan.FromMinutes(character.PlayTime))}");
+        ImGui.TextUnformatted($"{GeneratePlaytime(TimeSpan.FromMinutes(character.PlayTime))}");
         if (character.LastPlayTimeUpdate > 0)
         {
             if (ImGui.IsItemHovered())
                 ImGui.SetTooltip(
-                    $"Last updated on : {UnixTimeStampToDateTime(character.LastPlayTimeUpdate)}"
-
-                    );
+                    $"Last updated on : {UnixTimeStampToDateTime(character.LastPlayTimeUpdate)} - {GetLastOnlineFormatted(character.LastPlayTimeUpdate)}"
+                );
         }
 
         // Todo : Buttons
@@ -255,7 +255,7 @@ public class CharactersWindow : Window, IDisposable
     private void DrawCharacters(List<Character> characters)
     {
         if(characters.Count == 0) return;
-        TotalGils = characters.Select(c => c.Currencies.Gil).Sum();
+        TotalGils = characters.Select(c => c.Currencies != null ? c.Currencies.Gil: 0).Sum();
         TotalPlayed = 0;
         TotalCharacters = characters.Count;
         TotalWorlds = characters.Select(c => c.HomeWorld).Distinct().Count();

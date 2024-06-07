@@ -3,6 +3,7 @@ using Dalamud;
 using Dalamud.Interface.Windowing;
 using Dalamud.Plugin.Services;
 using ImGuiNET;
+using Lumina.Data.Files.Excel;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
@@ -46,7 +47,7 @@ public class CurrenciesWindow : Window, IDisposable
 
     public Func<Character> GetPlayer { get; init; } = null!;
     public Func<List<Character>> GetOthersCharactersList { get; set; } = null!;
-    private Character? current_character = null!;
+    private Character? current_character = null;
     private string current_currency = string.Empty;
     private string selected_currency = string.Empty;
 
@@ -69,7 +70,7 @@ public class CurrenciesWindow : Window, IDisposable
                 ImGui.TableSetupColumn(string.Empty, ImGuiTableColumnFlags.WidthStretch);
                 ImGui.TableNextRow();
                 ImGui.TableNextColumn();
-                if (ImGui.BeginListBox("", new Vector2(200, -1)))
+                if (ImGui.BeginListBox(string.Empty, new Vector2(200, -1)))
                 {
                     ImGui.SetScrollY(0);
                     if (ImGui.Selectable("All"))
@@ -78,7 +79,7 @@ public class CurrenciesWindow : Window, IDisposable
                     }
                     foreach (Character currChar in chars)
                     {
-                        if (ImGui.Selectable($"{currChar.FirstName} {currChar.LastName}\uE05D{currChar.HomeWorld}"))
+                        if (ImGui.Selectable($"{currChar.FirstName} {currChar.LastName}{(char)SpecialIcon.E05D}{currChar.HomeWorld}"))
                         {
                             current_character = currChar;
                         }
@@ -125,6 +126,7 @@ public class CurrenciesWindow : Window, IDisposable
 
     private void DrawAll(List<Character> chars)
     {
+
         //pluginLog.Debug("DrawAll called");
         if (ImGui.BeginCombo(string.Empty, selected_currency))
         {
@@ -164,14 +166,17 @@ public class CurrenciesWindow : Window, IDisposable
                     //pluginLog.Debug($"{character.Currencies.Gil}");
                     ImGui.TableNextRow();
                     ImGui.TableSetColumnIndex(0);
-                    ImGui.Text($"{character.FirstName} {character.LastName}\uE05D{character.HomeWorld}");
-                    var p = character.Currencies.GetType().GetProperty(current_currency);
-                    //pluginLog.Debug($"p: {p}");
-                    if (p != null)
+                    ImGui.TextUnformatted($"{character.FirstName} {character.LastName}{(char)SpecialIcon.E05D}{character.HomeWorld}");
+                    if (character.Currencies is not null)
                     {
-                        //pluginLog.Debug($"v: {p.GetValue(character.Currencies, null):N0}");
-                        ImGui.TableSetColumnIndex(1);
-                        ImGui.Text($"{p.GetValue(character.Currencies, null):N0}");
+                        var p = character.Currencies.GetType().GetProperty(current_currency);
+                        //pluginLog.Debug($"p: {p}");
+                        if (p != null)
+                        {
+                            //pluginLog.Debug($"v: {p.GetValue(character.Currencies, null):N0}");
+                            ImGui.TableSetColumnIndex(1);
+                            ImGui.TextUnformatted($"{p.GetValue(character.Currencies, null):N0}");
+                        }
                     }
                 }
                 ImGui.EndTable();
@@ -181,6 +186,8 @@ public class CurrenciesWindow : Window, IDisposable
 
     private void DrawPc(Character current_character)
     {
+        if (current_character.Currencies is null) return;
+
         if (ImGui.BeginTabBar($"#tabs"))
         {
             if (ImGui.BeginTabItem($"{Utils.GetAddonString(dataManager, pluginLog, currentLocale, 3662)}"))
@@ -246,6 +253,8 @@ public class CurrenciesWindow : Window, IDisposable
 
     private void DrawCommon(Character current_character)
     {
+        if (current_character.Currencies is null || current_character.Profile is null) return;
+
         PlayerCurrencies pc = current_character.Currencies;
 
         if (ImGui.BeginTable("CommonCurrencyTable", 1))
@@ -253,7 +262,7 @@ public class CurrenciesWindow : Window, IDisposable
             ImGui.TableSetupColumn(string.Empty, ImGuiTableColumnFlags.WidthStretch);
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
-            ImGui.Text(Utils.GetAddonString(dataManager, pluginLog, currentLocale, 830));
+            ImGui.TextUnformatted(Utils.GetAddonString(dataManager, pluginLog, currentLocale, 830));
             ImGui.Separator();
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
@@ -267,16 +276,34 @@ public class CurrenciesWindow : Window, IDisposable
             {
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                ImGui.Text(Utils.GetAddonString(dataManager, pluginLog, currentLocale, 831));
+                ImGui.TextUnformatted(Utils.GetAddonString(dataManager, pluginLog, currentLocale, 831));
                 ImGui.Separator();
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                (int val, Currencies c) = current_character.Profile.Grand_Company switch
+                int val = 0;
+                Currencies c = 0;
+                if (current_character.Profile.Grand_Company == 1)
+                {
+                    val = pc.Storm_Seal;
+                    c = Currencies.STORM_SEAL;
+                }
+                else if (current_character.Profile.Grand_Company == 2)
+                {
+                    val = pc.Serpent_Seal;
+                    c = Currencies.SERPENT_SEAL;
+                }
+                else if (current_character.Profile.Grand_Company == 3)
+                {
+                    val = pc.Flame_Seal;
+                    c = Currencies.FLAME_SEAL;
+                }
+
+                /*(int val, Currencies c) = current_character.Profile.Grand_Company switch
                 {
                     1 => (pc.Storm_Seal, Currencies.STORM_SEAL),
                     2 => (pc.Serpent_Seal, Currencies.SERPENT_SEAL),
                     3 => (pc.Flame_Seal, Currencies.FLAME_SEAL),
-                };
+                };*/
                 DrawCommonCurrency(val, c, Utils.GetGrandCompanyRankMaxSeals(dataManager, pluginLog, currentLocale, current_character.Profile.Grand_Company_Rank));
             }
 
@@ -289,7 +316,7 @@ public class CurrenciesWindow : Window, IDisposable
             {
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                ImGui.Text(Utils.GetAddonString(dataManager, pluginLog, currentLocale, 5755));
+                ImGui.TextUnformatted(Utils.GetAddonString(dataManager, pluginLog, currentLocale, 5755));
                 ImGui.Separator();
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
@@ -300,7 +327,7 @@ public class CurrenciesWindow : Window, IDisposable
             {
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                ImGui.Text(Utils.GetAddonString(dataManager, pluginLog, currentLocale, 3667));
+                ImGui.TextUnformatted(Utils.GetAddonString(dataManager, pluginLog, currentLocale, 3667));
                 ImGui.Separator();
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
@@ -326,11 +353,11 @@ public class CurrenciesWindow : Window, IDisposable
             ImGui.TableSetColumnIndex(1);
             if (max != 0)
             {
-                ImGui.Text($"{currency:N0}/{max:N0}");
+                ImGui.TextUnformatted($"{currency:N0}/{max:N0}");
             }
             else
             {
-                ImGui.Text($"{currency:N0}");
+                ImGui.TextUnformatted($"{currency:N0}");
             }
 
             ImGui.EndTable();
@@ -348,12 +375,13 @@ public class CurrenciesWindow : Window, IDisposable
 
     private void DrawBattle(Character current_character)
     {
+        if (current_character.Currencies is null) return;
         PlayerCurrencies pc = current_character.Currencies;
 
         //Todo: Dunno when this unlock, maybe ARR done?
         if (current_character.HasAnyLevelJob(50))
         {
-            ImGui.Text(Utils.GetAddonString(dataManager, pluginLog, currentLocale, 3500));
+            ImGui.TextUnformatted(Utils.GetAddonString(dataManager, pluginLog, currentLocale, 3500));
             ImGui.Separator();
             if (ImGui.BeginTable("BattleCurrencyAllaganTable", 2))
             {
@@ -361,7 +389,7 @@ public class CurrenciesWindow : Window, IDisposable
                 ImGui.TableSetupColumn(string.Empty, ImGuiTableColumnFlags.WidthStretch);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(1);
-                ImGui.Text($"{Utils.GetAddonString(dataManager, pluginLog, currentLocale, 3668)} {GetNextThuesday()}");
+                ImGui.TextUnformatted($"{Utils.GetAddonString(dataManager, pluginLog, currentLocale, 3668)} {GetNextThuesday()}");
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
                 DrawBattleCurrency(pc.Allagan_Tomestone_Of_Poetics, Currencies.ALLAGAN_TOMESTONE_OF_POETICS, 2000, true);
@@ -372,11 +400,11 @@ public class CurrenciesWindow : Window, IDisposable
                 ImGui.TableSetColumnIndex(0);
                 DrawBattleCurrency(pc.Allagan_Tomestone_Of_Comedy, Currencies.ALLAGAN_TOMESTONE_OF_COMEDY, 2000, true);
                 ImGui.TableSetColumnIndex(1);
-                ImGui.Text(Utils.GetAddonString(dataManager, pluginLog, currentLocale, 3502));
-                ImGui.Text($"?/900");// Todo: Find a way to get weekly amount
+                ImGui.TextUnformatted(Utils.GetAddonString(dataManager, pluginLog, currentLocale, 3502));
+                ImGui.TextUnformatted($"?/900");// Todo: Find a way to get weekly amount
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                ImGui.Text(Utils.GetAddonString(dataManager, pluginLog, currentLocale, 5756));
+                ImGui.TextUnformatted(Utils.GetAddonString(dataManager, pluginLog, currentLocale, 5756));
                 DrawBattleCurrency(pc.Allagan_Tomestone_Of_Astronomy, Currencies.ALLAGAN_TOMESTONE_OF_ASTRONOMY, 2000, true);
 
                 ImGui.EndTable();
@@ -391,7 +419,7 @@ public class CurrenciesWindow : Window, IDisposable
             pc.Trophy_Crystal > 0
         )
         {
-            ImGui.Text(Utils.GetAddonString(dataManager, pluginLog, currentLocale, 834));
+            ImGui.TextUnformatted(Utils.GetAddonString(dataManager, pluginLog, currentLocale, 834));
             ImGui.Separator();
             if (ImGui.BeginTable("BattleCurrencyPvPTable", 2))
             {
@@ -417,7 +445,7 @@ public class CurrenciesWindow : Window, IDisposable
             pc.Sack_of_Nuts > 0
         )
         {
-            ImGui.Text(Utils.GetAddonString(dataManager, pluginLog, currentLocale, 838));
+            ImGui.TextUnformatted(Utils.GetAddonString(dataManager, pluginLog, currentLocale, 838));
             ImGui.Separator();
             if (ImGui.BeginTable("BattleCurrencyHuntTable", 2))
             {
@@ -463,7 +491,7 @@ public class CurrenciesWindow : Window, IDisposable
             //Todo: check if can get list of completed FATEs then check for at least one in either SHB or EW
         )
         {
-            ImGui.Text(Utils.GetAddonString(dataManager, pluginLog, currentLocale, 5768));
+            ImGui.TextUnformatted(Utils.GetAddonString(dataManager, pluginLog, currentLocale, 5768));
             ImGui.Separator();
             if (ImGui.BeginTable("BattleCurrencyFATETable", 1))
             {
@@ -495,13 +523,13 @@ public class CurrenciesWindow : Window, IDisposable
             {
                 if (total)
                 {
-                    ImGui.Text($"{Utils.GetAddonString(dataManager, pluginLog, currentLocale, 3501)}");
+                    ImGui.TextUnformatted($"{Utils.GetAddonString(dataManager, pluginLog, currentLocale, 3501)}");
                 }
-                ImGui.Text($"{currency:N0}/{max:N0}");
+                ImGui.TextUnformatted($"{currency:N0}/{max:N0}");
             }
             else
             {
-                ImGui.Text($"{currency:N0}");
+                ImGui.TextUnformatted($"{currency:N0}");
             }
 
             ImGui.EndTable();
@@ -510,6 +538,7 @@ public class CurrenciesWindow : Window, IDisposable
 
     private void DrawOthers(Character current_character)
     {
+        if (current_character.Currencies is null) return;
         PlayerCurrencies pc = current_character.Currencies;
 
         if (ImGui.BeginTable("OthersCurrencyTable", 1))
@@ -519,7 +548,7 @@ public class CurrenciesWindow : Window, IDisposable
                 ImGui.TableSetupColumn(string.Empty, ImGuiTableColumnFlags.WidthStretch);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                ImGui.Text(Utils.GetAddonString(dataManager, pluginLog, currentLocale, 3665));
+                ImGui.TextUnformatted(Utils.GetAddonString(dataManager, pluginLog, currentLocale, 3665));
                 ImGui.Separator();
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
@@ -529,12 +558,12 @@ public class CurrenciesWindow : Window, IDisposable
                 DrawOtherCurrency(pc.Purple_Crafters_Scrip, Currencies.PURPLE_CRAFTERS_SCRIP, 4000, true);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                ImGui.Text(Utils.GetAddonString(dataManager, pluginLog, currentLocale, 5756));
+                ImGui.TextUnformatted(Utils.GetAddonString(dataManager, pluginLog, currentLocale, 5756));
                 DrawOtherCurrency(pc.Yellow_Crafters_Scrip, Currencies.YELLOW_CRAFTERS_SCRIP, 4000, true, true);
 
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                ImGui.Text(Utils.GetAddonString(dataManager, pluginLog, currentLocale, 3666));
+                ImGui.TextUnformatted(Utils.GetAddonString(dataManager, pluginLog, currentLocale, 3666));
                 ImGui.Separator();
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
@@ -544,7 +573,7 @@ public class CurrenciesWindow : Window, IDisposable
                 DrawOtherCurrency(pc.Purple_Gatherers_Scrip, Currencies.PURPLE_GATHERERS_SCRIP, 4000, true);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                ImGui.Text(Utils.GetAddonString(dataManager, pluginLog, currentLocale, 5756));
+                ImGui.TextUnformatted(Utils.GetAddonString(dataManager, pluginLog, currentLocale, 5756));
                 DrawOtherCurrency(pc.Yellow_Gatherers_Scrip, Currencies.YELLOW_GATHERERS_SCRIP, 4000, true, true);
             }
 
@@ -552,7 +581,7 @@ public class CurrenciesWindow : Window, IDisposable
             {
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                ImGui.Text(Utils.GetAddonString(dataManager, pluginLog, currentLocale, 5758));
+                ImGui.TextUnformatted(Utils.GetAddonString(dataManager, pluginLog, currentLocale, 5758));
                 ImGui.Separator();
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
@@ -580,13 +609,13 @@ public class CurrenciesWindow : Window, IDisposable
             {
                 if (total)
                 {
-                    ImGui.Text($"{Utils.GetAddonString(dataManager, pluginLog, currentLocale, 3501)}");
+                    ImGui.TextUnformatted($"{Utils.GetAddonString(dataManager, pluginLog, currentLocale, 3501)}");
                 }
-                ImGui.Text($"{currency:N0}/{max:N0}");
+                ImGui.TextUnformatted($"{currency:N0}/{max:N0}");
             }
             else
             {
-                ImGui.Text($"{currency:N0}");
+                ImGui.TextUnformatted($"{currency:N0}");
             }
 
             ImGui.EndTable();
@@ -595,9 +624,11 @@ public class CurrenciesWindow : Window, IDisposable
 
     private void DrawTribal(Character current_character)
     {
+        if (current_character.Currencies == null) return;
+
         PlayerCurrencies pc = current_character.Currencies;
 
-        ImGui.Text(Utils.GetAddonString(dataManager, pluginLog, currentLocale, 5751));
+        ImGui.TextUnformatted(Utils.GetAddonString(dataManager, pluginLog, currentLocale, 5751));
         ImGui.Separator();
         if (ImGui.BeginTable("TribalCurrencyTable", 3))
         {
@@ -613,7 +644,7 @@ public class CurrenciesWindow : Window, IDisposable
             {
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                ImGui.Text("A Realm Reborn");
+                ImGui.TextUnformatted("A Realm Reborn");
                 ImGui.TableNextRow();
                 if (current_character.IsQuestCompleted(66754))
                 {
@@ -656,7 +687,7 @@ public class CurrenciesWindow : Window, IDisposable
             {
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                ImGui.Text("Heavensward");
+                ImGui.TextUnformatted("Heavensward");
                 ImGui.TableNextRow();
                 if (current_character.IsQuestCompleted(67700))
                 {
@@ -685,7 +716,7 @@ public class CurrenciesWindow : Window, IDisposable
             {
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                ImGui.Text("Stormblood");
+                ImGui.TextUnformatted("Stormblood");
                 ImGui.TableNextRow();
                 if (current_character.IsQuestCompleted(68509))
                 {
@@ -714,7 +745,7 @@ public class CurrenciesWindow : Window, IDisposable
             {
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                ImGui.Text("Shadowbringers");
+                ImGui.TextUnformatted("Shadowbringers");
                 ImGui.TableNextRow();
                 if (current_character.IsQuestCompleted(69219))
                 {
@@ -743,7 +774,7 @@ public class CurrenciesWindow : Window, IDisposable
             {
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                ImGui.Text("Endwalker");
+                ImGui.TextUnformatted("Endwalker");
                 ImGui.TableNextRow();
                 if (current_character.IsQuestCompleted(70081))
                 {
@@ -783,7 +814,7 @@ public class CurrenciesWindow : Window, IDisposable
                     Utils.GetTribalCurrencyFromId(dataManager, pluginLog, currentLocale, (uint)tribal_id)
                 );
             ImGui.TableSetColumnIndex(1);
-            ImGui.Text($"{currency}");
+            ImGui.TextUnformatted($"{currency}");
 
             ImGui.EndTable();
         }

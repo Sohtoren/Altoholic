@@ -8,23 +8,24 @@ namespace Altoholic.Models
 {
     public class Character
     {
-        public ulong Id { get; init; }
+        public ulong Id { get; init; } = 0;
         public string FirstName { get; set; } = string.Empty;
         public string LastName { get; set; } = string.Empty;
         public string HomeWorld { get; set; } = string.Empty;
         public string Datacenter {  get; set; } = string.Empty;
         public string Region {  get; set; } = string.Empty;
+        public bool IsSprout { get; set; } = false;
         public uint LastJob { get; set; } = 0;
         public int LastJobLevel { get; set; } = 0;
         public string FCTag { get; set; } = string.Empty;
         public string FreeCompany { get; set; } = string.Empty;
         public long LastOnline { get; set; } = 0;
-        public uint PlayTime { get; set; }
+        public uint PlayTime { get; set; } = 0;
         public long LastPlayTimeUpdate {  get; set; } = 0;
-        public Attributes Attributes { get; set; } = null!;
-        public PlayerCurrencies Currencies { get; set; } = null!;
-        public Jobs Jobs { get; set; } = null!;
-        public Profile Profile { get; set; } = null!;
+        public Attributes? Attributes { get; set; }
+        public PlayerCurrencies? Currencies { get; set; }
+        public Jobs? Jobs { get; set; }
+        public Profile? Profile { get; set; }
         public List<Quest> Quests { get; set; } = [];
         public List<Inventory> Inventory { get; set; } = [];
         public List<Gear> Gear { get; set; } = [];
@@ -32,6 +33,7 @@ namespace Altoholic.Models
 
         public bool HasAnyLevelJob(int level)
         {
+            if (Jobs is null) return false;
             foreach (PropertyInfo prop in Jobs.GetType().GetProperties())
             {
                 var value = prop.GetValue(Jobs);

@@ -115,6 +115,7 @@ namespace Altoholic.Database
                         c.HomeWorld = character.HomeWorld;
                         c.Datacenter = character.Datacenter;
                         c.Region = character.Region;
+                        c.IsSprout = character.IsSprout;
                         c.LastJob = character.LastJob;
                         c.LastJobLevel = character.LastJobLevel;
                         c.FCTag = character.FCTag;
@@ -144,6 +145,7 @@ namespace Altoholic.Database
                             HomeWorld = character.HomeWorld,
                             Datacenter = character.Datacenter,
                             Region = character.Region,
+                            IsSprout = character.IsSprout,
                             LastJob = character.LastJob,
                             LastJobLevel = character.LastJobLevel,
                             FCTag = character.FCTag,
@@ -165,7 +167,7 @@ namespace Altoholic.Database
                         }
                     }
 
-                    pluginLog.Debug($"Updating character with c : id = {c.Id}, FirstName = {c.FirstName}, LastName = {c.LastName}, HomeWorld = {c.HomeWorld}, DataCenter = {c.Datacenter}, LastJob = {c.LastJob}, LastJobLevel = {c.LastJobLevel}, FCTag = {c.FCTag}, FreeCompany = {c.FreeCompany}, LastOnline = {c.LastOnline}, PlayTime = {c.PlayTime}, LastPlayTimeUpdate = {c.LastPlayTimeUpdate}, Quests = {c.Quests.Count}, Inventory = {c.Inventory}, Gear {c.Gear.Count}, Retainers = {c.Retainers.Count}");
+                    pluginLog.Debug($"Updating character with c : id = {c.Id}, FirstName = {c.FirstName}, LastName = {c.LastName}, HomeWorld = {c.HomeWorld}, DataCenter = {c.Datacenter}, LastJob = {c.LastJob}, LastJobLevel = {c.LastJobLevel}, FCTag = {c.FCTag}, FreeCompany = {c.FreeCompany}, LastOnline = {c.LastOnline}, PlayTime = {c.PlayTime}, LastPlayTimeUpdate = {c.LastPlayTimeUpdate}, Quests = {c.Quests.Count}, Inventory = {c.Inventory.Count}, Gear {c.Gear.Count}, Retainers = {c.Retainers.Count}");
                     col.Upsert(c);
                 }
             }

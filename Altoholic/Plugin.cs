@@ -8,7 +8,6 @@ using LiteDB;
 using Altoholic.Models;
 using System.Collections.Generic;
 using System.Threading;
-using Dalamud.Game.Text;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using System;
 using Dalamud.Game.ClientState.Objects.SubKinds;
@@ -65,9 +64,9 @@ namespace Altoholic
         private string localPlayerCurrentWorld = string.Empty;
         private string localPlayerCurrentDatacenter = string.Empty;
         private string localPlayerCurrentRegion = string.Empty;
-        private Utf8String localPlayerFreeCompanyTest;
+        private Utf8String? localPlayerFreeCompanyTest;
 
-        private PeriodicTimer periodicTimer = null!;
+        private PeriodicTimer? periodicTimer = null;
         public List<Character> otherCharacters = [];
         private ClientLanguage currentLocale;
 
@@ -82,7 +81,8 @@ namespace Altoholic
             INotificationManager notificationManager
         )
         {
-            var playtimePtr = SigScanner.ScanText(PlaytimeSig);
+            nint playtimePtr = SigScanner.ScanText(PlaytimeSig);
+            //if (playtimePtr == nint.Zero) return;
             PlaytimeHook = Hook.HookFromAddress<PlaytimeDelegate>(playtimePtr, PlaytimePacket);
             PlaytimeHook.Enable();
 
@@ -158,7 +158,6 @@ namespace Altoholic
                 currentLocale);
 
             WindowSystem.AddWindow(ConfigWindow);
-            //WindowSystem.AddWindow(CharactersWindow);
             WindowSystem.AddWindow(MainWindow);
 
             commandManager.AddHandler(CommandName, new CommandInfo(OnCommand)
@@ -181,6 +180,7 @@ namespace Altoholic
             PlaytimeHook.Dispose();
             WindowSystem.RemoveAllWindows();
 
+            JobsWindow.Dispose();
             ConfigWindow.Dispose();
             CurrenciesWindow.Dispose();
             DetailsWindow.Dispose();
@@ -207,6 +207,7 @@ namespace Altoholic
         {
             WindowSystem.Draw();
         }
+ 
         private void DrawMainUI()
         {
             if (!clientState.IsLoggedIn)
@@ -221,7 +222,7 @@ namespace Altoholic
                 });
                 return;
             }
-            // in response to the slash command, just display our main ui
+
             //pluginLog.Debug($"localPlayerName : {localPlayer.FirstName} {localPlayer.LastName}");
             if (localPlayer == null || localPlayer.FirstName == null)
             {
@@ -233,7 +234,7 @@ namespace Altoholic
                     if (localPlayer.PlayTime == 0)//still needed?
                     {
                         Character? chara = Database.Database.GetCharacter(db, pluginLog, localPlayer.Id);
-                        if (chara != null)
+                        if (chara is not null)
                         {
                             localPlayer.PlayTime = chara.PlayTime;
                             localPlayer.LastPlayTimeUpdate = chara.LastPlayTimeUpdate;
@@ -244,10 +245,6 @@ namespace Altoholic
                     pluginLog.Debug($"Inventory : {localPlayer.Inventory.Count}");
                     foreach (var inventory in localPlayer.Inventory)
                     {
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
-                        //var lumina = DataManager.GetExcelSheet<Lumina.Excel.GeneratedSheets.Item>(pluginLocal).GetRow(inventory.ItemId)!;
-                        //var lumina = DataManager.GetExcelSheet<Lumina.Excel.GeneratedSheets.Item>(ClientLanguage.English).GetRow(inventory.ItemId)!;
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
                         //pluginLog.Debug($"{inventory.ItemId} {lumina.Singular} {inventory.HQ} {inventory.Quantity}");
                     }
                 }
@@ -272,10 +269,10 @@ namespace Altoholic
                 }
                 //pluginLog.Debug($"localPlayer.Quests.Count: {localPlayer.Quests.Count}");
 
-                /*foreach (Gear i in localPlayer.Gear)
+                foreach (Gear i in localPlayer.Gear)
                 {
-                    pluginLog.Debug($"Gear: {i.ItemId} {Enum.GetName(typeof(GearSlot), i.Slot)}");
-                }*/
+                    pluginLog.Debug($"Gear: {i.ItemId} {Enum.GetName(typeof(GearSlot), i.Slot)} {i.Slot}");
+                }
 
                 /*pluginLog.Debug($"Title {localPlayer.Profile.Title}");
                 pluginLog.Debug($"Title Length {localPlayer.Profile.Title.Length}");
@@ -304,6 +301,10 @@ namespace Altoholic
                     GetPlayerCompletedQuest();
                 }
 
+                if (clientState.IsLoggedIn)
+                {
+                    localPlayer.LastOnline = 0;
+                }
                 /*pluginLog.Debug($"Gladiator : {localPlayer.Jobs.Gladiator.Level}");
                 pluginLog.Debug($"Pugilist : {localPlayer.Jobs.Pugilist.Level}");
                 pluginLog.Debug($"Marauder : {localPlayer.Jobs.Marauder.Level}");
@@ -345,7 +346,6 @@ namespace Altoholic
                 pluginLog.Debug($"Reaper : {localPlayer.Jobs.Reaper.Level}");
                 pluginLog.Debug($"Sage : {localPlayer.Jobs.Sage.Level}");*/
             }
-            //CharactersWindow.IsOpen = true;
             MainWindow.IsOpen = true;
         }
 
@@ -365,9 +365,13 @@ namespace Altoholic
                 };
 
                 var name =  lPlayer.Name.TextValue ?? string.Empty;
+                if (string.IsNullOrEmpty(name)) return;
                 var names = name.Split(" ");
-                localPlayer.FirstName = names[0];
-                localPlayer.LastName = names[1];
+                if (names.Length == 2)
+                {
+                    localPlayer.FirstName = names[0];
+                    localPlayer.LastName = names[1];
+                }
                 var hw = lPlayer.HomeWorld;
                 if (hw != null)
                 {
@@ -400,15 +404,15 @@ namespace Altoholic
                 }
                 else if (localPlayerCurrentWorld != localPlayer.HomeWorld && localPlayerCurrentRegion == localPlayer.Region)
                 {
-                    localPlayer.FCTag = "Wanderer";
+                    localPlayer.FCTag = Utils.GetAddonString(dataManager, pluginLog, currentLocale, 12541);
                 }
                 else if (localPlayerCurrentWorld != localPlayer.HomeWorld && localPlayerCurrentRegion != localPlayer.Region)
                 {
-                    localPlayer.FCTag = "Traveler";
+                    localPlayer.FCTag = Utils.GetAddonString(dataManager, pluginLog, currentLocale, 12625);
                 }
                 else if (localPlayerCurrentWorld != localPlayer.HomeWorld && localPlayerCurrentRegion != localPlayer.Region)
                 {
-                    localPlayer.FCTag = "Voyager";
+                    localPlayer.FCTag = Utils.GetAddonString(dataManager, pluginLog, currentLocale, 12627);
                 }
                 //pluginLog.Debug($"localPlayerRegion : {localPlayerRegion}");
                 //pluginLog.Debug($"localPlayerCurrentRegion : {localPlayerCurrentRegion}");
@@ -428,7 +432,6 @@ namespace Altoholic
                 {
                     pluginLog.Error(e, "Could not get free company name");
                 }*/
-
                 localPlayer.Attributes = new()
                 {
                     Hp = lPlayer.MaxHp,
@@ -443,24 +446,34 @@ namespace Altoholic
 
         private unsafe void GetPlayerAttributesProfileAndJobs()
         {
+            if(localPlayer is null) return;
             unsafe
             {
-                var raptureAtkModule = Framework.Instance()->GetUiModule()->GetRaptureAtkModule();
-                var npi = raptureAtkModule->NamePlateInfoEntriesSpan;
                 var title = string.Empty;
-                for (var i = 0; i < 50 && i < raptureAtkModule->NameplateInfoCount; i++)
+                var raptureAtkModule = Framework.Instance()->GetUiModule()->GetRaptureAtkModule();
+                if (raptureAtkModule != null)
                 {
-                    ref NamePlateInfo namePlateInfo = ref npi[i];
-                    if (namePlateInfo.ObjectID.ObjectID == clientState.LocalPlayer?.ObjectId)
+                    var npi = raptureAtkModule->NamePlateInfoEntriesSpan;
+                    if (npi != null)
                     {
-                        var t = namePlateInfo.Title.ToString();//this sometime get player name??? to recheck
-                        if (t != $"{localPlayer.FirstName} {localPlayer.LastName}")
+                        for (var i = 0; i < 50 && i < raptureAtkModule->NameplateInfoCount; i++)
                         {
-                            title = t;
+                            ref NamePlateInfo namePlateInfo = ref npi[i];
+                            if (clientState.LocalPlayer == null) continue;
+                            if (namePlateInfo.ObjectID.ObjectID == clientState.LocalPlayer.ObjectId)
+                            {
+                                var t = namePlateInfo.Title.ToString();//this sometime get player name??? to recheck
+                                if (t != $"{localPlayer.FirstName} {localPlayer.LastName}")
+                                {
+                                    title = t;
+                                }
+                            }
                         }
                     }
                 }
-                ref var player = ref UIState.Instance()->PlayerState;
+                ref readonly UIState uistate = ref *UIState.Instance();//nullcheck?
+                var player = uistate.PlayerState;
+                localPlayer.IsSprout = player.IsNovice();
                 localPlayer.Profile = new()
                 {
                     Title = title,
@@ -518,7 +531,6 @@ namespace Altoholic
                     Reaper = new() { Level = player.ClassJobLevelArray[28], Exp = player.ClassJobExpArray[28] },
                     Sage = new() { Level = player.ClassJobLevelArray[29], Exp = player.ClassJobExpArray[29] }
                 };
-                //localPlayer.Jobs = new();
                 //player.Attributes.
                 //pluginLog.Debug();
                 /*foreach (var a in player.Attributes)
@@ -530,121 +542,122 @@ namespace Altoholic
 
         private unsafe PlayerCurrencies GetPlayerCurrencies()
         {
+            ref readonly InventoryManager inventoryManager = ref *InventoryManager.Instance();
             return new PlayerCurrencies
             {
-                Achievement_Certificate = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.ACHIEVEMENT_CERTIFICATE),
-                Allagan_Tomestone_Of_Allegory = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.ALLAGAN_TOMESTONE_OF_ALLEGORY),
-                Allagan_Tomestone_Of_Aphorism = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.ALLAGAN_TOMESTONE_OF_APHORISM),
-                Allagan_Tomestone_Of_Astronomy = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.ALLAGAN_TOMESTONE_OF_ASTRONOMY),
-                Allagan_Tomestone_Of_Causality = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.ALLAGAN_TOMESTONE_OF_CAUSALITY),
-                Allagan_Tomestone_Of_Comedy = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.ALLAGAN_TOMESTONE_OF_COMEDY),
-                Allagan_Tomestone_Of_Creation = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.ALLAGAN_TOMESTONE_OF_CREATION),
-                Allagan_Tomestone_Of_Esoterics = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.ALLAGAN_TOMESTONE_OF_ESOTERICS),
-                Allagan_Tomestone_Of_Genesis = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.ALLAGAN_TOMESTONE_OF_GENESIS),
-                Allagan_Tomestone_Of_Goetia = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.ALLAGAN_TOMESTONE_OF_GOETIA),
-                Allagan_Tomestone_Of_Law = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.ALLAGAN_TOMESTONE_OF_LAW),
-                Allagan_Tomestone_Of_Lore = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.ALLAGAN_TOMESTONE_OF_LORE),
-                Allagan_Tomestone_Of_Mendacity = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.ALLAGAN_TOMESTONE_OF_MENDACITY),
-                Allagan_Tomestone_Of_Mythology = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.ALLAGAN_TOMESTONE_OF_MYTHOLOGY),
-                Allagan_Tomestone_Of_Phantasmagoria = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.ALLAGAN_TOMESTONE_OF_PHANTASMAGORIA),
-                Allagan_Tomestone_Of_Philosophy = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.ALLAGAN_TOMESTONE_OF_PHILOSOPHY),
-                Allagan_Tomestone_Of_Poetics = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.ALLAGAN_TOMESTONE_OF_POETICS),
-                Allagan_Tomestone_Of_Revelation = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.ALLAGAN_TOMESTONE_OF_REVELATION),
-                Allagan_Tomestone_Of_Scripture = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.ALLAGAN_TOMESTONE_OF_SCRIPTURE),
-                Allagan_Tomestone_Of_Soldiery = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.ALLAGAN_TOMESTONE_OF_SOLDIERY),
-                Allagan_Tomestone_Of_Verity = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.ALLAGAN_TOMESTONE_OF_VERITY),
-                Allied_Seal = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.ALLIED_SEAL),
-                Ananta_Dreamstaff = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.ANANTA_DREAMSTAFF),
-                Arkasodara_Pana = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.ARKASODARA_PANA),
-                Bicolor_Gemstone = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.BICOLOR_GEMSTONE),
-                Black_Copper_Gil = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.BLACK_COPPER_GIL),
-                Bozjan_Cluster = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.BOZJAN_CLUSTER),
-                Carved_Kupo_Nut = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.CARVED_KUPO_NUT),
-                Centurio_Seal = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.CENTURIO_SEAL),
-                Earth_Cluster = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.EARTH_CLUSTER),
-                Earth_Crystal = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.EARTH_CRYSTAL),
-                Earth_Shard = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.EARTH_SHARD),
-                Fae_Fancy = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.FAE_FANCY),
-                Faux_Leaf = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.FAUX_LEAF),
-                Felicitous_Token = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.FELICITOUS_TOKEN),
-                Fire_Cluster = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.FIRE_CLUSTER),
-                Fire_Crystal = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.FIRE_CRYSTAL),
-                Fire_Shard = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.FIRE_SHARD),
-                Flame_Seal = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.FLAME_SEAL),
-                Gil = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.GIL),
-                Hammered_Frogment = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.HAMMERED_FROGMENT),
-                Ice_Cluster = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.ICE_CLUSTER),
-                Ice_Crystal = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.ICE_CRYSTAL),
-                Ice_Shard = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.ICE_SHARD),
-                Irregular_Tomestone_Of_Creation = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.IRREGULAR_TOMESTONE_OF_CREATION),
-                Irregular_Tomestone_Of_Esoterics = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.IRREGULAR_TOMESTONE_OF_ESOTERICS),
-                Irregular_Tomestone_Of_Genesis_i = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.IRREGULAR_TOMESTONE_OF_GENESIS_I),
-                Irregular_Tomestone_Of_Genesis_ii = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.IRREGULAR_TOMESTONE_OF_GENESIS_II),
-                Irregular_Tomestone_Of_Law = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.IRREGULAR_TOMESTONE_OF_LAW),
-                Irregular_Tomestone_Of_Lore = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.IRREGULAR_TOMESTONE_OF_LORE),
-                Irregular_Tomestone_Of_Mendacity = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.IRREGULAR_TOMESTONE_OF_MENDACITY),
-                Irregular_Tomestone_Of_Mythology = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.IRREGULAR_TOMESTONE_OF_MYTHOLOGY),
-                Irregular_Tomestone_Of_Pageantry = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.IRREGULAR_TOMESTONE_OF_PAGEANTRY),
-                Irregular_Tomestone_Of_Philosophy = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.IRREGULAR_TOMESTONE_OF_PHILOSOPHY),
-                Irregular_Tomestone_Of_Scripture = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.IRREGULAR_TOMESTONE_OF_SCRIPTURE),
-                Irregular_Tomestone_Of_Soldiery = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.IRREGULAR_TOMESTONE_OF_SOLDIERY),
-                Irregular_Tomestone_Of_Tenfold_pageantry = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.IRREGULAR_TOMESTONE_OF_TENFOLD_PAGEANTRY),
-                Irregular_Tomestone_Of_Verity = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.IRREGULAR_TOMESTONE_OF_VERITY),
-                Islanders_Cowrie = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.ISLANDERS_COWRIE),
-                Ixali_Oaknot = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.IXALI_OAKNOT),
-                Kojin_Sango = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.KOJIN_SANGO),
-                Lightning_Cluster = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.LIGHTNING_CLUSTER),
-                Lightning_Crystal = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.LIGHTNING_CRYSTAL),
-                Lightning_Shard = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.LIGHTNING_SHARD),
-                Loporrit_Carat = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.LOPORRIT_CARAT),
-                MGF = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.MGF),
-                MGP = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.MGP),
-                Namazu_Koban = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.NAMAZU_KOBAN),
-                Omicron_Omnitoken = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.OMICRON_OMNITOKEN),
-                Purple_Crafters_Scrip = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.PURPLE_CRAFTERS_SCRIP),
-                Purple_Gatherers_Scrip = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.PURPLE_GATHERERS_SCRIP),
-                Qitari_Compliment = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.QITARI_COMPLIMENT),
-                Rainbowtide_Psashp = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.RAINBOWTIDE_PSASHP),
-                Sack_of_Nuts = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.SACK_OF_NUTS),
-                Seafarers_Cowrie = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.SEAFARERS_COWRIE),
-                Serpent_Seal = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.SERPENT_SEAL),
-                Skybuilders_Scrip = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.SKYBUILDERS_SCRIP),
-                Steel_Amaljok = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.STEEL_AMALJOK),
-                Storm_Seal = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.STORM_SEAL),
-                Sylphic_Goldleaf = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.SYLPHIC_GOLDLEAF),
-                Titan_Cobaltpiece = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.TITAN_COBALTPIECE),
-                Trophy_Crystal = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.TROPHY_CRYSTAL),
-                Vanu_Whitebone = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.VANU_WHITEBONE),
-                Venture = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.VENTURE),
-                Water_Cluster = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.WATER_CLUSTER),
-                Water_Crystal = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.WATER_CRYSTAL),
-                Water_Shard = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.WATER_SHARD),
-                White_Crafters_Scrip = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.WHITE_CRAFTERS_SCRIP),
-                White_Gatherers_Scrip = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.WHITE_GATHERERS_SCRIP),
-                Wind_Cluster = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.WIND_CLUSTER),
-                Wind_Crystal = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.WIND_CRYSTAL),
-                Wind_Shard = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.WIND_SHARD),
-                Wolf_Mark = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.WOLF_MARK),
-                Yellow_Crafters_Scrip = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.YELLOW_CRAFTERS_SCRIP),
-                Yellow_Gatherers_Scrip = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.YELLOW_GATHERERS_SCRIP),
-                Yo_Kai_Legendary_Jibanyan_Medal = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.YO_KAI_LEGENDARY_JIBANYAN_MEDAL),
-                Yo_Kai_Legendary_Komasan_Medal = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.YO_KAI_LEGENDARY_KOMASAN_MEDAL),
-                Yo_Kai_Legendary_Whisper_Medal = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.YO_KAI_LEGENDARY_WHISPER_MEDAL),
-                Yo_Kai_Legendary_Blizzaria_Medal = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.YO_KAI_LEGENDARY_BLIZZARIA_MEDAL),
-                Yo_Kai_Legendary_Kyubi_Medal = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.YO_KAI_LEGENDARY_KYUBI_MEDAL),
-                Yo_Kai_Legendary_Komajiro_Medal = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.YO_KAI_LEGENDARY_KOMAJIRO_MEDAL),
-                Yo_Kai_Legendary_Manjimutt_Medal = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.YO_KAI_LEGENDARY_MANJIMUTT_MEDAL),
-                Yo_Kai_Legendary_Noko_Medal = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.YO_KAI_LEGENDARY_NOKO_MEDAL),
-                Yo_Kai_Legendary_Venoct_Medal = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.YO_KAI_LEGENDARY_VENOCT_MEDAL),
-                Yo_Kai_Legendary_Shogunyan_Medal = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.YO_KAI_LEGENDARY_SHOGUNYAN_MEDAL),
-                Yo_Kai_Legendary_Hovernyan_Medal = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.YO_KAI_LEGENDARY_HOVERNYAN_MEDAL),
-                Yo_Kai_Legendary_Robonyan_f_type_Medal = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.YO_KAI_LEGENDARY_ROBONYAN_F_TYPE_MEDAL),
-                Yo_Kai_Legendary_Usapyon_Medal = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.YO_KAI_LEGENDARY_USAPYON_MEDAL),
-                Yo_Kai_Legendary_Zazel_Medal = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.YO_KAI_LEGENDARY_ZAZEL_MEDAL),
-                Yo_Kai_Legendary_lord_ananta_Medal = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.YO_KAI_LEGENDARY_LORD_ANANTA_MEDAL),
-                Yo_Kai_Legendary_Lord_enma_Medal = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.YO_KAI_LEGENDARY_LORD_ENMA_MEDAL),
-                Yo_Kai_Legendary_Damona_Medal = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.YO_KAI_LEGENDARY_DAMONA_MEDAL),
-                Yo_Kai_Medal = InventoryManager.Instance()->GetInventoryItemCount((uint)Currencies.YO_KAI_MEDAL),
+                Achievement_Certificate = inventoryManager.GetInventoryItemCount((uint)Currencies.ACHIEVEMENT_CERTIFICATE),
+                Allagan_Tomestone_Of_Allegory = inventoryManager.GetInventoryItemCount((uint)Currencies.ALLAGAN_TOMESTONE_OF_ALLEGORY),
+                Allagan_Tomestone_Of_Aphorism = inventoryManager.GetInventoryItemCount((uint)Currencies.ALLAGAN_TOMESTONE_OF_APHORISM),
+                Allagan_Tomestone_Of_Astronomy = inventoryManager.GetInventoryItemCount((uint)Currencies.ALLAGAN_TOMESTONE_OF_ASTRONOMY),
+                Allagan_Tomestone_Of_Causality = inventoryManager.GetInventoryItemCount((uint)Currencies.ALLAGAN_TOMESTONE_OF_CAUSALITY),
+                Allagan_Tomestone_Of_Comedy = inventoryManager.GetInventoryItemCount((uint)Currencies.ALLAGAN_TOMESTONE_OF_COMEDY),
+                Allagan_Tomestone_Of_Creation = inventoryManager.GetInventoryItemCount((uint)Currencies.ALLAGAN_TOMESTONE_OF_CREATION),
+                Allagan_Tomestone_Of_Esoterics = inventoryManager.GetInventoryItemCount((uint)Currencies.ALLAGAN_TOMESTONE_OF_ESOTERICS),
+                Allagan_Tomestone_Of_Genesis = inventoryManager.GetInventoryItemCount((uint)Currencies.ALLAGAN_TOMESTONE_OF_GENESIS),
+                Allagan_Tomestone_Of_Goetia = inventoryManager.GetInventoryItemCount((uint)Currencies.ALLAGAN_TOMESTONE_OF_GOETIA),
+                Allagan_Tomestone_Of_Law = inventoryManager.GetInventoryItemCount((uint)Currencies.ALLAGAN_TOMESTONE_OF_LAW),
+                Allagan_Tomestone_Of_Lore = inventoryManager.GetInventoryItemCount((uint)Currencies.ALLAGAN_TOMESTONE_OF_LORE),
+                Allagan_Tomestone_Of_Mendacity = inventoryManager.GetInventoryItemCount((uint)Currencies.ALLAGAN_TOMESTONE_OF_MENDACITY),
+                Allagan_Tomestone_Of_Mythology = inventoryManager.GetInventoryItemCount((uint)Currencies.ALLAGAN_TOMESTONE_OF_MYTHOLOGY),
+                Allagan_Tomestone_Of_Phantasmagoria = inventoryManager.GetInventoryItemCount((uint)Currencies.ALLAGAN_TOMESTONE_OF_PHANTASMAGORIA),
+                Allagan_Tomestone_Of_Philosophy = inventoryManager.GetInventoryItemCount((uint)Currencies.ALLAGAN_TOMESTONE_OF_PHILOSOPHY),
+                Allagan_Tomestone_Of_Poetics = inventoryManager.GetInventoryItemCount((uint)Currencies.ALLAGAN_TOMESTONE_OF_POETICS),
+                Allagan_Tomestone_Of_Revelation = inventoryManager.GetInventoryItemCount((uint)Currencies.ALLAGAN_TOMESTONE_OF_REVELATION),
+                Allagan_Tomestone_Of_Scripture = inventoryManager.GetInventoryItemCount((uint)Currencies.ALLAGAN_TOMESTONE_OF_SCRIPTURE),
+                Allagan_Tomestone_Of_Soldiery = inventoryManager.GetInventoryItemCount((uint)Currencies.ALLAGAN_TOMESTONE_OF_SOLDIERY),
+                Allagan_Tomestone_Of_Verity = inventoryManager.GetInventoryItemCount((uint)Currencies.ALLAGAN_TOMESTONE_OF_VERITY),
+                Allied_Seal = inventoryManager.GetInventoryItemCount((uint)Currencies.ALLIED_SEAL),
+                Ananta_Dreamstaff = inventoryManager.GetInventoryItemCount((uint)Currencies.ANANTA_DREAMSTAFF),
+                Arkasodara_Pana = inventoryManager.GetInventoryItemCount((uint)Currencies.ARKASODARA_PANA),
+                Bicolor_Gemstone = inventoryManager.GetInventoryItemCount((uint)Currencies.BICOLOR_GEMSTONE),
+                Black_Copper_Gil = inventoryManager.GetInventoryItemCount((uint)Currencies.BLACK_COPPER_GIL),
+                Bozjan_Cluster = inventoryManager.GetInventoryItemCount((uint)Currencies.BOZJAN_CLUSTER),
+                Carved_Kupo_Nut = inventoryManager.GetInventoryItemCount((uint)Currencies.CARVED_KUPO_NUT),
+                Centurio_Seal = inventoryManager.GetInventoryItemCount((uint)Currencies.CENTURIO_SEAL),
+                Earth_Cluster = inventoryManager.GetInventoryItemCount((uint)Currencies.EARTH_CLUSTER),
+                Earth_Crystal = inventoryManager.GetInventoryItemCount((uint)Currencies.EARTH_CRYSTAL),
+                Earth_Shard = inventoryManager.GetInventoryItemCount((uint)Currencies.EARTH_SHARD),
+                Fae_Fancy = inventoryManager.GetInventoryItemCount((uint)Currencies.FAE_FANCY),
+                Faux_Leaf = inventoryManager.GetInventoryItemCount((uint)Currencies.FAUX_LEAF),
+                Felicitous_Token = inventoryManager.GetInventoryItemCount((uint)Currencies.FELICITOUS_TOKEN),
+                Fire_Cluster = inventoryManager.GetInventoryItemCount((uint)Currencies.FIRE_CLUSTER),
+                Fire_Crystal = inventoryManager.GetInventoryItemCount((uint)Currencies.FIRE_CRYSTAL),
+                Fire_Shard = inventoryManager.GetInventoryItemCount((uint)Currencies.FIRE_SHARD),
+                Flame_Seal = inventoryManager.GetInventoryItemCount((uint)Currencies.FLAME_SEAL),
+                Gil = inventoryManager.GetInventoryItemCount((uint)Currencies.GIL),
+                Hammered_Frogment = inventoryManager.GetInventoryItemCount((uint)Currencies.HAMMERED_FROGMENT),
+                Ice_Cluster = inventoryManager.GetInventoryItemCount((uint)Currencies.ICE_CLUSTER),
+                Ice_Crystal = inventoryManager.GetInventoryItemCount((uint)Currencies.ICE_CRYSTAL),
+                Ice_Shard = inventoryManager.GetInventoryItemCount((uint)Currencies.ICE_SHARD),
+                Irregular_Tomestone_Of_Creation = inventoryManager.GetInventoryItemCount((uint)Currencies.IRREGULAR_TOMESTONE_OF_CREATION),
+                Irregular_Tomestone_Of_Esoterics = inventoryManager.GetInventoryItemCount((uint)Currencies.IRREGULAR_TOMESTONE_OF_ESOTERICS),
+                Irregular_Tomestone_Of_Genesis_i = inventoryManager.GetInventoryItemCount((uint)Currencies.IRREGULAR_TOMESTONE_OF_GENESIS_I),
+                Irregular_Tomestone_Of_Genesis_ii = inventoryManager.GetInventoryItemCount((uint)Currencies.IRREGULAR_TOMESTONE_OF_GENESIS_II),
+                Irregular_Tomestone_Of_Law = inventoryManager.GetInventoryItemCount((uint)Currencies.IRREGULAR_TOMESTONE_OF_LAW),
+                Irregular_Tomestone_Of_Lore = inventoryManager.GetInventoryItemCount((uint)Currencies.IRREGULAR_TOMESTONE_OF_LORE),
+                Irregular_Tomestone_Of_Mendacity = inventoryManager.GetInventoryItemCount((uint)Currencies.IRREGULAR_TOMESTONE_OF_MENDACITY),
+                Irregular_Tomestone_Of_Mythology = inventoryManager.GetInventoryItemCount((uint)Currencies.IRREGULAR_TOMESTONE_OF_MYTHOLOGY),
+                Irregular_Tomestone_Of_Pageantry = inventoryManager.GetInventoryItemCount((uint)Currencies.IRREGULAR_TOMESTONE_OF_PAGEANTRY),
+                Irregular_Tomestone_Of_Philosophy = inventoryManager.GetInventoryItemCount((uint)Currencies.IRREGULAR_TOMESTONE_OF_PHILOSOPHY),
+                Irregular_Tomestone_Of_Scripture = inventoryManager.GetInventoryItemCount((uint)Currencies.IRREGULAR_TOMESTONE_OF_SCRIPTURE),
+                Irregular_Tomestone_Of_Soldiery = inventoryManager.GetInventoryItemCount((uint)Currencies.IRREGULAR_TOMESTONE_OF_SOLDIERY),
+                Irregular_Tomestone_Of_Tenfold_pageantry = inventoryManager.GetInventoryItemCount((uint)Currencies.IRREGULAR_TOMESTONE_OF_TENFOLD_PAGEANTRY),
+                Irregular_Tomestone_Of_Verity = inventoryManager.GetInventoryItemCount((uint)Currencies.IRREGULAR_TOMESTONE_OF_VERITY),
+                Islanders_Cowrie = inventoryManager.GetInventoryItemCount((uint)Currencies.ISLANDERS_COWRIE),
+                Ixali_Oaknot = inventoryManager.GetInventoryItemCount((uint)Currencies.IXALI_OAKNOT),
+                Kojin_Sango = inventoryManager.GetInventoryItemCount((uint)Currencies.KOJIN_SANGO),
+                Lightning_Cluster = inventoryManager.GetInventoryItemCount((uint)Currencies.LIGHTNING_CLUSTER),
+                Lightning_Crystal = inventoryManager.GetInventoryItemCount((uint)Currencies.LIGHTNING_CRYSTAL),
+                Lightning_Shard = inventoryManager.GetInventoryItemCount((uint)Currencies.LIGHTNING_SHARD),
+                Loporrit_Carat = inventoryManager.GetInventoryItemCount((uint)Currencies.LOPORRIT_CARAT),
+                MGF = inventoryManager.GetInventoryItemCount((uint)Currencies.MGF),
+                MGP = inventoryManager.GetInventoryItemCount((uint)Currencies.MGP),
+                Namazu_Koban = inventoryManager.GetInventoryItemCount((uint)Currencies.NAMAZU_KOBAN),
+                Omicron_Omnitoken = inventoryManager.GetInventoryItemCount((uint)Currencies.OMICRON_OMNITOKEN),
+                Purple_Crafters_Scrip = inventoryManager.GetInventoryItemCount((uint)Currencies.PURPLE_CRAFTERS_SCRIP),
+                Purple_Gatherers_Scrip = inventoryManager.GetInventoryItemCount((uint)Currencies.PURPLE_GATHERERS_SCRIP),
+                Qitari_Compliment = inventoryManager.GetInventoryItemCount((uint)Currencies.QITARI_COMPLIMENT),
+                Rainbowtide_Psashp = inventoryManager.GetInventoryItemCount((uint)Currencies.RAINBOWTIDE_PSASHP),
+                Sack_of_Nuts = inventoryManager.GetInventoryItemCount((uint)Currencies.SACK_OF_NUTS),
+                Seafarers_Cowrie = inventoryManager.GetInventoryItemCount((uint)Currencies.SEAFARERS_COWRIE),
+                Serpent_Seal = inventoryManager.GetInventoryItemCount((uint)Currencies.SERPENT_SEAL),
+                Skybuilders_Scrip = inventoryManager.GetInventoryItemCount((uint)Currencies.SKYBUILDERS_SCRIP),
+                Steel_Amaljok = inventoryManager.GetInventoryItemCount((uint)Currencies.STEEL_AMALJOK),
+                Storm_Seal = inventoryManager.GetInventoryItemCount((uint)Currencies.STORM_SEAL),
+                Sylphic_Goldleaf = inventoryManager.GetInventoryItemCount((uint)Currencies.SYLPHIC_GOLDLEAF),
+                Titan_Cobaltpiece = inventoryManager.GetInventoryItemCount((uint)Currencies.TITAN_COBALTPIECE),
+                Trophy_Crystal = inventoryManager.GetInventoryItemCount((uint)Currencies.TROPHY_CRYSTAL),
+                Vanu_Whitebone = inventoryManager.GetInventoryItemCount((uint)Currencies.VANU_WHITEBONE),
+                Venture = inventoryManager.GetInventoryItemCount((uint)Currencies.VENTURE),
+                Water_Cluster = inventoryManager.GetInventoryItemCount((uint)Currencies.WATER_CLUSTER),
+                Water_Crystal = inventoryManager.GetInventoryItemCount((uint)Currencies.WATER_CRYSTAL),
+                Water_Shard = inventoryManager.GetInventoryItemCount((uint)Currencies.WATER_SHARD),
+                White_Crafters_Scrip = inventoryManager.GetInventoryItemCount((uint)Currencies.WHITE_CRAFTERS_SCRIP),
+                White_Gatherers_Scrip = inventoryManager.GetInventoryItemCount((uint)Currencies.WHITE_GATHERERS_SCRIP),
+                Wind_Cluster = inventoryManager.GetInventoryItemCount((uint)Currencies.WIND_CLUSTER),
+                Wind_Crystal = inventoryManager.GetInventoryItemCount((uint)Currencies.WIND_CRYSTAL),
+                Wind_Shard = inventoryManager.GetInventoryItemCount((uint)Currencies.WIND_SHARD),
+                Wolf_Mark = inventoryManager.GetInventoryItemCount((uint)Currencies.WOLF_MARK),
+                Yellow_Crafters_Scrip = inventoryManager.GetInventoryItemCount((uint)Currencies.YELLOW_CRAFTERS_SCRIP),
+                Yellow_Gatherers_Scrip = inventoryManager.GetInventoryItemCount((uint)Currencies.YELLOW_GATHERERS_SCRIP),
+                Yo_Kai_Legendary_Jibanyan_Medal = inventoryManager.GetInventoryItemCount((uint)Currencies.YO_KAI_LEGENDARY_JIBANYAN_MEDAL),
+                Yo_Kai_Legendary_Komasan_Medal = inventoryManager.GetInventoryItemCount((uint)Currencies.YO_KAI_LEGENDARY_KOMASAN_MEDAL),
+                Yo_Kai_Legendary_Whisper_Medal = inventoryManager.GetInventoryItemCount((uint)Currencies.YO_KAI_LEGENDARY_WHISPER_MEDAL),
+                Yo_Kai_Legendary_Blizzaria_Medal = inventoryManager.GetInventoryItemCount((uint)Currencies.YO_KAI_LEGENDARY_BLIZZARIA_MEDAL),
+                Yo_Kai_Legendary_Kyubi_Medal = inventoryManager.GetInventoryItemCount((uint)Currencies.YO_KAI_LEGENDARY_KYUBI_MEDAL),
+                Yo_Kai_Legendary_Komajiro_Medal = inventoryManager.GetInventoryItemCount((uint)Currencies.YO_KAI_LEGENDARY_KOMAJIRO_MEDAL),
+                Yo_Kai_Legendary_Manjimutt_Medal = inventoryManager.GetInventoryItemCount((uint)Currencies.YO_KAI_LEGENDARY_MANJIMUTT_MEDAL),
+                Yo_Kai_Legendary_Noko_Medal = inventoryManager.GetInventoryItemCount((uint)Currencies.YO_KAI_LEGENDARY_NOKO_MEDAL),
+                Yo_Kai_Legendary_Venoct_Medal = inventoryManager.GetInventoryItemCount((uint)Currencies.YO_KAI_LEGENDARY_VENOCT_MEDAL),
+                Yo_Kai_Legendary_Shogunyan_Medal = inventoryManager.GetInventoryItemCount((uint)Currencies.YO_KAI_LEGENDARY_SHOGUNYAN_MEDAL),
+                Yo_Kai_Legendary_Hovernyan_Medal = inventoryManager.GetInventoryItemCount((uint)Currencies.YO_KAI_LEGENDARY_HOVERNYAN_MEDAL),
+                Yo_Kai_Legendary_Robonyan_f_type_Medal = inventoryManager.GetInventoryItemCount((uint)Currencies.YO_KAI_LEGENDARY_ROBONYAN_F_TYPE_MEDAL),
+                Yo_Kai_Legendary_Usapyon_Medal = inventoryManager.GetInventoryItemCount((uint)Currencies.YO_KAI_LEGENDARY_USAPYON_MEDAL),
+                Yo_Kai_Legendary_Zazel_Medal = inventoryManager.GetInventoryItemCount((uint)Currencies.YO_KAI_LEGENDARY_ZAZEL_MEDAL),
+                Yo_Kai_Legendary_lord_ananta_Medal = inventoryManager.GetInventoryItemCount((uint)Currencies.YO_KAI_LEGENDARY_LORD_ANANTA_MEDAL),
+                Yo_Kai_Legendary_Lord_enma_Medal = inventoryManager.GetInventoryItemCount((uint)Currencies.YO_KAI_LEGENDARY_LORD_ENMA_MEDAL),
+                Yo_Kai_Legendary_Damona_Medal = inventoryManager.GetInventoryItemCount((uint)Currencies.YO_KAI_LEGENDARY_DAMONA_MEDAL),
+                Yo_Kai_Medal = inventoryManager.GetInventoryItemCount((uint)Currencies.YO_KAI_MEDAL),
             };
         }
 
@@ -684,11 +697,15 @@ namespace Altoholic
         {
             unsafe
             {
-                var inv = InventoryManager.Instance()->GetInventoryContainer(InventoryType.EquippedItems);
+                //var inv = InventoryManager.Instance()->GetInventoryContainer(InventoryType.EquippedItems);
+                ref readonly InventoryManager inventoryManager = ref *InventoryManager.Instance();
+                InventoryContainer inv  = *inventoryManager.GetInventoryContainer(InventoryType.EquippedItems);
                 List<Gear> gear_items = [];
-                for (var i = 0; i < inv->Size; i++)
+                //for (var i = 0; i < inv->Size; i++)
+                for (var i = 0; i < inv.Size; i++)
                 {
-                    var ii = inv->Items[i];
+                    //var ii = inv->Items[i];
+                    var ii = inv.Items[i];
                     var flags = ii.Flags;
                     Gear currGear = new()
                     {
@@ -723,10 +740,15 @@ namespace Altoholic
                 List<Inventory> items = [];
                 foreach (var kind in invs)
                 {
-                    var inv = InventoryManager.Instance()->GetInventoryContainer(kind);
-                    for (var i = 0; i < inv->Size; i++)
+                    //var inv = InventoryManager.Instance()->GetInventoryContainer(kind)
+                    ref readonly InventoryManager inventoryManager = ref *InventoryManager.Instance();
+                    InventoryContainer inv = *inventoryManager.GetInventoryContainer(kind);
+                    List<Gear> gear_items = [];
+                    //for (var i = 0; i < inv->Size; i++)
+                    for (var i = 0; i < inv.Size; i++)
                     {
-                        var ii = inv->Items[i];
+                        //var ii = inv->Items[i];
+                        var ii = inv.Items[i];
                         var flags = ii.Flags;
                         Inventory currInv = new()
                         {
@@ -760,16 +782,21 @@ namespace Altoholic
                 FreeCompany = string.Empty,
                 PlayTime = 0,
                 LastPlayTimeUpdate = 0,
-                Attributes = null!,
-                Currencies = null!,
-                Jobs = null!,
-                Profile = null!,
+                Attributes = null,
+                Currencies = null,
+                Jobs = null,
+                Profile = null,
                 Quests = [],
                 Inventory = [],
                 Gear = [],
                 Retainers = [],
             };
+
+            localPlayer = null!;
             localPlayerCurrentWorld = string.Empty;
+            localPlayerCurrentDatacenter = string.Empty;
+            localPlayerCurrentRegion = string.Empty;
+            localPlayerFreeCompanyTest = null;
             otherCharacters = [];
         }
 
@@ -822,6 +849,7 @@ namespace Altoholic
             CleanLastLocalCharacter();
 
             MainWindow.IsOpen = false;
+            DetailsWindow.Dispose();
             periodicTimer?.Dispose();
         }
 
@@ -849,7 +877,7 @@ namespace Altoholic
             if (player.Item1.Length == 0)
                 return result;
 
-            pluginLog.Debug($"Extracted Player Name: {player.Item1}\uE05D{player.Item2}");
+            pluginLog.Debug($"Extracted Player Name: {player.Item1}{(char)SpecialIcon.E05D}{player.Item2}");
 
             var totalPlaytime = (uint)Marshal.ReadInt32((nint)param2 + 0x10);
             pluginLog.Debug($"Value from address {totalPlaytime}");
@@ -873,27 +901,32 @@ namespace Altoholic
 
         public (string, string, string) GetLocalPlayerNameWorldRegion()
         {
-            var local = clientState.LocalPlayer;
-            if (local == null || local.HomeWorld.GameData == null)
+            PlayerCharacter? local = clientState.LocalPlayer;
+            if (local == null || local.HomeWorld == null || local.HomeWorld.GameData == null)
                 return (string.Empty, string.Empty, string.Empty);
+            else {
+                var homeworld = local.HomeWorld.GameData.Name;
 
-            var homeworld = local.HomeWorld.GameData.Name;
-
-            return ($"{local.Name}", $"{homeworld}", $"{Utils.GetRegionFromWorld(homeworld)}");
+                return ($"{local.Name}", $"{homeworld}", $"{Utils.GetRegionFromWorld(homeworld)}");
+            }
         }
         
         public void UpdateCharacter()
         {
             if (localPlayer == null || localPlayer.FirstName.Length == 0) return;
 
-            pluginLog.Debug($"Updating characters with {localPlayer.Id} {localPlayer.FirstName} {localPlayer.LastName}\uE05D{localPlayer.HomeWorld}, {Utils.GetRegionFromWorld(localPlayer.HomeWorld)}.");
+            pluginLog.Debug($"Updating characters with {localPlayer.Id} {localPlayer.FirstName} {localPlayer.LastName}{(char)SpecialIcon.E05D}{localPlayer.HomeWorld}, {Utils.GetRegionFromWorld(localPlayer.HomeWorld)}.");
             Database.Database.UpdateCharacter(db, pluginLog, localPlayer);
         }
 
         public Character? GetCharacterFromGameOrDB()
         {
+            if (clientState is null) return null;
+
             var player = GetLocalPlayerNameWorldRegion();
-            //pluginLog.Debug("Altoholic : Character names => 0: {0}\uE05D{1}", player.Item1, player.Item2);
+            if (string.IsNullOrEmpty(player.Item1) || string.IsNullOrEmpty(player.Item2) || string.IsNullOrEmpty(player.Item3)) return null;
+
+            //pluginLog.Debug($"Altoholic : Character names => 0: {player.Item1}{(char)SpecialIcon.E05D}{player.Item2});
             var names = player.Item1.Split(' '); // Todo: recheck when Dalamud API7 is out https://discord.com/channels/581875019861328007/653504487352303619/1061422333748850708
             if (names.Length == 2)
             {
@@ -914,10 +947,21 @@ namespace Altoholic
                         HomeWorld = player.Item2,
                         Datacenter = Utils.GetDatacenterFromWorld(player.Item2),
                         Region = player.Item3,
+                        IsSprout = localPlayer.IsSprout,
                         LastJob = localPlayer.LastJob,
                         LastJobLevel = localPlayer.LastJobLevel,
                         FCTag = localPlayer.FCTag,
                         FreeCompany = localPlayer.FreeCompany,
+                        LastOnline = localPlayer.LastOnline,
+                        LastPlayTimeUpdate = localPlayer.LastPlayTimeUpdate,
+                        Attributes = localPlayer.Attributes,
+                        Currencies = localPlayer.Currencies,
+                        Jobs = localPlayer.Jobs,
+                        Profile = localPlayer.Profile,
+                        Quests = localPlayer.Quests,
+                        Inventory = localPlayer.Inventory,
+                        Gear = localPlayer.Gear,
+                        Retainers = localPlayer.Retainers,
                     };
                 }
             }

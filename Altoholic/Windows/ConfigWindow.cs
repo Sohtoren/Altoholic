@@ -27,6 +27,6 @@ public class ConfigWindow : Window, IDisposable
 
     public override void Draw()
     {
-        ImGui.Text("Settings is not implemented at the moment");
+        ImGui.TextUnformatted("Settings is not implemented at the moment");
     }
 }
