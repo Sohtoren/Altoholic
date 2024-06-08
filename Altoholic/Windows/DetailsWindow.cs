@@ -75,11 +75,11 @@ public class DetailsWindow : Window, IDisposable
         {
             if (ImGui.BeginTable("CharactersDetailsTable", 2))
             {
-                ImGui.TableSetupColumn("##CharactersDetailsTable#CharacterListHeader", ImGuiTableColumnFlags.WidthFixed, 200);
+                ImGui.TableSetupColumn("##CharactersDetailsTable#CharacterListsHeader", ImGuiTableColumnFlags.WidthFixed, 200);
                 ImGui.TableSetupColumn("##CharactersDetailsTable#DetailsHeader", ImGuiTableColumnFlags.WidthStretch);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                if (ImGui.BeginListBox("##CharactersDetailsTable#CharacterListBox", new Vector2(200, -1)))
+                if (ImGui.BeginListBox("##CharactersDetailsTable#CharactersListBox", new Vector2(200, -1)))
                 {
                     ImGui.SetScrollY(0);
                     foreach (Character currChar in chars)
