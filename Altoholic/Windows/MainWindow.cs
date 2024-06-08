@@ -60,7 +60,7 @@ public class MainWindow : Window, IDisposable
 
     public override void Draw()
     {
-        if (ImGui.BeginTabBar($"#tabs"))
+        if (ImGui.BeginTabBar($"###MainWindow#Tabs"))
         {
             if (ImGui.BeginTabItem($"Characters"))
             {

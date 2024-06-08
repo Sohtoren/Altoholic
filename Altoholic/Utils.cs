@@ -840,6 +840,31 @@ namespace Altoholic
             };
         }
 
+        public static int GetJobNextLevelExp(IDataManager dataManager, IPluginLog pluginLog, ClientLanguage currentLocale, int level)
+        {
+            if (dataManager is null || pluginLog is null) return 0;
+            Lumina.Excel.ExcelSheet<Lumina.Excel.GeneratedSheets.ParamGrow>? dbt = dataManager.GetExcelSheet<Lumina.Excel.GeneratedSheets.ParamGrow>(currentLocale);
+            if (dbt != null)
+            {
+                Lumina.Excel.GeneratedSheets.ParamGrow? lumina = dbt.GetRow((uint)level);
+                if (lumina != null)
+                    return lumina.ExpToNext;
+            }
+            return 0;
+        }
+
+        public static void DrawLevelProgressBar(int exp, int nextExp, string jobFullname)
+        {
+            float progress = (float)exp / nextExp;
+            ImGui.ProgressBar(progress, new Vector2(150, 10), "");
+            if (ImGui.IsItemHovered())
+            {
+                ImGui.BeginTooltip();
+                ImGui.TextUnformatted($"{jobFullname} {exp}/{nextExp}");
+                ImGui.EndTooltip();
+            }
+        }
+
         public static uint GetRoleIcon(uint roleId)
         {
             return roleId switch
@@ -1325,8 +1350,6 @@ namespace Altoholic
                     return lumina.Name;
             }
             return string.Empty;
-            /*var lumina = dataManager.GetExcelSheet<Lumina.Excel.GeneratedSheets.BeastTribe>(currentLocale).GetRow(id)!;
-            return lumina.Name;*/
         }
         public static string GetTribalCurrencyFromId(IDataManager dataManager, IPluginLog pluginLog, ClientLanguage currentLocale, uint id)
         {

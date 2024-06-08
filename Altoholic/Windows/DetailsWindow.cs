@@ -73,13 +73,13 @@ public class DetailsWindow : Window, IDisposable
         chars.AddRange(GetOthersCharactersList.Invoke());
         try
         {
-            if (ImGui.BeginTable("CharactersDetailsTable", 2))
+            if (ImGui.BeginTable("###CharactersDetailsTable", 2))
             {
-                ImGui.TableSetupColumn("##CharactersDetailsTable#CharacterListsHeader", ImGuiTableColumnFlags.WidthFixed, 200);
-                ImGui.TableSetupColumn("##CharactersDetailsTable#DetailsHeader", ImGuiTableColumnFlags.WidthStretch);
+                ImGui.TableSetupColumn("###CharactersDetailsTable#CharacterLists", ImGuiTableColumnFlags.WidthFixed, 200);
+                ImGui.TableSetupColumn("###CharactersDetailsTable#Details", ImGuiTableColumnFlags.WidthStretch);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                if (ImGui.BeginListBox("##CharactersDetailsTable#CharactersListBox", new Vector2(200, -1)))
+                if (ImGui.BeginListBox("###CharactersDetailsTable#CharactersListBox", new Vector2(200, -1)))
                 {
                     ImGui.SetScrollY(0);
                     foreach (Character currChar in chars)
@@ -109,13 +109,13 @@ public class DetailsWindow : Window, IDisposable
 
     private void DrawDetails(Character current_character)
     {
-        if (ImGui.BeginTable("##AttributesProfileTable", 2))
+        if (ImGui.BeginTable("###CharactersDetailsTable#ProfileTable", 2))
         {
-            ImGui.TableSetupColumn("##AttributesProfileTable#ProfileColumn", ImGuiTableColumnFlags.WidthStretch);
-            ImGui.TableSetupColumn("##AttributesProfileTable#GearColumn", ImGuiTableColumnFlags.WidthStretch);
+            ImGui.TableSetupColumn("###CharactersDetailsTable#ProfileTable#ProfileCol", ImGuiTableColumnFlags.WidthStretch);
+            ImGui.TableSetupColumn("###CharactersDetailsTable#ProfileTable#GearCol", ImGuiTableColumnFlags.WidthStretch);
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
-            if (ImGui.BeginTabBar($"##AttributesProfileTable#ProfileColumn#ProfileTabBar"))
+            if (ImGui.BeginTabBar($"###CharactersDetailsTable#ProfileTable#ProfileCol#ProfileTabBar"))
             {
                 /*if (ImGui.BeginTabItem($"{Utils.GetAddonString(dataManager, pluginLog, currentLocale, 758)}"))
                 {
@@ -140,10 +140,10 @@ public class DetailsWindow : Window, IDisposable
     private void DrawAttributes(Character current_character)
     {
         if (current_character.Attributes is null) return;
-        if (ImGui.BeginTable("##Attributes#HealthManaBarsTable", 2))
+        if (ImGui.BeginTable("###Attributes#HealthManaBarsTable", 2))
         {
-            ImGui.TableSetupColumn("##HealthManaBarsTable#HPHeader", ImGuiTableColumnFlags.WidthStretch);
-            ImGui.TableSetupColumn("##HealthManaBarsTable#MPHeader", ImGuiTableColumnFlags.WidthStretch);
+            ImGui.TableSetupColumn("###HealthManaBarsTable#HPHeader", ImGuiTableColumnFlags.WidthStretch);
+            ImGui.TableSetupColumn("###HealthManaBarsTable#MPHeader", ImGuiTableColumnFlags.WidthStretch);
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
             ImGui.TextUnformatted($"HP      {current_character.Attributes.Hp}");
@@ -152,18 +152,18 @@ public class DetailsWindow : Window, IDisposable
             ImGui.EndTable();
         }
         
-        if (ImGui.BeginTable("##Attributes#StrDexVitIntMindTable", 2))
+        if (ImGui.BeginTable("###Attributes#StrDexVitIntMindTable", 2))
         {
-            ImGui.TableSetupColumn("##Attributes#StrDexVitIntMindTable#LabelHeader", ImGuiTableColumnFlags.WidthStretch);
-            ImGui.TableSetupColumn("##Attributes#StrDexVitIntMindTable#ValueHeader", ImGuiTableColumnFlags.WidthStretch);
+            ImGui.TableSetupColumn("###Attributes#StrDexVitIntMindTable#LabelHeader", ImGuiTableColumnFlags.WidthStretch);
+            ImGui.TableSetupColumn("###Attributes#StrDexVitIntMindTable#ValueHeader", ImGuiTableColumnFlags.WidthStretch);
             ImGui.TableNextRow();
             ImGui.TextUnformatted("Attributes");
             ImGui.Separator();
             ImGui.TableSetColumnIndex(0);
-            if (ImGui.BeginTable("##Attributes#StrDexVitTable", 2))
+            if (ImGui.BeginTable("###Attributes#StrDexVitTable", 2))
             {
-                ImGui.TableSetupColumn("##Attributes#StrDexVitTable#LabelHeader", ImGuiTableColumnFlags.WidthStretch);
-                ImGui.TableSetupColumn("##Attributes#StrDexVitTable#ValueHeader", ImGuiTableColumnFlags.WidthStretch);
+                ImGui.TableSetupColumn("###Attributes#StrDexVitTable#LabelHeader", ImGuiTableColumnFlags.WidthStretch);
+                ImGui.TableSetupColumn("###Attributes#StrDexVitTable#ValueHeader", ImGuiTableColumnFlags.WidthStretch);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
                 ImGui.TextUnformatted("Strength");
@@ -182,10 +182,10 @@ public class DetailsWindow : Window, IDisposable
                 ImGui.EndTable();
             }
             ImGui.TableSetColumnIndex(1);
-            if (ImGui.BeginTable("##Attributes#IntMindTable", 2))
+            if (ImGui.BeginTable("###Attributes#IntMindTable", 2))
             {
-                ImGui.TableSetupColumn("##Attributes#IntMindTable#LabelHeader", ImGuiTableColumnFlags.WidthStretch);
-                ImGui.TableSetupColumn("##Attributes#IntMindTable#ValueHeader", ImGuiTableColumnFlags.WidthStretch);
+                ImGui.TableSetupColumn("###Attributes#IntMindTable#LabelHeader", ImGuiTableColumnFlags.WidthStretch);
+                ImGui.TableSetupColumn("###Attributes#IntMindTable#ValueHeader", ImGuiTableColumnFlags.WidthStretch);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
                 ImGui.TextUnformatted("Intelligence");
@@ -221,19 +221,19 @@ public class DetailsWindow : Window, IDisposable
             ImGui.TextUnformatted("");
             ImGui.TextUnformatted($"{Utils.GetAddonString(dataManager, pluginLog, currentLocale, 791)}");//Grand Company
             ImGui.Separator();
-            if (ImGui.BeginTable("##ProfileTable#GrandCompanyTable", 2))
+            if (ImGui.BeginTable("###ProfileTable#GrandCompanyTable", 2))
             {
-                ImGui.TableSetupColumn("##ProfileTable#GrandCompanyTable#Icon", ImGuiTableColumnFlags.WidthFixed, 44);
-                ImGui.TableSetupColumn("##ProfileTable#GrandCompanyTable#Rank", ImGuiTableColumnFlags.WidthStretch);
+                ImGui.TableSetupColumn("###ProfileTable#GrandCompanyTable#Icon", ImGuiTableColumnFlags.WidthFixed, 44);
+                ImGui.TableSetupColumn("###ProfileTable#GrandCompanyTable#Rank", ImGuiTableColumnFlags.WidthStretch);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
                 Utils.DrawIcon(textureProvider, pluginLog, new Vector2(40, 40), false, Utils.GetGrandCompanyIcon(current_character.Profile.Grand_Company));
 
                 ImGui.TableSetColumnIndex(1);
-                if (ImGui.BeginTable("##ProfileTable#GrandCompanyTable#RankTable", 2))
+                if (ImGui.BeginTable("###ProfileTable#GrandCompanyTable#RankTable", 2))
                 {
-                    ImGui.TableSetupColumn("##ProfileTable#GrandCompanyTable#RankTable#Name", ImGuiTableColumnFlags.WidthFixed, 200);
-                    ImGui.TableSetupColumn("##ProfileTable#GrandCompanyTable#RankTable#Icon", ImGuiTableColumnFlags.WidthFixed, 50);
+                    ImGui.TableSetupColumn("###ProfileTable#GrandCompanyTable#RankTable#Name", ImGuiTableColumnFlags.WidthFixed, 200);
+                    ImGui.TableSetupColumn("###ProfileTable#GrandCompanyTable#RankTable#Icon", ImGuiTableColumnFlags.WidthFixed, 50);
                     ImGui.TableNextRow();
                     ImGui.TableSetColumnIndex(0);
                     ImGui.TextUnformatted($"{Utils.GetGrandCompany(dataManager, pluginLog, currentLocale, current_character.Profile.Grand_Company)}");
@@ -254,10 +254,10 @@ public class DetailsWindow : Window, IDisposable
         ImGui.TextUnformatted("");
         ImGui.TextUnformatted($"{Utils.GetAddonString(dataManager, pluginLog, currentLocale, 794)}");//City-state
         ImGui.Separator();
-        if (ImGui.BeginTable("##ProfileTable#ProfileColumn#ProfileTable", 2))
+        if (ImGui.BeginTable("###ProfileTable#ProfileColumn#ProfileTable", 2))
         {
-            ImGui.TableSetupColumn("##ProfileTable#ProfileColumn#ProfileTable#CityIcon", ImGuiTableColumnFlags.WidthFixed, 40);
-            ImGui.TableSetupColumn("##ProfileTable#ProfileColumn#ProfileTable#CityName", ImGuiTableColumnFlags.WidthStretch);
+            ImGui.TableSetupColumn("###ProfileTable#ProfileColumn#ProfileTable#CityIcon", ImGuiTableColumnFlags.WidthFixed, 40);
+            ImGui.TableSetupColumn("###ProfileTable#ProfileColumn#ProfileTable#CityName", ImGuiTableColumnFlags.WidthStretch);
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
             Utils.DrawIcon(textureProvider, pluginLog, new Vector2(36, 36), false, Utils.GetTownIcon(current_character.Profile.City_State));
@@ -272,10 +272,10 @@ public class DetailsWindow : Window, IDisposable
         ImGui.TextUnformatted("");
         ImGui.TextUnformatted($"{Utils.GetAddonString(dataManager, pluginLog, currentLocale, 796)}");//Guardian
         ImGui.Separator();
-        if (ImGui.BeginTable("##ProfileTable#GuardianTable", 2))
+        if (ImGui.BeginTable("###ProfileTable#GuardianTable", 2))
         {
-            ImGui.TableSetupColumn("##ProfileTable#GuardianTable#Icon", ImGuiTableColumnFlags.WidthFixed, 44);
-            ImGui.TableSetupColumn("##ProfileTable#GuardianTable#Name", ImGuiTableColumnFlags.WidthStretch);
+            ImGui.TableSetupColumn("###ProfileTable#GuardianTable#Icon", ImGuiTableColumnFlags.WidthFixed, 44);
+            ImGui.TableSetupColumn("###ProfileTable#GuardianTable#Name", ImGuiTableColumnFlags.WidthStretch);
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
             Utils.DrawIcon(textureProvider, pluginLog, new Vector2(40, 40), false, Utils.GetGuardianIcon(current_character.Profile.Guardian));
@@ -289,19 +289,19 @@ public class DetailsWindow : Window, IDisposable
     private void DrawGear(Character current_character)
     {
         if (current_character.Gear.Count == 0) return;
-        if (ImGui.BeginTable("##GearTableHeader", 2))
+        if (ImGui.BeginTable("###GearTableHeader", 2))
         {
-            ImGui.TableSetupColumn("##GearTableHeader#MHColumn", ImGuiTableColumnFlags.WidthFixed, 44);
-            ImGui.TableSetupColumn("##GearTableHeader#RoleIconNameColumn", ImGuiTableColumnFlags.WidthStretch);
+            ImGui.TableSetupColumn("###GearTableHeader#MHColumn", ImGuiTableColumnFlags.WidthFixed, 44);
+            ImGui.TableSetupColumn("###GearTableHeader#RoleIconNameColumn", ImGuiTableColumnFlags.WidthStretch);
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
             DrawGearPiece(current_character, GearSlot.MH, Utils.GetAddonString(dataManager, pluginLog, currentLocale, 11524), new Vector2(40, 40), 13775);
             ImGui.TableSetColumnIndex(1);
             ImGui.TextUnformatted($"Level {current_character.LastJobLevel}");
-            if (ImGui.BeginTable("##GearTable#RoleIconNameTable", 2))
+            if (ImGui.BeginTable("###GearTable#RoleIconNameTable", 2))
             {
-                ImGui.TableSetupColumn("##GearTable#RoleColumn#RoleIcon", ImGuiTableColumnFlags.WidthFixed, 44);
-                ImGui.TableSetupColumn("##GearTable#RoleColumn#RoleName", ImGuiTableColumnFlags.WidthStretch);
+                ImGui.TableSetupColumn("###GearTable#RoleColumn#RoleIcon", ImGuiTableColumnFlags.WidthFixed, 44);
+                ImGui.TableSetupColumn("###GearTable#RoleColumn#RoleName", ImGuiTableColumnFlags.WidthStretch);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
                 Utils.DrawIcon(textureProvider, pluginLog, new Vector2(40, 40), false, Utils.GetJobIcon(current_character.LastJob));
@@ -314,16 +314,16 @@ public class DetailsWindow : Window, IDisposable
             ImGui.EndTable();
         }
 
-        if (ImGui.BeginTable("##GearTable", 3))
+        if (ImGui.BeginTable("###GearTable", 3))
         {
-            ImGui.TableSetupColumn("##GearTable#LeftGearColumnHeader", ImGuiTableColumnFlags.WidthFixed, 44);
-            ImGui.TableSetupColumn("##GearTable#CentralColumnHeader", ImGuiTableColumnFlags.WidthFixed, 305);
-            ImGui.TableSetupColumn("##GearTable#RightGearColumnHeader", ImGuiTableColumnFlags.WidthFixed, 44);
+            ImGui.TableSetupColumn("###GearTable#LeftGearColumnHeader", ImGuiTableColumnFlags.WidthFixed, 44);
+            ImGui.TableSetupColumn("###GearTable#CentralColumnHeader", ImGuiTableColumnFlags.WidthFixed, 305);
+            ImGui.TableSetupColumn("###GearTable#RightGearColumnHeader", ImGuiTableColumnFlags.WidthFixed, 44);
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
-            if (ImGui.BeginTable("##GearTable#LeftGearColumn", 1))
+            if (ImGui.BeginTable("###GearTable#LeftGearColumn", 1))
             {
-                ImGui.TableSetupColumn("##GearTable#LeftGearColum#Column", ImGuiTableColumnFlags.WidthFixed, 42);
+                ImGui.TableSetupColumn("###GearTable#LeftGearColum#Column", ImGuiTableColumnFlags.WidthFixed, 42);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
                 DrawGearPiece(current_character, GearSlot.HEAD, Utils.GetAddonString(dataManager, pluginLog, currentLocale, 11525), new Vector2(40, 40), 10032);
@@ -350,9 +350,9 @@ public class DetailsWindow : Window, IDisposable
             Utils.DrawIcon(textureProvider, pluginLog, new Vector2(300, 350), false, 055396);
 
             ImGui.TableSetColumnIndex(2);
-            if (ImGui.BeginTable("##GearTable#RightGearColumn", 1))
+            if (ImGui.BeginTable("###GearTable#RightGearColumn", 1))
             {
-                ImGui.TableSetupColumn("##GearTable#RightGearColum#Column", ImGuiTableColumnFlags.WidthFixed, 42);
+                ImGui.TableSetupColumn("###GearTable#RightGearColum#Column", ImGuiTableColumnFlags.WidthFixed, 42);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
                 DrawGearPiece(current_character, GearSlot.OH, Utils.GetAddonString(dataManager, pluginLog, currentLocale, 12227), new Vector2(40, 40), 30067);

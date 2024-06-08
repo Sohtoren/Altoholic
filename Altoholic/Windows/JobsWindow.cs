@@ -59,13 +59,13 @@ public class JobsWindow : Window, IDisposable
 
         try
         {
-            if (ImGui.BeginTable("CharactersJobs", 2))
+            if (ImGui.BeginTable("###CharactersJobsTable", 2))
             {
-                ImGui.TableSetupColumn(string.Empty, ImGuiTableColumnFlags.WidthFixed, 210);
-                ImGui.TableSetupColumn(string.Empty, ImGuiTableColumnFlags.WidthStretch);
+                ImGui.TableSetupColumn("###CharactersJobsTable#CharactersListHeader", ImGuiTableColumnFlags.WidthFixed, 210);
+                ImGui.TableSetupColumn("###CharactersJobsTable#Jobs", ImGuiTableColumnFlags.WidthStretch);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                if (ImGui.BeginListBox("", new Vector2(200, -1)))
+                if (ImGui.BeginListBox("###CharactersJobsTable#CharactersListBox", new Vector2(200, -1)))
                 {
                     ImGui.SetScrollY(0);
                     if (chars.Count > 0)
@@ -107,347 +107,391 @@ public class JobsWindow : Window, IDisposable
 
     private void DrawAll(List<Character> chars)
     {
-        if (ImGui.BeginTable("AllJobs", 41, ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner | ImGuiTableFlags.ScrollX | ImGuiTableFlags.ScrollY))
+        if (ImGui.BeginTable("###CharactersJobs#All", 41, ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner | ImGuiTableFlags.ScrollX | ImGuiTableFlags.ScrollY))
         {
             // ImGuiCol.TableRowBg = new Vector4(255, 255, 255, 1); ;
-            ImGui.TableSetupColumn(string.Empty, ImGuiTableColumnFlags.WidthFixed, 35);
-            ImGui.TableSetupColumn(string.Empty, ImGuiTableColumnFlags.WidthFixed, 25);
-            ImGui.TableSetupColumn(string.Empty, ImGuiTableColumnFlags.WidthFixed, 25);
-            ImGui.TableSetupColumn(string.Empty, ImGuiTableColumnFlags.WidthFixed, 25);
-            ImGui.TableSetupColumn(string.Empty, ImGuiTableColumnFlags.WidthFixed, 25);
-            ImGui.TableSetupColumn(string.Empty, ImGuiTableColumnFlags.WidthFixed, 25);
-            ImGui.TableSetupColumn(string.Empty, ImGuiTableColumnFlags.WidthFixed, 25);
-            ImGui.TableSetupColumn(string.Empty, ImGuiTableColumnFlags.WidthFixed, 25);
-            ImGui.TableSetupColumn(string.Empty, ImGuiTableColumnFlags.WidthFixed, 25);
-            ImGui.TableSetupColumn(string.Empty, ImGuiTableColumnFlags.WidthFixed, 25);
-            ImGui.TableSetupColumn(string.Empty, ImGuiTableColumnFlags.WidthFixed, 25);
-            ImGui.TableSetupColumn(string.Empty, ImGuiTableColumnFlags.WidthFixed, 25);
-            ImGui.TableSetupColumn(string.Empty, ImGuiTableColumnFlags.WidthFixed, 25);
-            ImGui.TableSetupColumn(string.Empty, ImGuiTableColumnFlags.WidthFixed, 25);
-            ImGui.TableSetupColumn(string.Empty, ImGuiTableColumnFlags.WidthFixed, 25);
-            ImGui.TableSetupColumn(string.Empty, ImGuiTableColumnFlags.WidthFixed, 25);
-            ImGui.TableSetupColumn(string.Empty, ImGuiTableColumnFlags.WidthFixed, 25);
-            ImGui.TableSetupColumn(string.Empty, ImGuiTableColumnFlags.WidthFixed, 25);
-            ImGui.TableSetupColumn(string.Empty, ImGuiTableColumnFlags.WidthFixed, 25);
-            ImGui.TableSetupColumn(string.Empty, ImGuiTableColumnFlags.WidthFixed, 25);
-            ImGui.TableSetupColumn(string.Empty, ImGuiTableColumnFlags.WidthFixed, 25);
-            ImGui.TableSetupColumn(string.Empty, ImGuiTableColumnFlags.WidthFixed, 25);
-            ImGui.TableSetupColumn(string.Empty, ImGuiTableColumnFlags.WidthFixed, 25);
-            ImGui.TableSetupColumn(string.Empty, ImGuiTableColumnFlags.WidthFixed, 25);
-            ImGui.TableSetupColumn(string.Empty, ImGuiTableColumnFlags.WidthFixed, 25);
-            ImGui.TableSetupColumn(string.Empty, ImGuiTableColumnFlags.WidthFixed, 25);
-            ImGui.TableSetupColumn(string.Empty, ImGuiTableColumnFlags.WidthFixed, 25);
-            ImGui.TableSetupColumn(string.Empty, ImGuiTableColumnFlags.WidthFixed, 25);
-            ImGui.TableSetupColumn(string.Empty, ImGuiTableColumnFlags.WidthFixed, 25);
-            ImGui.TableSetupColumn(string.Empty, ImGuiTableColumnFlags.WidthFixed, 25);
-            ImGui.TableSetupColumn(string.Empty, ImGuiTableColumnFlags.WidthFixed, 25);
-            ImGui.TableSetupColumn(string.Empty, ImGuiTableColumnFlags.WidthFixed, 25);
-            ImGui.TableSetupColumn(string.Empty, ImGuiTableColumnFlags.WidthFixed, 25);
-            ImGui.TableSetupColumn(string.Empty, ImGuiTableColumnFlags.WidthFixed, 25);
-            ImGui.TableSetupColumn(string.Empty, ImGuiTableColumnFlags.WidthFixed, 25);
-            ImGui.TableSetupColumn(string.Empty, ImGuiTableColumnFlags.WidthFixed, 25);
-            ImGui.TableSetupColumn(string.Empty, ImGuiTableColumnFlags.WidthFixed, 25);
-            ImGui.TableSetupColumn(string.Empty, ImGuiTableColumnFlags.WidthFixed, 25);
-            ImGui.TableSetupColumn(string.Empty, ImGuiTableColumnFlags.WidthFixed, 25);
-            ImGui.TableSetupColumn(string.Empty, ImGuiTableColumnFlags.WidthFixed, 25);
-            ImGui.TableSetupColumn(string.Empty, ImGuiTableColumnFlags.WidthFixed, 25);
+            ImGui.TableSetupColumn("###CharactersJobs#All#Names", ImGuiTableColumnFlags.WidthFixed, 35);
+            ImGui.TableSetupColumn("###CharactersJobs#All#GLA", ImGuiTableColumnFlags.WidthFixed, 25);
+            ImGui.TableSetupColumn("###CharactersJobs#All#PLD", ImGuiTableColumnFlags.WidthFixed, 25);
+            ImGui.TableSetupColumn("###CharactersJobs#All#MRD", ImGuiTableColumnFlags.WidthFixed, 25);
+            ImGui.TableSetupColumn("###CharactersJobs#All#WAR", ImGuiTableColumnFlags.WidthFixed, 25);
+            ImGui.TableSetupColumn("###CharactersJobs#All#DRK", ImGuiTableColumnFlags.WidthFixed, 25);
+            ImGui.TableSetupColumn("###CharactersJobs#All#GNB", ImGuiTableColumnFlags.WidthFixed, 25);
+            ImGui.TableSetupColumn("###CharactersJobs#All#CNJ", ImGuiTableColumnFlags.WidthFixed, 25);
+            ImGui.TableSetupColumn("###CharactersJobs#All#WHM", ImGuiTableColumnFlags.WidthFixed, 25);
+            ImGui.TableSetupColumn("###CharactersJobs#All#SCH", ImGuiTableColumnFlags.WidthFixed, 25);
+            ImGui.TableSetupColumn("###CharactersJobs#All#AST", ImGuiTableColumnFlags.WidthFixed, 25);
+            ImGui.TableSetupColumn("###CharactersJobs#All#SGE", ImGuiTableColumnFlags.WidthFixed, 25);
+            ImGui.TableSetupColumn("###CharactersJobs#All#PGL", ImGuiTableColumnFlags.WidthFixed, 25);
+            ImGui.TableSetupColumn("###CharactersJobs#All#MNK", ImGuiTableColumnFlags.WidthFixed, 25);
+            ImGui.TableSetupColumn("###CharactersJobs#All#LNC", ImGuiTableColumnFlags.WidthFixed, 25);
+            ImGui.TableSetupColumn("###CharactersJobs#All#DRG", ImGuiTableColumnFlags.WidthFixed, 25);
+            ImGui.TableSetupColumn("###CharactersJobs#All#ROG", ImGuiTableColumnFlags.WidthFixed, 25);
+            ImGui.TableSetupColumn("###CharactersJobs#All#NIN", ImGuiTableColumnFlags.WidthFixed, 25);
+            ImGui.TableSetupColumn("###CharactersJobs#All#SAM", ImGuiTableColumnFlags.WidthFixed, 25);
+            ImGui.TableSetupColumn("###CharactersJobs#All#RPR", ImGuiTableColumnFlags.WidthFixed, 25);
+            ImGui.TableSetupColumn("###CharactersJobs#All#ARC", ImGuiTableColumnFlags.WidthFixed, 25);
+            ImGui.TableSetupColumn("###CharactersJobs#All#BRD", ImGuiTableColumnFlags.WidthFixed, 25);
+            ImGui.TableSetupColumn("###CharactersJobs#All#MCH", ImGuiTableColumnFlags.WidthFixed, 25);
+            ImGui.TableSetupColumn("###CharactersJobs#All#DNC", ImGuiTableColumnFlags.WidthFixed, 25);
+            ImGui.TableSetupColumn("###CharactersJobs#All#THM", ImGuiTableColumnFlags.WidthFixed, 25);
+            ImGui.TableSetupColumn("###CharactersJobs#All#BLM", ImGuiTableColumnFlags.WidthFixed, 25);
+            ImGui.TableSetupColumn("###CharactersJobs#All#ACN", ImGuiTableColumnFlags.WidthFixed, 25);
+            ImGui.TableSetupColumn("###CharactersJobs#All#SMN", ImGuiTableColumnFlags.WidthFixed, 25);
+            ImGui.TableSetupColumn("###CharactersJobs#All#RDM", ImGuiTableColumnFlags.WidthFixed, 25);
+            ImGui.TableSetupColumn("###CharactersJobs#All#BLU", ImGuiTableColumnFlags.WidthFixed, 25);
+            ImGui.TableSetupColumn("###CharactersJobs#All#CRP", ImGuiTableColumnFlags.WidthFixed, 25);
+            ImGui.TableSetupColumn("###CharactersJobs#All#BSM", ImGuiTableColumnFlags.WidthFixed, 25);
+            ImGui.TableSetupColumn("###CharactersJobs#All#ARM", ImGuiTableColumnFlags.WidthFixed, 25);
+            ImGui.TableSetupColumn("###CharactersJobs#All#GSM", ImGuiTableColumnFlags.WidthFixed, 25);
+            ImGui.TableSetupColumn("###CharactersJobs#All#LTW", ImGuiTableColumnFlags.WidthFixed, 25);
+            ImGui.TableSetupColumn("###CharactersJobs#All#WVR", ImGuiTableColumnFlags.WidthFixed, 25);
+            ImGui.TableSetupColumn("###CharactersJobs#All#ALC", ImGuiTableColumnFlags.WidthFixed, 25);
+            ImGui.TableSetupColumn("###CharactersJobs#All#CUL", ImGuiTableColumnFlags.WidthFixed, 25);
+            ImGui.TableSetupColumn("###CharactersJobs#All#MIN", ImGuiTableColumnFlags.WidthFixed, 25);
+            ImGui.TableSetupColumn("###CharactersJobs#All#BTN", ImGuiTableColumnFlags.WidthFixed, 25);
+            ImGui.TableSetupColumn("###CharactersJobs#All#FSH", ImGuiTableColumnFlags.WidthFixed, 25);
 
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
             ImGui.TextUnformatted(Utils.GetAddonString(dataManager, pluginLog, currentLocale, 1898));
             if (ImGui.IsItemHovered())
-                ImGui.SetTooltip(
-                    Utils.GetAddonString(dataManager, pluginLog, currentLocale, 14055)
-                );
+            {
+                ImGui.BeginTooltip();
+                ImGui.TextUnformatted(Utils.GetAddonString(dataManager, pluginLog, currentLocale, 14055));
+                ImGui.EndTooltip();
+            }
             ImGui.TableSetColumnIndex(1);
             ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.GLA, true));
             if (ImGui.IsItemHovered())
-                ImGui.SetTooltip(
-                    Utils.GetJobNameFromId(dataManager, pluginLog,  currentLocale, (uint)ClassJob.GLA)
-                );
+            {
+                ImGui.BeginTooltip();
+                ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.GLA));
+                ImGui.EndTooltip();
+            }
             ImGui.TableSetColumnIndex(2);
             ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.PLD, true));
             if (ImGui.IsItemHovered())
-                ImGui.SetTooltip(
-                    Utils.GetJobNameFromId(dataManager, pluginLog,  currentLocale, (uint)ClassJob.PLD)
-                );
+            {
+                ImGui.BeginTooltip();
+                ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.PLD));
+                ImGui.EndTooltip();
+            }
             ImGui.TableSetColumnIndex(3);
             ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.MRD, true));
             if (ImGui.IsItemHovered())
-                ImGui.SetTooltip(
-                    Utils.GetJobNameFromId(dataManager, pluginLog,  currentLocale, (uint)ClassJob.MRD)
-                );
+            {
+                ImGui.BeginTooltip();
+                ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.MRD));
+                ImGui.EndTooltip();
+            }
             ImGui.TableSetColumnIndex(4);
             ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.WAR, true));
             if (ImGui.IsItemHovered())
-                ImGui.SetTooltip(
-                    Utils.GetJobNameFromId(dataManager, pluginLog,  currentLocale, (uint)ClassJob.WAR)
-                );
+            {
+                ImGui.BeginTooltip();
+                ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.WAR));
+                ImGui.EndTooltip();
+            }
             ImGui.TableSetColumnIndex(5);
             ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.DRK, true));
             if (ImGui.IsItemHovered())
-                ImGui.SetTooltip(
-                    Utils.GetJobNameFromId(dataManager, pluginLog,  currentLocale, (uint)ClassJob.DRK)
-                );
+            {
+                ImGui.BeginTooltip();
+                ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.DRK));
+                ImGui.EndTooltip();
+            }
             ImGui.TableSetColumnIndex(6);
             ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.GNB, true));
             if (ImGui.IsItemHovered())
-                ImGui.SetTooltip(
-                    Utils.GetJobNameFromId(dataManager, pluginLog,  currentLocale, (uint)ClassJob.GNB)
-                );
+            {
+                ImGui.BeginTooltip();
+                ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.GNB));
+                ImGui.EndTooltip();
+            }
             ImGui.TableSetColumnIndex(7);
             ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.CNJ, true));
             if (ImGui.IsItemHovered())
-                ImGui.SetTooltip(
-                    Utils.GetJobNameFromId(dataManager, pluginLog,  currentLocale, (uint)ClassJob.CNJ)
-                );
+            {
+                ImGui.BeginTooltip();
+                ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.CNJ));
+                ImGui.EndTooltip();
+            }
             ImGui.TableSetColumnIndex(8);
             ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.WHM, true));
             if (ImGui.IsItemHovered())
-                ImGui.SetTooltip(
-                    Utils.GetJobNameFromId(dataManager, pluginLog,  currentLocale, (uint)ClassJob.WHM)
-                );
+            {
+                ImGui.BeginTooltip();
+                ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.WHM));
+                ImGui.EndTooltip();
+            }
             ImGui.TableSetColumnIndex(9);
             ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.SCH, true));
             if (ImGui.IsItemHovered())
-                ImGui.SetTooltip(
-                    Utils.GetJobNameFromId(dataManager, pluginLog,  currentLocale, (uint)ClassJob.SCH)
-                );
+            {
+                ImGui.BeginTooltip();
+                ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.SCH));
+                ImGui.EndTooltip();
+            }
             ImGui.TableSetColumnIndex(10);
             ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.AST, true));
             if (ImGui.IsItemHovered())
-                ImGui.SetTooltip(
-                    Utils.GetJobNameFromId(dataManager, pluginLog,  currentLocale, (uint)ClassJob.AST)
-                );
+            {
+                ImGui.BeginTooltip();
+                ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.AST));
+                ImGui.EndTooltip();
+            }
             ImGui.TableSetColumnIndex(11);
             ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.SGE, true));
             if (ImGui.IsItemHovered())
-                ImGui.SetTooltip(
-                    Utils.GetJobNameFromId(dataManager, pluginLog,  currentLocale, (uint)ClassJob.SGE)
-                );
+            {
+                ImGui.BeginTooltip();
+                ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.SGE));
+                ImGui.EndTooltip();
+            }
             ImGui.TableSetColumnIndex(12);
             ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.PGL, true));
             if (ImGui.IsItemHovered())
-                ImGui.SetTooltip(
-                    Utils.GetJobNameFromId(dataManager, pluginLog,  currentLocale, (uint)ClassJob.PGL)
-                );
+            {
+                ImGui.BeginTooltip();
+                ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.PGL));
+                ImGui.EndTooltip();
+            }
             ImGui.TableSetColumnIndex(13);
             ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.MNK, true));
             if (ImGui.IsItemHovered())
-                ImGui.SetTooltip(
-                    Utils.GetJobNameFromId(dataManager, pluginLog,  currentLocale, (uint)ClassJob.MNK)
-                );
+            {
+                ImGui.BeginTooltip();
+                ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.MNK));
+                ImGui.EndTooltip();
+            }
             ImGui.TableSetColumnIndex(14);
             ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.LNC, true));
             if (ImGui.IsItemHovered())
-                ImGui.SetTooltip(
-                    Utils.GetJobNameFromId(dataManager, pluginLog,  currentLocale, (uint)ClassJob.LNC)
-                );
+            {
+                ImGui.BeginTooltip();
+                ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.LNC));
+                ImGui.EndTooltip();
+            }
             ImGui.TableSetColumnIndex(15);
             ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.DRG, true));
             if (ImGui.IsItemHovered())
-                ImGui.SetTooltip(
-                    Utils.GetJobNameFromId(dataManager, pluginLog,  currentLocale, (uint)ClassJob.DRG)
-                );
+            {
+                ImGui.BeginTooltip();
+                ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.DRG));
+                ImGui.EndTooltip();
+            }
             ImGui.TableSetColumnIndex(16);
             ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.ROG, true));
             if (ImGui.IsItemHovered())
-                ImGui.SetTooltip(
-                    Utils.GetJobNameFromId(dataManager, pluginLog,  currentLocale, (uint)ClassJob.ROG)
-                );
+            {
+                ImGui.BeginTooltip();
+                ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.ROG));
+                ImGui.EndTooltip();
+            }
             ImGui.TableSetColumnIndex(17);
             ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.NIN, true));
             if (ImGui.IsItemHovered())
-                ImGui.SetTooltip(
-                    Utils.GetJobNameFromId(dataManager, pluginLog,  currentLocale, (uint)ClassJob.NIN)
-                );
+            {
+                ImGui.BeginTooltip();
+                ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.NIN));
+                ImGui.EndTooltip();
+            }
             ImGui.TableSetColumnIndex(18);
             ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.SAM, true));
             if (ImGui.IsItemHovered())
-                ImGui.SetTooltip(
-                    Utils.GetJobNameFromId(dataManager, pluginLog,  currentLocale, (uint)ClassJob.SAM)
-                );
+            {
+                ImGui.BeginTooltip();
+                ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.SAM));
+                ImGui.EndTooltip();
+            }
             ImGui.TableSetColumnIndex(19);
             ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.RPR, true));
             if (ImGui.IsItemHovered())
-                ImGui.SetTooltip(
-                    Utils.GetJobNameFromId(dataManager, pluginLog,  currentLocale, (uint)ClassJob.RPR)
-                );
+            {
+                ImGui.BeginTooltip();
+                ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.RPR));
+                ImGui.EndTooltip();
+            }
             ImGui.TableSetColumnIndex(20);
             ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.ARC, true));
             if (ImGui.IsItemHovered())
-                ImGui.SetTooltip(
-                    Utils.GetJobNameFromId(dataManager, pluginLog,  currentLocale, (uint)ClassJob.ARC)
-                );
+            {
+                ImGui.BeginTooltip();
+                ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.ARC));
+                ImGui.EndTooltip();
+            }
             ImGui.TableSetColumnIndex(21);
             ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.BRD, true));
             if (ImGui.IsItemHovered())
-                ImGui.SetTooltip(
-                    Utils.GetJobNameFromId(dataManager, pluginLog,  currentLocale, (uint)ClassJob.BRD)
-                );
+            {
+                ImGui.BeginTooltip();
+                ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.BRD));
+                ImGui.EndTooltip();
+            }
             ImGui.TableSetColumnIndex(22);
             ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.MCH, true));
             if (ImGui.IsItemHovered())
-                ImGui.SetTooltip(
-                    Utils.GetJobNameFromId(dataManager, pluginLog,  currentLocale, (uint)ClassJob.MCH)
-                );
+            {
+                ImGui.BeginTooltip();
+                ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.MCH));
+                ImGui.EndTooltip();
+            }
             ImGui.TableSetColumnIndex(23);
             ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.DNC, true));
             if (ImGui.IsItemHovered())
-                ImGui.SetTooltip(
-                    Utils.GetJobNameFromId(dataManager, pluginLog,  currentLocale, (uint)ClassJob.DNC)
-                );
+            {
+                ImGui.BeginTooltip();
+                ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.DNC));
+                ImGui.EndTooltip();
+            }
             ImGui.TableSetColumnIndex(24);
             ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.THM, true));
             if (ImGui.IsItemHovered())
-                ImGui.SetTooltip(
-                    Utils.GetJobNameFromId(dataManager, pluginLog,  currentLocale, (uint)ClassJob.THM)
-                );
+            {
+                ImGui.BeginTooltip();
+                ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.THM));
+                ImGui.EndTooltip();
+            }
             ImGui.TableSetColumnIndex(25);
             ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.BLM, true));
             if (ImGui.IsItemHovered())
-                ImGui.SetTooltip(
-                    Utils.GetJobNameFromId(dataManager, pluginLog,  currentLocale, (uint)ClassJob.BLM)
-                );
+            {
+                ImGui.BeginTooltip();
+                ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.BLM));
+                ImGui.EndTooltip();
+            }
             ImGui.TableSetColumnIndex(26);
             ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.ACN, true));
             if (ImGui.IsItemHovered())
-                ImGui.SetTooltip(
-                    Utils.GetJobNameFromId(dataManager, pluginLog,  currentLocale, (uint)ClassJob.ACN)
-                );
+            {
+                ImGui.BeginTooltip();
+                ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.ACN));
+                ImGui.EndTooltip();
+            }
             ImGui.TableSetColumnIndex(27);
             ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.SMN, true));
             if (ImGui.IsItemHovered())
-                ImGui.SetTooltip(
-                    Utils.GetJobNameFromId(dataManager, pluginLog,  currentLocale, (uint)ClassJob.SMN)
-                );
+            {
+                ImGui.BeginTooltip();
+                ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.SMN));
+                ImGui.EndTooltip();
+            }
             ImGui.TableSetColumnIndex(28);
             ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.RDM, true));
             if (ImGui.IsItemHovered())
-                ImGui.SetTooltip(
-                    Utils.GetJobNameFromId(dataManager, pluginLog,  currentLocale, (uint)ClassJob.RDM)
-                );
+            {
+                ImGui.BeginTooltip();
+                ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.RDM));
+                ImGui.EndTooltip();
+            }
             ImGui.TableSetColumnIndex(29);
             ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.BLU));
             if (ImGui.IsItemHovered())
-                ImGui.SetTooltip(
-                    Utils.GetJobNameFromId(dataManager, pluginLog,  currentLocale, (uint)ClassJob.BLU)
-                );
+            {
+                ImGui.BeginTooltip();
+                ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.BLU));
+                ImGui.EndTooltip();
+            }
             ImGui.TableSetColumnIndex(30);
             ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.CRP, true));
             if (ImGui.IsItemHovered())
-                ImGui.SetTooltip(
-                    Utils.GetJobNameFromId(dataManager, pluginLog,  currentLocale, (uint)ClassJob.CRP)
-                );
+            {
+                ImGui.BeginTooltip();
+                ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.CRP));
+                ImGui.EndTooltip();
+            }
             ImGui.TableSetColumnIndex(31);
             ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.BSM, true));
             if (ImGui.IsItemHovered())
-                ImGui.SetTooltip(
-                    Utils.GetJobNameFromId(dataManager, pluginLog,  currentLocale, (uint)ClassJob.BSM)
-                );
+            {
+                ImGui.BeginTooltip();
+                ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.BSM));
+                ImGui.EndTooltip();
+            }
             ImGui.TableSetColumnIndex(32);
             ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.ARM, true));
             if (ImGui.IsItemHovered())
-                ImGui.SetTooltip(
-                    Utils.GetJobNameFromId(dataManager, pluginLog,  currentLocale, (uint)ClassJob.ARM)
-                );
+            {
+                ImGui.BeginTooltip();
+                ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.ARM));
+                ImGui.EndTooltip();
+            }
             ImGui.TableSetColumnIndex(33);
             ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.GSM, true));
             if (ImGui.IsItemHovered())
-                ImGui.SetTooltip(
-                    Utils.GetJobNameFromId(dataManager, pluginLog,  currentLocale, (uint)ClassJob.MRD)
-                );
+            {
+                ImGui.BeginTooltip();
+                ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.MRD));
+                ImGui.EndTooltip();
+            }
             ImGui.TableSetColumnIndex(34);
             ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.LTW, true));
             if (ImGui.IsItemHovered())
-                ImGui.SetTooltip(
-                    Utils.GetJobNameFromId(dataManager, pluginLog,  currentLocale, (uint)ClassJob.LTW)
-                );
+            {
+                ImGui.BeginTooltip();
+                ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.LTW));
+                ImGui.EndTooltip();
+            }
             ImGui.TableSetColumnIndex(35);
             ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.WVR, true));
             if (ImGui.IsItemHovered())
-                ImGui.SetTooltip(
-                    Utils.GetJobNameFromId(dataManager, pluginLog,  currentLocale, (uint)ClassJob.WVR)
-                );
+            {
+                ImGui.BeginTooltip();
+                ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.WVR));
+                ImGui.EndTooltip();
+            }
             ImGui.TableSetColumnIndex(36);
             ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.ALC, true));
             if (ImGui.IsItemHovered())
-                ImGui.SetTooltip(
-                    Utils.GetJobNameFromId(dataManager, pluginLog,  currentLocale, (uint)ClassJob.ALC)
-                );
+            {
+                ImGui.BeginTooltip();
+                ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.ALC));
+                ImGui.EndTooltip();
+            }
             ImGui.TableSetColumnIndex(37);
             ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.CUL, true));
             if (ImGui.IsItemHovered())
-                ImGui.SetTooltip(
-                    Utils.GetJobNameFromId(dataManager, pluginLog,  currentLocale, (uint)ClassJob.CUL)
-                );
+            {
+                ImGui.BeginTooltip();
+                ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.CUL));
+                ImGui.EndTooltip();
+            }
             ImGui.TableSetColumnIndex(38);
             ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.MIN, true));
             if (ImGui.IsItemHovered())
-                ImGui.SetTooltip(
-                    Utils.GetJobNameFromId(dataManager, pluginLog,  currentLocale, (uint)ClassJob.MIN)
-                );
+            {
+                ImGui.BeginTooltip();
+                ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.MIN));
+                ImGui.EndTooltip();
+            }
             ImGui.TableSetColumnIndex(39);
             ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.BTN, true));
             if (ImGui.IsItemHovered())
-                ImGui.SetTooltip(
-                    Utils.GetJobNameFromId(dataManager, pluginLog,  currentLocale, (uint)ClassJob.BTN)
-                );
+            {
+                ImGui.BeginTooltip();
+                ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.BTN));
+                ImGui.EndTooltip();
+            }
             ImGui.TableSetColumnIndex(40);
             ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.FSH, true));
             if (ImGui.IsItemHovered())
-                ImGui.SetTooltip(
-                    Utils.GetJobNameFromId(dataManager, pluginLog,  currentLocale, (uint)ClassJob.FSH)
-                );
-            /*ImGui.TableSetupColumn("PLD", ImGuiTableColumnFlags.WidthFixed, 20);
-            ImGui.TableSetupColumn("MRD", ImGuiTableColumnFlags.WidthFixed, 22);
-            ImGui.TableSetupColumn("WAR", ImGuiTableColumnFlags.WidthFixed, 20);
-            ImGui.TableSetupColumn("DRK", ImGuiTableColumnFlags.WidthFixed, 20);
-            ImGui.TableSetupColumn("GNB", ImGuiTableColumnFlags.WidthFixed, 20);
-            ImGui.TableSetupColumn("CNJ", ImGuiTableColumnFlags.WidthFixed, 20);
-            ImGui.TableSetupColumn("WHM", ImGuiTableColumnFlags.WidthFixed, 20);
-            ImGui.TableSetupColumn("SCH", ImGuiTableColumnFlags.WidthFixed, 20);
-            ImGui.TableSetupColumn("AST", ImGuiTableColumnFlags.WidthFixed, 20);
-            ImGui.TableSetupColumn("SGE", ImGuiTableColumnFlags.WidthFixed, 20);
-            ImGui.TableSetupColumn("PUG", ImGuiTableColumnFlags.WidthFixed, 20);
-            ImGui.TableSetupColumn("MNK", ImGuiTableColumnFlags.WidthFixed, 20);
-            ImGui.TableSetupColumn("LNC", ImGuiTableColumnFlags.WidthFixed, 20);
-            ImGui.TableSetupColumn("DRG", ImGuiTableColumnFlags.WidthFixed, 20);
-            ImGui.TableSetupColumn("ROG", ImGuiTableColumnFlags.WidthFixed, 20);
-            ImGui.TableSetupColumn("NIN", ImGuiTableColumnFlags.WidthFixed, 20);
-            ImGui.TableSetupColumn("SAM", ImGuiTableColumnFlags.WidthFixed, 20);
-            ImGui.TableSetupColumn("RPR", ImGuiTableColumnFlags.WidthFixed, 20);
-            ImGui.TableSetupColumn("BRD", ImGuiTableColumnFlags.WidthFixed, 20);
-            ImGui.TableSetupColumn("ARC", ImGuiTableColumnFlags.WidthFixed, 20);
-            ImGui.TableSetupColumn("MCH", ImGuiTableColumnFlags.WidthFixed, 20);
-            ImGui.TableSetupColumn("DNC", ImGuiTableColumnFlags.WidthFixed, 20);
-            ImGui.TableSetupColumn("BLM", ImGuiTableColumnFlags.WidthFixed, 20);
-            ImGui.TableSetupColumn("THM", ImGuiTableColumnFlags.WidthFixed, 20);
-            ImGui.TableSetupColumn("SMN", ImGuiTableColumnFlags.WidthFixed, 20);
-            ImGui.TableSetupColumn("ACN", ImGuiTableColumnFlags.WidthFixed, 20);
-            ImGui.TableSetupColumn("RDM", ImGuiTableColumnFlags.WidthFixed, 20);
-            ImGui.TableSetupColumn("BLU", ImGuiTableColumnFlags.WidthFixed, 20);
-            ImGui.TableSetupColumn("CRP", ImGuiTableColumnFlags.WidthFixed, 20);
-            ImGui.TableSetupColumn("BSM", ImGuiTableColumnFlags.WidthFixed, 20);
-            ImGui.TableSetupColumn("ARM", ImGuiTableColumnFlags.WidthFixed, 20);
-            ImGui.TableSetupColumn("GSM", ImGuiTableColumnFlags.WidthFixed, 20);
-            ImGui.TableSetupColumn("LTW", ImGuiTableColumnFlags.WidthFixed, 20);
-            ImGui.TableSetupColumn("WVR", ImGuiTableColumnFlags.WidthFixed, 20);
-            ImGui.TableSetupColumn("ALC", ImGuiTableColumnFlags.WidthFixed, 20);
-            ImGui.TableSetupColumn("CUL", ImGuiTableColumnFlags.WidthFixed, 20);
-            ImGui.TableSetupColumn("MIN", ImGuiTableColumnFlags.WidthFixed, 20);
-            ImGui.TableSetupColumn("BTN", ImGuiTableColumnFlags.WidthFixed, 20);
-            ImGui.TableSetupColumn("FSH", ImGuiTableColumnFlags.WidthFixed, 20);*/
-            //ImGui.TableHeadersRow();
+            {
+                ImGui.BeginTooltip();
+                ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.FSH));
+                ImGui.EndTooltip();
+            }
             foreach (Character currChar in chars)
             {
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
                 ImGui.TextUnformatted($"{currChar.FirstName[0]}.{currChar.LastName[0]}");
                 if (ImGui.IsItemHovered())
-                    ImGui.SetTooltip(
-                        $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}"
-                    );
+                {
+                    ImGui.BeginTooltip();
+                    ImGui.TextUnformatted($"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
+                    ImGui.EndTooltip();
+                }
                 if (currChar.Jobs is null) continue;
                 ImGui.TableSetColumnIndex(1);
                 ImGui.TextUnformatted($"{currChar.Jobs.Gladiator.Level}");
@@ -536,14 +580,14 @@ public class JobsWindow : Window, IDisposable
 
     private void DrawJobs(Character current_character)
     {
-        if (ImGui.BeginTabBar($"#attributesprofile"))
+        if (ImGui.BeginTabBar($"####CharactersJobs#JobsTable#{current_character.Id}"))
         {
-            if (ImGui.BeginTabItem($"{Utils.GetAddonString(dataManager, pluginLog, currentLocale, 1080)}"))
+            if (ImGui.BeginTabItem($"{Utils.GetAddonString(dataManager, pluginLog, currentLocale, 1080)}###{current_character.Id}"))// Dow/DoM
             {
                 DrawDoWDoMJobs(current_character);
                 ImGui.EndTabItem();
             }
-            if (ImGui.BeginTabItem($"{Utils.GetAddonString(dataManager, pluginLog, currentLocale, 1081)}"))
+            if (ImGui.BeginTabItem($"{Utils.GetAddonString(dataManager, pluginLog, currentLocale, 1081)}###{current_character.Id}"))// DoHDoL
             {
                 DrawDoHDoLJobs(current_character);
                 ImGui.EndTabItem();
@@ -555,31 +599,31 @@ public class JobsWindow : Window, IDisposable
     private void DrawDoWDoMJobs(Character current_character)
     {
         if (current_character is null) return;
-        if (ImGui.BeginTable("DoWDoMJobs", 2, ImGuiTableFlags.ScrollY))
+        if (ImGui.BeginTable($"###CharactersJobs#DoWDoMJobs#{current_character.Id}", 2, ImGuiTableFlags.ScrollY))
         {
-            ImGui.TableSetupColumn(string.Empty, ImGuiTableColumnFlags.WidthStretch);
-            ImGui.TableSetupColumn(string.Empty, ImGuiTableColumnFlags.WidthStretch);
+            ImGui.TableSetupColumn($"###CharactersJobs#DoW#{current_character.Id}", ImGuiTableColumnFlags.WidthStretch);
+            ImGui.TableSetupColumn($"###CharactersJobs#DoM#{current_character.Id}", ImGuiTableColumnFlags.WidthStretch);
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
-            if (ImGui.BeginTable("RoleTank", 2))
+            if (ImGui.BeginTable("###CharactersJobs#DoW#RoleTank", 2))
             {
-                ImGui.TableSetupColumn(string.Empty, ImGuiTableColumnFlags.WidthFixed, 22);
-                ImGui.TableSetupColumn(string.Empty, ImGuiTableColumnFlags.WidthStretch);
+                ImGui.TableSetupColumn($"###CharactersJobs#DoW#RoleTank#Icon", ImGuiTableColumnFlags.WidthFixed, 22);
+                ImGui.TableSetupColumn($"###CharactersJobs#DoW#RoleTank#Name", ImGuiTableColumnFlags.WidthStretch);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
                 Utils.DrawIcon(textureProvider, pluginLog, new Vector2(20, 20), false, Utils.GetRoleIcon(0));
                 ImGui.TableSetColumnIndex(1);
-                ImGui.TextUnformatted($"{Utils.GetAddonString(dataManager, pluginLog, currentLocale, 1082)}");
+                ImGui.TextUnformatted($"{Utils.GetAddonString(dataManager, pluginLog, currentLocale, 1082)}"); // Tank
 
                 ImGui.EndTable();
             }
             ImGui.Separator();
 
             ImGui.TableSetColumnIndex(1);
-            if (ImGui.BeginTable("RoleHealer", 2))
+            if (ImGui.BeginTable("###CharactersJobs#DoM#RoleHealer", 2))
             {
-                ImGui.TableSetupColumn(string.Empty, ImGuiTableColumnFlags.WidthFixed, 22);
-                ImGui.TableSetupColumn(string.Empty, ImGuiTableColumnFlags.WidthStretch);
+                ImGui.TableSetupColumn($"###CharactersJobs#DoM#RoleHealer#Icon", ImGuiTableColumnFlags.WidthFixed, 22);
+                ImGui.TableSetupColumn($"###CharactersJobs#DoM#RoleHealer#Name", ImGuiTableColumnFlags.WidthStretch);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
                 Utils.DrawIcon(textureProvider, pluginLog, new Vector2(20, 20), false, Utils.GetRoleIcon(1));
@@ -616,10 +660,10 @@ public class JobsWindow : Window, IDisposable
 
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
-            if (ImGui.BeginTable("RoleMelee", 2))
+            if (ImGui.BeginTable("###CharactersJobs#DoW#RoleMelee", 2))
             {
-                ImGui.TableSetupColumn(string.Empty, ImGuiTableColumnFlags.WidthFixed, 22);
-                ImGui.TableSetupColumn(string.Empty, ImGuiTableColumnFlags.WidthStretch);
+                ImGui.TableSetupColumn("###CharactersJobs#DoW#RoleMelee#Icon", ImGuiTableColumnFlags.WidthFixed, 22);
+                ImGui.TableSetupColumn("###CharactersJobs#DoW#RoleMelee#Name", ImGuiTableColumnFlags.WidthStretch);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
                 Utils.DrawIcon(textureProvider, pluginLog, new Vector2(20, 20), false, Utils.GetRoleIcon(2));
@@ -631,10 +675,10 @@ public class JobsWindow : Window, IDisposable
             ImGui.Separator();
 
             ImGui.TableSetColumnIndex(1);
-            if (ImGui.BeginTable("RolePhysicalRanged", 2))
+            if (ImGui.BeginTable("###CharactersJobs#DoW#RolePhysicalRanged", 2))
             {
-                ImGui.TableSetupColumn(string.Empty, ImGuiTableColumnFlags.WidthFixed, 22);
-                ImGui.TableSetupColumn(string.Empty, ImGuiTableColumnFlags.WidthStretch);
+                ImGui.TableSetupColumn("###CharactersJobs#DoW#RolePhysicalRanged#Icon", ImGuiTableColumnFlags.WidthFixed, 22);
+                ImGui.TableSetupColumn("###CharactersJobs#DoW#RolePhysicalRanged#Name", ImGuiTableColumnFlags.WidthStretch);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
                 Utils.DrawIcon(textureProvider, pluginLog, new Vector2(20, 20), false, Utils.GetRoleIcon(3));
@@ -668,10 +712,10 @@ public class JobsWindow : Window, IDisposable
             DrawJobLine(current_character, ClassJob.SAM);
 
             ImGui.TableSetColumnIndex(1);
-            if (ImGui.BeginTable("RoleMagicalRanged", 2))
+            if (ImGui.BeginTable("###CharactersJobs#DoM#RoleMagicalRanged", 2))
             {
-                ImGui.TableSetupColumn(string.Empty, ImGuiTableColumnFlags.WidthFixed, 22);
-                ImGui.TableSetupColumn(string.Empty, ImGuiTableColumnFlags.WidthStretch);
+                ImGui.TableSetupColumn("###CharactersJobs#DoM#RoleMagicalRanged#Icon", ImGuiTableColumnFlags.WidthFixed, 22);
+                ImGui.TableSetupColumn("###CharactersJobs#DoM#RoleMagicalRanged#Name", ImGuiTableColumnFlags.WidthStretch);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
                 Utils.DrawIcon(textureProvider, pluginLog, new Vector2(20, 20), false, Utils.GetRoleIcon(4));
@@ -707,16 +751,16 @@ public class JobsWindow : Window, IDisposable
     private void DrawDoHDoLJobs(Character current_character)
     {
         if (current_character is null) return;
-        if (ImGui.BeginTable("DoHDoLJobs", 2))
+        if (ImGui.BeginTable($"###CharactersJobs#DoHDoLJobs#{current_character.Id}", 2))
         {
-            ImGui.TableSetupColumn(string.Empty, ImGuiTableColumnFlags.WidthStretch);
-            ImGui.TableSetupColumn(string.Empty, ImGuiTableColumnFlags.WidthStretch);
+            ImGui.TableSetupColumn($"###CharactersJobs#DoH#{current_character.Id}", ImGuiTableColumnFlags.WidthStretch);
+            ImGui.TableSetupColumn($"###CharactersJobs#DoL#{current_character.Id}", ImGuiTableColumnFlags.WidthStretch);
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
-            if (ImGui.BeginTable("RoleDoH", 2))
+            if (ImGui.BeginTable("###CharactersJobs#DoH#RoleDoH", 2))
             {
-                ImGui.TableSetupColumn(string.Empty, ImGuiTableColumnFlags.WidthFixed, 22);
-                ImGui.TableSetupColumn(string.Empty, ImGuiTableColumnFlags.WidthStretch);
+                ImGui.TableSetupColumn("###CharactersJobs#DoH#RoleDoH#Icon", ImGuiTableColumnFlags.WidthFixed, 22);
+                ImGui.TableSetupColumn("###CharactersJobs#DoH#RoleDoH#Name", ImGuiTableColumnFlags.WidthStretch);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
                 Utils.DrawIcon(textureProvider, pluginLog, new Vector2(20, 20), false, Utils.GetRoleIcon(5));
@@ -728,10 +772,10 @@ public class JobsWindow : Window, IDisposable
             ImGui.Separator();
 
             ImGui.TableSetColumnIndex(1);
-            if (ImGui.BeginTable("RoleDoL", 2))
+            if (ImGui.BeginTable("###CharactersJobs#DoL#RoleDoL", 2))
             {
-                ImGui.TableSetupColumn(string.Empty, ImGuiTableColumnFlags.WidthFixed, 22);
-                ImGui.TableSetupColumn(string.Empty, ImGuiTableColumnFlags.WidthStretch);
+                ImGui.TableSetupColumn("###CharactersJobs#DoL#RoleDoL#Icon", ImGuiTableColumnFlags.WidthFixed, 22);
+                ImGui.TableSetupColumn("###CharactersJobs#DoL#RoleDoL#Name", ImGuiTableColumnFlags.WidthStretch);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
                 Utils.DrawIcon(textureProvider, pluginLog, new Vector2(20, 20), false, Utils.GetRoleIcon(6));
@@ -1099,10 +1143,10 @@ public class JobsWindow : Window, IDisposable
             true => new Vector2(1, 1),
             false => new Vector2(0.5f, 0.5f),
         };
-        if (ImGui.BeginTable("JobLine", 2))
+        if (ImGui.BeginTable("###CharactersJobs#JobLine", 2))
         {
-            ImGui.TableSetupColumn(string.Empty, ImGuiTableColumnFlags.WidthFixed, 36);
-            ImGui.TableSetupColumn(string.Empty, ImGuiTableColumnFlags.WidthStretch);
+            ImGui.TableSetupColumn("###CharactersJobs#Icon", ImGuiTableColumnFlags.WidthFixed, 36);
+            ImGui.TableSetupColumn("###CharactersJobs#LevelNameExp", ImGuiTableColumnFlags.WidthStretch);
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
             //Utils.DrawIcon(textureProvider, dataManager, pluginLog, new Vector2(42, 42), false, Utils.GetJobIconWithCornerSmall((uint)job_id), alpha);
@@ -1110,22 +1154,23 @@ public class JobsWindow : Window, IDisposable
             Utils.DrawIcon(textureProvider, pluginLog, new Vector2(36, 36), false, Utils.GetJobIconWithCornerSmall((uint)job_id));
             if (ImGui.IsItemHovered())
             {
-                ImGui.SetTooltip(
-                    tooltip
-                );
+                ImGui.BeginTooltip();
+                ImGui.TextUnformatted(tooltip);
+                ImGui.EndTooltip();
             }
             ImGui.TableSetColumnIndex(1);
-            if (ImGui.BeginTable("JobLevelNameExp", 2))
+            if (ImGui.BeginTable("###CharactersJobs#JobLevelNameExp", 2))
             {
-                ImGui.TableSetupColumn(string.Empty, ImGuiTableColumnFlags.WidthFixed, 10);
-                ImGui.TableSetupColumn(string.Empty, ImGuiTableColumnFlags.WidthStretch);
+                ImGui.TableSetupColumn("###CharactersJobs#JobLevelNameExp#Level", ImGuiTableColumnFlags.WidthFixed, 10);
+                ImGui.TableSetupColumn("###CharactersJobs#JobLevelNameExp#NameExp", ImGuiTableColumnFlags.WidthStretch);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
                 ImGui.TextUnformatted($"{job.Level}");
                 ImGui.TableSetColumnIndex(1);
                 ImGui.TextUnformatted($"{Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)job_id)}");
                 ImGui.TableNextRow();
-                ImGui.TextUnformatted($"{job.Exp}");
+                ImGui.TableSetColumnIndex(1);
+                Utils.DrawLevelProgressBar(job.Exp, Utils.GetJobNextLevelExp(dataManager, pluginLog, currentLocale, job.Level), tooltip);
                 ImGui.EndTable();
             }
             ImGui.EndTable();

@@ -64,7 +64,7 @@ public class CharactersWindow : Window, IDisposable
         {
             //if (ImGui.BeginTable("Characters", 10, ImGuiTableFlags.ScrollY))
             //if (ImGui.BeginTable("Characters", 10))
-            if (ImGui.BeginTable("Characters", 9))
+            if (ImGui.BeginTable("###Characters", 9))
             {
                 ImGui.TableSetupColumn("Firstname", ImGuiTableColumnFlags.WidthFixed, 100);
                 ImGui.TableSetupColumn("Lastname", ImGuiTableColumnFlags.WidthFixed, 100);
@@ -97,43 +97,46 @@ public class CharactersWindow : Window, IDisposable
 
                 ImGui.EndTable();
             }
-            if (ImGui.BeginTable("Characters", 4))
+            if (ImGui.BeginTable("###TotalCharacters", 4))
             {
-                ImGui.TableSetupColumn(string.Empty, ImGuiTableColumnFlags.WidthFixed, 440);
-                ImGui.TableSetupColumn(string.Empty, ImGuiTableColumnFlags.WidthFixed, 110);
-                ImGui.TableSetupColumn(string.Empty, ImGuiTableColumnFlags.WidthFixed, 110);
-                ImGui.TableSetupColumn(string.Empty, ImGuiTableColumnFlags.WidthStretch);
+                ImGui.TableSetupColumn("###TotalCharacters#Count", ImGuiTableColumnFlags.WidthFixed, 440);
+                ImGui.TableSetupColumn("###TotalCharacters#Gils", ImGuiTableColumnFlags.WidthFixed, 110);
+                ImGui.TableSetupColumn("###TotalCharacters#Empty", ImGuiTableColumnFlags.WidthFixed, 110);
+                ImGui.TableSetupColumn("###TotalCharacters#Playtime", ImGuiTableColumnFlags.WidthStretch);
                 ImGui.TableNextRow();
-                ImGui.TableNextColumn();
+                ImGui.TableSetColumnIndex(0);
                 ImGui.Separator();
                 ImGui.TextUnformatted($"Characters: {TotalCharacters}, Worlds: {TotalWorlds}");
-                ImGui.TableNextColumn();
+                ImGui.TableSetColumnIndex(1);
                 ImGui.Separator();
-                ImGui.BeginTable("Gils", 2);
-                    ImGui.TableSetupColumn(string.Empty, ImGuiTableColumnFlags.WidthFixed, 20);
-                    ImGui.TableSetupColumn(string.Empty, ImGuiTableColumnFlags.WidthFixed, 90);
+                if (ImGui.BeginTable("###TotalCharacters#GilsTable", 2))
+                {
+                    ImGui.TableSetupColumn("###TotalCharacters#GilsTable#Icon", ImGuiTableColumnFlags.WidthFixed, 20);
+                    ImGui.TableSetupColumn("###TotalCharacters#GilsTable#Amount", ImGuiTableColumnFlags.WidthFixed, 90);
                     ImGui.TableNextRow();
-                    ImGui.TableNextColumn();
+                    ImGui.TableSetColumnIndex(0);
                     Utils.DrawIcon(textureProvider, pluginLog, new Vector2(18, 18), false, 065002);
-                    ImGui.TableNextColumn();
+                    ImGui.TableSetColumnIndex(1);
                     var gilText = $"{TotalGils:N0}";
                     var posX = ImGui.GetCursorPosX() + ImGui.GetColumnWidth() - ImGui.CalcTextSize(gilText.ToString()).X - ImGui.GetScrollX() - (2 * ImGui.GetStyle().ItemSpacing.X);
                     if (posX > ImGui.GetCursorPosX())
                         ImGui.SetCursorPosX(posX);
                     ImGui.TextUnformatted($"{gilText}");
+                    // Ending Gils Table
+                    ImGui.EndTable();
+                }
 
-                // Ending Gils Table
-                ImGui.EndTable();
-
-                ImGui.TableNextColumn();
+                ImGui.TableSetColumnIndex(2);
                 ImGui.Separator();
-                ImGui.TableNextColumn();
+                ImGui.TableSetColumnIndex(3);
                 ImGui.Separator();
                 ImGui.TextUnformatted($"{GeneratePlaytime(TimeSpan.FromMinutes(TotalPlayed))}");
                 if (ImGui.IsItemHovered())
-                    ImGui.SetTooltip(
-                        "as of the last auto /playtime check"
-                    );
+                {
+                    ImGui.BeginTooltip();
+                    ImGui.TextUnformatted("as of the last auto /playtime check");
+                    ImGui.EndTooltip();
+                }
                 ImGui.EndTable();
             }
         }
@@ -145,59 +148,72 @@ public class CharactersWindow : Window, IDisposable
     private void DrawCharacter(int pos, Character character)
     {
         ImGui.TableNextRow();
-        ImGui.TableNextColumn();
-        ImGui.TextUnformatted($"{((character.IsSprout == true)? (char)SeIconChar.BotanistSprout : "")}{character.FirstName}");
-        ImGui.TableNextColumn();
+        ImGui.TableSetColumnIndex(0);
+        ImGui.TextUnformatted($"{((character.IsSprout == true) ? (char)SeIconChar.BotanistSprout : "")}{character.FirstName}");
+        ImGui.TableSetColumnIndex(1);
         ImGui.TextUnformatted($"{character.LastName}");
-        ImGui.TableNextColumn();
+        ImGui.TableSetColumnIndex(2);
         ImGui.TextUnformatted($"{character.HomeWorld}");
-        ImGui.TableNextColumn();
+        ImGui.TableSetColumnIndex(3);
         ImGui.TextUnformatted($"{Utils.GetRegionFromWorld(character.HomeWorld)}");
         if (ImGui.IsItemHovered())
-            ImGui.SetTooltip(
-                Utils.GetDatacenterFromWorld(character.HomeWorld)
-            );
-        ImGui.TableNextColumn();
+        {
+            ImGui.BeginTooltip();
+            ImGui.TextUnformatted(Utils.GetDatacenterFromWorld(character.HomeWorld));
+            ImGui.EndTooltip();
+        }
+        ImGui.TableSetColumnIndex(4);
         ImGui.TextUnformatted($"{character.LastJobLevel}");
         if (ImGui.IsItemHovered())
-            ImGui.SetTooltip(
-                Enum.GetName(typeof(ClassJob), character.LastJob)
-            );
-        ImGui.TableNextColumn();
+        {
+            ImGui.BeginTooltip();
+            ImGui.TextUnformatted(Enum.GetName(typeof(ClassJob), character.LastJob));
+            ImGui.EndTooltip();
+        }
+        ImGui.TableSetColumnIndex(5);
         ImGui.TextUnformatted($"{character.FCTag}");
-        ImGui.TableNextColumn();
 
-            ImGui.BeginTable("Gils", 2);
-                ImGui.TableSetupColumn(string.Empty, ImGuiTableColumnFlags.WidthFixed, 20);
-                ImGui.TableSetupColumn(string.Empty, ImGuiTableColumnFlags.WidthFixed, 90);
-                ImGui.TableNextColumn();
-                Utils.DrawIcon(textureProvider, pluginLog, new Vector2(18, 18), false, 065002);
-                ImGui.TableNextColumn();
-                if (character.Currencies is not null)
-                {
-                    var gilText = $"{character.Currencies.Gil:N0}";
-                    var posX = ImGui.GetCursorPosX() + ImGui.GetColumnWidth() - ImGui.CalcTextSize(gilText.ToString()).X - ImGui.GetScrollX() - (2 * ImGui.GetStyle().ItemSpacing.X);
-                    if (posX > ImGui.GetCursorPosX())
-                        ImGui.SetCursorPosX(posX);
-                    ImGui.TextUnformatted($"{gilText}");
-                }
+        ImGui.TableSetColumnIndex(6);
+        if (ImGui.BeginTable($"###Characters#Character#Gils#{character.Id}", 2))
+        {
+            ImGui.TableSetupColumn($"###Characters#Character#Gils#Icon#{character.Id}", ImGuiTableColumnFlags.WidthFixed, 20);
+            ImGui.TableSetupColumn($"###Characters#Character#Gils#Amount#{character.Id}", ImGuiTableColumnFlags.WidthFixed, 90);
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            Utils.DrawIcon(textureProvider, pluginLog, new Vector2(18, 18), false, 065002);
+            ImGui.TableSetColumnIndex(1);
+            if (character.Currencies is not null)
+            {
+                var gilText = $"{character.Currencies.Gil:N0}";
+                var posX = ImGui.GetCursorPosX() + ImGui.GetColumnWidth() - ImGui.CalcTextSize(gilText.ToString()).X - ImGui.GetScrollX() - (2 * ImGui.GetStyle().ItemSpacing.X);
+                if (posX > ImGui.GetCursorPosX())
+                    ImGui.SetCursorPosX(posX);
+                ImGui.TextUnformatted($"{gilText}");
+            }
             ImGui.EndTable();// Ending Gils Table
+        }
 
-        ImGui.TableNextColumn();
+        ImGui.TableSetColumnIndex(7);
         ImGui.TextUnformatted($"{GetLastOnlineFormatted(character.LastOnline/*, character.FirstName*/)}");
-        if(pos > 0)
+        if (pos > 0)
+        {
             if (ImGui.IsItemHovered())
-                ImGui.SetTooltip(
-                    UnixTimeStampToDateTime(character.LastOnline)
-                );
-        ImGui.TableNextColumn();
+            {
+                ImGui.BeginTooltip();
+                ImGui.TextUnformatted(UnixTimeStampToDateTime(character.LastOnline));
+                ImGui.EndTooltip();
+            }
+        }
+        ImGui.TableSetColumnIndex(8);
         ImGui.TextUnformatted($"{GeneratePlaytime(TimeSpan.FromMinutes(character.PlayTime))}");
         if (character.LastPlayTimeUpdate > 0)
         {
             if (ImGui.IsItemHovered())
-                ImGui.SetTooltip(
-                    $"Last updated on : {UnixTimeStampToDateTime(character.LastPlayTimeUpdate)} - {GetLastOnlineFormatted(character.LastPlayTimeUpdate)}"
-                );
+            {
+                ImGui.BeginTooltip();
+                ImGui.TextUnformatted($"Last updated on : {UnixTimeStampToDateTime(character.LastPlayTimeUpdate)} - {GetLastOnlineFormatted(character.LastPlayTimeUpdate)}");
+                ImGui.EndTooltip();
+            }
         }
 
         // Todo : Buttons
