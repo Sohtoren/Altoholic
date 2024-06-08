@@ -1,5 +1,6 @@
 using Altoholic.Models;
 using Dalamud;
+using Dalamud.Game.Text;
 using Dalamud.Interface.Windowing;
 using Dalamud.Plugin.Services;
 using ImGuiNET;
@@ -79,7 +80,7 @@ public class CurrenciesWindow : Window, IDisposable
                     }
                     foreach (Character currChar in chars)
                     {
-                        if (ImGui.Selectable($"{currChar.FirstName} {currChar.LastName}{(char)SpecialIcon.E05D}{currChar.HomeWorld}"))
+                        if (ImGui.Selectable($"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}"))
                         {
                             current_character = currChar;
                         }
@@ -166,7 +167,7 @@ public class CurrenciesWindow : Window, IDisposable
                     //pluginLog.Debug($"{character.Currencies.Gil}");
                     ImGui.TableNextRow();
                     ImGui.TableSetColumnIndex(0);
-                    ImGui.TextUnformatted($"{character.FirstName} {character.LastName}{(char)SpecialIcon.E05D}{character.HomeWorld}");
+                    ImGui.TextUnformatted($"{character.FirstName} {character.LastName}{(char)SeIconChar.CrossWorld}{character.HomeWorld}");
                     if (character.Currencies is not null)
                     {
                         var p = character.Currencies.GetType().GetProperty(current_currency);

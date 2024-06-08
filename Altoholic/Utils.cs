@@ -1,5 +1,6 @@
 ﻿using Altoholic.Models;
 using Dalamud;
+using Dalamud.Game.Text;
 using Dalamud.Interface;
 using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Common.Math;
@@ -987,8 +988,8 @@ namespace Altoholic
                 ImGui.TableSetColumnIndex(0);
                 DrawItemIcon(textureProvider, dataManager, pluginLog, currentLocale, new Vector2(40, 40), item.HQ, item.ItemId);
                 ImGui.TableSetColumnIndex(1);
-                ImGui.TextUnformatted($"{dbItem.Name} {(item.HQ ? (char)SpecialIcon.HQ : "")}");
-                ImGui.TextUnformatted($"{(char)SpecialIcon.GLAMOUR} {GetItemNameFromId(dataManager, pluginLog, currentLocale, item.GlamourID)}");
+                ImGui.TextUnformatted($"{dbItem.Name} {(item.HQ ? (char)SeIconChar.HighQuality : "")}");
+                ImGui.TextUnformatted($"{(char)SeIconChar.Glamoured} {GetItemNameFromId(dataManager, pluginLog, currentLocale, item.GlamourID)}");
                 ImGui.TableNextRow(); 
                 ImGui.TableSetColumnIndex(0);
                 ImGui.TextUnformatted($"{GetSlotName(dataManager, pluginLog, currentLocale, item.Slot)}");

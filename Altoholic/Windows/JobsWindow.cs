@@ -1,5 +1,6 @@
 using Altoholic.Models;
 using Dalamud;
+using Dalamud.Game.Text;
 using Dalamud.Interface.Windowing;
 using Dalamud.Plugin.Services;
 using ImGuiNET;
@@ -76,7 +77,7 @@ public class JobsWindow : Window, IDisposable
 
                         foreach (Character currChar in chars)
                         {
-                            if (ImGui.Selectable($"{currChar.FirstName} {currChar.LastName}{(char)SpecialIcon.E05D}{currChar.HomeWorld}"))
+                            if (ImGui.Selectable($"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}"))
                             {
                                 current_character = currChar;
                             }
@@ -445,7 +446,7 @@ public class JobsWindow : Window, IDisposable
                 ImGui.TextUnformatted($"{currChar.FirstName[0]}.{currChar.LastName[0]}");
                 if (ImGui.IsItemHovered())
                     ImGui.SetTooltip(
-                        $"{currChar.FirstName} {currChar.LastName}{(char)SpecialIcon.E05D}{currChar.HomeWorld}"
+                        $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}"
                     );
                 if (currChar.Jobs is null) continue;
                 ImGui.TableSetColumnIndex(1);

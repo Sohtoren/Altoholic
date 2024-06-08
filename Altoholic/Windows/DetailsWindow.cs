@@ -4,6 +4,7 @@ using System.Linq;
 using System.Numerics;
 using Altoholic.Models;
 using Dalamud;
+using Dalamud.Game.Text;
 using Dalamud.Interface.Windowing;
 using Dalamud.Plugin.Services;
 using ImGuiNET;
@@ -83,7 +84,7 @@ public class DetailsWindow : Window, IDisposable
                     ImGui.SetScrollY(0);
                     foreach (Character currChar in chars)
                     {
-                        if (ImGui.Selectable($"{currChar.FirstName} {currChar.LastName}{(char)SpecialIcon.E05D}{currChar.HomeWorld}"))
+                        if (ImGui.Selectable($"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}"))
                         {
                             current_character = currChar;
                         }

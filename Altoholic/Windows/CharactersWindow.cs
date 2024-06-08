@@ -1,5 +1,6 @@
 using Altoholic.Models;
 using Dalamud;
+using Dalamud.Game.Text;
 using Dalamud.Interface.Windowing;
 using Dalamud.Plugin.Services;
 using ImGuiNET;
@@ -145,7 +146,7 @@ public class CharactersWindow : Window, IDisposable
     {
         ImGui.TableNextRow();
         ImGui.TableNextColumn();
-        ImGui.TextUnformatted($"{((character.IsSprout == true)? (char)SpecialIcon.GARDEN : "")}{character.FirstName}");
+        ImGui.TextUnformatted($"{((character.IsSprout == true)? (char)SeIconChar.BotanistSprout : "")}{character.FirstName}");
         ImGui.TableNextColumn();
         ImGui.TextUnformatted($"{character.LastName}");
         ImGui.TableNextColumn();

@@ -23,6 +23,7 @@ using static FFXIVClientStructs.FFXIV.Client.UI.RaptureAtkModule;
 using ImGuiNET;
 using Dalamud.Interface.Internal.Notifications;
 using Dalamud.Interface.ImGuiNotification;
+using Dalamud.Game.Text;
 
 namespace Altoholic
 {
@@ -877,7 +878,7 @@ namespace Altoholic
             if (player.Item1.Length == 0)
                 return result;
 
-            pluginLog.Debug($"Extracted Player Name: {player.Item1}{(char)SpecialIcon.E05D}{player.Item2}");
+            pluginLog.Debug($"Extracted Player Name: {player.Item1}{(char)SeIconChar.CrossWorld}{player.Item2}");
 
             var totalPlaytime = (uint)Marshal.ReadInt32((nint)param2 + 0x10);
             pluginLog.Debug($"Value from address {totalPlaytime}");
@@ -915,7 +916,7 @@ namespace Altoholic
         {
             if (localPlayer == null || localPlayer.FirstName.Length == 0) return;
 
-            pluginLog.Debug($"Updating characters with {localPlayer.Id} {localPlayer.FirstName} {localPlayer.LastName}{(char)SpecialIcon.E05D}{localPlayer.HomeWorld}, {Utils.GetRegionFromWorld(localPlayer.HomeWorld)}.");
+            pluginLog.Debug($"Updating characters with {localPlayer.Id} {localPlayer.FirstName} {localPlayer.LastName}{(char)SeIconChar.CrossWorld}{localPlayer.HomeWorld}, {Utils.GetRegionFromWorld(localPlayer.HomeWorld)}.");
             Database.Database.UpdateCharacter(db, pluginLog, localPlayer);
         }
 
@@ -926,7 +927,7 @@ namespace Altoholic
             var player = GetLocalPlayerNameWorldRegion();
             if (string.IsNullOrEmpty(player.Item1) || string.IsNullOrEmpty(player.Item2) || string.IsNullOrEmpty(player.Item3)) return null;
 
-            //pluginLog.Debug($"Altoholic : Character names => 0: {player.Item1}{(char)SpecialIcon.E05D}{player.Item2});
+            //pluginLog.Debug($"Altoholic : Character names => 0: {player.Item1}{(char)SeIconChar.CrossWorld}{player.Item2});
             var names = player.Item1.Split(' '); // Todo: recheck when Dalamud API7 is out https://discord.com/channels/581875019861328007/653504487352303619/1061422333748850708
             if (names.Length == 2)
             {
