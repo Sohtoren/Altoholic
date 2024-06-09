@@ -20,10 +20,10 @@ using FFXIVClientStructs.FFXIV.Client.System.String;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using FFXIVClientStructs.FFXIV.Client.System.Framework;
 using static FFXIVClientStructs.FFXIV.Client.UI.RaptureAtkModule;
-using ImGuiNET;
 using Dalamud.Interface.Internal.Notifications;
 using Dalamud.Interface.ImGuiNotification;
 using Dalamud.Game.Text;
+using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 
 namespace Altoholic
 {
@@ -244,10 +244,13 @@ namespace Altoholic
 
                     pluginLog.Debug($"Character localLastPlayTimeUpdate : {localPlayer.LastPlayTimeUpdate}");
                     pluginLog.Debug($"Inventory : {localPlayer.Inventory.Count}");
+                    #if DEBUG
+
                     foreach (var inventory in localPlayer.Inventory)
                     {
                         //pluginLog.Debug($"{inventory.ItemId} {lumina.Singular} {inventory.HQ} {inventory.Quantity}");
                     }
+                    #endif
                 }
             }
             if (localPlayer is not null)
@@ -274,7 +277,7 @@ namespace Altoholic
                 {
                     pluginLog.Debug($"Gear: {i.ItemId} {Enum.GetName(typeof(GearSlot), i.Slot)} {i.Slot}");
                 }
-
+                #if DEBUG
                 /*pluginLog.Debug($"Title {localPlayer.Profile.Title}");
                 pluginLog.Debug($"Title Length {localPlayer.Profile.Title.Length}");
                 pluginLog.Debug($"Grand Company {localPlayer.Profile.Grand_Company}");
@@ -286,7 +289,7 @@ namespace Altoholic
                 pluginLog.Debug($"Nameday_Day {localPlayer.Profile.Nameday_Day}");
                 pluginLog.Debug($"Nameday_Month {localPlayer.Profile.Nameday_Month}");
                 pluginLog.Debug($"Guardian {Utils.GetGuardian(dataManager, pluginLog, currentLocale, localPlayer.Profile.Guardian)}");*/
-
+                #endif 
                 PlayerCharacter? lPlayer = clientState.LocalPlayer;
                 if (lPlayer != null)
                 {
@@ -306,6 +309,7 @@ namespace Altoholic
                 {
                     localPlayer.LastOnline = 0;
                 }
+                #if DEBUG
                 /*pluginLog.Debug($"Gladiator : {localPlayer.Jobs.Gladiator.Level}");
                 pluginLog.Debug($"Pugilist : {localPlayer.Jobs.Pugilist.Level}");
                 pluginLog.Debug($"Marauder : {localPlayer.Jobs.Marauder.Level}");
@@ -346,6 +350,7 @@ namespace Altoholic
                 pluginLog.Debug($"Dancer : {localPlayer.Jobs.Dancer.Level}");
                 pluginLog.Debug($"Reaper : {localPlayer.Jobs.Reaper.Level}");
                 pluginLog.Debug($"Sage : {localPlayer.Jobs.Sage.Level}");*/
+                #endif
             }
             MainWindow.IsOpen = true;
         }
@@ -419,20 +424,28 @@ namespace Altoholic
                 //pluginLog.Debug($"localPlayerCurrentRegion : {localPlayerCurrentRegion}");
                 //pluginLog.Debug($"localPlayerFreeCompanyTag : {localPlayerFreeCompanyTag}");
                 //localPlayerFreeCompany = localPlayer..TextValue ?? string.Empty;
-                /*try
+                try
                 {
                     unsafe
                     {
-                        localPlayerFreeCompanyTest = AgentInspect.Instance()->FreeCompany.GuildName;
+                        ref readonly AgentInspect agentInspect = ref *AgentInspect.Instance();
+                        localPlayerFreeCompanyTest = agentInspect.FreeCompany.GuildName;
+                        /*pluginLog.Debug($"localPlayerFreeCompanyTest???");
+                        if(localPlayerFreeCompanyTest != null)
+                        {
+                            pluginLog.Debug($"localPlayerFreeCompanyTest : {localPlayerFreeCompanyTest}");
+                        }*/
+                        //localPlayerFreeCompanyTest = FFXIVClientStructs.FFXIV.Client.UI.Agent.AgentInspect.Instance()->FreeCompany.GuildName;
                         //pluginLog.Debug($"localPlayerFreeCompanyTest : {localPlayerFreeCompanyTest}");
                         //pluginLog.Debug(System.Text.Encoding.UTF8.GetString(AgentInspect.Instance()->FreeCompany.GuildName));
-                        //pluginLog.Debug($"localPlayerFreeCompany : {localPlayerFreeCompany}");
+                        //pluginLog.Debug(System.Text.Encoding.UTF8.GetString(localPlayerFreeCompanyTest)); ;
+                        //pluginLog.Debug($"localPlayerFreeCompany : {localPlayerFreeCompanyTest}");
                     }
                 }
                 catch (Exception e)
                 {
                     pluginLog.Error(e, "Could not get free company name");
-                }*/
+                }
                 localPlayer.Attributes = new()
                 {
                     Hp = lPlayer.MaxHp,
@@ -451,6 +464,7 @@ namespace Altoholic
             unsafe
             {
                 var title = string.Empty;
+                var prefixTitle = false;
                 var raptureAtkModule = Framework.Instance()->GetUiModule()->GetRaptureAtkModule();
                 if (raptureAtkModule != null)
                 {
@@ -464,9 +478,11 @@ namespace Altoholic
                             if (namePlateInfo.ObjectID.ObjectID == clientState.LocalPlayer.ObjectId)
                             {
                                 var t = namePlateInfo.Title.ToString();//this sometime get player name??? to recheck
+                                //pluginLog.Debug($"t: {t}");
                                 if (t != $"{localPlayer.FirstName} {localPlayer.LastName}")
                                 {
                                     title = t;
+                                    prefixTitle = namePlateInfo.IsPrefixTitle;
                                 }
                             }
                         }
@@ -478,6 +494,7 @@ namespace Altoholic
                 localPlayer.Profile = new()
                 {
                     Title = title,
+                    TitleIsPrefix = prefixTitle,
                     Grand_Company = player.GrandCompany,
                     Grand_Company_Rank = player.GetGrandCompanyRank(),
                     Race = player.Race,

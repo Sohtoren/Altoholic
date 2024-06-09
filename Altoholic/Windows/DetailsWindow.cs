@@ -206,14 +206,30 @@ public class DetailsWindow : Window, IDisposable
     {
         if (current_character.Profile is null) return;
         ImGui.TextUnformatted($"{Utils.GetAddonString(dataManager, pluginLog, currentLocale, 790)}");//Title
-        ImGui.Separator();        
-        if (!string.IsNullOrEmpty(current_character.Profile.Title))
+        ImGui.Separator();
+        pluginLog.Debug($"Title: {current_character.Profile.Title}, isprefix: {current_character.Profile.TitleIsPrefix}");
+        if (!string.IsNullOrEmpty(current_character.Profile.Title) && current_character.Profile.TitleIsPrefix)
         {
             ImGui.TextUnformatted($"{current_character.Profile.Title}");
+            if (!string.IsNullOrEmpty(current_character.FirstName) && !string.IsNullOrEmpty(current_character.LastName))
+            {
+                ImGui.TextUnformatted($"            {current_character.FirstName} {current_character.LastName}");
+            }
         }
-        if (!string.IsNullOrEmpty(current_character.FirstName) && !string.IsNullOrEmpty(current_character.LastName))
+        else if (!string.IsNullOrEmpty(current_character.Profile.Title) && !current_character.Profile.TitleIsPrefix)
         {
-            ImGui.TextUnformatted($"{current_character.FirstName} {current_character.LastName}");
+            if (!string.IsNullOrEmpty(current_character.FirstName) && !string.IsNullOrEmpty(current_character.LastName))
+            {
+                ImGui.TextUnformatted($"{current_character.FirstName} {current_character.LastName}");
+                ImGui.TextUnformatted($"            {current_character.Profile.Title}");
+            }
+        }
+        else
+        {
+            if (!string.IsNullOrEmpty(current_character.FirstName) && !string.IsNullOrEmpty(current_character.LastName))
+            {
+                ImGui.TextUnformatted($"{current_character.FirstName} {current_character.LastName}");
+            }
         }
 
         if (current_character.Profile.Grand_Company is not 0)

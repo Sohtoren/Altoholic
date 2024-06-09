@@ -9,6 +9,7 @@ namespace Altoholic.Models
     public class Profile
     {
         public string Title { get; set; } = string.Empty;
+        public bool TitleIsPrefix { get; set; } = false;
         public int Grand_Company { get; set; } = 0;
         public int Grand_Company_Rank { get; set; } = 0;
         public byte Race { get; set; }
