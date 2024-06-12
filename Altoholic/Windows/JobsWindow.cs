@@ -13,19 +13,11 @@ namespace Altoholic.Windows;
 public class JobsWindow : Window, IDisposable
 {
     private Plugin plugin;
-
-    private readonly IPluginLog pluginLog;
-    private readonly IDataManager dataManager;
-    private readonly ITextureProvider textureProvider;
-    private readonly ClientLanguage currentLocale;
+    private ClientLanguage currentLocale;
 
     public JobsWindow(
         Plugin plugin,
-        string name,
-        IPluginLog pluginLog,
-        IDataManager dataManager,
-        ITextureProvider textureProvider,
-        ClientLanguage currentLocale
+        string name
         ) 
         : base(
         name, ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse)
@@ -36,10 +28,6 @@ public class JobsWindow : Window, IDisposable
             MaximumSize = new Vector2(float.MaxValue, float.MaxValue)
         };
         this.plugin = plugin;
-        this.pluginLog = pluginLog;
-        this.dataManager = dataManager;
-        this.textureProvider = textureProvider;
-        this.currentLocale = currentLocale;
     }
 
     public Func<Character> GetPlayer { get; init; } = null!;
@@ -53,6 +41,7 @@ public class JobsWindow : Window, IDisposable
 
     public override void Draw()
     {
+        currentLocale = plugin.Configuration.Language;
         var chars = new List<Character>();
         chars.Insert(0, GetPlayer.Invoke());
         chars.AddRange(GetOthersCharactersList.Invoke());
@@ -70,7 +59,7 @@ public class JobsWindow : Window, IDisposable
                     ImGui.SetScrollY(0);
                     if (chars.Count > 0)
                     {
-                        if (ImGui.Selectable("All"))
+                        if (ImGui.Selectable($"{Utils.GetAddonString(970)}###CharactersJobsTable#CharactersListBox#All"))
                         {
                             current_character = null;
                         }
@@ -101,7 +90,7 @@ public class JobsWindow : Window, IDisposable
         }
         catch (Exception e)
         {
-            pluginLog.Debug("Altoholic : Exception : {0}", e);
+            Plugin.Log.Debug("Altoholic : Exception : {0}", e);
         }
     }
 
@@ -154,331 +143,331 @@ public class JobsWindow : Window, IDisposable
 
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
-            ImGui.TextUnformatted(Utils.GetAddonString(dataManager, pluginLog, currentLocale, 1898));
+            ImGui.TextUnformatted(Utils.GetAddonString(1898));
             if (ImGui.IsItemHovered())
             {
                 ImGui.BeginTooltip();
-                ImGui.TextUnformatted(Utils.GetAddonString(dataManager, pluginLog, currentLocale, 14055));
+                ImGui.TextUnformatted(Utils.GetAddonString(14055));
                 ImGui.EndTooltip();
             }
             ImGui.TableSetColumnIndex(1);
-            ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.GLA, true));
+            ImGui.TextUnformatted(Utils.GetJobNameFromId((uint)ClassJob.GLA, true));
             if (ImGui.IsItemHovered())
             {
                 ImGui.BeginTooltip();
-                ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.GLA));
+                ImGui.TextUnformatted(Utils.GetJobNameFromId((uint)ClassJob.GLA));
                 ImGui.EndTooltip();
             }
             ImGui.TableSetColumnIndex(2);
-            ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.PLD, true));
+            ImGui.TextUnformatted(Utils.GetJobNameFromId((uint)ClassJob.PLD, true));
             if (ImGui.IsItemHovered())
             {
                 ImGui.BeginTooltip();
-                ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.PLD));
+                ImGui.TextUnformatted(Utils.GetJobNameFromId((uint)ClassJob.PLD));
                 ImGui.EndTooltip();
             }
             ImGui.TableSetColumnIndex(3);
-            ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.MRD, true));
+            ImGui.TextUnformatted(Utils.GetJobNameFromId((uint)ClassJob.MRD, true));
             if (ImGui.IsItemHovered())
             {
                 ImGui.BeginTooltip();
-                ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.MRD));
+                ImGui.TextUnformatted(Utils.GetJobNameFromId((uint)ClassJob.MRD));
                 ImGui.EndTooltip();
             }
             ImGui.TableSetColumnIndex(4);
-            ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.WAR, true));
+            ImGui.TextUnformatted(Utils.GetJobNameFromId((uint)ClassJob.WAR, true));
             if (ImGui.IsItemHovered())
             {
                 ImGui.BeginTooltip();
-                ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.WAR));
+                ImGui.TextUnformatted(Utils.GetJobNameFromId((uint)ClassJob.WAR));
                 ImGui.EndTooltip();
             }
             ImGui.TableSetColumnIndex(5);
-            ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.DRK, true));
+            ImGui.TextUnformatted(Utils.GetJobNameFromId((uint)ClassJob.DRK, true));
             if (ImGui.IsItemHovered())
             {
                 ImGui.BeginTooltip();
-                ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.DRK));
+                ImGui.TextUnformatted(Utils.GetJobNameFromId((uint)ClassJob.DRK));
                 ImGui.EndTooltip();
             }
             ImGui.TableSetColumnIndex(6);
-            ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.GNB, true));
+            ImGui.TextUnformatted(Utils.GetJobNameFromId((uint)ClassJob.GNB, true));
             if (ImGui.IsItemHovered())
             {
                 ImGui.BeginTooltip();
-                ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.GNB));
+                ImGui.TextUnformatted(Utils.GetJobNameFromId((uint)ClassJob.GNB));
                 ImGui.EndTooltip();
             }
             ImGui.TableSetColumnIndex(7);
-            ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.CNJ, true));
+            ImGui.TextUnformatted(Utils.GetJobNameFromId((uint)ClassJob.CNJ, true));
             if (ImGui.IsItemHovered())
             {
                 ImGui.BeginTooltip();
-                ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.CNJ));
+                ImGui.TextUnformatted(Utils.GetJobNameFromId((uint)ClassJob.CNJ));
                 ImGui.EndTooltip();
             }
             ImGui.TableSetColumnIndex(8);
-            ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.WHM, true));
+            ImGui.TextUnformatted(Utils.GetJobNameFromId((uint)ClassJob.WHM, true));
             if (ImGui.IsItemHovered())
             {
                 ImGui.BeginTooltip();
-                ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.WHM));
+                ImGui.TextUnformatted(Utils.GetJobNameFromId((uint)ClassJob.WHM));
                 ImGui.EndTooltip();
             }
             ImGui.TableSetColumnIndex(9);
-            ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.SCH, true));
+            ImGui.TextUnformatted(Utils.GetJobNameFromId((uint)ClassJob.SCH, true));
             if (ImGui.IsItemHovered())
             {
                 ImGui.BeginTooltip();
-                ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.SCH));
+                ImGui.TextUnformatted(Utils.GetJobNameFromId((uint)ClassJob.SCH));
                 ImGui.EndTooltip();
             }
             ImGui.TableSetColumnIndex(10);
-            ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.AST, true));
+            ImGui.TextUnformatted(Utils.GetJobNameFromId((uint)ClassJob.AST, true));
             if (ImGui.IsItemHovered())
             {
                 ImGui.BeginTooltip();
-                ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.AST));
+                ImGui.TextUnformatted(Utils.GetJobNameFromId((uint)ClassJob.AST));
                 ImGui.EndTooltip();
             }
             ImGui.TableSetColumnIndex(11);
-            ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.SGE, true));
+            ImGui.TextUnformatted(Utils.GetJobNameFromId((uint)ClassJob.SGE, true));
             if (ImGui.IsItemHovered())
             {
                 ImGui.BeginTooltip();
-                ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.SGE));
+                ImGui.TextUnformatted(Utils.GetJobNameFromId((uint)ClassJob.SGE));
                 ImGui.EndTooltip();
             }
             ImGui.TableSetColumnIndex(12);
-            ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.PGL, true));
+            ImGui.TextUnformatted(Utils.GetJobNameFromId((uint)ClassJob.PGL, true));
             if (ImGui.IsItemHovered())
             {
                 ImGui.BeginTooltip();
-                ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.PGL));
+                ImGui.TextUnformatted(Utils.GetJobNameFromId((uint)ClassJob.PGL));
                 ImGui.EndTooltip();
             }
             ImGui.TableSetColumnIndex(13);
-            ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.MNK, true));
+            ImGui.TextUnformatted(Utils.GetJobNameFromId((uint)ClassJob.MNK, true));
             if (ImGui.IsItemHovered())
             {
                 ImGui.BeginTooltip();
-                ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.MNK));
+                ImGui.TextUnformatted(Utils.GetJobNameFromId((uint)ClassJob.MNK));
                 ImGui.EndTooltip();
             }
             ImGui.TableSetColumnIndex(14);
-            ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.LNC, true));
+            ImGui.TextUnformatted(Utils.GetJobNameFromId((uint)ClassJob.LNC, true));
             if (ImGui.IsItemHovered())
             {
                 ImGui.BeginTooltip();
-                ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.LNC));
+                ImGui.TextUnformatted(Utils.GetJobNameFromId((uint)ClassJob.LNC));
                 ImGui.EndTooltip();
             }
             ImGui.TableSetColumnIndex(15);
-            ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.DRG, true));
+            ImGui.TextUnformatted(Utils.GetJobNameFromId((uint)ClassJob.DRG, true));
             if (ImGui.IsItemHovered())
             {
                 ImGui.BeginTooltip();
-                ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.DRG));
+                ImGui.TextUnformatted(Utils.GetJobNameFromId((uint)ClassJob.DRG));
                 ImGui.EndTooltip();
             }
             ImGui.TableSetColumnIndex(16);
-            ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.ROG, true));
+            ImGui.TextUnformatted(Utils.GetJobNameFromId((uint)ClassJob.ROG, true));
             if (ImGui.IsItemHovered())
             {
                 ImGui.BeginTooltip();
-                ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.ROG));
+                ImGui.TextUnformatted(Utils.GetJobNameFromId((uint)ClassJob.ROG));
                 ImGui.EndTooltip();
             }
             ImGui.TableSetColumnIndex(17);
-            ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.NIN, true));
+            ImGui.TextUnformatted(Utils.GetJobNameFromId((uint)ClassJob.NIN, true));
             if (ImGui.IsItemHovered())
             {
                 ImGui.BeginTooltip();
-                ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.NIN));
+                ImGui.TextUnformatted(Utils.GetJobNameFromId((uint)ClassJob.NIN));
                 ImGui.EndTooltip();
             }
             ImGui.TableSetColumnIndex(18);
-            ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.SAM, true));
+            ImGui.TextUnformatted(Utils.GetJobNameFromId((uint)ClassJob.SAM, true));
             if (ImGui.IsItemHovered())
             {
                 ImGui.BeginTooltip();
-                ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.SAM));
+                ImGui.TextUnformatted(Utils.GetJobNameFromId((uint)ClassJob.SAM));
                 ImGui.EndTooltip();
             }
             ImGui.TableSetColumnIndex(19);
-            ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.RPR, true));
+            ImGui.TextUnformatted(Utils.GetJobNameFromId((uint)ClassJob.RPR, true));
             if (ImGui.IsItemHovered())
             {
                 ImGui.BeginTooltip();
-                ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.RPR));
+                ImGui.TextUnformatted(Utils.GetJobNameFromId((uint)ClassJob.RPR));
                 ImGui.EndTooltip();
             }
             ImGui.TableSetColumnIndex(20);
-            ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.ARC, true));
+            ImGui.TextUnformatted(Utils.GetJobNameFromId((uint)ClassJob.ARC, true));
             if (ImGui.IsItemHovered())
             {
                 ImGui.BeginTooltip();
-                ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.ARC));
+                ImGui.TextUnformatted(Utils.GetJobNameFromId((uint)ClassJob.ARC));
                 ImGui.EndTooltip();
             }
             ImGui.TableSetColumnIndex(21);
-            ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.BRD, true));
+            ImGui.TextUnformatted(Utils.GetJobNameFromId((uint)ClassJob.BRD, true));
             if (ImGui.IsItemHovered())
             {
                 ImGui.BeginTooltip();
-                ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.BRD));
+                ImGui.TextUnformatted(Utils.GetJobNameFromId((uint)ClassJob.BRD));
                 ImGui.EndTooltip();
             }
             ImGui.TableSetColumnIndex(22);
-            ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.MCH, true));
+            ImGui.TextUnformatted(Utils.GetJobNameFromId((uint)ClassJob.MCH, true));
             if (ImGui.IsItemHovered())
             {
                 ImGui.BeginTooltip();
-                ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.MCH));
+                ImGui.TextUnformatted(Utils.GetJobNameFromId((uint)ClassJob.MCH));
                 ImGui.EndTooltip();
             }
             ImGui.TableSetColumnIndex(23);
-            ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.DNC, true));
+            ImGui.TextUnformatted(Utils.GetJobNameFromId((uint)ClassJob.DNC, true));
             if (ImGui.IsItemHovered())
             {
                 ImGui.BeginTooltip();
-                ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.DNC));
+                ImGui.TextUnformatted(Utils.GetJobNameFromId((uint)ClassJob.DNC));
                 ImGui.EndTooltip();
             }
             ImGui.TableSetColumnIndex(24);
-            ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.THM, true));
+            ImGui.TextUnformatted(Utils.GetJobNameFromId((uint)ClassJob.THM, true));
             if (ImGui.IsItemHovered())
             {
                 ImGui.BeginTooltip();
-                ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.THM));
+                ImGui.TextUnformatted(Utils.GetJobNameFromId((uint)ClassJob.THM));
                 ImGui.EndTooltip();
             }
             ImGui.TableSetColumnIndex(25);
-            ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.BLM, true));
+            ImGui.TextUnformatted(Utils.GetJobNameFromId((uint)ClassJob.BLM, true));
             if (ImGui.IsItemHovered())
             {
                 ImGui.BeginTooltip();
-                ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.BLM));
+                ImGui.TextUnformatted(Utils.GetJobNameFromId((uint)ClassJob.BLM));
                 ImGui.EndTooltip();
             }
             ImGui.TableSetColumnIndex(26);
-            ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.ACN, true));
+            ImGui.TextUnformatted(Utils.GetJobNameFromId((uint)ClassJob.ACN, true));
             if (ImGui.IsItemHovered())
             {
                 ImGui.BeginTooltip();
-                ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.ACN));
+                ImGui.TextUnformatted(Utils.GetJobNameFromId((uint)ClassJob.ACN));
                 ImGui.EndTooltip();
             }
             ImGui.TableSetColumnIndex(27);
-            ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.SMN, true));
+            ImGui.TextUnformatted(Utils.GetJobNameFromId((uint)ClassJob.SMN, true));
             if (ImGui.IsItemHovered())
             {
                 ImGui.BeginTooltip();
-                ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.SMN));
+                ImGui.TextUnformatted(Utils.GetJobNameFromId((uint)ClassJob.SMN));
                 ImGui.EndTooltip();
             }
             ImGui.TableSetColumnIndex(28);
-            ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.RDM, true));
+            ImGui.TextUnformatted(Utils.GetJobNameFromId((uint)ClassJob.RDM, true));
             if (ImGui.IsItemHovered())
             {
                 ImGui.BeginTooltip();
-                ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.RDM));
+                ImGui.TextUnformatted(Utils.GetJobNameFromId((uint)ClassJob.RDM));
                 ImGui.EndTooltip();
             }
             ImGui.TableSetColumnIndex(29);
-            ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.BLU));
+            ImGui.TextUnformatted(Utils.GetJobNameFromId((uint)ClassJob.BLU));
             if (ImGui.IsItemHovered())
             {
                 ImGui.BeginTooltip();
-                ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.BLU));
+                ImGui.TextUnformatted(Utils.GetJobNameFromId((uint)ClassJob.BLU));
                 ImGui.EndTooltip();
             }
             ImGui.TableSetColumnIndex(30);
-            ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.CRP, true));
+            ImGui.TextUnformatted(Utils.GetJobNameFromId((uint)ClassJob.CRP, true));
             if (ImGui.IsItemHovered())
             {
                 ImGui.BeginTooltip();
-                ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.CRP));
+                ImGui.TextUnformatted(Utils.GetJobNameFromId((uint)ClassJob.CRP));
                 ImGui.EndTooltip();
             }
             ImGui.TableSetColumnIndex(31);
-            ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.BSM, true));
+            ImGui.TextUnformatted(Utils.GetJobNameFromId((uint)ClassJob.BSM, true));
             if (ImGui.IsItemHovered())
             {
                 ImGui.BeginTooltip();
-                ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.BSM));
+                ImGui.TextUnformatted(Utils.GetJobNameFromId((uint)ClassJob.BSM));
                 ImGui.EndTooltip();
             }
             ImGui.TableSetColumnIndex(32);
-            ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.ARM, true));
+            ImGui.TextUnformatted(Utils.GetJobNameFromId((uint)ClassJob.ARM, true));
             if (ImGui.IsItemHovered())
             {
                 ImGui.BeginTooltip();
-                ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.ARM));
+                ImGui.TextUnformatted(Utils.GetJobNameFromId((uint)ClassJob.ARM));
                 ImGui.EndTooltip();
             }
             ImGui.TableSetColumnIndex(33);
-            ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.GSM, true));
+            ImGui.TextUnformatted(Utils.GetJobNameFromId((uint)ClassJob.GSM, true));
             if (ImGui.IsItemHovered())
             {
                 ImGui.BeginTooltip();
-                ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.MRD));
+                ImGui.TextUnformatted(Utils.GetJobNameFromId((uint)ClassJob.MRD));
                 ImGui.EndTooltip();
             }
             ImGui.TableSetColumnIndex(34);
-            ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.LTW, true));
+            ImGui.TextUnformatted(Utils.GetJobNameFromId((uint)ClassJob.LTW, true));
             if (ImGui.IsItemHovered())
             {
                 ImGui.BeginTooltip();
-                ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.LTW));
+                ImGui.TextUnformatted(Utils.GetJobNameFromId((uint)ClassJob.LTW));
                 ImGui.EndTooltip();
             }
             ImGui.TableSetColumnIndex(35);
-            ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.WVR, true));
+            ImGui.TextUnformatted(Utils.GetJobNameFromId((uint)ClassJob.WVR, true));
             if (ImGui.IsItemHovered())
             {
                 ImGui.BeginTooltip();
-                ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.WVR));
+                ImGui.TextUnformatted(Utils.GetJobNameFromId((uint)ClassJob.WVR));
                 ImGui.EndTooltip();
             }
             ImGui.TableSetColumnIndex(36);
-            ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.ALC, true));
+            ImGui.TextUnformatted(Utils.GetJobNameFromId((uint)ClassJob.ALC, true));
             if (ImGui.IsItemHovered())
             {
                 ImGui.BeginTooltip();
-                ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.ALC));
+                ImGui.TextUnformatted(Utils.GetJobNameFromId((uint)ClassJob.ALC));
                 ImGui.EndTooltip();
             }
             ImGui.TableSetColumnIndex(37);
-            ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.CUL, true));
+            ImGui.TextUnformatted(Utils.GetJobNameFromId((uint)ClassJob.CUL, true));
             if (ImGui.IsItemHovered())
             {
                 ImGui.BeginTooltip();
-                ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.CUL));
+                ImGui.TextUnformatted(Utils.GetJobNameFromId((uint)ClassJob.CUL));
                 ImGui.EndTooltip();
             }
             ImGui.TableSetColumnIndex(38);
-            ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.MIN, true));
+            ImGui.TextUnformatted(Utils.GetJobNameFromId((uint)ClassJob.MIN, true));
             if (ImGui.IsItemHovered())
             {
                 ImGui.BeginTooltip();
-                ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.MIN));
+                ImGui.TextUnformatted(Utils.GetJobNameFromId((uint)ClassJob.MIN));
                 ImGui.EndTooltip();
             }
             ImGui.TableSetColumnIndex(39);
-            ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.BTN, true));
+            ImGui.TextUnformatted(Utils.GetJobNameFromId((uint)ClassJob.BTN, true));
             if (ImGui.IsItemHovered())
             {
                 ImGui.BeginTooltip();
-                ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.BTN));
+                ImGui.TextUnformatted(Utils.GetJobNameFromId((uint)ClassJob.BTN));
                 ImGui.EndTooltip();
             }
             ImGui.TableSetColumnIndex(40);
-            ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.FSH, true));
+            ImGui.TextUnformatted(Utils.GetJobNameFromId((uint)ClassJob.FSH, true));
             if (ImGui.IsItemHovered())
             {
                 ImGui.BeginTooltip();
-                ImGui.TextUnformatted(Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)ClassJob.FSH));
+                ImGui.TextUnformatted(Utils.GetJobNameFromId((uint)ClassJob.FSH));
                 ImGui.EndTooltip();
             }
             foreach (Character currChar in chars)
@@ -582,12 +571,12 @@ public class JobsWindow : Window, IDisposable
     {
         if (ImGui.BeginTabBar($"####CharactersJobs#JobsTable#{current_character.Id}"))
         {
-            if (ImGui.BeginTabItem($"{Utils.GetAddonString(dataManager, pluginLog, currentLocale, 1080)}###{current_character.Id}"))// Dow/DoM
+            if (ImGui.BeginTabItem($"{Utils.GetAddonString(1080)}###{current_character.Id}"))// Dow/DoM
             {
                 DrawDoWDoMJobs(current_character);
                 ImGui.EndTabItem();
             }
-            if (ImGui.BeginTabItem($"{Utils.GetAddonString(dataManager, pluginLog, currentLocale, 1081)}###{current_character.Id}"))// DoHDoL
+            if (ImGui.BeginTabItem($"{Utils.GetAddonString(1081)}###{current_character.Id}"))// DoHDoL
             {
                 DrawDoHDoLJobs(current_character);
                 ImGui.EndTabItem();
@@ -611,9 +600,9 @@ public class JobsWindow : Window, IDisposable
                 ImGui.TableSetupColumn($"###CharactersJobs#DoW#RoleTank#Name", ImGuiTableColumnFlags.WidthStretch);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                Utils.DrawIcon(textureProvider, pluginLog, new Vector2(20, 20), false, Utils.GetRoleIcon(0));
+                Utils.DrawIcon(new Vector2(20, 20), false, Utils.GetRoleIcon(0));
                 ImGui.TableSetColumnIndex(1);
-                ImGui.TextUnformatted($"{Utils.GetAddonString(dataManager, pluginLog, currentLocale, 1082)}"); // Tank
+                ImGui.TextUnformatted($"{Utils.GetAddonString(1082)}"); // Tank
 
                 ImGui.EndTable();
             }
@@ -626,9 +615,9 @@ public class JobsWindow : Window, IDisposable
                 ImGui.TableSetupColumn($"###CharactersJobs#DoM#RoleHealer#Name", ImGuiTableColumnFlags.WidthStretch);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                Utils.DrawIcon(textureProvider, pluginLog, new Vector2(20, 20), false, Utils.GetRoleIcon(1));
+                Utils.DrawIcon(new Vector2(20, 20), false, Utils.GetRoleIcon(1));
                 ImGui.TableSetColumnIndex(1);
-                ImGui.TextUnformatted($"{Utils.GetAddonString(dataManager, pluginLog, currentLocale, 1083)}");
+                ImGui.TextUnformatted($"{Utils.GetAddonString(1083)}");
 
                 ImGui.EndTable();
             }
@@ -666,9 +655,9 @@ public class JobsWindow : Window, IDisposable
                 ImGui.TableSetupColumn("###CharactersJobs#DoW#RoleMelee#Name", ImGuiTableColumnFlags.WidthStretch);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                Utils.DrawIcon(textureProvider, pluginLog, new Vector2(20, 20), false, Utils.GetRoleIcon(2));
+                Utils.DrawIcon(new Vector2(20, 20), false, Utils.GetRoleIcon(2));
                 ImGui.TableSetColumnIndex(1);
-                ImGui.TextUnformatted($"{Utils.GetAddonString(dataManager, pluginLog, currentLocale, 1084)}");
+                ImGui.TextUnformatted($"{Utils.GetAddonString(1084)}");
 
                 ImGui.EndTable();
             }
@@ -681,9 +670,9 @@ public class JobsWindow : Window, IDisposable
                 ImGui.TableSetupColumn("###CharactersJobs#DoW#RolePhysicalRanged#Name", ImGuiTableColumnFlags.WidthStretch);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                Utils.DrawIcon(textureProvider, pluginLog, new Vector2(20, 20), false, Utils.GetRoleIcon(3));
+                Utils.DrawIcon(new Vector2(20, 20), false, Utils.GetRoleIcon(3));
                 ImGui.TableSetColumnIndex(1);
-                ImGui.TextUnformatted($"{Utils.GetAddonString(dataManager, pluginLog, currentLocale, 1085)}");
+                ImGui.TextUnformatted($"{Utils.GetAddonString(1085)}");
 
                 ImGui.EndTable();
             }
@@ -718,9 +707,9 @@ public class JobsWindow : Window, IDisposable
                 ImGui.TableSetupColumn("###CharactersJobs#DoM#RoleMagicalRanged#Name", ImGuiTableColumnFlags.WidthStretch);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                Utils.DrawIcon(textureProvider, pluginLog, new Vector2(20, 20), false, Utils.GetRoleIcon(4));
+                Utils.DrawIcon(new Vector2(20, 20), false, Utils.GetRoleIcon(4));
                 ImGui.TableSetColumnIndex(1);
-                ImGui.TextUnformatted($"{Utils.GetAddonString(dataManager, pluginLog, currentLocale, 1086)}");
+                ImGui.TextUnformatted($"{Utils.GetAddonString(1086)}");
 
                 ImGui.EndTable();
             }
@@ -763,9 +752,9 @@ public class JobsWindow : Window, IDisposable
                 ImGui.TableSetupColumn("###CharactersJobs#DoH#RoleDoH#Name", ImGuiTableColumnFlags.WidthStretch);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                Utils.DrawIcon(textureProvider, pluginLog, new Vector2(20, 20), false, Utils.GetRoleIcon(5));
+                Utils.DrawIcon(new Vector2(20, 20), false, Utils.GetRoleIcon(5));
                 ImGui.TableSetColumnIndex(1);
-                ImGui.TextUnformatted($"{Utils.GetAddonString(dataManager, pluginLog, currentLocale, 802)}");
+                ImGui.TextUnformatted($"{Utils.GetAddonString(802)}");
 
                 ImGui.EndTable();
             }
@@ -778,9 +767,9 @@ public class JobsWindow : Window, IDisposable
                 ImGui.TableSetupColumn("###CharactersJobs#DoL#RoleDoL#Name", ImGuiTableColumnFlags.WidthStretch);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                Utils.DrawIcon(textureProvider, pluginLog, new Vector2(20, 20), false, Utils.GetRoleIcon(6));
+                Utils.DrawIcon(new Vector2(20, 20), false, Utils.GetRoleIcon(6));
                 ImGui.TableSetColumnIndex(1);
-                ImGui.TextUnformatted($"{Utils.GetAddonString(dataManager, pluginLog, currentLocale, 803)}");
+                ImGui.TextUnformatted($"{Utils.GetAddonString(803)}");
 
                 ImGui.EndTable();
             }
@@ -839,12 +828,12 @@ public class JobsWindow : Window, IDisposable
             {
                 if (current_character.Jobs.Paladin.Level >= 30)
                 {
-                    DrawJob(current_character.Jobs.Paladin, ClassJob.PLD, $"{Utils.GetJobNameFromId(dataManager, pluginLog,  currentLocale, (uint)ClassJob.PLD)} / {Utils.GetJobNameFromId(dataManager, pluginLog,  currentLocale, (uint)ClassJob.GLA)}", true);
+                    DrawJob(current_character.Jobs.Paladin, ClassJob.PLD, $"{Utils.GetJobNameFromId((uint)ClassJob.PLD)} / {Utils.GetJobNameFromId((uint)ClassJob.GLA)}", true);
                 }
                 else
                 {
                     bool active = (current_character.Jobs.Gladiator.Level > 0);
-                    DrawJob(current_character.Jobs.Gladiator, ClassJob.GLA, Utils.GetJobNameFromId(dataManager, pluginLog,  currentLocale, (uint)ClassJob.GLA), active);
+                    DrawJob(current_character.Jobs.Gladiator, ClassJob.GLA, Utils.GetJobNameFromId((uint)ClassJob.GLA), active);
                 }
 
                 break;
@@ -854,12 +843,12 @@ public class JobsWindow : Window, IDisposable
             {
                 if (current_character.Jobs.Marauder.Level >= 30)
                 {
-                    DrawJob(current_character.Jobs.Warrior, ClassJob.WAR, $"{Utils.GetJobNameFromId(dataManager, pluginLog,  currentLocale, (uint)ClassJob.WAR)} / {Utils.GetJobNameFromId(dataManager, pluginLog,  currentLocale, (uint)ClassJob.MRD)}", true);
+                    DrawJob(current_character.Jobs.Warrior, ClassJob.WAR, $"{Utils.GetJobNameFromId((uint)ClassJob.WAR)} / {Utils.GetJobNameFromId((uint)ClassJob.MRD)}", true);
                 }
                 else
                 {
                     bool active = (current_character.Jobs.Marauder.Level > 0);
-                    DrawJob(current_character.Jobs.Marauder, ClassJob.MRD, Utils.GetJobNameFromId(dataManager, pluginLog,  currentLocale, (uint)ClassJob.MRD), active);
+                    DrawJob(current_character.Jobs.Marauder, ClassJob.MRD, Utils.GetJobNameFromId((uint)ClassJob.MRD), active);
                 }
 
                 break;
@@ -867,14 +856,14 @@ public class JobsWindow : Window, IDisposable
             case ClassJob.DRK:
             {
                 bool active = (current_character.Jobs.DarkKnight.Level >= 30);
-                DrawJob(current_character.Jobs.DarkKnight, ClassJob.DRK, Utils.GetJobNameFromId(dataManager, pluginLog,  currentLocale, (uint)ClassJob.DRK), active);
+                DrawJob(current_character.Jobs.DarkKnight, ClassJob.DRK, Utils.GetJobNameFromId((uint)ClassJob.DRK), active);
 
                 break;
             }
             case ClassJob.GNB:
             {
                 bool active = (current_character.Jobs.Gunbreaker.Level >= 60);
-                DrawJob(current_character.Jobs.Gunbreaker, ClassJob.GNB, Utils.GetJobNameFromId(dataManager, pluginLog,  currentLocale, (uint)ClassJob.GNB), active);
+                DrawJob(current_character.Jobs.Gunbreaker, ClassJob.GNB, Utils.GetJobNameFromId((uint)ClassJob.GNB), active);
 
                 break;
             }
@@ -883,12 +872,12 @@ public class JobsWindow : Window, IDisposable
             {
                 if (current_character.Jobs.Pugilist.Level >= 30)
                 {
-                    DrawJob(current_character.Jobs.Monk, ClassJob.MNK, $"{Utils.GetJobNameFromId(dataManager, pluginLog,  currentLocale, (uint)ClassJob.MNK)} / {Utils.GetJobNameFromId(dataManager, pluginLog,  currentLocale, (uint)ClassJob.PGL)}", true);
+                    DrawJob(current_character.Jobs.Monk, ClassJob.MNK, $"{Utils.GetJobNameFromId((uint)ClassJob.MNK)} / {Utils.GetJobNameFromId((uint)ClassJob.PGL)}", true);
                 }
                 else
                 {
                     bool active = (current_character.Jobs.Pugilist.Level > 0);
-                    DrawJob(current_character.Jobs.Pugilist, ClassJob.PGL, Utils.GetJobNameFromId(dataManager, pluginLog,  currentLocale, (uint)ClassJob.PGL), active);
+                    DrawJob(current_character.Jobs.Pugilist, ClassJob.PGL, Utils.GetJobNameFromId((uint)ClassJob.PGL), active);
                 }
 
                 break;
@@ -898,12 +887,12 @@ public class JobsWindow : Window, IDisposable
             {
                 if (current_character.Jobs.Lancer.Level >= 30)
                 {
-                    DrawJob(current_character.Jobs.Dragoon, ClassJob.DRG, $"{Utils.GetJobNameFromId(dataManager, pluginLog,  currentLocale, (uint)ClassJob.DRG)} / {Utils.GetJobNameFromId(dataManager, pluginLog,  currentLocale, (uint)ClassJob.LNC)}", true);
+                    DrawJob(current_character.Jobs.Dragoon, ClassJob.DRG, $"{Utils.GetJobNameFromId((uint)ClassJob.DRG)} / {Utils.GetJobNameFromId((uint)ClassJob.LNC)}", true);
                 }
                 else
                 {
                     bool active = (current_character.Jobs.Lancer.Level > 0);
-                    DrawJob(current_character.Jobs.Lancer, ClassJob.LNC, Utils.GetJobNameFromId(dataManager, pluginLog,  currentLocale, (uint)ClassJob.LNC), active);
+                    DrawJob(current_character.Jobs.Lancer, ClassJob.LNC, Utils.GetJobNameFromId((uint)ClassJob.LNC), active);
                 }
 
                 break;
@@ -913,12 +902,12 @@ public class JobsWindow : Window, IDisposable
             {
                 if (current_character.Jobs.Lancer.Level >= 30)
                 {
-                    DrawJob(current_character.Jobs.Ninja, ClassJob.NIN, $"{Utils.GetJobNameFromId(dataManager, pluginLog,  currentLocale, (uint)ClassJob.NIN)} / {Utils.GetJobNameFromId(dataManager, pluginLog,  currentLocale, (uint)ClassJob.ROG)}", true);
+                    DrawJob(current_character.Jobs.Ninja, ClassJob.NIN, $"{Utils.GetJobNameFromId((uint)ClassJob.NIN)} / {Utils.GetJobNameFromId((uint)ClassJob.ROG)}", true);
                 }
                 else
                 {
                     bool active = (current_character.Jobs.Lancer.Level > 0);
-                    DrawJob(current_character.Jobs.Rogue, ClassJob.ROG, Utils.GetJobNameFromId(dataManager, pluginLog,  currentLocale, (uint)ClassJob.ROG), active);
+                    DrawJob(current_character.Jobs.Rogue, ClassJob.ROG, Utils.GetJobNameFromId((uint)ClassJob.ROG), active);
                 }
 
                 break;
@@ -926,14 +915,14 @@ public class JobsWindow : Window, IDisposable
             case ClassJob.SAM:
             {
                 bool active = (current_character.Jobs.Samurai.Level >= 50);
-                DrawJob(current_character.Jobs.Samurai, ClassJob.SAM, Utils.GetJobNameFromId(dataManager, pluginLog,  currentLocale, (uint)ClassJob.SAM), active);
+                DrawJob(current_character.Jobs.Samurai, ClassJob.SAM, Utils.GetJobNameFromId((uint)ClassJob.SAM), active);
 
                 break;
             }
             case ClassJob.RPR:
             {
                 bool active = (current_character.Jobs.Reaper.Level >= 70);
-                DrawJob(current_character.Jobs.Reaper, ClassJob.RPR, Utils.GetJobNameFromId(dataManager, pluginLog,  currentLocale, (uint)ClassJob.RPR), active);
+                DrawJob(current_character.Jobs.Reaper, ClassJob.RPR, Utils.GetJobNameFromId((uint)ClassJob.RPR), active);
 
                 break;
             }
@@ -942,12 +931,12 @@ public class JobsWindow : Window, IDisposable
             {
                 if (current_character.Jobs.Lancer.Level >= 30)
                 {
-                    DrawJob(current_character.Jobs.WhiteMage, ClassJob.WHM, $"{Utils.GetJobNameFromId(dataManager, pluginLog,  currentLocale, (uint)ClassJob.WHM)} / {Utils.GetJobNameFromId(dataManager, pluginLog,  currentLocale, (uint)ClassJob.CNJ)}", true);
+                    DrawJob(current_character.Jobs.WhiteMage, ClassJob.WHM, $"{Utils.GetJobNameFromId((uint)ClassJob.WHM)} / {Utils.GetJobNameFromId((uint)ClassJob.CNJ)}", true);
                 }
                 else
                 {
                     bool active = (current_character.Jobs.Conjurer.Level > 0);
-                    DrawJob(current_character.Jobs.Conjurer, ClassJob.CNJ, Utils.GetJobNameFromId(dataManager, pluginLog,  currentLocale, (uint)ClassJob.CNJ), active);
+                    DrawJob(current_character.Jobs.Conjurer, ClassJob.CNJ, Utils.GetJobNameFromId((uint)ClassJob.CNJ), active);
                 }
 
                 break;
@@ -962,12 +951,12 @@ public class JobsWindow : Window, IDisposable
                     {
                         case ClassJob.SCH:
                         {
-                            DrawJob(current_character.Jobs.Scholar, ClassJob.SCH, $"{Utils.GetJobNameFromId(dataManager, pluginLog,  currentLocale, (uint)ClassJob.SCH)}", true);
+                            DrawJob(current_character.Jobs.Scholar, ClassJob.SCH, $"{Utils.GetJobNameFromId((uint)ClassJob.SCH)}", true);
                             break;
                         }
                         case ClassJob.SMN:
                         {
-                            DrawJob(current_character.Jobs.Summoner, ClassJob.SMN, $"{Utils.GetJobNameFromId(dataManager, pluginLog,  currentLocale, (uint)ClassJob.SMN)} / {Utils.GetJobNameFromId(dataManager, pluginLog,  currentLocale, (uint)ClassJob.ACN)}", true);
+                            DrawJob(current_character.Jobs.Summoner, ClassJob.SMN, $"{Utils.GetJobNameFromId((uint)ClassJob.SMN)} / {Utils.GetJobNameFromId((uint)ClassJob.ACN)}", true);
                             break;
                         }
                     }
@@ -975,21 +964,21 @@ public class JobsWindow : Window, IDisposable
                 else
                 {
                     bool active = (current_character.Jobs.Arcanist.Level > 0);
-                    DrawJob(current_character.Jobs.Arcanist, ClassJob.ACN, Utils.GetJobNameFromId(dataManager, pluginLog,  currentLocale, (uint)ClassJob.ACN), active);
+                    DrawJob(current_character.Jobs.Arcanist, ClassJob.ACN, Utils.GetJobNameFromId((uint)ClassJob.ACN), active);
                 }
                 break;
             }
             case ClassJob.AST:
             {
                 bool active = (current_character.Jobs.Astrologian.Level >= 30) ;
-                DrawJob(current_character.Jobs.Astrologian, ClassJob.AST, Utils.GetJobNameFromId(dataManager, pluginLog,  currentLocale, (uint)ClassJob.AST), active);
+                DrawJob(current_character.Jobs.Astrologian, ClassJob.AST, Utils.GetJobNameFromId((uint)ClassJob.AST), active);
 
                 break;
             }
             case ClassJob.SGE:
             {
                 bool active = (current_character.Jobs.Sage.Level >= 70);
-                DrawJob(current_character.Jobs.Sage, ClassJob.SGE, Utils.GetJobNameFromId(dataManager, pluginLog,  currentLocale, (uint)ClassJob.SGE), active);
+                DrawJob(current_character.Jobs.Sage, ClassJob.SGE, Utils.GetJobNameFromId((uint)ClassJob.SGE), active);
 
                 break;
             }
@@ -998,12 +987,12 @@ public class JobsWindow : Window, IDisposable
             {
                 if (current_character.Jobs.Archer.Level >= 30)
                 {
-                    DrawJob(current_character.Jobs.Bard, ClassJob.BRD, $"{Utils.GetJobNameFromId(dataManager, pluginLog,  currentLocale, (uint)ClassJob.BRD)} / {Utils.GetJobNameFromId(dataManager, pluginLog,  currentLocale, (uint)ClassJob.ARC)}", true);
+                    DrawJob(current_character.Jobs.Bard, ClassJob.BRD, $"{Utils.GetJobNameFromId((uint)ClassJob.BRD)} / {Utils.GetJobNameFromId((uint)ClassJob.ARC)}", true);
                 }
                 else
                 {
                     bool active = (current_character.Jobs.Archer.Level > 0);
-                    DrawJob(current_character.Jobs.Archer, ClassJob.ARC, Utils.GetJobNameFromId(dataManager, pluginLog,  currentLocale, (uint)ClassJob.ARC), active);
+                    DrawJob(current_character.Jobs.Archer, ClassJob.ARC, Utils.GetJobNameFromId((uint)ClassJob.ARC), active);
                 }
 
                 break;
@@ -1011,14 +1000,14 @@ public class JobsWindow : Window, IDisposable
             case ClassJob.MCH:
             {
                 bool active = (current_character.Jobs.Machinist.Level >= 30);
-                DrawJob(current_character.Jobs.Machinist, ClassJob.MCH, Utils.GetJobNameFromId(dataManager, pluginLog,  currentLocale, (uint)ClassJob.MCH), active);
+                DrawJob(current_character.Jobs.Machinist, ClassJob.MCH, Utils.GetJobNameFromId((uint)ClassJob.MCH), active);
 
                 break;
             }
             case ClassJob.DNC:
             {
                 bool active = (current_character.Jobs.Dancer.Level >= 60);
-                DrawJob(current_character.Jobs.Dancer, ClassJob.DNC, Utils.GetJobNameFromId(dataManager, pluginLog,  currentLocale, (uint)ClassJob.DNC), active);
+                DrawJob(current_character.Jobs.Dancer, ClassJob.DNC, Utils.GetJobNameFromId((uint)ClassJob.DNC), active);
 
                 break;
             }
@@ -1027,12 +1016,12 @@ public class JobsWindow : Window, IDisposable
             {
                 if (current_character.Jobs.Thaumaturge.Level >= 30)
                 {
-                    DrawJob(current_character.Jobs.BlackMage, ClassJob.BLM, $"{Utils.GetJobNameFromId(dataManager, pluginLog,  currentLocale, (uint)ClassJob.BLM)} / {Utils.GetJobNameFromId(dataManager, pluginLog,  currentLocale, (uint)ClassJob.THM)}", true);
+                    DrawJob(current_character.Jobs.BlackMage, ClassJob.BLM, $"{Utils.GetJobNameFromId((uint)ClassJob.BLM)} / {Utils.GetJobNameFromId((uint)ClassJob.THM)}", true);
                 }
                 else
                 {
                     bool active = (current_character.Jobs.Thaumaturge.Level > 0);
-                    DrawJob(current_character.Jobs.Thaumaturge, ClassJob.THM, Utils.GetJobNameFromId(dataManager, pluginLog,  currentLocale, (uint)ClassJob.THM), active);
+                    DrawJob(current_character.Jobs.Thaumaturge, ClassJob.THM, Utils.GetJobNameFromId((uint)ClassJob.THM), active);
                 }
 
                 break;
@@ -1040,91 +1029,91 @@ public class JobsWindow : Window, IDisposable
             case ClassJob.RDM:
             {
                 bool active = (current_character.Jobs.RedMage.Level >= 50);
-                DrawJob(current_character.Jobs.RedMage, ClassJob.RDM, Utils.GetJobNameFromId(dataManager, pluginLog,  currentLocale, (uint)ClassJob.RDM), active);
+                DrawJob(current_character.Jobs.RedMage, ClassJob.RDM, Utils.GetJobNameFromId((uint)ClassJob.RDM), active);
 
                 break;
             }
             case ClassJob.BLU:
             {
                 bool active = (current_character.Jobs.BlueMage.Level > 0);
-                DrawJob(current_character.Jobs.BlueMage, ClassJob.BLU, Utils.GetJobNameFromId(dataManager, pluginLog,  currentLocale, (uint)ClassJob.BLU), active);
+                DrawJob(current_character.Jobs.BlueMage, ClassJob.BLU, Utils.GetJobNameFromId((uint)ClassJob.BLU), active);
 
                 break;
             }
             case ClassJob.CRP:
             {
                 bool active = (current_character.Jobs.Carpenter.Level > 0);
-                DrawJob(current_character.Jobs.Carpenter, ClassJob.CRP, Utils.GetJobNameFromId(dataManager, pluginLog,  currentLocale, (uint)ClassJob.CRP), active);
+                DrawJob(current_character.Jobs.Carpenter, ClassJob.CRP, Utils.GetJobNameFromId((uint)ClassJob.CRP), active);
 
                 break;
             }
             case ClassJob.BSM:
             {
                 bool active = (current_character.Jobs.Blacksmith.Level > 0);
-                DrawJob(current_character.Jobs.Blacksmith, ClassJob.BSM, Utils.GetJobNameFromId(dataManager, pluginLog,  currentLocale, (uint)ClassJob.BSM), active);
+                DrawJob(current_character.Jobs.Blacksmith, ClassJob.BSM, Utils.GetJobNameFromId((uint)ClassJob.BSM), active);
 
                 break;
             }
             case ClassJob.ARM:
             {
                 bool active = (current_character.Jobs.Armorer.Level > 0);
-                DrawJob(current_character.Jobs.Armorer, ClassJob.ARM, Utils.GetJobNameFromId(dataManager, pluginLog,  currentLocale, (uint)ClassJob.ARM), active);
+                DrawJob(current_character.Jobs.Armorer, ClassJob.ARM, Utils.GetJobNameFromId((uint)ClassJob.ARM), active);
 
                 break;
             }
             case ClassJob.GSM:
             {
                 bool active = (current_character.Jobs.Goldsmith.Level > 0);
-                DrawJob(current_character.Jobs.Goldsmith, ClassJob.GSM, Utils.GetJobNameFromId(dataManager, pluginLog,  currentLocale, (uint)ClassJob.GSM), active);
+                DrawJob(current_character.Jobs.Goldsmith, ClassJob.GSM, Utils.GetJobNameFromId((uint)ClassJob.GSM), active);
 
                 break;
             }
             case ClassJob.LTW:
             {
                 bool active = (current_character.Jobs.Leatherworker.Level > 0);
-                DrawJob(current_character.Jobs.Leatherworker, ClassJob.LTW, Utils.GetJobNameFromId(dataManager, pluginLog,  currentLocale, (uint)ClassJob.LTW), active);
+                DrawJob(current_character.Jobs.Leatherworker, ClassJob.LTW, Utils.GetJobNameFromId((uint)ClassJob.LTW), active);
 
                 break;
             }
             case ClassJob.WVR:
             {
                 bool active = (current_character.Jobs.Weaver.Level > 0);
-                DrawJob(current_character.Jobs.Weaver, ClassJob.WVR, Utils.GetJobNameFromId(dataManager, pluginLog,  currentLocale, (uint)ClassJob.WVR), active);
+                DrawJob(current_character.Jobs.Weaver, ClassJob.WVR, Utils.GetJobNameFromId((uint)ClassJob.WVR), active);
 
                 break;
             }
             case ClassJob.ALC:
             {
                 bool active = (current_character.Jobs.Alchemist.Level > 0);
-                DrawJob(current_character.Jobs.Alchemist, ClassJob.ALC, Utils.GetJobNameFromId(dataManager, pluginLog,  currentLocale, (uint)ClassJob.ALC), active);
+                DrawJob(current_character.Jobs.Alchemist, ClassJob.ALC, Utils.GetJobNameFromId((uint)ClassJob.ALC), active);
 
                 break;
             }
             case ClassJob.CUL:
             {
                 bool active = (current_character.Jobs.Culinarian.Level > 0);
-                DrawJob(current_character.Jobs.Culinarian, ClassJob.CUL, Utils.GetJobNameFromId(dataManager, pluginLog,  currentLocale, (uint)ClassJob.CUL), active);
+                DrawJob(current_character.Jobs.Culinarian, ClassJob.CUL, Utils.GetJobNameFromId((uint)ClassJob.CUL), active);
 
                 break;
             }
             case ClassJob.MIN:
             {
                 bool active = (current_character.Jobs.Miner.Level > 0);
-                DrawJob(current_character.Jobs.Miner, ClassJob.MIN, Utils.GetJobNameFromId(dataManager, pluginLog,  currentLocale, (uint)ClassJob.MIN), active);
+                DrawJob(current_character.Jobs.Miner, ClassJob.MIN, Utils.GetJobNameFromId((uint)ClassJob.MIN), active);
 
                 break;
             }
             case ClassJob.BTN:
             {
                 bool active = (current_character.Jobs.Botanist.Level > 0);
-                DrawJob(current_character.Jobs.Botanist, ClassJob.BTN, Utils.GetJobNameFromId(dataManager, pluginLog,  currentLocale, (uint)ClassJob.BTN), active);
+                DrawJob(current_character.Jobs.Botanist, ClassJob.BTN, Utils.GetJobNameFromId((uint)ClassJob.BTN), active);
 
                 break;
             }
             case ClassJob.FSH:
             {
                 bool active = (current_character.Jobs.Fisher.Level > 0);
-                DrawJob(current_character.Jobs.Fisher, ClassJob.FSH, Utils.GetJobNameFromId(dataManager, pluginLog,  currentLocale, (uint)ClassJob.FSH), active);
+                DrawJob(current_character.Jobs.Fisher, ClassJob.FSH, Utils.GetJobNameFromId((uint)ClassJob.FSH), active);
 
                 break;
             }            
@@ -1137,7 +1126,7 @@ public class JobsWindow : Window, IDisposable
 
     private void DrawJob(Job job, ClassJob job_id, string tooltip, bool active)
     {
-        //pluginLog.Debug($"{job_id} {tooltip} {Utils.GetJobIconWithCornerSmall((uint)job_id)}");
+        //Plugin.Log.Debug($"{job_id} {tooltip} {Utils.GetJobIconWithCornerSmall((uint)job_id)}");
         Vector2 alpha = active switch
         {
             true => new Vector2(1, 1),
@@ -1149,9 +1138,9 @@ public class JobsWindow : Window, IDisposable
             ImGui.TableSetupColumn("###CharactersJobs#LevelNameExp", ImGuiTableColumnFlags.WidthStretch);
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
-            //Utils.DrawIcon(textureProvider, dataManager, pluginLog, new Vector2(42, 42), false, Utils.GetJobIconWithCornerSmall((uint)job_id), alpha);
+            //Utils.DrawIcon( Plugin.DataManager, new Vector2(42, 42), false, Utils.GetJobIconWithCornerSmall((uint)job_id), alpha);
             // Todo: Fix alpha
-            Utils.DrawIcon(textureProvider, pluginLog, new Vector2(36, 36), false, Utils.GetJobIconWithCornerSmall((uint)job_id));
+            Utils.DrawIcon(new Vector2(36, 36), false, Utils.GetJobIconWithCornerSmall((uint)job_id));
             if (ImGui.IsItemHovered())
             {
                 ImGui.BeginTooltip();
@@ -1167,10 +1156,10 @@ public class JobsWindow : Window, IDisposable
                 ImGui.TableSetColumnIndex(0);
                 ImGui.TextUnformatted($"{job.Level}");
                 ImGui.TableSetColumnIndex(1);
-                ImGui.TextUnformatted($"{Utils.GetJobNameFromId(dataManager, pluginLog, currentLocale, (uint)job_id)}");
+                ImGui.TextUnformatted($"{Utils.GetJobNameFromId((uint)job_id)}");
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(1);
-                Utils.DrawLevelProgressBar(job.Exp, Utils.GetJobNextLevelExp(dataManager, pluginLog, currentLocale, job.Level), tooltip);
+                Utils.DrawLevelProgressBar(job.Exp, Utils.GetJobNextLevelExp(job.Level), tooltip);
                 ImGui.EndTable();
             }
             ImGui.EndTable();

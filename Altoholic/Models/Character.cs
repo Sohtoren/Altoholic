@@ -12,8 +12,11 @@ namespace Altoholic.Models
         public string FirstName { get; set; } = string.Empty;
         public string LastName { get; set; } = string.Empty;
         public string HomeWorld { get; set; } = string.Empty;
+        public string CurrentWorld { get; set; } = string.Empty;
         public string Datacenter {  get; set; } = string.Empty;
+        public string CurrentDatacenter {  get; set; } = string.Empty;
         public string Region {  get; set; } = string.Empty;
+        public string CurrentRegion {  get; set; } = string.Empty;
         public bool IsSprout { get; set; } = false;
         public uint LastJob { get; set; } = 0;
         public int LastJobLevel { get; set; } = 0;
@@ -28,6 +31,7 @@ namespace Altoholic.Models
         public Profile? Profile { get; set; }
         public List<Quest> Quests { get; set; } = [];
         public List<Inventory> Inventory { get; set; } = [];
+        public List<Inventory> Saddle { get; set; } = [];
         public List<Gear> Gear { get; set; } = [];
         public List<Retainer> Retainers { get; set; } = [];
 

@@ -11,9 +11,9 @@ namespace Altoholic.Database
 {
     public class Database
     {
-        public static Character? GetCharacter(LiteDatabase db, IPluginLog pluginLog, ulong id)
+        public static Character? GetCharacter(IPluginLog Log, LiteDatabase db, ulong id)
         {
-            pluginLog.Debug($"Database/GetCharacter entered db = {db}, pluginLog = {pluginLog}, id = {id}");
+            Plugin.Log.Debug($"Database/GetCharacter entered db = {db}, Log = {Log}, id = {id}");
             try
             {
                 var col = db.GetCollection<Character>();
@@ -24,7 +24,7 @@ namespace Altoholic.Database
 
                     /*if (character is not null)
                     {
-                        character.Retainers = GetCharacterRetainers(db, pluginLog, character.Id);
+                        character.Retainers = GetCharacterRetainers(db, character.Id);
                     }*/
 
                     return character;
@@ -38,12 +38,12 @@ namespace Altoholic.Database
             {
                 // Todo: Add error handling to not crash game if db is opened in another program
                 Console.WriteLine(ex.ToString());
-                pluginLog.Error(ex.ToString());
+                Log.Error(ex.ToString());
                 return null;
             }
         }
 
-        public static List<Character> GetOthersCharacters(LiteDatabase db, IPluginLog pluginLog, ulong id)
+        public static List<Character> GetOthersCharacters(IPluginLog Log, LiteDatabase db, ulong id)
         {
             try
             {
@@ -55,7 +55,7 @@ namespace Altoholic.Database
                     var characters = col.Find(cf => cf.Id != id).ToList();
                     /*foreach (var c in characters)
                     {
-                        c.Retainers = GetCharacterRetainers(db, pluginLog, c.Id);
+                        c.Retainers = GetCharacterRetainers(db, c.Id);
                     }*/
 
                     return characters;
@@ -69,12 +69,12 @@ namespace Altoholic.Database
             {
                 // Todo: Add error handling to not crash game if db is opened in another program
                 Console.WriteLine(ex.ToString());
-                pluginLog.Error(ex.ToString());
+                Log.Error(ex.ToString());
                 return [];
             }
         }
 
-        public static List<Character>? DeleteCharacter(LiteDatabase db, IPluginLog pluginLog, ulong id)
+        public static List<Character>? DeleteCharacter(IPluginLog Log, LiteDatabase db, ulong id)
         {
             try
             {
@@ -83,20 +83,20 @@ namespace Altoholic.Database
                 var col2 = db.GetCollection<Blacklist>();
                 col2?.Delete(id);
 
-                return GetOthersCharacters(db, pluginLog, id);
+                return GetOthersCharacters(Log, db, id);
             }
             catch (Exception ex)
             {
                 // Todo: Add error handling to not crash game if db is opened in another program
                 Console.WriteLine(ex.ToString());
-                pluginLog.Error(ex.ToString());
+                Log.Error(ex.ToString());
                 return null;
             }
 }
 
-        public static void UpdateCharacter(LiteDatabase db, IPluginLog pluginLog, Character character)
+        public static void UpdateCharacter(IPluginLog Log, LiteDatabase db, Character character)
         {
-            pluginLog.Debug($"Entering UpdateCharacter with character : id = {character.Id}, FirstName = {character.FirstName}, LastName = {character.LastName}, HomeWorld = {character.HomeWorld}, DataCenter = {character.Datacenter}, LastJob = {character.LastJob}, LastJobLevel = {character.LastJobLevel}, FCTag = {character.FCTag}, FreeCompany = {character.FreeCompany}, LastOnline = {character.LastOnline}, PlayTime = {character.PlayTime}, LastPlayTimeUpdate = {character.LastPlayTimeUpdate}");
+            Plugin.Log.Debug($"Entering UpdateCharacter with character : id = {character.Id}, FirstName = {character.FirstName}, LastName = {character.LastName}, HomeWorld = {character.HomeWorld}, DataCenter = {character.Datacenter}, LastJob = {character.LastJob}, LastJobLevel = {character.LastJobLevel}, FCTag = {character.FCTag}, FreeCompany = {character.FreeCompany}, LastOnline = {character.LastOnline}, PlayTime = {character.PlayTime}, LastPlayTimeUpdate = {character.LastPlayTimeUpdate}");
             if (character.Id == 0) return;
 
             try
@@ -167,7 +167,7 @@ namespace Altoholic.Database
                         }
                     }
 
-                    pluginLog.Debug($"Updating character with c : id = {c.Id}, FirstName = {c.FirstName}, LastName = {c.LastName}, HomeWorld = {c.HomeWorld}, DataCenter = {c.Datacenter}, LastJob = {c.LastJob}, LastJobLevel = {c.LastJobLevel}, FCTag = {c.FCTag}, FreeCompany = {c.FreeCompany}, LastOnline = {c.LastOnline}, PlayTime = {c.PlayTime}, LastPlayTimeUpdate = {c.LastPlayTimeUpdate}, Quests = {c.Quests.Count}, Inventory = {c.Inventory.Count}, Gear {c.Gear.Count}, Retainers = {c.Retainers.Count}");
+                    Plugin.Log.Debug($"Updating character with c : id = {c.Id}, FirstName = {c.FirstName}, LastName = {c.LastName}, HomeWorld = {c.HomeWorld}, DataCenter = {c.Datacenter}, LastJob = {c.LastJob}, LastJobLevel = {c.LastJobLevel}, FCTag = {c.FCTag}, FreeCompany = {c.FreeCompany}, LastOnline = {c.LastOnline}, PlayTime = {c.PlayTime}, LastPlayTimeUpdate = {c.LastPlayTimeUpdate}, Quests = {c.Quests.Count}, Inventory = {c.Inventory.Count}, Gear {c.Gear.Count}, Retainers = {c.Retainers.Count}");
                     col.Upsert(c);
                 }
             }
@@ -175,14 +175,14 @@ namespace Altoholic.Database
             {
                 // Todo: Add error handling to not crash game if db is opened in another program
                 Console.WriteLine(ex.ToString());
-                pluginLog.Error(ex.ToString());
+                Log.Error(ex.ToString());
             }
         }
         
-        public static void UpdatePlaytime(LiteDatabase db, IPluginLog pluginLog, ulong id, uint PlayTime, long PlayTimeUpdate)
+        public static void UpdatePlaytime(IPluginLog Log, LiteDatabase db, ulong id, uint PlayTime, long PlayTimeUpdate)
         {
             if (PlayTime == 0) return;
-            pluginLog.Debug($"UpdatePlayTime {id} {PlayTime} {PlayTimeUpdate}");
+            Plugin.Log.Debug($"UpdatePlayTime {id} {PlayTime} {PlayTimeUpdate}");
             try
             {
                 var col = db.GetCollection<Character>();
@@ -213,13 +213,13 @@ namespace Altoholic.Database
             {
                 // Todo: Add error handling to not crash game if db is opened in another program
                 Console.WriteLine(ex.ToString());
-                pluginLog.Error(ex.ToString());
+                Log.Error(ex.ToString());
             }
         }
 
-        public static List<Character>? BlacklistCharacter(LiteDatabase db, IPluginLog pluginLog, ulong id)
+        public static List<Character>? BlacklistCharacter(IPluginLog Log, LiteDatabase db, ulong id)
         {
-            pluginLog.Debug($"Database/BlacklistCharacter entered db = {db}, pluginLog = {pluginLog}, id = {id}");
+            Plugin.Log.Debug($"Database/BlacklistCharacter entered db = {db}, Log = {Log}, id = {id}");
             try
             {
                 var col = db.GetCollection<Blacklist>();
@@ -234,16 +234,16 @@ namespace Altoholic.Database
                         };
                         col.Insert(blacklist);
                     }
-                    DeleteCharacter(db, pluginLog, id);
-                    return GetOthersCharacters(db, pluginLog, id);
+                    DeleteCharacter(Log, db, id);
+                    return GetOthersCharacters(Log, db, id);
                 }
-                return GetOthersCharacters(db, pluginLog, id);
+                return GetOthersCharacters(Log, db, id);
             }
             catch (Exception ex)
             {
                 // Todo: Add error handling to not crash game if db is opened in another program
                 Console.WriteLine(ex.ToString());
-                pluginLog.Error(ex.ToString());
+                Log.Error(ex.ToString());
                 return null;
             }
         }

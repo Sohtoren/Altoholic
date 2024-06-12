@@ -1,4 +1,5 @@
 using Altoholic.Models;
+using CheapLoc;
 using Dalamud;
 using Dalamud.Game.Text;
 using Dalamud.Interface.Windowing;
@@ -15,17 +16,11 @@ namespace Altoholic.Windows;
 public class CharactersWindow : Window, IDisposable
 {
     private readonly Plugin plugin;
-    private readonly IPluginLog pluginLog;
-    private readonly ITextureProvider textureProvider;
-    private readonly ClientLanguage currentLocale;
     private readonly LiteDatabase db;
 
     public CharactersWindow(
         Plugin plugin,
         string name,
-        IPluginLog pluginLog,
-        ITextureProvider textureProvider,
-        ClientLanguage currentLocale,
         LiteDatabase db
     )
         : base(name, ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse)
@@ -37,9 +32,6 @@ public class CharactersWindow : Window, IDisposable
         };
         this.db = db;
         this.plugin = plugin;
-        this.pluginLog = pluginLog;
-        this.textureProvider = textureProvider;
-        this.currentLocale = currentLocale;
     }
 
     public Func<Character> GetPlayer { get; init; } = null!;
@@ -66,15 +58,17 @@ public class CharactersWindow : Window, IDisposable
             //if (ImGui.BeginTable("Characters", 10))
             if (ImGui.BeginTable("###Characters", 9))
             {
-                ImGui.TableSetupColumn("Firstname", ImGuiTableColumnFlags.WidthFixed, 100);
-                ImGui.TableSetupColumn("Lastname", ImGuiTableColumnFlags.WidthFixed, 100);
-                ImGui.TableSetupColumn("Homeworld", ImGuiTableColumnFlags.WidthFixed, 90);
-                ImGui.TableSetupColumn("DC", ImGuiTableColumnFlags.WidthFixed, 30);
-                ImGui.TableSetupColumn("Level", ImGuiTableColumnFlags.WidthFixed, 30);
+                ImGui.TableSetupColumn(Utils.GetAddonString(330), ImGuiTableColumnFlags.WidthFixed, 100);
+                if (ImGui.IsItemHovered())
+                    ImGui.Text("hover");
+                ImGui.TableSetupColumn(Utils.GetAddonString(331), ImGuiTableColumnFlags.WidthFixed, 100);
+                ImGui.TableSetupColumn(Utils.GetAddonString(4728), ImGuiTableColumnFlags.WidthFixed, 90);
+                ImGui.TableSetupColumn(Utils.GetDCString(), ImGuiTableColumnFlags.WidthFixed, 30);
+                ImGui.TableSetupColumn("Lv" /*Utils.GetAddonString(335)*/, ImGuiTableColumnFlags.WidthFixed, 30);
                 ImGui.TableSetupColumn("FC", ImGuiTableColumnFlags.WidthFixed, 50);
-                ImGui.TableSetupColumn("Gils", ImGuiTableColumnFlags.WidthFixed, 110);
+                ImGui.TableSetupColumn(Utils.GetAddonString(2883), ImGuiTableColumnFlags.WidthFixed, 110);
                 ImGui.TableSetupColumn("Last online", ImGuiTableColumnFlags.WidthFixed, 110);
-                ImGui.TableSetupColumn("Playtime", ImGuiTableColumnFlags.WidthStretch);
+                ImGui.TableSetupColumn($"{Loc.Localize("Playtime", "Playtime")}###Characters#Playtime", ImGuiTableColumnFlags.WidthStretch);
                 //ImGui.TableSetupColumn("Playtime", ImGuiTableColumnFlags.WidthFixed, 80);
                 //ImGui.TableSetupColumn("Actions", ImGuiTableColumnFlags.WidthStretch);
                 ImGui.TableHeadersRow();
@@ -115,7 +109,7 @@ public class CharactersWindow : Window, IDisposable
                     ImGui.TableSetupColumn("###TotalCharacters#GilsTable#Amount", ImGuiTableColumnFlags.WidthFixed, 90);
                     ImGui.TableNextRow();
                     ImGui.TableSetColumnIndex(0);
-                    Utils.DrawIcon(textureProvider, pluginLog, new Vector2(18, 18), false, 065002);
+                    Utils.DrawIcon(new Vector2(18, 18), false, 065002);
                     ImGui.TableSetColumnIndex(1);
                     var gilText = $"{TotalGils:N0}";
                     var posX = ImGui.GetCursorPosX() + ImGui.GetColumnWidth() - ImGui.CalcTextSize(gilText.ToString()).X - ImGui.GetScrollX() - (2 * ImGui.GetStyle().ItemSpacing.X);
@@ -142,7 +136,7 @@ public class CharactersWindow : Window, IDisposable
         }
         catch (Exception e)
         {
-            pluginLog.Debug("Altoholic : Exception : {0}", e);
+            Plugin.Log.Debug("Altoholic : Exception : {0}", e);
         }
     }
     private void DrawCharacter(int pos, Character character)
@@ -167,11 +161,11 @@ public class CharactersWindow : Window, IDisposable
         if (ImGui.IsItemHovered())
         {
             ImGui.BeginTooltip();
-            ImGui.TextUnformatted(Enum.GetName(typeof(ClassJob), character.LastJob));
+            ImGui.TextUnformatted(Utils.GetJobNameFromId(character.LastJob));
             ImGui.EndTooltip();
         }
         ImGui.TableSetColumnIndex(5);
-        ImGui.TextUnformatted($"{character.FCTag}");
+        ImGui.TextUnformatted($"{Utils.GetFCTag(character)}");
 
         ImGui.TableSetColumnIndex(6);
         if (ImGui.BeginTable($"###Characters#Character#Gils#{character.Id}", 2))
@@ -180,7 +174,7 @@ public class CharactersWindow : Window, IDisposable
             ImGui.TableSetupColumn($"###Characters#Character#Gils#Amount#{character.Id}", ImGuiTableColumnFlags.WidthFixed, 90);
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
-            Utils.DrawIcon(textureProvider, pluginLog, new Vector2(18, 18), false, 065002);
+            Utils.DrawIcon(new Vector2(18, 18), false, 065002);
             ImGui.TableSetColumnIndex(1);
             if (character.Currencies is not null)
             {
@@ -299,7 +293,7 @@ public class CharactersWindow : Window, IDisposable
 
         string? time;
 
-        //pluginLog.Debug($"{firstname} diffDays: {diffDays}, diffHours: {diffHours}, diffMins: {diffMins}");
+        //Plugin.Log.Debug($"{firstname} diffDays: {diffDays}, diffHours: {diffHours}, diffMins: {diffMins}");
 
         if (lastOnline == 0)
         {

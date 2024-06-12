@@ -14,7 +14,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="LiteDB" Version="5.0.19" />
+    <PackageReference Include="LiteDB" Version="5.0.20" />
+  </ItemGroup>
+  <ItemGroup>
+  <Reference Include="CheapLoc">
+    <HintPath>$(DalamudLibPath)CheapLoc.dll</HintPath>
+    <Private>false</Private>
+  </Reference>
   </ItemGroup>
 
   <ItemGroup>

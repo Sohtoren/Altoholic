@@ -18,12 +18,14 @@ using System.Runtime.InteropServices;
 using Dalamud;
 using FFXIVClientStructs.FFXIV.Client.System.String;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
-using FFXIVClientStructs.FFXIV.Client.System.Framework;
 using static FFXIVClientStructs.FFXIV.Client.UI.RaptureAtkModule;
 using Dalamud.Interface.Internal.Notifications;
 using Dalamud.Interface.ImGuiNotification;
 using Dalamud.Game.Text;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
+using System.Linq;
+using System.Text;
+using Dalamud.Memory;
 
 namespace Altoholic
 {
@@ -32,15 +34,22 @@ namespace Altoholic
         public static string Name => "Altoholic Plugin";
         private const string CommandName = "/altoholic";
         private readonly int[] QuestIds = [65970, 66045, 66216, 66217, 66218, 66640, 66641, 66642, 66754, 66789, 66857, 66911, 66968, 66969, 66970, 67023, 67099, 67100, 67101, 67658, 67700, 67791, 67856, 68509, 68572, 68633, 68734, 68817, 69133, 69219, 69330, 69432, 70081, 70137, 70217, 69208, 67631, 69208];
-        private DalamudPluginInterface PluginInterface { get; init; }
-        private readonly ICommandManager commandManager;
-        private readonly IClientState clientState;
-        private readonly IFramework framework;
-        private readonly IPluginLog pluginLog;
-        private readonly IDataManager dataManager;
-        private readonly ITextureProvider textureProvider;
-        private readonly INotificationManager notificationManager;
-
+        //private DalamudPluginInterface PluginInterface { get; init; }
+        //private readonly ICommandManager commandManager;
+        //private readonly IClientState ClientState;
+        //private readonly IFramework framework;
+        //private readonly ILog Log;
+        //private readonly IDataManager Plugin.DataManager;
+        //private readonly ITextureProvider textureProvider;
+        //private readonly INotificationManager notificationManager;
+        [PluginService] public static DalamudPluginInterface PluginInterface { get; private set; } = null!;
+        [PluginService] public static IClientState ClientState { get; private set; } = null!;
+        [PluginService] public static ICommandManager CommandManager { get; private set; } = null!;
+        [PluginService] public static IFramework Framework { get; private set; } = null!;
+        [PluginService] public static IPluginLog Log { get; private set; } = null!;
+        [PluginService] public static IDataManager DataManager { get; private set; } = null!;
+        [PluginService] public static ITextureProvider TextureProvider { get; private set; } = null!;
+        [PluginService] public static INotificationManager NotificationManager { get; private set; } = null!;
         [PluginService] public static ISigScanner SigScanner { get; private set; } = null!;
         [PluginService] public static IGameInteropProvider Hook { get; private set; } = null!;
 
@@ -62,24 +71,22 @@ namespace Altoholic
         private readonly LiteDatabase db;
 
         private Character localPlayer = null!;
-        private string localPlayerCurrentWorld = string.Empty;
-        private string localPlayerCurrentDatacenter = string.Empty;
-        private string localPlayerCurrentRegion = string.Empty;
         private Utf8String? localPlayerFreeCompanyTest;
 
         private PeriodicTimer? periodicTimer = null;
         public List<Character> otherCharacters = [];
-        private ClientLanguage currentLocale;
+        private static ClientLanguage currentLocale;
+        private readonly Localization Localization = new();
 
         public Plugin(
-            DalamudPluginInterface pluginInterface,
-            ICommandManager commandManager,
-            IClientState clientState,
-            IFramework framework,
-            IPluginLog pluginLog,
-            IDataManager dataManager,
-            ITextureProvider textureProvider,
-            INotificationManager notificationManager
+        /*DalamudPluginInterface pluginInterface,
+        ICommandManager commandManager,
+        IClientState ClientState,
+        IFramework framework,
+        ILog Log,
+        IDataManager Plugin.DataManager,
+        ITextureProvider textureProvider,
+        INotificationManager notificationManager*/
         )
         {
             nint playtimePtr = SigScanner.ScanText(PlaytimeSig);
@@ -87,7 +94,7 @@ namespace Altoholic
             PlaytimeHook = Hook.HookFromAddress<PlaytimeDelegate>(playtimePtr, PlaytimePacket);
             PlaytimeHook.Enable();
 
-            var dbpath = Path.Combine(pluginInterface.AssemblyLocation.Directory?.FullName!, "altoholic.db");
+            var dbpath = Path.Combine(PluginInterface.AssemblyLocation.Directory?.FullName!, "altoholic.db");
             /*try
             {*/
 
@@ -103,44 +110,52 @@ namespace Altoholic
             }*/
             // Todo: Make sure this don't crash the game when db is already opened
 
-            PluginInterface = pluginInterface;
-            this.clientState = clientState;
+            /*PluginInterface = pluginInterface;
+            this.ClientState = ClientState;
             this.framework = framework;
             this.commandManager = commandManager;
-            this.pluginLog = pluginLog;
-            this.dataManager = dataManager;
+            this.Log = Log;
+            this.Plugin.DataManager = Plugin.DataManager;
             this.textureProvider = textureProvider;
-            this.notificationManager = notificationManager;
-
-            currentLocale = ClientLanguage.English;
+            this.notificationManager = notificationManager;*/
 
             Configuration = PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
             Configuration.Initialize(PluginInterface);
+
+            if (Configuration.Language != ClientState.ClientLanguage)
+            {
+                Configuration.Language = ClientState.ClientLanguage;
+                Configuration.Save();
+            }
+            currentLocale = Configuration.Language;
+
+
+            Localization.SetupWithLangCode(PluginInterface.UiLanguage);
 
             altoholicService = new Service(
                 () => this.localPlayer,
                 () => this.otherCharacters);
 
-            ConfigWindow = new ConfigWindow(this, $"{Name} configuration");
-            CharactersWindow = new CharactersWindow(this, $"{Name} characters", pluginLog, textureProvider, currentLocale, db)
+            ConfigWindow = new ConfigWindow(this, $"{Name} configuration"/*, Plugin.DataManager*/);
+            CharactersWindow = new CharactersWindow(this, $"{Name} characters", /*Plugin.DataManager, textureProvider,*/ db)
             {
                 GetPlayer = () => this.altoholicService.GetPlayer(),
                 GetOthersCharactersList = () => this.altoholicService.GetOthersCharacters(),
             };
 
-            DetailsWindow = new DetailsWindow(this, $"{Name} characters details", pluginLog, dataManager, textureProvider, currentLocale)
+            DetailsWindow = new DetailsWindow(this, $"{Name} characters details"/*, Plugin.DataManager, textureProvider*/)
             {
                 GetPlayer = () => this.altoholicService.GetPlayer(),
                 GetOthersCharactersList = () => this.altoholicService.GetOthersCharacters(),
             };
 
-            JobsWindow = new JobsWindow(this, $"{Name} characters jobs", pluginLog, dataManager, textureProvider, currentLocale)
+            JobsWindow = new JobsWindow(this, $"{Name} characters jobs"/*, Plugin.DataManager, textureProvider*/)
             {
                 GetPlayer = () => this.altoholicService.GetPlayer(),
                 GetOthersCharactersList = () => this.altoholicService.GetOthersCharacters(),
             };
 
-            CurrenciesWindow = new CurrenciesWindow(this, $"{Name} characters currencies", pluginLog, dataManager, textureProvider, currentLocale)
+            CurrenciesWindow = new CurrenciesWindow(this, $"{Name} characters currencies"/*, Plugin.DataManager, textureProvider*/)
             {
                 GetPlayer = () => this.altoholicService.GetPlayer(),
                 GetOthersCharactersList = () => this.altoholicService.GetOthersCharacters(),
@@ -150,18 +165,18 @@ namespace Altoholic
             MainWindow = new MainWindow(
                 this,
                 $"{Name} characters",
-                pluginLog,
-                dataManager,
+                /*Log,
+                Plugin.DataManager,*/
                 CharactersWindow,
                 DetailsWindow,
                 JobsWindow,
                 CurrenciesWindow,
-                currentLocale);
+                ConfigWindow);
 
             WindowSystem.AddWindow(ConfigWindow);
             WindowSystem.AddWindow(MainWindow);
 
-            commandManager.AddHandler(CommandName, new CommandInfo(OnCommand)
+            CommandManager.AddHandler(CommandName, new CommandInfo(OnCommand)
             {
                 HelpMessage = "Show/hide Altoholic"
             });
@@ -169,17 +184,23 @@ namespace Altoholic
             PluginInterface.UiBuilder.Draw += DrawUI;
             PluginInterface.UiBuilder.OpenConfigUi += DrawConfigUI;
             PluginInterface.UiBuilder.OpenMainUi += DrawMainUI;
+            PluginInterface.LanguageChanged += Localization.SetupWithLangCode;
 
             // Todo: On retainers retainer window close
-            clientState.Login += OnCharacterLogin;
-            clientState.Logout += OnCharacterLogout;
-            framework.Update += OnFrameworkUpdate;
+            ClientState.Login += OnCharacterLogin;
+            ClientState.Logout += OnCharacterLogout;
+            Framework.Update += OnFrameworkUpdate;
         }
 
         public void Dispose()
         {
             PlaytimeHook.Dispose();
             WindowSystem.RemoveAllWindows();
+
+            PluginInterface.UiBuilder.Draw -= DrawUI;
+            PluginInterface.UiBuilder.OpenConfigUi -= DrawConfigUI;
+            PluginInterface.UiBuilder.OpenMainUi -= DrawMainUI;
+            PluginInterface.LanguageChanged -= Localization.SetupWithLangCode;
 
             JobsWindow.Dispose();
             ConfigWindow.Dispose();
@@ -190,31 +211,40 @@ namespace Altoholic
 
             CleanLastLocalCharacter();
 
-            commandManager.RemoveHandler(CommandName);
+            CommandManager.RemoveHandler(CommandName);
 
-            clientState.Login -= OnCharacterLogin;
-            clientState.Logout -= OnCharacterLogout;
-            framework.Update -= OnFrameworkUpdate;
+            ClientState.Login -= OnCharacterLogin;
+            ClientState.Logout -= OnCharacterLogout;
+            Framework.Update -= OnFrameworkUpdate;
             db.Dispose();
         }
 
         private void OnCommand(string command, string args)
         {
-            pluginLog.Debug("OnCommand called");
-            DrawMainUI();
+            Log.Debug("OnCommand called");
+            if (MainWindow.IsOpen)
+            {
+                MainWindow.IsOpen = false;
+            }
+            else
+            {
+                DrawMainUI();
+            }
         }
- 
+
         private void DrawUI()
         {
             WindowSystem.Draw();
         }
- 
+
         private void DrawMainUI()
         {
-            if (!clientState.IsLoggedIn)
+            if (!ClientState.IsLoggedIn)
             {
-                pluginLog.Error("No character logged in, doing nothing");
-                notificationManager.AddNotification(new Notification() {
+                Log.Error("No character logged in, doing nothing");
+
+                NotificationManager.AddNotification(new Notification()
+                {
                     Title = "Altoholic",
                     Content = "This plugin need a character to be logged in",
                     Type = NotificationType.Error,
@@ -224,17 +254,17 @@ namespace Altoholic
                 return;
             }
 
-            //pluginLog.Debug($"localPlayerName : {localPlayer.FirstName} {localPlayer.LastName}");
+            //Plugin.Log.Debug($"localPlayerName : {localPlayer.FirstName} {localPlayer.LastName}");
             if (localPlayer == null || localPlayer.FirstName == null)
             {
                 var p = GetCharacterFromGameOrDB();
                 if (p is not null)
                 {
                     localPlayer = p;
-                    //pluginLog.Debug($"localPlayerPlayTime : {localPlayerPlayTime}");
+                    //Plugin.Log.Debug($"localPlayerPlayTime : {localPlayerPlayTime}");
                     if (localPlayer.PlayTime == 0)//still needed?
                     {
-                        Character? chara = Database.Database.GetCharacter(db, pluginLog, localPlayer.Id);
+                        Character? chara = Database.Database.GetCharacter(Log, db, localPlayer.Id);
                         if (chara is not null)
                         {
                             localPlayer.PlayTime = chara.PlayTime;
@@ -242,55 +272,55 @@ namespace Altoholic
                         }
                     }
 
-                    pluginLog.Debug($"Character localLastPlayTimeUpdate : {localPlayer.LastPlayTimeUpdate}");
-                    pluginLog.Debug($"Inventory : {localPlayer.Inventory.Count}");
-                    #if DEBUG
+                    Plugin.Log.Debug($"Character localLastPlayTimeUpdate : {localPlayer.LastPlayTimeUpdate}");
+                    Plugin.Log.Debug($"Inventory : {localPlayer.Inventory.Count}");
+#if DEBUG
 
                     foreach (var inventory in localPlayer.Inventory)
                     {
-                        //pluginLog.Debug($"{inventory.ItemId} {lumina.Singular} {inventory.HQ} {inventory.Quantity}");
+                        //Plugin.Log.Debug($"{inventory.ItemId} {lumina.Singular} {inventory.HQ} {inventory.Quantity}");
                     }
-                    #endif
+#endif
                 }
             }
             if (localPlayer is not null)
             {
                 if (otherCharacters.Count == 0)
                 {
-                    otherCharacters = Database.Database.GetOthersCharacters(db, pluginLog, localPlayer.Id);
+                    otherCharacters = Database.Database.GetOthersCharacters(Log, db, localPlayer.Id);
                 }
-                //pluginLog.Debug($"otherCharacters count {otherCharacters.Count}");
+                //Plugin.Log.Debug($"otherCharacters count {otherCharacters.Count}");
 
-                //pluginLog.Debug($"localPlayer.Quests.Count: {localPlayer.Quests.Count}");
+                //Plugin.Log.Debug($"localPlayer.Quests.Count: {localPlayer.Quests.Count}");
                 if (localPlayer.Quests.Count == 0)
                 {
-                    //pluginLog.Debug("No quest found, fetching from db");
-                    Character? chara = Database.Database.GetCharacter(db, pluginLog, localPlayer.Id);
+                    //Plugin.Log.Debug("No quest found, fetching from db");
+                    Character? chara = Database.Database.GetCharacter(Log, db, localPlayer.Id);
                     if (chara != null)
                     {
                         localPlayer.Quests = chara.Quests;
                     }
                 }
-                //pluginLog.Debug($"localPlayer.Quests.Count: {localPlayer.Quests.Count}");
+                //Plugin.Log.Debug($"localPlayer.Quests.Count: {localPlayer.Quests.Count}");
 
                 foreach (Gear i in localPlayer.Gear)
                 {
-                    pluginLog.Debug($"Gear: {i.ItemId} {Enum.GetName(typeof(GearSlot), i.Slot)} {i.Slot}");
+                    Plugin.Log.Debug($"Gear: {i.ItemId} {Enum.GetName(typeof(GearSlot), i.Slot)} {i.Slot}");
                 }
-                #if DEBUG
-                /*pluginLog.Debug($"Title {localPlayer.Profile.Title}");
-                pluginLog.Debug($"Title Length {localPlayer.Profile.Title.Length}");
-                pluginLog.Debug($"Grand Company {localPlayer.Profile.Grand_Company}");
-                pluginLog.Debug($"Grand Company Rank {localPlayer.Profile.Grand_Company_Rank}");
-                pluginLog.Debug($"Gender {Utils.GetGender(localPlayer.Profile.Gender)}");
-                pluginLog.Debug($"Race {Utils.GetRace(dataManager, pluginLog, currentLocale, localPlayer.Profile.Gender, localPlayer.Profile.Race)}");
-                pluginLog.Debug($"Tribe {Utils.GetTribe(dataManager, pluginLog, currentLocale, localPlayer.Profile.Gender, localPlayer.Profile.Tribe)}");
-                pluginLog.Debug($"City State {Utils.GetTown(dataManager, pluginLog, currentLocale, localPlayer.Profile.City_State)}");
-                pluginLog.Debug($"Nameday_Day {localPlayer.Profile.Nameday_Day}");
-                pluginLog.Debug($"Nameday_Month {localPlayer.Profile.Nameday_Month}");
-                pluginLog.Debug($"Guardian {Utils.GetGuardian(dataManager, pluginLog, currentLocale, localPlayer.Profile.Guardian)}");*/
-                #endif 
-                PlayerCharacter? lPlayer = clientState.LocalPlayer;
+#if DEBUG
+                /*Plugin.Log.Debug($"Title {localPlayer.Profile.Title}");
+                Plugin.Log.Debug($"Title Length {localPlayer.Profile.Title.Length}");
+                Plugin.Log.Debug($"Grand Company {localPlayer.Profile.Grand_Company}");
+                Plugin.Log.Debug($"Grand Company Rank {localPlayer.Profile.Grand_Company_Rank}");
+                Plugin.Log.Debug($"Gender {Utils.GetGender(localPlayer.Profile.Gender)}");
+                Plugin.Log.Debug($"Race {Utils.GetRace(localPlayer.Profile.Gender, localPlayer.Profile.Race)}");
+                Plugin.Log.Debug($"Tribe {Utils.GetTribe(localPlayer.Profile.Gender, localPlayer.Profile.Tribe)}");
+                Plugin.Log.Debug($"City State {Utils.GetTown(localPlayer.Profile.City_State)}");
+                Plugin.Log.Debug($"Nameday_Day {localPlayer.Profile.Nameday_Day}");
+                Plugin.Log.Debug($"Nameday_Month {localPlayer.Profile.Nameday_Month}");
+                Plugin.Log.Debug($"Guardian {Utils.GetGuardian(localPlayer.Profile.Guardian)}");*/
+#endif
+                PlayerCharacter? lPlayer = ClientState.LocalPlayer;
                 if (lPlayer != null)
                 {
                     localPlayer.Attributes = new()
@@ -302,55 +332,70 @@ namespace Altoholic
                     GetPlayerAttributesProfileAndJobs();
                     GetPlayerEquippedGear();
                     GetPlayerInventory();
+                    GetPlayerSaddleInventory();
                     GetPlayerCompletedQuest();
+
+                    Log.Debug($"localPlayer.Saddle.Count: {localPlayer.Saddle.Count}");
+                    foreach (var inventory in localPlayer.Saddle)
+                    {
+                        Plugin.Log.Debug($"{inventory.ItemId} {inventory.HQ} {inventory.Quantity}");
+                    }
                 }
 
-                if (clientState.IsLoggedIn)
+                if (ClientState.IsLoggedIn)
                 {
                     localPlayer.LastOnline = 0;
                 }
-                #if DEBUG
-                /*pluginLog.Debug($"Gladiator : {localPlayer.Jobs.Gladiator.Level}");
-                pluginLog.Debug($"Pugilist : {localPlayer.Jobs.Pugilist.Level}");
-                pluginLog.Debug($"Marauder : {localPlayer.Jobs.Marauder.Level}");
-                pluginLog.Debug($"Lancer : {localPlayer.Jobs.Lancer.Level}");
-                pluginLog.Debug($"Archer : {localPlayer.Jobs.Archer.Level}");
-                pluginLog.Debug($"Conjurer : {localPlayer.Jobs.Conjurer.Level}");
-                pluginLog.Debug($"Thaumaturge : {localPlayer.Jobs.Thaumaturge.Level}");
-                pluginLog.Debug($"Carpenter : {localPlayer.Jobs.Carpenter.Level}");
-                pluginLog.Debug($"Blacksmith : {localPlayer.Jobs.Blacksmith.Level}");
-                pluginLog.Debug($"Armorer : {localPlayer.Jobs.Armorer.Level}");
-                pluginLog.Debug($"Goldsmith : {localPlayer.Jobs.Goldsmith.Level}");
-                pluginLog.Debug($"Leatherworker : {localPlayer.Jobs.Leatherworker.Level}");
-                pluginLog.Debug($"Weaver : {localPlayer.Jobs.Weaver.Level}");
-                pluginLog.Debug($"Alchemist : {localPlayer.Jobs.Alchemist.Level}");
-                pluginLog.Debug($"Culinarian : {localPlayer.Jobs.Culinarian.Level}");
-                pluginLog.Debug($"Miner : {localPlayer.Jobs.Miner.Level}");
-                pluginLog.Debug($"Botanist : {localPlayer.Jobs.Botanist.Level}");
-                pluginLog.Debug($"Fisher : {localPlayer.Jobs.Fisher.Level}");
-                pluginLog.Debug($"Paladin : {localPlayer.Jobs.Paladin.Level}");
-                pluginLog.Debug($"Monk : {localPlayer.Jobs.Monk.Level}");
-                pluginLog.Debug($"Warrior : {localPlayer.Jobs.Warrior.Level}");
-                pluginLog.Debug($"Dragoon : {localPlayer.Jobs.Dragoon.Level}");
-                pluginLog.Debug($"Bard : {localPlayer.Jobs.Bard.Level}");
-                pluginLog.Debug($"WhiteMage : {localPlayer.Jobs.WhiteMage.Level}");
-                pluginLog.Debug($"BlackMage : {localPlayer.Jobs.BlackMage.Level}");
-                pluginLog.Debug($"Arcanist : {localPlayer.Jobs.Arcanist.Level}");
-                pluginLog.Debug($"Summoner : {localPlayer.Jobs.Summoner.Level}");
-                pluginLog.Debug($"Scholar : {localPlayer.Jobs.Scholar.Level}");
-                pluginLog.Debug($"Rogue : {localPlayer.Jobs.Rogue.Level}");
-                pluginLog.Debug($"Ninja : {localPlayer.Jobs.Ninja.Level}");
-                pluginLog.Debug($"Machinist : {localPlayer.Jobs.Machinist.Level}");
-                pluginLog.Debug($"DarkKnight : {localPlayer.Jobs.DarkKnight.Level}");
-                pluginLog.Debug($"Astrologian : {localPlayer.Jobs.Astrologian.Level}");
-                pluginLog.Debug($"Samurai : {localPlayer.Jobs.Samurai.Level}");
-                pluginLog.Debug($"RedMage : {localPlayer.Jobs.RedMage.Level}");
-                pluginLog.Debug($"BlueMage : {localPlayer.Jobs.BlueMage.Level}");
-                pluginLog.Debug($"Gunbreaker : {localPlayer.Jobs.Gunbreaker.Level}");
-                pluginLog.Debug($"Dancer : {localPlayer.Jobs.Dancer.Level}");
-                pluginLog.Debug($"Reaper : {localPlayer.Jobs.Reaper.Level}");
-                pluginLog.Debug($"Sage : {localPlayer.Jobs.Sage.Level}");*/
-                #endif
+#if DEBUG
+                /*Plugin.Log.Debug($"Gladiator : {localPlayer.Jobs.Gladiator.Level}");
+                Plugin.Log.Debug($"Pugilist : {localPlayer.Jobs.Pugilist.Level}");
+                Plugin.Log.Debug($"Marauder : {localPlayer.Jobs.Marauder.Level}");
+                Plugin.Log.Debug($"Lancer : {localPlayer.Jobs.Lancer.Level}");
+                Plugin.Log.Debug($"Archer : {localPlayer.Jobs.Archer.Level}");
+                Plugin.Log.Debug($"Conjurer : {localPlayer.Jobs.Conjurer.Level}");
+                Plugin.Log.Debug($"Thaumaturge : {localPlayer.Jobs.Thaumaturge.Level}");
+                Plugin.Log.Debug($"Carpenter : {localPlayer.Jobs.Carpenter.Level}");
+                Plugin.Log.Debug($"Blacksmith : {localPlayer.Jobs.Blacksmith.Level}");
+                Plugin.Log.Debug($"Armorer : {localPlayer.Jobs.Armorer.Level}");
+                Plugin.Log.Debug($"Goldsmith : {localPlayer.Jobs.Goldsmith.Level}");
+                Plugin.Log.Debug($"Leatherworker : {localPlayer.Jobs.Leatherworker.Level}");
+                Plugin.Log.Debug($"Weaver : {localPlayer.Jobs.Weaver.Level}");
+                Plugin.Log.Debug($"Alchemist : {localPlayer.Jobs.Alchemist.Level}");
+                Plugin.Log.Debug($"Culinarian : {localPlayer.Jobs.Culinarian.Level}");
+                Plugin.Log.Debug($"Miner : {localPlayer.Jobs.Miner.Level}");
+                Plugin.Log.Debug($"Botanist : {localPlayer.Jobs.Botanist.Level}");
+                Plugin.Log.Debug($"Fisher : {localPlayer.Jobs.Fisher.Level}");
+                Plugin.Log.Debug($"Paladin : {localPlayer.Jobs.Paladin.Level}");
+                Plugin.Log.Debug($"Monk : {localPlayer.Jobs.Monk.Level}");
+                Plugin.Log.Debug($"Warrior : {localPlayer.Jobs.Warrior.Level}");
+                Plugin.Log.Debug($"Dragoon : {localPlayer.Jobs.Dragoon.Level}");
+                Plugin.Log.Debug($"Bard : {localPlayer.Jobs.Bard.Level}");
+                Plugin.Log.Debug($"WhiteMage : {localPlayer.Jobs.WhiteMage.Level}");
+                Plugin.Log.Debug($"BlackMage : {localPlayer.Jobs.BlackMage.Level}");
+                Plugin.Log.Debug($"Arcanist : {localPlayer.Jobs.Arcanist.Level}");
+                Plugin.Log.Debug($"Summoner : {localPlayer.Jobs.Summoner.Level}");
+                Plugin.Log.Debug($"Scholar : {localPlayer.Jobs.Scholar.Level}");
+                Plugin.Log.Debug($"Rogue : {localPlayer.Jobs.Rogue.Level}");
+                Plugin.Log.Debug($"Ninja : {localPlayer.Jobs.Ninja.Level}");
+                Plugin.Log.Debug($"Machinist : {localPlayer.Jobs.Machinist.Level}");
+                Plugin.Log.Debug($"DarkKnight : {localPlayer.Jobs.DarkKnight.Level}");
+                Plugin.Log.Debug($"Astrologian : {localPlayer.Jobs.Astrologian.Level}");
+                Plugin.Log.Debug($"Samurai : {localPlayer.Jobs.Samurai.Level}");
+                Plugin.Log.Debug($"RedMage : {localPlayer.Jobs.RedMage.Level}");
+                Plugin.Log.Debug($"BlueMage : {localPlayer.Jobs.BlueMage.Level}");
+                Plugin.Log.Debug($"Gunbreaker : {localPlayer.Jobs.Gunbreaker.Level}");
+                Plugin.Log.Debug($"Dancer : {localPlayer.Jobs.Dancer.Level}");
+                Plugin.Log.Debug($"Reaper : {localPlayer.Jobs.Reaper.Level}");
+                Plugin.Log.Debug($"Sage : {localPlayer.Jobs.Sage.Level}");*/
+#endif
+                if (localPlayer.PlayTime == 0)
+                {
+                    var p = GetCharacterFromGameOrDB();
+                    if (p is not null)
+                    {
+                        localPlayer.PlayTime = p.PlayTime;
+                    }
+                }
             }
             MainWindow.IsOpen = true;
         }
@@ -362,15 +407,15 @@ namespace Altoholic
 
         private void OnFrameworkUpdate(IFramework framework)
         {
-            PlayerCharacter? lPlayer = clientState.LocalPlayer;
+            PlayerCharacter? lPlayer = ClientState.LocalPlayer;
             if (lPlayer != null)
             {
                 localPlayer ??= new()
                 {
-                    Id = clientState.LocalContentId
+                    Id = ClientState.LocalContentId
                 };
 
-                var name =  lPlayer.Name.TextValue ?? string.Empty;
+                var name = lPlayer.Name.TextValue ?? string.Empty;
                 if (string.IsNullOrEmpty(name)) return;
                 var names = name.Split(" ");
                 if (names.Length == 2)
@@ -395,34 +440,16 @@ namespace Altoholic
                     var cwhd = cw.GameData;
                     if (cwhd != null)
                     {
-                        localPlayerCurrentWorld = cwhd.Name ?? string.Empty;
-                        localPlayerCurrentDatacenter = Utils.GetDatacenterFromWorld(localPlayerCurrentWorld);
-                        localPlayerCurrentRegion = Utils.GetRegionFromWorld(localPlayerCurrentWorld);
+                        localPlayer.CurrentWorld = cwhd.Name ?? string.Empty;
+                        localPlayer.CurrentDatacenter = Utils.GetDatacenterFromWorld(localPlayer.CurrentWorld);
+                        localPlayer.CurrentRegion = Utils.GetRegionFromWorld(localPlayer.CurrentWorld);
                     }
-                }                
+                }
 
                 localPlayer.LastJob = lPlayer.ClassJob.Id;
                 localPlayer.LastJobLevel = lPlayer.Level;
-
-                if (localPlayerCurrentWorld == localPlayer.HomeWorld && localPlayerCurrentRegion == localPlayer.Region)
-                {
-                    localPlayer.FCTag = lPlayer.CompanyTag.TextValue ?? string.Empty;
-                }
-                else if (localPlayerCurrentWorld != localPlayer.HomeWorld && localPlayerCurrentRegion == localPlayer.Region)
-                {
-                    localPlayer.FCTag = Utils.GetAddonString(dataManager, pluginLog, currentLocale, 12541);
-                }
-                else if (localPlayerCurrentWorld != localPlayer.HomeWorld && localPlayerCurrentRegion != localPlayer.Region)
-                {
-                    localPlayer.FCTag = Utils.GetAddonString(dataManager, pluginLog, currentLocale, 12625);
-                }
-                else if (localPlayerCurrentWorld != localPlayer.HomeWorld && localPlayerCurrentRegion != localPlayer.Region)
-                {
-                    localPlayer.FCTag = Utils.GetAddonString(dataManager, pluginLog, currentLocale, 12627);
-                }
-                //pluginLog.Debug($"localPlayerRegion : {localPlayerRegion}");
-                //pluginLog.Debug($"localPlayerCurrentRegion : {localPlayerCurrentRegion}");
-                //pluginLog.Debug($"localPlayerFreeCompanyTag : {localPlayerFreeCompanyTag}");
+                localPlayer.FCTag = lPlayer.CompanyTag.TextValue ?? string.Empty;
+                //Plugin.Log.Debug($"localPlayerFreeCompanyTag : {localPlayerFreeCompanyTag}");
                 //localPlayerFreeCompany = localPlayer..TextValue ?? string.Empty;
                 try
                 {
@@ -430,21 +457,21 @@ namespace Altoholic
                     {
                         ref readonly AgentInspect agentInspect = ref *AgentInspect.Instance();
                         localPlayerFreeCompanyTest = agentInspect.FreeCompany.GuildName;
-                        /*pluginLog.Debug($"localPlayerFreeCompanyTest???");
+                        /*Plugin.Log.Debug($"localPlayerFreeCompanyTest???");
                         if(localPlayerFreeCompanyTest != null)
                         {
-                            pluginLog.Debug($"localPlayerFreeCompanyTest : {localPlayerFreeCompanyTest}");
+                            Plugin.Log.Debug($"localPlayerFreeCompanyTest : {localPlayerFreeCompanyTest}");
                         }*/
                         //localPlayerFreeCompanyTest = FFXIVClientStructs.FFXIV.Client.UI.Agent.AgentInspect.Instance()->FreeCompany.GuildName;
-                        //pluginLog.Debug($"localPlayerFreeCompanyTest : {localPlayerFreeCompanyTest}");
-                        //pluginLog.Debug(System.Text.Encoding.UTF8.GetString(AgentInspect.Instance()->FreeCompany.GuildName));
-                        //pluginLog.Debug(System.Text.Encoding.UTF8.GetString(localPlayerFreeCompanyTest)); ;
-                        //pluginLog.Debug($"localPlayerFreeCompany : {localPlayerFreeCompanyTest}");
+                        //Plugin.Log.Debug($"localPlayerFreeCompanyTest : {localPlayerFreeCompanyTest}");
+                        //Plugin.Log.Debug(System.Text.Encoding.UTF8.GetString(AgentInspect.Instance()->FreeCompany.GuildName));
+                        //Plugin.Log.Debug(System.Text.Encoding.UTF8.GetString(localPlayerFreeCompanyTest)); ;
+                        //Plugin.Log.Debug($"localPlayerFreeCompany : {localPlayerFreeCompanyTest}");
                     }
                 }
                 catch (Exception e)
                 {
-                    pluginLog.Error(e, "Could not get free company name");
+                    Log.Error(e, "Could not get free company name");
                 }
                 localPlayer.Attributes = new()
                 {
@@ -455,17 +482,18 @@ namespace Altoholic
                 GetPlayerAttributesProfileAndJobs();
                 GetPlayerEquippedGear();
                 GetPlayerInventory();
+                GetPlayerSaddleInventory();
             }
         }
 
         private unsafe void GetPlayerAttributesProfileAndJobs()
         {
-            if(localPlayer is null) return;
+            if (localPlayer is null) return;
             unsafe
             {
                 var title = string.Empty;
                 var prefixTitle = false;
-                var raptureAtkModule = Framework.Instance()->GetUiModule()->GetRaptureAtkModule();
+                var raptureAtkModule = FFXIVClientStructs.FFXIV.Client.System.Framework.Framework.Instance()->GetUiModule()->GetRaptureAtkModule();
                 if (raptureAtkModule != null)
                 {
                     var npi = raptureAtkModule->NamePlateInfoEntriesSpan;
@@ -474,11 +502,11 @@ namespace Altoholic
                         for (var i = 0; i < 50 && i < raptureAtkModule->NameplateInfoCount; i++)
                         {
                             ref NamePlateInfo namePlateInfo = ref npi[i];
-                            if (clientState.LocalPlayer == null) continue;
-                            if (namePlateInfo.ObjectID.ObjectID == clientState.LocalPlayer.ObjectId)
+                            if (ClientState.LocalPlayer == null) continue;
+                            if (namePlateInfo.ObjectID.ObjectID == ClientState.LocalPlayer.ObjectId)
                             {
                                 var t = namePlateInfo.Title.ToString();//this sometime get player name??? to recheck
-                                //pluginLog.Debug($"t: {t}");
+                                //Plugin.Log.Debug($"t: {t}");
                                 if (t != $"{localPlayer.FirstName} {localPlayer.LastName}")
                                 {
                                     title = t;
@@ -550,7 +578,7 @@ namespace Altoholic
                     Sage = new() { Level = player.ClassJobLevelArray[29], Exp = player.ClassJobExpArray[29] }
                 };
                 //player.Attributes.
-                //pluginLog.Debug();
+                //Plugin.Log.Debug();
                 /*foreach (var a in player.Attributes)
                 {
 
@@ -683,14 +711,14 @@ namespace Altoholic
         {
             foreach (int id in QuestIds)
             {
-                pluginLog.Debug($"Checking quest {id}");
+                Plugin.Log.Debug($"Checking quest {id}");
                 /*if(localPlayer.HasQuest(id) && localPlayer.IsQuestCompleted(id))
-                    pluginLog.Debug($"{id} is completed");*/
+                    Plugin.Log.Debug($"{id} is completed");*/
 
                 if (!localPlayer.HasQuest(id) || localPlayer.HasQuest(id) && !localPlayer.IsQuestCompleted(id))
                 {
-                    pluginLog.Debug($"Quest not in store or not completed, checking if quest {id} is completed");
-                    bool complete = Utils.IsQuestCompleted(pluginLog, id);
+                    Plugin.Log.Debug($"Quest not in store or not completed, checking if quest {id} is completed");
+                    bool complete = Utils.IsQuestCompleted(id);
                     if (!localPlayer.HasQuest(id))
                     {
                         localPlayer.Quests.Add(new()
@@ -717,7 +745,7 @@ namespace Altoholic
             {
                 //var inv = InventoryManager.Instance()->GetInventoryContainer(InventoryType.EquippedItems);
                 ref readonly InventoryManager inventoryManager = ref *InventoryManager.Instance();
-                InventoryContainer inv  = *inventoryManager.GetInventoryContainer(InventoryType.EquippedItems);
+                InventoryContainer inv = *inventoryManager.GetInventoryContainer(InventoryType.EquippedItems);
                 List<Gear> gear_items = [];
                 //for (var i = 0; i < inv->Size; i++)
                 for (var i = 0; i < inv.Size; i++)
@@ -742,7 +770,7 @@ namespace Altoholic
                     gear_items.Add(currGear);
                 }
                 localPlayer.Gear = gear_items;
-            }            
+            }
         }
 
         private unsafe void GetPlayerInventory()
@@ -754,6 +782,7 @@ namespace Altoholic
                         InventoryType.Inventory2,
                         InventoryType.Inventory3,
                         InventoryType.Inventory4,
+                        InventoryType.Crystals,
                     };
                 List<Inventory> items = [];
                 foreach (var kind in invs)
@@ -761,7 +790,6 @@ namespace Altoholic
                     //var inv = InventoryManager.Instance()->GetInventoryContainer(kind)
                     ref readonly InventoryManager inventoryManager = ref *InventoryManager.Instance();
                     InventoryContainer inv = *inventoryManager.GetInventoryContainer(kind);
-                    List<Gear> gear_items = [];
                     //for (var i = 0; i < inv->Size; i++)
                     for (var i = 0; i < inv.Size; i++)
                     {
@@ -774,7 +802,7 @@ namespace Altoholic
                             HQ = flags.HasFlag(InventoryItem.ItemFlags.HQ),
                             Quantity = ii.Quantity,
                         };
-                        //pluginLog.Debug($"{currInv.ItemId}");
+                        //Plugin.Log.Debug($"{currInv.ItemId}");
                         items.Add(currInv);
                     }
                 }
@@ -783,6 +811,190 @@ namespace Altoholic
                 localPlayer.Currencies = GetPlayerCurrencies();
             }
         }
+        private unsafe void GetPlayerSaddleInventory()
+        {
+            unsafe
+            {
+                var invs = new[] {
+                        InventoryType.SaddleBag1,
+                        InventoryType.SaddleBag2,
+                        InventoryType.PremiumSaddleBag1,
+                        InventoryType.PremiumSaddleBag2,
+                    };
+                List<Inventory> items = [];
+                foreach (var kind in invs)
+                {
+                    //var inv = InventoryManager.Instance()->GetInventoryContainer(kind)
+                    ref readonly InventoryManager inventoryManager = ref *InventoryManager.Instance();
+                    InventoryContainer inv = *inventoryManager.GetInventoryContainer(kind);
+                    //for (var i = 0; i < inv->Size; i++)
+                    for (var i = 0; i < inv.Size; i++)
+                    {
+                        //var ii = inv->Items[i];
+                        var ii = inv.Items[i];
+                        var flags = ii.Flags;
+                        Inventory currInv = new()
+                        {
+                            ItemId = ii.ItemID,
+                            HQ = flags.HasFlag(InventoryItem.ItemFlags.HQ),
+                            Quantity = ii.Quantity,
+                        };
+                        //Plugin.Log.Debug($"{currInv.ItemId}");
+                        items.Add(currInv);
+                    }
+                }
+                localPlayer.Saddle = items;
+            }
+        }
+
+        private unsafe void GetPlayerRetainer()
+        {
+            unsafe
+            {
+                ref readonly RetainerManager retainerManager = ref *RetainerManager.Instance();
+                var retainersCount = retainerManager;
+                for (uint i = 0; i < 10; i++)
+                {
+                    var current_retainer = retainerManager.GetRetainerBySortedIndex(i);
+                    Retainer? playerRetainer = localPlayer.Retainers.First(r => r.Id == current_retainer->RetainerID);
+                    if (playerRetainer != null)
+                    {
+                        
+                    }
+                    else
+                    {
+                        playerRetainer = new()
+                        {
+                            Id = current_retainer->RetainerID
+                        };
+                    }
+
+                    playerRetainer.Available = current_retainer->Available;
+                    playerRetainer.Name = MemoryHelper.ReadSeStringNullTerminated((nint)current_retainer->Name).TextValue;
+                    playerRetainer.ClassJob = current_retainer->ClassJob;
+                    playerRetainer.Level = current_retainer->Level;
+                    playerRetainer.Gils = current_retainer->Gil;
+                    playerRetainer.Town = current_retainer->Town;
+                    playerRetainer.MarkerItemCount = current_retainer->MarkerItemCount;
+                    playerRetainer.MarketExpire = current_retainer->MarketExpire;
+                    playerRetainer.VentureID = current_retainer->VentureID;
+                    playerRetainer.LastUpdate = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+                    if (playerRetainer.Id == retainerManager.LastSelectedRetainerId)
+                    {
+                        playerRetainer.Inventory = GetPlayerRetainerInventory();
+                        playerRetainer.Gear = GetPlayerRetainerEquippedGear();
+                        playerRetainer.MarketInventory = GetPlayerRetainermarketInventory();
+                    }
+                }
+            }
+        }
+        private unsafe List<Inventory> GetPlayerRetainerInventory()
+        {
+            unsafe
+            {
+                var invs = new[] {
+                        InventoryType.RetainerPage1,
+                        InventoryType.RetainerPage2,
+                        InventoryType.RetainerPage3,
+                        InventoryType.RetainerPage4,
+                        InventoryType.RetainerPage5,
+                        InventoryType.RetainerPage6,
+                        InventoryType.RetainerPage7,
+                        InventoryType.RetainerCrystals,
+                    };
+                List<Inventory> items = [];
+                foreach (var kind in invs)
+                {
+                    //var inv = InventoryManager.Instance()->GetInventoryContainer(kind)
+                    ref readonly InventoryManager inventoryManager = ref *InventoryManager.Instance();
+                    InventoryContainer inv = *inventoryManager.GetInventoryContainer(kind);
+                    //for (var i = 0; i < inv->Size; i++)
+                    for (var i = 0; i < inv.Size; i++)
+                    {
+                        //var ii = inv->Items[i];
+                        var ii = inv.Items[i];
+                        var flags = ii.Flags;
+                        Inventory currInv = new()
+                        {
+                            ItemId = ii.ItemID,
+                            HQ = flags.HasFlag(InventoryItem.ItemFlags.HQ),
+                            Quantity = ii.Quantity,
+                        };
+                        //Plugin.Log.Debug($"{currInv.ItemId}");
+                        items.Add(currInv);
+                    }
+                }
+                return items;
+            }
+
+            /*
+             * 
+                RetainerMarket = 12002,
+            */
+        }
+        
+        private unsafe List<Inventory> GetPlayerRetainermarketInventory()
+        {
+            unsafe
+            {
+                //var inv = InventoryManager.Instance()->GetInventoryContainer(InventoryType.EquippedItems);
+                ref readonly InventoryManager inventoryManager = ref *InventoryManager.Instance();
+                InventoryContainer inv = *inventoryManager.GetInventoryContainer(InventoryType.RetainerMarket);
+                List<Inventory> market_items = [];
+                //for (var i = 0; i < inv->Size; i++)
+                for (var i = 0; i < inv.Size; i++)
+                {
+                    //var ii = inv->Items[i];
+                    var ii = inv.Items[i];
+                    var flags = ii.Flags;
+                    Inventory currInv = new()
+                    {
+                        ItemId = ii.ItemID,
+                        HQ = flags.HasFlag(InventoryItem.ItemFlags.HQ),
+                        Quantity = ii.Quantity,
+                    };
+                    //Plugin.Log.Debug($"{currInv.ItemId}");
+                    market_items.Add(currInv);
+                }
+                return market_items;
+            }
+        }
+        
+        private unsafe List<Gear> GetPlayerRetainerEquippedGear()
+        {
+            unsafe
+            {
+                //var inv = InventoryManager.Instance()->GetInventoryContainer(InventoryType.EquippedItems);
+                ref readonly InventoryManager inventoryManager = ref *InventoryManager.Instance();
+                InventoryContainer inv = *inventoryManager.GetInventoryContainer(InventoryType.RetainerEquippedItems);
+                List<Gear> gear_items = [];
+                //for (var i = 0; i < inv->Size; i++)
+                for (var i = 0; i < inv.Size; i++)
+                {
+                    //var ii = inv->Items[i];
+                    var ii = inv.Items[i];
+                    var flags = ii.Flags;
+                    Gear currGear = new()
+                    {
+                        ItemId = ii.ItemID,
+                        HQ = flags.HasFlag(InventoryItem.ItemFlags.HQ),
+                        CompanyCrestApplied = flags.HasFlag(InventoryItem.ItemFlags.CompanyCrestApplied),
+                        Slot = ii.Slot,
+                        Spiritbond = ii.Spiritbond,
+                        Condition = ii.Condition,
+                        CrafterContentID = ii.CrafterContentID,
+                        Materia = (ushort)ii.Materia,
+                        MateriaGrade = (byte)ii.MateriaGrade,
+                        Stain = ii.Stain,
+                        GlamourID = ii.GlamourID,
+                    };
+                    gear_items.Add(currGear);
+                }
+                return gear_items;
+            }
+        }
+
+
 
         private void CleanLastLocalCharacter()
         {
@@ -811,23 +1023,20 @@ namespace Altoholic
             };
 
             localPlayer = null!;
-            localPlayerCurrentWorld = string.Empty;
-            localPlayerCurrentDatacenter = string.Empty;
-            localPlayerCurrentRegion = string.Empty;
             localPlayerFreeCompanyTest = null;
             otherCharacters = [];
         }
 
         private void OnCharacterLogin()
         {
-            //pluginLog.Info("Altoholic : OnCharacterLogin called");
+            //Log.Info("Altoholic : OnCharacterLogin called");
             var p = GetCharacterFromGameOrDB();
             if (p is not null)
             {
                 localPlayer = p;
-                //pluginLog.Info($"Character id is : {localPlayer.Id}");
-                otherCharacters = Database.Database.GetOthersCharacters(db, pluginLog, localPlayer.Id);
-                //pluginLog.Info("Altoholic : Found {0} others players", otherCharacters.Count);
+                //Log.Info($"Character id is : {localPlayer.Id}");
+                otherCharacters = Database.Database.GetOthersCharacters(Log, db, localPlayer.Id);
+                //Log.Info("Altoholic : Found {0} others players", otherCharacters.Count);
             }
             //Todo: send /playtime command
             /*_ = new XivChatEntry
@@ -845,21 +1054,21 @@ namespace Altoholic
             periodicTimer = new PeriodicTimer(timeSpan);
             while (await periodicTimer.WaitForNextTickAsync())
             {
-                Database.Database.UpdateCharacter(db, pluginLog, character);
+                Database.Database.UpdateCharacter(db, character);
                 _ = new XivChatEntry
                 {
                     Message = $"Tick from the time loop",
                     Type = XivChatType.Echo,
                 }
-                pluginLog.Debug("Altoholic : Tick from the time loop");
+                Plugin.Log.Debug("Altoholic : Tick from the time loop");
             }
 
-            pluginLog.Debug($"{periodicTimer}");
+            Plugin.Log.Debug($"{periodicTimer}");
         }*/
 
         private void OnCharacterLogout()
         {
-            pluginLog.Debug("Altoholic : OnCharacterLogout called");
+            Plugin.Log.Debug("Altoholic : OnCharacterLogout called");
             GetPlayerCompletedQuest();
             UpdateCharacter();
 
@@ -874,7 +1083,7 @@ namespace Altoholic
         /*private void PlaytimeCommand()
         {
             // send playtime command after user uses btime command
-            pluginLog.Debug($"Requesting playtime from server.");
+            Plugin.Log.Debug($"Requesting playtime from server.");
             xivCommon.Functions.Chat.SendMessage("/playtime");
             SendChatCommand = true;
         }*/
@@ -895,12 +1104,12 @@ namespace Altoholic
             if (player.Item1.Length == 0)
                 return result;
 
-            pluginLog.Debug($"Extracted Player Name: {player.Item1}{(char)SeIconChar.CrossWorld}{player.Item2}");
+            Plugin.Log.Debug($"Extracted Player Name: {player.Item1}{(char)SeIconChar.CrossWorld}{player.Item2}");
 
             var totalPlaytime = (uint)Marshal.ReadInt32((nint)param2 + 0x10);
-            pluginLog.Debug($"Value from address {totalPlaytime}");
+            Plugin.Log.Debug($"Value from address {totalPlaytime}");
             var playtime = TimeSpan.FromMinutes(totalPlaytime);
-            pluginLog.Debug($"Value from timespan {playtime}");
+            Plugin.Log.Debug($"Value from timespan {playtime}");
 
             var names = player.Item1.Split(' ');
             if (names.Length == 0)
@@ -908,58 +1117,59 @@ namespace Altoholic
 
             localPlayer.PlayTime = totalPlaytime;
 
-            ulong id = clientState.LocalContentId;
-           
+            ulong id = ClientState.LocalContentId;
+
             long newPlayTimeUpdate = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
             localPlayer.LastPlayTimeUpdate = newPlayTimeUpdate;
-            pluginLog.Debug($"Updating playtime with {player.Item1}, {player.Item2}, {totalPlaytime}, {newPlayTimeUpdate}.");
-            Database.Database.UpdatePlaytime(db, pluginLog, id,totalPlaytime, newPlayTimeUpdate);
+            Plugin.Log.Debug($"Updating playtime with {player.Item1}, {player.Item2}, {totalPlaytime}, {newPlayTimeUpdate}.");
+            Database.Database.UpdatePlaytime(Log, db, id, totalPlaytime, newPlayTimeUpdate);
             return result;
         }
 
         public (string, string, string) GetLocalPlayerNameWorldRegion()
         {
-            PlayerCharacter? local = clientState.LocalPlayer;
+            PlayerCharacter? local = ClientState.LocalPlayer;
             if (local == null || local.HomeWorld == null || local.HomeWorld.GameData == null)
                 return (string.Empty, string.Empty, string.Empty);
-            else {
+            else
+            {
                 var homeworld = local.HomeWorld.GameData.Name;
 
                 return ($"{local.Name}", $"{homeworld}", $"{Utils.GetRegionFromWorld(homeworld)}");
             }
         }
-        
+
         public void UpdateCharacter()
         {
             if (localPlayer == null || localPlayer.FirstName.Length == 0) return;
 
-            pluginLog.Debug($"Updating characters with {localPlayer.Id} {localPlayer.FirstName} {localPlayer.LastName}{(char)SeIconChar.CrossWorld}{localPlayer.HomeWorld}, {Utils.GetRegionFromWorld(localPlayer.HomeWorld)}.");
-            Database.Database.UpdateCharacter(db, pluginLog, localPlayer);
+            Plugin.Log.Debug($"Updating characters with {localPlayer.Id} {localPlayer.FirstName} {localPlayer.LastName}{(char)SeIconChar.CrossWorld}{localPlayer.HomeWorld}, {Utils.GetRegionFromWorld(localPlayer.HomeWorld)}.");
+            Database.Database.UpdateCharacter(Log, db, localPlayer);
         }
 
         public Character? GetCharacterFromGameOrDB()
         {
-            if (clientState is null) return null;
+            if (ClientState is null) return null;
 
             var player = GetLocalPlayerNameWorldRegion();
             if (string.IsNullOrEmpty(player.Item1) || string.IsNullOrEmpty(player.Item2) || string.IsNullOrEmpty(player.Item3)) return null;
 
-            //pluginLog.Debug($"Altoholic : Character names => 0: {player.Item1}{(char)SeIconChar.CrossWorld}{player.Item2});
+            //Plugin.Log.Debug($"Altoholic : Character names => 0: {player.Item1}{(char)SeIconChar.CrossWorld}{player.Item2});
             var names = player.Item1.Split(' '); // Todo: recheck when Dalamud API7 is out https://discord.com/channels/581875019861328007/653504487352303619/1061422333748850708
             if (names.Length == 2)
             {
-                //pluginLog.Debug("Altoholic : Character names : 0 : {0}, 1: {1}, 2: {2}, 3: {3}", names[0], names[1], player.Item2, player.Item3);
-                Character? chara = Database.Database.GetCharacter(db, pluginLog, clientState.LocalContentId);
+                //Plugin.Log.Debug("Altoholic : Character names : 0 : {0}, 1: {1}, 2: {2}, 3: {3}", names[0], names[1], player.Item2, player.Item3);
+                Character? chara = Database.Database.GetCharacter(Log, db, ClientState.LocalContentId);
                 if (chara != null)
                 {
-                    //pluginLog.Debug($"GetCharacterFromDB : id = {chara.Id}, FirstName = {chara.FirstName}, LastName = {chara.LastName}, HomeWorld = {chara.HomeWorld}, DataCenter = {chara.Datacenter}, LastJob = {chara.LastJob}, LastJobLevel = {chara.LastJobLevel}, FCTag = {chara.FCTag}, FreeCompany = {chara.FreeCompany}, LastOnline = {chara.LastOnline}, PlayTime = {chara.PlayTime}, LastPlayTimeUpdate = {chara.LastPlayTimeUpdate}");
+                    //Plugin.Log.Debug($"GetCharacterFromDB : id = {chara.Id}, FirstName = {chara.FirstName}, LastName = {chara.LastName}, HomeWorld = {chara.HomeWorld}, DataCenter = {chara.Datacenter}, LastJob = {chara.LastJob}, LastJobLevel = {chara.LastJobLevel}, FCTag = {chara.FCTag}, FreeCompany = {chara.FreeCompany}, LastOnline = {chara.LastOnline}, PlayTime = {chara.PlayTime}, LastPlayTimeUpdate = {chara.LastPlayTimeUpdate}");
                     return chara;
                 }
                 else
                 {
                     return new()
                     {
-                        Id = clientState.LocalContentId,
+                        Id = ClientState.LocalContentId,
                         FirstName = names[0],
                         LastName = names[1],
                         HomeWorld = player.Item2,
@@ -987,6 +1197,19 @@ namespace Altoholic
             {
                 return null;
             }
+        }
+        public void ChangeLanguage(ClientLanguage newLanguage)
+        {
+            string isoLang = newLanguage switch
+            {
+                ClientLanguage.German => "de",
+                ClientLanguage.English => "en",
+                ClientLanguage.French => "fr",
+                ClientLanguage.Japanese => "ja",
+                _ => "en",
+            };
+
+            Localization.SetupWithLangCode(isoLang);
         }
     }
 }
