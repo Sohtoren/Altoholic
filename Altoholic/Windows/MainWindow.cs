@@ -15,6 +15,7 @@ public class MainWindow : Window, IDisposable
     private DetailsWindow detailsWindow { get; init; }
     private JobsWindow jobsWindow { get; init; }
     private CurrenciesWindow currenciesWindow { get; init; }
+    private InventoryWindow inventoryWindow { get; init; }
     private ConfigWindow configWindow { get; init; }
 
     private ClientLanguage currentLocale;
@@ -26,6 +27,7 @@ public class MainWindow : Window, IDisposable
         DetailsWindow detailsWindow,
         JobsWindow jobsWindow,
         CurrenciesWindow currenciesWindow,
+        InventoryWindow inventoryWindow,
         ConfigWindow configWindow/*,
         ClientLanguage currentLocale*/
     )
@@ -42,6 +44,7 @@ public class MainWindow : Window, IDisposable
         this.detailsWindow = detailsWindow;
         this.jobsWindow = jobsWindow;
         this.currenciesWindow = currenciesWindow;
+        this.inventoryWindow = inventoryWindow;
         this.configWindow = configWindow;
     }
 
@@ -52,6 +55,8 @@ public class MainWindow : Window, IDisposable
         currenciesWindow.IsOpen = false;
         detailsWindow.IsOpen = false;
         jobsWindow.IsOpen = false;
+        inventoryWindow.IsOpen = false;
+        configWindow.IsOpen = false;
     }
 
     public void Dispose()
@@ -96,6 +101,15 @@ public class MainWindow : Window, IDisposable
             }
         };
         
+        //using (var bagsTab = ImRaii.TabItem($"{Utils.GetAddonString(358)}"))// Bags
+        using (var inventoryTab = ImRaii.TabItem($"{Utils.GetAddonString(520)}"))// Inventory
+        {
+            if (inventoryTab.Success)
+            {
+                inventoryWindow.Draw();
+            }
+        };
+        
         using (var settingsTab = ImRaii.TabItem($"{Utils.GetAddonString(10119)}"))
         {
             if (settingsTab.Success)
@@ -131,6 +145,11 @@ public class MainWindow : Window, IDisposable
             }
 
             /*if (ImGui.BeginTabItem($"Bags")) //358
+            {
+                ImGui.EndTabItem();
+            }
+        
+            if (ImGui.BeginTabItem($"Collection")) //Pet&Mount
             {
                 ImGui.EndTabItem();
             }

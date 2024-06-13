@@ -58,13 +58,13 @@ namespace Altoholic.Models
 
         public bool HasQuest(int id)
         {
-            return this.Quests.Exists(q => q.Id == id);
+            return Quests.Exists(q => q.Id == id);
         }
         public bool IsQuestCompleted(int id)
         {
-            if (this.HasQuest(id))
+            if (HasQuest(id))
             {
-                return this.Quests.First(q => q.Id == id).Completed;
+                return Quests.First(q => q.Id == id).Completed;
             }
             else
             {

@@ -66,6 +66,7 @@ namespace Altoholic
         private DetailsWindow DetailsWindow { get; init; }
         private JobsWindow JobsWindow { get; init; }
         private CurrenciesWindow CurrenciesWindow { get; init; }
+        private InventoryWindow InventoryWindow { get; init; }
 
         private readonly Service altoholicService = null!;
         private readonly LiteDatabase db;
@@ -136,26 +137,32 @@ namespace Altoholic
                 () => this.localPlayer,
                 () => this.otherCharacters);
 
-            ConfigWindow = new ConfigWindow(this, $"{Name} configuration"/*, Plugin.DataManager*/);
-            CharactersWindow = new CharactersWindow(this, $"{Name} characters", /*Plugin.DataManager, textureProvider,*/ db)
+            ConfigWindow = new ConfigWindow(this, $"{Name} configuration");
+            CharactersWindow = new CharactersWindow(this, $"{Name} characters", db)
             {
                 GetPlayer = () => this.altoholicService.GetPlayer(),
                 GetOthersCharactersList = () => this.altoholicService.GetOthersCharacters(),
             };
 
-            DetailsWindow = new DetailsWindow(this, $"{Name} characters details"/*, Plugin.DataManager, textureProvider*/)
+            DetailsWindow = new DetailsWindow(this, $"{Name} characters details")
             {
                 GetPlayer = () => this.altoholicService.GetPlayer(),
                 GetOthersCharactersList = () => this.altoholicService.GetOthersCharacters(),
             };
 
-            JobsWindow = new JobsWindow(this, $"{Name} characters jobs"/*, Plugin.DataManager, textureProvider*/)
+            JobsWindow = new JobsWindow(this, $"{Name} characters jobs")
             {
                 GetPlayer = () => this.altoholicService.GetPlayer(),
                 GetOthersCharactersList = () => this.altoholicService.GetOthersCharacters(),
             };
 
-            CurrenciesWindow = new CurrenciesWindow(this, $"{Name} characters currencies"/*, Plugin.DataManager, textureProvider*/)
+            CurrenciesWindow = new CurrenciesWindow(this, $"{Name} characters currencies")
+            {
+                GetPlayer = () => this.altoholicService.GetPlayer(),
+                GetOthersCharactersList = () => this.altoholicService.GetOthersCharacters(),
+            };
+
+            InventoryWindow = new InventoryWindow(this, $"{Name} characters currencies")
             {
                 GetPlayer = () => this.altoholicService.GetPlayer(),
                 GetOthersCharactersList = () => this.altoholicService.GetOthersCharacters(),
@@ -171,6 +178,7 @@ namespace Altoholic
                 DetailsWindow,
                 JobsWindow,
                 CurrenciesWindow,
+                InventoryWindow,
                 ConfigWindow);
 
             WindowSystem.AddWindow(ConfigWindow);
@@ -202,6 +210,7 @@ namespace Altoholic
             PluginInterface.UiBuilder.OpenMainUi -= DrawMainUI;
             PluginInterface.LanguageChanged -= Localization.SetupWithLangCode;
 
+            InventoryWindow.Dispose();
             JobsWindow.Dispose();
             ConfigWindow.Dispose();
             CurrenciesWindow.Dispose();
@@ -273,9 +282,7 @@ namespace Altoholic
                     }
 
                     Plugin.Log.Debug($"Character localLastPlayTimeUpdate : {localPlayer.LastPlayTimeUpdate}");
-                    Plugin.Log.Debug($"Inventory : {localPlayer.Inventory.Count}");
 #if DEBUG
-
                     foreach (var inventory in localPlayer.Inventory)
                     {
                         //Plugin.Log.Debug($"{inventory.ItemId} {lumina.Singular} {inventory.HQ} {inventory.Quantity}");
@@ -335,10 +342,11 @@ namespace Altoholic
                     GetPlayerSaddleInventory();
                     GetPlayerCompletedQuest();
 
+                    Log.Debug($"localPlayer.Inventory.Count : {localPlayer.Inventory.Count}");
                     Log.Debug($"localPlayer.Saddle.Count: {localPlayer.Saddle.Count}");
                     foreach (var inventory in localPlayer.Saddle)
                     {
-                        Plugin.Log.Debug($"{inventory.ItemId} {inventory.HQ} {inventory.Quantity}");
+                        Log.Debug($"{inventory.ItemId} {inventory.HQ} {inventory.Quantity}");
                     }
                 }
 
@@ -782,6 +790,7 @@ namespace Altoholic
                         InventoryType.Inventory2,
                         InventoryType.Inventory3,
                         InventoryType.Inventory4,
+                        InventoryType.KeyItems,
                         InventoryType.Crystals,
                     };
                 List<Inventory> items = [];

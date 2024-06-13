@@ -8,6 +8,7 @@ using FFXIVClientStructs.FFXIV.Common.Math;
 using ImGuiNET;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using static Dalamud.Plugin.Services.ITextureProvider;
 using static Lumina.Data.Parsing.Layer.LayerCommon;
 
@@ -23,6 +24,28 @@ namespace Altoholic
             if (ditm != null)
             {
                 Lumina.Excel.GeneratedSheets.Item? lumina = ditm.GetRow(item_id);
+                //Plugin.Log.Debug($"lumina : ${lumina}");
+                if (lumina != null)
+                {
+                    //Todo: HQ
+                    //Plugin.Log.Debug($"icon path : {lumina.Icon}");
+                    uint icon_id = (lumina.Icon == 0) ? (uint)FALLBACK_ICON : lumina.Icon;
+                    var icon = Plugin.TextureProvider.GetIcon(icon_id, hq ? IconFlags.ItemHighQuality : IconFlags.None);
+                    if (icon != null)
+                    {
+                        //ImGui.Image(icon.ImGuiHandle, new Vector2(icon.Width, icon.Height));
+                        ImGui.Image(icon.ImGuiHandle, icon_size);
+                    }
+                }
+            }
+        }
+        public static void DrawEventItemIcon(Vector2 icon_size, bool hq, uint item_id)
+        {
+            if(Plugin.TextureProvider is null || Plugin.DataManager is null || Plugin.Log is null) return;
+            Lumina.Excel.ExcelSheet<Lumina.Excel.GeneratedSheets.EventItem>? deitm = Plugin.DataManager.GetExcelSheet<Lumina.Excel.GeneratedSheets.EventItem>(GetLocale());
+            if (deitm != null)
+            {
+                Lumina.Excel.GeneratedSheets.EventItem? lumina = deitm.GetRow(item_id);
                 //Plugin.Log.Debug($"lumina : ${lumina}");
                 if (lumina != null)
                 {
@@ -621,6 +644,19 @@ namespace Altoholic
             return string.Empty;
         }
 
+        public static IEnumerable<Lumina.Excel.GeneratedSheets.Item>? GetItemsFromName(string name)
+        {
+            if (Plugin.DataManager is null || Plugin.Log is null) return null;
+            //Plugin.Log.Debug($"GetItemFromId : {id}");
+            Lumina.Excel.ExcelSheet<Lumina.Excel.GeneratedSheets.Item>? ditm = Plugin.DataManager.GetExcelSheet<Lumina.Excel.GeneratedSheets.Item>(GetLocale());
+            if (ditm != null)
+            {
+                IEnumerable<Lumina.Excel.GeneratedSheets.Item>? items = ditm.Where(i => i.Name.RawString.Contains(name.ToLower(), StringComparison.CurrentCultureIgnoreCase));
+                return items;
+            }
+            return null;
+        }
+
         public static Lumina.Excel.GeneratedSheets.ItemLevel? GetItemLevelFromId(uint id)
         {
             if (Plugin.DataManager is null || Plugin.Log is null) return null;
@@ -977,7 +1013,7 @@ namespace Altoholic
             };
         }
 
-        public static void DrawItemTooltip(Gear item)
+        public static void DrawGearTooltip(Gear item)
         {
             if (Plugin.TextureProvider == null || Plugin.DataManager is null || Plugin.Log is null) return;
             Lumina.Excel.GeneratedSheets.Item? dbItem = GetItemFromId(item.ItemId);
@@ -1025,7 +1061,10 @@ namespace Altoholic
                 DrawItemIcon(new Vector2(40, 40), item.HQ, item.ItemId);
                 ImGui.TableSetColumnIndex(1);
                 ImGui.TextUnformatted($"{dbItem.Name} {(item.HQ ? (char)SeIconChar.HighQuality : "")}");
-                ImGui.TextUnformatted($"{(char)SeIconChar.Glamoured} {GetItemNameFromId(item.GlamourID)}");
+                if (dbItem.IsGlamourous)
+                {
+                    ImGui.TextUnformatted($"{(char)SeIconChar.Glamoured} {GetItemNameFromId(item.GlamourID)}");
+                }
                 ImGui.TableNextRow(); 
                 ImGui.TableSetColumnIndex(0);
                 ImGui.TextUnformatted($"{GetSlotName(item.Slot)}");
@@ -1110,6 +1149,144 @@ namespace Altoholic
             ImGui.TextUnformatted($"{GetSellableString(dbItem, item)}");//Materia Melding
             if((item.CrafterContentID > 0))
                 ImGui.TextUnformatted($"Crafted");
+
+            ImGui.EndTooltip();
+        }
+        
+        public static void DrawItemTooltip(Inventory item)
+        {
+            if (Plugin.TextureProvider == null || Plugin.DataManager is null || Plugin.Log is null) return;
+            Lumina.Excel.GeneratedSheets.Item? dbItem = GetItemFromId(item.ItemId);
+            if (dbItem == null) return;
+            Lumina.Excel.GeneratedSheets.ItemLevel? ilvl = GetItemLevelFromId(dbItem.LevelItem.Row);
+            if (ilvl == null) return;
+
+            ImGui.BeginTooltip();
+
+            if (dbItem.IsUnique || dbItem.IsUntradable)
+            {
+                if (ImGui.BeginTable($"##DrawItemTooltip#Item_{item.ItemId}#Unique", 3))
+                {
+                    ImGui.TableSetupColumn($"##DrawItemTooltip#Item_{item.ItemId}#Unique#IsUnique", ImGuiTableColumnFlags.WidthStretch);
+                    ImGui.TableSetupColumn($"##DrawItemTooltip#Item_{item.ItemId}#Unique#IsUntradable", ImGuiTableColumnFlags.WidthFixed, 200);
+                    ImGui.TableSetupColumn($"##DrawItemTooltip#Item_{item.ItemId}#Unique#IsBinding", ImGuiTableColumnFlags.WidthStretch);
+                    ImGui.TableNextRow();
+                    ImGui.TableSetColumnIndex(0);
+                    ImGui.TextUnformatted("");
+                    ImGui.TableSetColumnIndex(1);
+                    if (dbItem.IsUnique)
+                    {
+                        ImGui.TextUnformatted($"{GetAddonString(494)}");// Unique
+                    }
+                    if (dbItem.IsUntradable)
+                    {
+                        ImGui.SameLine();
+                        ImGui.TextUnformatted($"{GetAddonString(495)}");// Untradable
+                    }
+                    /*if (i.Is) No Binding value???
+                    {
+                        ImGui.TextUnformatted($"{GetAddonString(496)}");// Binding
+                    }*/
+                    ImGui.TableSetColumnIndex(2);
+                    ImGui.TextUnformatted("");
+                    ImGui.EndTable();
+                }
+            }
+            if (ImGui.BeginTable($"##DrawItemTooltip#Item_{item.ItemId}#NameIcon", 2))
+            {
+                ImGui.TableSetupColumn($"##DrawItemTooltip#Item_{item.ItemId}#NameIcon#Icon", ImGuiTableColumnFlags.WidthFixed, 55);
+                ImGui.TableSetupColumn($"##DrawItemTooltip#Item_{item.ItemId}#NameIcon#Name", ImGuiTableColumnFlags.WidthFixed, 305);
+                ImGui.TableNextRow();
+                ImGui.TableSetColumnIndex(0);
+                DrawItemIcon(new Vector2(40, 40), item.HQ, item.ItemId);
+                ImGui.TableSetColumnIndex(1);
+                ImGui.TextUnformatted($"{dbItem.Name} {(item.HQ ? (char)SeIconChar.HighQuality : "")}");
+                ImGui.EndTable();
+            }
+            if (ImGui.BeginTable($"##DrawItemTooltip#Item_{item.ItemId}#Category", 3))
+            {
+                ImGui.TableSetupColumn($"##DrawItemTooltip#Item_{item.ItemId}#Category#Icon", ImGuiTableColumnFlags.WidthFixed, 150);
+                ImGui.TableSetupColumn($"##DrawItemTooltip#Item_{item.ItemId}#Category#Name", ImGuiTableColumnFlags.WidthFixed, 200);
+                ImGui.TableSetupColumn($"##DrawItemTooltip#Item_{item.ItemId}#Category#Name", ImGuiTableColumnFlags.WidthFixed, 55);
+                ImGui.TableNextRow();
+                ImGui.TableSetColumnIndex(0);
+                ImGui.TextUnformatted($"{dbItem.ItemUICategory.Value?.Name}");
+                ImGui.TableSetColumnIndex(1);
+                ImGui.TextUnformatted($"{item.Quantity}/99 (Total: {item.Quantity})");
+                ImGui.EndTable();
+            }
+
+            ImGui.Separator();
+            ImGui.TextUnformatted($"{GetAddonString(497)}");// Crafting & Repairs
+
+            ImGui.EndTooltip();
+        }
+        
+        public static void DrawCrystalTooltip(uint itemId, int amount)
+        {
+            if (Plugin.TextureProvider == null || Plugin.DataManager is null || Plugin.Log is null) return;
+            Lumina.Excel.GeneratedSheets.Item? dbItem = GetItemFromId(itemId);
+            if (dbItem == null) return;
+            Lumina.Excel.GeneratedSheets.ItemLevel? ilvl = GetItemLevelFromId(dbItem.LevelItem.Row);
+            if (ilvl == null) return;
+
+            ImGui.BeginTooltip();
+
+            if (dbItem.IsUnique || dbItem.IsUntradable)
+            {
+                if (ImGui.BeginTable($"##DrawItemTooltip#Item_{dbItem.RowId}#Unique", 3))
+                {
+                    ImGui.TableSetupColumn($"##DrawItemTooltip#Item_{dbItem.RowId}#Unique#IsUnique", ImGuiTableColumnFlags.WidthStretch);
+                    ImGui.TableSetupColumn($"##DrawItemTooltip#Item_{dbItem.RowId}#Unique#IsUntradable", ImGuiTableColumnFlags.WidthFixed, 200);
+                    ImGui.TableSetupColumn($"##DrawItemTooltip#Item_{dbItem.RowId}#Unique#IsBinding", ImGuiTableColumnFlags.WidthStretch);
+                    ImGui.TableNextRow();
+                    ImGui.TableSetColumnIndex(0);
+                    ImGui.TextUnformatted("");
+                    ImGui.TableSetColumnIndex(1);
+                    if (dbItem.IsUnique)
+                    {
+                        ImGui.TextUnformatted($"{GetAddonString(494)}");// Unique
+                    }
+                    if (dbItem.IsUntradable)
+                    {
+                        ImGui.SameLine();
+                        ImGui.TextUnformatted($"{GetAddonString(495)}");// Untradable
+                    }
+                    /*if (i.Is) No Binding value???
+                    {
+                        ImGui.TextUnformatted($"{GetAddonString(496)}");// Binding
+                    }*/
+                    ImGui.TableSetColumnIndex(2);
+                    ImGui.TextUnformatted("");
+                    ImGui.EndTable();
+                }
+            }
+            if (ImGui.BeginTable($"##DrawItemTooltip#Item_{dbItem.RowId}", 2))
+            {
+                ImGui.TableSetupColumn($"##DrawItemTooltip#Item_{dbItem.RowId}#Icon", ImGuiTableColumnFlags.WidthFixed, 55);
+                ImGui.TableSetupColumn($"##DrawItemTooltip#Item_{dbItem.RowId}#Name", ImGuiTableColumnFlags.WidthFixed, 305);
+                ImGui.TableNextRow();
+                ImGui.TableSetColumnIndex(0);
+                DrawItemIcon(new Vector2(40, 40), false, itemId);
+                ImGui.TableSetColumnIndex(1);
+                ImGui.TextUnformatted($"{dbItem.Name}");
+                ImGui.EndTable();
+            }
+            if (ImGui.BeginTable($"##DrawItemTooltip#Item_{dbItem.RowId}", 3))
+            {
+                ImGui.TableSetupColumn($"##DrawItemTooltip#Item_{dbItem.RowId}#Icon", ImGuiTableColumnFlags.WidthFixed, 150);
+                ImGui.TableSetupColumn($"##DrawItemTooltip#Item_{dbItem.RowId}#Name", ImGuiTableColumnFlags.WidthFixed, 200);
+                ImGui.TableSetupColumn($"##DrawItemTooltip#Item_{dbItem.RowId}#Name", ImGuiTableColumnFlags.WidthFixed, 55);
+                ImGui.TableNextRow();
+                ImGui.TableSetColumnIndex(0);
+                ImGui.TextUnformatted($"{dbItem.ItemUICategory.Value?.Name}");
+                ImGui.TableSetColumnIndex(1);
+                ImGui.TextUnformatted($"{amount}/99 (Total: {amount})");
+                ImGui.EndTable();
+            }
+
+            ImGui.Separator();
+            ImGui.TextUnformatted($"{GetAddonString(497)}");// Crafting & Repairs
 
             ImGui.EndTooltip();
         }
@@ -1482,6 +1659,31 @@ namespace Altoholic
             //Plugin.Log.Debug($"localPlayerRegion : {localPlayerRegion}");
             //Plugin.Log.Debug($"localPlayer.CurrentRegion : {localPlayer.CurrentRegion}");
             return FCTag;
+        }
+        public static string GetCrystalName(int i)
+        {
+            return i switch
+            {
+                0 => GetItemNameFromId(2),
+                1 => GetItemNameFromId(3),
+                2 => GetItemNameFromId(4),
+                3 => GetItemNameFromId(5),
+                4 => GetItemNameFromId(6),
+                5 => GetItemNameFromId(7),
+                6 => GetItemNameFromId(8),
+                7 => GetItemNameFromId(9),
+                8 => GetItemNameFromId(10),
+                9 => GetItemNameFromId(11),
+                10 => GetItemNameFromId(12),
+                11 => GetItemNameFromId(13),
+                12 => GetItemNameFromId(14),
+                13 => GetItemNameFromId(15),
+                14 => GetItemNameFromId(16),
+                15 => GetItemNameFromId(17),
+                16 => GetItemNameFromId(18),
+                17 => GetItemNameFromId(19),
+                _ => string.Empty
+            };
         }
     }
 }

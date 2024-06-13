@@ -66,7 +66,7 @@ public class JobsWindow : Window, IDisposable
 
                         foreach (Character currChar in chars)
                         {
-                            if (ImGui.Selectable($"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}"))
+                            if (ImGui.Selectable($"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}", currChar == current_character))
                             {
                                 current_character = currChar;
                             }
@@ -569,7 +569,7 @@ public class JobsWindow : Window, IDisposable
 
     private void DrawJobs(Character current_character)
     {
-        if (ImGui.BeginTabBar($"####CharactersJobs#JobsTable#{current_character.Id}"))
+        if (ImGui.BeginTabBar($"###CharactersJobs#JobsTable#{current_character.Id}"))
         {
             if (ImGui.BeginTabItem($"{Utils.GetAddonString(1080)}###{current_character.Id}"))// Dow/DoM
             {

@@ -73,7 +73,7 @@ public class DetailsWindow : Window, IDisposable
                     ImGui.SetScrollY(0);
                     foreach (Character currChar in chars)
                     {
-                        if (ImGui.Selectable($"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}"))
+                        if (ImGui.Selectable($"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}", currChar == current_character))
                         {
                             current_character = currChar;
                         }
@@ -409,7 +409,7 @@ public class DetailsWindow : Window, IDisposable
             Utils.DrawItemIcon(icon_size, GEAR.HQ, GEAR.ItemId);
             if (ImGui.IsItemHovered())
             {
-                Utils.DrawItemTooltip(GEAR);
+                Utils.DrawGearTooltip(GEAR);
             }
         }
     }

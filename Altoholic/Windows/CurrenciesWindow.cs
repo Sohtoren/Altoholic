@@ -77,7 +77,7 @@ public class CurrenciesWindow : Window, IDisposable
                     }
                     foreach (Character currChar in chars)
                     {
-                        if (ImGui.Selectable($"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}"))
+                        if (ImGui.Selectable($"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}", currChar == current_character))
                         {
                             current_character = currChar;
                         }
@@ -166,7 +166,7 @@ public class CurrenciesWindow : Window, IDisposable
     {
         if (current_character.Currencies is null) return;
 
-        if (ImGui.BeginTabBar($"#####CharactersCurrencies#CurrencyTabs#{current_character.Id}"))
+        if (ImGui.BeginTabBar($"###CharactersCurrencies#CurrencyTabs#{current_character.Id}"))
         {
             if (ImGui.BeginTabItem($"{Utils.GetAddonString(3662)}"))
             {
