@@ -23,8 +23,6 @@ using Dalamud.Interface.Internal.Notifications;
 using Dalamud.Interface.ImGuiNotification;
 using Dalamud.Game.Text;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
-using System.Linq;
-using System.Text;
 using Dalamud.Memory;
 
 namespace Altoholic
@@ -66,7 +64,8 @@ namespace Altoholic
         private DetailsWindow DetailsWindow { get; init; }
         private JobsWindow JobsWindow { get; init; }
         private CurrenciesWindow CurrenciesWindow { get; init; }
-        private InventoryWindow InventoryWindow { get; init; }
+        private InventoriesWindow InventoriesWindow { get; init; }
+        private RetainersWindow RetainersWindow { get; init; }
 
         private readonly Service altoholicService = null!;
         private readonly LiteDatabase db;
@@ -162,7 +161,13 @@ namespace Altoholic
                 GetOthersCharactersList = () => this.altoholicService.GetOthersCharacters(),
             };
 
-            InventoryWindow = new InventoryWindow(this, $"{Name} characters currencies")
+            InventoriesWindow = new InventoriesWindow(this, $"{Name} characters inventories")
+            {
+                GetPlayer = () => this.altoholicService.GetPlayer(),
+                GetOthersCharactersList = () => this.altoholicService.GetOthersCharacters(),
+            };
+
+            RetainersWindow = new RetainersWindow(this, $"{Name} characters retainers")
             {
                 GetPlayer = () => this.altoholicService.GetPlayer(),
                 GetOthersCharactersList = () => this.altoholicService.GetOthersCharacters(),
@@ -178,7 +183,8 @@ namespace Altoholic
                 DetailsWindow,
                 JobsWindow,
                 CurrenciesWindow,
-                InventoryWindow,
+                InventoriesWindow,
+                RetainersWindow,
                 ConfigWindow);
 
             WindowSystem.AddWindow(ConfigWindow);
@@ -210,7 +216,8 @@ namespace Altoholic
             PluginInterface.UiBuilder.OpenMainUi -= DrawMainUI;
             PluginInterface.LanguageChanged -= Localization.SetupWithLangCode;
 
-            InventoryWindow.Dispose();
+            RetainersWindow.Dispose();
+            InventoriesWindow.Dispose();
             JobsWindow.Dispose();
             ConfigWindow.Dispose();
             CurrenciesWindow.Dispose();
@@ -309,7 +316,14 @@ namespace Altoholic
                     }
                 }
                 //Plugin.Log.Debug($"localPlayer.Quests.Count: {localPlayer.Quests.Count}");
-
+                if (localPlayer.Retainers.Count == 0)
+                {
+                    Character? chara = Database.Database.GetCharacter(Log, db, localPlayer.Id);
+                    if (chara != null)
+                    {
+                        localPlayer.Retainers = chara.Retainers;
+                    }
+                }
                 foreach (Gear i in localPlayer.Gear)
                 {
                     Plugin.Log.Debug($"Gear: {i.ItemId} {Enum.GetName(typeof(GearSlot), i.Slot)} {i.Slot}");
@@ -340,13 +354,22 @@ namespace Altoholic
                     GetPlayerEquippedGear();
                     GetPlayerInventory();
                     GetPlayerSaddleInventory();
+                    // Todo: Glamour dresser & armoire inventories
                     GetPlayerCompletedQuest();
+                    GetPlayerRetainer();
 
+                    /*
                     Log.Debug($"localPlayer.Inventory.Count : {localPlayer.Inventory.Count}");
                     Log.Debug($"localPlayer.Saddle.Count: {localPlayer.Saddle.Count}");
                     foreach (var inventory in localPlayer.Saddle)
                     {
                         Log.Debug($"{inventory.ItemId} {inventory.HQ} {inventory.Quantity}");
+                    }
+                    */
+                    Log.Debug($"localPlayer retainers count : {localPlayer.Retainers.Count}");
+                    foreach(Retainer retainer in localPlayer.Retainers)
+                    {
+                        Log.Debug($"{retainer.Name} job:{Enum.GetName(typeof(ClassJob), retainer.ClassJob)}, displayorder: {retainer.DisplayOrder}, items: {retainer.Inventory.Count}, gils: {retainer.Gils}");
                     }
                 }
 
@@ -471,7 +494,7 @@ namespace Altoholic
                             Plugin.Log.Debug($"localPlayerFreeCompanyTest : {localPlayerFreeCompanyTest}");
                         }*/
                         //localPlayerFreeCompanyTest = FFXIVClientStructs.FFXIV.Client.UI.Agent.AgentInspect.Instance()->FreeCompany.GuildName;
-                        //Plugin.Log.Debug($"localPlayerFreeCompanyTest : {localPlayerFreeCompanyTest}");
+                        Log.Debug($"localPlayerFreeCompanyTest : {}");
                         //Plugin.Log.Debug(System.Text.Encoding.UTF8.GetString(AgentInspect.Instance()->FreeCompany.GuildName));
                         //Plugin.Log.Debug(System.Text.Encoding.UTF8.GetString(localPlayerFreeCompanyTest)); ;
                         //Plugin.Log.Debug($"localPlayerFreeCompany : {localPlayerFreeCompanyTest}");
@@ -491,6 +514,7 @@ namespace Altoholic
                 GetPlayerEquippedGear();
                 GetPlayerInventory();
                 GetPlayerSaddleInventory();
+                GetPlayerRetainer();
             }
         }
 
@@ -527,6 +551,7 @@ namespace Altoholic
                 ref readonly UIState uistate = ref *UIState.Instance();//nullcheck?
                 var player = uistate.PlayerState;
                 localPlayer.IsSprout = player.IsNovice();
+                localPlayer.HasPremiumSaddlebag = player.HasPremiumSaddlebag;
                 localPlayer.Profile = new()
                 {
                     Title = title,
@@ -861,38 +886,47 @@ namespace Altoholic
             unsafe
             {
                 ref readonly RetainerManager retainerManager = ref *RetainerManager.Instance();
-                var retainersCount = retainerManager;
+                var retainersCount = retainerManager.GetRetainerCount();
+                if (retainersCount == 0) return;
+                //Log.Debug($"Retainers count {retainersCount}");
                 for (uint i = 0; i < 10; i++)
                 {
                     var current_retainer = retainerManager.GetRetainerBySortedIndex(i);
-                    Retainer? playerRetainer = localPlayer.Retainers.First(r => r.Id == current_retainer->RetainerID);
-                    if (playerRetainer != null)
+                    //if (!current_retainer->Available) continue;
+                    var retainerId = current_retainer->RetainerID;
+                    var name = MemoryHelper.ReadSeStringNullTerminated((nint)current_retainer->Name).TextValue;
+
+                    //Log.Debug($"current_retainer name: {name} id: {retainerId}");
+                    if (name == "RETAINER") continue;
+
+                    Retainer? r = localPlayer.Retainers.Find(r => r.Id == retainerId);
+                    r ??= new()
                     {
-                        
-                    }
-                    else
+                        Id = current_retainer->RetainerID
+                    };
+
+                    r.Available = current_retainer->Available;
+                    r.Name = name;
+                    r.ClassJob = current_retainer->ClassJob;
+                    r.Level = current_retainer->Level;
+                    r.Gils = current_retainer->Gil;
+                    r.Town = current_retainer->Town;
+                    r.MarketItemCount = current_retainer->MarkerItemCount;// Todo: change the typo once dalamud update CS
+                    r.MarketExpire = current_retainer->MarketExpire;
+                    r.VentureID = current_retainer->VentureID;
+                    r.LastUpdate = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+                    r.DisplayOrder = retainerManager.DisplayOrder[i];
+
+                    if (r.Id == retainerManager.LastSelectedRetainerId)
                     {
-                        playerRetainer = new()
-                        {
-                            Id = current_retainer->RetainerID
-                        };
+                        r.Inventory = GetPlayerRetainerInventory();
+                        r.Gear = GetPlayerRetainerEquippedGear();
+                        r.MarketInventory = GetPlayerRetainerMarketInventory();
                     }
 
-                    playerRetainer.Available = current_retainer->Available;
-                    playerRetainer.Name = MemoryHelper.ReadSeStringNullTerminated((nint)current_retainer->Name).TextValue;
-                    playerRetainer.ClassJob = current_retainer->ClassJob;
-                    playerRetainer.Level = current_retainer->Level;
-                    playerRetainer.Gils = current_retainer->Gil;
-                    playerRetainer.Town = current_retainer->Town;
-                    playerRetainer.MarkerItemCount = current_retainer->MarkerItemCount;
-                    playerRetainer.MarketExpire = current_retainer->MarketExpire;
-                    playerRetainer.VentureID = current_retainer->VentureID;
-                    playerRetainer.LastUpdate = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-                    if (playerRetainer.Id == retainerManager.LastSelectedRetainerId)
+                    if (localPlayer.Retainers.Find(r => r.Id == retainerId) == null)
                     {
-                        playerRetainer.Inventory = GetPlayerRetainerInventory();
-                        playerRetainer.Gear = GetPlayerRetainerEquippedGear();
-                        playerRetainer.MarketInventory = GetPlayerRetainermarketInventory();
+                        localPlayer.Retainers.Add(r);
                     }
                 }
             }
@@ -942,7 +976,7 @@ namespace Altoholic
             */
         }
         
-        private unsafe List<Inventory> GetPlayerRetainermarketInventory()
+        private unsafe List<Inventory> GetPlayerRetainerMarketInventory()
         {
             unsafe
             {
@@ -1002,8 +1036,6 @@ namespace Altoholic
                 return gear_items;
             }
         }
-
-
 
         private void CleanLastLocalCharacter()
         {
@@ -1182,21 +1214,27 @@ namespace Altoholic
                         FirstName = names[0],
                         LastName = names[1],
                         HomeWorld = player.Item2,
+                        CurrentWorld = player.Item2,
                         Datacenter = Utils.GetDatacenterFromWorld(player.Item2),
+                        CurrentDatacenter = Utils.GetDatacenterFromWorld(player.Item2),
                         Region = player.Item3,
+                        CurrentRegion = player.Item3,
                         IsSprout = localPlayer.IsSprout,
                         LastJob = localPlayer.LastJob,
                         LastJobLevel = localPlayer.LastJobLevel,
                         FCTag = localPlayer.FCTag,
                         FreeCompany = localPlayer.FreeCompany,
                         LastOnline = localPlayer.LastOnline,
+                        PlayTime = localPlayer.PlayTime,
                         LastPlayTimeUpdate = localPlayer.LastPlayTimeUpdate,
+                        HasPremiumSaddlebag = localPlayer.HasPremiumSaddlebag,
                         Attributes = localPlayer.Attributes,
                         Currencies = localPlayer.Currencies,
                         Jobs = localPlayer.Jobs,
                         Profile = localPlayer.Profile,
                         Quests = localPlayer.Quests,
                         Inventory = localPlayer.Inventory,
+                        Saddle = localPlayer.Saddle,
                         Gear = localPlayer.Gear,
                         Retainers = localPlayer.Retainers,
                     };

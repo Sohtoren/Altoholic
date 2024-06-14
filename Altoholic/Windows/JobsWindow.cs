@@ -567,31 +567,31 @@ public class JobsWindow : Window, IDisposable
         }
     }
 
-    private void DrawJobs(Character current_character)
+    private void DrawJobs(Character selected_character)
     {
-        if (ImGui.BeginTabBar($"###CharactersJobs#JobsTable#{current_character.Id}"))
+        if (ImGui.BeginTabBar($"###CharactersJobs#JobsTable#{selected_character.Id}"))
         {
-            if (ImGui.BeginTabItem($"{Utils.GetAddonString(1080)}###{current_character.Id}"))// Dow/DoM
+            if (ImGui.BeginTabItem($"{Utils.GetAddonString(1080)}###{selected_character.Id}"))// Dow/DoM
             {
-                DrawDoWDoMJobs(current_character);
+                DrawDoWDoMJobs(selected_character);
                 ImGui.EndTabItem();
             }
-            if (ImGui.BeginTabItem($"{Utils.GetAddonString(1081)}###{current_character.Id}"))// DoHDoL
+            if (ImGui.BeginTabItem($"{Utils.GetAddonString(1081)}###{selected_character.Id}"))// DoHDoL
             {
-                DrawDoHDoLJobs(current_character);
+                DrawDoHDoLJobs(selected_character);
                 ImGui.EndTabItem();
             }
             ImGui.EndTabBar();
         }
     }
 
-    private void DrawDoWDoMJobs(Character current_character)
+    private void DrawDoWDoMJobs(Character selected_character)
     {
-        if (current_character is null) return;
-        if (ImGui.BeginTable($"###CharactersJobs#DoWDoMJobs#{current_character.Id}", 2, ImGuiTableFlags.ScrollY))
+        if (selected_character is null) return;
+        if (ImGui.BeginTable($"###CharactersJobs#DoWDoMJobs#{selected_character.Id}", 2, ImGuiTableFlags.ScrollY))
         {
-            ImGui.TableSetupColumn($"###CharactersJobs#DoW#{current_character.Id}", ImGuiTableColumnFlags.WidthStretch);
-            ImGui.TableSetupColumn($"###CharactersJobs#DoM#{current_character.Id}", ImGuiTableColumnFlags.WidthStretch);
+            ImGui.TableSetupColumn($"###CharactersJobs#DoW#{selected_character.Id}", ImGuiTableColumnFlags.WidthStretch);
+            ImGui.TableSetupColumn($"###CharactersJobs#DoM#{selected_character.Id}", ImGuiTableColumnFlags.WidthStretch);
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
             if (ImGui.BeginTable("###CharactersJobs#DoW#RoleTank", 2))
@@ -625,27 +625,27 @@ public class JobsWindow : Window, IDisposable
 
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
-            DrawJobLine(current_character, ClassJob.GLA);
+            DrawJobLine(selected_character, ClassJob.GLA);
             ImGui.TableSetColumnIndex(1);
-            DrawJobLine(current_character, ClassJob.CNJ);
+            DrawJobLine(selected_character, ClassJob.CNJ);
 
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
-            DrawJobLine(current_character, ClassJob.MRD);
+            DrawJobLine(selected_character, ClassJob.MRD);
             ImGui.TableSetColumnIndex(1);
-            DrawJobLine(current_character, ClassJob.SCH);
+            DrawJobLine(selected_character, ClassJob.SCH);
 
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
-            DrawJobLine(current_character, ClassJob.DRK);
+            DrawJobLine(selected_character, ClassJob.DRK);
             ImGui.TableSetColumnIndex(1);
-            DrawJobLine(current_character, ClassJob.AST);
+            DrawJobLine(selected_character, ClassJob.AST);
             
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
-            DrawJobLine(current_character, ClassJob.GNB);
+            DrawJobLine(selected_character, ClassJob.GNB);
             ImGui.TableSetColumnIndex(1);
-            DrawJobLine(current_character, ClassJob.SGE);
+            DrawJobLine(selected_character, ClassJob.SGE);
 
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
@@ -680,25 +680,25 @@ public class JobsWindow : Window, IDisposable
 
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
-            DrawJobLine(current_character, ClassJob.PGL);
+            DrawJobLine(selected_character, ClassJob.PGL);
             ImGui.TableSetColumnIndex(1);
-            DrawJobLine(current_character, ClassJob.ARC);
+            DrawJobLine(selected_character, ClassJob.ARC);
 
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
-            DrawJobLine(current_character, ClassJob.LNC);
+            DrawJobLine(selected_character, ClassJob.LNC);
             ImGui.TableSetColumnIndex(1);
-            DrawJobLine(current_character, ClassJob.MCH);
+            DrawJobLine(selected_character, ClassJob.MCH);
             
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
-            DrawJobLine(current_character, ClassJob.ROG);
+            DrawJobLine(selected_character, ClassJob.ROG);
             ImGui.TableSetColumnIndex(1);
-            DrawJobLine(current_character, ClassJob.DNC);
+            DrawJobLine(selected_character, ClassJob.DNC);
 
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
-            DrawJobLine(current_character, ClassJob.SAM);
+            DrawJobLine(selected_character, ClassJob.SAM);
 
             ImGui.TableSetColumnIndex(1);
             if (ImGui.BeginTable("###CharactersJobs#DoM#RoleMagicalRanged", 2))
@@ -717,33 +717,33 @@ public class JobsWindow : Window, IDisposable
 
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
-            DrawJobLine(current_character, ClassJob.RPR);
+            DrawJobLine(selected_character, ClassJob.RPR);
             ImGui.TableSetColumnIndex(1);
-            DrawJobLine(current_character, ClassJob.THM);
+            DrawJobLine(selected_character, ClassJob.THM);
 
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(1);
-            DrawJobLine(current_character, ClassJob.SMN);
+            DrawJobLine(selected_character, ClassJob.SMN);
 
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(1);
-            DrawJobLine(current_character, ClassJob.RDM);
+            DrawJobLine(selected_character, ClassJob.RDM);
 
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(1);
-            DrawJobLine(current_character, ClassJob.BLU);
+            DrawJobLine(selected_character, ClassJob.BLU);
 
             ImGui.EndTable();
         }
     }
 
-    private void DrawDoHDoLJobs(Character current_character)
+    private void DrawDoHDoLJobs(Character selected_character)
     {
-        if (current_character is null) return;
-        if (ImGui.BeginTable($"###CharactersJobs#DoHDoLJobs#{current_character.Id}", 2))
+        if (selected_character is null) return;
+        if (ImGui.BeginTable($"###CharactersJobs#DoHDoLJobs#{selected_character.Id}", 2))
         {
-            ImGui.TableSetupColumn($"###CharactersJobs#DoH#{current_character.Id}", ImGuiTableColumnFlags.WidthStretch);
-            ImGui.TableSetupColumn($"###CharactersJobs#DoL#{current_character.Id}", ImGuiTableColumnFlags.WidthStretch);
+            ImGui.TableSetupColumn($"###CharactersJobs#DoH#{selected_character.Id}", ImGuiTableColumnFlags.WidthStretch);
+            ImGui.TableSetupColumn($"###CharactersJobs#DoL#{selected_character.Id}", ImGuiTableColumnFlags.WidthStretch);
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
             if (ImGui.BeginTable("###CharactersJobs#DoH#RoleDoH", 2))
@@ -777,63 +777,63 @@ public class JobsWindow : Window, IDisposable
 
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
-            DrawJobLine(current_character, ClassJob.CRP);
+            DrawJobLine(selected_character, ClassJob.CRP);
             ImGui.TableSetColumnIndex(1);
-            DrawJobLine(current_character, ClassJob.MIN);
+            DrawJobLine(selected_character, ClassJob.MIN);
 
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
-            DrawJobLine(current_character, ClassJob.BSM);
+            DrawJobLine(selected_character, ClassJob.BSM);
             ImGui.TableSetColumnIndex(1);
-            DrawJobLine(current_character, ClassJob.BTN);
+            DrawJobLine(selected_character, ClassJob.BTN);
             
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
-            DrawJobLine(current_character, ClassJob.ARM);
+            DrawJobLine(selected_character, ClassJob.ARM);
             ImGui.TableSetColumnIndex(1);
-            DrawJobLine(current_character, ClassJob.FSH);
+            DrawJobLine(selected_character, ClassJob.FSH);
 
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
-            DrawJobLine(current_character, ClassJob.GSM);
+            DrawJobLine(selected_character, ClassJob.GSM);
 
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
-            DrawJobLine(current_character, ClassJob.LTW);
+            DrawJobLine(selected_character, ClassJob.LTW);
 
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
-            DrawJobLine(current_character, ClassJob.WVR);
+            DrawJobLine(selected_character, ClassJob.WVR);
 
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
-            DrawJobLine(current_character, ClassJob.ALC);
+            DrawJobLine(selected_character, ClassJob.ALC);
 
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
-            DrawJobLine(current_character, ClassJob.CUL);
+            DrawJobLine(selected_character, ClassJob.CUL);
 
 
             ImGui.EndTable();
         }
     }
  
-    private void DrawJobLine(Character current_character, ClassJob job)
+    private void DrawJobLine(Character selected_character, ClassJob job)
     {
-        if (current_character.Jobs is null) return;
+        if (selected_character.Jobs is null) return;
         switch (job)
         {
             case ClassJob.GLA:
             case ClassJob.PLD:
             {
-                if (current_character.Jobs.Paladin.Level >= 30)
+                if (selected_character.Jobs.Paladin.Level >= 30)
                 {
-                    DrawJob(current_character.Jobs.Paladin, ClassJob.PLD, $"{Utils.GetJobNameFromId((uint)ClassJob.PLD)} / {Utils.GetJobNameFromId((uint)ClassJob.GLA)}", true);
+                    DrawJob(selected_character.Jobs.Paladin, ClassJob.PLD, $"{Utils.GetJobNameFromId((uint)ClassJob.PLD)} / {Utils.GetJobNameFromId((uint)ClassJob.GLA)}", true);
                 }
                 else
                 {
-                    bool active = (current_character.Jobs.Gladiator.Level > 0);
-                    DrawJob(current_character.Jobs.Gladiator, ClassJob.GLA, Utils.GetJobNameFromId((uint)ClassJob.GLA), active);
+                    bool active = (selected_character.Jobs.Gladiator.Level > 0);
+                    DrawJob(selected_character.Jobs.Gladiator, ClassJob.GLA, Utils.GetJobNameFromId((uint)ClassJob.GLA), active);
                 }
 
                 break;
@@ -841,43 +841,43 @@ public class JobsWindow : Window, IDisposable
             case ClassJob.MRD:
             case ClassJob.WAR:
             {
-                if (current_character.Jobs.Marauder.Level >= 30)
+                if (selected_character.Jobs.Marauder.Level >= 30)
                 {
-                    DrawJob(current_character.Jobs.Warrior, ClassJob.WAR, $"{Utils.GetJobNameFromId((uint)ClassJob.WAR)} / {Utils.GetJobNameFromId((uint)ClassJob.MRD)}", true);
+                    DrawJob(selected_character.Jobs.Warrior, ClassJob.WAR, $"{Utils.GetJobNameFromId((uint)ClassJob.WAR)} / {Utils.GetJobNameFromId((uint)ClassJob.MRD)}", true);
                 }
                 else
                 {
-                    bool active = (current_character.Jobs.Marauder.Level > 0);
-                    DrawJob(current_character.Jobs.Marauder, ClassJob.MRD, Utils.GetJobNameFromId((uint)ClassJob.MRD), active);
+                    bool active = (selected_character.Jobs.Marauder.Level > 0);
+                    DrawJob(selected_character.Jobs.Marauder, ClassJob.MRD, Utils.GetJobNameFromId((uint)ClassJob.MRD), active);
                 }
 
                 break;
             }
             case ClassJob.DRK:
             {
-                bool active = (current_character.Jobs.DarkKnight.Level >= 30);
-                DrawJob(current_character.Jobs.DarkKnight, ClassJob.DRK, Utils.GetJobNameFromId((uint)ClassJob.DRK), active);
+                bool active = (selected_character.Jobs.DarkKnight.Level >= 30);
+                DrawJob(selected_character.Jobs.DarkKnight, ClassJob.DRK, Utils.GetJobNameFromId((uint)ClassJob.DRK), active);
 
                 break;
             }
             case ClassJob.GNB:
             {
-                bool active = (current_character.Jobs.Gunbreaker.Level >= 60);
-                DrawJob(current_character.Jobs.Gunbreaker, ClassJob.GNB, Utils.GetJobNameFromId((uint)ClassJob.GNB), active);
+                bool active = (selected_character.Jobs.Gunbreaker.Level >= 60);
+                DrawJob(selected_character.Jobs.Gunbreaker, ClassJob.GNB, Utils.GetJobNameFromId((uint)ClassJob.GNB), active);
 
                 break;
             }
             case ClassJob.PGL:
             case ClassJob.MNK:
             {
-                if (current_character.Jobs.Pugilist.Level >= 30)
+                if (selected_character.Jobs.Pugilist.Level >= 30)
                 {
-                    DrawJob(current_character.Jobs.Monk, ClassJob.MNK, $"{Utils.GetJobNameFromId((uint)ClassJob.MNK)} / {Utils.GetJobNameFromId((uint)ClassJob.PGL)}", true);
+                    DrawJob(selected_character.Jobs.Monk, ClassJob.MNK, $"{Utils.GetJobNameFromId((uint)ClassJob.MNK)} / {Utils.GetJobNameFromId((uint)ClassJob.PGL)}", true);
                 }
                 else
                 {
-                    bool active = (current_character.Jobs.Pugilist.Level > 0);
-                    DrawJob(current_character.Jobs.Pugilist, ClassJob.PGL, Utils.GetJobNameFromId((uint)ClassJob.PGL), active);
+                    bool active = (selected_character.Jobs.Pugilist.Level > 0);
+                    DrawJob(selected_character.Jobs.Pugilist, ClassJob.PGL, Utils.GetJobNameFromId((uint)ClassJob.PGL), active);
                 }
 
                 break;
@@ -885,14 +885,14 @@ public class JobsWindow : Window, IDisposable
             case ClassJob.LNC:
             case ClassJob.DRG:
             {
-                if (current_character.Jobs.Lancer.Level >= 30)
+                if (selected_character.Jobs.Lancer.Level >= 30)
                 {
-                    DrawJob(current_character.Jobs.Dragoon, ClassJob.DRG, $"{Utils.GetJobNameFromId((uint)ClassJob.DRG)} / {Utils.GetJobNameFromId((uint)ClassJob.LNC)}", true);
+                    DrawJob(selected_character.Jobs.Dragoon, ClassJob.DRG, $"{Utils.GetJobNameFromId((uint)ClassJob.DRG)} / {Utils.GetJobNameFromId((uint)ClassJob.LNC)}", true);
                 }
                 else
                 {
-                    bool active = (current_character.Jobs.Lancer.Level > 0);
-                    DrawJob(current_character.Jobs.Lancer, ClassJob.LNC, Utils.GetJobNameFromId((uint)ClassJob.LNC), active);
+                    bool active = (selected_character.Jobs.Lancer.Level > 0);
+                    DrawJob(selected_character.Jobs.Lancer, ClassJob.LNC, Utils.GetJobNameFromId((uint)ClassJob.LNC), active);
                 }
 
                 break;
@@ -900,43 +900,43 @@ public class JobsWindow : Window, IDisposable
             case ClassJob.ROG:
             case ClassJob.NIN:
             {
-                if (current_character.Jobs.Lancer.Level >= 30)
+                if (selected_character.Jobs.Lancer.Level >= 30)
                 {
-                    DrawJob(current_character.Jobs.Ninja, ClassJob.NIN, $"{Utils.GetJobNameFromId((uint)ClassJob.NIN)} / {Utils.GetJobNameFromId((uint)ClassJob.ROG)}", true);
+                    DrawJob(selected_character.Jobs.Ninja, ClassJob.NIN, $"{Utils.GetJobNameFromId((uint)ClassJob.NIN)} / {Utils.GetJobNameFromId((uint)ClassJob.ROG)}", true);
                 }
                 else
                 {
-                    bool active = (current_character.Jobs.Lancer.Level > 0);
-                    DrawJob(current_character.Jobs.Rogue, ClassJob.ROG, Utils.GetJobNameFromId((uint)ClassJob.ROG), active);
+                    bool active = (selected_character.Jobs.Lancer.Level > 0);
+                    DrawJob(selected_character.Jobs.Rogue, ClassJob.ROG, Utils.GetJobNameFromId((uint)ClassJob.ROG), active);
                 }
 
                 break;
             }
             case ClassJob.SAM:
             {
-                bool active = (current_character.Jobs.Samurai.Level >= 50);
-                DrawJob(current_character.Jobs.Samurai, ClassJob.SAM, Utils.GetJobNameFromId((uint)ClassJob.SAM), active);
+                bool active = (selected_character.Jobs.Samurai.Level >= 50);
+                DrawJob(selected_character.Jobs.Samurai, ClassJob.SAM, Utils.GetJobNameFromId((uint)ClassJob.SAM), active);
 
                 break;
             }
             case ClassJob.RPR:
             {
-                bool active = (current_character.Jobs.Reaper.Level >= 70);
-                DrawJob(current_character.Jobs.Reaper, ClassJob.RPR, Utils.GetJobNameFromId((uint)ClassJob.RPR), active);
+                bool active = (selected_character.Jobs.Reaper.Level >= 70);
+                DrawJob(selected_character.Jobs.Reaper, ClassJob.RPR, Utils.GetJobNameFromId((uint)ClassJob.RPR), active);
 
                 break;
             }
             case ClassJob.CNJ:
             case ClassJob.WHM:
             {
-                if (current_character.Jobs.Lancer.Level >= 30)
+                if (selected_character.Jobs.Lancer.Level >= 30)
                 {
-                    DrawJob(current_character.Jobs.WhiteMage, ClassJob.WHM, $"{Utils.GetJobNameFromId((uint)ClassJob.WHM)} / {Utils.GetJobNameFromId((uint)ClassJob.CNJ)}", true);
+                    DrawJob(selected_character.Jobs.WhiteMage, ClassJob.WHM, $"{Utils.GetJobNameFromId((uint)ClassJob.WHM)} / {Utils.GetJobNameFromId((uint)ClassJob.CNJ)}", true);
                 }
                 else
                 {
-                    bool active = (current_character.Jobs.Conjurer.Level > 0);
-                    DrawJob(current_character.Jobs.Conjurer, ClassJob.CNJ, Utils.GetJobNameFromId((uint)ClassJob.CNJ), active);
+                    bool active = (selected_character.Jobs.Conjurer.Level > 0);
+                    DrawJob(selected_character.Jobs.Conjurer, ClassJob.CNJ, Utils.GetJobNameFromId((uint)ClassJob.CNJ), active);
                 }
 
                 break;
@@ -945,175 +945,175 @@ public class JobsWindow : Window, IDisposable
             case ClassJob.SCH:
             case ClassJob.SMN:
             {
-                if (current_character.Jobs.Arcanist.Level >= 30)
+                if (selected_character.Jobs.Arcanist.Level >= 30)
                 {
                     switch (job)
                     {
                         case ClassJob.SCH:
                         {
-                            DrawJob(current_character.Jobs.Scholar, ClassJob.SCH, $"{Utils.GetJobNameFromId((uint)ClassJob.SCH)}", true);
+                            DrawJob(selected_character.Jobs.Scholar, ClassJob.SCH, $"{Utils.GetJobNameFromId((uint)ClassJob.SCH)}", true);
                             break;
                         }
                         case ClassJob.SMN:
                         {
-                            DrawJob(current_character.Jobs.Summoner, ClassJob.SMN, $"{Utils.GetJobNameFromId((uint)ClassJob.SMN)} / {Utils.GetJobNameFromId((uint)ClassJob.ACN)}", true);
+                            DrawJob(selected_character.Jobs.Summoner, ClassJob.SMN, $"{Utils.GetJobNameFromId((uint)ClassJob.SMN)} / {Utils.GetJobNameFromId((uint)ClassJob.ACN)}", true);
                             break;
                         }
                     }
                 }
                 else
                 {
-                    bool active = (current_character.Jobs.Arcanist.Level > 0);
-                    DrawJob(current_character.Jobs.Arcanist, ClassJob.ACN, Utils.GetJobNameFromId((uint)ClassJob.ACN), active);
+                    bool active = (selected_character.Jobs.Arcanist.Level > 0);
+                    DrawJob(selected_character.Jobs.Arcanist, ClassJob.ACN, Utils.GetJobNameFromId((uint)ClassJob.ACN), active);
                 }
                 break;
             }
             case ClassJob.AST:
             {
-                bool active = (current_character.Jobs.Astrologian.Level >= 30) ;
-                DrawJob(current_character.Jobs.Astrologian, ClassJob.AST, Utils.GetJobNameFromId((uint)ClassJob.AST), active);
+                bool active = (selected_character.Jobs.Astrologian.Level >= 30) ;
+                DrawJob(selected_character.Jobs.Astrologian, ClassJob.AST, Utils.GetJobNameFromId((uint)ClassJob.AST), active);
 
                 break;
             }
             case ClassJob.SGE:
             {
-                bool active = (current_character.Jobs.Sage.Level >= 70);
-                DrawJob(current_character.Jobs.Sage, ClassJob.SGE, Utils.GetJobNameFromId((uint)ClassJob.SGE), active);
+                bool active = (selected_character.Jobs.Sage.Level >= 70);
+                DrawJob(selected_character.Jobs.Sage, ClassJob.SGE, Utils.GetJobNameFromId((uint)ClassJob.SGE), active);
 
                 break;
             }
             case ClassJob.ARC:
             case ClassJob.BRD:
             {
-                if (current_character.Jobs.Archer.Level >= 30)
+                if (selected_character.Jobs.Archer.Level >= 30)
                 {
-                    DrawJob(current_character.Jobs.Bard, ClassJob.BRD, $"{Utils.GetJobNameFromId((uint)ClassJob.BRD)} / {Utils.GetJobNameFromId((uint)ClassJob.ARC)}", true);
+                    DrawJob(selected_character.Jobs.Bard, ClassJob.BRD, $"{Utils.GetJobNameFromId((uint)ClassJob.BRD)} / {Utils.GetJobNameFromId((uint)ClassJob.ARC)}", true);
                 }
                 else
                 {
-                    bool active = (current_character.Jobs.Archer.Level > 0);
-                    DrawJob(current_character.Jobs.Archer, ClassJob.ARC, Utils.GetJobNameFromId((uint)ClassJob.ARC), active);
+                    bool active = (selected_character.Jobs.Archer.Level > 0);
+                    DrawJob(selected_character.Jobs.Archer, ClassJob.ARC, Utils.GetJobNameFromId((uint)ClassJob.ARC), active);
                 }
 
                 break;
             }
             case ClassJob.MCH:
             {
-                bool active = (current_character.Jobs.Machinist.Level >= 30);
-                DrawJob(current_character.Jobs.Machinist, ClassJob.MCH, Utils.GetJobNameFromId((uint)ClassJob.MCH), active);
+                bool active = (selected_character.Jobs.Machinist.Level >= 30);
+                DrawJob(selected_character.Jobs.Machinist, ClassJob.MCH, Utils.GetJobNameFromId((uint)ClassJob.MCH), active);
 
                 break;
             }
             case ClassJob.DNC:
             {
-                bool active = (current_character.Jobs.Dancer.Level >= 60);
-                DrawJob(current_character.Jobs.Dancer, ClassJob.DNC, Utils.GetJobNameFromId((uint)ClassJob.DNC), active);
+                bool active = (selected_character.Jobs.Dancer.Level >= 60);
+                DrawJob(selected_character.Jobs.Dancer, ClassJob.DNC, Utils.GetJobNameFromId((uint)ClassJob.DNC), active);
 
                 break;
             }
             case ClassJob.THM:
             case ClassJob.BLM:
             {
-                if (current_character.Jobs.Thaumaturge.Level >= 30)
+                if (selected_character.Jobs.Thaumaturge.Level >= 30)
                 {
-                    DrawJob(current_character.Jobs.BlackMage, ClassJob.BLM, $"{Utils.GetJobNameFromId((uint)ClassJob.BLM)} / {Utils.GetJobNameFromId((uint)ClassJob.THM)}", true);
+                    DrawJob(selected_character.Jobs.BlackMage, ClassJob.BLM, $"{Utils.GetJobNameFromId((uint)ClassJob.BLM)} / {Utils.GetJobNameFromId((uint)ClassJob.THM)}", true);
                 }
                 else
                 {
-                    bool active = (current_character.Jobs.Thaumaturge.Level > 0);
-                    DrawJob(current_character.Jobs.Thaumaturge, ClassJob.THM, Utils.GetJobNameFromId((uint)ClassJob.THM), active);
+                    bool active = (selected_character.Jobs.Thaumaturge.Level > 0);
+                    DrawJob(selected_character.Jobs.Thaumaturge, ClassJob.THM, Utils.GetJobNameFromId((uint)ClassJob.THM), active);
                 }
 
                 break;
             }
             case ClassJob.RDM:
             {
-                bool active = (current_character.Jobs.RedMage.Level >= 50);
-                DrawJob(current_character.Jobs.RedMage, ClassJob.RDM, Utils.GetJobNameFromId((uint)ClassJob.RDM), active);
+                bool active = (selected_character.Jobs.RedMage.Level >= 50);
+                DrawJob(selected_character.Jobs.RedMage, ClassJob.RDM, Utils.GetJobNameFromId((uint)ClassJob.RDM), active);
 
                 break;
             }
             case ClassJob.BLU:
             {
-                bool active = (current_character.Jobs.BlueMage.Level > 0);
-                DrawJob(current_character.Jobs.BlueMage, ClassJob.BLU, Utils.GetJobNameFromId((uint)ClassJob.BLU), active);
+                bool active = (selected_character.Jobs.BlueMage.Level > 0);
+                DrawJob(selected_character.Jobs.BlueMage, ClassJob.BLU, Utils.GetJobNameFromId((uint)ClassJob.BLU), active);
 
                 break;
             }
             case ClassJob.CRP:
             {
-                bool active = (current_character.Jobs.Carpenter.Level > 0);
-                DrawJob(current_character.Jobs.Carpenter, ClassJob.CRP, Utils.GetJobNameFromId((uint)ClassJob.CRP), active);
+                bool active = (selected_character.Jobs.Carpenter.Level > 0);
+                DrawJob(selected_character.Jobs.Carpenter, ClassJob.CRP, Utils.GetJobNameFromId((uint)ClassJob.CRP), active);
 
                 break;
             }
             case ClassJob.BSM:
             {
-                bool active = (current_character.Jobs.Blacksmith.Level > 0);
-                DrawJob(current_character.Jobs.Blacksmith, ClassJob.BSM, Utils.GetJobNameFromId((uint)ClassJob.BSM), active);
+                bool active = (selected_character.Jobs.Blacksmith.Level > 0);
+                DrawJob(selected_character.Jobs.Blacksmith, ClassJob.BSM, Utils.GetJobNameFromId((uint)ClassJob.BSM), active);
 
                 break;
             }
             case ClassJob.ARM:
             {
-                bool active = (current_character.Jobs.Armorer.Level > 0);
-                DrawJob(current_character.Jobs.Armorer, ClassJob.ARM, Utils.GetJobNameFromId((uint)ClassJob.ARM), active);
+                bool active = (selected_character.Jobs.Armorer.Level > 0);
+                DrawJob(selected_character.Jobs.Armorer, ClassJob.ARM, Utils.GetJobNameFromId((uint)ClassJob.ARM), active);
 
                 break;
             }
             case ClassJob.GSM:
             {
-                bool active = (current_character.Jobs.Goldsmith.Level > 0);
-                DrawJob(current_character.Jobs.Goldsmith, ClassJob.GSM, Utils.GetJobNameFromId((uint)ClassJob.GSM), active);
+                bool active = (selected_character.Jobs.Goldsmith.Level > 0);
+                DrawJob(selected_character.Jobs.Goldsmith, ClassJob.GSM, Utils.GetJobNameFromId((uint)ClassJob.GSM), active);
 
                 break;
             }
             case ClassJob.LTW:
             {
-                bool active = (current_character.Jobs.Leatherworker.Level > 0);
-                DrawJob(current_character.Jobs.Leatherworker, ClassJob.LTW, Utils.GetJobNameFromId((uint)ClassJob.LTW), active);
+                bool active = (selected_character.Jobs.Leatherworker.Level > 0);
+                DrawJob(selected_character.Jobs.Leatherworker, ClassJob.LTW, Utils.GetJobNameFromId((uint)ClassJob.LTW), active);
 
                 break;
             }
             case ClassJob.WVR:
             {
-                bool active = (current_character.Jobs.Weaver.Level > 0);
-                DrawJob(current_character.Jobs.Weaver, ClassJob.WVR, Utils.GetJobNameFromId((uint)ClassJob.WVR), active);
+                bool active = (selected_character.Jobs.Weaver.Level > 0);
+                DrawJob(selected_character.Jobs.Weaver, ClassJob.WVR, Utils.GetJobNameFromId((uint)ClassJob.WVR), active);
 
                 break;
             }
             case ClassJob.ALC:
             {
-                bool active = (current_character.Jobs.Alchemist.Level > 0);
-                DrawJob(current_character.Jobs.Alchemist, ClassJob.ALC, Utils.GetJobNameFromId((uint)ClassJob.ALC), active);
+                bool active = (selected_character.Jobs.Alchemist.Level > 0);
+                DrawJob(selected_character.Jobs.Alchemist, ClassJob.ALC, Utils.GetJobNameFromId((uint)ClassJob.ALC), active);
 
                 break;
             }
             case ClassJob.CUL:
             {
-                bool active = (current_character.Jobs.Culinarian.Level > 0);
-                DrawJob(current_character.Jobs.Culinarian, ClassJob.CUL, Utils.GetJobNameFromId((uint)ClassJob.CUL), active);
+                bool active = (selected_character.Jobs.Culinarian.Level > 0);
+                DrawJob(selected_character.Jobs.Culinarian, ClassJob.CUL, Utils.GetJobNameFromId((uint)ClassJob.CUL), active);
 
                 break;
             }
             case ClassJob.MIN:
             {
-                bool active = (current_character.Jobs.Miner.Level > 0);
-                DrawJob(current_character.Jobs.Miner, ClassJob.MIN, Utils.GetJobNameFromId((uint)ClassJob.MIN), active);
+                bool active = (selected_character.Jobs.Miner.Level > 0);
+                DrawJob(selected_character.Jobs.Miner, ClassJob.MIN, Utils.GetJobNameFromId((uint)ClassJob.MIN), active);
 
                 break;
             }
             case ClassJob.BTN:
             {
-                bool active = (current_character.Jobs.Botanist.Level > 0);
-                DrawJob(current_character.Jobs.Botanist, ClassJob.BTN, Utils.GetJobNameFromId((uint)ClassJob.BTN), active);
+                bool active = (selected_character.Jobs.Botanist.Level > 0);
+                DrawJob(selected_character.Jobs.Botanist, ClassJob.BTN, Utils.GetJobNameFromId((uint)ClassJob.BTN), active);
 
                 break;
             }
             case ClassJob.FSH:
             {
-                bool active = (current_character.Jobs.Fisher.Level > 0);
-                DrawJob(current_character.Jobs.Fisher, ClassJob.FSH, Utils.GetJobNameFromId((uint)ClassJob.FSH), active);
+                bool active = (selected_character.Jobs.Fisher.Level > 0);
+                DrawJob(selected_character.Jobs.Fisher, ClassJob.FSH, Utils.GetJobNameFromId((uint)ClassJob.FSH), active);
 
                 break;
             }            

@@ -25,6 +25,7 @@ namespace Altoholic.Models
         public long LastOnline { get; set; } = 0;
         public uint PlayTime { get; set; } = 0;
         public long LastPlayTimeUpdate {  get; set; } = 0;
+        public bool HasPremiumSaddlebag { get; set; } = false;
         public Attributes? Attributes { get; set; }
         public PlayerCurrencies? Currencies { get; set; }
         public Jobs? Jobs { get; set; }

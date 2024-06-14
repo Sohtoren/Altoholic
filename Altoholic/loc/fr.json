@@ -2,5 +2,21 @@
   "Playtime": {
     "message": "Temps de jeu",
     "description": "PlaytimeString"
+  },
+  "OpenSaddlebag": {
+    "message": "Ouvrez la sacoche chocobo pour mettre à jour",
+    "description": "OpenSaddlebagString"
+  },
+  "OpenRetainerToUpdate": {
+    "message": "Ouvrez le servant pour mettre à jour",
+    "description": "Retainer.OpenInventoryString"
+  },
+  "OpenRetainerToUpdateList": {
+    "message": "Ouvrez le servant pour mettre à jour la liste",
+    "description": "Retainer.OpenInventoryString"
+  },
+  "NoItemFound": {
+    "message": "Aucun objet trouvé",
+    "description": "NoItemFound"
   }
 }

@@ -2,5 +2,21 @@
   "Playtime": {
     "message": "累積プレイ時間",
     "description": "PlaytimeString"
+  },
+  "OpenSaddlebag": {
+    "message": "チョコボかばんを開くてアップデートする",
+    "description": "OpenSaddlebagString"
+  },
+  "OpenRetainerToUpdate": {
+    "message": "RETAINERを開くてアップデートする",
+    "description": "Retainer.OpenInventoryString"
+  },
+  "OpenRetainerToUpdateList": {
+    "message": "リストを更新するにはRETAINERを開くてアップデートする",
+    "description": "Retainer.OpenInventoryString"
+  },
+  "NoItemFound": {
+    "message": "アイテムが見つかりませんでした",
+    "description": "NoItemFound"
   }
 }

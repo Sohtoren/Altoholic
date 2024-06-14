@@ -15,7 +15,8 @@ public class MainWindow : Window, IDisposable
     private DetailsWindow detailsWindow { get; init; }
     private JobsWindow jobsWindow { get; init; }
     private CurrenciesWindow currenciesWindow { get; init; }
-    private InventoryWindow inventoryWindow { get; init; }
+    private InventoriesWindow inventoriesWindow { get; init; }
+    private RetainersWindow retainersWindow { get; init; }
     private ConfigWindow configWindow { get; init; }
 
     private ClientLanguage currentLocale;
@@ -27,11 +28,12 @@ public class MainWindow : Window, IDisposable
         DetailsWindow detailsWindow,
         JobsWindow jobsWindow,
         CurrenciesWindow currenciesWindow,
-        InventoryWindow inventoryWindow,
+        InventoriesWindow inventoriesWindow,
+        RetainersWindow retainersWindow,
         ConfigWindow configWindow/*,
         ClientLanguage currentLocale*/
     )
-        : base(name, ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse)
+        : base(name, ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse)
     {
         this.SizeConstraints = new WindowSizeConstraints
         {
@@ -44,7 +46,8 @@ public class MainWindow : Window, IDisposable
         this.detailsWindow = detailsWindow;
         this.jobsWindow = jobsWindow;
         this.currenciesWindow = currenciesWindow;
-        this.inventoryWindow = inventoryWindow;
+        this.inventoriesWindow = inventoriesWindow;
+        this.retainersWindow = retainersWindow;
         this.configWindow = configWindow;
     }
 
@@ -55,7 +58,8 @@ public class MainWindow : Window, IDisposable
         currenciesWindow.IsOpen = false;
         detailsWindow.IsOpen = false;
         jobsWindow.IsOpen = false;
-        inventoryWindow.IsOpen = false;
+        inventoriesWindow.IsOpen = false;
+        retainersWindow.IsOpen = false;
         configWindow.IsOpen = false;
     }
 
@@ -106,7 +110,15 @@ public class MainWindow : Window, IDisposable
         {
             if (inventoryTab.Success)
             {
-                inventoryWindow.Draw();
+                inventoriesWindow.Draw();
+            }
+        };
+        
+        using (var retainersTab = ImRaii.TabItem($"{Utils.GetAddonString(532)}"))
+        {
+            if (retainersTab.Success)
+            {
+                retainersWindow.Draw();
             }
         };
         

@@ -9,16 +9,17 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using System.Xml.Linq;
+using CheapLoc;
+using System.Reflection.Emit;
 
 namespace Altoholic.Windows;
 
-public class InventoryWindow : Window, IDisposable
+public class InventoriesWindow : Window, IDisposable
 {
     private Plugin plugin;
     private ClientLanguage currentLocale;
 
-    public InventoryWindow(
+    public InventoriesWindow(
         Plugin plugin,
         string name
         )
@@ -78,7 +79,6 @@ public class InventoryWindow : Window, IDisposable
             {
                 if (listBox)
                 {
-
                     ImGui.SetScrollY(0);
                     if (chars.Count > 0)
                     {
@@ -117,8 +117,9 @@ public class InventoryWindow : Window, IDisposable
     {
         if(ImGui.InputText(Utils.Capitalize(Utils.GetAddonString(3635)), ref searched_item, 512, ImGuiInputTextFlags.EnterReturnsTrue))
         {
-            if (searched_item.Length > 3)
+            if (searched_item.Length >= 3)
             {
+                if (searched_item == "Gil" || searched_item == "MGP" || searched_item == "MGF") return;
                 IEnumerable<Lumina.Excel.GeneratedSheets.Item>? items = Utils.GetItemsFromName(searched_item);
                 if (items != null && items.Any())
                 {
@@ -184,59 +185,82 @@ public class InventoryWindow : Window, IDisposable
         }
     }
 
-    private void DrawInventories(Character current_character)
+    private void DrawInventories(Character selected_character)
     {
-        using var table = ImRaii.Table($"###CharactersInventoryTable#Inventories#{current_character.Id}", 3, ImGuiTableFlags.ScrollX | ImGuiTableFlags.ScrollX);
+        using var table = ImRaii.Table($"###CharactersInventoryTable#Inventories#{selected_character.Id}", 2, ImGuiTableFlags.ScrollY);
         if (!table) return;
 
-        if (current_character.Inventory.Count != 278) return;
-        List<Inventory> inventory = [.. current_character.Inventory[..140].OrderByDescending(i => i.Quantity)];//Todo: Use ItemOrderModule
-        List<Inventory> keysitems = [.. current_character.Inventory.Slice(141, 105).OrderByDescending(k => k.Quantity)];
+        if (selected_character.Inventory.Count != 278) return;
+        List<Inventory> inventory = [.. selected_character.Inventory[..140].OrderByDescending(i => i.Quantity)];//Todo: Use ItemOrderModule
+        List<Inventory> keysitems = [.. selected_character.Inventory.Slice(141, 105).OrderByDescending(k => k.Quantity)];
         bool isKeyItemEmpty = (keysitems.FindAll(k => k.Quantity == 0).Count == 105);
-        //List<Inventory> crystals = current_character.Inventory.Slice(246, 32);
+        //List<Inventory> crystals = selected_character.Inventory.Slice(246, 32);
+        List<Inventory> saddleBag = [.. selected_character.Saddle.OrderByDescending(s => s.Quantity)];
 
-        ImGui.TableSetupColumn($"###CharactersInventoryTable#Inventories#Bags_{current_character.Id}", ImGuiTableColumnFlags.WidthFixed, 450);
+        ImGui.TableSetupColumn($"###CharactersInventoryTable#Inventories#Bags_{selected_character.Id}", ImGuiTableColumnFlags.WidthFixed, 450);
         if (isKeyItemEmpty)
-            ImGui.TableSetupColumn($"###CharactersInventoryTable#Inventories#KeyItems_{current_character.Id}", ImGuiTableColumnFlags.WidthFixed, 100);
+            ImGui.TableSetupColumn($"###CharactersInventoryTable#Inventories#KeyItems_{selected_character.Id}", ImGuiTableColumnFlags.WidthFixed, 180);
         else
-            ImGui.TableSetupColumn($"###CharactersInventoryTable#Inventories#KeyItems_{current_character.Id}", ImGuiTableColumnFlags.WidthStretch);
+            ImGui.TableSetupColumn($"###CharactersInventoryTable#Inventories#KeyItems_{selected_character.Id}", ImGuiTableColumnFlags.WidthStretch);
 
-        ImGui.TableSetupColumn($"###CharactersInventoryTable#Inventories#Crystals_{current_character.Id}", ImGuiTableColumnFlags.WidthFixed, 180);
+        //ImGui.TableSetupColumn($"###CharactersInventoryTable#Inventories#Crystals_{selected_character.Id}", ImGuiTableColumnFlags.WidthFixed, 180);
         ImGui.TableNextRow();
         ImGui.TableSetColumnIndex(0);
         ImGui.TextUnformatted($"{Utils.GetAddonString(520)}");
-        DrawInventory($"Inventory_{current_character.Id}", inventory);
+        DrawInventory($"Inventory_{selected_character.Id}", inventory);
+        if (ImGui.BeginTable($"###CharactersInventoryTable#Inventories#Inventory#Inventory_{selected_character.Id}#Amount", 2))
+        {
+            ImGui.TableSetupColumn($"###CharactersInventoryTable#Inventories#Inventory#Inventory_{selected_character.Id}#Amount#Col1", ImGuiTableColumnFlags.WidthFixed, 390);
+            ImGui.TableSetupColumn($"###CharactersInventoryTable#Inventories#Inventory#Inventory_{selected_character.Id}#Amount#Col2", ImGuiTableColumnFlags.WidthFixed, 80);
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            ImGui.Text("");
+            ImGui.TableSetColumnIndex(1);
+            ImGui.TextUnformatted($"{inventory.FindAll(i => i.ItemId != 0).Count}/140");
+            ImGui.EndTable();
+        }
         ImGui.TableSetColumnIndex(1);
         ImGui.TextUnformatted($"{Utils.GetAddonString(536)}");
-        Plugin.Log.Debug($"{current_character.FirstName} KeyItems: {keysitems.FindAll(k => k.Quantity == 0).Count}");
+        Plugin.Log.Debug($"{selected_character.FirstName} KeyItems: {keysitems.FindAll(k => k.Quantity == 0).Count}");
         if (isKeyItemEmpty)
         {
             ImGui.TextUnformatted($"{Utils.GetAddonString(1959)}");
         }
         else
         {
-            DrawInventory($"Keyitem_{current_character.Id}", keysitems, true);
+            DrawKeyInventory($"Keyitem_{selected_character.Id}", keysitems);
         }
-        ImGui.TableSetColumnIndex(2);
+        //ImGui.TableSetColumnIndex(1);
         ImGui.TextUnformatted($"{Utils.GetAddonString(2882)}");
-        DrawCrystals(current_character);
+        DrawCrystals(selected_character);
 
         ImGui.TableNextRow();
         ImGui.TableSetColumnIndex(0);
         ImGui.TextUnformatted($"{Utils.GetAddonString(12212)}");
-        Plugin.Log.Debug($"{current_character.FirstName} Saddle: {current_character.Saddle.FindAll(k => k.Quantity == 0).Count}");
-        int SaddleCount = current_character.Saddle.FindAll(s => s.Quantity == 0).Count;
+        Plugin.Log.Debug($"{selected_character.FirstName} Saddle: {selected_character.Saddle.FindAll(k => k.Quantity == 0).Count}");
+        int SaddleCount = selected_character.Saddle.FindAll(s => s.Quantity == 0).Count;
         if (SaddleCount == 0 || SaddleCount == 140)
         {
-            ImGui.TextUnformatted($"{Utils.GetAddonString(1959)}");
+            ImGui.TextUnformatted($"{Utils.GetAddonString(5448)} {Loc.Localize("OpenSaddlebag", "Open the Saddlebag to update")}");
         }
         else
         {
-            DrawInventory($"Saddle_{current_character.Id}", [..current_character.Saddle.OrderByDescending(s => s.Quantity)]);
+            DrawInventory($"Saddle_{selected_character.Id}", saddleBag, true, selected_character.HasPremiumSaddlebag);
+            if (ImGui.BeginTable($"###CharactersInventoryTable#Inventories#Inventory#Saddle_{selected_character.Id}#Amount", 2))
+            {
+                ImGui.TableSetupColumn($"###CharactersInventoryTable#Inventories#Inventory#Saddle_{selected_character.Id}#Amount#Col1", ImGuiTableColumnFlags.WidthFixed, 390);
+                ImGui.TableSetupColumn($"###CharactersInventoryTable#Inventories#Inventory#Saddle_{selected_character.Id}#Amount#Col2", ImGuiTableColumnFlags.WidthFixed, 80);
+                ImGui.TableNextRow();
+                ImGui.TableSetColumnIndex(0);
+                ImGui.Text("");
+                ImGui.TableSetColumnIndex(1);
+                ImGui.TextUnformatted($"{saddleBag.FindAll(i => i.ItemId != 0).Count}/{((selected_character.HasPremiumSaddlebag) ? "140" : "70")}");
+                ImGui.EndTable();
+            }
         }
     }
 
-    private void DrawInventory(string label, List<Inventory> inventory, bool event_item = false)
+    private void DrawInventory(string label, List<Inventory> inventory, bool saddle = false, bool premium = false)
     {
         using var table = ImRaii.Table($"###CharactersInventoryTable#Inventories#Inventory#{label}Table", 10, ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner);
         if (!table) return;
@@ -258,6 +282,7 @@ public class InventoryWindow : Window, IDisposable
         for (int i = 0; i < inventory.Count; i++)
         {
             Inventory item = inventory[i];
+            if (saddle && !premium && i > 69) continue;
             if (i == 0 ||
                 i == 10 ||
                 i == 20 ||
@@ -286,10 +311,81 @@ public class InventoryWindow : Window, IDisposable
             }
             else
             {
-                if(event_item)
-                    Utils.DrawEventItemIcon(new Vector2(36, 36), item.HQ, item.ItemId);
-                else
-                    Utils.DrawItemIcon(new Vector2(36, 36), item.HQ, item.ItemId);
+                Utils.DrawItemIcon(new Vector2(36, 36), item.HQ, item.ItemId);
+                if (ImGui.IsItemHovered())
+                {
+                    Utils.DrawItemTooltip(item);
+                }
+            }
+        }
+    }
+    
+    private void DrawKeyInventory(string label, List<Inventory> inventory)
+    {
+
+        int height = inventory.FindAll(i => i.ItemId != 0).ToList().Count switch
+        {
+            int i when i >= 0 && i <= 7 => 36,
+            int i when i >= 8 && i <= 14 => 72,
+            int i when i >= 15 && i <= 21 => 108,
+            int i when i >= 22 && i <= 28 => 144,
+            int i when i >= 29 && i <= 35 => 180,
+            int i when i >= 36 && i <= 42 => 216,
+            int i when i >= 43 && i <= 49 => 252,
+            int i when i >= 44 && i <= 56 => 288,
+            int i when i >= 57 && i <= 63 => 234,
+            int i when i >= 64 && i <= 70 => 360,
+            int i when i >= 71 && i <= 77 => 396,
+            int i when i >= 78 && i <= 84 => 432,
+            int i when i >= 85 && i <= 91 => 468,
+            int i when i >= 92 && i <= 98 => 504,
+            int i when i >= 99 && i <= 105 => 540,
+            _ => -1
+        };
+        using var table = ImRaii.Table($"###CharactersInventoryTable#Inventories#Inventory#{label}Table", 7, ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner, new Vector2(310,height));
+        if (!table) return;
+
+        ImGui.TableSetupColumn($"###CharactersInventoryTable#Inventories#Inventory#{label}#Col1", ImGuiTableColumnFlags.WidthFixed, 36);
+        ImGui.TableSetupColumn($"###CharactersInventoryTable#Inventories#Inventory#{label}#Col2", ImGuiTableColumnFlags.WidthFixed, 36);
+        ImGui.TableSetupColumn($"###CharactersInventoryTable#Inventories#Inventory#{label}#Col3", ImGuiTableColumnFlags.WidthFixed, 36);
+        ImGui.TableSetupColumn($"###CharactersInventoryTable#Inventories#Inventory#{label}#Col4", ImGuiTableColumnFlags.WidthFixed, 36);
+        ImGui.TableSetupColumn($"###CharactersInventoryTable#Inventories#Inventory#{label}#Col5", ImGuiTableColumnFlags.WidthFixed, 36);
+        ImGui.TableSetupColumn($"###CharactersInventoryTable#Inventories#Inventory#{label}#Col6", ImGuiTableColumnFlags.WidthFixed, 36);
+        ImGui.TableSetupColumn($"###CharactersInventoryTable#Inventories#Inventory#{label}#Col7", ImGuiTableColumnFlags.WidthFixed, 36);
+        for (int i = 0; i < inventory.Count; i++)
+        {
+            Inventory item = inventory[i];
+            if (item.ItemId == 0) continue;
+            if (i == 0 ||
+                i == 7 ||
+                i == 14 ||
+                i == 21 ||
+                i == 28 ||
+                i == 35 ||
+                i == 42 ||
+                i == 49 ||
+                i == 56 ||
+                i == 63 ||
+                i == 70 ||
+                i == 77 ||
+                i == 84 ||
+                i == 91 ||
+                i == 98
+            )
+            {
+                ImGui.TableNextRow();
+            }
+            ImGui.TableNextColumn();
+            if (item == null || item.ItemId == 0)
+            {
+                //Utils.DrawIcon(new Vector2(36, 36), false, 653);
+                ImGui.Text("");
+                /*var list = ImGui.GetWindowDrawList();
+                list.AddRect(new Vector2(0, 0), new Vector2(36, 36),(uint)i);*/
+            }
+            else
+            {
+                Utils.DrawEventItemIcon(new Vector2(36, 36), item.HQ, item.ItemId);
                 if (ImGui.IsItemHovered())
                 {
                     Utils.DrawItemTooltip(item);
@@ -298,15 +394,15 @@ public class InventoryWindow : Window, IDisposable
         }
     }
 
-    private void DrawCrystals(Character current_character)
+    private void DrawCrystals(Character selected_character)
     {
-        if (current_character.Currencies is null) return;
-        using var table = ImRaii.Table($"###CharactersInventoryTable#Inventories_{current_character.Id}", 4, ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner);
+        if (selected_character.Currencies is null) return;
+        using var table = ImRaii.Table($"###CharactersInventoryTable#Inventories_{selected_character.Id}", 4, ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner, new Vector2(180,180));
         if (!table) return;
-        ImGui.TableSetupColumn($"###CharactersInventoryTable#Inventories_{current_character.Id}#Crystals#Icons", ImGuiTableColumnFlags.WidthFixed, 36);
-        ImGui.TableSetupColumn($"###CharactersInventoryTable#Inventories_{current_character.Id}#Crystals#Col1", ImGuiTableColumnFlags.WidthFixed, 36);
-        ImGui.TableSetupColumn($"###CharactersInventoryTable#Inventories_{current_character.Id}#Crystals#Col2", ImGuiTableColumnFlags.WidthFixed, 36);
-        ImGui.TableSetupColumn($"###CharactersInventoryTable#Inventories_{current_character.Id}#Crystals#Col3", ImGuiTableColumnFlags.WidthFixed, 36);
+        ImGui.TableSetupColumn($"###CharactersInventoryTable#Inventories_{selected_character.Id}#Crystals#Icons", ImGuiTableColumnFlags.WidthFixed, 36);
+        ImGui.TableSetupColumn($"###CharactersInventoryTable#Inventories_{selected_character.Id}#Crystals#Col1", ImGuiTableColumnFlags.WidthFixed, 36);
+        ImGui.TableSetupColumn($"###CharactersInventoryTable#Inventories_{selected_character.Id}#Crystals#Col2", ImGuiTableColumnFlags.WidthFixed, 36);
+        ImGui.TableSetupColumn($"###CharactersInventoryTable#Inventories_{selected_character.Id}#Crystals#Col3", ImGuiTableColumnFlags.WidthFixed, 36);
         ImGui.TableNextRow();
         ImGui.TableSetColumnIndex(0);
         ImGui.Text("");
@@ -321,61 +417,61 @@ public class InventoryWindow : Window, IDisposable
         ImGui.TableSetColumnIndex(0);
         Utils.DrawIcon(new Vector2(24,24), false, 60651);
         ImGui.TableSetColumnIndex(1);
-        DrawCrystal(2, current_character.Currencies.Fire_Shard);
+        DrawCrystal(2, selected_character.Currencies.Fire_Shard);
         ImGui.TableSetColumnIndex(2);
-        DrawCrystal(8, current_character.Currencies.Fire_Crystal);
+        DrawCrystal(8, selected_character.Currencies.Fire_Crystal);
         ImGui.TableSetColumnIndex(3);
-        DrawCrystal(14, current_character.Currencies.Fire_Cluster);
+        DrawCrystal(14, selected_character.Currencies.Fire_Cluster);
 
         ImGui.TableNextRow();
         ImGui.TableSetColumnIndex(0);
         Utils.DrawIcon(new Vector2(24,24), false, 60652);
         ImGui.TableSetColumnIndex(1);
-        DrawCrystal(3, current_character.Currencies.Ice_Shard);
+        DrawCrystal(3, selected_character.Currencies.Ice_Shard);
         ImGui.TableSetColumnIndex(2);
-        DrawCrystal(9, current_character.Currencies.Ice_Crystal);
+        DrawCrystal(9, selected_character.Currencies.Ice_Crystal);
         ImGui.TableSetColumnIndex(3);
-        DrawCrystal(15, current_character.Currencies.Ice_Cluster);
+        DrawCrystal(15, selected_character.Currencies.Ice_Cluster);
 
         ImGui.TableNextRow();
         ImGui.TableSetColumnIndex(0);
         Utils.DrawIcon(new Vector2(24,24), false, 60653);
         ImGui.TableSetColumnIndex(1);
-        DrawCrystal(4, current_character.Currencies.Wind_Shard);
+        DrawCrystal(4, selected_character.Currencies.Wind_Shard);
         ImGui.TableSetColumnIndex(2);
-        DrawCrystal(10, current_character.Currencies.Wind_Crystal);
+        DrawCrystal(10, selected_character.Currencies.Wind_Crystal);
         ImGui.TableSetColumnIndex(3);
-        DrawCrystal(16, current_character.Currencies.Wind_Cluster);
+        DrawCrystal(16, selected_character.Currencies.Wind_Cluster);
 
         ImGui.TableNextRow();
         ImGui.TableSetColumnIndex(0);
         Utils.DrawIcon(new Vector2(24,24), false, 60654);
         ImGui.TableSetColumnIndex(1);
-        DrawCrystal(5, current_character.Currencies.Earth_Shard);
+        DrawCrystal(5, selected_character.Currencies.Earth_Shard);
         ImGui.TableSetColumnIndex(2);
-        DrawCrystal(11, current_character.Currencies.Earth_Crystal);
+        DrawCrystal(11, selected_character.Currencies.Earth_Crystal);
         ImGui.TableSetColumnIndex(3);
-        DrawCrystal(17, current_character.Currencies.Earth_Cluster);
+        DrawCrystal(17, selected_character.Currencies.Earth_Cluster);
 
         ImGui.TableNextRow();
         ImGui.TableSetColumnIndex(0);
         Utils.DrawIcon(new Vector2(24,24), false, 60655);
         ImGui.TableSetColumnIndex(1);
-        DrawCrystal(6, current_character.Currencies.Lightning_Shard);
+        DrawCrystal(6, selected_character.Currencies.Lightning_Shard);
         ImGui.TableSetColumnIndex(2);
-        DrawCrystal(12, current_character.Currencies.Lightning_Crystal);
+        DrawCrystal(12, selected_character.Currencies.Lightning_Crystal);
         ImGui.TableSetColumnIndex(3);
-        DrawCrystal(18, current_character.Currencies.Lightning_Cluster);
+        DrawCrystal(18, selected_character.Currencies.Lightning_Cluster);
 
         ImGui.TableNextRow();
         ImGui.TableSetColumnIndex(0);
         Utils.DrawIcon(new Vector2(24,24), false, 60656);
         ImGui.TableSetColumnIndex(1);
-        DrawCrystal(7, current_character.Currencies.Water_Shard);
+        DrawCrystal(7, selected_character.Currencies.Water_Shard);
         ImGui.TableSetColumnIndex(2);
-        DrawCrystal(13, current_character.Currencies.Water_Crystal);
+        DrawCrystal(13, selected_character.Currencies.Water_Crystal);
         ImGui.TableSetColumnIndex(3);
-        DrawCrystal(19, current_character.Currencies.Water_Cluster);
+        DrawCrystal(19, selected_character.Currencies.Water_Cluster);
     }
     private void DrawCrystal(uint itemid, int amount)
     {

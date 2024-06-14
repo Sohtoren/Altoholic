@@ -27,7 +27,6 @@ namespace Altoholic
                 //Plugin.Log.Debug($"lumina : ${lumina}");
                 if (lumina != null)
                 {
-                    //Todo: HQ
                     //Plugin.Log.Debug($"icon path : {lumina.Icon}");
                     uint icon_id = (lumina.Icon == 0) ? (uint)FALLBACK_ICON : lumina.Icon;
                     var icon = Plugin.TextureProvider.GetIcon(icon_id, hq ? IconFlags.ItemHighQuality : IconFlags.None);
@@ -49,7 +48,6 @@ namespace Altoholic
                 //Plugin.Log.Debug($"lumina : ${lumina}");
                 if (lumina != null)
                 {
-                    //Todo: HQ
                     //Plugin.Log.Debug($"icon path : {lumina.Icon}");
                     uint icon_id = (lumina.Icon == 0) ? (uint)FALLBACK_ICON : lumina.Icon;
                     var icon = Plugin.TextureProvider.GetIcon(icon_id, hq ? IconFlags.ItemHighQuality : IconFlags.None);
@@ -900,6 +898,56 @@ namespace Altoholic
             return 0;
         }
 
+        public static int GetRetainerJobMaxLevel(uint job, Character character)
+        {
+            if (character.Jobs == null) return 0;
+            return job switch
+            {
+                0 => character.Jobs.Adventurer.Level,
+                1 => character.Jobs.Gladiator.Level,
+                2 => character.Jobs.Pugilist.Level,
+                3 => character.Jobs.Marauder.Level,
+                4 => character.Jobs.Lancer.Level,
+                5 => character.Jobs.Archer.Level,
+                6 => character.Jobs.Conjurer.Level,
+                7 => character.Jobs.Thaumaturge.Level,
+                8 => character.Jobs.Carpenter.Level,
+                9 => character.Jobs.Blacksmith.Level,
+                10 => character.Jobs.Armorer.Level,
+                11 => character.Jobs.Goldsmith.Level,
+                12 => character.Jobs.Leatherworker.Level,
+                13 => character.Jobs.Weaver.Level,
+                14 => character.Jobs.Alchemist.Level,
+                15 => character.Jobs.Culinarian.Level,
+                16 => character.Jobs.Miner.Level,
+                17 => character.Jobs.Botanist.Level,
+                18 => character.Jobs.Fisher.Level,
+                19 => character.Jobs.Paladin.Level,
+                20 => character.Jobs.Monk.Level,
+                21 => character.Jobs.Warrior.Level,
+                22 => character.Jobs.Dragoon.Level,
+                23 => character.Jobs.Bard.Level,
+                24 => character.Jobs.WhiteMage.Level,
+                25 => character.Jobs.BlackMage.Level,
+                26 => character.Jobs.Arcanist.Level,
+                27 => character.Jobs.Summoner.Level,
+                28 => character.Jobs.Scholar.Level,
+                29 => character.Jobs.Rogue.Level,
+                30 => character.Jobs.Ninja.Level,
+                31 => character.Jobs.Machinist.Level,
+                32 => character.Jobs.DarkKnight.Level,
+                33 => character.Jobs.Astrologian.Level,
+                34 => character.Jobs.Samurai.Level,
+                35 => character.Jobs.RedMage.Level,
+                36 => character.Jobs.BlueMage.Level,
+                37 => character.Jobs.Gunbreaker.Level,
+                38 => character.Jobs.Dancer.Level,
+                39 => character.Jobs.Reaper.Level,
+                40 => character.Jobs.Sage.Level,
+                _ => 0
+            };
+        }
+
         public static void DrawLevelProgressBar(int exp, int nextExp, string jobFullname)
         {
             float progress = (float)exp / nextExp;
@@ -1013,6 +1061,131 @@ namespace Altoholic
             };
         }
 
+        public static void DrawGear(List<Gear> gears, uint job, int jobLevel, int middleWidth, int middleHeigth, bool retainer = false, int maxLevel = 0)
+        {
+            if (gears.Count == 0) return;
+            if (ImGui.BeginTable("###GearTableHeader", 3))
+            {
+                ImGui.TableSetupColumn("###GearTableHeader#MHColumn", ImGuiTableColumnFlags.WidthFixed, 44);
+                ImGui.TableSetupColumn("###GearTableHeader#RoleIconNameColumn", ImGuiTableColumnFlags.WidthStretch);
+                ImGui.TableSetupColumn("###GearTableHeader#RoleIconNameColumn", ImGuiTableColumnFlags.WidthFixed, 100);
+                ImGui.TableNextRow();
+                ImGui.TableSetColumnIndex(0);
+                DrawGearPiece(gears, GearSlot.MH, GetAddonString(11524), new Vector2(40, 40), 13775);
+                ImGui.TableSetColumnIndex(1);
+                ImGui.TextUnformatted($"{GetAddonString(335)} {jobLevel}");
+                if (ImGui.BeginTable("###GearTable#RoleIconNameTable", 2))
+                {
+                    ImGui.TableSetupColumn("###GearTable#RoleColumn#RoleIcon", ImGuiTableColumnFlags.WidthFixed, 44);
+                    ImGui.TableSetupColumn("###GearTable#RoleColumn#RoleName", ImGuiTableColumnFlags.WidthStretch);
+                    ImGui.TableNextRow();
+                    ImGui.TableSetColumnIndex(0);
+                    DrawIcon(new Vector2(40, 40), false, GetJobIcon(job));
+                    ImGui.TableSetColumnIndex(1);
+                    ImGui.TextUnformatted($"{GetJobNameFromId(job)}");
+
+                    ImGui.EndTable();
+                }
+                ImGui.TableSetColumnIndex(2);
+                ImGui.TextUnformatted($"{GetAddonString(2325).Replace("[","").Replace("]", "")}{maxLevel}");
+
+                ImGui.EndTable();
+            }
+
+            if (ImGui.BeginTable("###GearTable", 3))
+            {
+                ImGui.TableSetupColumn("###GearTable#LeftGearColumnHeader", ImGuiTableColumnFlags.WidthFixed, 44);
+                ImGui.TableSetupColumn("###GearTable#CentralColumnHeader", ImGuiTableColumnFlags.WidthFixed, middleWidth);
+                ImGui.TableSetupColumn("###GearTable#RightGearColumnHeader", ImGuiTableColumnFlags.WidthFixed, 44);
+                ImGui.TableNextRow();
+                ImGui.TableSetColumnIndex(0);
+                if (ImGui.BeginTable("###GearTable#LeftGearColumn", 1))
+                {
+                    ImGui.TableSetupColumn("###GearTable#LeftGearColum#Column", ImGuiTableColumnFlags.WidthFixed, 42);
+                    ImGui.TableNextRow();
+                    ImGui.TableSetColumnIndex(0);
+                    DrawGearPiece(gears, GearSlot.HEAD, GetAddonString(11525), new Vector2(40, 40), 10032);
+
+                    ImGui.TableNextRow();
+                    ImGui.TableSetColumnIndex(0);
+                    DrawGearPiece(gears, GearSlot.BODY, GetAddonString(11526), new Vector2(40, 40), 10033);
+
+                    ImGui.TableNextRow();
+                    ImGui.TableSetColumnIndex(0);
+                    DrawGearPiece(gears, GearSlot.HANDS, GetAddonString(11527), new Vector2(40, 40), 10034);
+
+                    ImGui.TableNextRow();
+                    ImGui.TableSetColumnIndex(0);
+                    DrawGearPiece(gears, GearSlot.LEGS, GetAddonString(11528), new Vector2(40, 40), 10035);
+
+                    ImGui.TableNextRow();
+                    ImGui.TableSetColumnIndex(0);
+                    DrawGearPiece(gears, GearSlot.FEET, GetAddonString(11529), new Vector2(40, 40), 10035);
+                    ImGui.EndTable();
+                }
+
+                ImGui.TableSetColumnIndex(1);
+                DrawIcon(new Vector2(middleWidth, middleHeigth), false, 055396);
+
+                ImGui.TableSetColumnIndex(2);
+                if (ImGui.BeginTable("###GearTable#RightGearColumn", 1))
+                {
+                    ImGui.TableSetupColumn("###GearTable#RightGearColum#Column", ImGuiTableColumnFlags.WidthFixed, 42);
+                    ImGui.TableNextRow();
+                    ImGui.TableSetColumnIndex(0);
+                    DrawGearPiece(gears, GearSlot.OH, GetAddonString(12227), new Vector2(40, 40), 30067);
+
+                    ImGui.TableNextRow();
+                    ImGui.TableSetColumnIndex(0);
+                    DrawGearPiece(gears, GearSlot.EARS, GetAddonString(11530), new Vector2(40, 40), 9293);
+
+                    ImGui.TableNextRow();
+                    ImGui.TableSetColumnIndex(0);
+                    DrawGearPiece(gears, GearSlot.NECK, GetAddonString(11531), new Vector2(40, 40), 9292);
+
+                    ImGui.TableNextRow();
+                    ImGui.TableSetColumnIndex(0);
+                    DrawGearPiece(gears, GearSlot.WRISTS, GetAddonString(11532), new Vector2(40, 40), 9294);
+
+                    ImGui.TableNextRow();
+                    ImGui.TableSetColumnIndex(0);
+                    DrawGearPiece(gears, GearSlot.RIGHT_RING, GetAddonString(11533), new Vector2(40, 40), 9295);
+
+                    ImGui.TableNextRow();
+                    ImGui.TableSetColumnIndex(0);
+                    DrawGearPiece(gears, GearSlot.LEFT_RING, GetAddonString(11534), new Vector2(40, 40), 9295);
+
+                    ImGui.TableNextRow();
+                    ImGui.TableSetColumnIndex(0);
+                    DrawGearPiece(gears, GearSlot.SOUL_CRYSTAL, GetAddonString(12238), new Vector2(40, 40), 55396);//Todo: Find Soul Crystal empty icon
+                    ImGui.EndTable();
+                }
+                ImGui.EndTable();
+            }
+        }
+
+        public static void DrawGearPiece(List<Gear> Gear, GearSlot slot, string tooltip, Vector2 icon_size, uint fallback_icon)
+        {
+            var GEAR = Gear.First(g => g.Slot == (short)slot);
+            if (GEAR == null || GEAR.ItemId == 0)
+            {
+                DrawItemIcon(icon_size, false, fallback_icon);
+                if (ImGui.IsItemHovered())
+                {
+                    ImGui.BeginTooltip();
+                    ImGui.TextUnformatted(tooltip);
+                    ImGui.EndTooltip();
+                }
+            }
+            else
+            {
+                DrawItemIcon(icon_size, GEAR.HQ, GEAR.ItemId);
+                if (ImGui.IsItemHovered())
+                {
+                    DrawGearTooltip(GEAR);
+                }
+            }
+        }
         public static void DrawGearTooltip(Gear item)
         {
             if (Plugin.TextureProvider == null || Plugin.DataManager is null || Plugin.Log is null) return;
@@ -1684,6 +1857,47 @@ namespace Altoholic
                 17 => GetItemNameFromId(19),
                 _ => string.Empty
             };
+        }
+
+        public static Lumina.Excel.GeneratedSheets.RetainerTask? GetRetainerTask(uint id)
+        {
+            if (Plugin.DataManager is null || Plugin.Log is null) return null;
+            Lumina.Excel.ExcelSheet<Lumina.Excel.GeneratedSheets.RetainerTask>? drt = Plugin.DataManager.GetExcelSheet<Lumina.Excel.GeneratedSheets.RetainerTask>(GetLocale());
+            if (drt != null)
+            {
+                Lumina.Excel.GeneratedSheets.RetainerTask? lumina = drt.GetRow(id);
+                return lumina;
+            }
+            return null;
+        }
+        public static Lumina.Excel.GeneratedSheets.RetainerTaskNormal? GetRetainerTaskNormal(uint id)
+        {
+            if (Plugin.DataManager is null || Plugin.Log is null) return null;
+            Lumina.Excel.ExcelSheet<Lumina.Excel.GeneratedSheets.RetainerTaskNormal>? drtn = Plugin.DataManager.GetExcelSheet<Lumina.Excel.GeneratedSheets.RetainerTaskNormal>(GetLocale());
+            if (drtn != null)
+            {
+                Lumina.Excel.GeneratedSheets.RetainerTaskNormal? lumina = drtn.GetRow(id);
+                return lumina;
+            }
+            return null;
+        }
+        public static Lumina.Excel.GeneratedSheets.RetainerTaskRandom? GetRetainerTaskRandom(uint id)
+        {
+            if (Plugin.DataManager is null || Plugin.Log is null) return null;
+            Lumina.Excel.ExcelSheet<Lumina.Excel.GeneratedSheets.RetainerTaskRandom>? drtr = Plugin.DataManager.GetExcelSheet<Lumina.Excel.GeneratedSheets.RetainerTaskRandom>(GetLocale());
+            if (drtr != null)
+            {
+                Lumina.Excel.GeneratedSheets.RetainerTaskRandom? lumina = drtr.GetRow(id);
+                return lumina;
+            }
+            return null;
+        }
+
+        public static string UnixTimeStampToDateTime(long lastOnline)
+        {
+            DateTime dateTime = new(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+            dateTime = dateTime.AddSeconds(lastOnline).ToLocalTime();
+            return dateTime.ToString();
         }
     }
 }

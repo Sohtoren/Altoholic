@@ -126,14 +126,16 @@ namespace Altoholic.Database
                             c.PlayTime = character.PlayTime;
                             c.LastPlayTimeUpdate = character.LastPlayTimeUpdate;
                         }
+                        c.HasPremiumSaddlebag = character.HasPremiumSaddlebag;
                         c.Attributes = character.Attributes;
                         c.Currencies = character.Currencies;
                         c.Jobs = character.Jobs;
-                        c.Quests = character.Quests;
                         c.Profile = character.Profile;
-                        c.Retainers = character.Retainers;
+                        c.Quests = character.Quests;
                         c.Inventory = character.Inventory;
-                        c.Gear = character.Gear;                        
+                        c.Saddle = character.Saddle;
+                        c.Gear = character.Gear;
+                        c.Retainers = character.Retainers;
                     }
                     else
                     {
@@ -151,14 +153,16 @@ namespace Altoholic.Database
                             FCTag = character.FCTag,
                             FreeCompany = character.FreeCompany,
                             LastOnline = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
+                            HasPremiumSaddlebag = character.HasPremiumSaddlebag,
                             Attributes = character.Attributes,
                             Currencies = character.Currencies,
                             Jobs = character.Jobs,
-                            Quests = character.Quests,
                             Profile = character.Profile,
-                            Retainers = character.Retainers,
+                            Quests = character.Quests,
                             Inventory = character.Inventory,
+                            Saddle = character.Saddle,
                             Gear = character.Gear,
+                            Retainers = character.Retainers,
                         };
                         if (character.PlayTime > 0)
                         {

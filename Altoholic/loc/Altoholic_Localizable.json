@@ -2,5 +2,21 @@
   "Playtime": {
     "message": "Playtime",
     "description": "PlaytimeString"
+  },
+  "OpenSaddlebag": {
+    "message": "Open Saddlebag to update",
+    "description": "OpenSaddlebagString"
+  },
+  "OpenRetainerToUpdate": {
+    "message": "Open the retainer to update",
+    "description": "Retainer.OpenInventoryString"
+  },
+  "OpenRetainerToUpdateList": {
+    "message": "Open the retainer to update the list",
+    "description": "Retainer.OpenInventoryString"
+  },
+  "NoItemFound": {
+    "message": "Aucun objet trouvé",
+    "description": "NoItemFound"
   }
 }

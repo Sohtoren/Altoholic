@@ -1,6 +1,18 @@
 {
   "Playtime": {
     "message": "Gesamtspielzeit",
-    "description": "PlaytimeString",
+    "description": "PlaytimeString"
+  },
+  "OpenSaddlebag": {
+    "message": "Öffnen Sie Saddlebag zum Aktualisieren",
+    "description": "OpenSaddlebagString"
+  },
+  "OpenRetainerToUpdate": {
+    "message": "Öffnen Sie den Gehilfe zum Aktualisieren",
+    "description": "Retainer.OpenInventoryString"
+  },
+  "OpenRetainerToUpdateList": {
+    "message": "Öffnen Sie den Gehilfe, um die Liste zu aktualisieren",
+    "description": "Retainer.OpenInventoryString"
   }
 }

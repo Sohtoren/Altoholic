@@ -64,7 +64,7 @@ public class CharactersWindow : Window, IDisposable
                 ImGui.TableSetupColumn(Utils.GetAddonString(331), ImGuiTableColumnFlags.WidthFixed, 100);
                 ImGui.TableSetupColumn(Utils.GetAddonString(4728), ImGuiTableColumnFlags.WidthFixed, 90);
                 ImGui.TableSetupColumn(Utils.GetDCString(), ImGuiTableColumnFlags.WidthFixed, 30);
-                ImGui.TableSetupColumn("Lv" /*Utils.GetAddonString(335)*/, ImGuiTableColumnFlags.WidthFixed, 30);
+                ImGui.TableSetupColumn(Utils.GetAddonString(464) /*Utils.GetAddonString(335)*/, ImGuiTableColumnFlags.WidthFixed, 30);
                 ImGui.TableSetupColumn("FC", ImGuiTableColumnFlags.WidthFixed, 50);
                 ImGui.TableSetupColumn(Utils.GetAddonString(2883), ImGuiTableColumnFlags.WidthFixed, 110);
                 ImGui.TableSetupColumn("Last online", ImGuiTableColumnFlags.WidthFixed, 110);
@@ -194,7 +194,7 @@ public class CharactersWindow : Window, IDisposable
             if (ImGui.IsItemHovered())
             {
                 ImGui.BeginTooltip();
-                ImGui.TextUnformatted(UnixTimeStampToDateTime(character.LastOnline));
+                ImGui.TextUnformatted(Utils.UnixTimeStampToDateTime(character.LastOnline));
                 ImGui.EndTooltip();
             }
         }
@@ -205,7 +205,7 @@ public class CharactersWindow : Window, IDisposable
             if (ImGui.IsItemHovered())
             {
                 ImGui.BeginTooltip();
-                ImGui.TextUnformatted($"Last updated on : {UnixTimeStampToDateTime(character.LastPlayTimeUpdate)} - {GetLastOnlineFormatted(character.LastPlayTimeUpdate)}");
+                ImGui.TextUnformatted($"Last updated on : {Utils.UnixTimeStampToDateTime(character.LastPlayTimeUpdate)} - {GetLastOnlineFormatted(character.LastPlayTimeUpdate)}");
                 ImGui.EndTooltip();
             }
         }
@@ -275,13 +275,6 @@ public class CharactersWindow : Window, IDisposable
             TotalPlayed += characters[i].PlayTime;
             DrawCharacter(i, characters[i]);
         }
-    }
-
-    private static string UnixTimeStampToDateTime(long lastOnline)
-    {
-        DateTime dateTime = new(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
-        dateTime = dateTime.AddSeconds(lastOnline).ToLocalTime();
-        return dateTime.ToString();
     }
     private string GetLastOnlineFormatted(long lastOnline/*, string firstname*/)
     {

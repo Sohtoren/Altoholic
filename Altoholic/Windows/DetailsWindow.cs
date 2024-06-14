@@ -96,7 +96,7 @@ public class DetailsWindow : Window, IDisposable
         }
     }
 
-    private void DrawDetails(Character current_character)
+    private void DrawDetails(Character selected_character)
     {
         if (ImGui.BeginTable("###CharactersDetailsTable#ProfileTable", 2))
         {
@@ -114,30 +114,30 @@ public class DetailsWindow : Window, IDisposable
                 }*/
                 if (ImGui.BeginTabItem($"{Utils.GetAddonString(759)}"))
                 {
-                    DrawProfile(current_character);
+                    DrawProfile(selected_character);
                     ImGui.EndTabItem();
                 }
                 ImGui.EndTabBar();
             }
             ImGui.TableSetColumnIndex(1);
-            DrawGear(current_character);
+            Utils.DrawGear(selected_character.Gear, selected_character.LastJob, selected_character.LastJobLevel, 300, 350);
 
             ImGui.EndTable();
         }
     }
 
-    private void DrawAttributes(Character current_character)
+    private void DrawAttributes(Character selected_character)
     {
-        if (current_character.Attributes is null) return;
+        if (selected_character.Attributes is null) return;
         if (ImGui.BeginTable("###Attributes#HealthManaBarsTable", 2))
         {
             ImGui.TableSetupColumn("###HealthManaBarsTable#HPHeader", ImGuiTableColumnFlags.WidthStretch);
             ImGui.TableSetupColumn("###HealthManaBarsTable#MPHeader", ImGuiTableColumnFlags.WidthStretch);
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
-            ImGui.TextUnformatted($"HP      {current_character.Attributes.Hp}");
+            ImGui.TextUnformatted($"HP      {selected_character.Attributes.Hp}");
             ImGui.TableSetColumnIndex(1);
-            ImGui.TextUnformatted($"MP      {current_character.Attributes.Mp}");
+            ImGui.TextUnformatted($"MP      {selected_character.Attributes.Mp}");
             ImGui.EndTable();
         }
         
@@ -157,17 +157,17 @@ public class DetailsWindow : Window, IDisposable
                 ImGui.TableSetColumnIndex(0);
                 ImGui.TextUnformatted("Strength");
                 ImGui.TableSetColumnIndex(1);
-                ImGui.TextUnformatted($"{current_character.Attributes.Strength}");
+                ImGui.TextUnformatted($"{selected_character.Attributes.Strength}");
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
                 ImGui.TextUnformatted("Dexterity");
                 ImGui.TableSetColumnIndex(1);
-                ImGui.TextUnformatted($"{current_character.Attributes.Dexterity}");
+                ImGui.TextUnformatted($"{selected_character.Attributes.Dexterity}");
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
                 ImGui.TextUnformatted("Vitality");
                 ImGui.TableSetColumnIndex(1);
-                ImGui.TextUnformatted($"{current_character.Attributes.Vitality}");
+                ImGui.TextUnformatted($"{selected_character.Attributes.Vitality}");
                 ImGui.EndTable();
             }
             ImGui.TableSetColumnIndex(1);
@@ -179,49 +179,49 @@ public class DetailsWindow : Window, IDisposable
                 ImGui.TableSetColumnIndex(0);
                 ImGui.TextUnformatted("Intelligence");
                 ImGui.TableSetColumnIndex(1);
-                ImGui.TextUnformatted($"{current_character.Attributes.Intelligence}");
+                ImGui.TextUnformatted($"{selected_character.Attributes.Intelligence}");
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
                 ImGui.TextUnformatted("Mind");
                 ImGui.TableSetColumnIndex(1);
-                ImGui.TextUnformatted($"{current_character.Attributes.Mind}");
+                ImGui.TextUnformatted($"{selected_character.Attributes.Mind}");
                 ImGui.EndTable();
             }
             ImGui.EndTable();
         }
     }
 
-    private void DrawProfile(Character current_character)
+    private void DrawProfile(Character selected_character)
     {
-        if (current_character.Profile is null) return;
+        if (selected_character.Profile is null) return;
         ImGui.TextUnformatted($"{Utils.GetAddonString(790)}");//Title
         ImGui.Separator();
         //Plugin.Log.Debug($"Title: {current_character.Profile.Title}, isprefix: {current_character.Profile.TitleIsPrefix}");
-        if (!string.IsNullOrEmpty(current_character.Profile.Title) && current_character.Profile.TitleIsPrefix)
+        if (!string.IsNullOrEmpty(selected_character.Profile.Title) && selected_character.Profile.TitleIsPrefix)
         {
-            ImGui.TextUnformatted($"{current_character.Profile.Title}");
-            if (!string.IsNullOrEmpty(current_character.FirstName) && !string.IsNullOrEmpty(current_character.LastName))
+            ImGui.TextUnformatted($"{selected_character.Profile.Title}");
+            if (!string.IsNullOrEmpty(selected_character.FirstName) && !string.IsNullOrEmpty(selected_character.LastName))
             {
-                ImGui.TextUnformatted($"            {current_character.FirstName} {current_character.LastName}");
+                ImGui.TextUnformatted($"            {selected_character.FirstName} {selected_character.LastName}");
             }
         }
-        else if (!string.IsNullOrEmpty(current_character.Profile.Title) && !current_character.Profile.TitleIsPrefix)
+        else if (!string.IsNullOrEmpty(selected_character.Profile.Title) && !selected_character.Profile.TitleIsPrefix)
         {
-            if (!string.IsNullOrEmpty(current_character.FirstName) && !string.IsNullOrEmpty(current_character.LastName))
+            if (!string.IsNullOrEmpty(selected_character.FirstName) && !string.IsNullOrEmpty(selected_character.LastName))
             {
-                ImGui.TextUnformatted($"{current_character.FirstName} {current_character.LastName}");
-                ImGui.TextUnformatted($"            {current_character.Profile.Title}");
+                ImGui.TextUnformatted($"{selected_character.FirstName} {selected_character.LastName}");
+                ImGui.TextUnformatted($"            {selected_character.Profile.Title}");
             }
         }
         else
         {
-            if (!string.IsNullOrEmpty(current_character.FirstName) && !string.IsNullOrEmpty(current_character.LastName))
+            if (!string.IsNullOrEmpty(selected_character.FirstName) && !string.IsNullOrEmpty(selected_character.LastName))
             {
-                ImGui.TextUnformatted($"{current_character.FirstName} {current_character.LastName}");
+                ImGui.TextUnformatted($"{selected_character.FirstName} {selected_character.LastName}");
             }
         }
 
-        if (current_character.Profile.Grand_Company is not 0)
+        if (selected_character.Profile.Grand_Company is not 0)
         {
             ImGui.TextUnformatted("");
             ImGui.TextUnformatted($"{Utils.GetAddonString(791)}");//Grand Company
@@ -232,7 +232,7 @@ public class DetailsWindow : Window, IDisposable
                 ImGui.TableSetupColumn("###ProfileTable#GrandCompanyTable#Rank", ImGuiTableColumnFlags.WidthStretch);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                Utils.DrawIcon(new Vector2(40, 40), false, Utils.GetGrandCompanyIcon(current_character.Profile.Grand_Company));
+                Utils.DrawIcon(new Vector2(40, 40), false, Utils.GetGrandCompanyIcon(selected_character.Profile.Grand_Company));
 
                 ImGui.TableSetColumnIndex(1);
                 if (ImGui.BeginTable("###ProfileTable#GrandCompanyTable#RankTable", 2))
@@ -241,10 +241,10 @@ public class DetailsWindow : Window, IDisposable
                     ImGui.TableSetupColumn("###ProfileTable#GrandCompanyTable#RankTable#Icon", ImGuiTableColumnFlags.WidthFixed, 50);
                     ImGui.TableNextRow();
                     ImGui.TableSetColumnIndex(0);
-                    ImGui.TextUnformatted($"{Utils.GetGrandCompany(current_character.Profile.Grand_Company)}");
-                    ImGui.TextUnformatted($"{Utils.Capitalize(Utils.GetGrandCompanyRank(current_character.Profile.Grand_Company, current_character.Profile.Grand_Company_Rank, current_character.Profile.Gender))}");
+                    ImGui.TextUnformatted($"{Utils.GetGrandCompany(selected_character.Profile.Grand_Company)}");
+                    ImGui.TextUnformatted($"{Utils.Capitalize(Utils.GetGrandCompanyRank(selected_character.Profile.Grand_Company, selected_character.Profile.Grand_Company_Rank, selected_character.Profile.Gender))}");
                     ImGui.TableSetColumnIndex(1);
-                    Utils.DrawIcon(new Vector2(48, 48), false, Utils.GetGrandCompanyRankIcon(current_character.Profile.Grand_Company, current_character.Profile.Grand_Company_Rank));
+                    Utils.DrawIcon(new Vector2(48, 48), false, Utils.GetGrandCompanyRankIcon(selected_character.Profile.Grand_Company, selected_character.Profile.Grand_Company_Rank));
 
                     ImGui.EndTable();
                 }
@@ -255,7 +255,7 @@ public class DetailsWindow : Window, IDisposable
         ImGui.TextUnformatted("");
         ImGui.TextUnformatted($"{Utils.GetAddonString(793)}");//Race/Clan/Gender
         ImGui.Separator();
-        ImGui.TextUnformatted($"{Utils.GetRace(current_character.Profile.Gender, current_character.Profile.Race)} / {Utils.GetTribe(current_character.Profile.Gender, current_character.Profile.Tribe)} / {Utils.GetGender(current_character.Profile.Gender)}");
+        ImGui.TextUnformatted($"{Utils.GetRace(selected_character.Profile.Gender, selected_character.Profile.Race)} / {Utils.GetTribe(selected_character.Profile.Gender, selected_character.Profile.Tribe)} / {Utils.GetGender(selected_character.Profile.Gender)}");
         ImGui.TextUnformatted("");
         ImGui.TextUnformatted($"{Utils.GetAddonString(794)}");//City-state
         ImGui.Separator();
@@ -265,15 +265,15 @@ public class DetailsWindow : Window, IDisposable
             ImGui.TableSetupColumn("###ProfileTable#ProfileColumn#ProfileTable#CityName", ImGuiTableColumnFlags.WidthStretch);
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
-            Utils.DrawIcon(new Vector2(36, 36), false, Utils.GetTownIcon(current_character.Profile.City_State));
+            Utils.DrawIcon(new Vector2(36, 36), false, Utils.GetTownIcon(selected_character.Profile.City_State));
             ImGui.TableSetColumnIndex(1);
-            ImGui.TextUnformatted($"{Utils.GetTown(current_character.Profile.City_State)}");
+            ImGui.TextUnformatted($"{Utils.GetTown(selected_character.Profile.City_State)}");
 
             ImGui.EndTable();
         }
         ImGui.TextUnformatted($"{Utils.GetAddonString(795)}");//Nameday
         ImGui.Separator();
-        ImGui.TextUnformatted($"{Utils.GetNameday(current_character.Profile.Nameday_Day, current_character.Profile.Nameday_Month)}");
+        ImGui.TextUnformatted($"{Utils.GetNameday(selected_character.Profile.Nameday_Day, selected_character.Profile.Nameday_Month)}");
         ImGui.TextUnformatted("");
         ImGui.TextUnformatted($"{Utils.GetAddonString(796)}");//Guardian
         ImGui.Separator();
@@ -283,134 +283,11 @@ public class DetailsWindow : Window, IDisposable
             ImGui.TableSetupColumn("###ProfileTable#GuardianTable#Name", ImGuiTableColumnFlags.WidthStretch);
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
-            Utils.DrawIcon(new Vector2(40, 40), false, Utils.GetGuardianIcon(current_character.Profile.Guardian));
+            Utils.DrawIcon(new Vector2(40, 40), false, Utils.GetGuardianIcon(selected_character.Profile.Guardian));
             ImGui.TableSetColumnIndex(1);
-            ImGui.TextUnformatted($"{Utils.GetGuardian(current_character.Profile.Guardian)}");
+            ImGui.TextUnformatted($"{Utils.GetGuardian(selected_character.Profile.Guardian)}");
 
             ImGui.EndTable();
-        }
-    }
-
-    private void DrawGear(Character current_character)
-    {
-        if (current_character.Gear.Count == 0) return;
-        if (ImGui.BeginTable("###GearTableHeader", 2))
-        {
-            ImGui.TableSetupColumn("###GearTableHeader#MHColumn", ImGuiTableColumnFlags.WidthFixed, 44);
-            ImGui.TableSetupColumn("###GearTableHeader#RoleIconNameColumn", ImGuiTableColumnFlags.WidthStretch);
-            ImGui.TableNextRow();
-            ImGui.TableSetColumnIndex(0);
-            DrawGearPiece(current_character, GearSlot.MH, Utils.GetAddonString(11524), new Vector2(40, 40), 13775);
-            ImGui.TableSetColumnIndex(1);
-            ImGui.TextUnformatted($"Level {current_character.LastJobLevel}");
-            if (ImGui.BeginTable("###GearTable#RoleIconNameTable", 2))
-            {
-                ImGui.TableSetupColumn("###GearTable#RoleColumn#RoleIcon", ImGuiTableColumnFlags.WidthFixed, 44);
-                ImGui.TableSetupColumn("###GearTable#RoleColumn#RoleName", ImGuiTableColumnFlags.WidthStretch);
-                ImGui.TableNextRow();
-                ImGui.TableSetColumnIndex(0);
-                Utils.DrawIcon(new Vector2(40, 40), false, Utils.GetJobIcon(current_character.LastJob));
-                ImGui.TableSetColumnIndex(1);
-                ImGui.TextUnformatted($"{Utils.GetJobNameFromId(current_character.LastJob)}");
-
-                ImGui.EndTable();
-            }
-
-            ImGui.EndTable();
-        }
-
-        if (ImGui.BeginTable("###GearTable", 3))
-        {
-            ImGui.TableSetupColumn("###GearTable#LeftGearColumnHeader", ImGuiTableColumnFlags.WidthFixed, 44);
-            ImGui.TableSetupColumn("###GearTable#CentralColumnHeader", ImGuiTableColumnFlags.WidthFixed, 305);
-            ImGui.TableSetupColumn("###GearTable#RightGearColumnHeader", ImGuiTableColumnFlags.WidthFixed, 44);
-            ImGui.TableNextRow();
-            ImGui.TableSetColumnIndex(0);
-            if (ImGui.BeginTable("###GearTable#LeftGearColumn", 1))
-            {
-                ImGui.TableSetupColumn("###GearTable#LeftGearColum#Column", ImGuiTableColumnFlags.WidthFixed, 42);
-                ImGui.TableNextRow();
-                ImGui.TableSetColumnIndex(0);
-                DrawGearPiece(current_character, GearSlot.HEAD, Utils.GetAddonString(11525), new Vector2(40, 40), 10032);
-
-                ImGui.TableNextRow();
-                ImGui.TableSetColumnIndex(0);
-                DrawGearPiece(current_character, GearSlot.BODY, Utils.GetAddonString(11526), new Vector2(40, 40), 10033);
-
-                ImGui.TableNextRow();
-                ImGui.TableSetColumnIndex(0);
-                DrawGearPiece(current_character, GearSlot.HANDS, Utils.GetAddonString(11527), new Vector2(40, 40), 10034);
-
-                ImGui.TableNextRow();
-                ImGui.TableSetColumnIndex(0);
-                DrawGearPiece(current_character, GearSlot.LEGS, Utils.GetAddonString(11528), new Vector2(40, 40), 10035);
-
-                ImGui.TableNextRow();
-                ImGui.TableSetColumnIndex(0);
-                DrawGearPiece(current_character, GearSlot.FEET, Utils.GetAddonString(11529), new Vector2(40, 40), 10035);
-                ImGui.EndTable();
-            }
-
-            ImGui.TableSetColumnIndex(1);
-            Utils.DrawIcon(new Vector2(300, 350), false, 055396);
-
-            ImGui.TableSetColumnIndex(2);
-            if (ImGui.BeginTable("###GearTable#RightGearColumn", 1))
-            {
-                ImGui.TableSetupColumn("###GearTable#RightGearColum#Column", ImGuiTableColumnFlags.WidthFixed, 42);
-                ImGui.TableNextRow();
-                ImGui.TableSetColumnIndex(0);
-                DrawGearPiece(current_character, GearSlot.OH, Utils.GetAddonString(12227), new Vector2(40, 40), 30067);
-
-                ImGui.TableNextRow();
-                ImGui.TableSetColumnIndex(0);
-                DrawGearPiece(current_character, GearSlot.EARS, Utils.GetAddonString(11530), new Vector2(40, 40), 9293);
-
-                ImGui.TableNextRow();
-                ImGui.TableSetColumnIndex(0);
-                DrawGearPiece(current_character, GearSlot.NECK, Utils.GetAddonString(11531), new Vector2(40, 40), 9292);
-
-                ImGui.TableNextRow();
-                ImGui.TableSetColumnIndex(0);
-                DrawGearPiece(current_character, GearSlot.WRISTS, Utils.GetAddonString(11532), new Vector2(40, 40), 9294);
-
-                ImGui.TableNextRow();
-                ImGui.TableSetColumnIndex(0);
-                DrawGearPiece(current_character, GearSlot.RIGHT_RING, Utils.GetAddonString(11533), new Vector2(40, 40), 9295);
-
-                ImGui.TableNextRow();
-                ImGui.TableSetColumnIndex(0);
-                DrawGearPiece(current_character, GearSlot.LEFT_RING, Utils.GetAddonString(11534), new Vector2(40, 40), 9295);
-
-                ImGui.TableNextRow();
-                ImGui.TableSetColumnIndex(0);
-                DrawGearPiece(current_character, GearSlot.SOUL_CRYSTAL, Utils.GetAddonString(12238), new Vector2(40, 40), 55396);//Todo: Find Soul Crystal empty icon
-                ImGui.EndTable();
-            }
-            ImGui.EndTable();
-        }
-    }
-
-    private void DrawGearPiece(Character current_character, GearSlot slot, string tooltip, Vector2 icon_size, uint fallback_icon)
-    {
-        var GEAR = current_character.Gear.First(g => g.Slot == (short)slot);
-        if (GEAR == null || GEAR.ItemId == 0)
-        {
-            Utils.DrawItemIcon(icon_size, false, fallback_icon);
-            if (ImGui.IsItemHovered())
-            {
-                ImGui.BeginTooltip();
-                ImGui.TextUnformatted(tooltip);
-                ImGui.EndTooltip();
-            }
-        }
-        else
-        {
-            Utils.DrawItemIcon(icon_size, GEAR.HQ, GEAR.ItemId);
-            if (ImGui.IsItemHovered())
-            {
-                Utils.DrawGearTooltip(GEAR);
-            }
         }
     }
 }

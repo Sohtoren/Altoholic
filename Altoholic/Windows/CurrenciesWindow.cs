@@ -162,65 +162,65 @@ public class CurrenciesWindow : Window, IDisposable
         }
     }
 
-    private void DrawPc(Character current_character)
+    private void DrawPc(Character selected_character)
     {
-        if (current_character.Currencies is null) return;
+        if (selected_character.Currencies is null) return;
 
-        if (ImGui.BeginTabBar($"###CharactersCurrencies#CurrencyTabs#{current_character.Id}"))
+        if (ImGui.BeginTabBar($"###CharactersCurrencies#CurrencyTabs#{selected_character.Id}"))
         {
             if (ImGui.BeginTabItem($"{Utils.GetAddonString(3662)}"))
             {
-                DrawCommon(current_character);
+                DrawCommon(selected_character);
                 ImGui.EndTabItem();
             }
 
             if (
-                current_character.Currencies.Bicolor_Gemstone > 0 ||
-                current_character.HasAnyLevelJob(50)
+                selected_character.Currencies.Bicolor_Gemstone > 0 ||
+                selected_character.HasAnyLevelJob(50)
             )
             {
                 if (ImGui.BeginTabItem($"{Utils.GetAddonString(3663)}"))
                 {
-                    DrawBattle(current_character);
+                    DrawBattle(selected_character);
                     ImGui.EndTabItem();
                 }
             }
 
             if (
-                current_character.IsQuestCompleted(67631) ||
-                current_character.IsQuestCompleted(69208)
+                selected_character.IsQuestCompleted(67631) ||
+                selected_character.IsQuestCompleted(69208)
             )
             {
                 if (ImGui.BeginTabItem($"{Utils.GetAddonString(3664)}"))
                 {
-                    DrawOthers(current_character);
+                    DrawOthers(selected_character);
                     ImGui.EndTabItem();
                 }
             }
 
-            if (current_character.IsQuestCompleted(66754) ||
-                current_character.IsQuestCompleted(66789) ||
-                current_character.IsQuestCompleted(66857) ||
-                current_character.IsQuestCompleted(66911) ||
-                current_character.IsQuestCompleted(67023) ||
-                current_character.IsQuestCompleted(67700) ||
-                current_character.IsQuestCompleted(67700) ||
-                current_character.IsQuestCompleted(67791) ||
-                current_character.IsQuestCompleted(67856) ||
-                current_character.IsQuestCompleted(68509) ||
-                current_character.IsQuestCompleted(68572) ||
-                current_character.IsQuestCompleted(68633) ||
-                current_character.IsQuestCompleted(69219) ||
-                current_character.IsQuestCompleted(69330) ||
-                current_character.IsQuestCompleted(69432) ||
-                current_character.IsQuestCompleted(70081) ||
-                current_character.IsQuestCompleted(70137) ||
-                current_character.IsQuestCompleted(70217)
+            if (selected_character.IsQuestCompleted(66754) ||
+                selected_character.IsQuestCompleted(66789) ||
+                selected_character.IsQuestCompleted(66857) ||
+                selected_character.IsQuestCompleted(66911) ||
+                selected_character.IsQuestCompleted(67023) ||
+                selected_character.IsQuestCompleted(67700) ||
+                selected_character.IsQuestCompleted(67700) ||
+                selected_character.IsQuestCompleted(67791) ||
+                selected_character.IsQuestCompleted(67856) ||
+                selected_character.IsQuestCompleted(68509) ||
+                selected_character.IsQuestCompleted(68572) ||
+                selected_character.IsQuestCompleted(68633) ||
+                selected_character.IsQuestCompleted(69219) ||
+                selected_character.IsQuestCompleted(69330) ||
+                selected_character.IsQuestCompleted(69432) ||
+                selected_character.IsQuestCompleted(70081) ||
+                selected_character.IsQuestCompleted(70137) ||
+                selected_character.IsQuestCompleted(70217)
             )
             {
                 if (ImGui.BeginTabItem($"{Utils.GetAddonString(5750)}"))
                 {
-                    DrawTribal(current_character);
+                    DrawTribal(selected_character);
                     ImGui.EndTabItem();
                 }
             }
@@ -229,15 +229,15 @@ public class CurrenciesWindow : Window, IDisposable
         }
     }
 
-    private void DrawCommon(Character current_character)
+    private void DrawCommon(Character selected_character)
     {
-        if (current_character.Currencies is null || current_character.Profile is null) return;
+        if (selected_character.Currencies is null || selected_character.Profile is null) return;
 
-        PlayerCurrencies pc = current_character.Currencies;
+        PlayerCurrencies pc = selected_character.Currencies;
 
-        if (ImGui.BeginTable($"###CharactersCurrencies#CommonCurrencyTable#{current_character.Id}", 1))
+        if (ImGui.BeginTable($"###CharactersCurrencies#CommonCurrencyTable#{selected_character.Id}", 1))
         {
-            ImGui.TableSetupColumn($"###CharactersCurrencies#CommonCurrencyTable#Currency#{current_character.Id}", ImGuiTableColumnFlags.WidthStretch);
+            ImGui.TableSetupColumn($"###CharactersCurrencies#CommonCurrencyTable#Currency#{selected_character.Id}", ImGuiTableColumnFlags.WidthStretch);
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
             ImGui.TextUnformatted(Utils.GetAddonString(830));
@@ -247,9 +247,9 @@ public class CurrenciesWindow : Window, IDisposable
             DrawCommonCurrency(pc.Gil, Currencies.GIL, 0);
 
             if (
-                current_character.IsQuestCompleted(66216) ||
-                current_character.IsQuestCompleted(66217) ||
-                current_character.IsQuestCompleted(66218)
+                selected_character.IsQuestCompleted(66216) ||
+                selected_character.IsQuestCompleted(66217) ||
+                selected_character.IsQuestCompleted(66218)
             )
             {
                 ImGui.TableNextRow();
@@ -260,29 +260,29 @@ public class CurrenciesWindow : Window, IDisposable
                 ImGui.TableSetColumnIndex(0);
                 int val = 0;
                 Currencies c = 0;
-                if (current_character.Profile.Grand_Company == 1)
+                if (selected_character.Profile.Grand_Company == 1)
                 {
                     val = pc.Storm_Seal;
                     c = Currencies.STORM_SEAL;
                 }
-                else if (current_character.Profile.Grand_Company == 2)
+                else if (selected_character.Profile.Grand_Company == 2)
                 {
                     val = pc.Serpent_Seal;
                     c = Currencies.SERPENT_SEAL;
                 }
-                else if (current_character.Profile.Grand_Company == 3)
+                else if (selected_character.Profile.Grand_Company == 3)
                 {
                     val = pc.Flame_Seal;
                     c = Currencies.FLAME_SEAL;
                 }
-                DrawCommonCurrency(val, c, Utils.GetGrandCompanyRankMaxSeals(current_character.Profile.Grand_Company_Rank));
+                DrawCommonCurrency(val, c, Utils.GetGrandCompanyRankMaxSeals(selected_character.Profile.Grand_Company_Rank));
             }
 
             if (
-                current_character.IsQuestCompleted(66045)/* || //Ventures on the currencies window is unlocked with MSQ, not the venture quest... (checked on boosted char tho)
-                current_character.IsQuestCompleted(66968) ||
-                current_character.IsQuestCompleted(66969) ||
-                current_character.IsQuestCompleted(66970)*/
+                selected_character.IsQuestCompleted(66045)/* || //Ventures on the currencies window is unlocked with MSQ, not the venture quest... (checked on boosted char tho)
+                selected_character.IsQuestCompleted(66968) ||
+                selected_character.IsQuestCompleted(66969) ||
+                selected_character.IsQuestCompleted(66970)*/
             )
             {
                 ImGui.TableNextRow();
@@ -294,7 +294,7 @@ public class CurrenciesWindow : Window, IDisposable
                 DrawCommonCurrency(pc.Venture, Currencies.VENTURE, 0);
             }
 
-            if (current_character.IsQuestCompleted(65970))//add quest unlocking. Check if you can get MGP without completing the GC intro quest
+            if (selected_character.IsQuestCompleted(65970))//add quest unlocking. Check if you can get MGP without completing the GC intro quest
             {
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
@@ -346,20 +346,20 @@ public class CurrenciesWindow : Window, IDisposable
         return nextTuesday;
     }
 
-    private void DrawBattle(Character current_character)
+    private void DrawBattle(Character selected_character)
     {
-        if (current_character.Currencies is null) return;
-        PlayerCurrencies pc = current_character.Currencies;
+        if (selected_character.Currencies is null) return;
+        PlayerCurrencies pc = selected_character.Currencies;
 
         //Todo: Dunno when this unlock, maybe ARR done?
-        if (current_character.HasAnyLevelJob(50))
+        if (selected_character.HasAnyLevelJob(50))
         {
             ImGui.TextUnformatted(Utils.GetAddonString(3500));
             ImGui.Separator();
-            if (ImGui.BeginTable($"###CharactersCurrencies#BattleCurrencyTable#AllaganTable#{current_character.Id}", 2))
+            if (ImGui.BeginTable($"###CharactersCurrencies#BattleCurrencyTable#AllaganTable#{selected_character.Id}", 2))
             {
-                ImGui.TableSetupColumn($"###CharactersCurrencies#BattleCurrencyTable#AllaganTable#Tomestone#{current_character.Id}", ImGuiTableColumnFlags.WidthStretch);
-                ImGui.TableSetupColumn($"###CharactersCurrencies#BattleCurrencyTable#AllaganTable#Weekly#{current_character.Id}", ImGuiTableColumnFlags.WidthStretch);
+                ImGui.TableSetupColumn($"###CharactersCurrencies#BattleCurrencyTable#AllaganTable#Tomestone#{selected_character.Id}", ImGuiTableColumnFlags.WidthStretch);
+                ImGui.TableSetupColumn($"###CharactersCurrencies#BattleCurrencyTable#AllaganTable#Weekly#{selected_character.Id}", ImGuiTableColumnFlags.WidthStretch);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(1);
                 ImGui.TextUnformatted($"{Utils.GetAddonString(3668)} {GetNextThuesday()}");
@@ -385,19 +385,19 @@ public class CurrenciesWindow : Window, IDisposable
         }
 
         if (
-            current_character.IsQuestCompleted(66640) ||
-            current_character.IsQuestCompleted(66641) ||
-            current_character.IsQuestCompleted(66642) ||
+            selected_character.IsQuestCompleted(66640) ||
+            selected_character.IsQuestCompleted(66641) ||
+            selected_character.IsQuestCompleted(66642) ||
             pc.Wolf_Mark > 0 ||
             pc.Trophy_Crystal > 0
         )
         {
             ImGui.TextUnformatted(Utils.GetAddonString(834));
             ImGui.Separator();
-            if (ImGui.BeginTable($"###CharactersCurrencies#BattleCurrencyTable#PvPTable#{current_character.Id}", 2))
+            if (ImGui.BeginTable($"###CharactersCurrencies#BattleCurrencyTable#PvPTable#{selected_character.Id}", 2))
             {
-                ImGui.TableSetupColumn($"###CharactersCurrencies#BattleCurrencyTable#PvPTable#Wolf#{current_character.Id}", ImGuiTableColumnFlags.WidthStretch);
-                ImGui.TableSetupColumn($"###CharactersCurrencies#BattleCurrencyTable#PvPTable#Trophy#{current_character.Id}", ImGuiTableColumnFlags.WidthStretch);
+                ImGui.TableSetupColumn($"###CharactersCurrencies#BattleCurrencyTable#PvPTable#Wolf#{selected_character.Id}", ImGuiTableColumnFlags.WidthStretch);
+                ImGui.TableSetupColumn($"###CharactersCurrencies#BattleCurrencyTable#PvPTable#Trophy#{selected_character.Id}", ImGuiTableColumnFlags.WidthStretch);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
                 DrawBattleCurrency(pc.Wolf_Mark, Currencies.WOLF_MARK, 20000);
@@ -409,10 +409,10 @@ public class CurrenciesWindow : Window, IDisposable
         }
 
         if (
-            current_character.IsQuestCompleted(67099) ||
-            current_character.IsQuestCompleted(67100) ||
-            current_character.IsQuestCompleted(67101) ||
-            current_character.IsQuestCompleted(68734) ||
+            selected_character.IsQuestCompleted(67099) ||
+            selected_character.IsQuestCompleted(67100) ||
+            selected_character.IsQuestCompleted(67101) ||
+            selected_character.IsQuestCompleted(68734) ||
             pc.Allied_Seal > 0 ||
             pc.Centurio_Seal > 0 ||
             pc.Sack_of_Nuts > 0
@@ -420,24 +420,25 @@ public class CurrenciesWindow : Window, IDisposable
         {
             ImGui.TextUnformatted(Utils.GetAddonString(838));
             ImGui.Separator();
-            if (ImGui.BeginTable($"###CharactersCurrencies#BattleCurrencyTable#HuntTable#{current_character.Id}", 2))
+            if (ImGui.BeginTable($"###CharactersCurrencies#BattleCurrencyTable#HuntTable#{selected_character.Id}", 3))
             {
-                ImGui.TableSetupColumn($"###CharactersCurrencies#BattleCurrencyTable#HuntTable#FirstCol#{current_character.Id}", ImGuiTableColumnFlags.WidthStretch);
-                ImGui.TableSetupColumn($"###CharactersCurrencies#BattleCurrencyTable#HuntTable#SecondCol#{current_character.Id}", ImGuiTableColumnFlags.WidthStretch);
+                ImGui.TableSetupColumn($"###CharactersCurrencies#BattleCurrencyTable#HuntTable#FirstCol#{selected_character.Id}", ImGuiTableColumnFlags.WidthStretch);
+                ImGui.TableSetupColumn($"###CharactersCurrencies#BattleCurrencyTable#HuntTable#SecondCol#{selected_character.Id}", ImGuiTableColumnFlags.WidthStretch);
+                ImGui.TableSetupColumn($"###CharactersCurrencies#BattleCurrencyTable#HuntTable#ThirdCol#{selected_character.Id}", ImGuiTableColumnFlags.WidthStretch);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
                 if (
-                    current_character.IsQuestCompleted(67099) ||
-                    current_character.IsQuestCompleted(67100) ||
-                    current_character.IsQuestCompleted(67101) ||
-                    current_character.IsQuestCompleted(68734) ||
+                    selected_character.IsQuestCompleted(67099) ||
+                    selected_character.IsQuestCompleted(67100) ||
+                    selected_character.IsQuestCompleted(67101) ||
+                    selected_character.IsQuestCompleted(68734) ||
                     pc.Allied_Seal > 0
                 )
                 {
                     DrawBattleCurrency(pc.Allied_Seal, Currencies.ALLIED_SEAL, 4000);
                 }
                 if (
-                    current_character.IsQuestCompleted(67658) ||
+                    selected_character.IsQuestCompleted(67658) ||
                     pc.Centurio_Seal > 0
                 )
                 {
@@ -445,12 +446,11 @@ public class CurrenciesWindow : Window, IDisposable
                     DrawBattleCurrency(pc.Centurio_Seal, Currencies.CENTURIO_SEAL, 4000);
                 }
                 if (
-                    current_character.IsQuestCompleted(69133) ||
+                    selected_character.IsQuestCompleted(69133) ||
                     pc.Sack_of_Nuts > 0
                 )
                 {
-                    ImGui.TableNextRow();
-                    ImGui.TableSetColumnIndex(0);
+                    ImGui.TableSetColumnIndex(2);
                     DrawBattleCurrency(pc.Sack_of_Nuts, Currencies.SACK_OF_NUTS, 4000);
                 }
 
@@ -466,9 +466,9 @@ public class CurrenciesWindow : Window, IDisposable
         {
             ImGui.TextUnformatted(Utils.GetAddonString(5768));
             ImGui.Separator();
-            if (ImGui.BeginTable($"###CharactersCurrencies#BattleCurrencyTable#FATETable#{current_character.Id}", 1))
+            if (ImGui.BeginTable($"###CharactersCurrencies#BattleCurrencyTable#FATETable#{selected_character.Id}", 1))
             {
-                ImGui.TableSetupColumn($"###CharactersCurrencies#BattleCurrencyTable#FATETable#Bicolor#{current_character.Id}", ImGuiTableColumnFlags.WidthStretch);
+                ImGui.TableSetupColumn($"###CharactersCurrencies#BattleCurrencyTable#FATETable#Bicolor#{selected_character.Id}", ImGuiTableColumnFlags.WidthStretch);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
                 DrawBattleCurrency(pc.Bicolor_Gemstone, Currencies.BICOLOR_GEMSTONE, 1000);
@@ -511,16 +511,16 @@ public class CurrenciesWindow : Window, IDisposable
         }
     }
 
-    private void DrawOthers(Character current_character)
+    private void DrawOthers(Character selected_character)
     {
-        if (current_character.Currencies is null) return;
-        PlayerCurrencies pc = current_character.Currencies;
+        if (selected_character.Currencies is null) return;
+        PlayerCurrencies pc = selected_character.Currencies;
 
-        if (ImGui.BeginTable($"###CharactersCurrencies#OthersCurrencyTable#{current_character.Id}", 1))
+        if (ImGui.BeginTable($"###CharactersCurrencies#OthersCurrencyTable#{selected_character.Id}", 1))
         {
-            if (current_character.IsQuestCompleted(67631))
+            if (selected_character.IsQuestCompleted(67631))
             {
-                ImGui.TableSetupColumn($"###CharactersCurrencies#OthersCurrencyTable#Currency#{current_character.Id}", ImGuiTableColumnFlags.WidthStretch);
+                ImGui.TableSetupColumn($"###CharactersCurrencies#OthersCurrencyTable#Currency#{selected_character.Id}", ImGuiTableColumnFlags.WidthStretch);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
                 ImGui.TextUnformatted(Utils.GetAddonString(3665));
@@ -552,7 +552,7 @@ public class CurrenciesWindow : Window, IDisposable
                 DrawOtherCurrency(pc.Yellow_Gatherers_Scrip, Currencies.YELLOW_GATHERERS_SCRIP, 4000, true, true);
             }
 
-            if (current_character.IsQuestCompleted(69208))
+            if (selected_character.IsQuestCompleted(69208))
             {
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
@@ -599,43 +599,43 @@ public class CurrenciesWindow : Window, IDisposable
         }
     }
 
-    private void DrawTribal(Character current_character)
+    private void DrawTribal(Character selected_character)
     {
-        if (current_character.Currencies == null) return;
+        if (selected_character.Currencies == null) return;
 
-        PlayerCurrencies pc = current_character.Currencies;
+        PlayerCurrencies pc = selected_character.Currencies;
 
         ImGui.TextUnformatted(Utils.GetAddonString(5751));
         ImGui.Separator();
-        if (ImGui.BeginTable($"###CharactersCurrencies#TribalCurrencyTable#{current_character.Id}", 3))
+        if (ImGui.BeginTable($"###CharactersCurrencies#TribalCurrencyTable#{selected_character.Id}", 3))
         {
-            ImGui.TableSetupColumn($"###CharactersCurrencies#TribalCurrencyTable#Col1#{current_character.Id}", ImGuiTableColumnFlags.WidthStretch);
-            ImGui.TableSetupColumn($"###CharactersCurrencies#TribalCurrencyTable#Col2#{current_character.Id}", ImGuiTableColumnFlags.WidthStretch);
-            ImGui.TableSetupColumn($"###CharactersCurrencies#TribalCurrencyTable#Col3#{current_character.Id}", ImGuiTableColumnFlags.WidthStretch);
-            if (current_character.IsQuestCompleted(66754) ||
-                current_character.IsQuestCompleted(66789) ||
-                current_character.IsQuestCompleted(66857) ||
-                current_character.IsQuestCompleted(66911) ||
-                current_character.IsQuestCompleted(67023)
+            ImGui.TableSetupColumn($"###CharactersCurrencies#TribalCurrencyTable#Col1#{selected_character.Id}", ImGuiTableColumnFlags.WidthStretch);
+            ImGui.TableSetupColumn($"###CharactersCurrencies#TribalCurrencyTable#Col2#{selected_character.Id}", ImGuiTableColumnFlags.WidthStretch);
+            ImGui.TableSetupColumn($"###CharactersCurrencies#TribalCurrencyTable#Col3#{selected_character.Id}", ImGuiTableColumnFlags.WidthStretch);
+            if (selected_character.IsQuestCompleted(66754) ||
+                selected_character.IsQuestCompleted(66789) ||
+                selected_character.IsQuestCompleted(66857) ||
+                selected_character.IsQuestCompleted(66911) ||
+                selected_character.IsQuestCompleted(67023)
             )
             {
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
                 ImGui.TextUnformatted("A Realm Reborn");
                 ImGui.TableNextRow();
-                if (current_character.IsQuestCompleted(66754))
+                if (selected_character.IsQuestCompleted(66754))
                 {
                     //ImGui.TableSetColumnIndex(0);
                     ImGui.TableNextColumn();
                     DrawTribalCurrency(pc.Steel_Amaljok, Currencies.STEEL_AMALJOK, Tribal.AMALJ_AA);
                 }
-                if (current_character.IsQuestCompleted(66789))
+                if (selected_character.IsQuestCompleted(66789))
                 {
                     //ImGui.TableSetColumnIndex(1);
                     ImGui.TableNextColumn();
                     DrawTribalCurrency(pc.Sylphic_Goldleaf, Currencies.SYLPHIC_GOLDLEAF, Tribal.SYLPHS);
                 }
-                if (current_character.IsQuestCompleted(66857))
+                if (selected_character.IsQuestCompleted(66857))
                 {
                     //ImGui.TableSetColumnIndex(2);
                     ImGui.TableNextColumn();
@@ -643,13 +643,13 @@ public class CurrenciesWindow : Window, IDisposable
                 }
 
                 //ImGui.TableNextRow();
-                if (current_character.IsQuestCompleted(66911))
+                if (selected_character.IsQuestCompleted(66911))
                 {
                     //ImGui.TableSetColumnIndex(0);
                     ImGui.TableNextColumn();
                     DrawTribalCurrency(pc.Rainbowtide_Psashp, Currencies.RAINBOWTIDE_PSASHP, Tribal.SAHAGIN);
                 }
-                if (current_character.IsQuestCompleted(67023))
+                if (selected_character.IsQuestCompleted(67023))
                 {
                     //ImGui.TableSetColumnIndex(1);
                     ImGui.TableNextColumn();
@@ -657,28 +657,28 @@ public class CurrenciesWindow : Window, IDisposable
                 }
             }
 
-            if (current_character.IsQuestCompleted(67700) ||
-                current_character.IsQuestCompleted(67791) ||
-                current_character.IsQuestCompleted(67856)
+            if (selected_character.IsQuestCompleted(67700) ||
+                selected_character.IsQuestCompleted(67791) ||
+                selected_character.IsQuestCompleted(67856)
             )
             {
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
                 ImGui.TextUnformatted("Heavensward");
                 ImGui.TableNextRow();
-                if (current_character.IsQuestCompleted(67700))
+                if (selected_character.IsQuestCompleted(67700))
                 {
                     //ImGui.TableSetColumnIndex(0);
                     ImGui.TableNextColumn();
                     DrawTribalCurrency(pc.Vanu_Whitebone, Currencies.VANU_WHITEBONE, Tribal.VANU_VANU);
                 }
-                if (current_character.IsQuestCompleted(67791))
+                if (selected_character.IsQuestCompleted(67791))
                 {
                     //ImGui.TableSetColumnIndex(1);
                     ImGui.TableNextColumn();
                     DrawTribalCurrency(pc.Black_Copper_Gil, Currencies.BLACK_COPPER_GIL, Tribal.VATH);
                 }
-                if (current_character.IsQuestCompleted(67856))
+                if (selected_character.IsQuestCompleted(67856))
                 {
                     //ImGui.TableSetColumnIndex(2);
                     ImGui.TableNextColumn();
@@ -686,28 +686,28 @@ public class CurrenciesWindow : Window, IDisposable
                 }
             }
 
-            if (current_character.IsQuestCompleted(68509) ||
-                current_character.IsQuestCompleted(68572) ||
-                current_character.IsQuestCompleted(68633)
+            if (selected_character.IsQuestCompleted(68509) ||
+                selected_character.IsQuestCompleted(68572) ||
+                selected_character.IsQuestCompleted(68633)
             )
             {
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
                 ImGui.TextUnformatted("Stormblood");
                 ImGui.TableNextRow();
-                if (current_character.IsQuestCompleted(68509))
+                if (selected_character.IsQuestCompleted(68509))
                 {
                     //ImGui.TableSetColumnIndex(0);
                     ImGui.TableNextColumn();
                     DrawTribalCurrency(pc.Kojin_Sango, Currencies.KOJIN_SANGO, Tribal.KOJIN);
                 }
-                if (current_character.IsQuestCompleted(68572))
+                if (selected_character.IsQuestCompleted(68572))
                 {
                     //ImGui.TableSetColumnIndex(1);
                     ImGui.TableNextColumn();
                     DrawTribalCurrency(pc.Ananta_Dreamstaff, Currencies.ANANTA_DREAMSTAFF, Tribal.ANANTA);
                 }
-                if (current_character.IsQuestCompleted(68633))
+                if (selected_character.IsQuestCompleted(68633))
                 {
                     //ImGui.TableSetColumnIndex(2);
                     ImGui.TableNextColumn();
@@ -715,28 +715,28 @@ public class CurrenciesWindow : Window, IDisposable
                 }
             }
 
-            if (current_character.IsQuestCompleted(69219) ||
-                current_character.IsQuestCompleted(69330) ||
-                current_character.IsQuestCompleted(69432)
+            if (selected_character.IsQuestCompleted(69219) ||
+                selected_character.IsQuestCompleted(69330) ||
+                selected_character.IsQuestCompleted(69432)
             )
             {
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
                 ImGui.TextUnformatted("Shadowbringers");
                 ImGui.TableNextRow();
-                if (current_character.IsQuestCompleted(69219))
+                if (selected_character.IsQuestCompleted(69219))
                 {
                     //ImGui.TableSetColumnIndex(0);
                     ImGui.TableNextColumn();
                     DrawTribalCurrency(pc.Fae_Fancy, Currencies.FAE_FANCY, Tribal.PIXIES);
                 }
-                if (current_character.IsQuestCompleted(69330))
+                if (selected_character.IsQuestCompleted(69330))
                 {
                     //ImGui.TableSetColumnIndex(1);
                     ImGui.TableNextColumn();
                     DrawTribalCurrency(pc.Qitari_Compliment, Currencies.QITARI_COMPLIMENT, Tribal.QITARI);
                 }
-                if (current_character.IsQuestCompleted(69432))
+                if (selected_character.IsQuestCompleted(69432))
                 {
                     //ImGui.TableSetColumnIndex(2);
                     ImGui.TableNextColumn();
@@ -744,28 +744,28 @@ public class CurrenciesWindow : Window, IDisposable
                 }
             }
 
-            if (current_character.IsQuestCompleted(70081) ||
-                current_character.IsQuestCompleted(70137) ||
-                current_character.IsQuestCompleted(70217)
+            if (selected_character.IsQuestCompleted(70081) ||
+                selected_character.IsQuestCompleted(70137) ||
+                selected_character.IsQuestCompleted(70217)
             )
             {
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
                 ImGui.TextUnformatted("Endwalker");
                 ImGui.TableNextRow();
-                if (current_character.IsQuestCompleted(70081))
+                if (selected_character.IsQuestCompleted(70081))
                 {
                     //ImGui.TableSetColumnIndex(0);
                     ImGui.TableNextColumn();
                     DrawTribalCurrency(pc.Arkasodara_Pana, Currencies.ARKASODARA_PANA, Tribal.ARKASODARA);
                 }
-                if (current_character.IsQuestCompleted(70137))
+                if (selected_character.IsQuestCompleted(70137))
                 {
                     //ImGui.TableSetColumnIndex(1);
                     ImGui.TableNextColumn();
                     DrawTribalCurrency(pc.Omicron_Omnitoken, Currencies.OMICRON_OMNITOKEN, Tribal.OMICRONS);
                 }
-                if (current_character.IsQuestCompleted(70217))
+                if (selected_character.IsQuestCompleted(70217))
                 {
                     //ImGui.TableSetColumnIndex(2);
                     ImGui.TableNextColumn();
