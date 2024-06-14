@@ -494,7 +494,7 @@ namespace Altoholic
                             Plugin.Log.Debug($"localPlayerFreeCompanyTest : {localPlayerFreeCompanyTest}");
                         }*/
                         //localPlayerFreeCompanyTest = FFXIVClientStructs.FFXIV.Client.UI.Agent.AgentInspect.Instance()->FreeCompany.GuildName;
-                        Log.Debug($"localPlayerFreeCompanyTest : {}");
+                        //Log.Debug($"localPlayerFreeCompanyTest : {}");
                         //Plugin.Log.Debug(System.Text.Encoding.UTF8.GetString(AgentInspect.Instance()->FreeCompany.GuildName));
                         //Plugin.Log.Debug(System.Text.Encoding.UTF8.GetString(localPlayerFreeCompanyTest)); ;
                         //Plugin.Log.Debug($"localPlayerFreeCompany : {localPlayerFreeCompanyTest}");
