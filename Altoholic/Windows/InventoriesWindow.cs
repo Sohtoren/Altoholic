@@ -90,7 +90,6 @@ public class InventoriesWindow : Window, IDisposable
         selectedTab = null;
 
         foreach (var loadedTexture in armoryTabTextures) loadedTexture.Value?.Dispose();
-        foreach (var loadedTexture in armoryTabTextures) loadedTexture.Value?.Dispose();
         armouryBoard.Dispose();
     }
 
