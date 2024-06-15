@@ -25,6 +25,7 @@ using Dalamud.Game.Text;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using Dalamud.Memory;
 using ImGuiNET;
+using Dalamud.Game.ClientState.Conditions;
 
 namespace Altoholic
 {
@@ -49,6 +50,7 @@ namespace Altoholic
         [PluginService] public static IDataManager DataManager { get; private set; } = null!;
         [PluginService] public static ITextureProvider TextureProvider { get; private set; } = null!;
         [PluginService] public static INotificationManager NotificationManager { get; private set; } = null!;
+        [PluginService] public static ICondition Condition { get; set; } = null!;
         [PluginService] public static ISigScanner SigScanner { get; private set; } = null!;
         [PluginService] public static IGameInteropProvider Hook { get; private set; } = null!;
 
@@ -877,6 +879,14 @@ foreach(Retainer retainer in localPlayer.Retainers)
         {
             unsafe
             {
+                if (
+                    Condition[ConditionFlag.BoundByDuty] ||
+                    Condition[ConditionFlag.BoundByDuty56] ||
+                    Condition[ConditionFlag.BoundByDuty95]
+                )
+                {
+                    return;
+                }
                 var invs = new[] {
                         InventoryType.SaddleBag1,
                         InventoryType.SaddleBag2,
@@ -1279,12 +1289,12 @@ foreach(Retainer retainer in localPlayer.Retainers)
             if (player.Item1.Length == 0)
                 return result;
 
-            Plugin.Log.Debug($"Extracted Player Name: {player.Item1}{(char)SeIconChar.CrossWorld}{player.Item2}");
+            Log.Debug($"Extracted Player Name: {player.Item1}{(char)SeIconChar.CrossWorld}{player.Item2}");
 
             var totalPlaytime = (uint)Marshal.ReadInt32((nint)param2 + 0x10);
-            Plugin.Log.Debug($"Value from address {totalPlaytime}");
+            Log.Debug($"Value from address {totalPlaytime}");
             var playtime = TimeSpan.FromMinutes(totalPlaytime);
-            Plugin.Log.Debug($"Value from timespan {playtime}");
+            Log.Debug($"Value from timespan {playtime}");
 
             var names = player.Item1.Split(' ');
             if (names.Length == 0)
@@ -1296,7 +1306,7 @@ foreach(Retainer retainer in localPlayer.Retainers)
 
             long newPlayTimeUpdate = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
             localPlayer.LastPlayTimeUpdate = newPlayTimeUpdate;
-            Plugin.Log.Debug($"Updating playtime with {player.Item1}, {player.Item2}, {totalPlaytime}, {newPlayTimeUpdate}.");
+            Log.Debug($"Updating playtime with {player.Item1}, {player.Item2}, {totalPlaytime}, {newPlayTimeUpdate}.");
             Database.Database.UpdatePlaytime(Log, db, id, totalPlaytime, newPlayTimeUpdate);
             return result;
         }
