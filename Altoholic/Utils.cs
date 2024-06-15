@@ -2,15 +2,24 @@
 using Dalamud;
 using Dalamud.Game.Text;
 using Dalamud.Interface;
+using Dalamud.Interface.Internal;
+using Dalamud.Interface.Utility;
 using Dalamud.Plugin.Services;
 using Dalamud.Utility;
+using FFXIVClientStructs.FFXIV.Client.Game;
+using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
+using FFXIVClientStructs.FFXIV.Common.Component.BGCollision;
 using FFXIVClientStructs.FFXIV.Common.Math;
+using FFXIVClientStructs.FFXIV.Component.GUI;
 using ImGuiNET;
 using System;
+using System.Buffers.Text;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using static Dalamud.Plugin.Services.ITextureProvider;
 using static Lumina.Data.Parsing.Layer.LayerCommon;
+using static Lumina.Data.Parsing.Uld.NodeData;
 
 namespace Altoholic
 {
@@ -84,6 +93,8 @@ namespace Altoholic
                 ImGui.Image(icon.ImGuiHandle, icon_size, new Vector2(0,0), alpha);
             }
         }
+
+        //public static void DrawIconFromTexture(Vector2 size, Vector4 area)
 
         public static string GetDCString()
         {
@@ -624,6 +635,19 @@ namespace Altoholic
             if (ditm != null)
             {
                 Lumina.Excel.GeneratedSheets.Item? lumina = ditm.GetRow(id);
+                return lumina;
+            }
+            return null;
+        }
+        
+        public static Lumina.Excel.GeneratedSheets.EventItem? GetEventItemFromId(uint id)
+        {
+            if (Plugin.DataManager is null || Plugin.Log is null) return null;
+            //Plugin.Log.Debug($"GetItemFromId : {id}");
+            Lumina.Excel.ExcelSheet<Lumina.Excel.GeneratedSheets.EventItem>? deitm = Plugin.DataManager.GetExcelSheet<Lumina.Excel.GeneratedSheets.EventItem>(GetLocale());
+            if (deitm != null)
+            {
+                Lumina.Excel.GeneratedSheets.EventItem? lumina = deitm.GetRow(id);
                 return lumina;
             }
             return null;
@@ -1385,6 +1409,45 @@ namespace Altoholic
                 ImGui.TableSetColumnIndex(0);
                 ImGui.TextUnformatted($"{dbItem.ItemUICategory.Value?.Name}");
                 ImGui.TableSetColumnIndex(1);
+                ImGui.TextUnformatted($"{item.Quantity}/99 (Total: {item.Quantity})");
+                ImGui.TableSetColumnIndex(2);
+                ImGui.EndTable();
+            }
+
+            ImGui.Separator();
+            ImGui.TextUnformatted($"{GetAddonString(497)}");// Crafting & Repairs
+
+            ImGui.EndTooltip();
+        }
+        
+        public static void DrawEventItemTooltip(Inventory item)
+        {
+            if (Plugin.TextureProvider == null || Plugin.DataManager is null || Plugin.Log is null) return;
+            Lumina.Excel.GeneratedSheets.EventItem? dbItem = GetEventItemFromId(item.ItemId);
+            if (dbItem == null) return;
+
+            ImGui.BeginTooltip();
+
+            if (ImGui.BeginTable($"##DrawItemTooltip#Item_{item.ItemId}#NameIcon", 2))
+            {
+                ImGui.TableSetupColumn($"##DrawItemTooltip#Item_{item.ItemId}#NameIcon#Icon", ImGuiTableColumnFlags.WidthFixed, 55);
+                ImGui.TableSetupColumn($"##DrawItemTooltip#Item_{item.ItemId}#NameIcon#Name", ImGuiTableColumnFlags.WidthFixed, 305);
+                ImGui.TableNextRow();
+                ImGui.TableSetColumnIndex(0);
+                DrawItemIcon(new Vector2(40, 40), item.HQ, item.ItemId);
+                ImGui.TableSetColumnIndex(1);
+                ImGui.TextUnformatted($"{dbItem.Name} {(item.HQ ? (char)SeIconChar.HighQuality : "")}");
+                ImGui.EndTable();
+            }
+            if (ImGui.BeginTable($"##DrawItemTooltip#Item_{item.ItemId}#Category", 3))
+            {
+                ImGui.TableSetupColumn($"##DrawItemTooltip#Item_{item.ItemId}#Category#Icon", ImGuiTableColumnFlags.WidthFixed, 150);
+                ImGui.TableSetupColumn($"##DrawItemTooltip#Item_{item.ItemId}#Category#Name", ImGuiTableColumnFlags.WidthFixed, 150);
+                ImGui.TableSetupColumn($"##DrawItemTooltip#Item_{item.ItemId}#Category#Name", ImGuiTableColumnFlags.WidthFixed, 100);
+                ImGui.TableNextRow();
+                ImGui.TableSetColumnIndex(0);
+                ImGui.TableSetColumnIndex(1);
+                ImGui.TableSetColumnIndex(2);
                 ImGui.TextUnformatted($"{item.Quantity}/99 (Total: {item.Quantity})");
                 ImGui.EndTable();
             }

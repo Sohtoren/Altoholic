@@ -133,6 +133,7 @@ namespace Altoholic.Database
                         c.Profile = character.Profile;
                         c.Quests = character.Quests;
                         c.Inventory = character.Inventory;
+                        c.ArmoryInventory = character.ArmoryInventory;
                         c.Saddle = character.Saddle;
                         c.Gear = character.Gear;
                         c.Retainers = character.Retainers;
@@ -160,6 +161,7 @@ namespace Altoholic.Database
                             Profile = character.Profile,
                             Quests = character.Quests,
                             Inventory = character.Inventory,
+                            ArmoryInventory = character.ArmoryInventory,
                             Saddle = character.Saddle,
                             Gear = character.Gear,
                             Retainers = character.Retainers,

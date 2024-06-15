@@ -24,6 +24,7 @@ using Dalamud.Interface.ImGuiNotification;
 using Dalamud.Game.Text;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using Dalamud.Memory;
+using ImGuiNET;
 
 namespace Altoholic
 {
@@ -354,7 +355,9 @@ namespace Altoholic
                     GetPlayerEquippedGear();
                     GetPlayerInventory();
                     GetPlayerSaddleInventory();
-                    // Todo: Glamour dresser & armoire inventories
+                    GetPlayerArmoryInventory();
+                    GetPlayerGlamourInventory();
+                    GetPlayerArmoireInventory();
                     GetPlayerCompletedQuest();
                     GetPlayerRetainer();
 
@@ -366,11 +369,32 @@ namespace Altoholic
                         Log.Debug($"{inventory.ItemId} {inventory.HQ} {inventory.Quantity}");
                     }
                     */
-                    Log.Debug($"localPlayer retainers count : {localPlayer.Retainers.Count}");
-                    foreach(Retainer retainer in localPlayer.Retainers)
+/*Log.Debug($"localPlayer retainers count : {localPlayer.Retainers.Count}");
+foreach(Retainer retainer in localPlayer.Retainers)
+{
+    Log.Debug($"{retainer.Name} job:{Enum.GetName(typeof(ClassJob), retainer.ClassJob)}, displayorder: {retainer.DisplayOrder}, items: {retainer.Inventory.Count}, gils: {retainer.Gils}");
+}*/
+#if DEBUG
+                    if (localPlayer.ArmoryInventory != null)
                     {
-                        Log.Debug($"{retainer.Name} job:{Enum.GetName(typeof(ClassJob), retainer.ClassJob)}, displayorder: {retainer.DisplayOrder}, items: {retainer.Inventory.Count}, gils: {retainer.Gils}");
+                        Log.Debug($"localPlayer.ArmoryInventory.MainHand.Count : {localPlayer.ArmoryInventory.MainHand.FindAll(i => i.ItemId != 0).Count}");
+                        Log.Debug($"localPlayer.ArmoryInventory.Head.Count : {localPlayer.ArmoryInventory.Head.FindAll(i => i.ItemId != 0).Count}");
+                        Log.Debug($"localPlayer.ArmoryInventory.Body.Count : {localPlayer.ArmoryInventory.Body.FindAll(i => i.ItemId != 0).Count}");
+                        Log.Debug($"localPlayer.ArmoryInventory.Hands.Count : {localPlayer.ArmoryInventory.Hands.FindAll(i => i.ItemId != 0).Count}");
+                        Log.Debug($"localPlayer.ArmoryInventory.Legs.Count : {localPlayer.ArmoryInventory.Legs.FindAll(i => i.ItemId != 0).Count}");
+                        Log.Debug($"localPlayer.ArmoryInventory.Feets.Count : {localPlayer.ArmoryInventory.Feets.FindAll(i => i.ItemId != 0).Count}");
+                        Log.Debug($"localPlayer.ArmoryInventory.OffHand.Count : {localPlayer.ArmoryInventory.OffHand.FindAll(i => i.ItemId != 0).Count}");
+                        Log.Debug($"localPlayer.ArmoryInventory.Ear.Count : {localPlayer.ArmoryInventory.Ear.FindAll(i => i.ItemId != 0).Count}");
+                        Log.Debug($"localPlayer.ArmoryInventory.Neck.Count : {localPlayer.ArmoryInventory.Neck.FindAll(i => i.ItemId != 0).Count}");
+                        Log.Debug($"localPlayer.ArmoryInventory.Wrist.Count : {localPlayer.ArmoryInventory.Wrist.FindAll(i => i.ItemId != 0).Count}");
+                        Log.Debug($"localPlayer.ArmoryInventory.Rings.Count : {localPlayer.ArmoryInventory.Rings.FindAll(i => i.ItemId != 0).Count}");
+                        Log.Debug($"localPlayer.ArmoryInventory.SoulCrystal.Count : {localPlayer.ArmoryInventory.SoulCrystal.FindAll(i => i.ItemId != 0).Count}");
+                        /*foreach (var inventory in localPlayer.ArmoryInventory.Hands)
+                        {
+                            Log.Debug($"{inventory.ItemId} {Utils.GetItemNameFromId(inventory.ItemId)} {inventory.HQ}");
+                        }*/
                     }
+#endif
                 }
 
                 if (ClientState.IsLoggedIn)
@@ -513,6 +537,9 @@ namespace Altoholic
                 GetPlayerAttributesProfileAndJobs();
                 GetPlayerEquippedGear();
                 GetPlayerInventory();
+                GetPlayerArmoryInventory();
+                GetPlayerGlamourInventory();
+                GetPlayerArmoireInventory();
                 GetPlayerSaddleInventory();
                 GetPlayerRetainer();
             }
@@ -615,7 +642,7 @@ namespace Altoholic
                 /*foreach (var a in player.Attributes)
                 {
 
-                }*/
+                }*/                
             }
         }
 
@@ -819,10 +846,11 @@ namespace Altoholic
                         InventoryType.Crystals,
                     };
                 List<Inventory> items = [];
+                ref readonly InventoryManager inventoryManager = ref *InventoryManager.Instance();
                 foreach (var kind in invs)
                 {
                     //var inv = InventoryManager.Instance()->GetInventoryContainer(kind)
-                    ref readonly InventoryManager inventoryManager = ref *InventoryManager.Instance();
+                    //ref readonly InventoryManager inventoryManager = ref *InventoryManager.Instance();
                     InventoryContainer inv = *inventoryManager.GetInventoryContainer(kind);
                     //for (var i = 0; i < inv->Size; i++)
                     for (var i = 0; i < inv.Size; i++)
@@ -856,10 +884,11 @@ namespace Altoholic
                         InventoryType.PremiumSaddleBag2,
                     };
                 List<Inventory> items = [];
+                ref readonly InventoryManager inventoryManager = ref *InventoryManager.Instance();
                 foreach (var kind in invs)
                 {
                     //var inv = InventoryManager.Instance()->GetInventoryContainer(kind)
-                    ref readonly InventoryManager inventoryManager = ref *InventoryManager.Instance();
+                    //ref readonly InventoryManager inventoryManager = ref *InventoryManager.Instance();
                     InventoryContainer inv = *inventoryManager.GetInventoryContainer(kind);
                     //for (var i = 0; i < inv->Size; i++)
                     for (var i = 0; i < inv.Size; i++)
@@ -879,6 +908,104 @@ namespace Altoholic
                 }
                 localPlayer.Saddle = items;
             }
+        }
+
+        private unsafe void GetPlayerArmoryInventory()
+        {
+            unsafe
+            {
+                var invs = new[] {
+                        InventoryType.ArmoryMainHand,
+                        InventoryType.ArmoryHead,
+                        InventoryType.ArmoryBody,
+                        InventoryType.ArmoryHands,
+                        InventoryType.ArmoryLegs,
+                        InventoryType.ArmoryFeets,
+                        InventoryType.ArmoryOffHand,
+                        InventoryType.ArmoryEar,
+                        InventoryType.ArmoryNeck,
+                        InventoryType.ArmoryWrist,
+                        InventoryType.ArmoryRings,
+                        InventoryType.ArmorySoulCrystal
+                    };
+                List<Gear> MH = [];
+                List<Gear> Head = [];
+                List<Gear> Body = [];
+                List<Gear> Hands = [];
+                List<Gear> Legs = [];
+                List<Gear> Feets = [];
+                List<Gear> OH = [];
+                List<Gear> Ear = [];
+                List<Gear> Neck = [];
+                List<Gear> Wrist = [];
+                List<Gear> Rings = [];
+                List<Gear> SC = [];
+                ref readonly InventoryManager inventoryManager = ref *InventoryManager.Instance();
+                foreach (var kind in invs)
+                {
+                    InventoryContainer inv = *inventoryManager.GetInventoryContainer(kind);
+                    for (var i = 0; i < inv.Size; i++)
+                    {
+                        var ii = inv.Items[i];
+                        var flags = ii.Flags;
+                        Gear currGear = new()
+                        {
+                            ItemId = ii.ItemID,
+                            HQ = flags.HasFlag(InventoryItem.ItemFlags.HQ),
+                            CompanyCrestApplied = flags.HasFlag(InventoryItem.ItemFlags.CompanyCrestApplied),
+                            Slot = ii.Slot,
+                            Spiritbond = ii.Spiritbond,
+                            Condition = ii.Condition,
+                            CrafterContentID = ii.CrafterContentID,
+                            Materia = (ushort)ii.Materia,
+                            MateriaGrade = (byte)ii.MateriaGrade,
+                            Stain = ii.Stain,
+                            GlamourID = ii.GlamourID,
+                        };
+
+                        switch(kind)
+                        {
+                            case InventoryType.ArmoryMainHand: MH.Add(currGear);break;
+                            case InventoryType.ArmoryHead: Head.Add(currGear); break;
+                            case InventoryType.ArmoryBody: Body.Add(currGear); break;
+                            case InventoryType.ArmoryHands: Hands.Add(currGear); break;
+                            case InventoryType.ArmoryLegs: Legs.Add(currGear); break;
+                            case InventoryType.ArmoryFeets: Feets.Add(currGear); break;
+                            case InventoryType.ArmoryOffHand: OH.Add(currGear); break;
+                            case InventoryType.ArmoryEar: Ear.Add(currGear); break;
+                            case InventoryType.ArmoryNeck: Neck.Add(currGear); break;
+                            case InventoryType.ArmoryWrist: Wrist.Add(currGear); break;
+                            case InventoryType.ArmoryRings: Rings.Add(currGear); break;
+                            case InventoryType.ArmorySoulCrystal: SC.Add(currGear);break;
+                            default: break;
+                        };
+                    }
+                }
+
+                localPlayer.ArmoryInventory = new()
+                {
+                    MainHand = MH,
+                    Head = Head,
+                    Body = Body,
+                    Hands = Hands,
+                    Legs = Legs,
+                    Feets = Feets,
+                    OffHand = OH,
+                    Ear = Ear,
+                    Neck = Neck,
+                    Wrist = Wrist,
+                    Rings = Rings,
+                    SoulCrystal = SC,
+                };
+            }
+        }
+        private unsafe void GetPlayerGlamourInventory()
+        {
+            
+        }
+        private unsafe void GetPlayerArmoireInventory()
+        {
+            
         }
 
         private unsafe void GetPlayerRetainer()
@@ -946,10 +1073,11 @@ namespace Altoholic
                         InventoryType.RetainerCrystals,
                     };
                 List<Inventory> items = [];
+                ref readonly InventoryManager inventoryManager = ref *InventoryManager.Instance();
                 foreach (var kind in invs)
                 {
                     //var inv = InventoryManager.Instance()->GetInventoryContainer(kind)
-                    ref readonly InventoryManager inventoryManager = ref *InventoryManager.Instance();
+                    //ref readonly InventoryManager inventoryManager = ref *InventoryManager.Instance();
                     InventoryContainer inv = *inventoryManager.GetInventoryContainer(kind);
                     //for (var i = 0; i < inv->Size; i++)
                     for (var i = 0; i < inv.Size; i++)
@@ -1117,7 +1245,13 @@ namespace Altoholic
             CleanLastLocalCharacter();
 
             MainWindow.IsOpen = false;
+            RetainersWindow.Dispose();
+            InventoriesWindow.Dispose();
+            JobsWindow.Dispose();
+            ConfigWindow.Dispose();
+            CurrenciesWindow.Dispose();
             DetailsWindow.Dispose();
+            CharactersWindow.Dispose();
             periodicTimer?.Dispose();
         }
 

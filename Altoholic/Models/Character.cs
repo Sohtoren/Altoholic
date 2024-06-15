@@ -32,6 +32,7 @@ namespace Altoholic.Models
         public Profile? Profile { get; set; }
         public List<Quest> Quests { get; set; } = [];
         public List<Inventory> Inventory { get; set; } = [];
+        public ArmoryGear? ArmoryInventory { get; set; } = null;
         public List<Inventory> Saddle { get; set; } = [];
         public List<Gear> Gear { get; set; } = [];
         public List<Retainer> Retainers { get; set; } = [];
