@@ -15,5 +15,6 @@ public enum GearSlot : short
     WRISTS = 10,
     RIGHT_RING = 11,
     LEFT_RING = 12,
-    SOUL_CRYSTAL = 13
+    SOUL_CRYSTAL = 13,
+    EMPTY = 99
 }

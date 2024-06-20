@@ -26,6 +26,7 @@ using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using Dalamud.Memory;
 using ImGuiNET;
 using Dalamud.Game.ClientState.Conditions;
+using Altoholic.Cache;
 
 namespace Altoholic
 {
@@ -69,6 +70,7 @@ namespace Altoholic
         private CurrenciesWindow CurrenciesWindow { get; init; }
         private InventoriesWindow InventoriesWindow { get; init; }
         private RetainersWindow RetainersWindow { get; init; }
+        private CollectionWindow CollectionWindow { get; init; }
 
         private readonly Service altoholicService = null!;
         private readonly LiteDatabase db;
@@ -80,18 +82,19 @@ namespace Altoholic
         public List<Character> otherCharacters = [];
         private static ClientLanguage currentLocale;
         private readonly Localization Localization = new();
+        private readonly GlobalCache GlobalCache;
+        /*private readonly IconStorage IconStorage;
+        private readonly ItemStorage ItemStorage;*/
 
-        public Plugin(
-        /*DalamudPluginInterface pluginInterface,
-        ICommandManager commandManager,
-        IClientState ClientState,
-        IFramework framework,
-        ILog Log,
-        IDataManager Plugin.DataManager,
-        ITextureProvider textureProvider,
-        INotificationManager notificationManager*/
-        )
+        public Plugin()
         {
+            GlobalCache = new()
+            {
+                IconStorage = new IconStorage(TextureProvider),
+                ItemStorage = new ItemStorage(),
+                JobStorage = new JobStorage()
+            };
+
             nint playtimePtr = SigScanner.ScanText(PlaytimeSig);
             //if (playtimePtr == nint.Zero) return;
             PlaytimeHook = Hook.HookFromAddress<PlaytimeDelegate>(playtimePtr, PlaytimePacket);
@@ -113,15 +116,6 @@ namespace Altoholic
             }*/
             // Todo: Make sure this don't crash the game when db is already opened
 
-            /*PluginInterface = pluginInterface;
-            this.ClientState = ClientState;
-            this.framework = framework;
-            this.commandManager = commandManager;
-            this.Log = Log;
-            this.Plugin.DataManager = Plugin.DataManager;
-            this.textureProvider = textureProvider;
-            this.notificationManager = notificationManager;*/
-
             Configuration = PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
             Configuration.Initialize(PluginInterface);
 
@@ -131,8 +125,6 @@ namespace Altoholic
                 Configuration.Save();
             }
             currentLocale = Configuration.Language;
-
-
             Localization.SetupWithLangCode(PluginInterface.UiLanguage);
 
             altoholicService = new Service(
@@ -140,19 +132,19 @@ namespace Altoholic
                 () => this.otherCharacters);
 
             ConfigWindow = new ConfigWindow(this, $"{Name} configuration");
-            CharactersWindow = new CharactersWindow(this, $"{Name} characters", db)
+            CharactersWindow = new CharactersWindow(this, $"{Name} characters", db, GlobalCache)
             {
                 GetPlayer = () => this.altoholicService.GetPlayer(),
                 GetOthersCharactersList = () => this.altoholicService.GetOthersCharacters(),
             };
 
-            DetailsWindow = new DetailsWindow(this, $"{Name} characters details")
+            DetailsWindow = new DetailsWindow(this, $"{Name} characters details", GlobalCache)
             {
                 GetPlayer = () => this.altoholicService.GetPlayer(),
                 GetOthersCharactersList = () => this.altoholicService.GetOthersCharacters(),
             };
 
-            JobsWindow = new JobsWindow(this, $"{Name} characters jobs")
+            JobsWindow = new JobsWindow(this, $"{Name} characters jobs", GlobalCache)
             {
                 GetPlayer = () => this.altoholicService.GetPlayer(),
                 GetOthersCharactersList = () => this.altoholicService.GetOthersCharacters(),
@@ -164,7 +156,7 @@ namespace Altoholic
                 GetOthersCharactersList = () => this.altoholicService.GetOthersCharacters(),
             };
 
-            InventoriesWindow = new InventoriesWindow(this, $"{Name} characters inventories")
+            InventoriesWindow = new InventoriesWindow(this, $"{Name} characters inventories", GlobalCache)
             {
                 GetPlayer = () => this.altoholicService.GetPlayer(),
                 GetOthersCharactersList = () => this.altoholicService.GetOthersCharacters(),
@@ -174,6 +166,10 @@ namespace Altoholic
             {
                 GetPlayer = () => this.altoholicService.GetPlayer(),
                 GetOthersCharactersList = () => this.altoholicService.GetOthersCharacters(),
+            };
+
+            CollectionWindow = new CollectionWindow(this, $"{Name} characters colletion", GlobalCache)
+            {
             };
 
 
@@ -188,6 +184,7 @@ namespace Altoholic
                 CurrenciesWindow,
                 InventoriesWindow,
                 RetainersWindow,
+                CollectionWindow,
                 ConfigWindow);
 
             WindowSystem.AddWindow(ConfigWindow);
@@ -218,6 +215,9 @@ namespace Altoholic
             PluginInterface.UiBuilder.OpenConfigUi -= DrawConfigUI;
             PluginInterface.UiBuilder.OpenMainUi -= DrawMainUI;
             PluginInterface.LanguageChanged -= Localization.SetupWithLangCode;
+
+            GlobalCache.IconStorage.Dispose();
+            GlobalCache.ItemStorage.Dispose();
 
             RetainersWindow.Dispose();
             InventoriesWindow.Dispose();
@@ -1177,7 +1177,7 @@ foreach(Retainer retainer in localPlayer.Retainers)
 
         private void CleanLastLocalCharacter()
         {
-            localPlayer = new Character
+            /*localPlayer = new Character
             {
                 Id = 0,
                 FirstName = string.Empty,
@@ -1197,9 +1197,11 @@ foreach(Retainer retainer in localPlayer.Retainers)
                 Profile = null,
                 Quests = [],
                 Inventory = [],
+                ArmoryInventory = [],
+                Saddle = [],
                 Gear = [],
                 Retainers = [],
-            };
+            };*/
 
             localPlayer = null!;
             localPlayerFreeCompanyTest = null;
@@ -1256,7 +1258,8 @@ foreach(Retainer retainer in localPlayer.Retainers)
 
             MainWindow.IsOpen = false;
             RetainersWindow.Dispose();
-            InventoriesWindow.Dispose();
+            //InventoriesWindow.Dispose();
+            InventoriesWindow.IsOpen = false;
             JobsWindow.Dispose();
             ConfigWindow.Dispose();
             CurrenciesWindow.Dispose();

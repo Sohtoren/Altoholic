@@ -1,12 +1,18 @@
+using Altoholic.Cache;
 using Altoholic.Models;
 using Dalamud;
 using Dalamud.Game.Text;
+using Dalamud.Interface.Internal;
+using Dalamud.Interface;
 using Dalamud.Interface.Windowing;
 using Dalamud.Plugin.Services;
 using ImGuiNET;
+using LiteDB;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
+using System.Drawing;
+using Dalamud.Interface.Utility.Raii;
 
 namespace Altoholic.Windows;
 
@@ -14,10 +20,11 @@ public class JobsWindow : Window, IDisposable
 {
     private Plugin plugin;
     private ClientLanguage currentLocale;
-
+    private GlobalCache _globalCache;
     public JobsWindow(
         Plugin plugin,
-        string name
+        string name,
+        GlobalCache globalCache
         ) 
         : base(
         name, ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse)
@@ -28,11 +35,15 @@ public class JobsWindow : Window, IDisposable
             MaximumSize = new Vector2(float.MaxValue, float.MaxValue)
         };
         this.plugin = plugin;
+        this._globalCache = globalCache;
+
+        rolesTextureWrap = Plugin.TextureProvider.GetTextureFromGame("ui/uld/fourth/ToggleButton_hr1.tex");
     }
 
     public Func<Character> GetPlayer { get; init; } = null!;
     public Func<List<Character>> GetOthersCharactersList { get; set; } = null!;
     private Character? current_character = null;
+    private IDalamudTextureWrap? rolesTextureWrap = null;
 
     public void Dispose()
     {
@@ -569,7 +580,23 @@ public class JobsWindow : Window, IDisposable
 
     private void DrawJobs(Character selected_character)
     {
-        if (ImGui.BeginTabBar($"###CharactersJobs#JobsTable#{selected_character.Id}"))
+        using var tabBar = ImRaii.TabBar($"###CharactersJobs#JobsTabs#{selected_character.Id}");
+        if (!tabBar.Success) return;
+        using (var DoWDoMTab = ImRaii.TabItem($"{Utils.GetAddonString(1080)}###CharactersJobs#JobsTabs#DoWDoM#{selected_character.Id}"))
+        {
+            if (DoWDoMTab)
+            {
+                DrawDoWDoMJobs(selected_character);
+            }
+        };
+        using (var DoHDoLTab = ImRaii.TabItem($"{Utils.GetAddonString(1081)}###CharactersJobs#JobsTabs#DoHDoL#{selected_character.Id}"))
+        {
+            if (DoHDoLTab)
+            {
+                DrawDoHDoLJobs(selected_character);
+            }
+        };
+        /*if (ImGui.BeginTabBar($"###CharactersJobs#JobsTable#{selected_character.Id}"))
         {
             if (ImGui.BeginTabItem($"{Utils.GetAddonString(1080)}###{selected_character.Id}"))// Dow/DoM
             {
@@ -582,11 +609,12 @@ public class JobsWindow : Window, IDisposable
                 ImGui.EndTabItem();
             }
             ImGui.EndTabBar();
-        }
+        }*/
     }
 
     private void DrawDoWDoMJobs(Character selected_character)
     {
+        if (rolesTextureWrap is null) return;
         if (selected_character is null) return;
         if (ImGui.BeginTable($"###CharactersJobs#DoWDoMJobs#{selected_character.Id}", 2, ImGuiTableFlags.ScrollY))
         {
@@ -600,7 +628,8 @@ public class JobsWindow : Window, IDisposable
                 ImGui.TableSetupColumn($"###CharactersJobs#DoW#RoleTank#Name", ImGuiTableColumnFlags.WidthStretch);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                Utils.DrawIcon(new Vector2(20, 20), false, Utils.GetRoleIcon(0));
+                //Utils.DrawIcon(new Vector2(20, 20), false, Utils.GetRoleIcon(0));
+                Utils.DrawRoleTexture(ref rolesTextureWrap, RoleIcon.Tank, new Vector2(20,20));
                 ImGui.TableSetColumnIndex(1);
                 ImGui.TextUnformatted($"{Utils.GetAddonString(1082)}"); // Tank
 
@@ -615,7 +644,8 @@ public class JobsWindow : Window, IDisposable
                 ImGui.TableSetupColumn($"###CharactersJobs#DoM#RoleHealer#Name", ImGuiTableColumnFlags.WidthStretch);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                Utils.DrawIcon(new Vector2(20, 20), false, Utils.GetRoleIcon(1));
+                //Utils.DrawIcon(new Vector2(20, 20), false, Utils.GetRoleIcon(1));
+                Utils.DrawRoleTexture(ref rolesTextureWrap, RoleIcon.Heal, new Vector2(20, 20));
                 ImGui.TableSetColumnIndex(1);
                 ImGui.TextUnformatted($"{Utils.GetAddonString(1083)}");
 
@@ -655,7 +685,8 @@ public class JobsWindow : Window, IDisposable
                 ImGui.TableSetupColumn("###CharactersJobs#DoW#RoleMelee#Name", ImGuiTableColumnFlags.WidthStretch);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                Utils.DrawIcon(new Vector2(20, 20), false, Utils.GetRoleIcon(2));
+                //Utils.DrawIcon(new Vector2(20, 20), false, Utils.GetRoleIcon(2));
+                Utils.DrawRoleTexture(ref rolesTextureWrap, RoleIcon.Melee, new Vector2(20, 20));
                 ImGui.TableSetColumnIndex(1);
                 ImGui.TextUnformatted($"{Utils.GetAddonString(1084)}");
 
@@ -670,7 +701,8 @@ public class JobsWindow : Window, IDisposable
                 ImGui.TableSetupColumn("###CharactersJobs#DoW#RolePhysicalRanged#Name", ImGuiTableColumnFlags.WidthStretch);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                Utils.DrawIcon(new Vector2(20, 20), false, Utils.GetRoleIcon(3));
+                //Utils.DrawIcon(new Vector2(20, 20), false, Utils.GetRoleIcon(3));
+                Utils.DrawRoleTexture(ref rolesTextureWrap, RoleIcon.Ranged, new Vector2(20, 20));
                 ImGui.TableSetColumnIndex(1);
                 ImGui.TextUnformatted($"{Utils.GetAddonString(1085)}");
 
@@ -707,7 +739,8 @@ public class JobsWindow : Window, IDisposable
                 ImGui.TableSetupColumn("###CharactersJobs#DoM#RoleMagicalRanged#Name", ImGuiTableColumnFlags.WidthStretch);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                Utils.DrawIcon(new Vector2(20, 20), false, Utils.GetRoleIcon(4));
+                //Utils.DrawIcon(new Vector2(20, 20), false, Utils.GetRoleIcon(4));
+                Utils.DrawRoleTexture(ref rolesTextureWrap, RoleIcon.Caster, new Vector2(20, 20));
                 ImGui.TableSetColumnIndex(1);
                 ImGui.TextUnformatted($"{Utils.GetAddonString(1086)}");
 
@@ -739,6 +772,7 @@ public class JobsWindow : Window, IDisposable
 
     private void DrawDoHDoLJobs(Character selected_character)
     {
+        if (rolesTextureWrap is null) return;
         if (selected_character is null) return;
         if (ImGui.BeginTable($"###CharactersJobs#DoHDoLJobs#{selected_character.Id}", 2))
         {
@@ -752,7 +786,8 @@ public class JobsWindow : Window, IDisposable
                 ImGui.TableSetupColumn("###CharactersJobs#DoH#RoleDoH#Name", ImGuiTableColumnFlags.WidthStretch);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                Utils.DrawIcon(new Vector2(20, 20), false, Utils.GetRoleIcon(5));
+                //Utils.DrawIcon(new Vector2(20, 20), false, Utils.GetRoleIcon(5));
+                Utils.DrawRoleTexture(ref rolesTextureWrap, RoleIcon.Crafter, new Vector2(20, 20));
                 ImGui.TableSetColumnIndex(1);
                 ImGui.TextUnformatted($"{Utils.GetAddonString(802)}");
 
@@ -767,7 +802,8 @@ public class JobsWindow : Window, IDisposable
                 ImGui.TableSetupColumn("###CharactersJobs#DoL#RoleDoL#Name", ImGuiTableColumnFlags.WidthStretch);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                Utils.DrawIcon(new Vector2(20, 20), false, Utils.GetRoleIcon(6));
+                //Utils.DrawIcon(new Vector2(20, 20), false, Utils.GetRoleIcon(6));
+                Utils.DrawRoleTexture(ref rolesTextureWrap, RoleIcon.Gatherer, new Vector2(20, 20));
                 ImGui.TableSetColumnIndex(1);
                 ImGui.TextUnformatted($"{Utils.GetAddonString(803)}");
 
@@ -1127,10 +1163,10 @@ public class JobsWindow : Window, IDisposable
     private void DrawJob(Job job, ClassJob job_id, string tooltip, bool active)
     {
         //Plugin.Log.Debug($"{job_id} {tooltip} {Utils.GetJobIconWithCornerSmall((uint)job_id)}");
-        Vector2 alpha = active switch
+        Vector4 alpha = active switch
         {
-            true => new Vector2(1, 1),
-            false => new Vector2(0.5f, 0.5f),
+            true => new Vector4(1, 1, 1, 1),
+            false => new Vector4(1, 1, 1, 0.5f),
         };
         if (ImGui.BeginTable("###CharactersJobs#JobLine", 2))
         {
@@ -1140,13 +1176,8 @@ public class JobsWindow : Window, IDisposable
             ImGui.TableSetColumnIndex(0);
             //Utils.DrawIcon( Plugin.DataManager, new Vector2(42, 42), false, Utils.GetJobIconWithCornerSmall((uint)job_id), alpha);
             // Todo: Fix alpha
-            Utils.DrawIcon(new Vector2(36, 36), false, Utils.GetJobIconWithCornerSmall((uint)job_id));
-            if (ImGui.IsItemHovered())
-            {
-                ImGui.BeginTooltip();
-                ImGui.TextUnformatted(tooltip);
-                ImGui.EndTooltip();
-            }
+            //Utils.DrawIcon(new Vector2(36, 36), false, Utils.GetJobIconWithCornerSmall((uint)job_id));
+            Utils.DrawIcon_test(_globalCache.IconStorage.LoadIcon(Utils.GetJobIconWithCornerSmall((uint)job_id)), new Vector2(36, 36), alpha);
             ImGui.TableSetColumnIndex(1);
             if (ImGui.BeginTable("###CharactersJobs#JobLevelNameExp", 2))
             {
@@ -1154,15 +1185,38 @@ public class JobsWindow : Window, IDisposable
                 ImGui.TableSetupColumn("###CharactersJobs#JobLevelNameExp#NameExp", ImGuiTableColumnFlags.WidthStretch);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                ImGui.TextUnformatted($"{job.Level}");
+                if (active)
+                    ImGui.TextUnformatted($"{job.Level}");
+                else
+                {
+                    ImGui.PushStyleVar(ImGuiStyleVar.Alpha, 0.5f);
+                    ImGui.TextUnformatted($"{job.Level}");
+                    ImGui.PopStyleVar();
+                }
                 ImGui.TableSetColumnIndex(1);
-                ImGui.TextUnformatted($"{Utils.GetJobNameFromId((uint)job_id)}");
+                //ImGui.TextUnformatted($"{Utils.GetJobNameFromId((uint)job_id)}");
+                if (active)
+                    ImGui.TextUnformatted($"{Utils.Capitalize(_globalCache.JobStorage.GetName((uint)job_id))}");
+                else
+                {
+                    ImGui.PushStyleVar(ImGuiStyleVar.Alpha, 0.5f);
+                    ImGui.TextUnformatted($"{Utils.Capitalize(_globalCache.JobStorage.GetName((uint)job_id))}");
+                    ImGui.PopStyleVar();
+                }
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(1);
-                Utils.DrawLevelProgressBar(job.Exp, Utils.GetJobNextLevelExp(job.Level), tooltip);
+                //Utils.DrawLevelProgressBar(job.Exp, Utils.GetJobNextLevelExp(job.Level), tooltip);
+                bool maxLevel = (job_id == ClassJob.BLU) ? job.Level == 80 : job.Level == 90;
+                Utils.DrawLevelProgressBar(job.Exp, _globalCache.JobStorage.GetNextLevelExp(job.Level), tooltip, active, maxLevel);
                 ImGui.EndTable();
             }
             ImGui.EndTable();
+        }
+        if (ImGui.IsItemHovered())
+        {
+            ImGui.BeginTooltip();
+            ImGui.TextUnformatted(tooltip);
+            ImGui.EndTooltip();
         }
     }
 }

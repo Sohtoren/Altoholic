@@ -17,6 +17,7 @@ public class MainWindow : Window, IDisposable
     private CurrenciesWindow currenciesWindow { get; init; }
     private InventoriesWindow inventoriesWindow { get; init; }
     private RetainersWindow retainersWindow { get; init; }
+    private CollectionWindow collectionWindow { get; init; }
     private ConfigWindow configWindow { get; init; }
 
     private ClientLanguage currentLocale;
@@ -30,6 +31,7 @@ public class MainWindow : Window, IDisposable
         CurrenciesWindow currenciesWindow,
         InventoriesWindow inventoriesWindow,
         RetainersWindow retainersWindow,
+        CollectionWindow collectionWindow,
         ConfigWindow configWindow/*,
         ClientLanguage currentLocale*/
     )
@@ -48,6 +50,7 @@ public class MainWindow : Window, IDisposable
         this.currenciesWindow = currenciesWindow;
         this.inventoriesWindow = inventoriesWindow;
         this.retainersWindow = retainersWindow;
+        this.collectionWindow = collectionWindow;
         this.configWindow = configWindow;
     }
 
@@ -60,6 +63,7 @@ public class MainWindow : Window, IDisposable
         jobsWindow.IsOpen = false;
         inventoriesWindow.IsOpen = false;
         retainersWindow.IsOpen = false;
+        collectionWindow.IsOpen = false;
         configWindow.IsOpen = false;
     }
 
@@ -121,7 +125,24 @@ public class MainWindow : Window, IDisposable
                 retainersWindow.Draw();
             }
         };
-        
+
+        using (var collectionTab = ImRaii.TabItem($"{((currentLocale == ClientLanguage.French) ? Utils.GetAddonString(9515) : Utils.GetAddonString(12790))}")) //Pet&Mount&Orchestrion
+        {
+            if (collectionTab.Success)
+            {
+                //3 tabs, pets, mount & orchestrion with list
+                collectionWindow.Draw();
+            }
+        };
+
+        using (var progressTab = ImRaii.TabItem($"Progress"))
+        {
+            if (progressTab.Success)
+            {
+                //Double list like retainers, second list is the progress list (msq, event, yokai, trials,etc)
+            }
+        };
+
         using (var settingsTab = ImRaii.TabItem($"{Utils.GetAddonString(10119)}"))
         {
             if (settingsTab.Success)
@@ -129,57 +150,6 @@ public class MainWindow : Window, IDisposable
                 configWindow.Draw();
             }
         };
-
-        /*if (ImGui.BeginTabBar($"###MainWindow#Tabs"))
-        {
-            if (ImGui.BeginTabItem($"Characters"))
-            {
-                charactersWindow.Draw();
-                ImGui.EndTabItem();
-            }
-
-            if (ImGui.BeginTabItem($"Details"))
-            {
-                detailsWindow.Draw();
-                ImGui.EndTabItem();
-            }
-
-            if (ImGui.BeginTabItem($"{Utils.GetAddonString(760)}"))
-            {
-                jobsWindow.Draw();
-                ImGui.EndTabItem();
-            }
-
-            if (ImGui.BeginTabItem($"Currencies"))
-            {
-                currenciesWindow.Draw();
-                ImGui.EndTabItem();
-            }
-
-            /*if (ImGui.BeginTabItem($"Bags")) //358
-            {
-                ImGui.EndTabItem();
-            }
-        
-            if (ImGui.BeginTabItem($"Collection")) //Pet&Mount
-            {
-                ImGui.EndTabItem();
-            }
-
-            if (ImGui.BeginTabItem($"Retainers"))
-            {
-                ImGui.EndTabItem();
-            }
-
-            if (ImGui.BeginTabItem($"Reputations")) // 102512
-            {
-                ImGui.EndTabItem();
-            }
-
-            if (ImGui.BeginTabItem($"Progress"))
-            {
-                ImGui.EndTabItem();
-            }*/
 
         //ImGui.EndTabBar();
         /*bool val = true;

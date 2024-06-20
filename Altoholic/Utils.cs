@@ -1,34 +1,26 @@
-﻿using Altoholic.Models;
+﻿using Altoholic.Cache;
+using Altoholic.Models;
 using Dalamud;
 using Dalamud.Game.Text;
-using Dalamud.Interface;
 using Dalamud.Interface.Internal;
-using Dalamud.Interface.Utility;
-using Dalamud.Plugin.Services;
-using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.Game;
-using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
-using FFXIVClientStructs.FFXIV.Common.Component.BGCollision;
 using FFXIVClientStructs.FFXIV.Common.Math;
-using FFXIVClientStructs.FFXIV.Component.GUI;
 using ImGuiNET;
+using Lumina.Excel.GeneratedSheets;
 using System;
-using System.Buffers.Text;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using static Dalamud.Plugin.Services.ITextureProvider;
-using static Lumina.Data.Parsing.Layer.LayerCommon;
-using static Lumina.Data.Parsing.Uld.NodeData;
 
 namespace Altoholic
 {
     internal class Utils
     {
         private const uint FALLBACK_ICON = 055396;
+
         public static void DrawItemIcon(Vector2 icon_size, bool hq, uint item_id)
         {
-            if(Plugin.TextureProvider is null || Plugin.DataManager is null || Plugin.Log is null) return;
+            if (Plugin.TextureProvider is null || Plugin.DataManager is null || Plugin.Log is null) return;
             Lumina.Excel.ExcelSheet<Lumina.Excel.GeneratedSheets.Item>? ditm = Plugin.DataManager.GetExcelSheet<Lumina.Excel.GeneratedSheets.Item>(GetLocale());
             if (ditm != null)
             {
@@ -49,7 +41,7 @@ namespace Altoholic
         }
         public static void DrawEventItemIcon(Vector2 icon_size, bool hq, uint item_id)
         {
-            if(Plugin.TextureProvider is null || Plugin.DataManager is null || Plugin.Log is null) return;
+            if (Plugin.TextureProvider is null || Plugin.DataManager is null || Plugin.Log is null) return;
             Lumina.Excel.ExcelSheet<Lumina.Excel.GeneratedSheets.EventItem>? deitm = Plugin.DataManager.GetExcelSheet<Lumina.Excel.GeneratedSheets.EventItem>(GetLocale());
             if (deitm != null)
             {
@@ -68,7 +60,7 @@ namespace Altoholic
                 }
             }
         }
-        
+
         public static void DrawIcon(Vector2 icon_size, bool hq, uint icon_id)
         {
             if (Plugin.TextureProvider is null  /*||Plugin.Log is null*/) return;
@@ -90,7 +82,7 @@ namespace Altoholic
             if (icon != null)
             {
                 //ImGui.Image(icon.ImGuiHandle, new Vector2(icon.Width, icon.Height));
-                ImGui.Image(icon.ImGuiHandle, icon_size, new Vector2(0,0), alpha);
+                ImGui.Image(icon.ImGuiHandle, icon_size, new Vector2(0, 0), alpha);
             }
         }
 
@@ -214,7 +206,7 @@ namespace Altoholic
             };*/
         }
 
-        private static ClientLanguage GetLocale()
+        public static ClientLanguage GetLocale()
         {
             var config = Plugin.PluginInterface.GetPluginConfig() as Configuration;
             return (config is not null) ? config.Language : ClientLanguage.English;
@@ -230,10 +222,10 @@ namespace Altoholic
                     return (gender == 0) ? lumina.Masculine : lumina.Feminine;
             }
             return string.Empty;
-           /*if (gender == 0)
-                return Plugin.DataManager.GetExcelSheet<Lumina.Excel.GeneratedSheets.Tribe>(GetLocale()).GetRow((uint)tribe)!.Masculine;
-            else
-                return Plugin.DataManager.GetExcelSheet<Lumina.Excel.GeneratedSheets.Tribe>(GetLocale()).GetRow((uint)tribe)!.Feminine;*/
+            /*if (gender == 0)
+                 return Plugin.DataManager.GetExcelSheet<Lumina.Excel.GeneratedSheets.Tribe>(GetLocale()).GetRow((uint)tribe)!.Masculine;
+             else
+                 return Plugin.DataManager.GetExcelSheet<Lumina.Excel.GeneratedSheets.Tribe>(GetLocale()).GetRow((uint)tribe)!.Feminine;*/
             /*return tribe switch
             {
                 1 => "Midlander",
@@ -259,7 +251,7 @@ namespace Altoholic
         public static string GetTown(int town)
         {
             if (Plugin.DataManager is null || Plugin.Log is null) return string.Empty;
-            Lumina.Excel.ExcelSheet<Lumina.Excel.GeneratedSheets.Town>? dt= Plugin.DataManager.GetExcelSheet<Lumina.Excel.GeneratedSheets.Town>(GetLocale());
+            Lumina.Excel.ExcelSheet<Lumina.Excel.GeneratedSheets.Town>? dt = Plugin.DataManager.GetExcelSheet<Lumina.Excel.GeneratedSheets.Town>(GetLocale());
             if (dt != null)
             {
                 Lumina.Excel.GeneratedSheets.Town? lumina = dt.GetRow((uint)town);
@@ -277,7 +269,7 @@ namespace Altoholic
                 _ => string.Empty,
             };*/
         }
-        
+
         public static uint GetTownIcon(int town)
         {
             return town switch
@@ -373,7 +365,7 @@ namespace Altoholic
             /*var lumina = Plugin.DataManager.GetExcelSheet<Lumina.Excel.GeneratedSheets.GrandCompany>(GetLocale()).GetRow((uint)id)!;
             return lumina.Name;*/
         }
-        
+
         public static uint GetGrandCompanyIcon(int company)
         {
             return company switch
@@ -639,7 +631,7 @@ namespace Altoholic
             }
             return null;
         }
-        
+
         public static Lumina.Excel.GeneratedSheets.EventItem? GetEventItemFromId(uint id)
         {
             if (Plugin.DataManager is null || Plugin.Log is null) return null;
@@ -708,13 +700,13 @@ namespace Altoholic
         {
             if (Plugin.DataManager is null || Plugin.Log is null) return string.Empty;
             //Plugin.Log.Debug($"GetItemNameFromId : {id}");
-            
+
             Lumina.Excel.GeneratedSheets.ClassJob? lumina = GetClassJobFromId(id);
             if (lumina != null)
             {
                 return (abbreviation) ? lumina.Abbreviation : Capitalize(lumina.Name);
             }
-            
+
             return string.Empty;
         }
 
@@ -972,15 +964,23 @@ namespace Altoholic
             };
         }
 
-        public static void DrawLevelProgressBar(int exp, int nextExp, string jobFullname)
+        public static void DrawLevelProgressBar(int exp, int nextExp, string jobFullname, bool active, bool isMax)
         {
             float progress = (float)exp / nextExp;
-            ImGui.ProgressBar(progress, new Vector2(150, 10), "");
+            if (active)
+            {
+                ImGui.ProgressBar(progress, new Vector2(150, 10), "");
+            }
+            else
+            {
+                ImGui.PushStyleVar(ImGuiStyleVar.Alpha, 0.5f);
+                ImGui.ProgressBar(progress, new Vector2(150, 10), "");
+                ImGui.PopStyleVar();
+            }
             if (ImGui.IsItemHovered())
             {
-                ImGui.BeginTooltip();
-                ImGui.TextUnformatted($"{jobFullname} {exp}/{nextExp}");
-                ImGui.EndTooltip();
+                if (active && !isMax)
+                    ImGui.TextUnformatted($"{exp}/{nextExp}");
             }
         }
 
@@ -1085,7 +1085,8 @@ namespace Altoholic
             };
         }
 
-        public static void DrawGear(List<Gear> gears, uint job, int jobLevel, int middleWidth, int middleHeigth, bool retainer = false, int maxLevel = 0)
+        //public static void DrawGear(List<Gear> gears, uint job, int jobLevel, int middleWidth, int middleHeigth, bool retainer = false, int maxLevel = 0)
+        public static void DrawGear(ref GlobalCache _globalCache, ref Dictionary<GearSlot, IDalamudTextureWrap?> defaultTextures, List<Gear> gears, uint job, int jobLevel, int middleWidth, int middleHeigth, bool retainer = false, int maxLevel = 0)
         {
             if (gears.Count == 0) return;
             if (ImGui.BeginTable("###GearTableHeader", 3))
@@ -1095,7 +1096,8 @@ namespace Altoholic
                 ImGui.TableSetupColumn("###GearTableHeader#RoleIconNameColumn", ImGuiTableColumnFlags.WidthFixed, 100);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                DrawGearPiece(gears, GearSlot.MH, GetAddonString(11524), new Vector2(40, 40), 13775);
+                //DrawGearPiece(ref _globalCache, gears, GearSlot.MH, GetAddonString(11524), new Vector2(40, 40), 13775);
+                DrawGearPiece(ref _globalCache, gears, GearSlot.MH, GetAddonString(11524), new Vector2(40, 40), /*ref*/ defaultTextures[GearSlot.MH], defaultTextures[GearSlot.EMPTY]);
                 ImGui.TableSetColumnIndex(1);
                 ImGui.TextUnformatted($"{GetAddonString(335)} {jobLevel}");
                 if (ImGui.BeginTable("###GearTable#RoleIconNameTable", 2))
@@ -1104,14 +1106,16 @@ namespace Altoholic
                     ImGui.TableSetupColumn("###GearTable#RoleColumn#RoleName", ImGuiTableColumnFlags.WidthStretch);
                     ImGui.TableNextRow();
                     ImGui.TableSetColumnIndex(0);
-                    DrawIcon(new Vector2(40, 40), false, GetJobIcon(job));
+                    //DrawIcon(new Vector2(40, 40), false, GetJobIcon(job));
+                    DrawIcon_test(_globalCache.IconStorage.LoadIcon(GetJobIcon(job)), new Vector2(40, 40));
                     ImGui.TableSetColumnIndex(1);
                     ImGui.TextUnformatted($"{GetJobNameFromId(job)}");
 
                     ImGui.EndTable();
                 }
                 ImGui.TableSetColumnIndex(2);
-                ImGui.TextUnformatted($"{GetAddonString(2325).Replace("[","").Replace("]", "")}{maxLevel}");
+                if(retainer)
+                    ImGui.TextUnformatted($"{GetAddonString(2325).Replace("[", "").Replace("]", "")}{maxLevel}");
 
                 ImGui.EndTable();
             }
@@ -1128,28 +1132,34 @@ namespace Altoholic
                     ImGui.TableSetupColumn("###GearTable#LeftGearColum#Column", ImGuiTableColumnFlags.WidthFixed, 42);
                     ImGui.TableNextRow();
                     ImGui.TableSetColumnIndex(0);
-                    DrawGearPiece(gears, GearSlot.HEAD, GetAddonString(11525), new Vector2(40, 40), 10032);
+                    //DrawGearPiece(ref _globalCache, gears, GearSlot.HEAD, GetAddonString(11525), new Vector2(40, 40), 10032);
+                    DrawGearPiece(ref _globalCache, gears, GearSlot.HEAD, GetAddonString(11525), new Vector2(40, 40), /*ref*/ defaultTextures[GearSlot.HEAD], defaultTextures[GearSlot.EMPTY]);
 
                     ImGui.TableNextRow();
                     ImGui.TableSetColumnIndex(0);
-                    DrawGearPiece(gears, GearSlot.BODY, GetAddonString(11526), new Vector2(40, 40), 10033);
+                    //DrawGearPiece(ref _globalCache, gears, GearSlot.BODY, GetAddonString(11526), new Vector2(40, 40), 10033);
+                    DrawGearPiece(ref _globalCache, gears, GearSlot.BODY, GetAddonString(11526), new Vector2(40, 40), /*ref*/ defaultTextures[GearSlot.BODY], defaultTextures[GearSlot.EMPTY]);
 
                     ImGui.TableNextRow();
                     ImGui.TableSetColumnIndex(0);
-                    DrawGearPiece(gears, GearSlot.HANDS, GetAddonString(11527), new Vector2(40, 40), 10034);
+                    //DrawGearPiece(ref _globalCache, gears, GearSlot.HANDS, GetAddonString(11527), new Vector2(40, 40), 10034);
+                    DrawGearPiece(ref _globalCache, gears, GearSlot.HANDS, GetAddonString(11527), new Vector2(40, 40), /*ref*/ defaultTextures[GearSlot.HANDS], defaultTextures[GearSlot.EMPTY]);
 
                     ImGui.TableNextRow();
                     ImGui.TableSetColumnIndex(0);
-                    DrawGearPiece(gears, GearSlot.LEGS, GetAddonString(11528), new Vector2(40, 40), 10035);
+                    //DrawGearPiece(ref _globalCache, gears, GearSlot.LEGS, GetAddonString(11528), new Vector2(40, 40), 10035);
+                    DrawGearPiece(ref _globalCache, gears, GearSlot.LEGS, GetAddonString(11528), new Vector2(40, 40), /*ref*/ defaultTextures[GearSlot.LEGS], defaultTextures[GearSlot.EMPTY]);
 
                     ImGui.TableNextRow();
                     ImGui.TableSetColumnIndex(0);
-                    DrawGearPiece(gears, GearSlot.FEET, GetAddonString(11529), new Vector2(40, 40), 10035);
+                    //DrawGearPiece(ref _globalCache, gears, GearSlot.FEET, GetAddonString(11529), new Vector2(40, 40), 10035);
+                    DrawGearPiece(ref _globalCache, gears, GearSlot.FEET, GetAddonString(11529), new Vector2(40, 40), /*ref*/ defaultTextures[GearSlot.FEET], defaultTextures[GearSlot.EMPTY]);
                     ImGui.EndTable();
                 }
 
                 ImGui.TableSetColumnIndex(1);
-                DrawIcon(new Vector2(middleWidth, middleHeigth), false, 055396);
+                //DrawIcon(new Vector2(middleWidth, middleHeigth), false, 055396);
+                DrawIcon_test(_globalCache.IconStorage.LoadIcon(055396), new Vector2(middleWidth, middleHeigth));
 
                 ImGui.TableSetColumnIndex(2);
                 if (ImGui.BeginTable("###GearTable#RightGearColumn", 1))
@@ -1157,43 +1167,111 @@ namespace Altoholic
                     ImGui.TableSetupColumn("###GearTable#RightGearColum#Column", ImGuiTableColumnFlags.WidthFixed, 42);
                     ImGui.TableNextRow();
                     ImGui.TableSetColumnIndex(0);
-                    DrawGearPiece(gears, GearSlot.OH, GetAddonString(12227), new Vector2(40, 40), 30067);
+                    //DrawGearPiece(ref _globalCache, gears, GearSlot.OH, GetAddonString(12227), new Vector2(40, 40), 30067);
+                    DrawGearPiece(ref _globalCache, gears, GearSlot.OH, GetAddonString(12227), new Vector2(40, 40), /*ref*/ defaultTextures[GearSlot.OH], defaultTextures[GearSlot.EMPTY]);
 
                     ImGui.TableNextRow();
                     ImGui.TableSetColumnIndex(0);
-                    DrawGearPiece(gears, GearSlot.EARS, GetAddonString(11530), new Vector2(40, 40), 9293);
+                    //DrawGearPiece(ref _globalCache, gears, GearSlot.EARS, GetAddonString(11530), new Vector2(40, 40), 9293);
+                    DrawGearPiece(ref _globalCache, gears, GearSlot.EARS, GetAddonString(11530), new Vector2(40, 40), /*ref*/ defaultTextures[GearSlot.EARS], defaultTextures[GearSlot.EMPTY]);
 
                     ImGui.TableNextRow();
                     ImGui.TableSetColumnIndex(0);
-                    DrawGearPiece(gears, GearSlot.NECK, GetAddonString(11531), new Vector2(40, 40), 9292);
+                    //DrawGearPiece(ref _globalCache, gears, GearSlot.NECK, GetAddonString(11531), new Vector2(40, 40), 9292);
+                    DrawGearPiece(ref _globalCache, gears, GearSlot.NECK, GetAddonString(11531), new Vector2(40, 40), /*ref*/ defaultTextures[GearSlot.NECK], defaultTextures[GearSlot.EMPTY]);
 
                     ImGui.TableNextRow();
                     ImGui.TableSetColumnIndex(0);
-                    DrawGearPiece(gears, GearSlot.WRISTS, GetAddonString(11532), new Vector2(40, 40), 9294);
+                    //DrawGearPiece(ref _globalCache, gears, GearSlot.WRISTS, GetAddonString(11532), new Vector2(40, 40), 9294);
+                    DrawGearPiece(ref _globalCache, gears, GearSlot.WRISTS, GetAddonString(11532), new Vector2(40, 40), /*ref*/ defaultTextures[GearSlot.WRISTS], defaultTextures[GearSlot.EMPTY]);
 
                     ImGui.TableNextRow();
                     ImGui.TableSetColumnIndex(0);
-                    DrawGearPiece(gears, GearSlot.RIGHT_RING, GetAddonString(11533), new Vector2(40, 40), 9295);
+                    //DrawGearPiece(ref _globalCache, gears, GearSlot.RIGHT_RING, GetAddonString(11533), new Vector2(40, 40), 9295);
+                    DrawGearPiece(ref _globalCache, gears, GearSlot.RIGHT_RING, GetAddonString(11533), new Vector2(40, 40), /*ref*/ defaultTextures[GearSlot.RIGHT_RING], defaultTextures[GearSlot.EMPTY]);
 
                     ImGui.TableNextRow();
                     ImGui.TableSetColumnIndex(0);
-                    DrawGearPiece(gears, GearSlot.LEFT_RING, GetAddonString(11534), new Vector2(40, 40), 9295);
+                    //DrawGearPiece(ref _globalCache, gears, GearSlot.LEFT_RING, GetAddonString(11534), new Vector2(40, 40), 9295);
+                    DrawGearPiece(ref _globalCache, gears, GearSlot.LEFT_RING, GetAddonString(11534), new Vector2(40, 40), /*ref*/ defaultTextures[GearSlot.LEFT_RING], defaultTextures[GearSlot.EMPTY]);
 
                     ImGui.TableNextRow();
                     ImGui.TableSetColumnIndex(0);
-                    DrawGearPiece(gears, GearSlot.SOUL_CRYSTAL, GetAddonString(12238), new Vector2(40, 40), 55396);//Todo: Find Soul Crystal empty icon
+                    //DrawGearPiece(ref _globalCache, gears, GearSlot.SOUL_CRYSTAL, GetAddonString(12238), new Vector2(40, 40), 55396);//Todo: Find Soul Crystal empty icon
+                    DrawGearPiece(ref _globalCache, gears, GearSlot.SOUL_CRYSTAL, GetAddonString(12238), new Vector2(40, 40), /*ref*/ defaultTextures[GearSlot.SOUL_CRYSTAL], defaultTextures[GearSlot.EMPTY]);
                     ImGui.EndTable();
                 }
                 ImGui.EndTable();
             }
         }
 
-        public static void DrawGearPiece(List<Gear> Gear, GearSlot slot, string tooltip, Vector2 icon_size, uint fallback_icon)
+        public static (Vector2 uv0, Vector2 uv1) GetTextureCoordinate(Vector2 texture_size, int u, int v, int w, int h)
         {
+            float u1 = (u + w) / texture_size.X;
+            float v1 = (v + h) / texture_size.Y;
+            Vector2 uv0 = new(u / texture_size.X, v / texture_size.Y);
+            Vector2 uv1 = new(u1, v1);
+            return (uv0, uv1);
+        }
+
+        public static void DrawRoleTexture(ref IDalamudTextureWrap texture, RoleIcon role, Vector2 size)
+        {
+            var (uv0, uv1) = role switch
+            {
+                RoleIcon.Tank => GetTextureCoordinate(texture.Size, 100, 0, 40, 40),
+                RoleIcon.Heal => GetTextureCoordinate(texture.Size, 140, 0, 40, 40),
+                RoleIcon.Melee => GetTextureCoordinate(texture.Size, 180, 0, 40, 40),
+                RoleIcon.Ranged => GetTextureCoordinate(texture.Size, 220, 0, 40, 40),
+                RoleIcon.Caster => GetTextureCoordinate(texture.Size, 100, 40, 40, 40),
+                RoleIcon.Crafter => GetTextureCoordinate(texture.Size, 140, 40, 40, 40),
+                RoleIcon.Gatherer => GetTextureCoordinate(texture.Size, 180, 40, 40, 40),
+                RoleIcon.DoWDoM => GetTextureCoordinate(texture.Size, 136, 80, 36, 36),
+                RoleIcon.DoHDoL => GetTextureCoordinate(texture.Size, 208, 80, 36, 36),
+                _ => GetTextureCoordinate(texture.Size, 0, 0, 0, 0)
+            };
+            ImGui.Image(texture.ImGuiHandle, size, uv0, uv1);
+        }
+        /*public static void DrawdefaultTextures[GearSlot.EMPTY](ref IDalamudTextureWrap texture, GearSlot part)
+        {
+            Vector2 size = new(64, 64);
+            var (uv0, uv1) = part switch
+            {
+                GearSlot.MH => GetTextureCoordinate(texture.Size, 0, 144, 64, 64),
+                GearSlot.HEAD => GetTextureCoordinate(texture.Size, 128, 144, 64, 64),
+                GearSlot.BODY => GetTextureCoordinate(texture.Size, 192, 144, 64, 64),
+                GearSlot.HANDS => GetTextureCoordinate(texture.Size, 256, 144, 64, 64),
+                GearSlot.BELT => GetTextureCoordinate(texture.Size, 320, 144, 64, 64),
+                GearSlot.LEGS => GetTextureCoordinate(texture.Size, 384, 144, 64, 64),
+                GearSlot.FEET => GetTextureCoordinate(texture.Size, 0, 208, 64, 64),
+                GearSlot.OH => GetTextureCoordinate(texture.Size, 64, 144, 64, 64),
+                GearSlot.EARS => GetTextureCoordinate(texture.Size, 64, 208, 64, 64),
+                GearSlot.NECK => GetTextureCoordinate(texture.Size, 128, 208, 64, 64),
+                GearSlot.WRISTS => GetTextureCoordinate(texture.Size, 192, 208, 64, 64),
+                GearSlot.LEFT_RING => GetTextureCoordinate(texture.Size, 256, 208, 64, 64),
+                GearSlot.RIGHT_RING => GetTextureCoordinate(texture.Size, 256, 208, 64, 64),
+                GearSlot.SOUL_CRYSTAL => GetTextureCoordinate(texture.Size, 384, 208, 64, 64),
+                _ => GetTextureCoordinate(texture.Size, 0,0,0,0)
+            };
+            ImGui.Image(texture.ImGuiHandle, size, uv0, uv1, Vector4.One with { W = 0.33f });
+        }
+        */
+        public static void DrawGearPiece(ref GlobalCache _globalCache, List<Gear> Gear, GearSlot slot, string tooltip, Vector2 icon_size, /*uint fallback_icon*/ /*ref*/ IDalamudTextureWrap? fallbackTexture, IDalamudTextureWrap? emptySlot)
+        {
+            if (fallbackTexture is null || emptySlot is null) return;
             var GEAR = Gear.First(g => g.Slot == (short)slot);
+            //Plugin.Log.Debug($"{slot}, {GEAR.ItemId}");
             if (GEAR == null || GEAR.ItemId == 0)
             {
-                DrawItemIcon(icon_size, false, fallback_icon);
+                //DrawItemIcon(icon_size, false, fallback_icon);
+                /*var i = _itemStorage.LoadItem(fallback_icon);
+                if (i == null) return;
+                DrawIcon_test(_globalCache.IconStorage.LoadIcon(i.Icon), icon_size);*/
+                //ImGui.Image(fallbackTexture.ImGuiHandle, icon_size, Vector2.Zero, Vector2.One, Vector4.One with { W = 0.33f });
+                var p = ImGui.GetCursorPos();
+                ImGui.Image(emptySlot.ImGuiHandle, new Vector2(42, 42));
+                ImGui.SetCursorPos(new Vector2(p.X + 1, p.Y+1));
+                ImGui.Image(fallbackTexture.ImGuiHandle, new Vector2(40, 40));
+                //DrawdefaultTextures[GearSlot.EMPTY](ref fallbackTexture, slot);
                 if (ImGui.IsItemHovered())
                 {
                     ImGui.BeginTooltip();
@@ -1203,19 +1281,22 @@ namespace Altoholic
             }
             else
             {
-                DrawItemIcon(icon_size, GEAR.HQ, GEAR.ItemId);
+                //DrawItemIcon(icon_size, GEAR.HQ, GEAR.ItemId);
+                var i = _globalCache.ItemStorage.LoadItem(GEAR.ItemId);
+                if(i == null) return;
+                DrawIcon_test(_globalCache.IconStorage.LoadIcon(i.Icon, GEAR.HQ), icon_size);
                 if (ImGui.IsItemHovered())
                 {
-                    DrawGearTooltip(GEAR);
+                    DrawGearTooltip(ref _globalCache, GEAR, i);
                 }
             }
         }
-        public static void DrawGearTooltip(Gear item)
+        public static void DrawGearTooltip(ref GlobalCache _globalCache, Gear item, Item dbItem)
         {
             if (Plugin.TextureProvider == null || Plugin.DataManager is null || Plugin.Log is null) return;
-            Lumina.Excel.GeneratedSheets.Item? dbItem = GetItemFromId(item.ItemId);
+            //Lumina.Excel.GeneratedSheets.Item? dbItem = GetItemFromId(item.ItemId);
             if (dbItem == null) return;
-            Lumina.Excel.GeneratedSheets.ItemLevel? ilvl = GetItemLevelFromId(dbItem.LevelItem.Row);
+            ItemLevel? ilvl = GetItemLevelFromId(dbItem.LevelItem.Row);
             if (ilvl == null) return;
 
             ImGui.BeginTooltip();
@@ -1255,7 +1336,8 @@ namespace Altoholic
                 ImGui.TableSetupColumn($"##DrawItemTooltip#Item_{item.ItemId}#Name", ImGuiTableColumnFlags.WidthFixed, 305);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                DrawItemIcon(new Vector2(40, 40), item.HQ, item.ItemId);
+                //DrawItemIcon(new Vector2(40, 40), item.HQ, item.ItemId);
+                DrawIcon_test(_globalCache.IconStorage.LoadIcon(dbItem.Icon, item.HQ), new Vector2(40,40));
                 ImGui.TableSetColumnIndex(1);
                 ImGui.TextUnformatted($"{dbItem.Name} {(item.HQ ? (char)SeIconChar.HighQuality : "")}");
                 if (dbItem.IsGlamourous)
@@ -1296,7 +1378,7 @@ namespace Altoholic
             }
             if (item.Stain > 0)
             {
-                Lumina.Excel.GeneratedSheets.Stain? dye = GetStainFromId(item.Stain);
+                Stain? dye = GetStainFromId(item.Stain);
                 if (dye != null)
                 {
                     ImGui.TextUnformatted($"{dye.Name}");
@@ -1851,6 +1933,19 @@ namespace Altoholic
             }
             return null;
         }
+        
+        public static Lumina.Excel.GeneratedSheets.ClassJob? GetClassJobFromId(uint? id, Dalamud.ClientLanguage clientLanguage)
+        {
+            if (Plugin.DataManager is null || Plugin.Log is null || id is null) return null;
+            //Plugin.Log.Debug($"GetItemNameFromId : {id}");
+            Lumina.Excel.ExcelSheet<Lumina.Excel.GeneratedSheets.ClassJob>? djc = Plugin.DataManager.GetExcelSheet<Lumina.Excel.GeneratedSheets.ClassJob>(clientLanguage);
+            if (djc != null)
+            {
+                Lumina.Excel.GeneratedSheets.ClassJob? lumina = djc.GetRow(id.Value);
+                return lumina;
+            }
+            return null;
+        }
 
         public static string GetItemRepairResource(uint id)
         {
@@ -1962,6 +2057,41 @@ namespace Altoholic
             dateTime = dateTime.AddSeconds(lastOnline).ToLocalTime();
             return dateTime.ToString();
         }
+
+
+
+        ////////////////////////Test
+        public static IDalamudTextureWrap? LoadIcon(uint icon_id, bool hq = false)
+        {
+            if (Plugin.TextureProvider is null  /*||Plugin.Log is null*/) return null;
+            if (icon_id == 0) icon_id = FALLBACK_ICON;
+            //Plugin.Log.Debug($"DrawIcon icon_id : {icon_id}");
+            return Plugin.TextureProvider.GetIcon(icon_id, hq ? IconFlags.ItemHighQuality : IconFlags.None);
+        }
+        public static void DrawIcon_test(IDalamudTextureWrap? icon, Vector2 icon_size)
+        {
+            if (icon != null)
+            {
+                ImGui.Image(icon.ImGuiHandle, icon_size);
+            }
+        }
+        public static void DrawIcon_test(IDalamudTextureWrap? icon, Vector2 icon_size, Vector4 alpha)
+        {
+            if (icon != null)
+            {
+                ImGui.Image(icon.ImGuiHandle, icon_size, Vector2.Zero, Vector2.One, alpha);
+            }
+        }// call this in the window constructor for all the images that won't change (gil, roles,classes,etc) and store them in global dictionary or something so it doesn't load them every draw
+
+        /*public static void DrawIcon_test(Vector2 icon_size, bool hq, uint icon_id)
+        {
+            var icon = LoadIcon(icon_id, hq);
+            if (icon != null)
+            {
+                ImGui.Image(icon.ImGuiHandle, icon_size);
+            }
+        }*/
+
     }
 }
 public static class StringExt

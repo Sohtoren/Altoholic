@@ -1,7 +1,9 @@
+using Altoholic.Cache;
 using Altoholic.Models;
 using CheapLoc;
 using Dalamud;
 using Dalamud.Game.Text;
+using Dalamud.Interface.Internal;
 using Dalamud.Interface.Windowing;
 using Dalamud.Plugin.Services;
 using ImGuiNET;
@@ -10,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using static FFXIVClientStructs.FFXIV.Client.Game.CurrencyManager;
 
 namespace Altoholic.Windows;
 
@@ -17,11 +20,12 @@ public class CharactersWindow : Window, IDisposable
 {
     private readonly Plugin plugin;
     private readonly LiteDatabase db;
-
+    private readonly GlobalCache _globalStorage;
     public CharactersWindow(
         Plugin plugin,
         string name,
-        LiteDatabase db
+        LiteDatabase db,
+        GlobalCache globalStorage
     )
         : base(name, ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse)
     {
@@ -32,22 +36,37 @@ public class CharactersWindow : Window, IDisposable
         };
         this.db = db;
         this.plugin = plugin;
+        this._globalStorage = globalStorage;
+
+        GilIcon = _globalStorage.IconStorage.LoadIcon(065002);
     }
 
     public Func<Character> GetPlayer { get; init; } = null!;
     public Func<List<Character>> GetOthersCharactersList { get; set; } = null!;
-    public long TotalGils { get; set; } = 0;
-    public uint TotalPlayed { get; set; } = 0;
-    public int TotalCharacters { get; set; } = 0;
-    public int TotalWorlds { get; set; } = 0;
+    private long TotalGils { get; set; } = 0;
+    private uint TotalPlayed { get; set; } = 0;
+    private int TotalCharacters { get; set; } = 0;
+    private int TotalWorlds { get; set; } = 0;
+
+    //public IDalamudTextureWrap? GilIcon { get; set; } = Utils.LoadIcon(065002);
+    private IDalamudTextureWrap? GilIcon { get; set; }
+
+    private Character? current_character_last_state {  get; set; }
 
     public override void Draw()
     {
         ClientStateExample();
     }
 
+    public override void OnClose()
+    {
+        Plugin.Log.Debug("CharactersWindow, OnClose() called");
+        current_character_last_state = null;
+    }
+
     public void Dispose()
     {
+        current_character_last_state = null;
     }
 
     public void ClientStateExample()
@@ -109,7 +128,8 @@ public class CharactersWindow : Window, IDisposable
                     ImGui.TableSetupColumn("###TotalCharacters#GilsTable#Amount", ImGuiTableColumnFlags.WidthFixed, 90);
                     ImGui.TableNextRow();
                     ImGui.TableSetColumnIndex(0);
-                    Utils.DrawIcon(new Vector2(18, 18), false, 065002);
+                    //Utils.DrawIcon(new Vector2(18, 18), false, 065002);
+                    Utils.DrawIcon_test(GilIcon, new Vector2(18, 18));
                     ImGui.TableSetColumnIndex(1);
                     var gilText = $"{TotalGils:N0}";
                     var posX = ImGui.GetCursorPosX() + ImGui.GetColumnWidth() - ImGui.CalcTextSize(gilText.ToString()).X - ImGui.GetScrollX() - (2 * ImGui.GetStyle().ItemSpacing.X);
@@ -174,7 +194,8 @@ public class CharactersWindow : Window, IDisposable
             ImGui.TableSetupColumn($"###Characters#Character#Gils#Amount#{character.Id}", ImGuiTableColumnFlags.WidthFixed, 90);
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
-            Utils.DrawIcon(new Vector2(18, 18), false, 065002);
+            //Utils.DrawIcon(new Vector2(18, 18), false, 065002);
+            Utils.DrawIcon_test(GilIcon, new Vector2(18, 18));
             ImGui.TableSetColumnIndex(1);
             if (character.Currencies is not null)
             {
@@ -263,6 +284,8 @@ public class CharactersWindow : Window, IDisposable
         return formatted;
     }
 
+    int called = 0;
+    bool others_drawn = false;
     private void DrawCharacters(List<Character> characters)
     {
         if(characters.Count == 0) return;
@@ -270,11 +293,24 @@ public class CharactersWindow : Window, IDisposable
         TotalPlayed = 0;
         TotalCharacters = characters.Count;
         TotalWorlds = characters.Select(c => c.HomeWorld).Distinct().Count();
-        for(var i = 0; i < characters.Count;i++)
-        {
-            TotalPlayed += characters[i].PlayTime;
-            DrawCharacter(i, characters[i]);
-        }
+
+        Character current_character = characters.First();
+        /*if (current_character_last_state == null || current_character_last_state != current_character)
+        {*/
+            DrawCharacter(0, current_character);
+            /*current_character_last_state = current_character;
+            called++;
+        }*/
+        //for(var i = 0; i < characters.Count;i++)
+        /*if (!others_drawn)
+        {*/
+            for (var i = 1; i < characters.Count; i++)
+            {
+                TotalPlayed += characters[i].PlayTime;
+                DrawCharacter(i, characters[i]);
+            }
+            /*others_drawn = true;
+        }*/
     }
     private string GetLastOnlineFormatted(long lastOnline/*, string firstname*/)
     {

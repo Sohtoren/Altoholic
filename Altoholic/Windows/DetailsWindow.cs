@@ -2,11 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using Altoholic.Cache;
 using Altoholic.Models;
 using Dalamud;
 using Dalamud.Game.Text;
+using Dalamud.Interface;
+using Dalamud.Interface.Internal;
 using Dalamud.Interface.Windowing;
 using Dalamud.Plugin.Services;
+using FFXIVClientStructs.FFXIV.Client.Game;
 using ImGuiNET;
 
 namespace Altoholic.Windows;
@@ -15,10 +19,12 @@ public class DetailsWindow : Window, IDisposable
 {
     private Plugin plugin;
     private ClientLanguage currentLocale;
+    private GlobalCache _globalCache;
 
     public DetailsWindow(
         Plugin plugin,
-        string name
+        string name,
+        GlobalCache globalCache
         ) 
         : base(
         name, ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse)
@@ -29,12 +35,31 @@ public class DetailsWindow : Window, IDisposable
             MaximumSize = new Vector2(float.MaxValue, float.MaxValue)
         };
         this.plugin = plugin;
+        this._globalCache = globalCache;
+
+        characterIcons = Plugin.PluginInterface.UiBuilder.LoadUld("ui/uld/Character.uld");
+        characterTextures.Add(GearSlot.MH, characterIcons.LoadTexturePart("ui/uld/Character_hr1.tex", 17));
+        characterTextures.Add(GearSlot.HEAD, characterIcons.LoadTexturePart("ui/uld/Character_hr1.tex", 19));
+        characterTextures.Add(GearSlot.BODY, characterIcons.LoadTexturePart("ui/uld/Character_hr1.tex", 20));
+        characterTextures.Add(GearSlot.HANDS, characterIcons.LoadTexturePart("ui/uld/Character_hr1.tex", 21));
+        characterTextures.Add(GearSlot.BELT, characterIcons.LoadTexturePart("ui/uld/Character_hr1.tex", 22));
+        characterTextures.Add(GearSlot.LEGS, characterIcons.LoadTexturePart("ui/uld/Character_hr1.tex", 23));
+        characterTextures.Add(GearSlot.FEET, characterIcons.LoadTexturePart("ui/uld/Character_hr1.tex", 24));
+        characterTextures.Add(GearSlot.OH, characterIcons.LoadTexturePart("ui/uld/Character_hr1.tex", 18));
+        characterTextures.Add(GearSlot.EARS, characterIcons.LoadTexturePart("ui/uld/Character_hr1.tex", 25));
+        characterTextures.Add(GearSlot.NECK, characterIcons.LoadTexturePart("ui/uld/Character_hr1.tex", 26));
+        characterTextures.Add(GearSlot.WRISTS, characterIcons.LoadTexturePart("ui/uld/Character_hr1.tex", 27));
+        characterTextures.Add(GearSlot.LEFT_RING, characterIcons.LoadTexturePart("ui/uld/Character_hr1.tex", 28));
+        characterTextures.Add(GearSlot.RIGHT_RING, characterIcons.LoadTexturePart("ui/uld/Character_hr1.tex", 28));
+        characterTextures.Add(GearSlot.SOUL_CRYSTAL, characterIcons.LoadTexturePart("ui/uld/Character_hr1.tex", 29));
+        characterTextures.Add(GearSlot.EMPTY, Plugin.TextureProvider.GetTextureFromGame("ui/uld/fourth/DragTargetA_hr1.tex"));
     }
 
     public Func<Character>? GetPlayer { get; init; }
     public Func<List<Character>>? GetOthersCharactersList { get; set; }
     private Character? current_character = null;
-
+    private readonly UldWrapper characterIcons;
+    private Dictionary<GearSlot, IDalamudTextureWrap?> characterTextures = [];
 
     public override void OnClose()
     {
@@ -45,6 +70,8 @@ public class DetailsWindow : Window, IDisposable
     public void Dispose()
     {
         current_character = null;
+        foreach(var loadedTexture in characterTextures) loadedTexture.Value?.Dispose();
+        characterIcons.Dispose();
     }
 
     public override void Draw()
@@ -120,7 +147,7 @@ public class DetailsWindow : Window, IDisposable
                 ImGui.EndTabBar();
             }
             ImGui.TableSetColumnIndex(1);
-            Utils.DrawGear(selected_character.Gear, selected_character.LastJob, selected_character.LastJobLevel, 300, 350);
+            Utils.DrawGear(ref _globalCache, ref characterTextures, selected_character.Gear, selected_character.LastJob, selected_character.LastJobLevel, 300, 350);
 
             ImGui.EndTable();
         }
@@ -232,7 +259,8 @@ public class DetailsWindow : Window, IDisposable
                 ImGui.TableSetupColumn("###ProfileTable#GrandCompanyTable#Rank", ImGuiTableColumnFlags.WidthStretch);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                Utils.DrawIcon(new Vector2(40, 40), false, Utils.GetGrandCompanyIcon(selected_character.Profile.Grand_Company));
+                //Utils.DrawIcon(new Vector2(40, 40), false, Utils.GetGrandCompanyIcon(selected_character.Profile.Grand_Company));
+                Utils.DrawIcon_test(_globalCache.IconStorage.LoadIcon(Utils.GetGrandCompanyIcon(selected_character.Profile.Grand_Company)), new Vector2(40, 40));
 
                 ImGui.TableSetColumnIndex(1);
                 if (ImGui.BeginTable("###ProfileTable#GrandCompanyTable#RankTable", 2))
@@ -244,7 +272,8 @@ public class DetailsWindow : Window, IDisposable
                     ImGui.TextUnformatted($"{Utils.GetGrandCompany(selected_character.Profile.Grand_Company)}");
                     ImGui.TextUnformatted($"{Utils.Capitalize(Utils.GetGrandCompanyRank(selected_character.Profile.Grand_Company, selected_character.Profile.Grand_Company_Rank, selected_character.Profile.Gender))}");
                     ImGui.TableSetColumnIndex(1);
-                    Utils.DrawIcon(new Vector2(48, 48), false, Utils.GetGrandCompanyRankIcon(selected_character.Profile.Grand_Company, selected_character.Profile.Grand_Company_Rank));
+                    //Utils.DrawIcon(new Vector2(48, 48), false, Utils.GetGrandCompanyRankIcon(selected_character.Profile.Grand_Company, selected_character.Profile.Grand_Company_Rank));
+                    Utils.DrawIcon_test(_globalCache.IconStorage.LoadIcon(Utils.GetGrandCompanyRankIcon(selected_character.Profile.Grand_Company, selected_character.Profile.Grand_Company_Rank)), new Vector2(48, 48));
 
                     ImGui.EndTable();
                 }
@@ -265,7 +294,8 @@ public class DetailsWindow : Window, IDisposable
             ImGui.TableSetupColumn("###ProfileTable#ProfileColumn#ProfileTable#CityName", ImGuiTableColumnFlags.WidthStretch);
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
-            Utils.DrawIcon(new Vector2(36, 36), false, Utils.GetTownIcon(selected_character.Profile.City_State));
+            //Utils.DrawIcon(new Vector2(36, 36), false, Utils.GetTownIcon(selected_character.Profile.City_State));
+            Utils.DrawIcon_test(_globalCache.IconStorage.LoadIcon(Utils.GetTownIcon(selected_character.Profile.City_State)), new Vector2(36, 36));
             ImGui.TableSetColumnIndex(1);
             ImGui.TextUnformatted($"{Utils.GetTown(selected_character.Profile.City_State)}");
 
@@ -283,7 +313,8 @@ public class DetailsWindow : Window, IDisposable
             ImGui.TableSetupColumn("###ProfileTable#GuardianTable#Name", ImGuiTableColumnFlags.WidthStretch);
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
-            Utils.DrawIcon(new Vector2(40, 40), false, Utils.GetGuardianIcon(selected_character.Profile.Guardian));
+            //Utils.DrawIcon(new Vector2(40, 40), false, Utils.GetGuardianIcon(selected_character.Profile.Guardian));
+            Utils.DrawIcon_test(_globalCache.IconStorage.LoadIcon(Utils.GetGuardianIcon(selected_character.Profile.Guardian)), new Vector2(36, 36));
             ImGui.TableSetColumnIndex(1);
             ImGui.TextUnformatted($"{Utils.GetGuardian(selected_character.Profile.Guardian)}");
 

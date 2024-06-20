@@ -337,7 +337,7 @@ public class RetainersWindow : Window, IDisposable
                 ImGui.TableSetColumnIndex(1);
                 if (selected_retainer.ClassJob != 0 && selected_retainer.Gear.Count > 0)
                 {
-                    Utils.DrawGear(selected_retainer.Gear, selected_retainer.ClassJob, selected_retainer.Level, 200, 180, true, Utils.GetRetainerJobMaxLevel((uint)selected_retainer.ClassJob,GetPlayer.Invoke()));
+                    //Utils.DrawGear(selected_retainer.Gear, selected_retainer.ClassJob, selected_retainer.Level, 200, 180, true, Utils.GetRetainerJobMaxLevel((uint)selected_retainer.ClassJob,GetPlayer.Invoke()));
                 }
                 else
                 {

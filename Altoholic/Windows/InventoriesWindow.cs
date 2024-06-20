@@ -3,22 +3,16 @@ using Dalamud;
 using Dalamud.Game.Text;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
-using Dalamud.Plugin.Services;
 using ImGuiNET;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using CheapLoc;
-using System.Reflection.Emit;
-using System.Reflection.Metadata;
-using Lumina.Data.Structs;
 using Dalamud.Interface.Internal;
-using Dalamud.Interface.Utility;
 using Dalamud.Interface;
 using FFXIVClientStructs.FFXIV.Client.Game;
-using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
-using System.Drawing;
+using Altoholic.Cache;
 
 namespace Altoholic.Windows;
 
@@ -26,10 +20,12 @@ public class InventoriesWindow : Window, IDisposable
 {
     private Plugin plugin;
     private ClientLanguage currentLocale;
+    private GlobalCache _globalCache;
 
     public InventoriesWindow(
         Plugin plugin,
-        string name
+        string name,
+        GlobalCache globalCache
         )
         : base(
         name, ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse)
@@ -40,6 +36,8 @@ public class InventoriesWindow : Window, IDisposable
             MaximumSize = new Vector2(float.MaxValue, float.MaxValue)
         };
         this.plugin = plugin;
+        this._globalCache = globalCache;
+
         armouryBoard = Plugin.PluginInterface.UiBuilder.LoadUld("ui/uld/ArmouryBoard.uld");
         armoryTabTextures.Add(InventoryType.ArmoryMainHand, armouryBoard.LoadTexturePart("ui/uld/ArmouryBoard_hr1.tex", 0));
         armoryTabTextures.Add(InventoryType.ArmoryHead, armouryBoard.LoadTexturePart("ui/uld/ArmouryBoard_hr1.tex", 1));
@@ -47,7 +45,6 @@ public class InventoriesWindow : Window, IDisposable
         armoryTabTextures.Add(InventoryType.ArmoryHands, armouryBoard.LoadTexturePart("ui/uld/ArmouryBoard_hr1.tex", 3));
         armoryTabTextures.Add(InventoryType.ArmoryLegs, armouryBoard.LoadTexturePart("ui/uld/ArmouryBoard_hr1.tex", 5));
         armoryTabTextures.Add(InventoryType.ArmoryFeets, armouryBoard.LoadTexturePart("ui/uld/ArmouryBoard_hr1.tex", 6));
-
         armoryTabTextures.Add(InventoryType.ArmoryOffHand, armouryBoard.LoadTexturePart("ui/uld/ArmouryBoard_hr1.tex", 7));
         armoryTabTextures.Add(InventoryType.ArmoryEar, armouryBoard.LoadTexturePart("ui/uld/ArmouryBoard_hr1.tex", 8));
         armoryTabTextures.Add(InventoryType.ArmoryNeck, armouryBoard.LoadTexturePart("ui/uld/ArmouryBoard_hr1.tex", 9));
@@ -66,7 +63,6 @@ public class InventoriesWindow : Window, IDisposable
 
     private readonly UldWrapper armouryBoard;
     private readonly Dictionary<InventoryType, IDalamudTextureWrap?> armoryTabTextures = [];
-    //private InventoryType selectedTab = InventoryType.ArmoryMainHand;
     private InventoryType? selectedTab = null;
 
     public override void OnClose()
@@ -135,7 +131,7 @@ public class InventoriesWindow : Window, IDisposable
             ImGui.TableSetColumnIndex(1);
             if (current_character is not null)
             {
-                DrawInventories(current_character);
+                DrawInventories(_globalCache, current_character);
             }
             else
             {
@@ -223,7 +219,7 @@ public class InventoriesWindow : Window, IDisposable
         }
     }
 
-    private void DrawInventories(Character selected_character)
+    private void DrawInventories(GlobalCache _globalCache, Character selected_character)
     {
         using var tab = ImRaii.TabBar($"###CharactersInventoryTable#Inventories#{selected_character.Id}#TabBar");
         if (!tab) return;
@@ -247,7 +243,7 @@ public class InventoriesWindow : Window, IDisposable
                     ImGui.TableNextRow();
                     ImGui.TableSetColumnIndex(0);
                     ImGui.TableSetColumnIndex(1);
-                    DrawArmory(selected_character);
+                    DrawArmory(_globalCache, selected_character);
                     ImGui.TableSetColumnIndex(2);
                 }
                 table.Dispose();
@@ -397,6 +393,7 @@ public class InventoriesWindow : Window, IDisposable
             }
             else
             {
+                var previous = ImGui.GetCursorPos();
                 Utils.DrawItemIcon(new Vector2(36, 36), item.HQ, item.ItemId);
                 if (ImGui.IsItemHovered())
                 {
@@ -471,6 +468,12 @@ public class InventoriesWindow : Window, IDisposable
             }
             else
             {
+                var previous = ImGui.GetCursorPos();
+                /*Plugin.Log.Debug($"ImGui.GetCursorPos() before {ImGui.GetCursorPos()}");
+                ImGui.SetCursorPos(new Vector2(previous.X + 10, previous.Y));
+                Plugin.Log.Debug($"ImGui.GetCursorPos() after {ImGui.GetCursorPos()}");*/
+                //ImGui.TextUnformatted($"{item.Quantity}");
+                //ImGui.SetCursorPos(previous);
                 Utils.DrawEventItemIcon(new Vector2(36, 36), item.HQ, item.ItemId);
                 if (ImGui.IsItemHovered())
                 {
@@ -579,9 +582,10 @@ public class InventoriesWindow : Window, IDisposable
         }
     }
 
-    private void DrawArmory(Character selected_character)
+    private void DrawArmory(GlobalCache _globalCache, Character selected_character)
     {
         if (selected_character.ArmoryInventory == null) return;
+        Plugin.Log.Debug($"{armoryTabTextures.Count}");
         using var table = ImRaii.Table($"###CharactersInventoryTable#Inventories#ArmoryInventoryTable", 3, ImGuiTableFlags.ScrollY);
         if (!table) return;
 
@@ -621,7 +625,7 @@ public class InventoriesWindow : Window, IDisposable
         armory_left_table.Dispose();
 
         ImGui.TableSetColumnIndex(1);
-        DrawArmoryInventory();
+        DrawArmoryInventory(_globalCache);
 
         ImGui.TableSetColumnIndex(2);
         using var armory_right_table = ImRaii.Table("###CharactersInventoryTable#Inventories#ArmoryInventoryTable#SelectedTable#Col3Table", 1);
@@ -676,7 +680,8 @@ public class InventoriesWindow : Window, IDisposable
         }
         ImGui.TextUnformatted($"{gear.FindAll(i => i.ItemId != 0).Count}");
     }
-    private void DrawArmoryInventory()
+
+    private void DrawArmoryInventory(GlobalCache _globalCache)
     {
         if (selected_armory == null || selected_armory.Count == 0) return;
         var name = selected_armory.Keys.FirstOrDefault();
@@ -750,10 +755,19 @@ public class InventoriesWindow : Window, IDisposable
                 }
                 else
                 {
-                    Utils.DrawItemIcon(new Vector2(44, 44), gear.HQ, gear.ItemId);
+
+                    /*Utils.DrawItemIcon(new Vector2(44, 44), gear.HQ, gear.ItemId);
                     if (ImGui.IsItemHovered())
                     {
                         Utils.DrawGearTooltip(gear);
+                    }*/
+                    var itm = _globalCache.ItemStorage.LoadItem(gear.ItemId);
+                    if (itm == null) return;
+                    var icon = _globalCache.IconStorage.LoadIcon(itm.Icon, gear.HQ);
+                    Utils.DrawIcon_test(icon, new Vector2(44, 44));
+                    if (ImGui.IsItemHovered())
+                    {
+                        Utils.DrawGearTooltip(ref _globalCache, gear, itm);
                     }
                 }
             }
