@@ -46,12 +46,6 @@ namespace Altoholic.Cache
             }
         }
 
-        /*public string this[uint id]
-            => LoadStain(id);
-
-        public string this[int id]
-            => LoadStain((uint)id);*/
-
         public string LoadStain(ClientLanguage currentLocale, uint id)
         {
             return currentLocale switch

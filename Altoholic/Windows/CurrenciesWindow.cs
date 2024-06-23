@@ -8,7 +8,6 @@ using ImGuiNET;
 using Lumina.Excel.GeneratedSheets;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Numerics;
 using System.Reflection;
@@ -124,11 +123,10 @@ namespace Altoholic.Windows
                 names.Sort();
                 foreach (string name in names)
                 {
-                    //Utils.DrawItemIcon(new Vector2(24, 24), false, (uint)Enum.Parse(typeof(Currencies), name));
                     Item? item =
                         _globalCache.ItemStorage.LoadItem(_currentLocale, (uint)Enum.Parse(typeof(Currencies), name));
                     if (item == null) continue;
-                    Utils.DrawIcon_test(_globalCache.IconStorage.LoadIcon(item.Icon), new Vector2(24, 24));
+                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(item.Icon), new Vector2(24, 24));
                     ImGui.SameLine();
                     string n = item.Name;
                     if (n.Contains("Legendary")) n = $"Yo-Kai {n}";
@@ -151,11 +149,10 @@ namespace Altoholic.Windows
                 return;
             }
 
-            //Utils.DrawItemIcon(new Vector2(64, 64), false, (uint)Enum.Parse(typeof(Currencies), current_currency.ToUpper()));
             Item? itm = _globalCache.ItemStorage.LoadItem(_currentLocale,
                 (uint)Enum.Parse(typeof(Currencies), _currentCurrency.ToUpper()));
             if (itm == null) return;
-            Utils.DrawIcon_test(_globalCache.IconStorage.LoadIcon(itm.Icon), new Vector2(64, 64));
+            Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Icon), new Vector2(64, 64));
             using var charactersCurrenciesAllCurrencyTable =
                 ImRaii.Table("###CharactersCurrencies#All#CurrencyTable", 2, ImGuiTableFlags.Borders);
             if (!charactersCurrenciesAllCurrencyTable) return;
@@ -358,11 +355,10 @@ namespace Altoholic.Windows
                 ImGuiTableColumnFlags.WidthStretch);
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
-            //Utils.DrawItemIcon(new Vector2(32, 32), false, (uint)id);
             Item? item =
                 _globalCache.ItemStorage.LoadItem(_currentLocale, (uint)id);
             if (item == null) return;
-            Utils.DrawIcon_test(_globalCache.IconStorage.LoadIcon(item.Icon), new Vector2(32, 32));
+            Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(item.Icon), new Vector2(32, 32));
             if (ImGui.IsItemHovered())
             {
                 ImGui.BeginTooltip();
@@ -566,10 +562,9 @@ namespace Altoholic.Windows
                 ImGuiTableColumnFlags.WidthStretch);
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
-            //Utils.DrawItemIcon(new Vector2(32, 32), false, (uint)id);
             Item? item = _globalCache.ItemStorage.LoadItem(_currentLocale, (uint)id);
             if (item == null) return;
-            Utils.DrawIcon_test(_globalCache.IconStorage.LoadIcon(item.Icon), new Vector2(32, 32));
+            Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(item.Icon), new Vector2(32, 32));
             if (ImGui.IsItemHovered())
             {
                 ImGui.BeginTooltip();
@@ -660,10 +655,9 @@ namespace Altoholic.Windows
                 ImGuiTableColumnFlags.WidthStretch);
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
-            //Utils.DrawItemIcon(new Vector2(32, 32), false, (uint)id);
             Item? item = _globalCache.ItemStorage.LoadItem(_currentLocale, (uint)id);
             if (item == null) return;
-            Utils.DrawIcon_test(_globalCache.IconStorage.LoadIcon(item.Icon), new Vector2(32, 32));
+            Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(item.Icon), new Vector2(32, 32));
             if (ImGui.IsItemHovered())
             {
                 ImGui.BeginTooltip();
@@ -892,10 +886,9 @@ namespace Altoholic.Windows
                 ImGuiTableColumnFlags.WidthFixed, 20);
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
-            //Utils.DrawItemIcon(new Vector2(32, 32), false, (uint)id);
             Item? itm = _globalCache.ItemStorage.LoadItem(_currentLocale, (uint)id);
             if (itm == null) return;
-            Utils.DrawIcon_test(_globalCache.IconStorage.LoadIcon(itm.Icon), new Vector2(32, 32));
+            Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Icon), new Vector2(32, 32));
             if (ImGui.IsItemHovered())
                 ImGui.SetTooltip(
                     Utils.GetTribalCurrencyFromId(_currentLocale, (uint)tribalId)

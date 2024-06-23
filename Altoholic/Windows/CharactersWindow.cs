@@ -146,8 +146,7 @@ namespace Altoholic.Windows
                     ImGui.TableSetupColumn("###TotalCharacters#GilsTable#Amount", ImGuiTableColumnFlags.WidthFixed, 90);
                     ImGui.TableNextRow();
                     ImGui.TableSetColumnIndex(0);
-                    //Utils.DrawIcon(new Vector2(18, 18), false, 065002);
-                    Utils.DrawIcon_test(GilIcon, new Vector2(18, 18));
+                    Utils.DrawIcon(GilIcon, new Vector2(18, 18));
                     ImGui.TableSetColumnIndex(1);
                     string gilText = $"{TotalGils:N0}";
                     float posX = ImGui.GetCursorPosX() + ImGui.GetColumnWidth() - ImGui.CalcTextSize(gilText).X -
@@ -210,8 +209,7 @@ namespace Altoholic.Windows
                 ImGui.TableSetupColumn($"###Characters#Character#Gils#Amount#{character.Id}", ImGuiTableColumnFlags.WidthFixed, 90);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                //Utils.DrawIcon(new Vector2(18, 18), false, 065002);
-                Utils.DrawIcon_test(GilIcon, new Vector2(18, 18));
+                Utils.DrawIcon(GilIcon, new Vector2(18, 18));
                 ImGui.TableSetColumnIndex(1);
                 if (character.Currencies is not null)
                 {

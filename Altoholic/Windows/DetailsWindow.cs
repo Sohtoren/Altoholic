@@ -260,8 +260,7 @@ public class DetailsWindow : Window, IDisposable
             ImGui.TableSetupColumn("###ProfileTable#GrandCompanyTable#Rank", ImGuiTableColumnFlags.WidthStretch);
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
-            //Utils.DrawIcon(new Vector2(40, 40), false, Utils.GetGrandCompanyIcon(selected_character.Profile.Grand_Company));
-            Utils.DrawIcon_test(
+            Utils.DrawIcon(
                 _globalCache.IconStorage.LoadIcon(Utils.GetGrandCompanyIcon(selectedCharacter.Profile.GrandCompany)),
                 new Vector2(40, 40));
 
@@ -279,8 +278,7 @@ public class DetailsWindow : Window, IDisposable
             ImGui.TextUnformatted(
                 $"{Utils.Capitalize(Utils.GetGrandCompanyRank(_currentLocale, selectedCharacter.Profile.GrandCompany, selectedCharacter.Profile.GrandCompanyRank, selectedCharacter.Profile.Gender))}");
             ImGui.TableSetColumnIndex(1);
-            //Utils.DrawIcon(new Vector2(48, 48), false, Utils.GetGrandCompanyRankIcon(selected_character.Profile.Grand_Company, selected_character.Profile.Grand_Company_Rank));
-            Utils.DrawIcon_test(
+            Utils.DrawIcon(
                 _globalCache.IconStorage.LoadIcon(Utils.GetGrandCompanyRankIcon(
                     selectedCharacter.Profile.GrandCompany, selectedCharacter.Profile.GrandCompanyRank)),
                 new Vector2(48, 48));
@@ -304,8 +302,7 @@ public class DetailsWindow : Window, IDisposable
                 ImGuiTableColumnFlags.WidthStretch);
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
-            //Utils.DrawIcon(new Vector2(36, 36), false, Utils.GetTownIcon(selected_character.Profile.City_State));
-            Utils.DrawIcon_test(
+            Utils.DrawIcon(
                 _globalCache.IconStorage.LoadIcon(Utils.GetTownIcon(selectedCharacter.Profile.CityState)),
                 new Vector2(36, 36));
             ImGui.TableSetColumnIndex(1);
@@ -325,8 +322,7 @@ public class DetailsWindow : Window, IDisposable
         ImGui.TableSetupColumn("###ProfileTable#GuardianTable#Name", ImGuiTableColumnFlags.WidthStretch);
         ImGui.TableNextRow();
         ImGui.TableSetColumnIndex(0);
-        //Utils.DrawIcon(new Vector2(40, 40), false, Utils.GetGuardianIcon(selected_character.Profile.Guardian));
-        Utils.DrawIcon_test(
+        Utils.DrawIcon(
             _globalCache.IconStorage.LoadIcon(Utils.GetGuardianIcon(selectedCharacter.Profile.Guardian)),
             new Vector2(36, 36));
         ImGui.TableSetColumnIndex(1);

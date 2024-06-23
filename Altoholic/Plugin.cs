@@ -100,25 +100,11 @@ namespace Altoholic
             };
 
             nint playtimePtr = SigScanner.ScanText(PlaytimeSig);
-            //if (playtimePtr == nint.Zero) return;
             _playtimeHook = Hook.HookFromAddress<PlaytimeDelegate>(playtimePtr, PlaytimePacket);
             _playtimeHook.Enable();
 
             string dbpath = Path.Combine(PluginInterface.AssemblyLocation.Directory?.FullName!, "altoholic.db");
-            /*try
-            {*/
-
-            _db = new LiteDatabase(dbpath);
-            /*}
-            catch (Exception)
-            {
-                _ = new XivChatEntry
-                {
-                    Message = $"Error accessing the database",
-                    Type = XivChatType.Echo,
-                };
-            }*/
-            // Todo: Make sure this don't crash the game when db is already opened
+            _db = new LiteDatabase(dbpath); // Todo: Make sure this don't crash the game when db is already opened
 
             Configuration = PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
             Configuration.Initialize(PluginInterface);
@@ -181,8 +167,6 @@ namespace Altoholic
                 this,
                 $"{Name} characters",
                 _globalCache,
-                /*Log,
-                Plugin.DataManager,*/
                 CharactersWindow,
                 DetailsWindow,
                 JobsWindow,
@@ -300,8 +284,9 @@ namespace Altoholic
                         }
                     }
 
-                    Log.Debug($"Character localLastPlayTimeUpdate : {_localPlayer.LastPlayTimeUpdate}");
 #if DEBUG
+                    Log.Debug($"Character localLastPlayTimeUpdate : {_localPlayer.LastPlayTimeUpdate}");
+
                     /*foreach (Inventory inventory in _localPlayer.Inventory)
                     {
                         Plugin.Log.Debug($"{inventory.ItemId} {lumina.Singular} {inventory.HQ} {inventory.Quantity}");
@@ -380,11 +365,11 @@ namespace Altoholic
                         Log.Debug($"{inventory.ItemId} {inventory.HQ} {inventory.Quantity}");
                     }
                     */
-/*Log.Debug($"localPlayer retainers count : {localPlayer.Retainers.Count}");
-foreach(Retainer retainer in localPlayer.Retainers)
-{
-    Log.Debug($"{retainer.Name} job:{Enum.GetName(typeof(ClassJob), retainer.ClassJob)}, displayorder: {retainer.DisplayOrder}, items: {retainer.Inventory.Count}, gils: {retainer.Gils}");
-}*/
+                    /*Log.Debug($"localPlayer retainers count : {localPlayer.Retainers.Count}");
+                    foreach(Retainer retainer in localPlayer.Retainers)
+                    {
+                        Log.Debug($"{retainer.Name} job:{Enum.GetName(typeof(ClassJob), retainer.ClassJob)}, displayorder: {retainer.DisplayOrder}, items: {retainer.Inventory.Count}, gils: {retainer.Gils}");
+                    }*/
 #if DEBUG
                     if (_localPlayer.ArmoryInventory != null)
                     {
@@ -1179,32 +1164,6 @@ foreach(Retainer retainer in localPlayer.Retainers)
 
         private void CleanLastLocalCharacter()
         {
-            /*localPlayer = new Character
-            {
-                Id = 0,
-                FirstName = string.Empty,
-                LastName = string.Empty,
-                HomeWorld = string.Empty,
-                Datacenter = string.Empty,
-                Region = string.Empty,
-                LastJob = 0,
-                LastJobLevel = 0,
-                FCTag = string.Empty,
-                FreeCompany = string.Empty,
-                PlayTime = 0,
-                LastPlayTimeUpdate = 0,
-                Attributes = null,
-                Currencies = null,
-                Jobs = null,
-                Profile = null,
-                Quests = [],
-                Inventory = [],
-                ArmoryInventory = [],
-                Saddle = [],
-                Gear = [],
-                Retainers = [],
-            };*/
-
             _localPlayer = null!;
             _localPlayerFreeCompanyTest = null;
             OtherCharacters = [];
@@ -1223,7 +1182,7 @@ foreach(Retainer retainer in localPlayer.Retainers)
             //Log.Info($"Character id is : {localPlayer.Id}");
             OtherCharacters = Database.Database.GetOthersCharacters(Log, _db, _localPlayer.Id);
             //Log.Info("Altoholic : Found {0} others players", otherCharacters.Count);
-            //Todo: send /playtime command
+            //Todo: start timer after /playtime command
             /*_ = new XivChatEntry
             {
                 Message = $"Starting altoholic timer",
@@ -1256,8 +1215,6 @@ foreach(Retainer retainer in localPlayer.Retainers)
             Log.Debug("Altoholic : OnCharacterLogout called");
             GetPlayerCompletedQuest();
             UpdateCharacter();
-
-            //PlaytimeCommand();
             CleanLastLocalCharacter();
 
             MainWindow.IsOpen = false;
@@ -1267,17 +1224,10 @@ foreach(Retainer retainer in localPlayer.Retainers)
             ConfigWindow.IsOpen = false;
             CurrenciesWindow.IsOpen = false;
             DetailsWindow.IsOpen = false;
+            CollectionWindow.IsOpen = false;
             CharactersWindow.IsOpen = false;
             _periodicTimer?.Dispose();
         }
-
-        /*private void PlaytimeCommand()
-        {
-            // send playtime command after user uses btime command
-            Plugin.Log.Debug($"Requesting playtime from server.");
-            xivCommon.Functions.Chat.SendMessage("/playtime");
-            SendChatCommand = true;
-        }*/
 
         public void ReloadConfig()
         {

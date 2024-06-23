@@ -657,7 +657,6 @@ namespace Altoholic.Windows
                 ImGui.TableSetupColumn($"###CharactersJobs#DoW#RoleTank#Name", ImGuiTableColumnFlags.WidthStretch);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                //Utils.DrawIcon(new Vector2(20, 20), false, Utils.GetRoleIcon(0));
                 Utils.DrawRoleTexture(ref _rolesTextureWrap, RoleIcon.Tank, new Vector2(20, 20));
                 ImGui.TableSetColumnIndex(1);
                 ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 1082)}"); // Tank
@@ -673,7 +672,6 @@ namespace Altoholic.Windows
                 ImGui.TableSetupColumn($"###CharactersJobs#DoM#RoleHealer#Name", ImGuiTableColumnFlags.WidthStretch);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                //Utils.DrawIcon(new Vector2(20, 20), false, Utils.GetRoleIcon(1));
                 Utils.DrawRoleTexture(ref _rolesTextureWrap, RoleIcon.Heal, new Vector2(20, 20));
                 ImGui.TableSetColumnIndex(1);
                 ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 1083)}");
@@ -714,7 +712,6 @@ namespace Altoholic.Windows
                 ImGui.TableSetupColumn("###CharactersJobs#DoW#RoleMelee#Name", ImGuiTableColumnFlags.WidthStretch);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                //Utils.DrawIcon(new Vector2(20, 20), false, Utils.GetRoleIcon(2));
                 Utils.DrawRoleTexture(ref _rolesTextureWrap, RoleIcon.Melee, new Vector2(20, 20));
                 ImGui.TableSetColumnIndex(1);
                 ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 1084)}");
@@ -733,7 +730,6 @@ namespace Altoholic.Windows
                     ImGuiTableColumnFlags.WidthStretch);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                //Utils.DrawIcon(new Vector2(20, 20), false, Utils.GetRoleIcon(3));
                 Utils.DrawRoleTexture(ref _rolesTextureWrap, RoleIcon.Ranged, new Vector2(20, 20));
                 ImGui.TableSetColumnIndex(1);
                 ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 1085)}");
@@ -773,7 +769,6 @@ namespace Altoholic.Windows
                     ImGuiTableColumnFlags.WidthStretch);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                //Utils.DrawIcon(new Vector2(20, 20), false, Utils.GetRoleIcon(4));
                 Utils.DrawRoleTexture(ref _rolesTextureWrap, RoleIcon.Caster, new Vector2(20, 20));
                 ImGui.TableSetColumnIndex(1);
                 ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 1086)}");
@@ -803,9 +798,9 @@ namespace Altoholic.Windows
         private void DrawDoHDoLJobs(Character selectedCharacter)
         {
             if (_rolesTextureWrap is null) return;
-            using var CharactersJobsDoHDoLJobs =
+            using var charactersJobsDoHDoLJobs =
                 ImRaii.Table($"###CharactersJobs#DoHDoLJobs#{selectedCharacter.Id}", 2);
-            if (!CharactersJobsDoHDoLJobs) return;
+            if (!charactersJobsDoHDoLJobs) return;
             ImGui.TableSetupColumn($"###CharactersJobs#DoH#{selectedCharacter.Id}", ImGuiTableColumnFlags.WidthStretch);
             ImGui.TableSetupColumn($"###CharactersJobs#DoL#{selectedCharacter.Id}", ImGuiTableColumnFlags.WidthStretch);
             ImGui.TableNextRow();
@@ -817,7 +812,6 @@ namespace Altoholic.Windows
                 ImGui.TableSetupColumn("###CharactersJobs#DoH#RoleDoH#Name", ImGuiTableColumnFlags.WidthStretch);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                //Utils.DrawIcon(new Vector2(20, 20), false, Utils.GetRoleIcon(5));
                 Utils.DrawRoleTexture(ref _rolesTextureWrap, RoleIcon.Crafter, new Vector2(20, 20));
                 ImGui.TableSetColumnIndex(1);
                 ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 802)}");
@@ -833,7 +827,6 @@ namespace Altoholic.Windows
                 ImGui.TableSetupColumn("###CharactersJobs#DoL#RoleDoL#Name", ImGuiTableColumnFlags.WidthStretch);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                //Utils.DrawIcon(new Vector2(20, 20), false, Utils.GetRoleIcon(6));
                 Utils.DrawRoleTexture(ref _rolesTextureWrap, RoleIcon.Gatherer, new Vector2(20, 20));
                 ImGui.TableSetColumnIndex(1);
                 ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 803)}");
@@ -1196,9 +1189,7 @@ namespace Altoholic.Windows
                 ImGui.TableSetupColumn("###CharactersJobs#LevelNameExp", ImGuiTableColumnFlags.WidthStretch);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                //Utils.DrawIcon( Plugin.DataManager, new Vector2(42, 42), false, Utils.GetJobIconWithCornerSmall((uint)job_id), alpha);
-                //Utils.DrawIcon(new Vector2(36, 36), false, Utils.GetJobIconWithCornerSmall((uint)job_id));
-                Utils.DrawIcon_test(_globalCache.IconStorage.LoadIcon(Utils.GetJobIconWithCornerSmall((uint)jobId)), new Vector2(36, 36), alpha);
+                Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(Utils.GetJobIconWithCornerSmall((uint)jobId)), new Vector2(36, 36), alpha);
                 ImGui.TableSetColumnIndex(1);
                 using (var charactersJobsJobLevelNameExp = ImRaii.Table("###CharactersJobs#JobLevelNameExp", 2))
                 {
@@ -1216,7 +1207,6 @@ namespace Altoholic.Windows
                         ImGui.PopStyleVar();
                     }
                     ImGui.TableSetColumnIndex(1);
-                    //ImGui.TextUnformatted($"{_globalCache.JobStorage.GetName(currentLocale,(uint)job_id)}");
                     if (active)
                         ImGui.TextUnformatted($"{Utils.Capitalize(_globalCache.JobStorage.GetName(_currentLocale,(uint)jobId))}");
                     else
@@ -1227,7 +1217,6 @@ namespace Altoholic.Windows
                     }
                     ImGui.TableNextRow();
                     ImGui.TableSetColumnIndex(1);
-                    //Utils.DrawLevelProgressBar(job.Exp, Utils.GetJobNextLevelExp(job.Level), tooltip);
                     bool maxLevel = (jobId == ClassJob.BLU) ? job.Level == 80 : job.Level == 90;
                     Utils.DrawLevelProgressBar(job.Exp, _globalCache.JobStorage.GetNextLevelExp(job.Level), tooltip, active, maxLevel);
                 }

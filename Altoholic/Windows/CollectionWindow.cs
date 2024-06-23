@@ -31,13 +31,13 @@ namespace Altoholic.Windows
             : base(
                 name, ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse)
         {
-            this.SizeConstraints = new WindowSizeConstraints
+            SizeConstraints = new WindowSizeConstraints
             {
                 MinimumSize = new Vector2(1000, 450),
                 MaximumSize = new Vector2(float.MaxValue, float.MaxValue)
             };
-            this._plugin = plugin;
-            this._globalCache = globalCache;
+            _plugin = plugin;
+            _globalCache = globalCache;
 
             //rolesIcons = Plugin.PluginInterface.UiBuilder.LoadUld("ui/uld/fourth/ToggleButton.uld");
             //Plugin.Log.Debug($"Type: {rolesIcons.Uld?.FileInfo.Type}");
@@ -68,9 +68,8 @@ namespace Altoholic.Windows
             if (_rolesTextureWrap is null) return;
             //if (characterIcons is null) return;
             _currentLocale = _plugin.Configuration.Language;
-            //Utils.DrawEmptySlot(ref characterIcons, GearSlot.OH);
             using var table = ImRaii.Table("osefofthename", 1, ImGuiTableFlags.ScrollY);
-            if (table == null) return;
+            if (!table) return;
             ImGui.TableSetupColumn("###osefofthename#Col1", ImGuiTableColumnFlags.WidthFixed, 210);
             Vector2 size = new(40, 40);
             ImGui.TableNextRow();

@@ -222,8 +222,7 @@ namespace Altoholic.Windows
                         ImGuiTableColumnFlags.WidthFixed, 300);
                     ImGui.TableNextRow();
                     ImGui.TableSetColumnIndex(0);
-                    //Utils.DrawItemIcon(new Vector2(36, 36), false, (uint)current_item);
-                    Utils.DrawIcon_test(_globalCache.IconStorage.LoadIcon(itm.Icon), new Vector2(36, 36));
+                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Icon), new Vector2(36, 36));
 
                     ImGui.TableSetColumnIndex(1);
                     ImGui.TextUnformatted($"{itm.Name}");
@@ -351,8 +350,7 @@ namespace Altoholic.Windows
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
                 ImGui.TextUnformatted($"{selectedRetainer.Name}");
-                //Utils.DrawIcon(new Vector2(18, 18), false, 065002);
-                Utils.DrawIcon_test(_globalCache.IconStorage.LoadIcon(065002), new Vector2(18, 18)); 
+                Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(065002), new Vector2(18, 18)); 
                 ImGui.SameLine(); ImGui.TextUnformatted($"{selectedRetainer.Gils}");
                 ImGui.TableSetColumnIndex(1);
 
@@ -495,12 +493,10 @@ namespace Altoholic.Windows
                 ImGui.TableNextColumn();
                 if (item.ItemId == 0)
                 {
-                    //Utils.DrawIcon(new Vector2(36, 36), false, 0);
-                    Utils.DrawIcon_test(_globalCache.IconStorage.LoadIcon(0), new Vector2(36, 36));
+                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(0), new Vector2(36, 36));
                 }
                 else
                 {
-                    //Utils.DrawItemIcon(new Vector2(36, 36), item.HQ, item.ItemId);
                     Vector2 p = ImGui.GetCursorPos();
                     Item? itm = _globalCache.ItemStorage.LoadItem(_currentLocale, item.ItemId);
                     if (itm == null)
@@ -508,7 +504,7 @@ namespace Altoholic.Windows
                         continue;
                     }
 
-                    Utils.DrawIcon_test(_globalCache.IconStorage.LoadIcon(itm.Icon, item.HQ), new Vector2(36, 36));
+                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Icon, item.HQ), new Vector2(36, 36));
                     if (ImGui.IsItemHovered())
                     {
                         Utils.DrawItemTooltip(_currentLocale, ref _globalCache, item);
@@ -542,19 +538,15 @@ namespace Altoholic.Windows
             ImGui.TableSetColumnIndex(0);
             ImGui.Text("");
             ImGui.TableSetColumnIndex(1);
-            //Utils.DrawIcon(new Vector2(36, 36), false, 20034);
-            Utils.DrawIcon_test(_globalCache.IconStorage.LoadIcon(20034), new Vector2(36, 36));
+            Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(20034), new Vector2(36, 36));
             ImGui.TableSetColumnIndex(2);
-            //Utils.DrawIcon(new Vector2(36, 36), false, 20019);
-            Utils.DrawIcon_test(_globalCache.IconStorage.LoadIcon(20019), new Vector2(36, 36));
+            Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(20019), new Vector2(36, 36));
             ImGui.TableSetColumnIndex(3);
-            //Utils.DrawIcon(new Vector2(36, 36), false, 20020);
-            Utils.DrawIcon_test(_globalCache.IconStorage.LoadIcon(20020), new Vector2(36, 36));
+            Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(20020), new Vector2(36, 36));
 
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
-            //Utils.DrawIcon(new Vector2(40, 40), false, 60651);
-            Utils.DrawIcon_test(_globalCache.IconStorage.LoadIcon(60651), new Vector2(40, 40));
+            Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(60651), new Vector2(40, 40));
             ImGui.TableSetColumnIndex(1);
             DrawCrystal(2, selectedRetainer.Inventory[175].Quantity);
             ImGui.TableSetColumnIndex(2);
@@ -564,8 +556,7 @@ namespace Altoholic.Windows
 
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
-            //Utils.DrawIcon(new Vector2(40, 40), false, 60652);
-            Utils.DrawIcon_test(_globalCache.IconStorage.LoadIcon(60652), new Vector2(40, 40));
+            Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(60652), new Vector2(40, 40));
             ImGui.TableSetColumnIndex(1);
             DrawCrystal(3, selectedRetainer.Inventory[176].Quantity);
             ImGui.TableSetColumnIndex(2);
@@ -575,8 +566,7 @@ namespace Altoholic.Windows
 
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
-            //Utils.DrawIcon(new Vector2(40, 40), false, 60653);
-            Utils.DrawIcon_test(_globalCache.IconStorage.LoadIcon(60653), new Vector2(40, 40));
+            Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(60653), new Vector2(40, 40));
             ImGui.TableSetColumnIndex(1);
             DrawCrystal(4, selectedRetainer.Inventory[177].Quantity);
             ImGui.TableSetColumnIndex(2);
@@ -586,8 +576,7 @@ namespace Altoholic.Windows
 
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
-            //Utils.DrawIcon(new Vector2(40, 40), false, 60654);
-            Utils.DrawIcon_test(_globalCache.IconStorage.LoadIcon(60654), new Vector2(40, 40));
+            Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(60654), new Vector2(40, 40));
             ImGui.TableSetColumnIndex(1);
             DrawCrystal(5, selectedRetainer.Inventory[178].Quantity);
             ImGui.TableSetColumnIndex(2);
@@ -597,8 +586,7 @@ namespace Altoholic.Windows
 
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
-            //Utils.DrawIcon(new Vector2(40, 40), false, 60655);
-            Utils.DrawIcon_test(_globalCache.IconStorage.LoadIcon(60655), new Vector2(40, 40));
+            Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(60655), new Vector2(40, 40));
             ImGui.TableSetColumnIndex(1);
             DrawCrystal(6, selectedRetainer.Inventory[179].Quantity);
             ImGui.TableSetColumnIndex(2);
@@ -608,8 +596,7 @@ namespace Altoholic.Windows
 
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
-            //Utils.DrawIcon(new Vector2(40, 40), false, 60656);
-            Utils.DrawIcon_test(_globalCache.IconStorage.LoadIcon(60656), new Vector2(40, 40));
+            Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(60656), new Vector2(40, 40));
             ImGui.TableSetColumnIndex(1);
             DrawCrystal(7, selectedRetainer.Inventory[180].Quantity);
             ImGui.TableSetColumnIndex(2);

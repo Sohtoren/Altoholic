@@ -14,12 +14,6 @@ namespace Altoholic.Cache
         private readonly Dictionary<uint, ItemItemLevel> _items = new(size);
         private readonly Dictionary<uint, EventItem> _eventItems = new(size);
 
-        /*public Item? this[uint id]
-            => LoadItem(id);
-
-        public Item? this[int id]
-            => LoadItem((uint)id);*/
-
         public Item? LoadItem(ClientLanguage currentLocale, uint id)
         {
             if (_items.TryGetValue(id, out ItemItemLevel? ret))
