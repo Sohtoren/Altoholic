@@ -13,12 +13,7 @@ namespace Altoholic
         private const string FallbackLangCode = "en";
         private const string LocResourceDirectory = "loc";
 
-        private readonly Assembly Assembly;
-
-        public Localization()
-        {
-            Assembly = Assembly.GetCallingAssembly();
-        }
+        private readonly Assembly Assembly = Assembly.GetCallingAssembly();
 
         public void ExportLocalizable() => Loc.ExportLocalizableForAssembly(Assembly);
         private void SetupWithFallbacks() => Loc.SetupWithFallbacks(Assembly);

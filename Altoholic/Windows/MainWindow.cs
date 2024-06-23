@@ -1,159 +1,168 @@
+using Altoholic.Cache;
 using Dalamud;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
-using Dalamud.Plugin.Services;
 using ImGuiNET;
 using System;
 using System.Numerics;
 
-namespace Altoholic.Windows;
-
-public class MainWindow : Window, IDisposable
+namespace Altoholic.Windows
 {
-    private Plugin plugin;
-    private CharactersWindow charactersWindow { get; init; }
-    private DetailsWindow detailsWindow { get; init; }
-    private JobsWindow jobsWindow { get; init; }
-    private CurrenciesWindow currenciesWindow { get; init; }
-    private InventoriesWindow inventoriesWindow { get; init; }
-    private RetainersWindow retainersWindow { get; init; }
-    private CollectionWindow collectionWindow { get; init; }
-    private ConfigWindow configWindow { get; init; }
-
-    private ClientLanguage currentLocale;
-
-    public MainWindow(
-        Plugin plugin,
-        string name,
-        CharactersWindow charactersWindow,
-        DetailsWindow detailsWindow,
-        JobsWindow jobsWindow,
-        CurrenciesWindow currenciesWindow,
-        InventoriesWindow inventoriesWindow,
-        RetainersWindow retainersWindow,
-        CollectionWindow collectionWindow,
-        ConfigWindow configWindow/*,
-        ClientLanguage currentLocale*/
-    )
-        : base(name, ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse)
+    public class MainWindow : Window, IDisposable
     {
-        this.SizeConstraints = new WindowSizeConstraints
+        private readonly Plugin _plugin;
+        private CharactersWindow CharactersWindow { get; init; }
+        private DetailsWindow DetailsWindow { get; init; }
+        private JobsWindow JobsWindow { get; init; }
+        private CurrenciesWindow CurrenciesWindow { get; init; }
+        private InventoriesWindow InventoriesWindow { get; init; }
+        private RetainersWindow RetainersWindow { get; init; }
+        private CollectionWindow CollectionWindow { get; init; }
+        private ConfigWindow ConfigWindow { get; init; }
+
+        private ClientLanguage _currentLocale;
+
+        private readonly GlobalCache _globalCache;
+
+        public MainWindow(
+            Plugin plugin,
+            string name,
+            GlobalCache globalCache,
+            CharactersWindow charactersWindow,
+            DetailsWindow detailsWindow,
+            JobsWindow jobsWindow,
+            CurrenciesWindow currenciesWindow,
+            InventoriesWindow inventoriesWindow,
+            RetainersWindow retainersWindow,
+            CollectionWindow collectionWindow,
+            ConfigWindow configWindow
+        )
+            : base(name, ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse)
         {
-            MinimumSize = new Vector2(1050, 565),
-            MaximumSize = new Vector2(float.MaxValue, float.MaxValue)
-        };
-        this.plugin = plugin;
-        //this.currentLocale = currentLocale;
-        this.charactersWindow = charactersWindow;
-        this.detailsWindow = detailsWindow;
-        this.jobsWindow = jobsWindow;
-        this.currenciesWindow = currenciesWindow;
-        this.inventoriesWindow = inventoriesWindow;
-        this.retainersWindow = retainersWindow;
-        this.collectionWindow = collectionWindow;
-        this.configWindow = configWindow;
-    }
-
-    public override void OnClose()
-    {
-        Plugin.Log.Debug("MainWindow, OnClose() called");
-        charactersWindow.IsOpen = false;
-        currenciesWindow.IsOpen = false;
-        detailsWindow.IsOpen = false;
-        jobsWindow.IsOpen = false;
-        inventoriesWindow.IsOpen = false;
-        retainersWindow.IsOpen = false;
-        collectionWindow.IsOpen = false;
-        configWindow.IsOpen = false;
-    }
-
-    public void Dispose()
-    {
-    }
-
-    public override void Draw()
-    {
-        currentLocale = plugin.Configuration.Language;
-        using var tabBar = ImRaii.TabBar($"###MainWindow#Tabs");
-        if (!tabBar.Success) return;
-        using (var charactersTab = ImRaii.TabItem($"{Utils.GetAddonString(7543)}"))
-        {
-            if (charactersTab.Success)
+            SizeConstraints = new WindowSizeConstraints
             {
-                charactersWindow.Draw();
-            }
-        };
+                MinimumSize = new Vector2(1050, 565), MaximumSize = new Vector2(float.MaxValue, float.MaxValue)
+            };
+            _plugin = plugin;
+            _globalCache = globalCache;
+            CharactersWindow = charactersWindow;
+            DetailsWindow = detailsWindow;
+            JobsWindow = jobsWindow;
+            CurrenciesWindow = currenciesWindow;
+            InventoriesWindow = inventoriesWindow;
+            RetainersWindow = retainersWindow;
+            CollectionWindow = collectionWindow;
+            ConfigWindow = configWindow;
+        }
+
+        /*public override bool DrawConditions()
+        {
+            Plugin.Log.Debug("MainWindow DrawConditions");
+            return true;
+        }*/
+
+        public override void OnClose()
+        {
+            Plugin.Log.Debug("MainWindow, OnClose() called");
+            CharactersWindow.IsOpen = false;
+            CurrenciesWindow.IsOpen = false;
+            DetailsWindow.IsOpen = false;
+            JobsWindow.IsOpen = false;
+            InventoriesWindow.IsOpen = false;
+            RetainersWindow.IsOpen = false;
+            CollectionWindow.IsOpen = false;
+            ConfigWindow.IsOpen = false;
+        }
+
+        public void Dispose()
+        {
+        }
+
+        public override void Draw()
+        {
+            _currentLocale = _plugin.Configuration.Language;
+            using var tabBar = ImRaii.TabBar($"###MainWindow#Tabs");
+            if (!tabBar.Success) return;
+            using (var charactersTab = ImRaii.TabItem($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 7543)}"))
+            {
+                if (charactersTab.Success)
+                {
+                    //if(charactersWindow.DrawConditions())
+                    CharactersWindow.Draw();
+                }
+            };
         
-        using (var detailsTab = ImRaii.TabItem($"{Utils.GetAddonString(6361)}"))
-        {
-            if (detailsTab.Success)
+            using (var detailsTab = ImRaii.TabItem($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 6361)}"))
             {
-                detailsWindow.Draw();
-            }
-        };
+                if (detailsTab.Success)
+                {
+                    DetailsWindow.Draw();
+                }
+            };
 
 
-        using (var jobsTab = ImRaii.TabItem($"{Utils.GetAddonString(760)}"))
-        {
-            if (jobsTab.Success)
+            using (var jobsTab = ImRaii.TabItem($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 760)}"))
             {
-                jobsWindow.Draw();
-            }
-        };
+                if (jobsTab.Success)
+                {
+                    JobsWindow.Draw();
+                }
+            };
         
-        using (var currenciesTab = ImRaii.TabItem($"{Utils.GetAddonString(761)}"))
-        {
-            if (currenciesTab.Success)
+            using (var currenciesTab = ImRaii.TabItem($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 761)}"))
             {
-                currenciesWindow.Draw();
-            }
-        };
+                if (currenciesTab.Success)
+                {
+                    CurrenciesWindow.Draw();
+                }
+            };
         
-        //using (var bagsTab = ImRaii.TabItem($"{Utils.GetAddonString(358)}"))// Bags
-        using (var inventoryTab = ImRaii.TabItem($"{Utils.GetAddonString(520)}"))// Inventory
-        {
-            if (inventoryTab.Success)
+            //using (var bagsTab = ImRaii.TabItem($"{_globalCache.AddonStorage.LoadAddonString(358)}"))// Bags
+            using (var inventoryTab = ImRaii.TabItem($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 520)}"))// Inventory
             {
-                inventoriesWindow.Draw();
-            }
-        };
+                if (inventoryTab.Success)
+                {
+                    InventoriesWindow.Draw();
+                }
+            };
         
-        using (var retainersTab = ImRaii.TabItem($"{Utils.GetAddonString(532)}"))
-        {
-            if (retainersTab.Success)
+            using (var retainersTab = ImRaii.TabItem($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 532)}"))
             {
-                retainersWindow.Draw();
-            }
-        };
+                if (retainersTab.Success)
+                {
+                    RetainersWindow.Draw();
+                }
+            };
 
-        using (var collectionTab = ImRaii.TabItem($"{((currentLocale == ClientLanguage.French) ? Utils.GetAddonString(9515) : Utils.GetAddonString(12790))}")) //Pet&Mount&Orchestrion
-        {
-            if (collectionTab.Success)
+            using (var collectionTab = ImRaii.TabItem($"{((_currentLocale == ClientLanguage.French) ? _globalCache.AddonStorage.LoadAddonString(_currentLocale, 9515) : _globalCache.AddonStorage.LoadAddonString(_currentLocale, 12790))}")) //Pet&Mount&Orchestrion
             {
-                //3 tabs, pets, mount & orchestrion with list
-                collectionWindow.Draw();
-            }
-        };
+                if (collectionTab.Success)
+                {
+                    //3 tabs, pets, mount & orchestrion with list
+                    CollectionWindow.Draw();
+                }
+            };
 
-        using (var progressTab = ImRaii.TabItem($"Progress"))
-        {
-            if (progressTab.Success)
+            using (var progressTab = ImRaii.TabItem($"Progress"))
             {
-                //Double list like retainers, second list is the progress list (msq, event, yokai, trials,etc)
-            }
-        };
+                if (progressTab.Success)
+                {
+                    //Double list like retainers, second list is the progress list (msq, event, yokai, trials,etc)
+                }
+            };
 
-        using (var settingsTab = ImRaii.TabItem($"{Utils.GetAddonString(10119)}"))
-        {
-            if (settingsTab.Success)
+            using (var settingsTab = ImRaii.TabItem($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 10119)}"))
             {
-                configWindow.Draw();
-            }
-        };
+                if (settingsTab.Success)
+                {
+                    ConfigWindow.Draw();
+                }
+            };
 
-        //ImGui.EndTabBar();
-        /*bool val = true;
-        ImGui.Checkbox("Anonymize", ref val);*/
-        //}
+            //ImGui.EndTabBar();
+            /*bool val = true;
+            ImGui.Checkbox("Anonymize", ref val);*/
+            //}
+        }
     }
 }

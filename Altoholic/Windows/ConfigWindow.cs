@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Numerics;
+using Altoholic.Cache;
 using Altoholic.Models;
 using Dalamud;
 using Dalamud.Game.Text;
@@ -15,12 +16,14 @@ namespace Altoholic.Windows;
 
 public class ConfigWindow : Window, IDisposable
 {
-    private Plugin plugin;
-    private Configuration Configuration;
+    private readonly Plugin _plugin;
+    private readonly Configuration _configuration;
+    private readonly GlobalCache _globalCache;
 
     public ConfigWindow(
         Plugin plugin,
-        string name
+        string name,
+        GlobalCache globalCache
     ) : base(
         name,
         ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoScrollbar |
@@ -29,18 +32,19 @@ public class ConfigWindow : Window, IDisposable
         Size = new Vector2(300, 250);
         SizeCondition = ImGuiCond.Always;
 
-        Configuration = plugin.Configuration;
-        this.plugin = plugin;
+        _configuration = plugin.Configuration;
+        this._plugin = plugin;
+        this._globalCache = globalCache;
     }
 
-    private ClientLanguage selected_language;
+    private ClientLanguage _selectedLanguage;
 
     public void Dispose() { }
 
     public override void PreDraw()
     {
         // Flags must be added or removed before Draw() is being called, or they won't apply
-        if (Configuration.IsConfigWindowMovable)
+        if (_configuration.IsConfigWindowMovable)
         {
             Flags &= ~ImGuiWindowFlags.NoMove;
         }
@@ -52,43 +56,43 @@ public class ConfigWindow : Window, IDisposable
 
     public override void Draw()
     {
-        selected_language = plugin.Configuration.Language;
+        _selectedLanguage = _plugin.Configuration.Language;
         //ImGui.TextUnformatted("Settings is not implemented at the moment");
-        using var langCombo = ImRaii.Combo($"{Utils.GetAddonString(338)}###LangCombo", selected_language.ToString());
+        using var langCombo = ImRaii.Combo($"{_globalCache.AddonStorage.LoadAddonString(_selectedLanguage, 338)}###LangCombo", _selectedLanguage.ToString());
         if (langCombo.Success)
         {
-            if (ImGui.Selectable(ClientLanguage.German.ToString(), ClientLanguage.German.ToString() == selected_language.ToString()))
+            if (ImGui.Selectable(ClientLanguage.German.ToString(), ClientLanguage.German.ToString() == _selectedLanguage.ToString()))
             {
-                selected_language = ClientLanguage.German;
+                _selectedLanguage = ClientLanguage.German;
             }
-            if (ImGui.Selectable(ClientLanguage.English.ToString(), ClientLanguage.English.ToString() == selected_language.ToString()))
+            if (ImGui.Selectable(ClientLanguage.English.ToString(), ClientLanguage.English.ToString() == _selectedLanguage.ToString()))
             {
-                selected_language = ClientLanguage.English;
+                _selectedLanguage = ClientLanguage.English;
             }
-            if (ImGui.Selectable(ClientLanguage.French.ToString(), ClientLanguage.French.ToString() == selected_language.ToString()))
+            if (ImGui.Selectable(ClientLanguage.French.ToString(), ClientLanguage.French.ToString() == _selectedLanguage.ToString()))
             {
-                selected_language = ClientLanguage.French;
+                _selectedLanguage = ClientLanguage.French;
             }
-            if (ImGui.Selectable(ClientLanguage.Japanese.ToString(), ClientLanguage.Japanese.ToString() == selected_language.ToString()))
+            if (ImGui.Selectable(ClientLanguage.Japanese.ToString(), ClientLanguage.Japanese.ToString() == _selectedLanguage.ToString()))
             {
-                selected_language = ClientLanguage.Japanese;
+                _selectedLanguage = ClientLanguage.Japanese;
             }
-            Configuration.Language = selected_language;
-            plugin.ChangeLanguage(selected_language);
+            _configuration.Language = _selectedLanguage;
+            _plugin.ChangeLanguage(_selectedLanguage);
             try
             {
-                Configuration.Save();
+                _configuration.Save();
             }
             catch (Exception e) {
                 Plugin.Log.Debug($"Config save error: {e}");
             }
         }
 
-        var movable = Configuration.IsConfigWindowMovable;
+        bool movable = _configuration.IsConfigWindowMovable;
         if (ImGui.Checkbox("Movable Config Window", ref movable))
         {
-            Configuration.IsConfigWindowMovable = movable;
-            Configuration.Save();
+            _configuration.IsConfigWindowMovable = movable;
+            _configuration.Save();
         }
     }
 }

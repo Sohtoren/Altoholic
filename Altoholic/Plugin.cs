@@ -24,9 +24,13 @@ using Dalamud.Interface.ImGuiNotification;
 using Dalamud.Game.Text;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using Dalamud.Memory;
-using ImGuiNET;
 using Dalamud.Game.ClientState.Conditions;
 using Altoholic.Cache;
+using Dalamud.Game.ClientState.Resolvers;
+using FFXIVClientStructs.FFXIV.Client.UI;
+using Lumina.Excel.GeneratedSheets;
+using Lumina.Text;
+using Quest = Altoholic.Models.Quest;
 
 namespace Altoholic
 {
@@ -34,7 +38,7 @@ namespace Altoholic
     {
         public static string Name => "Altoholic Plugin";
         private const string CommandName = "/altoholic";
-        private readonly int[] QuestIds = [65970, 66045, 66216, 66217, 66218, 66640, 66641, 66642, 66754, 66789, 66857, 66911, 66968, 66969, 66970, 67023, 67099, 67100, 67101, 67658, 67700, 67791, 67856, 68509, 68572, 68633, 68734, 68817, 69133, 69219, 69330, 69432, 70081, 70137, 70217, 69208, 67631, 69208];
+        private readonly int[] _questIds = [65970, 66045, 66216, 66217, 66218, 66640, 66641, 66642, 66754, 66789, 66857, 66911, 66968, 66969, 66970, 67023, 67099, 67100, 67101, 67658, 67700, 67791, 67856, 68509, 68572, 68633, 68734, 68817, 69133, 69219, 69330, 69432, 70081, 70137, 70217, 69208, 67631, 69208];
         //private DalamudPluginInterface PluginInterface { get; init; }
         //private readonly ICommandManager commandManager;
         //private readonly IClientState ClientState;
@@ -57,7 +61,7 @@ namespace Altoholic
 
         private const string PlaytimeSig = "E8 ?? ?? ?? ?? B9 ?? ?? ?? ?? 48 8B D3";
         private delegate long PlaytimeDelegate(uint param1, long param2, uint param3);
-        private Hook<PlaytimeDelegate> PlaytimeHook;
+        private readonly Hook<PlaytimeDelegate> _playtimeHook;
 
         public Configuration Configuration { get; set; }
         public WindowSystem WindowSystem = new("Altoholic");
@@ -73,38 +77,38 @@ namespace Altoholic
         private CollectionWindow CollectionWindow { get; init; }
 
         private readonly Service altoholicService = null!;
-        private readonly LiteDatabase db;
+        private readonly LiteDatabase _db;
 
-        private Character localPlayer = null!;
-        private Utf8String? localPlayerFreeCompanyTest;
+        private Character _localPlayer = new();
+        private Utf8String? _localPlayerFreeCompanyTest;
 
-        private PeriodicTimer? periodicTimer = null;
-        public List<Character> otherCharacters = [];
-        private static ClientLanguage currentLocale;
-        private readonly Localization Localization = new();
-        private readonly GlobalCache GlobalCache;
-        /*private readonly IconStorage IconStorage;
-        private readonly ItemStorage ItemStorage;*/
+        private readonly PeriodicTimer? _periodicTimer = null;
+        public List<Character> OtherCharacters = [];
+        private static ClientLanguage _currentLocale;
+        private readonly Localization _localization = new();
+        private readonly GlobalCache _globalCache;
 
         public Plugin()
         {
-            GlobalCache = new()
+            _globalCache = new GlobalCache
             {
                 IconStorage = new IconStorage(TextureProvider),
                 ItemStorage = new ItemStorage(),
-                JobStorage = new JobStorage()
+                JobStorage = new JobStorage(),
+                AddonStorage = new AddonStorage(),
+                StainStorage = new StainStorage(),
             };
 
             nint playtimePtr = SigScanner.ScanText(PlaytimeSig);
             //if (playtimePtr == nint.Zero) return;
-            PlaytimeHook = Hook.HookFromAddress<PlaytimeDelegate>(playtimePtr, PlaytimePacket);
-            PlaytimeHook.Enable();
+            _playtimeHook = Hook.HookFromAddress<PlaytimeDelegate>(playtimePtr, PlaytimePacket);
+            _playtimeHook.Enable();
 
-            var dbpath = Path.Combine(PluginInterface.AssemblyLocation.Directory?.FullName!, "altoholic.db");
+            string dbpath = Path.Combine(PluginInterface.AssemblyLocation.Directory?.FullName!, "altoholic.db");
             /*try
             {*/
 
-            db = new LiteDatabase(dbpath);
+            _db = new LiteDatabase(dbpath);
             /*}
             catch (Exception)
             {
@@ -124,51 +128,51 @@ namespace Altoholic
                 Configuration.Language = ClientState.ClientLanguage;
                 Configuration.Save();
             }
-            currentLocale = Configuration.Language;
-            Localization.SetupWithLangCode(PluginInterface.UiLanguage);
+            _currentLocale = Configuration.Language;
+            _localization.SetupWithLangCode(PluginInterface.UiLanguage);
 
             altoholicService = new Service(
-                () => this.localPlayer,
-                () => this.otherCharacters);
+                () => _localPlayer,
+                () => OtherCharacters);
 
-            ConfigWindow = new ConfigWindow(this, $"{Name} configuration");
-            CharactersWindow = new CharactersWindow(this, $"{Name} characters", db, GlobalCache)
+            ConfigWindow = new ConfigWindow(this, $"{Name} configuration", _globalCache);
+            CharactersWindow = new CharactersWindow(this, $"{Name} characters", _db, _globalCache)
             {
-                GetPlayer = () => this.altoholicService.GetPlayer(),
-                GetOthersCharactersList = () => this.altoholicService.GetOthersCharacters(),
+                GetPlayer = () => altoholicService.GetPlayer(),
+                GetOthersCharactersList = () => altoholicService.GetOthersCharacters(),
             };
 
-            DetailsWindow = new DetailsWindow(this, $"{Name} characters details", GlobalCache)
+            DetailsWindow = new DetailsWindow(this, $"{Name} characters details", _globalCache)
             {
-                GetPlayer = () => this.altoholicService.GetPlayer(),
-                GetOthersCharactersList = () => this.altoholicService.GetOthersCharacters(),
+                GetPlayer = () => altoholicService.GetPlayer(),
+                GetOthersCharactersList = () => altoholicService.GetOthersCharacters(),
             };
 
-            JobsWindow = new JobsWindow(this, $"{Name} characters jobs", GlobalCache)
+            JobsWindow = new JobsWindow(this, $"{Name} characters jobs", _globalCache)
             {
-                GetPlayer = () => this.altoholicService.GetPlayer(),
-                GetOthersCharactersList = () => this.altoholicService.GetOthersCharacters(),
+                GetPlayer = () => altoholicService.GetPlayer(),
+                GetOthersCharactersList = () => altoholicService.GetOthersCharacters(),
             };
 
-            CurrenciesWindow = new CurrenciesWindow(this, $"{Name} characters currencies")
+            CurrenciesWindow = new CurrenciesWindow(this, $"{Name} characters currencies", _globalCache)
             {
-                GetPlayer = () => this.altoholicService.GetPlayer(),
-                GetOthersCharactersList = () => this.altoholicService.GetOthersCharacters(),
+                GetPlayer = () => altoholicService.GetPlayer(),
+                GetOthersCharactersList = () => altoholicService.GetOthersCharacters(),
             };
 
-            InventoriesWindow = new InventoriesWindow(this, $"{Name} characters inventories", GlobalCache)
+            InventoriesWindow = new InventoriesWindow(this, $"{Name} characters inventories", _globalCache)
             {
-                GetPlayer = () => this.altoholicService.GetPlayer(),
-                GetOthersCharactersList = () => this.altoholicService.GetOthersCharacters(),
+                GetPlayer = () => altoholicService.GetPlayer(),
+                GetOthersCharactersList = () => altoholicService.GetOthersCharacters(),
             };
 
-            RetainersWindow = new RetainersWindow(this, $"{Name} characters retainers")
+            RetainersWindow = new RetainersWindow(this, $"{Name} characters retainers", _globalCache)
             {
-                GetPlayer = () => this.altoholicService.GetPlayer(),
-                GetOthersCharactersList = () => this.altoholicService.GetOthersCharacters(),
+                GetPlayer = () => altoholicService.GetPlayer(),
+                GetOthersCharactersList = () => altoholicService.GetOthersCharacters(),
             };
 
-            CollectionWindow = new CollectionWindow(this, $"{Name} characters colletion", GlobalCache)
+            CollectionWindow = new CollectionWindow(this, $"{Name} characters colletion", _globalCache)
             {
             };
 
@@ -176,6 +180,7 @@ namespace Altoholic
             MainWindow = new MainWindow(
                 this,
                 $"{Name} characters",
+                _globalCache,
                 /*Log,
                 Plugin.DataManager,*/
                 CharactersWindow,
@@ -198,7 +203,7 @@ namespace Altoholic
             PluginInterface.UiBuilder.Draw += DrawUI;
             PluginInterface.UiBuilder.OpenConfigUi += DrawConfigUI;
             PluginInterface.UiBuilder.OpenMainUi += DrawMainUI;
-            PluginInterface.LanguageChanged += Localization.SetupWithLangCode;
+            PluginInterface.LanguageChanged += _localization.SetupWithLangCode;
 
             // Todo: On retainers retainer window close
             ClientState.Login += OnCharacterLogin;
@@ -208,16 +213,19 @@ namespace Altoholic
 
         public void Dispose()
         {
-            PlaytimeHook.Dispose();
+            _playtimeHook.Dispose();
             WindowSystem.RemoveAllWindows();
 
             PluginInterface.UiBuilder.Draw -= DrawUI;
             PluginInterface.UiBuilder.OpenConfigUi -= DrawConfigUI;
             PluginInterface.UiBuilder.OpenMainUi -= DrawMainUI;
-            PluginInterface.LanguageChanged -= Localization.SetupWithLangCode;
+            PluginInterface.LanguageChanged -= _localization.SetupWithLangCode;
 
-            GlobalCache.IconStorage.Dispose();
-            GlobalCache.ItemStorage.Dispose();
+            _globalCache.IconStorage.Dispose();
+            _globalCache.ItemStorage.Dispose();
+            _globalCache.JobStorage.Dispose();
+            _globalCache.AddonStorage.Dispose();
+            _globalCache.StainStorage.Dispose();
 
             RetainersWindow.Dispose();
             InventoriesWindow.Dispose();
@@ -235,7 +243,7 @@ namespace Altoholic
             ClientState.Login -= OnCharacterLogin;
             ClientState.Logout -= OnCharacterLogout;
             Framework.Update -= OnFrameworkUpdate;
-            db.Dispose();
+            _db.Dispose();
         }
 
         private void OnCommand(string command, string args)
@@ -251,11 +259,13 @@ namespace Altoholic
             }
         }
 
+        // ReSharper disable once InconsistentNaming
         private void DrawUI()
         {
             WindowSystem.Draw();
         }
 
+        // ReSharper disable once InconsistentNaming
         private void DrawMainUI()
         {
             if (!ClientState.IsLoggedIn)
@@ -274,62 +284,62 @@ namespace Altoholic
             }
 
             //Plugin.Log.Debug($"localPlayerName : {localPlayer.FirstName} {localPlayer.LastName}");
-            if (localPlayer == null || localPlayer.FirstName == null)
+            if (_localPlayer.Id == 0 || string.IsNullOrEmpty(_localPlayer.FirstName))
             {
-                var p = GetCharacterFromGameOrDB();
+                Character? p = GetCharacterFromGameOrDB();
                 if (p is not null)
                 {
-                    localPlayer = p;
+                    _localPlayer = p;
                     //Plugin.Log.Debug($"localPlayerPlayTime : {localPlayerPlayTime}");
-                    if (localPlayer.PlayTime == 0)//still needed?
+                    if (_localPlayer.PlayTime == 0)//still needed?
                     {
-                        Character? chara = Database.Database.GetCharacter(Log, db, localPlayer.Id);
+                        Character? chara = Database.Database.GetCharacter(Log, _db, _localPlayer.Id);
                         if (chara is not null)
                         {
-                            localPlayer.PlayTime = chara.PlayTime;
-                            localPlayer.LastPlayTimeUpdate = chara.LastPlayTimeUpdate;
+                            _localPlayer.PlayTime = chara.PlayTime;
+                            _localPlayer.LastPlayTimeUpdate = chara.LastPlayTimeUpdate;
                         }
                     }
 
-                    Plugin.Log.Debug($"Character localLastPlayTimeUpdate : {localPlayer.LastPlayTimeUpdate}");
+                    Log.Debug($"Character localLastPlayTimeUpdate : {_localPlayer.LastPlayTimeUpdate}");
 #if DEBUG
-                    foreach (var inventory in localPlayer.Inventory)
+                    /*foreach (Inventory inventory in _localPlayer.Inventory)
                     {
-                        //Plugin.Log.Debug($"{inventory.ItemId} {lumina.Singular} {inventory.HQ} {inventory.Quantity}");
-                    }
+                        Plugin.Log.Debug($"{inventory.ItemId} {lumina.Singular} {inventory.HQ} {inventory.Quantity}");
+                    }*/
 #endif
                 }
             }
-            if (localPlayer is not null)
+            if (_localPlayer.Id != 0)
             {
-                if (otherCharacters.Count == 0)
+                if (OtherCharacters.Count == 0)
                 {
-                    otherCharacters = Database.Database.GetOthersCharacters(Log, db, localPlayer.Id);
+                    OtherCharacters = Database.Database.GetOthersCharacters(Log, _db, _localPlayer.Id);
                 }
                 //Plugin.Log.Debug($"otherCharacters count {otherCharacters.Count}");
 
                 //Plugin.Log.Debug($"localPlayer.Quests.Count: {localPlayer.Quests.Count}");
-                if (localPlayer.Quests.Count == 0)
+                if (_localPlayer.Quests.Count == 0)
                 {
                     //Plugin.Log.Debug("No quest found, fetching from db");
-                    Character? chara = Database.Database.GetCharacter(Log, db, localPlayer.Id);
+                    Character? chara = Database.Database.GetCharacter(Log, _db, _localPlayer.Id);
                     if (chara != null)
                     {
-                        localPlayer.Quests = chara.Quests;
+                        _localPlayer.Quests = chara.Quests;
                     }
                 }
                 //Plugin.Log.Debug($"localPlayer.Quests.Count: {localPlayer.Quests.Count}");
-                if (localPlayer.Retainers.Count == 0)
+                if (_localPlayer.Retainers.Count == 0)
                 {
-                    Character? chara = Database.Database.GetCharacter(Log, db, localPlayer.Id);
+                    Character? chara = Database.Database.GetCharacter(Log, _db, _localPlayer.Id);
                     if (chara != null)
                     {
-                        localPlayer.Retainers = chara.Retainers;
+                        _localPlayer.Retainers = chara.Retainers;
                     }
                 }
-                foreach (Gear i in localPlayer.Gear)
+                foreach (Gear i in _localPlayer.Gear)
                 {
-                    Plugin.Log.Debug($"Gear: {i.ItemId} {Enum.GetName(typeof(GearSlot), i.Slot)} {i.Slot}");
+                    Log.Debug($"Gear: {i.ItemId} {Enum.GetName(typeof(GearSlot), i.Slot)} {i.Slot}");
                 }
 #if DEBUG
                 /*Plugin.Log.Debug($"Title {localPlayer.Profile.Title}");
@@ -347,7 +357,7 @@ namespace Altoholic
                 PlayerCharacter? lPlayer = ClientState.LocalPlayer;
                 if (lPlayer != null)
                 {
-                    localPlayer.Attributes = new()
+                    _localPlayer.Attributes = new Attributes
                     {
                         Hp = lPlayer.MaxHp,
                         Mp = lPlayer.MaxMp
@@ -377,20 +387,20 @@ foreach(Retainer retainer in localPlayer.Retainers)
     Log.Debug($"{retainer.Name} job:{Enum.GetName(typeof(ClassJob), retainer.ClassJob)}, displayorder: {retainer.DisplayOrder}, items: {retainer.Inventory.Count}, gils: {retainer.Gils}");
 }*/
 #if DEBUG
-                    if (localPlayer.ArmoryInventory != null)
+                    if (_localPlayer.ArmoryInventory != null)
                     {
-                        Log.Debug($"localPlayer.ArmoryInventory.MainHand.Count : {localPlayer.ArmoryInventory.MainHand.FindAll(i => i.ItemId != 0).Count}");
-                        Log.Debug($"localPlayer.ArmoryInventory.Head.Count : {localPlayer.ArmoryInventory.Head.FindAll(i => i.ItemId != 0).Count}");
-                        Log.Debug($"localPlayer.ArmoryInventory.Body.Count : {localPlayer.ArmoryInventory.Body.FindAll(i => i.ItemId != 0).Count}");
-                        Log.Debug($"localPlayer.ArmoryInventory.Hands.Count : {localPlayer.ArmoryInventory.Hands.FindAll(i => i.ItemId != 0).Count}");
-                        Log.Debug($"localPlayer.ArmoryInventory.Legs.Count : {localPlayer.ArmoryInventory.Legs.FindAll(i => i.ItemId != 0).Count}");
-                        Log.Debug($"localPlayer.ArmoryInventory.Feets.Count : {localPlayer.ArmoryInventory.Feets.FindAll(i => i.ItemId != 0).Count}");
-                        Log.Debug($"localPlayer.ArmoryInventory.OffHand.Count : {localPlayer.ArmoryInventory.OffHand.FindAll(i => i.ItemId != 0).Count}");
-                        Log.Debug($"localPlayer.ArmoryInventory.Ear.Count : {localPlayer.ArmoryInventory.Ear.FindAll(i => i.ItemId != 0).Count}");
-                        Log.Debug($"localPlayer.ArmoryInventory.Neck.Count : {localPlayer.ArmoryInventory.Neck.FindAll(i => i.ItemId != 0).Count}");
-                        Log.Debug($"localPlayer.ArmoryInventory.Wrist.Count : {localPlayer.ArmoryInventory.Wrist.FindAll(i => i.ItemId != 0).Count}");
-                        Log.Debug($"localPlayer.ArmoryInventory.Rings.Count : {localPlayer.ArmoryInventory.Rings.FindAll(i => i.ItemId != 0).Count}");
-                        Log.Debug($"localPlayer.ArmoryInventory.SoulCrystal.Count : {localPlayer.ArmoryInventory.SoulCrystal.FindAll(i => i.ItemId != 0).Count}");
+                        Log.Debug($"localPlayer.ArmoryInventory.MainHand.Count : {_localPlayer.ArmoryInventory.MainHand.FindAll(i => i.ItemId != 0).Count}");
+                        Log.Debug($"localPlayer.ArmoryInventory.Head.Count : {_localPlayer.ArmoryInventory.Head.FindAll(i => i.ItemId != 0).Count}");
+                        Log.Debug($"localPlayer.ArmoryInventory.Body.Count : {_localPlayer.ArmoryInventory.Body.FindAll(i => i.ItemId != 0).Count}");
+                        Log.Debug($"localPlayer.ArmoryInventory.Hands.Count : {_localPlayer.ArmoryInventory.Hands.FindAll(i => i.ItemId != 0).Count}");
+                        Log.Debug($"localPlayer.ArmoryInventory.Legs.Count : {_localPlayer.ArmoryInventory.Legs.FindAll(i => i.ItemId != 0).Count}");
+                        Log.Debug($"localPlayer.ArmoryInventory.Feets.Count : {_localPlayer.ArmoryInventory.Feets.FindAll(i => i.ItemId != 0).Count}");
+                        Log.Debug($"localPlayer.ArmoryInventory.OffHand.Count : {_localPlayer.ArmoryInventory.OffHand.FindAll(i => i.ItemId != 0).Count}");
+                        Log.Debug($"localPlayer.ArmoryInventory.Ear.Count : {_localPlayer.ArmoryInventory.Ear.FindAll(i => i.ItemId != 0).Count}");
+                        Log.Debug($"localPlayer.ArmoryInventory.Neck.Count : {_localPlayer.ArmoryInventory.Neck.FindAll(i => i.ItemId != 0).Count}");
+                        Log.Debug($"localPlayer.ArmoryInventory.Wrist.Count : {_localPlayer.ArmoryInventory.Wrist.FindAll(i => i.ItemId != 0).Count}");
+                        Log.Debug($"localPlayer.ArmoryInventory.Rings.Count : {_localPlayer.ArmoryInventory.Rings.FindAll(i => i.ItemId != 0).Count}");
+                        Log.Debug($"localPlayer.ArmoryInventory.SoulCrystal.Count : {_localPlayer.ArmoryInventory.SoulCrystal.FindAll(i => i.ItemId != 0).Count}");
                         /*foreach (var inventory in localPlayer.ArmoryInventory.Hands)
                         {
                             Log.Debug($"{inventory.ItemId} {Utils.GetItemNameFromId(inventory.ItemId)} {inventory.HQ}");
@@ -401,7 +411,7 @@ foreach(Retainer retainer in localPlayer.Retainers)
 
                 if (ClientState.IsLoggedIn)
                 {
-                    localPlayer.LastOnline = 0;
+                    _localPlayer.LastOnline = 0;
                 }
 #if DEBUG
                 /*Plugin.Log.Debug($"Gladiator : {localPlayer.Jobs.Gladiator.Level}");
@@ -445,18 +455,19 @@ foreach(Retainer retainer in localPlayer.Retainers)
                 Plugin.Log.Debug($"Reaper : {localPlayer.Jobs.Reaper.Level}");
                 Plugin.Log.Debug($"Sage : {localPlayer.Jobs.Sage.Level}");*/
 #endif
-                if (localPlayer.PlayTime == 0)
+                if (_localPlayer.PlayTime == 0)
                 {
-                    var p = GetCharacterFromGameOrDB();
+                    Character? p = GetCharacterFromGameOrDB();
                     if (p is not null)
                     {
-                        localPlayer.PlayTime = p.PlayTime;
+                        _localPlayer.PlayTime = p.PlayTime;
                     }
                 }
             }
             MainWindow.IsOpen = true;
         }
 
+        // ReSharper disable once InconsistentNaming
         public void DrawConfigUI()
         {
             ConfigWindow.IsOpen = true;
@@ -465,187 +476,192 @@ foreach(Retainer retainer in localPlayer.Retainers)
         private void OnFrameworkUpdate(IFramework framework)
         {
             PlayerCharacter? lPlayer = ClientState.LocalPlayer;
-            if (lPlayer != null)
+            if (lPlayer == null)
             {
-                localPlayer ??= new()
-                {
-                    Id = ClientState.LocalContentId
-                };
+                return;
+            }
 
-                var name = lPlayer.Name.TextValue ?? string.Empty;
-                if (string.IsNullOrEmpty(name)) return;
-                var names = name.Split(" ");
-                if (names.Length == 2)
-                {
-                    localPlayer.FirstName = names[0];
-                    localPlayer.LastName = names[1];
-                }
-                var hw = lPlayer.HomeWorld;
-                if (hw != null)
-                {
-                    var hwgd = hw.GameData;
-                    if (hwgd != null)
-                    {
-                        localPlayer.HomeWorld = hwgd.Name ?? string.Empty;
-                        localPlayer.Datacenter = Utils.GetDatacenterFromWorld(localPlayer.HomeWorld);
-                        localPlayer.Region = Utils.GetRegionFromWorld(localPlayer.HomeWorld);
-                    }
-                }
-                var cw = lPlayer.CurrentWorld;
-                if (cw != null)
-                {
-                    var cwhd = cw.GameData;
-                    if (cwhd != null)
-                    {
-                        localPlayer.CurrentWorld = cwhd.Name ?? string.Empty;
-                        localPlayer.CurrentDatacenter = Utils.GetDatacenterFromWorld(localPlayer.CurrentWorld);
-                        localPlayer.CurrentRegion = Utils.GetRegionFromWorld(localPlayer.CurrentWorld);
-                    }
-                }
+            if (_localPlayer.Id == 0)
+            {
+                _localPlayer = new Character { Id = ClientState.LocalContentId };
+            }
 
-                localPlayer.LastJob = lPlayer.ClassJob.Id;
-                localPlayer.LastJobLevel = lPlayer.Level;
-                localPlayer.FCTag = lPlayer.CompanyTag.TextValue ?? string.Empty;
-                //Plugin.Log.Debug($"localPlayerFreeCompanyTag : {localPlayerFreeCompanyTag}");
-                //localPlayerFreeCompany = localPlayer..TextValue ?? string.Empty;
-                try
+            string name = lPlayer.Name.TextValue;
+            if (string.IsNullOrEmpty(name)) return;
+            string[] names = name.Split(" ");
+            if (names.Length == 2)
+            {
+                _localPlayer.FirstName = names[0];
+                _localPlayer.LastName = names[1];
+            }
+            ExcelResolver<World> hw = lPlayer.HomeWorld;
+            {
+                World? hwgd = hw.GameData;
+                if (hwgd != null)
                 {
-                    unsafe
-                    {
-                        ref readonly AgentInspect agentInspect = ref *AgentInspect.Instance();
-                        localPlayerFreeCompanyTest = agentInspect.FreeCompany.GuildName;
-                        /*Plugin.Log.Debug($"localPlayerFreeCompanyTest???");
+                    _localPlayer.HomeWorld = hwgd.Name ?? string.Empty;
+                    _localPlayer.Datacenter = Utils.GetDatacenterFromWorld(_localPlayer.HomeWorld);
+                    _localPlayer.Region = Utils.GetRegionFromWorld(_localPlayer.HomeWorld);
+                }
+            }
+            ExcelResolver<World> cw = lPlayer.CurrentWorld;
+            {
+                World? cwhd = cw.GameData;
+                if (cwhd != null)
+                {
+                    _localPlayer.CurrentWorld = cwhd.Name ?? string.Empty;
+                    _localPlayer.CurrentDatacenter = Utils.GetDatacenterFromWorld(_localPlayer.CurrentWorld);
+                    _localPlayer.CurrentRegion = Utils.GetRegionFromWorld(_localPlayer.CurrentWorld);
+                }
+            }
+
+            _localPlayer.LastJob = lPlayer.ClassJob.Id;
+            _localPlayer.LastJobLevel = lPlayer.Level;
+            _localPlayer.FCTag = lPlayer.CompanyTag.TextValue;
+            //Plugin.Log.Debug($"localPlayerFreeCompanyTag : {localPlayerFreeCompanyTag}");
+            //localPlayerFreeCompany = localPlayer..TextValue ?? string.Empty;
+            try
+            {
+                unsafe
+                {
+                    ref readonly AgentInspect agentInspect = ref *AgentInspect.Instance();
+                    _localPlayerFreeCompanyTest = agentInspect.FreeCompany.GuildName;
+                    /*Plugin.Log.Debug($"localPlayerFreeCompanyTest???");
                         if(localPlayerFreeCompanyTest != null)
                         {
                             Plugin.Log.Debug($"localPlayerFreeCompanyTest : {localPlayerFreeCompanyTest}");
                         }*/
-                        //localPlayerFreeCompanyTest = FFXIVClientStructs.FFXIV.Client.UI.Agent.AgentInspect.Instance()->FreeCompany.GuildName;
-                        //Log.Debug($"localPlayerFreeCompanyTest : {}");
-                        //Plugin.Log.Debug(System.Text.Encoding.UTF8.GetString(AgentInspect.Instance()->FreeCompany.GuildName));
-                        //Plugin.Log.Debug(System.Text.Encoding.UTF8.GetString(localPlayerFreeCompanyTest)); ;
-                        //Plugin.Log.Debug($"localPlayerFreeCompany : {localPlayerFreeCompanyTest}");
-                    }
+                    //localPlayerFreeCompanyTest = FFXIVClientStructs.FFXIV.Client.UI.Agent.AgentInspect.Instance()->FreeCompany.GuildName;
+                    //Log.Debug($"localPlayerFreeCompanyTest : {}");
+                    //Plugin.Log.Debug(System.Text.Encoding.UTF8.GetString(AgentInspect.Instance()->FreeCompany.GuildName));
+                    //Plugin.Log.Debug(System.Text.Encoding.UTF8.GetString(localPlayerFreeCompanyTest)); ;
+                    //Plugin.Log.Debug($"localPlayerFreeCompany : {localPlayerFreeCompanyTest}");
                 }
-                catch (Exception e)
-                {
-                    Log.Error(e, "Could not get free company name");
-                }
-                localPlayer.Attributes = new()
-                {
-                    Hp = lPlayer.MaxHp,
-                    Mp = lPlayer.MaxMp
-                };
-
-                GetPlayerAttributesProfileAndJobs();
-                GetPlayerEquippedGear();
-                GetPlayerInventory();
-                GetPlayerArmoryInventory();
-                GetPlayerGlamourInventory();
-                GetPlayerArmoireInventory();
-                GetPlayerSaddleInventory();
-                GetPlayerRetainer();
             }
+            catch (Exception e)
+            {
+                Log.Error(e, "Could not get free company name");
+            }
+            _localPlayer.Attributes = new Attributes
+            {
+                Hp = lPlayer.MaxHp,
+                Mp = lPlayer.MaxMp
+            };
+
+            GetPlayerAttributesProfileAndJobs();
+            GetPlayerEquippedGear();
+            GetPlayerInventory();
+            GetPlayerArmoryInventory();
+            GetPlayerGlamourInventory();
+            GetPlayerArmoireInventory();
+            GetPlayerSaddleInventory();
+            GetPlayerRetainer();
         }
 
         private unsafe void GetPlayerAttributesProfileAndJobs()
         {
-            if (localPlayer is null) return;
-            unsafe
+            if (_localPlayer.Id == 0) return;
+            string title = string.Empty;
+            bool prefixTitle = false;
+            RaptureAtkModule* raptureAtkModule = FFXIVClientStructs.FFXIV.Client.System.Framework.Framework.Instance()->GetUiModule()->GetRaptureAtkModule();
+            if (raptureAtkModule != null)
             {
-                var title = string.Empty;
-                var prefixTitle = false;
-                var raptureAtkModule = FFXIVClientStructs.FFXIV.Client.System.Framework.Framework.Instance()->GetUiModule()->GetRaptureAtkModule();
-                if (raptureAtkModule != null)
+                Span<NamePlateInfo> npi = raptureAtkModule->NamePlateInfoEntriesSpan;
+                if (npi != null)
                 {
-                    var npi = raptureAtkModule->NamePlateInfoEntriesSpan;
-                    if (npi != null)
+                    for (int i = 0; i < 50 && i < raptureAtkModule->NameplateInfoCount; i++)
                     {
-                        for (var i = 0; i < 50 && i < raptureAtkModule->NameplateInfoCount; i++)
+                        ref NamePlateInfo namePlateInfo = ref npi[i];
+                        if (ClientState.LocalPlayer == null) continue;
+                        if (namePlateInfo.ObjectID.ObjectID != ClientState.LocalPlayer.ObjectId)
                         {
-                            ref NamePlateInfo namePlateInfo = ref npi[i];
-                            if (ClientState.LocalPlayer == null) continue;
-                            if (namePlateInfo.ObjectID.ObjectID == ClientState.LocalPlayer.ObjectId)
-                            {
-                                var t = namePlateInfo.Title.ToString();//this sometime get player name??? to recheck
-                                //Plugin.Log.Debug($"t: {t}");
-                                if (t != $"{localPlayer.FirstName} {localPlayer.LastName}")
-                                {
-                                    title = t;
-                                    prefixTitle = namePlateInfo.IsPrefixTitle;
-                                }
-                            }
+                            continue;
                         }
+
+                        string t = namePlateInfo.Title.ToString();//this sometime get player name??? to recheck
+                        //Plugin.Log.Debug($"t: {t}");
+                        if (t == $"{_localPlayer.FirstName} {_localPlayer.LastName}")
+                        {
+                            continue;
+                        }
+
+                        title = t;
+                        prefixTitle = namePlateInfo.IsPrefixTitle;
                     }
                 }
-                ref readonly UIState uistate = ref *UIState.Instance();//nullcheck?
-                var player = uistate.PlayerState;
-                localPlayer.IsSprout = player.IsNovice();
-                localPlayer.HasPremiumSaddlebag = player.HasPremiumSaddlebag;
-                localPlayer.Profile = new()
-                {
-                    Title = title,
-                    TitleIsPrefix = prefixTitle,
-                    Grand_Company = player.GrandCompany,
-                    Grand_Company_Rank = player.GetGrandCompanyRank(),
-                    Race = player.Race,
-                    Tribe = player.Tribe,
-                    Gender = player.Sex,
-                    City_State = player.StartTown,
-                    Nameday_Day = player.BirthDay,
-                    Nameday_Month = player.BirthMonth,
-                    Guardian = player.GuardianDeity
-                };
-                localPlayer.Jobs = new()
-                {
-                    Adventurer = new() { Level = player.ClassJobLevelArray[-1], Exp = player.ClassJobExpArray[-1] },
-                    Gladiator = new() { Level = player.ClassJobLevelArray[1], Exp = player.ClassJobExpArray[1] },
-                    Pugilist = new() { Level = player.ClassJobLevelArray[0], Exp = player.ClassJobExpArray[0] },
-                    Marauder = new() { Level = player.ClassJobLevelArray[2], Exp = player.ClassJobExpArray[2] },
-                    Lancer = new() { Level = player.ClassJobLevelArray[4], Exp = player.ClassJobExpArray[4] },
-                    Archer = new() { Level = player.ClassJobLevelArray[3], Exp = player.ClassJobExpArray[3] },
-                    Conjurer = new() { Level = player.ClassJobLevelArray[6], Exp = player.ClassJobExpArray[6] },
-                    Thaumaturge = new() { Level = player.ClassJobLevelArray[5], Exp = player.ClassJobExpArray[5] },
-                    Carpenter = new() { Level = player.ClassJobLevelArray[7], Exp = player.ClassJobExpArray[7] },
-                    Blacksmith = new() { Level = player.ClassJobLevelArray[8], Exp = player.ClassJobExpArray[8] },
-                    Armorer = new() { Level = player.ClassJobLevelArray[9], Exp = player.ClassJobExpArray[9] },
-                    Goldsmith = new() { Level = player.ClassJobLevelArray[10], Exp = player.ClassJobExpArray[10] },
-                    Leatherworker = new() { Level = player.ClassJobLevelArray[11], Exp = player.ClassJobExpArray[11] },
-                    Weaver = new() { Level = player.ClassJobLevelArray[12], Exp = player.ClassJobExpArray[12] },
-                    Alchemist = new() { Level = player.ClassJobLevelArray[13], Exp = player.ClassJobExpArray[13] },
-                    Culinarian = new() { Level = player.ClassJobLevelArray[14], Exp = player.ClassJobExpArray[14] },
-                    Miner = new() { Level = player.ClassJobLevelArray[15], Exp = player.ClassJobExpArray[15] },
-                    Botanist = new() { Level = player.ClassJobLevelArray[16], Exp = player.ClassJobExpArray[16] },
-                    Fisher = new() { Level = player.ClassJobLevelArray[17], Exp = player.ClassJobExpArray[17] },
-                    Paladin = new() { Level = player.ClassJobLevelArray[1], Exp = player.ClassJobExpArray[1] },
-                    Monk = new() { Level = player.ClassJobLevelArray[0], Exp = player.ClassJobExpArray[0] },
-                    Warrior = new() { Level = player.ClassJobLevelArray[2], Exp = player.ClassJobExpArray[2] },
-                    Dragoon = new() { Level = player.ClassJobLevelArray[4], Exp = player.ClassJobExpArray[4] },
-                    Bard = new() { Level = player.ClassJobLevelArray[3], Exp = player.ClassJobExpArray[3] },
-                    WhiteMage = new() { Level = player.ClassJobLevelArray[6], Exp = player.ClassJobExpArray[6] },
-                    BlackMage = new() { Level = player.ClassJobLevelArray[5], Exp = player.ClassJobExpArray[5] },
-                    Arcanist = new() { Level = player.ClassJobLevelArray[18], Exp = player.ClassJobExpArray[18] },
-                    Summoner = new() { Level = player.ClassJobLevelArray[18], Exp = player.ClassJobExpArray[18] },
-                    Scholar = new() { Level = player.ClassJobLevelArray[18], Exp = player.ClassJobExpArray[18] },
-                    Rogue = new() { Level = player.ClassJobLevelArray[19], Exp = player.ClassJobExpArray[19] },
-                    Ninja = new() { Level = player.ClassJobLevelArray[19], Exp = player.ClassJobExpArray[19] },
-                    Machinist = new() { Level = player.ClassJobLevelArray[20], Exp = player.ClassJobExpArray[20] },
-                    DarkKnight = new() { Level = player.ClassJobLevelArray[21], Exp = player.ClassJobExpArray[21] },
-                    Astrologian = new() { Level = player.ClassJobLevelArray[22], Exp = player.ClassJobExpArray[22] },
-                    Samurai = new() { Level = player.ClassJobLevelArray[23], Exp = player.ClassJobExpArray[23] },
-                    RedMage = new() { Level = player.ClassJobLevelArray[24], Exp = player.ClassJobExpArray[24] },
-                    BlueMage = new() { Level = player.ClassJobLevelArray[25], Exp = player.ClassJobExpArray[25] },
-                    Gunbreaker = new() { Level = player.ClassJobLevelArray[26], Exp = player.ClassJobExpArray[26] },
-                    Dancer = new() { Level = player.ClassJobLevelArray[27], Exp = player.ClassJobExpArray[27] },
-                    Reaper = new() { Level = player.ClassJobLevelArray[28], Exp = player.ClassJobExpArray[28] },
-                    Sage = new() { Level = player.ClassJobLevelArray[29], Exp = player.ClassJobExpArray[29] }
-                };
-                //player.Attributes.
-                //Plugin.Log.Debug();
-                /*foreach (var a in player.Attributes)
+            }
+            ref readonly UIState uistate = ref *UIState.Instance();//nullcheck?
+            PlayerState player = uistate.PlayerState;
+            _localPlayer.IsSprout = player.IsNovice();
+            _localPlayer.HasPremiumSaddlebag = player.HasPremiumSaddlebag;
+            _localPlayer.Profile = new Profile
+            {
+                Title = title,
+                TitleIsPrefix = prefixTitle,
+                Grand_Company = player.GrandCompany,
+                Grand_Company_Rank = player.GetGrandCompanyRank(),
+                Race = player.Race,
+                Tribe = player.Tribe,
+                Gender = player.Sex,
+                City_State = player.StartTown,
+                Nameday_Day = player.BirthDay,
+                Nameday_Month = player.BirthMonth,
+                Guardian = player.GuardianDeity
+            };
+            _localPlayer.Jobs = new Jobs
+            {
+                Adventurer = new Job { Level = player.ClassJobLevelArray[-1], Exp = player.ClassJobExpArray[-1] },
+                Gladiator = new Job { Level = player.ClassJobLevelArray[1], Exp = player.ClassJobExpArray[1] },
+                Pugilist = new Job { Level = player.ClassJobLevelArray[0], Exp = player.ClassJobExpArray[0] },
+                Marauder = new Job { Level = player.ClassJobLevelArray[2], Exp = player.ClassJobExpArray[2] },
+                Lancer = new Job { Level = player.ClassJobLevelArray[4], Exp = player.ClassJobExpArray[4] },
+                Archer = new Job { Level = player.ClassJobLevelArray[3], Exp = player.ClassJobExpArray[3] },
+                Conjurer = new Job { Level = player.ClassJobLevelArray[6], Exp = player.ClassJobExpArray[6] },
+                Thaumaturge = new Job { Level = player.ClassJobLevelArray[5], Exp = player.ClassJobExpArray[5] },
+                Carpenter = new Job() { Level = player.ClassJobLevelArray[7], Exp = player.ClassJobExpArray[7] },
+                Blacksmith = new Job { Level = player.ClassJobLevelArray[8], Exp = player.ClassJobExpArray[8] },
+                Armorer = new Job { Level = player.ClassJobLevelArray[9], Exp = player.ClassJobExpArray[9] },
+                Goldsmith = new Job { Level = player.ClassJobLevelArray[10], Exp = player.ClassJobExpArray[10] },
+                Leatherworker = new Job { Level = player.ClassJobLevelArray[11], Exp = player.ClassJobExpArray[11] },
+                Weaver = new Job { Level = player.ClassJobLevelArray[12], Exp = player.ClassJobExpArray[12] },
+                Alchemist = new Job { Level = player.ClassJobLevelArray[13], Exp = player.ClassJobExpArray[13] },
+                Culinarian = new Job { Level = player.ClassJobLevelArray[14], Exp = player.ClassJobExpArray[14] },
+                Miner = new Job { Level = player.ClassJobLevelArray[15], Exp = player.ClassJobExpArray[15] },
+                Botanist = new Job { Level = player.ClassJobLevelArray[16], Exp = player.ClassJobExpArray[16] },
+                Fisher = new Job { Level = player.ClassJobLevelArray[17], Exp = player.ClassJobExpArray[17] },
+                Paladin = new Job { Level = player.ClassJobLevelArray[1], Exp = player.ClassJobExpArray[1] },
+                Monk = new Job { Level = player.ClassJobLevelArray[0], Exp = player.ClassJobExpArray[0] },
+                Warrior = new Job { Level = player.ClassJobLevelArray[2], Exp = player.ClassJobExpArray[2] },
+                Dragoon = new Job { Level = player.ClassJobLevelArray[4], Exp = player.ClassJobExpArray[4] },
+                Bard = new Job { Level = player.ClassJobLevelArray[3], Exp = player.ClassJobExpArray[3] },
+                WhiteMage = new Job { Level = player.ClassJobLevelArray[6], Exp = player.ClassJobExpArray[6] },
+                BlackMage = new Job { Level = player.ClassJobLevelArray[5], Exp = player.ClassJobExpArray[5] },
+                Arcanist = new Job { Level = player.ClassJobLevelArray[18], Exp = player.ClassJobExpArray[18] },
+                Summoner = new Job { Level = player.ClassJobLevelArray[18], Exp = player.ClassJobExpArray[18] },
+                Scholar = new Job { Level = player.ClassJobLevelArray[18], Exp = player.ClassJobExpArray[18] },
+                Ninja = new Job { Level = player.ClassJobLevelArray[19], Exp = player.ClassJobExpArray[19] },
+                Rogue = new Job { Level = player.ClassJobLevelArray[19], Exp = player.ClassJobExpArray[19] },
+                Machinist = new Job { Level = player.ClassJobLevelArray[20], Exp = player.ClassJobExpArray[20] },
+                DarkKnight = new Job { Level = player.ClassJobLevelArray[21], Exp = player.ClassJobExpArray[21] },
+                Astrologian = new Job { Level = player.ClassJobLevelArray[22], Exp = player.ClassJobExpArray[22] },
+                Samurai = new Job { Level = player.ClassJobLevelArray[23], Exp = player.ClassJobExpArray[23] },
+                RedMage = new Job { Level = player.ClassJobLevelArray[24], Exp = player.ClassJobExpArray[24] },
+                BlueMage = new Job { Level = player.ClassJobLevelArray[25], Exp = player.ClassJobExpArray[25] },
+                Gunbreaker = new Job { Level = player.ClassJobLevelArray[26], Exp = player.ClassJobExpArray[26] },
+                Dancer = new Job { Level = player.ClassJobLevelArray[27], Exp = player.ClassJobExpArray[27] },
+                Reaper = new Job { Level = player.ClassJobLevelArray[28], Exp = player.ClassJobExpArray[28] },
+                Sage = new Job { Level = player.ClassJobLevelArray[29], Exp = player.ClassJobExpArray[29] }
+            };
+            _localPlayer.Jobs.Rogue.Level = player.ClassJobLevelArray[19];
+            _localPlayer.Jobs.Rogue.Exp = player.ClassJobExpArray[19];
+            _localPlayer.Jobs.Weaver.Level = player.ClassJobLevelArray[12];
+            _localPlayer.Jobs.Weaver.Exp = player.ClassJobExpArray[12];
+            //player.Attributes.
+            //Plugin.Log.Debug();
+            /*foreach (var a in player.Attributes)
                 {
 
-                }*/                
-            }
+                }*/
         }
 
         private unsafe PlayerCurrencies GetPlayerCurrencies()
@@ -771,31 +787,29 @@ foreach(Retainer retainer in localPlayer.Retainers)
 
         private void GetPlayerCompletedQuest()
         {
-            foreach (int id in QuestIds)
+            foreach (int id in _questIds)
             {
                 Plugin.Log.Debug($"Checking quest {id}");
                 /*if(localPlayer.HasQuest(id) && localPlayer.IsQuestCompleted(id))
                     Plugin.Log.Debug($"{id} is completed");*/
 
-                if (!localPlayer.HasQuest(id) || localPlayer.HasQuest(id) && !localPlayer.IsQuestCompleted(id))
+                if (_localPlayer.HasQuest(id) && _localPlayer.IsQuestCompleted(id))
                 {
-                    Plugin.Log.Debug($"Quest not in store or not completed, checking if quest {id} is completed");
-                    bool complete = Utils.IsQuestCompleted(id);
-                    if (!localPlayer.HasQuest(id))
+                    continue;
+                }
+
+                Log.Debug($"Quest not in store or not completed, checking if quest {id} is completed");
+                bool complete = Utils.IsQuestCompleted(id);
+                if (!_localPlayer.HasQuest(id))
+                {
+                    _localPlayer.Quests.Add(new Quest() { Id = id, Completed = complete });
+                }
+                else
+                {
+                    Quest? q = _localPlayer.Quests.Find(q => q.Id == id);
+                    if (q != null)
                     {
-                        localPlayer.Quests.Add(new()
-                        {
-                            Id = id,
-                            Completed = complete
-                        });
-                    }
-                    else
-                    {
-                        var q = localPlayer.Quests.Find(q => q.Id == id);
-                        if (q != null)
-                        {
-                            q.Completed = complete;
-                        }
+                        q.Completed = complete;
                     }
                 }
             }
@@ -803,18 +817,153 @@ foreach(Retainer retainer in localPlayer.Retainers)
 
         private unsafe void GetPlayerEquippedGear()
         {
-            unsafe
+            //var inv = InventoryManager.Instance()->GetInventoryContainer(InventoryType.EquippedItems);
+            ref readonly InventoryManager inventoryManager = ref *InventoryManager.Instance();
+            InventoryContainer inv = *inventoryManager.GetInventoryContainer(InventoryType.EquippedItems);
+            List<Gear> gearItems = [];
+            //for (var i = 0; i < inv->Size; i++)
+            for (int i = 0; i < inv.Size; i++)
             {
-                //var inv = InventoryManager.Instance()->GetInventoryContainer(InventoryType.EquippedItems);
-                ref readonly InventoryManager inventoryManager = ref *InventoryManager.Instance();
-                InventoryContainer inv = *inventoryManager.GetInventoryContainer(InventoryType.EquippedItems);
-                List<Gear> gear_items = [];
+                //var ii = inv->Items[i];
+                InventoryItem ii = inv.Items[i];
+                InventoryItem.ItemFlags flags = ii.Flags;
+                Gear currGear = new()
+                {
+                    ItemId = ii.ItemID,
+                    HQ = flags.HasFlag(InventoryItem.ItemFlags.HQ),
+                    CompanyCrestApplied = flags.HasFlag(InventoryItem.ItemFlags.CompanyCrestApplied),
+                    Slot = ii.Slot,
+                    Spiritbond = ii.Spiritbond,
+                    Condition = ii.Condition,
+                    CrafterContentID = ii.CrafterContentID,
+                    Materia = (ushort)ii.Materia,
+                    MateriaGrade = (byte)ii.MateriaGrade,
+                    Stain = ii.Stain,
+                    GlamourID = ii.GlamourID,
+                };
+                gearItems.Add(currGear);
+            }
+            _localPlayer.Gear = gearItems;
+        }
+
+        private unsafe void GetPlayerInventory()
+        {
+            InventoryType[] invs =
+            [
+                InventoryType.Inventory1,
+                InventoryType.Inventory2,
+                InventoryType.Inventory3,
+                InventoryType.Inventory4,
+                InventoryType.KeyItems,
+                InventoryType.Crystals
+            ];
+            List<Inventory> items = [];
+            ref readonly InventoryManager inventoryManager = ref *InventoryManager.Instance();
+            foreach (InventoryType kind in invs)
+            {
+                //var inv = InventoryManager.Instance()->GetInventoryContainer(kind)
+                //ref readonly InventoryManager inventoryManager = ref *InventoryManager.Instance();
+                InventoryContainer inv = *inventoryManager.GetInventoryContainer(kind);
                 //for (var i = 0; i < inv->Size; i++)
-                for (var i = 0; i < inv.Size; i++)
+                for (int i = 0; i < inv.Size; i++)
                 {
                     //var ii = inv->Items[i];
-                    var ii = inv.Items[i];
-                    var flags = ii.Flags;
+                    InventoryItem ii = inv.Items[i];
+                    InventoryItem.ItemFlags flags = ii.Flags;
+                    Inventory currInv = new()
+                    {
+                        ItemId = ii.ItemID,
+                        HQ = flags.HasFlag(InventoryItem.ItemFlags.HQ),
+                        Quantity = ii.Quantity,
+                    };
+                    //Plugin.Log.Debug($"{currInv.ItemId}");
+                    items.Add(currInv);
+                }
+            }
+            _localPlayer.Inventory = items;
+
+            _localPlayer.Currencies = GetPlayerCurrencies();
+        }
+        private unsafe void GetPlayerSaddleInventory()
+        {
+            if (
+                Condition[ConditionFlag.BoundByDuty] ||
+                Condition[ConditionFlag.BoundByDuty56] ||
+                Condition[ConditionFlag.BoundByDuty95]
+            )
+            {
+                return;
+            }
+            InventoryType[] invs =
+            [
+                InventoryType.SaddleBag1,
+                InventoryType.SaddleBag2,
+                InventoryType.PremiumSaddleBag1,
+                InventoryType.PremiumSaddleBag2
+            ];
+            List<Inventory> items = [];
+            ref readonly InventoryManager inventoryManager = ref *InventoryManager.Instance();
+            foreach (InventoryType kind in invs)
+            {
+                //var inv = InventoryManager.Instance()->GetInventoryContainer(kind)
+                //ref readonly InventoryManager inventoryManager = ref *InventoryManager.Instance();
+                InventoryContainer inv = *inventoryManager.GetInventoryContainer(kind);
+                //for (var i = 0; i < inv->Size; i++)
+                for (int i = 0; i < inv.Size; i++)
+                {
+                    //var ii = inv->Items[i];
+                    InventoryItem ii = inv.Items[i];
+                    InventoryItem.ItemFlags flags = ii.Flags;
+                    Inventory currInv = new()
+                    {
+                        ItemId = ii.ItemID,
+                        HQ = flags.HasFlag(InventoryItem.ItemFlags.HQ),
+                        Quantity = ii.Quantity,
+                    };
+                    //Plugin.Log.Debug($"{currInv.ItemId}");
+                    items.Add(currInv);
+                }
+            }
+            _localPlayer.Saddle = items;
+        }
+
+        private unsafe void GetPlayerArmoryInventory()
+        {
+            InventoryType[] invs =
+            [
+                InventoryType.ArmoryMainHand,
+                InventoryType.ArmoryHead,
+                InventoryType.ArmoryBody,
+                InventoryType.ArmoryHands,
+                InventoryType.ArmoryLegs,
+                InventoryType.ArmoryFeets,
+                InventoryType.ArmoryOffHand,
+                InventoryType.ArmoryEar,
+                InventoryType.ArmoryNeck,
+                InventoryType.ArmoryWrist,
+                InventoryType.ArmoryRings,
+                InventoryType.ArmorySoulCrystal
+            ];
+            List<Gear> mainHand = [];
+            List<Gear> head = [];
+            List<Gear> body = [];
+            List<Gear> hands = [];
+            List<Gear> legs = [];
+            List<Gear> feets = [];
+            List<Gear> oh = [];
+            List<Gear> ear = [];
+            List<Gear> neck = [];
+            List<Gear> wrist = [];
+            List<Gear> rings = [];
+            List<Gear> soulCrystal = [];
+            ref readonly InventoryManager inventoryManager = ref *InventoryManager.Instance();
+            foreach (InventoryType kind in invs)
+            {
+                InventoryContainer inv = *inventoryManager.GetInventoryContainer(kind);
+                for (int i = 0; i < inv.Size; i++)
+                {
+                    InventoryItem ii = inv.Items[i];
+                    InventoryItem.ItemFlags flags = ii.Flags;
                     Gear currGear = new()
                     {
                         ItemId = ii.ItemID,
@@ -829,185 +978,40 @@ foreach(Retainer retainer in localPlayer.Retainers)
                         Stain = ii.Stain,
                         GlamourID = ii.GlamourID,
                     };
-                    gear_items.Add(currGear);
-                }
-                localPlayer.Gear = gear_items;
-            }
-        }
 
-        private unsafe void GetPlayerInventory()
-        {
-            unsafe
-            {
-                var invs = new[] {
-                        InventoryType.Inventory1,
-                        InventoryType.Inventory2,
-                        InventoryType.Inventory3,
-                        InventoryType.Inventory4,
-                        InventoryType.KeyItems,
-                        InventoryType.Crystals,
-                    };
-                List<Inventory> items = [];
-                ref readonly InventoryManager inventoryManager = ref *InventoryManager.Instance();
-                foreach (var kind in invs)
-                {
-                    //var inv = InventoryManager.Instance()->GetInventoryContainer(kind)
-                    //ref readonly InventoryManager inventoryManager = ref *InventoryManager.Instance();
-                    InventoryContainer inv = *inventoryManager.GetInventoryContainer(kind);
-                    //for (var i = 0; i < inv->Size; i++)
-                    for (var i = 0; i < inv.Size; i++)
+                    switch(kind)
                     {
-                        //var ii = inv->Items[i];
-                        var ii = inv.Items[i];
-                        var flags = ii.Flags;
-                        Inventory currInv = new()
-                        {
-                            ItemId = ii.ItemID,
-                            HQ = flags.HasFlag(InventoryItem.ItemFlags.HQ),
-                            Quantity = ii.Quantity,
-                        };
-                        //Plugin.Log.Debug($"{currInv.ItemId}");
-                        items.Add(currInv);
-                    }
-                }
-                localPlayer.Inventory = items;
-
-                localPlayer.Currencies = GetPlayerCurrencies();
-            }
-        }
-        private unsafe void GetPlayerSaddleInventory()
-        {
-            unsafe
-            {
-                if (
-                    Condition[ConditionFlag.BoundByDuty] ||
-                    Condition[ConditionFlag.BoundByDuty56] ||
-                    Condition[ConditionFlag.BoundByDuty95]
-                )
-                {
-                    return;
-                }
-                var invs = new[] {
-                        InventoryType.SaddleBag1,
-                        InventoryType.SaddleBag2,
-                        InventoryType.PremiumSaddleBag1,
-                        InventoryType.PremiumSaddleBag2,
+                        case InventoryType.ArmoryMainHand: mainHand.Add(currGear);break;
+                        case InventoryType.ArmoryHead: head.Add(currGear); break;
+                        case InventoryType.ArmoryBody: body.Add(currGear); break;
+                        case InventoryType.ArmoryHands: hands.Add(currGear); break;
+                        case InventoryType.ArmoryLegs: legs.Add(currGear); break;
+                        case InventoryType.ArmoryFeets: feets.Add(currGear); break;
+                        case InventoryType.ArmoryOffHand: oh.Add(currGear); break;
+                        case InventoryType.ArmoryEar: ear.Add(currGear); break;
+                        case InventoryType.ArmoryNeck: neck.Add(currGear); break;
+                        case InventoryType.ArmoryWrist: wrist.Add(currGear); break;
+                        case InventoryType.ArmoryRings: rings.Add(currGear); break;
+                        case InventoryType.ArmorySoulCrystal: soulCrystal.Add(currGear);break;
                     };
-                List<Inventory> items = [];
-                ref readonly InventoryManager inventoryManager = ref *InventoryManager.Instance();
-                foreach (var kind in invs)
-                {
-                    //var inv = InventoryManager.Instance()->GetInventoryContainer(kind)
-                    //ref readonly InventoryManager inventoryManager = ref *InventoryManager.Instance();
-                    InventoryContainer inv = *inventoryManager.GetInventoryContainer(kind);
-                    //for (var i = 0; i < inv->Size; i++)
-                    for (var i = 0; i < inv.Size; i++)
-                    {
-                        //var ii = inv->Items[i];
-                        var ii = inv.Items[i];
-                        var flags = ii.Flags;
-                        Inventory currInv = new()
-                        {
-                            ItemId = ii.ItemID,
-                            HQ = flags.HasFlag(InventoryItem.ItemFlags.HQ),
-                            Quantity = ii.Quantity,
-                        };
-                        //Plugin.Log.Debug($"{currInv.ItemId}");
-                        items.Add(currInv);
-                    }
                 }
-                localPlayer.Saddle = items;
             }
-        }
 
-        private unsafe void GetPlayerArmoryInventory()
-        {
-            unsafe
+            _localPlayer.ArmoryInventory = new ArmoryGear
             {
-                var invs = new[] {
-                        InventoryType.ArmoryMainHand,
-                        InventoryType.ArmoryHead,
-                        InventoryType.ArmoryBody,
-                        InventoryType.ArmoryHands,
-                        InventoryType.ArmoryLegs,
-                        InventoryType.ArmoryFeets,
-                        InventoryType.ArmoryOffHand,
-                        InventoryType.ArmoryEar,
-                        InventoryType.ArmoryNeck,
-                        InventoryType.ArmoryWrist,
-                        InventoryType.ArmoryRings,
-                        InventoryType.ArmorySoulCrystal
-                    };
-                List<Gear> MH = [];
-                List<Gear> Head = [];
-                List<Gear> Body = [];
-                List<Gear> Hands = [];
-                List<Gear> Legs = [];
-                List<Gear> Feets = [];
-                List<Gear> OH = [];
-                List<Gear> Ear = [];
-                List<Gear> Neck = [];
-                List<Gear> Wrist = [];
-                List<Gear> Rings = [];
-                List<Gear> SC = [];
-                ref readonly InventoryManager inventoryManager = ref *InventoryManager.Instance();
-                foreach (var kind in invs)
-                {
-                    InventoryContainer inv = *inventoryManager.GetInventoryContainer(kind);
-                    for (var i = 0; i < inv.Size; i++)
-                    {
-                        var ii = inv.Items[i];
-                        var flags = ii.Flags;
-                        Gear currGear = new()
-                        {
-                            ItemId = ii.ItemID,
-                            HQ = flags.HasFlag(InventoryItem.ItemFlags.HQ),
-                            CompanyCrestApplied = flags.HasFlag(InventoryItem.ItemFlags.CompanyCrestApplied),
-                            Slot = ii.Slot,
-                            Spiritbond = ii.Spiritbond,
-                            Condition = ii.Condition,
-                            CrafterContentID = ii.CrafterContentID,
-                            Materia = (ushort)ii.Materia,
-                            MateriaGrade = (byte)ii.MateriaGrade,
-                            Stain = ii.Stain,
-                            GlamourID = ii.GlamourID,
-                        };
-
-                        switch(kind)
-                        {
-                            case InventoryType.ArmoryMainHand: MH.Add(currGear);break;
-                            case InventoryType.ArmoryHead: Head.Add(currGear); break;
-                            case InventoryType.ArmoryBody: Body.Add(currGear); break;
-                            case InventoryType.ArmoryHands: Hands.Add(currGear); break;
-                            case InventoryType.ArmoryLegs: Legs.Add(currGear); break;
-                            case InventoryType.ArmoryFeets: Feets.Add(currGear); break;
-                            case InventoryType.ArmoryOffHand: OH.Add(currGear); break;
-                            case InventoryType.ArmoryEar: Ear.Add(currGear); break;
-                            case InventoryType.ArmoryNeck: Neck.Add(currGear); break;
-                            case InventoryType.ArmoryWrist: Wrist.Add(currGear); break;
-                            case InventoryType.ArmoryRings: Rings.Add(currGear); break;
-                            case InventoryType.ArmorySoulCrystal: SC.Add(currGear);break;
-                            default: break;
-                        };
-                    }
-                }
-
-                localPlayer.ArmoryInventory = new()
-                {
-                    MainHand = MH,
-                    Head = Head,
-                    Body = Body,
-                    Hands = Hands,
-                    Legs = Legs,
-                    Feets = Feets,
-                    OffHand = OH,
-                    Ear = Ear,
-                    Neck = Neck,
-                    Wrist = Wrist,
-                    Rings = Rings,
-                    SoulCrystal = SC,
-                };
-            }
+                MainHand = mainHand,
+                Head = head,
+                Body = body,
+                Hands = hands,
+                Legs = legs,
+                Feets = feets,
+                OffHand = oh,
+                Ear = ear,
+                Neck = neck,
+                Wrist = wrist,
+                Rings = rings,
+                SoulCrystal = soulCrystal,
+            };
         }
         private unsafe void GetPlayerGlamourInventory()
         {
@@ -1023,34 +1027,34 @@ foreach(Retainer retainer in localPlayer.Retainers)
             unsafe
             {
                 ref readonly RetainerManager retainerManager = ref *RetainerManager.Instance();
-                var retainersCount = retainerManager.GetRetainerCount();
+                byte retainersCount = retainerManager.GetRetainerCount();
                 if (retainersCount == 0) return;
                 //Log.Debug($"Retainers count {retainersCount}");
                 for (uint i = 0; i < 10; i++)
                 {
-                    var current_retainer = retainerManager.GetRetainerBySortedIndex(i);
+                    RetainerManager.Retainer* currentRetainer = retainerManager.GetRetainerBySortedIndex(i);
                     //if (!current_retainer->Available) continue;
-                    var retainerId = current_retainer->RetainerID;
-                    var name = MemoryHelper.ReadSeStringNullTerminated((nint)current_retainer->Name).TextValue;
+                    ulong retainerId = currentRetainer->RetainerID;
+                    string name = MemoryHelper.ReadSeStringNullTerminated((nint)currentRetainer->Name).TextValue;
 
                     //Log.Debug($"current_retainer name: {name} id: {retainerId}");
                     if (name == "RETAINER") continue;
 
-                    Retainer? r = localPlayer.Retainers.Find(r => r.Id == retainerId);
-                    r ??= new()
+                    Retainer? r = _localPlayer.Retainers.Find(r => r.Id == retainerId);
+                    r ??= new Retainer
                     {
-                        Id = current_retainer->RetainerID
+                        Id = currentRetainer->RetainerID
                     };
 
-                    r.Available = current_retainer->Available;
+                    r.Available = currentRetainer->Available;
                     r.Name = name;
-                    r.ClassJob = current_retainer->ClassJob;
-                    r.Level = current_retainer->Level;
-                    r.Gils = current_retainer->Gil;
-                    r.Town = current_retainer->Town;
-                    r.MarketItemCount = current_retainer->MarkerItemCount;// Todo: change the typo once dalamud update CS
-                    r.MarketExpire = current_retainer->MarketExpire;
-                    r.VentureID = current_retainer->VentureID;
+                    r.ClassJob = currentRetainer->ClassJob;
+                    r.Level = currentRetainer->Level;
+                    r.Gils = currentRetainer->Gil;
+                    r.Town = currentRetainer->Town;
+                    r.MarketItemCount = currentRetainer->MarkerItemCount;// Todo: change the typo once dalamud update CS
+                    r.MarketExpire = currentRetainer->MarketExpire;
+                    r.VentureID = currentRetainer->VentureID;
                     r.LastUpdate = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
                     r.DisplayOrder = retainerManager.DisplayOrder[i];
 
@@ -1061,52 +1065,50 @@ foreach(Retainer retainer in localPlayer.Retainers)
                         r.MarketInventory = GetPlayerRetainerMarketInventory();
                     }
 
-                    if (localPlayer.Retainers.Find(r => r.Id == retainerId) == null)
+                    if (_localPlayer.Retainers.Find(ret => ret.Id == retainerId) == null)
                     {
-                        localPlayer.Retainers.Add(r);
+                        _localPlayer.Retainers.Add(r);
                     }
                 }
             }
         }
         private unsafe List<Inventory> GetPlayerRetainerInventory()
         {
-            unsafe
+            InventoryType[] invs =
+            [
+                InventoryType.RetainerPage1,
+                InventoryType.RetainerPage2,
+                InventoryType.RetainerPage3,
+                InventoryType.RetainerPage4,
+                InventoryType.RetainerPage5,
+                InventoryType.RetainerPage6,
+                InventoryType.RetainerPage7,
+                InventoryType.RetainerCrystals
+            ];
+            List<Inventory> items = [];
+            ref readonly InventoryManager inventoryManager = ref *InventoryManager.Instance();
+            foreach (InventoryType kind in invs)
             {
-                var invs = new[] {
-                        InventoryType.RetainerPage1,
-                        InventoryType.RetainerPage2,
-                        InventoryType.RetainerPage3,
-                        InventoryType.RetainerPage4,
-                        InventoryType.RetainerPage5,
-                        InventoryType.RetainerPage6,
-                        InventoryType.RetainerPage7,
-                        InventoryType.RetainerCrystals,
-                    };
-                List<Inventory> items = [];
-                ref readonly InventoryManager inventoryManager = ref *InventoryManager.Instance();
-                foreach (var kind in invs)
+                //var inv = InventoryManager.Instance()->GetInventoryContainer(kind)
+                //ref readonly InventoryManager inventoryManager = ref *InventoryManager.Instance();
+                InventoryContainer inv = *inventoryManager.GetInventoryContainer(kind);
+                //for (var i = 0; i < inv->Size; i++)
+                for (int i = 0; i < inv.Size; i++)
                 {
-                    //var inv = InventoryManager.Instance()->GetInventoryContainer(kind)
-                    //ref readonly InventoryManager inventoryManager = ref *InventoryManager.Instance();
-                    InventoryContainer inv = *inventoryManager.GetInventoryContainer(kind);
-                    //for (var i = 0; i < inv->Size; i++)
-                    for (var i = 0; i < inv.Size; i++)
+                    //var ii = inv->Items[i];
+                    InventoryItem ii = inv.Items[i];
+                    InventoryItem.ItemFlags flags = ii.Flags;
+                    Inventory currInv = new()
                     {
-                        //var ii = inv->Items[i];
-                        var ii = inv.Items[i];
-                        var flags = ii.Flags;
-                        Inventory currInv = new()
-                        {
-                            ItemId = ii.ItemID,
-                            HQ = flags.HasFlag(InventoryItem.ItemFlags.HQ),
-                            Quantity = ii.Quantity,
-                        };
-                        //Plugin.Log.Debug($"{currInv.ItemId}");
-                        items.Add(currInv);
-                    }
+                        ItemId = ii.ItemID,
+                        HQ = flags.HasFlag(InventoryItem.ItemFlags.HQ),
+                        Quantity = ii.Quantity,
+                    };
+                    //Plugin.Log.Debug($"{currInv.ItemId}");
+                    items.Add(currInv);
                 }
-                return items;
             }
+            return items;
 
             /*
              * 
@@ -1121,13 +1123,13 @@ foreach(Retainer retainer in localPlayer.Retainers)
                 //var inv = InventoryManager.Instance()->GetInventoryContainer(InventoryType.EquippedItems);
                 ref readonly InventoryManager inventoryManager = ref *InventoryManager.Instance();
                 InventoryContainer inv = *inventoryManager.GetInventoryContainer(InventoryType.RetainerMarket);
-                List<Inventory> market_items = [];
+                List<Inventory> marketItems = [];
                 //for (var i = 0; i < inv->Size; i++)
-                for (var i = 0; i < inv.Size; i++)
+                for (int i = 0; i < inv.Size; i++)
                 {
                     //var ii = inv->Items[i];
-                    var ii = inv.Items[i];
-                    var flags = ii.Flags;
+                    InventoryItem ii = inv.Items[i];
+                    InventoryItem.ItemFlags flags = ii.Flags;
                     Inventory currInv = new()
                     {
                         ItemId = ii.ItemID,
@@ -1135,9 +1137,9 @@ foreach(Retainer retainer in localPlayer.Retainers)
                         Quantity = ii.Quantity,
                     };
                     //Plugin.Log.Debug($"{currInv.ItemId}");
-                    market_items.Add(currInv);
+                    marketItems.Add(currInv);
                 }
-                return market_items;
+                return marketItems;
             }
         }
         
@@ -1148,13 +1150,13 @@ foreach(Retainer retainer in localPlayer.Retainers)
                 //var inv = InventoryManager.Instance()->GetInventoryContainer(InventoryType.EquippedItems);
                 ref readonly InventoryManager inventoryManager = ref *InventoryManager.Instance();
                 InventoryContainer inv = *inventoryManager.GetInventoryContainer(InventoryType.RetainerEquippedItems);
-                List<Gear> gear_items = [];
+                List<Gear> gearItems = [];
                 //for (var i = 0; i < inv->Size; i++)
-                for (var i = 0; i < inv.Size; i++)
+                for (int i = 0; i < inv.Size; i++)
                 {
                     //var ii = inv->Items[i];
-                    var ii = inv.Items[i];
-                    var flags = ii.Flags;
+                    InventoryItem ii = inv.Items[i];
+                    InventoryItem.ItemFlags flags = ii.Flags;
                     Gear currGear = new()
                     {
                         ItemId = ii.ItemID,
@@ -1169,9 +1171,9 @@ foreach(Retainer retainer in localPlayer.Retainers)
                         Stain = ii.Stain,
                         GlamourID = ii.GlamourID,
                     };
-                    gear_items.Add(currGear);
+                    gearItems.Add(currGear);
                 }
-                return gear_items;
+                return gearItems;
             }
         }
 
@@ -1203,22 +1205,24 @@ foreach(Retainer retainer in localPlayer.Retainers)
                 Retainers = [],
             };*/
 
-            localPlayer = null!;
-            localPlayerFreeCompanyTest = null;
-            otherCharacters = [];
+            _localPlayer = null!;
+            _localPlayerFreeCompanyTest = null;
+            OtherCharacters = [];
         }
 
         private void OnCharacterLogin()
         {
             //Log.Info("Altoholic : OnCharacterLogin called");
-            var p = GetCharacterFromGameOrDB();
-            if (p is not null)
+            Character? p = GetCharacterFromGameOrDB();
+            if (p is null)
             {
-                localPlayer = p;
-                //Log.Info($"Character id is : {localPlayer.Id}");
-                otherCharacters = Database.Database.GetOthersCharacters(Log, db, localPlayer.Id);
-                //Log.Info("Altoholic : Found {0} others players", otherCharacters.Count);
+                return;
             }
+
+            _localPlayer = p;
+            //Log.Info($"Character id is : {localPlayer.Id}");
+            OtherCharacters = Database.Database.GetOthersCharacters(Log, _db, _localPlayer.Id);
+            //Log.Info("Altoholic : Found {0} others players", otherCharacters.Count);
             //Todo: send /playtime command
             /*_ = new XivChatEntry
             {
@@ -1249,7 +1253,7 @@ foreach(Retainer retainer in localPlayer.Retainers)
 
         private void OnCharacterLogout()
         {
-            Plugin.Log.Debug("Altoholic : OnCharacterLogout called");
+            Log.Debug("Altoholic : OnCharacterLogout called");
             GetPlayerCompletedQuest();
             UpdateCharacter();
 
@@ -1257,15 +1261,14 @@ foreach(Retainer retainer in localPlayer.Retainers)
             CleanLastLocalCharacter();
 
             MainWindow.IsOpen = false;
-            RetainersWindow.Dispose();
-            //InventoriesWindow.Dispose();
+            RetainersWindow.IsOpen = false;
             InventoriesWindow.IsOpen = false;
-            JobsWindow.Dispose();
-            ConfigWindow.Dispose();
-            CurrenciesWindow.Dispose();
-            DetailsWindow.Dispose();
-            CharactersWindow.Dispose();
-            periodicTimer?.Dispose();
+            JobsWindow.IsOpen = false;
+            ConfigWindow.IsOpen = false;
+            CurrenciesWindow.IsOpen = false;
+            DetailsWindow.IsOpen = false;
+            CharactersWindow.IsOpen = false;
+            _periodicTimer?.Dispose();
         }
 
         /*private void PlaytimeCommand()
@@ -1284,113 +1287,104 @@ foreach(Retainer retainer in localPlayer.Retainers)
 
         private long PlaytimePacket(uint param1, long param2, uint param3)
         {
-            var result = PlaytimeHook.Original(param1, param2, param3);
+            long result = _playtimeHook.Original(param1, param2, param3);
             if (param1 != 11)
                 return result;
 
-            var player = GetLocalPlayerNameWorldRegion();
+            (string, string, string) player = GetLocalPlayerNameWorldRegion();
             if (player.Item1.Length == 0)
                 return result;
 
             Log.Debug($"Extracted Player Name: {player.Item1}{(char)SeIconChar.CrossWorld}{player.Item2}");
 
-            var totalPlaytime = (uint)Marshal.ReadInt32((nint)param2 + 0x10);
+            uint totalPlaytime = (uint)Marshal.ReadInt32((nint)param2 + 0x10);
             Log.Debug($"Value from address {totalPlaytime}");
-            var playtime = TimeSpan.FromMinutes(totalPlaytime);
+            TimeSpan playtime = TimeSpan.FromMinutes(totalPlaytime);
             Log.Debug($"Value from timespan {playtime}");
 
-            var names = player.Item1.Split(' ');
+            string[] names = player.Item1.Split(' ');
             if (names.Length == 0)
                 return result;
 
-            localPlayer.PlayTime = totalPlaytime;
+            _localPlayer.PlayTime = totalPlaytime;
 
             ulong id = ClientState.LocalContentId;
 
             long newPlayTimeUpdate = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-            localPlayer.LastPlayTimeUpdate = newPlayTimeUpdate;
+            _localPlayer.LastPlayTimeUpdate = newPlayTimeUpdate;
             Log.Debug($"Updating playtime with {player.Item1}, {player.Item2}, {totalPlaytime}, {newPlayTimeUpdate}.");
-            Database.Database.UpdatePlaytime(Log, db, id, totalPlaytime, newPlayTimeUpdate);
+            Database.Database.UpdatePlaytime(Log, _db, id, totalPlaytime, newPlayTimeUpdate);
             return result;
         }
 
         public (string, string, string) GetLocalPlayerNameWorldRegion()
         {
             PlayerCharacter? local = ClientState.LocalPlayer;
-            if (local == null || local.HomeWorld == null || local.HomeWorld.GameData == null)
+            if (local == null || local.HomeWorld?.GameData == null)
                 return (string.Empty, string.Empty, string.Empty);
-            else
-            {
-                var homeworld = local.HomeWorld.GameData.Name;
+            SeString? homeworld = local.HomeWorld.GameData.Name;
 
-                return ($"{local.Name}", $"{homeworld}", $"{Utils.GetRegionFromWorld(homeworld)}");
-            }
+            return ($"{local.Name}", $"{homeworld}", $"{Utils.GetRegionFromWorld(homeworld)}");
         }
 
         public void UpdateCharacter()
         {
-            if (localPlayer == null || localPlayer.FirstName.Length == 0) return;
+            if (_localPlayer.Id == 0 || _localPlayer.FirstName.Length == 0) return;
 
-            Plugin.Log.Debug($"Updating characters with {localPlayer.Id} {localPlayer.FirstName} {localPlayer.LastName}{(char)SeIconChar.CrossWorld}{localPlayer.HomeWorld}, {Utils.GetRegionFromWorld(localPlayer.HomeWorld)}.");
-            Database.Database.UpdateCharacter(Log, db, localPlayer);
+            Log.Debug($"Updating characters with {_localPlayer.Id} {_localPlayer.FirstName} {_localPlayer.LastName}{(char)SeIconChar.CrossWorld}{_localPlayer.HomeWorld}, {Utils.GetRegionFromWorld(_localPlayer.HomeWorld)}.");
+            Database.Database.UpdateCharacter(Log, _db, _localPlayer);
         }
 
         public Character? GetCharacterFromGameOrDB()
         {
-            if (ClientState is null) return null;
-
-            var player = GetLocalPlayerNameWorldRegion();
+            (string, string, string) player = GetLocalPlayerNameWorldRegion();
             if (string.IsNullOrEmpty(player.Item1) || string.IsNullOrEmpty(player.Item2) || string.IsNullOrEmpty(player.Item3)) return null;
 
             //Plugin.Log.Debug($"Altoholic : Character names => 0: {player.Item1}{(char)SeIconChar.CrossWorld}{player.Item2});
-            var names = player.Item1.Split(' '); // Todo: recheck when Dalamud API7 is out https://discord.com/channels/581875019861328007/653504487352303619/1061422333748850708
+            string[] names = player.Item1.Split(' '); // Todo: recheck when Dalamud API7 is out https://discord.com/channels/581875019861328007/653504487352303619/1061422333748850708
             if (names.Length == 2)
             {
                 //Plugin.Log.Debug("Altoholic : Character names : 0 : {0}, 1: {1}, 2: {2}, 3: {3}", names[0], names[1], player.Item2, player.Item3);
-                Character? chara = Database.Database.GetCharacter(Log, db, ClientState.LocalContentId);
+                Character? chara = Database.Database.GetCharacter(Log, _db, ClientState.LocalContentId);
                 if (chara != null)
                 {
                     //Plugin.Log.Debug($"GetCharacterFromDB : id = {chara.Id}, FirstName = {chara.FirstName}, LastName = {chara.LastName}, HomeWorld = {chara.HomeWorld}, DataCenter = {chara.Datacenter}, LastJob = {chara.LastJob}, LastJobLevel = {chara.LastJobLevel}, FCTag = {chara.FCTag}, FreeCompany = {chara.FreeCompany}, LastOnline = {chara.LastOnline}, PlayTime = {chara.PlayTime}, LastPlayTimeUpdate = {chara.LastPlayTimeUpdate}");
                     return chara;
                 }
-                else
+
+                return new Character
                 {
-                    return new()
-                    {
-                        Id = ClientState.LocalContentId,
-                        FirstName = names[0],
-                        LastName = names[1],
-                        HomeWorld = player.Item2,
-                        CurrentWorld = player.Item2,
-                        Datacenter = Utils.GetDatacenterFromWorld(player.Item2),
-                        CurrentDatacenter = Utils.GetDatacenterFromWorld(player.Item2),
-                        Region = player.Item3,
-                        CurrentRegion = player.Item3,
-                        IsSprout = localPlayer.IsSprout,
-                        LastJob = localPlayer.LastJob,
-                        LastJobLevel = localPlayer.LastJobLevel,
-                        FCTag = localPlayer.FCTag,
-                        FreeCompany = localPlayer.FreeCompany,
-                        LastOnline = localPlayer.LastOnline,
-                        PlayTime = localPlayer.PlayTime,
-                        LastPlayTimeUpdate = localPlayer.LastPlayTimeUpdate,
-                        HasPremiumSaddlebag = localPlayer.HasPremiumSaddlebag,
-                        Attributes = localPlayer.Attributes,
-                        Currencies = localPlayer.Currencies,
-                        Jobs = localPlayer.Jobs,
-                        Profile = localPlayer.Profile,
-                        Quests = localPlayer.Quests,
-                        Inventory = localPlayer.Inventory,
-                        Saddle = localPlayer.Saddle,
-                        Gear = localPlayer.Gear,
-                        Retainers = localPlayer.Retainers,
-                    };
-                }
+                    Id = ClientState.LocalContentId,
+                    FirstName = names[0],
+                    LastName = names[1],
+                    HomeWorld = player.Item2,
+                    CurrentWorld = player.Item2,
+                    Datacenter = Utils.GetDatacenterFromWorld(player.Item2),
+                    CurrentDatacenter = Utils.GetDatacenterFromWorld(player.Item2),
+                    Region = player.Item3,
+                    CurrentRegion = player.Item3,
+                    IsSprout = _localPlayer.IsSprout,
+                    LastJob = _localPlayer.LastJob,
+                    LastJobLevel = _localPlayer.LastJobLevel,
+                    FCTag = _localPlayer.FCTag,
+                    FreeCompany = _localPlayer.FreeCompany,
+                    LastOnline = _localPlayer.LastOnline,
+                    PlayTime = _localPlayer.PlayTime,
+                    LastPlayTimeUpdate = _localPlayer.LastPlayTimeUpdate,
+                    HasPremiumSaddlebag = _localPlayer.HasPremiumSaddlebag,
+                    Attributes = _localPlayer.Attributes,
+                    Currencies = _localPlayer.Currencies,
+                    Jobs = _localPlayer.Jobs,
+                    Profile = _localPlayer.Profile,
+                    Quests = _localPlayer.Quests,
+                    Inventory = _localPlayer.Inventory,
+                    Saddle = _localPlayer.Saddle,
+                    Gear = _localPlayer.Gear,
+                    Retainers = _localPlayer.Retainers,
+                };
             }
-            else
-            {
-                return null;
-            }
+
+            return null;
         }
         public void ChangeLanguage(ClientLanguage newLanguage)
         {
@@ -1403,7 +1397,7 @@ foreach(Retainer retainer in localPlayer.Retainers)
                 _ => "en",
             };
 
-            Localization.SetupWithLangCode(isoLang);
+            _localization.SetupWithLangCode(isoLang);
         }
     }
 }

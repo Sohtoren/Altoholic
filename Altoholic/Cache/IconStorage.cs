@@ -1,16 +1,12 @@
-﻿using Dalamud.Interface.FontIdentifier;
-using Dalamud.Interface.Internal;
+﻿using Dalamud.Interface.Internal;
 using Dalamud.Plugin.Services;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using static Dalamud.Plugin.Services.ITextureProvider;
 
 namespace Altoholic.Cache
 {
-    public class IconStorage(ITextureProvider provider, int size = 0)
+    public class IconStorage(ITextureProvider provider, int size = 0) : IDisposable
     {
         private readonly Dictionary<uint, IDalamudTextureWrap> _icons = new(size);
 
@@ -22,7 +18,7 @@ namespace Altoholic.Cache
 
         public IDalamudTextureWrap LoadIcon(uint id, bool hq = false)
         {
-            if (_icons.TryGetValue(id, out var ret))
+            if (_icons.TryGetValue(id, out IDalamudTextureWrap? ret))
                 return ret;
 
             //ret = provider.GetIcon(id)!;
@@ -33,7 +29,7 @@ namespace Altoholic.Cache
 
         public void Dispose()
         {
-            foreach (var icon in _icons.Values)
+            foreach (IDalamudTextureWrap icon in _icons.Values)
                 icon.Dispose();
         }
     }

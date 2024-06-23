@@ -4,16 +4,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Altoholic.Models;
-public enum RoleIcon
+namespace Altoholic.Models
 {
-    DoWDoM,
-    Tank,
-    Heal,
-    Melee,
-    Ranged,
-    Caster,
-    Crafter,
-    Gatherer,
-    DoHDoL
-};
+    public enum RoleIcon
+    {
+        DoWDoM,
+        Tank,
+        Heal,
+        Melee,
+        Ranged,
+        Caster,
+        Crafter,
+        Gatherer,
+        DoHDoL
+    };
+}

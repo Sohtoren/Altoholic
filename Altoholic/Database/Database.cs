@@ -92,96 +92,98 @@ namespace Altoholic.Database
                 Log.Error(ex.ToString());
                 return null;
             }
-}
+        }
 
-        public static void UpdateCharacter(IPluginLog Log, LiteDatabase db, Character character)
+        public static void UpdateCharacter(IPluginLog log, LiteDatabase db, Character character)
         {
             Plugin.Log.Debug($"Entering UpdateCharacter with character : id = {character.Id}, FirstName = {character.FirstName}, LastName = {character.LastName}, HomeWorld = {character.HomeWorld}, DataCenter = {character.Datacenter}, LastJob = {character.LastJob}, LastJobLevel = {character.LastJobLevel}, FCTag = {character.FCTag}, FreeCompany = {character.FreeCompany}, LastOnline = {character.LastOnline}, PlayTime = {character.PlayTime}, LastPlayTimeUpdate = {character.LastPlayTimeUpdate}");
             if (character.Id == 0) return;
 
             try
             {
-                var col = db.GetCollection<Character>();
-                if (col != null)
+                ILiteCollection<Character>? col = db.GetCollection<Character>();
+                if (col == null)
                 {
-                    var c = new Character();
-                    //var char_exist = col.FindOne(cf => cf.FirstName == character.FirstName && cf.LastName == character.LastName && cf.HomeWorld == character.HomeWorld);
-                    var char_exist = col.FindOne(cf => cf.Id == character.Id);
-                    if (char_exist != null)
-                    {
-                        c = char_exist;
-                        c.FirstName = character.FirstName;
-                        c.LastName = character.LastName;
-                        c.HomeWorld = character.HomeWorld;
-                        c.Datacenter = character.Datacenter;
-                        c.Region = character.Region;
-                        c.IsSprout = character.IsSprout;
-                        c.LastJob = character.LastJob;
-                        c.LastJobLevel = character.LastJobLevel;
-                        c.FCTag = character.FCTag;
-                        c.FreeCompany = character.FreeCompany;
-                        c.LastOnline = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-                        if (character.PlayTime > 0)
-                        {
-                            c.PlayTime = character.PlayTime;
-                            c.LastPlayTimeUpdate = character.LastPlayTimeUpdate;
-                        }
-                        c.HasPremiumSaddlebag = character.HasPremiumSaddlebag;
-                        c.Attributes = character.Attributes;
-                        c.Currencies = character.Currencies;
-                        c.Jobs = character.Jobs;
-                        c.Profile = character.Profile;
-                        c.Quests = character.Quests;
-                        c.Inventory = character.Inventory;
-                        c.ArmoryInventory = character.ArmoryInventory;
-                        c.Saddle = character.Saddle;
-                        c.Gear = character.Gear;
-                        c.Retainers = character.Retainers;
-                    }
-                    else
-                    {
-                        c = new Character()
-                        {
-                            Id = character.Id,
-                            FirstName = character.FirstName,
-                            LastName = character.LastName,
-                            HomeWorld = character.HomeWorld,
-                            Datacenter = character.Datacenter,
-                            Region = character.Region,
-                            IsSprout = character.IsSprout,
-                            LastJob = character.LastJob,
-                            LastJobLevel = character.LastJobLevel,
-                            FCTag = character.FCTag,
-                            FreeCompany = character.FreeCompany,
-                            LastOnline = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
-                            HasPremiumSaddlebag = character.HasPremiumSaddlebag,
-                            Attributes = character.Attributes,
-                            Currencies = character.Currencies,
-                            Jobs = character.Jobs,
-                            Profile = character.Profile,
-                            Quests = character.Quests,
-                            Inventory = character.Inventory,
-                            ArmoryInventory = character.ArmoryInventory,
-                            Saddle = character.Saddle,
-                            Gear = character.Gear,
-                            Retainers = character.Retainers,
-                        };
-                        if (character.PlayTime > 0)
-                        {
-                            c.PlayTime = character.PlayTime;
-                            c.LastPlayTimeUpdate = character.LastPlayTimeUpdate;
-                        }
-                    }
-
-                    Plugin.Log.Debug($"Updating character with c : id = {c.Id}, FirstName = {c.FirstName}, LastName = {c.LastName}, HomeWorld = {c.HomeWorld}, DataCenter = {c.Datacenter}, LastJob = {c.LastJob}, LastJobLevel = {c.LastJobLevel}, FCTag = {c.FCTag}, FreeCompany = {c.FreeCompany}, LastOnline = {c.LastOnline}, PlayTime = {c.PlayTime}, LastPlayTimeUpdate = {c.LastPlayTimeUpdate}, Quests = {c.Quests.Count}, Inventory = {c.Inventory.Count}, Gear {c.Gear.Count}, Retainers = {c.Retainers.Count}");
-                    col.Upsert(c);
+                    return;
                 }
+
+                Character c = new Character();
+                //var char_exist = col.FindOne(cf => cf.FirstName == character.FirstName && cf.LastName == character.LastName && cf.HomeWorld == character.HomeWorld);
+                Character? charExist = col.FindOne(cf => cf.Id == character.Id);
+                if (charExist != null)
+                {
+                    c = charExist;
+                    c.FirstName = character.FirstName;
+                    c.LastName = character.LastName;
+                    c.HomeWorld = character.HomeWorld;
+                    c.Datacenter = character.Datacenter;
+                    c.Region = character.Region;
+                    c.IsSprout = character.IsSprout;
+                    c.LastJob = character.LastJob;
+                    c.LastJobLevel = character.LastJobLevel;
+                    c.FCTag = character.FCTag;
+                    c.FreeCompany = character.FreeCompany;
+                    c.LastOnline = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+                    if (character.PlayTime > 0)
+                    {
+                        c.PlayTime = character.PlayTime;
+                        c.LastPlayTimeUpdate = character.LastPlayTimeUpdate;
+                    }
+                    c.HasPremiumSaddlebag = character.HasPremiumSaddlebag;
+                    c.Attributes = character.Attributes;
+                    c.Currencies = character.Currencies;
+                    c.Jobs = character.Jobs;
+                    c.Profile = character.Profile;
+                    c.Quests = character.Quests;
+                    c.Inventory = character.Inventory;
+                    c.ArmoryInventory = character.ArmoryInventory;
+                    c.Saddle = character.Saddle;
+                    c.Gear = character.Gear;
+                    c.Retainers = character.Retainers;
+                }
+                else
+                {
+                    c = new Character()
+                    {
+                        Id = character.Id,
+                        FirstName = character.FirstName,
+                        LastName = character.LastName,
+                        HomeWorld = character.HomeWorld,
+                        Datacenter = character.Datacenter,
+                        Region = character.Region,
+                        IsSprout = character.IsSprout,
+                        LastJob = character.LastJob,
+                        LastJobLevel = character.LastJobLevel,
+                        FCTag = character.FCTag,
+                        FreeCompany = character.FreeCompany,
+                        LastOnline = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
+                        HasPremiumSaddlebag = character.HasPremiumSaddlebag,
+                        Attributes = character.Attributes,
+                        Currencies = character.Currencies,
+                        Jobs = character.Jobs,
+                        Profile = character.Profile,
+                        Quests = character.Quests,
+                        Inventory = character.Inventory,
+                        ArmoryInventory = character.ArmoryInventory,
+                        Saddle = character.Saddle,
+                        Gear = character.Gear,
+                        Retainers = character.Retainers,
+                    };
+                    if (character.PlayTime > 0)
+                    {
+                        c.PlayTime = character.PlayTime;
+                        c.LastPlayTimeUpdate = character.LastPlayTimeUpdate;
+                    }
+                }
+
+                Plugin.Log.Debug($"Updating character with c : id = {c.Id}, FirstName = {c.FirstName}, LastName = {c.LastName}, HomeWorld = {c.HomeWorld}, DataCenter = {c.Datacenter}, LastJob = {c.LastJob}, LastJobLevel = {c.LastJobLevel}, FCTag = {c.FCTag}, FreeCompany = {c.FreeCompany}, LastOnline = {c.LastOnline}, PlayTime = {c.PlayTime}, LastPlayTimeUpdate = {c.LastPlayTimeUpdate}, Quests = {c.Quests.Count}, Inventory = {c.Inventory.Count}, Gear {c.Gear.Count}, Retainers = {c.Retainers.Count}");
+                col.Upsert(c);
             }
             catch (Exception ex)
             {
                 // Todo: Add error handling to not crash game if db is opened in another program
                 Console.WriteLine(ex.ToString());
-                Log.Error(ex.ToString());
+                log.Error(ex.ToString());
             }
         }
         
@@ -191,29 +193,31 @@ namespace Altoholic.Database
             Plugin.Log.Debug($"UpdatePlayTime {id} {PlayTime} {PlayTimeUpdate}");
             try
             {
-                var col = db.GetCollection<Character>();
-                if (col != null)
+                ILiteCollection<Character>? col = db.GetCollection<Character>();
+                if (col == null)
                 {
-                    var c = new Character();
-                    var char_exist = col.FindOne(ce => ce.Id == id);
-                    if (char_exist != null)
-                    {
-                        c = char_exist;
-                        c.PlayTime = PlayTime;
-                        c.LastPlayTimeUpdate = PlayTimeUpdate;
-                    }
-                    else
-                    {
-                        c = new Character()
-                        {
-                            Id = id,
-                            PlayTime = PlayTime,
-                            LastPlayTimeUpdate = PlayTimeUpdate,
-                        };
-                    }
-
-                    col.Upsert(c);
+                    return;
                 }
+
+                Character c = new();
+                Character? charExist = col.FindOne(ce => ce.Id == id);
+                if (charExist != null)
+                {
+                    c = charExist;
+                    c.PlayTime = PlayTime;
+                    c.LastPlayTimeUpdate = PlayTimeUpdate;
+                }
+                else
+                {
+                    c = new Character()
+                    {
+                        Id = id,
+                        PlayTime = PlayTime,
+                        LastPlayTimeUpdate = PlayTimeUpdate,
+                    };
+                }
+
+                col.Upsert(c);
             }
             catch (Exception ex)
             {
@@ -228,21 +232,22 @@ namespace Altoholic.Database
             Plugin.Log.Debug($"Database/BlacklistCharacter entered db = {db}, Log = {Log}, id = {id}");
             try
             {
-                var col = db.GetCollection<Blacklist>();
-                if (col != null)
+                ILiteCollection<Blacklist>? col = db.GetCollection<Blacklist>();
+                if (col == null)
                 {
-                    var character = col.FindOne(cf => cf.Id == id);
-                    if (character == null)
-                    {
-                        Blacklist blacklist = new()
-                        {
-                            Id = id,
-                        };
-                        col.Insert(blacklist);
-                    }
-                    DeleteCharacter(Log, db, id);
                     return GetOthersCharacters(Log, db, id);
                 }
+
+                Blacklist? character = col.FindOne(cf => cf.Id == id);
+                if (character == null)
+                {
+                    Blacklist blacklist = new()
+                    {
+                        Id = id,
+                    };
+                    col.Insert(blacklist);
+                }
+                DeleteCharacter(Log, db, id);
                 return GetOthersCharacters(Log, db, id);
             }
             catch (Exception ex)

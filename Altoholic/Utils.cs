@@ -6,85 +6,85 @@ using Dalamud.Interface.Internal;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Common.Math;
 using ImGuiNET;
+using Lumina.Excel;
 using Lumina.Excel.GeneratedSheets;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using static Dalamud.Plugin.Services.ITextureProvider;
+using ClassJob = Lumina.Excel.GeneratedSheets.ClassJob;
+using Stain = Lumina.Excel.GeneratedSheets.Stain;
 
 namespace Altoholic
 {
     internal class Utils
     {
+        // ReSharper disable once InconsistentNaming
         private const uint FALLBACK_ICON = 055396;
 
-        public static void DrawItemIcon(Vector2 icon_size, bool hq, uint item_id)
+        /*public static void DrawItemIcon(Vector2 iconSize, bool hq, uint itemId)
         {
-            if (Plugin.TextureProvider is null || Plugin.DataManager is null || Plugin.Log is null) return;
-            Lumina.Excel.ExcelSheet<Lumina.Excel.GeneratedSheets.Item>? ditm = Plugin.DataManager.GetExcelSheet<Lumina.Excel.GeneratedSheets.Item>(GetLocale());
-            if (ditm != null)
-            {
-                Lumina.Excel.GeneratedSheets.Item? lumina = ditm.GetRow(item_id);
-                //Plugin.Log.Debug($"lumina : ${lumina}");
-                if (lumina != null)
-                {
-                    //Plugin.Log.Debug($"icon path : {lumina.Icon}");
-                    uint icon_id = (lumina.Icon == 0) ? (uint)FALLBACK_ICON : lumina.Icon;
-                    var icon = Plugin.TextureProvider.GetIcon(icon_id, hq ? IconFlags.ItemHighQuality : IconFlags.None);
-                    if (icon != null)
-                    {
-                        //ImGui.Image(icon.ImGuiHandle, new Vector2(icon.Width, icon.Height));
-                        ImGui.Image(icon.ImGuiHandle, icon_size);
-                    }
-                }
-            }
-        }
-        public static void DrawEventItemIcon(Vector2 icon_size, bool hq, uint item_id)
-        {
-            if (Plugin.TextureProvider is null || Plugin.DataManager is null || Plugin.Log is null) return;
-            Lumina.Excel.ExcelSheet<Lumina.Excel.GeneratedSheets.EventItem>? deitm = Plugin.DataManager.GetExcelSheet<Lumina.Excel.GeneratedSheets.EventItem>(GetLocale());
-            if (deitm != null)
-            {
-                Lumina.Excel.GeneratedSheets.EventItem? lumina = deitm.GetRow(item_id);
-                //Plugin.Log.Debug($"lumina : ${lumina}");
-                if (lumina != null)
-                {
-                    //Plugin.Log.Debug($"icon path : {lumina.Icon}");
-                    uint icon_id = (lumina.Icon == 0) ? (uint)FALLBACK_ICON : lumina.Icon;
-                    var icon = Plugin.TextureProvider.GetIcon(icon_id, hq ? IconFlags.ItemHighQuality : IconFlags.None);
-                    if (icon != null)
-                    {
-                        //ImGui.Image(icon.ImGuiHandle, new Vector2(icon.Width, icon.Height));
-                        ImGui.Image(icon.ImGuiHandle, icon_size);
-                    }
-                }
-            }
-        }
+            ExcelSheet<Item>? ditm = Plugin.DataManager.GetExcelSheet<Item>(GetLocale());
 
-        public static void DrawIcon(Vector2 icon_size, bool hq, uint icon_id)
-        {
-            if (Plugin.TextureProvider is null  /*||Plugin.Log is null*/) return;
-            if (icon_id == 0) icon_id = FALLBACK_ICON;
-            //Plugin.Log.Debug($"DrawIcon icon_id : {icon_id}");
-            var icon = Plugin.TextureProvider.GetIcon(icon_id, hq ? IconFlags.ItemHighQuality : IconFlags.None);
+            Item? lumina = ditm?.GetRow(itemId);
+            //Plugin.Log.Debug($"lumina : ${lumina}");
+            if (lumina == null)
+            {
+                return;
+            }
+
+            //Plugin.Log.Debug($"icon path : {lumina.Icon}");
+            uint iconId = (lumina.Icon == 0) ? FALLBACK_ICON : lumina.Icon;
+            IDalamudTextureWrap? icon = Plugin.TextureProvider.GetIcon(iconId, hq ? IconFlags.ItemHighQuality : IconFlags.None);
             if (icon != null)
             {
                 //ImGui.Image(icon.ImGuiHandle, new Vector2(icon.Width, icon.Height));
-                ImGui.Image(icon.ImGuiHandle, icon_size);
+                ImGui.Image(icon.ImGuiHandle, iconSize);
             }
-        }
-        public static void DrawIcon(Vector2 icon_size, bool hq, uint icon_id, Vector2 alpha)
+        }*/
+        /*public static void DrawEventItemIcon(Vector2 iconSize, bool hq, uint itemId)
         {
-            if (Plugin.TextureProvider is null  /*||Plugin.Log is null*/) return;
-            if (icon_id == 0) icon_id = FALLBACK_ICON;
-            //Plugin.Log.Debug($"DrawIcon icon_id : {icon_id}");
-            var icon = Plugin.TextureProvider.GetIcon(icon_id, hq ? IconFlags.ItemHighQuality : IconFlags.None);
+            ExcelSheet<EventItem>? deitm = Plugin.DataManager.GetExcelSheet<EventItem>(GetLocale());
+            EventItem? lumina = deitm?.GetRow(itemId);
+            //Plugin.Log.Debug($"lumina : ${lumina}");
+            if (lumina == null)
+            {
+                return;
+            }
+
+            //Plugin.Log.Debug($"icon path : {lumina.Icon}");
+            uint iconId = (lumina.Icon == 0) ? FALLBACK_ICON : lumina.Icon;
+            IDalamudTextureWrap? icon = Plugin.TextureProvider.GetIcon(iconId, hq ? IconFlags.ItemHighQuality : IconFlags.None);
             if (icon != null)
             {
                 //ImGui.Image(icon.ImGuiHandle, new Vector2(icon.Width, icon.Height));
-                ImGui.Image(icon.ImGuiHandle, icon_size, new Vector2(0, 0), alpha);
+                ImGui.Image(icon.ImGuiHandle, iconSize);
+            }
+        }*/
+
+        /*public static void DrawIcon(Vector2 iconSize, bool hq, uint iconId)
+        {
+            if (iconId == 0) iconId = FALLBACK_ICON;
+            //Plugin.Log.Debug($"DrawIcon icon_id : {icon_id}");
+            IDalamudTextureWrap? icon = Plugin.TextureProvider.GetIcon(iconId, hq ? IconFlags.ItemHighQuality : IconFlags.None);
+            if (icon != null)
+            {
+                //ImGui.Image(icon.ImGuiHandle, new Vector2(icon.Width, icon.Height));
+                ImGui.Image(icon.ImGuiHandle, iconSize);
             }
         }
+        public static void DrawIcon(Vector2 iconSize, bool hq, uint iconId, Vector2 alpha)
+        {
+            if (iconId == 0) iconId = FALLBACK_ICON;
+            //Plugin.Log.Debug($"DrawIcon icon_id : {icon_id}");
+            IDalamudTextureWrap? icon = Plugin.TextureProvider.GetIcon(iconId, hq ? IconFlags.ItemHighQuality : IconFlags.None);
+            if (icon != null)
+            {
+                //ImGui.Image(icon.ImGuiHandle, new Vector2(icon.Width, icon.Height));
+                ImGui.Image(icon.ImGuiHandle, iconSize, new Vector2(0, 0), alpha);
+            }
+        }*/
 
         //public static void DrawIconFromTexture(Vector2 size, Vector4 area)
 
@@ -98,52 +98,58 @@ namespace Altoholic
             {
                 return "Aether";
             }
-            else if (Array.Exists(Datacenter.Chaos, w => w == name))
+
+            if (Array.Exists(Datacenter.Chaos, w => w == name))
             {
                 return "Chaos";
             }
-            else if (Array.Exists(Datacenter.Crystal, w => w == name))
+
+            if (Array.Exists(Datacenter.Crystal, w => w == name))
             {
                 return "Crystal";
             }
-            else if (Array.Exists(Datacenter.Dynamis, w => w == name))
+
+            if (Array.Exists(Datacenter.Dynamis, w => w == name))
             {
                 return "Dynamis";
             }
-            else if (Array.Exists(Datacenter.Elemental, w => w == name))
+
+            if (Array.Exists(Datacenter.Elemental, w => w == name))
             {
                 return "Elemental";
             }
-            else if (Array.Exists(Datacenter.Gaia, w => w == name))
+
+            if (Array.Exists(Datacenter.Gaia, w => w == name))
             {
                 return "Gaia";
             }
-            else if (Array.Exists(Datacenter.Light, w => w == name))
+
+            if (Array.Exists(Datacenter.Light, w => w == name))
             {
                 return "Light";
             }
-            else if (Array.Exists(Datacenter.Mana, w => w == name))
+
+            if (Array.Exists(Datacenter.Mana, w => w == name))
             {
                 return "Mana";
             }
-            else if (Array.Exists(Datacenter.Materia, w => w == name))
+
+            if (Array.Exists(Datacenter.Materia, w => w == name))
             {
                 return "Materia";
             }
-            else if (Array.Exists(Datacenter.Meteor, w => w == name))
+
+            if (Array.Exists(Datacenter.Meteor, w => w == name))
             {
                 return "Meteor";
             }
-            else if (Array.Exists(Datacenter.Primal, w => w == name))
+
+            if (Array.Exists(Datacenter.Primal, w => w == name))
             {
                 return "Primal";
             }
-            else if (Array.Exists(Datacenter.Shadow, w => w == name))
-            {
-                return "Shadow";
-            }
 
-            return string.Empty;
+            return Array.Exists(Datacenter.Shadow, w => w == name) ? "Shadow" : string.Empty;
         }
 
         public static string GetRegionFromWorld(string name)
@@ -152,19 +158,18 @@ namespace Altoholic
             {
                 return "EU";
             }
-            else if (Array.Exists(Region.JP, w => w == name))
+
+            if (Array.Exists(Region.JP, w => w == name))
             {
                 return "JP";
             }
-            else if (Array.Exists(Region.NA, w => w == name))
+
+            if (Array.Exists(Region.NA, w => w == name))
             {
                 return "NA";
             }
-            else if (Array.Exists(Region.OCE, w => w == name))
-            {
-                return "OCE";
-            }
-            return string.Empty;
+
+            return Array.Exists(Region.OCE, w => w == name) ? "OCE" : string.Empty;
         }
 
         public static string GetGender(int gender)
@@ -177,16 +182,20 @@ namespace Altoholic
             };
         }
 
-        public static string GetRace(int gender, uint race)
+        public static string GetRace(ClientLanguage currentLocale, int gender, uint race)
         {
-            if (Plugin.DataManager is null || Plugin.Log is null) return string.Empty;
-            Lumina.Excel.ExcelSheet<Lumina.Excel.GeneratedSheets.Race>? dr = Plugin.DataManager.GetExcelSheet<Lumina.Excel.GeneratedSheets.Race>(GetLocale());
-            if (dr != null)
-            {
-                Lumina.Excel.GeneratedSheets.Race? lumina = dr.GetRow((uint)race);
-                if (lumina != null)
-                    return (gender == 0) ? lumina.Masculine : lumina.Feminine;
-            }
+            ExcelSheet<Race>? dr = Plugin.DataManager.GetExcelSheet<Race>(currentLocale);
+            Race? lumina = dr?.GetRow(race);
+            if (lumina != null)
+                return gender == 0 ? lumina.Masculine : lumina.Feminine;
+            return string.Empty;
+        }
+        /*public static string GetRace(int gender, uint race)
+        {
+            ExcelSheet<Race>? dr = Plugin.DataManager.GetExcelSheet<Race>(GetLocale());
+            Race? lumina = dr?.GetRow(race);
+            if (lumina != null)
+                return gender == 0 ? lumina.Masculine : lumina.Feminine;
             return string.Empty;
             /*if (gender == 0)
                 return Plugin.DataManager.GetExcelSheet<Lumina.Excel.GeneratedSheets.Race>(GetLocale()).GetRow((uint)race)!.Masculine;
@@ -204,23 +213,23 @@ namespace Altoholic
                 8 => "Viera",
                 _ => string.Empty,
             };*/
+        //}
+
+        public static string GetTribe(ClientLanguage currentLocale, int gender, uint tribe)
+        {
+            ExcelSheet<Tribe>? dt = Plugin.DataManager.GetExcelSheet<Tribe>(currentLocale);
+            Tribe? lumina = dt?.GetRow(tribe);
+            if (lumina != null)
+                return gender == 0 ? lumina.Masculine : lumina.Feminine;
+            return string.Empty;
         }
 
-        public static ClientLanguage GetLocale()
+        /*public static string GetTribe(int gender, uint tribe)
         {
-            var config = Plugin.PluginInterface.GetPluginConfig() as Configuration;
-            return (config is not null) ? config.Language : ClientLanguage.English;
-        }
-        public static string GetTribe(int gender, uint tribe)
-        {
-            if (Plugin.DataManager is null || Plugin.Log is null) return string.Empty;
-            Lumina.Excel.ExcelSheet<Lumina.Excel.GeneratedSheets.Tribe>? dt = Plugin.DataManager.GetExcelSheet<Lumina.Excel.GeneratedSheets.Tribe>(GetLocale());
-            if (dt != null)
-            {
-                Lumina.Excel.GeneratedSheets.Tribe? lumina = dt.GetRow((uint)tribe);
-                if (lumina != null)
-                    return (gender == 0) ? lumina.Masculine : lumina.Feminine;
-            }
+            ExcelSheet<Tribe>? dt = Plugin.DataManager.GetExcelSheet<Tribe>(GetLocale());
+            Tribe? lumina = dt?.GetRow(tribe);
+            if (lumina != null)
+                return gender == 0 ? lumina.Masculine : lumina.Feminine;
             return string.Empty;
             /*if (gender == 0)
                  return Plugin.DataManager.GetExcelSheet<Lumina.Excel.GeneratedSheets.Tribe>(GetLocale()).GetRow((uint)tribe)!.Masculine;
@@ -246,19 +255,19 @@ namespace Altoholic
                 16 => "Veena",
                 _ => string.Empty,
             };*/
-        }
+        //}
 
-        public static string GetTown(int town)
+        public static string GetTown(ClientLanguage currentLocale, int town)
         {
-            if (Plugin.DataManager is null || Plugin.Log is null) return string.Empty;
-            Lumina.Excel.ExcelSheet<Lumina.Excel.GeneratedSheets.Town>? dt = Plugin.DataManager.GetExcelSheet<Lumina.Excel.GeneratedSheets.Town>(GetLocale());
-            if (dt != null)
-            {
-                Lumina.Excel.GeneratedSheets.Town? lumina = dt.GetRow((uint)town);
-                if (lumina != null)
-                    return lumina.Name;
-            }
-            return string.Empty;
+            ExcelSheet<Town>? dt = Plugin.DataManager.GetExcelSheet<Town>(currentLocale);
+            Town? lumina = dt?.GetRow((uint)town);
+            return lumina != null ? lumina.Name : string.Empty;
+        }
+        /*public static string GetTown(int town)
+        {
+            ExcelSheet<Town>? dt = Plugin.DataManager.GetExcelSheet<Town>(GetLocale());
+            Town? lumina = dt?.GetRow((uint)town);
+            return lumina != null ? lumina.Name : string.Empty;
             /*var lumina = Plugin.DataManager.GetExcelSheet<Lumina.Excel.GeneratedSheets.Town>(GetLocale()).GetRow((uint)town)!;
             return lumina.Name;*/
             /*return town switch
@@ -268,7 +277,7 @@ namespace Altoholic
                 3 => "Ul'dah",
                 _ => string.Empty,
             };*/
-        }
+        //}
 
         public static uint GetTownIcon(int town)
         {
@@ -281,17 +290,17 @@ namespace Altoholic
             };
         }
 
-        public static string GetGuardian(int guardian)
+        public static string GetGuardian(ClientLanguage currentLocale, int guardian)
         {
-            if (Plugin.DataManager is null || Plugin.Log is null) return string.Empty;
-            Lumina.Excel.ExcelSheet<Lumina.Excel.GeneratedSheets.GuardianDeity>? dg = Plugin.DataManager.GetExcelSheet<Lumina.Excel.GeneratedSheets.GuardianDeity>(GetLocale());
-            if (dg != null)
-            {
-                Lumina.Excel.GeneratedSheets.GuardianDeity? lumina = dg.GetRow((uint)guardian);
-                if (lumina != null)
-                    return lumina.Name;
-            }
-            return string.Empty;
+            ExcelSheet<GuardianDeity>? dg = Plugin.DataManager.GetExcelSheet<GuardianDeity>(currentLocale);
+            GuardianDeity? lumina = dg?.GetRow((uint)guardian);
+            return lumina != null ? lumina.Name : string.Empty;
+        }
+        /*public static string GetGuardian(int guardian)
+        {
+            ExcelSheet<GuardianDeity>? dg = Plugin.DataManager.GetExcelSheet<GuardianDeity>(GetLocale());
+            GuardianDeity? lumina = dg?.GetRow((uint)guardian);
+            return lumina != null ? lumina.Name : string.Empty;
             /*var lumina = Plugin.DataManager.GetExcelSheet<Lumina.Excel.GeneratedSheets.GuardianDeity>(GetLocale()).GetRow((uint)guardian)!;
             return lumina.Name;*/
             /*return guardian switch
@@ -310,7 +319,7 @@ namespace Altoholic
                 12 => "Althyk, the Keeper",
                 _ => string.Empty,
             };*/
-        }
+        //}
 
         public static uint GetGuardianIcon(int guardian)
         {
@@ -351,18 +360,18 @@ namespace Altoholic
             return $"{day}{nameday} Sun of the {month}{namedaymonth} Astral Moon";
         }
 
-        public static string GetGrandCompany(int id)
+        /*public static string GetGrandCompany(int id)
         {
-            if (Plugin.DataManager is null || Plugin.Log is null) return string.Empty;
-            Lumina.Excel.ExcelSheet<Lumina.Excel.GeneratedSheets.GrandCompany>? dgc = Plugin.DataManager.GetExcelSheet<Lumina.Excel.GeneratedSheets.GrandCompany>(GetLocale());
-            if (dgc != null)
-            {
-                Lumina.Excel.GeneratedSheets.GrandCompany? lumina = dgc.GetRow((uint)id);
-                if (lumina != null)
-                    return lumina.Name;
-            }
-            return string.Empty;
-            /*var lumina = Plugin.DataManager.GetExcelSheet<Lumina.Excel.GeneratedSheets.GrandCompany>(GetLocale()).GetRow((uint)id)!;
+            ExcelSheet<GrandCompany>? dgc = Plugin.DataManager.GetExcelSheet<GrandCompany>(GetLocale());
+            GrandCompany? lumina = dgc?.GetRow((uint)id);
+            return lumina != null ? lumina.Name : string.Empty;
+        }*/
+        public static string GetGrandCompany(ClientLanguage currentLocale, int id)
+        {
+            ExcelSheet<GrandCompany>? dgc = Plugin.DataManager.GetExcelSheet<GrandCompany>(currentLocale);
+            GrandCompany? lumina = dgc?.GetRow((uint)id);
+            return lumina != null ? lumina.Name : string.Empty;
+            /*var lumina = Plugin.DataManager.GetExcelSheet<Lumina.Excel.GeneratedSheets.GrandCompany>(GetLocale()).GetRow((uint)id);
             return lumina.Name;*/
         }
 
@@ -377,98 +386,89 @@ namespace Altoholic
             };
         }
 
-        public static string GetGrandCompanyRank(int company, int rank, int gender)
+        public static string GetGrandCompanyRank(ClientLanguage currentLocale, int company, int rank, int gender)
         {
-            if (Plugin.DataManager is null || Plugin.Log is null) return string.Empty;
-            if (company == 1)
+            switch (company)
             {
-                if (gender == 0)
-                {
-                    Lumina.Excel.ExcelSheet<Lumina.Excel.GeneratedSheets.GCRankLimsaMaleText>? dgcrlmt = Plugin.DataManager.GetExcelSheet<Lumina.Excel.GeneratedSheets.GCRankLimsaMaleText>(GetLocale());
-                    if (dgcrlmt != null)
+                case 1:
                     {
-                        Lumina.Excel.GeneratedSheets.GCRankLimsaMaleText? lumina = dgcrlmt.GetRow((uint)rank);
-                        if (lumina != null)
-                            return lumina.NameRank;
+                        if (gender == 0)
+                        {
+                            ExcelSheet<GCRankLimsaMaleText>? dgcrlmt = Plugin.DataManager.GetExcelSheet<GCRankLimsaMaleText>(currentLocale);
+                            if (dgcrlmt == null)
+                            {
+                                return string.Empty;
+                            }
+
+                            GCRankLimsaMaleText? lumina = dgcrlmt.GetRow((uint)rank);
+                            if (lumina != null)
+                                return lumina.NameRank;
+                        }
+                        else
+                        {
+                            ExcelSheet<GCRankLimsaFemaleText>? dgcrlft = Plugin.DataManager.GetExcelSheet<GCRankLimsaFemaleText>(currentLocale);
+                            if (dgcrlft == null)
+                            {
+                                return string.Empty;
+                            }
+
+                            GCRankLimsaFemaleText? lumina = dgcrlft.GetRow((uint)rank);
+                            if (lumina != null)
+                                return lumina.NameRank;
+                        }
+                        return string.Empty;
                     }
-                }
-                else
-                {
-                    Lumina.Excel.ExcelSheet<Lumina.Excel.GeneratedSheets.GCRankLimsaFemaleText>? dgcrlft = Plugin.DataManager.GetExcelSheet<Lumina.Excel.GeneratedSheets.GCRankLimsaFemaleText>(GetLocale());
-                    if (dgcrlft != null)
+                case 2:
                     {
-                        Lumina.Excel.GeneratedSheets.GCRankLimsaFemaleText? lumina = dgcrlft.GetRow((uint)rank);
-                        if (lumina != null)
-                            return lumina.NameRank;
+                        if (gender == 0)
+                        {
+                            ExcelSheet<GCRankUldahMaleText>? dgcrlmt = Plugin.DataManager.GetExcelSheet<GCRankUldahMaleText>(currentLocale);
+                            if (dgcrlmt == null)
+                            {
+                                return string.Empty;
+                            }
+
+                            GCRankUldahMaleText? lumina = dgcrlmt.GetRow((uint)rank);
+                            if (lumina != null)
+                                return lumina.NameRank;
+                        }
+                        else
+                        {
+                            ExcelSheet<GCRankUldahFemaleText>? dgcrlft = Plugin.DataManager.GetExcelSheet<GCRankUldahFemaleText>(currentLocale);
+                            GCRankUldahFemaleText? lumina = dgcrlft?.GetRow((uint)rank);
+                            if (lumina != null)
+                                return lumina.NameRank;
+                        }
+                        return string.Empty;
                     }
-                }
-                return string.Empty;
-            }
-            else if (company == 2)
-            {
-                if (gender == 0)
-                {
-                    Lumina.Excel.ExcelSheet<Lumina.Excel.GeneratedSheets.GCRankUldahMaleText>? dgcrlmt = Plugin.DataManager.GetExcelSheet<Lumina.Excel.GeneratedSheets.GCRankUldahMaleText>(GetLocale());
-                    if (dgcrlmt != null)
+                case 3:
                     {
-                        Lumina.Excel.GeneratedSheets.GCRankUldahMaleText? lumina = dgcrlmt.GetRow((uint)rank);
-                        if (lumina != null)
-                            return lumina.NameRank;
+                        if (gender == 0)
+                        {
+                            ExcelSheet<GCRankGridaniaMaleText>? dgcrlmt = Plugin.DataManager.GetExcelSheet<GCRankGridaniaMaleText>(currentLocale);
+                            GCRankGridaniaMaleText? lumina = dgcrlmt?.GetRow((uint)rank);
+                            if (lumina != null)
+                                return lumina.NameRank;
+                        }
+                        else
+                        {
+                            ExcelSheet<GCRankGridaniaFemaleText>? dgcrlft = Plugin.DataManager.GetExcelSheet<GCRankGridaniaFemaleText>(currentLocale);
+                            GCRankGridaniaFemaleText? lumina = dgcrlft?.GetRow((uint)rank);
+                            if (lumina != null)
+                                return lumina.NameRank;
+                        }
+                        return string.Empty;
                     }
-                }
-                else
-                {
-                    Lumina.Excel.ExcelSheet<Lumina.Excel.GeneratedSheets.GCRankUldahFemaleText>? dgcrlft = Plugin.DataManager.GetExcelSheet<Lumina.Excel.GeneratedSheets.GCRankUldahFemaleText>(GetLocale());
-                    if (dgcrlft != null)
-                    {
-                        Lumina.Excel.GeneratedSheets.GCRankUldahFemaleText? lumina = dgcrlft.GetRow((uint)rank);
-                        if (lumina != null)
-                            return lumina.NameRank;
-                    }
-                }
-                return string.Empty;
-            }
-            else if (company == 3)
-            {
-                if (gender == 0)
-                {
-                    Lumina.Excel.ExcelSheet<Lumina.Excel.GeneratedSheets.GCRankGridaniaMaleText>? dgcrlmt = Plugin.DataManager.GetExcelSheet<Lumina.Excel.GeneratedSheets.GCRankGridaniaMaleText>(GetLocale());
-                    if (dgcrlmt != null)
-                    {
-                        Lumina.Excel.GeneratedSheets.GCRankGridaniaMaleText? lumina = dgcrlmt.GetRow((uint)rank);
-                        if (lumina != null)
-                            return lumina.NameRank;
-                    }
-                }
-                else
-                {
-                    Lumina.Excel.ExcelSheet<Lumina.Excel.GeneratedSheets.GCRankGridaniaFemaleText>? dgcrlft = Plugin.DataManager.GetExcelSheet<Lumina.Excel.GeneratedSheets.GCRankGridaniaFemaleText>(GetLocale());
-                    if (dgcrlft != null)
-                    {
-                        Lumina.Excel.GeneratedSheets.GCRankGridaniaFemaleText? lumina = dgcrlft.GetRow((uint)rank);
-                        if (lumina != null)
-                            return lumina.NameRank;
-                    }
-                }
-                return string.Empty;
-            }
-            else
-            {
-                return string.Empty;
+                default:
+                    return string.Empty;
             }
         }
 
-        public static uint GetGrandCompanyRankMaxSeals(int rank)
+        public static uint GetGrandCompanyRankMaxSeals(ClientLanguage currentLocale, int rank)
         {
-            if (Plugin.DataManager is null || Plugin.Log is null) return 0;
-            Lumina.Excel.ExcelSheet<Lumina.Excel.GeneratedSheets.GrandCompanyRank>? dgcr = Plugin.DataManager.GetExcelSheet<Lumina.Excel.GeneratedSheets.GrandCompanyRank>(GetLocale());
-            if (dgcr != null)
-            {
-                Lumina.Excel.GeneratedSheets.GrandCompanyRank? lumina = dgcr.GetRow((uint)rank);
-                if (lumina != null)
-                    return lumina.MaxSeals;
-            }
-            return 0;
+            ExcelSheet<GrandCompanyRank>? dgcr = Plugin.DataManager.GetExcelSheet<GrandCompanyRank>(currentLocale);
+            GrandCompanyRank? lumina = dgcr?.GetRow((uint)rank);
+            return lumina?.MaxSeals ?? 0;
         }
 
         public static uint GetGrandCompanyRankIcon(int company, int rank)
@@ -619,84 +619,60 @@ namespace Altoholic
             };
         }
 
-        public static Lumina.Excel.GeneratedSheets.Item? GetItemFromId(uint id)
+        public static Item? GetItemFromId(ClientLanguage currentLocale, uint id)
         {
-            if (Plugin.DataManager is null || Plugin.Log is null) return null;
             //Plugin.Log.Debug($"GetItemFromId : {id}");
-            Lumina.Excel.ExcelSheet<Lumina.Excel.GeneratedSheets.Item>? ditm = Plugin.DataManager.GetExcelSheet<Lumina.Excel.GeneratedSheets.Item>(GetLocale());
-            if (ditm != null)
-            {
-                Lumina.Excel.GeneratedSheets.Item? lumina = ditm.GetRow(id);
-                return lumina;
-            }
-            return null;
+            ExcelSheet<Item>? ditm = Plugin.DataManager.GetExcelSheet<Item>(currentLocale);
+            Item? lumina = ditm?.GetRow(id);
+            return lumina;
         }
 
-        public static Lumina.Excel.GeneratedSheets.EventItem? GetEventItemFromId(uint id)
+        public static EventItem? GetEventItemFromId(ClientLanguage currentLocale, uint id)
         {
-            if (Plugin.DataManager is null || Plugin.Log is null) return null;
             //Plugin.Log.Debug($"GetItemFromId : {id}");
-            Lumina.Excel.ExcelSheet<Lumina.Excel.GeneratedSheets.EventItem>? deitm = Plugin.DataManager.GetExcelSheet<Lumina.Excel.GeneratedSheets.EventItem>(GetLocale());
-            if (deitm != null)
-            {
-                Lumina.Excel.GeneratedSheets.EventItem? lumina = deitm.GetRow(id);
-                return lumina;
-            }
-            return null;
+            ExcelSheet<EventItem>? deitm = Plugin.DataManager.GetExcelSheet<EventItem>(currentLocale);
+            EventItem? lumina = deitm?.GetRow(id);
+            return lumina;
         }
-        public static string GetItemNameFromId(uint id)
+        /*public static string GetItemNameFromId(ClientLanguage currentLocale, uint id)
         {
-            if (Plugin.DataManager is null || Plugin.Log is null) return string.Empty;
             //Plugin.Log.Debug($"GetItemNameFromId : {id}");
-            Lumina.Excel.ExcelSheet<Lumina.Excel.GeneratedSheets.Item>? ditm = Plugin.DataManager.GetExcelSheet<Lumina.Excel.GeneratedSheets.Item>(GetLocale());
-            if (ditm != null)
-            {
-                Lumina.Excel.GeneratedSheets.Item? lumina = ditm.GetRow(id);
-                if (lumina != null)
-                    return lumina.Name;
-            }
-            return string.Empty;
+            ExcelSheet<Item>? ditm = Plugin.DataManager.GetExcelSheet<Item>(currentLocale);
+            Item? lumina = ditm?.GetRow(id);
+            return lumina != null ? lumina.Name : string.Empty;
+        }*/
+
+        public static IEnumerable<Item>? GetItemsFromName(ClientLanguage currentLocale, string name)
+        {
+            //Plugin.Log.Debug($"GetItemFromId : {id}");
+            ExcelSheet<Item>? ditm = Plugin.DataManager.GetExcelSheet<Item>(currentLocale);
+            IEnumerable<Item>? items = ditm?.Where(i => i.Name.RawString.Contains(name.ToLower(), StringComparison.CurrentCultureIgnoreCase));
+            return items;
         }
 
-        public static IEnumerable<Lumina.Excel.GeneratedSheets.Item>? GetItemsFromName(string name)
+        public static ItemLevel? GetItemLevelFromId(uint id)
         {
-            if (Plugin.DataManager is null || Plugin.Log is null) return null;
             //Plugin.Log.Debug($"GetItemFromId : {id}");
-            Lumina.Excel.ExcelSheet<Lumina.Excel.GeneratedSheets.Item>? ditm = Plugin.DataManager.GetExcelSheet<Lumina.Excel.GeneratedSheets.Item>(GetLocale());
-            if (ditm != null)
-            {
-                IEnumerable<Lumina.Excel.GeneratedSheets.Item>? items = ditm.Where(i => i.Name.RawString.Contains(name.ToLower(), StringComparison.CurrentCultureIgnoreCase));
-                return items;
-            }
-            return null;
+            ExcelSheet<ItemLevel>? dilvl = Plugin.DataManager.GetExcelSheet<ItemLevel>(ClientLanguage.English);
+            ItemLevel? lumina = dilvl?.GetRow(id);
+            return lumina;
         }
-
-        public static Lumina.Excel.GeneratedSheets.ItemLevel? GetItemLevelFromId(uint id)
+        /*public static Stain? GetStainFromId(uint id)
         {
-            if (Plugin.DataManager is null || Plugin.Log is null) return null;
-            //Plugin.Log.Debug($"GetItemFromId : {id}");
-            Lumina.Excel.ExcelSheet<Lumina.Excel.GeneratedSheets.ItemLevel>? dilvl = Plugin.DataManager.GetExcelSheet<Lumina.Excel.GeneratedSheets.ItemLevel>(GetLocale());
-            if (dilvl != null)
-            {
-                Lumina.Excel.GeneratedSheets.ItemLevel? lumina = dilvl.GetRow(id);
-                return lumina;
-            }
-            return null;
-        }
-        public static Lumina.Excel.GeneratedSheets.Stain? GetStainFromId(uint id)
+            Plugin.Log.Debug($"GetItemNameFromId : {id}");
+            ExcelSheet<Stain>? ds = Plugin.DataManager.GetExcelSheet<Stain>(GetLocale());
+            Stain? lumina = ds?.GetRow(id);
+            return lumina;
+        }*/
+        public static Stain? GetStainFromId(uint id, ClientLanguage clientLanguage)
         {
-            if (Plugin.DataManager is null || Plugin.Log is null) return null;
             //Plugin.Log.Debug($"GetItemNameFromId : {id}");
-            Lumina.Excel.ExcelSheet<Lumina.Excel.GeneratedSheets.Stain>? ds = Plugin.DataManager.GetExcelSheet<Lumina.Excel.GeneratedSheets.Stain>(GetLocale());
-            if (ds != null)
-            {
-                Lumina.Excel.GeneratedSheets.Stain? lumina = ds.GetRow(id);
-                return lumina;
-            }
-            return null;
+            ExcelSheet<Stain>? ds = Plugin.DataManager.GetExcelSheet<Stain>(clientLanguage);
+            Stain? lumina = ds?.GetRow(id);
+            return lumina;
         }
 
-        public static string GetJobNameFromId(uint id, bool abbreviation = false)
+        /*public static string GetJobNameFromId(uint id, bool abbreviation = false)
         {
             if (Plugin.DataManager is null || Plugin.Log is null) return string.Empty;
             //Plugin.Log.Debug($"GetItemNameFromId : {id}");
@@ -708,7 +684,7 @@ namespace Altoholic
             }
 
             return string.Empty;
-        }
+        }*/
 
         /*public static string GetJobShortName(string fullname)
         {
@@ -903,15 +879,9 @@ namespace Altoholic
 
         public static int GetJobNextLevelExp(int level)
         {
-            if (Plugin.DataManager is null || Plugin.Log is null) return 0;
-            Lumina.Excel.ExcelSheet<Lumina.Excel.GeneratedSheets.ParamGrow>? dbt = Plugin.DataManager.GetExcelSheet<Lumina.Excel.GeneratedSheets.ParamGrow>(GetLocale());
-            if (dbt != null)
-            {
-                Lumina.Excel.GeneratedSheets.ParamGrow? lumina = dbt.GetRow((uint)level);
-                if (lumina != null)
-                    return lumina.ExpToNext;
-            }
-            return 0;
+            ExcelSheet<ParamGrow>? dbt = Plugin.DataManager.GetExcelSheet<ParamGrow>(ClientLanguage.English);
+            ParamGrow? lumina = dbt?.GetRow((uint)level);
+            return lumina?.ExpToNext ?? 0;
         }
 
         public static int GetRetainerJobMaxLevel(uint job, Character character)
@@ -1062,31 +1032,30 @@ namespace Altoholic
             };
         }*/
 
-        public static string GetSlotName(short id)
+        public static string GetSlotName(ClientLanguage currentLocale, GlobalCache globalCache, short id)
         {
-            if (Plugin.DataManager is null || Plugin.Log is null) return string.Empty;
             //Plugin.Log.Debug($"GetItemNameFromId : {id}");
             return id switch
             {
-                0 => GetAddonString(11524),
-                1 => GetAddonString(12227),
-                2 => GetAddonString(11525),
-                3 => GetAddonString(11526),
-                4 => GetAddonString(11527),
-                6 => GetAddonString(11528),
-                7 => GetAddonString(11529),
-                8 => GetAddonString(11530),
-                9 => GetAddonString(11531),
-                10 => GetAddonString(11532),
-                11 => GetAddonString(11533),
-                12 => GetAddonString(11534),
-                13 => GetAddonString(12238),
+                0 => globalCache.AddonStorage.LoadAddonString(currentLocale, 11524),
+                1 => globalCache.AddonStorage.LoadAddonString(currentLocale, 12227),
+                2 => globalCache.AddonStorage.LoadAddonString(currentLocale, 11525),
+                3 => globalCache.AddonStorage.LoadAddonString(currentLocale, 11526),
+                4 => globalCache.AddonStorage.LoadAddonString(currentLocale, 11527),
+                6 => globalCache.AddonStorage.LoadAddonString(currentLocale, 11528),
+                7 => globalCache.AddonStorage.LoadAddonString(currentLocale, 11529),
+                8 => globalCache.AddonStorage.LoadAddonString(currentLocale, 11530),
+                9 => globalCache.AddonStorage.LoadAddonString(currentLocale, 11531),
+                10 => globalCache.AddonStorage.LoadAddonString(currentLocale, 11532),
+                11 => globalCache.AddonStorage.LoadAddonString(currentLocale, 11533),
+                12 => globalCache.AddonStorage.LoadAddonString(currentLocale, 11534),
+                13 => globalCache.AddonStorage.LoadAddonString(currentLocale, 12238),
                 _ => string.Empty,
             };
         }
 
         //public static void DrawGear(List<Gear> gears, uint job, int jobLevel, int middleWidth, int middleHeigth, bool retainer = false, int maxLevel = 0)
-        public static void DrawGear(ref GlobalCache _globalCache, ref Dictionary<GearSlot, IDalamudTextureWrap?> defaultTextures, List<Gear> gears, uint job, int jobLevel, int middleWidth, int middleHeigth, bool retainer = false, int maxLevel = 0)
+        public static void DrawGear(ClientLanguage currentLocale, ref GlobalCache globalCache, ref Dictionary<GearSlot, IDalamudTextureWrap?> defaultTextures, List<Gear> gears, uint job, int jobLevel, int middleWidth, int middleHeigth, bool retainer = false, int maxLevel = 0)
         {
             if (gears.Count == 0) return;
             if (ImGui.BeginTable("###GearTableHeader", 3))
@@ -1097,9 +1066,9 @@ namespace Altoholic
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
                 //DrawGearPiece(ref _globalCache, gears, GearSlot.MH, GetAddonString(11524), new Vector2(40, 40), 13775);
-                DrawGearPiece(ref _globalCache, gears, GearSlot.MH, GetAddonString(11524), new Vector2(40, 40), /*ref*/ defaultTextures[GearSlot.MH], defaultTextures[GearSlot.EMPTY]);
+                DrawGearPiece(currentLocale, ref globalCache, gears, GearSlot.MH, globalCache.AddonStorage.LoadAddonString(currentLocale, 11524), new Vector2(40, 40), /*ref*/ defaultTextures[GearSlot.MH], defaultTextures[GearSlot.EMPTY]);
                 ImGui.TableSetColumnIndex(1);
-                ImGui.TextUnformatted($"{GetAddonString(335)} {jobLevel}");
+                ImGui.TextUnformatted($"{globalCache.AddonStorage.LoadAddonString(currentLocale, 335)} {jobLevel}");
                 if (ImGui.BeginTable("###GearTable#RoleIconNameTable", 2))
                 {
                     ImGui.TableSetupColumn("###GearTable#RoleColumn#RoleIcon", ImGuiTableColumnFlags.WidthFixed, 44);
@@ -1107,15 +1076,15 @@ namespace Altoholic
                     ImGui.TableNextRow();
                     ImGui.TableSetColumnIndex(0);
                     //DrawIcon(new Vector2(40, 40), false, GetJobIcon(job));
-                    DrawIcon_test(_globalCache.IconStorage.LoadIcon(GetJobIcon(job)), new Vector2(40, 40));
+                    DrawIcon_test(globalCache.IconStorage.LoadIcon(GetJobIcon(job)), new Vector2(40, 40));
                     ImGui.TableSetColumnIndex(1);
-                    ImGui.TextUnformatted($"{GetJobNameFromId(job)}");
+                    ImGui.TextUnformatted($"{globalCache.JobStorage.GetName(currentLocale, job)}");
 
                     ImGui.EndTable();
                 }
                 ImGui.TableSetColumnIndex(2);
                 if(retainer)
-                    ImGui.TextUnformatted($"{GetAddonString(2325).Replace("[", "").Replace("]", "")}{maxLevel}");
+                    ImGui.TextUnformatted($"{globalCache.AddonStorage.LoadAddonString(currentLocale, 2325).Replace("[", "").Replace("]", "")}{maxLevel}");
 
                 ImGui.EndTable();
             }
@@ -1133,33 +1102,33 @@ namespace Altoholic
                     ImGui.TableNextRow();
                     ImGui.TableSetColumnIndex(0);
                     //DrawGearPiece(ref _globalCache, gears, GearSlot.HEAD, GetAddonString(11525), new Vector2(40, 40), 10032);
-                    DrawGearPiece(ref _globalCache, gears, GearSlot.HEAD, GetAddonString(11525), new Vector2(40, 40), /*ref*/ defaultTextures[GearSlot.HEAD], defaultTextures[GearSlot.EMPTY]);
+                    DrawGearPiece(currentLocale, ref globalCache, gears, GearSlot.HEAD, globalCache.AddonStorage.LoadAddonString(currentLocale, 11525), new Vector2(40, 40), /*ref*/ defaultTextures[GearSlot.HEAD], defaultTextures[GearSlot.EMPTY]);
 
                     ImGui.TableNextRow();
                     ImGui.TableSetColumnIndex(0);
                     //DrawGearPiece(ref _globalCache, gears, GearSlot.BODY, GetAddonString(11526), new Vector2(40, 40), 10033);
-                    DrawGearPiece(ref _globalCache, gears, GearSlot.BODY, GetAddonString(11526), new Vector2(40, 40), /*ref*/ defaultTextures[GearSlot.BODY], defaultTextures[GearSlot.EMPTY]);
+                    DrawGearPiece(currentLocale, ref globalCache, gears, GearSlot.BODY, globalCache.AddonStorage.LoadAddonString(currentLocale, 11526), new Vector2(40, 40), /*ref*/ defaultTextures[GearSlot.BODY], defaultTextures[GearSlot.EMPTY]);
 
                     ImGui.TableNextRow();
                     ImGui.TableSetColumnIndex(0);
                     //DrawGearPiece(ref _globalCache, gears, GearSlot.HANDS, GetAddonString(11527), new Vector2(40, 40), 10034);
-                    DrawGearPiece(ref _globalCache, gears, GearSlot.HANDS, GetAddonString(11527), new Vector2(40, 40), /*ref*/ defaultTextures[GearSlot.HANDS], defaultTextures[GearSlot.EMPTY]);
+                    DrawGearPiece(currentLocale, ref globalCache, gears, GearSlot.HANDS, globalCache.AddonStorage.LoadAddonString(currentLocale, 11527), new Vector2(40, 40), /*ref*/ defaultTextures[GearSlot.HANDS], defaultTextures[GearSlot.EMPTY]);
 
                     ImGui.TableNextRow();
                     ImGui.TableSetColumnIndex(0);
                     //DrawGearPiece(ref _globalCache, gears, GearSlot.LEGS, GetAddonString(11528), new Vector2(40, 40), 10035);
-                    DrawGearPiece(ref _globalCache, gears, GearSlot.LEGS, GetAddonString(11528), new Vector2(40, 40), /*ref*/ defaultTextures[GearSlot.LEGS], defaultTextures[GearSlot.EMPTY]);
+                    DrawGearPiece(currentLocale, ref globalCache, gears, GearSlot.LEGS, globalCache.AddonStorage.LoadAddonString(currentLocale, 11528), new Vector2(40, 40), /*ref*/ defaultTextures[GearSlot.LEGS], defaultTextures[GearSlot.EMPTY]);
 
                     ImGui.TableNextRow();
                     ImGui.TableSetColumnIndex(0);
                     //DrawGearPiece(ref _globalCache, gears, GearSlot.FEET, GetAddonString(11529), new Vector2(40, 40), 10035);
-                    DrawGearPiece(ref _globalCache, gears, GearSlot.FEET, GetAddonString(11529), new Vector2(40, 40), /*ref*/ defaultTextures[GearSlot.FEET], defaultTextures[GearSlot.EMPTY]);
+                    DrawGearPiece(currentLocale, ref globalCache, gears, GearSlot.FEET, globalCache.AddonStorage.LoadAddonString(currentLocale, 11529), new Vector2(40, 40), /*ref*/ defaultTextures[GearSlot.FEET], defaultTextures[GearSlot.EMPTY]);
                     ImGui.EndTable();
                 }
 
                 ImGui.TableSetColumnIndex(1);
                 //DrawIcon(new Vector2(middleWidth, middleHeigth), false, 055396);
-                DrawIcon_test(_globalCache.IconStorage.LoadIcon(055396), new Vector2(middleWidth, middleHeigth));
+                DrawIcon_test(globalCache.IconStorage.LoadIcon(055396), new Vector2(middleWidth, middleHeigth));
 
                 ImGui.TableSetColumnIndex(2);
                 if (ImGui.BeginTable("###GearTable#RightGearColumn", 1))
@@ -1168,55 +1137,55 @@ namespace Altoholic
                     ImGui.TableNextRow();
                     ImGui.TableSetColumnIndex(0);
                     //DrawGearPiece(ref _globalCache, gears, GearSlot.OH, GetAddonString(12227), new Vector2(40, 40), 30067);
-                    DrawGearPiece(ref _globalCache, gears, GearSlot.OH, GetAddonString(12227), new Vector2(40, 40), /*ref*/ defaultTextures[GearSlot.OH], defaultTextures[GearSlot.EMPTY]);
+                    DrawGearPiece(currentLocale, ref globalCache, gears, GearSlot.OH, globalCache.AddonStorage.LoadAddonString(currentLocale, 12227), new Vector2(40, 40), /*ref*/ defaultTextures[GearSlot.OH], defaultTextures[GearSlot.EMPTY]);
 
                     ImGui.TableNextRow();
                     ImGui.TableSetColumnIndex(0);
                     //DrawGearPiece(ref _globalCache, gears, GearSlot.EARS, GetAddonString(11530), new Vector2(40, 40), 9293);
-                    DrawGearPiece(ref _globalCache, gears, GearSlot.EARS, GetAddonString(11530), new Vector2(40, 40), /*ref*/ defaultTextures[GearSlot.EARS], defaultTextures[GearSlot.EMPTY]);
+                    DrawGearPiece(currentLocale, ref globalCache, gears, GearSlot.EARS, globalCache.AddonStorage.LoadAddonString(currentLocale, 11530), new Vector2(40, 40), /*ref*/ defaultTextures[GearSlot.EARS], defaultTextures[GearSlot.EMPTY]);
 
                     ImGui.TableNextRow();
                     ImGui.TableSetColumnIndex(0);
                     //DrawGearPiece(ref _globalCache, gears, GearSlot.NECK, GetAddonString(11531), new Vector2(40, 40), 9292);
-                    DrawGearPiece(ref _globalCache, gears, GearSlot.NECK, GetAddonString(11531), new Vector2(40, 40), /*ref*/ defaultTextures[GearSlot.NECK], defaultTextures[GearSlot.EMPTY]);
+                    DrawGearPiece(currentLocale, ref globalCache, gears, GearSlot.NECK, globalCache.AddonStorage.LoadAddonString(currentLocale, 11531), new Vector2(40, 40), /*ref*/ defaultTextures[GearSlot.NECK], defaultTextures[GearSlot.EMPTY]);
 
                     ImGui.TableNextRow();
                     ImGui.TableSetColumnIndex(0);
                     //DrawGearPiece(ref _globalCache, gears, GearSlot.WRISTS, GetAddonString(11532), new Vector2(40, 40), 9294);
-                    DrawGearPiece(ref _globalCache, gears, GearSlot.WRISTS, GetAddonString(11532), new Vector2(40, 40), /*ref*/ defaultTextures[GearSlot.WRISTS], defaultTextures[GearSlot.EMPTY]);
+                    DrawGearPiece(currentLocale, ref globalCache, gears, GearSlot.WRISTS, globalCache.AddonStorage.LoadAddonString(currentLocale, 11532), new Vector2(40, 40), /*ref*/ defaultTextures[GearSlot.WRISTS], defaultTextures[GearSlot.EMPTY]);
 
                     ImGui.TableNextRow();
                     ImGui.TableSetColumnIndex(0);
                     //DrawGearPiece(ref _globalCache, gears, GearSlot.RIGHT_RING, GetAddonString(11533), new Vector2(40, 40), 9295);
-                    DrawGearPiece(ref _globalCache, gears, GearSlot.RIGHT_RING, GetAddonString(11533), new Vector2(40, 40), /*ref*/ defaultTextures[GearSlot.RIGHT_RING], defaultTextures[GearSlot.EMPTY]);
+                    DrawGearPiece(currentLocale, ref globalCache, gears, GearSlot.RIGHT_RING, globalCache.AddonStorage.LoadAddonString(currentLocale, 11533), new Vector2(40, 40), /*ref*/ defaultTextures[GearSlot.RIGHT_RING], defaultTextures[GearSlot.EMPTY]);
 
                     ImGui.TableNextRow();
                     ImGui.TableSetColumnIndex(0);
                     //DrawGearPiece(ref _globalCache, gears, GearSlot.LEFT_RING, GetAddonString(11534), new Vector2(40, 40), 9295);
-                    DrawGearPiece(ref _globalCache, gears, GearSlot.LEFT_RING, GetAddonString(11534), new Vector2(40, 40), /*ref*/ defaultTextures[GearSlot.LEFT_RING], defaultTextures[GearSlot.EMPTY]);
+                    DrawGearPiece(currentLocale, ref globalCache, gears, GearSlot.LEFT_RING, globalCache.AddonStorage.LoadAddonString(currentLocale, 11534), new Vector2(40, 40), /*ref*/ defaultTextures[GearSlot.LEFT_RING], defaultTextures[GearSlot.EMPTY]);
 
                     ImGui.TableNextRow();
                     ImGui.TableSetColumnIndex(0);
                     //DrawGearPiece(ref _globalCache, gears, GearSlot.SOUL_CRYSTAL, GetAddonString(12238), new Vector2(40, 40), 55396);//Todo: Find Soul Crystal empty icon
-                    DrawGearPiece(ref _globalCache, gears, GearSlot.SOUL_CRYSTAL, GetAddonString(12238), new Vector2(40, 40), /*ref*/ defaultTextures[GearSlot.SOUL_CRYSTAL], defaultTextures[GearSlot.EMPTY]);
+                    DrawGearPiece(currentLocale, ref globalCache, gears, GearSlot.SOUL_CRYSTAL, globalCache.AddonStorage.LoadAddonString(currentLocale, 12238), new Vector2(40, 40), /*ref*/ defaultTextures[GearSlot.SOUL_CRYSTAL], defaultTextures[GearSlot.EMPTY]);
                     ImGui.EndTable();
                 }
                 ImGui.EndTable();
             }
         }
 
-        public static (Vector2 uv0, Vector2 uv1) GetTextureCoordinate(Vector2 texture_size, int u, int v, int w, int h)
+        public static (Vector2 uv0, Vector2 uv1) GetTextureCoordinate(Vector2 textureSize, int u, int v, int w, int h)
         {
-            float u1 = (u + w) / texture_size.X;
-            float v1 = (v + h) / texture_size.Y;
-            Vector2 uv0 = new(u / texture_size.X, v / texture_size.Y);
+            float u1 = (u + w) / textureSize.X;
+            float v1 = (v + h) / textureSize.Y;
+            Vector2 uv0 = new(u / textureSize.X, v / textureSize.Y);
             Vector2 uv1 = new(u1, v1);
             return (uv0, uv1);
         }
 
         public static void DrawRoleTexture(ref IDalamudTextureWrap texture, RoleIcon role, Vector2 size)
         {
-            var (uv0, uv1) = role switch
+            (Vector2 uv0, Vector2 uv1) = role switch
             {
                 RoleIcon.Tank => GetTextureCoordinate(texture.Size, 100, 0, 40, 40),
                 RoleIcon.Heal => GetTextureCoordinate(texture.Size, 140, 0, 40, 40),
@@ -1255,19 +1224,19 @@ namespace Altoholic
             ImGui.Image(texture.ImGuiHandle, size, uv0, uv1, Vector4.One with { W = 0.33f });
         }
         */
-        public static void DrawGearPiece(ref GlobalCache _globalCache, List<Gear> Gear, GearSlot slot, string tooltip, Vector2 icon_size, /*uint fallback_icon*/ /*ref*/ IDalamudTextureWrap? fallbackTexture, IDalamudTextureWrap? emptySlot)
+        public static void DrawGearPiece(ClientLanguage currentLocale, ref GlobalCache globalCache, List<Gear> gear, GearSlot slot, string tooltip, Vector2 icon_size, /*uint fallback_icon*/ /*ref*/ IDalamudTextureWrap? fallbackTexture, IDalamudTextureWrap? emptySlot)
         {
             if (fallbackTexture is null || emptySlot is null) return;
-            var GEAR = Gear.First(g => g.Slot == (short)slot);
+            Gear? foundGear = gear.FirstOrDefault(g => g.Slot == (short)slot);
             //Plugin.Log.Debug($"{slot}, {GEAR.ItemId}");
-            if (GEAR == null || GEAR.ItemId == 0)
+            if (foundGear == null || foundGear.ItemId == 0)
             {
                 //DrawItemIcon(icon_size, false, fallback_icon);
                 /*var i = _itemStorage.LoadItem(fallback_icon);
                 if (i == null) return;
                 DrawIcon_test(_globalCache.IconStorage.LoadIcon(i.Icon), icon_size);*/
                 //ImGui.Image(fallbackTexture.ImGuiHandle, icon_size, Vector2.Zero, Vector2.One, Vector4.One with { W = 0.33f });
-                var p = ImGui.GetCursorPos();
+                System.Numerics.Vector2 p = ImGui.GetCursorPos();
                 ImGui.Image(emptySlot.ImGuiHandle, new Vector2(42, 42));
                 ImGui.SetCursorPos(new Vector2(p.X + 1, p.Y+1));
                 ImGui.Image(fallbackTexture.ImGuiHandle, new Vector2(40, 40));
@@ -1282,162 +1251,22 @@ namespace Altoholic
             else
             {
                 //DrawItemIcon(icon_size, GEAR.HQ, GEAR.ItemId);
-                var i = _globalCache.ItemStorage.LoadItem(GEAR.ItemId);
+                ItemItemLevel? i = globalCache.ItemStorage.LoadItemWithItemLevel(currentLocale, foundGear.ItemId);
                 if(i == null) return;
-                DrawIcon_test(_globalCache.IconStorage.LoadIcon(i.Icon, GEAR.HQ), icon_size);
+                DrawIcon_test(globalCache.IconStorage.LoadIcon(i.Item.Icon, foundGear.HQ), icon_size);
                 if (ImGui.IsItemHovered())
                 {
-                    DrawGearTooltip(ref _globalCache, GEAR, i);
+                    DrawGearTooltip(currentLocale, ref globalCache, foundGear, i);
                 }
             }
         }
-        public static void DrawGearTooltip(ref GlobalCache _globalCache, Gear item, Item dbItem)
+        public static void DrawGearTooltip(ClientLanguage currentLocale, ref GlobalCache globalCache, Gear item, ItemItemLevel itm)
         {
-            if (Plugin.TextureProvider == null || Plugin.DataManager is null || Plugin.Log is null) return;
             //Lumina.Excel.GeneratedSheets.Item? dbItem = GetItemFromId(item.ItemId);
+            Item? dbItem = itm.Item;
             if (dbItem == null) return;
-            ItemLevel? ilvl = GetItemLevelFromId(dbItem.LevelItem.Row);
-            if (ilvl == null) return;
-
-            ImGui.BeginTooltip();
-
-            if (dbItem.IsUnique || dbItem.IsUntradable)
-            {
-                if (ImGui.BeginTable($"##DrawItemTooltip#Item_{item.ItemId}#Unique", 3))
-                {
-                    ImGui.TableSetupColumn($"##DrawItemTooltip#Item_{item.ItemId}#Unique#IsUnique", ImGuiTableColumnFlags.WidthStretch);
-                    ImGui.TableSetupColumn($"##DrawItemTooltip#Item_{item.ItemId}#Unique#IsUnique", ImGuiTableColumnFlags.WidthFixed, 200);
-                    ImGui.TableSetupColumn($"##DrawItemTooltip#Item_{item.ItemId}#Unique#IsUnique", ImGuiTableColumnFlags.WidthStretch);
-                    ImGui.TableNextRow();
-                    ImGui.TableSetColumnIndex(0);
-                    ImGui.TextUnformatted("");
-                    ImGui.TableSetColumnIndex(1);
-                    if (dbItem.IsUnique)
-                    {
-                        ImGui.TextUnformatted($"{GetAddonString(494)}");// Unique
-                    }
-                    if (dbItem.IsUntradable)
-                    {
-                        ImGui.SameLine();
-                        ImGui.TextUnformatted($"{GetAddonString(495)}");// Untradable
-                    }
-                    /*if (i.Is) No Binding value???
-                    {
-                        ImGui.TextUnformatted($"{GetAddonString(496)}");// Binding
-                    }*/
-                    ImGui.TableSetColumnIndex(2);
-                    ImGui.TextUnformatted("");
-                    ImGui.EndTable();
-                }
-            }
-            if (ImGui.BeginTable($"##DrawItemTooltip#Item_{item.ItemId}", 3))
-            {
-                ImGui.TableSetupColumn($"##DrawItemTooltip#Item_{item.ItemId}#Icon", ImGuiTableColumnFlags.WidthFixed, 55);
-                ImGui.TableSetupColumn($"##DrawItemTooltip#Item_{item.ItemId}#Name", ImGuiTableColumnFlags.WidthFixed, 305);
-                ImGui.TableNextRow();
-                ImGui.TableSetColumnIndex(0);
-                //DrawItemIcon(new Vector2(40, 40), item.HQ, item.ItemId);
-                DrawIcon_test(_globalCache.IconStorage.LoadIcon(dbItem.Icon, item.HQ), new Vector2(40,40));
-                ImGui.TableSetColumnIndex(1);
-                ImGui.TextUnformatted($"{dbItem.Name} {(item.HQ ? (char)SeIconChar.HighQuality : "")}");
-                if (dbItem.IsGlamourous)
-                {
-                    ImGui.TextUnformatted($"{(char)SeIconChar.Glamoured} {GetItemNameFromId(item.GlamourID)}");
-                }
-                ImGui.TableNextRow(); 
-                ImGui.TableSetColumnIndex(0);
-                ImGui.TextUnformatted($"{GetSlotName(item.Slot)}");
-                ImGui.EndTable();
-            }
-            if(ImGui.BeginTable($"##DrawItemTooltip#Item_{item.ItemId}#Defense", 3))
-            {
-                ImGui.TableSetupColumn($"##DrawItemTooltip#Item_{item.ItemId}#Defense#Empty", ImGuiTableColumnFlags.WidthStretch);
-                ImGui.TableSetupColumn($"##DrawItemTooltip#Item_{item.ItemId}#Defense#Icon", ImGuiTableColumnFlags.WidthFixed, 100);
-                ImGui.TableSetupColumn($"##DrawItemTooltip#Item_{item.ItemId}#Defense#Name", ImGuiTableColumnFlags.WidthFixed, 100);
-                ImGui.TableNextRow();
-                ImGui.TableSetColumnIndex(0);
-                ImGui.TextUnformatted($"{GetAddonString(3244)}");// Defense
-                ImGui.TableSetColumnIndex(1);
-                ImGui.TextUnformatted($"{GetAddonString(3246)}");// Magic Defense
-                ImGui.TableNextRow();
-                ImGui.TableSetColumnIndex(0);
-                ImGui.TextUnformatted($"{dbItem.DefensePhys}");
-                ImGui.TableSetColumnIndex(1);
-                ImGui.TextUnformatted($"{dbItem.DefenseMag}");
-                ImGui.EndTable();
-            }
-            ImGui.Separator();
-            ImGui.TextUnformatted($"{GetAddonString(13775)} {ilvl.RowId}");// Item Level
-            ImGui.Separator();
-            ImGui.TextUnformatted($"{GetClassJobCategoryFromId(dbItem.ClassJobCategory.Value?.RowId)}");
-            ImGui.TextUnformatted($"{GetAddonString(1034)} {dbItem.LevelEquip}");
-            ImGui.Separator();
-            if (!dbItem.IsAdvancedMeldingPermitted)
-            { 
-                ImGui.TextUnformatted($"{GetAddonString(4655)}"); // Advanced Melding Forbidden
-            }
-            if (item.Stain > 0)
-            {
-                Stain? dye = GetStainFromId(item.Stain);
-                if (dye != null)
-                {
-                    ImGui.TextUnformatted($"{dye.Name}");
-                }
-            }
-            ImGui.Separator();
-            if (ImGui.BeginTable($"##DrawItemTooltip#Item_{item.ItemId}#Bonuses", 3))
-            {
-                //Todo: Conditional attributes since not every item will have the same
-                ImGui.TableSetupColumn($"##DrawItemTooltip#Item_{item.ItemId}#Bonuses#StrengthCrit", ImGuiTableColumnFlags.WidthFixed, 40);
-                ImGui.TableSetupColumn($"##DrawItemTooltip#Item_{item.ItemId}#Bonuses#Empty", ImGuiTableColumnFlags.WidthStretch);
-                ImGui.TableSetupColumn($"##DrawItemTooltip#Item_{item.ItemId}#Bonuses#VitSkS", ImGuiTableColumnFlags.WidthFixed, 305);
-                ImGui.TableNextRow();
-                ImGui.TableSetColumnIndex(0);
-                ImGui.TextUnformatted($"{GetAddonString(3226)} +");// Defense
-                ImGui.TableSetColumnIndex(1);
-                ImGui.TextUnformatted("");
-                ImGui.TableSetColumnIndex(2);
-                ImGui.TextUnformatted($"{GetAddonString(3227)} +");// Vitality
-                ImGui.TableNextRow();
-                ImGui.TableSetColumnIndex(0);
-                ImGui.TextUnformatted($"{GetAddonString(3241)} +");// Critical Hit
-                ImGui.TableSetColumnIndex(1);
-                ImGui.TextUnformatted("");
-                ImGui.TableSetColumnIndex(2);
-                ImGui.TextUnformatted($"{GetAddonString(3249)} +");// Skill Speed
-                ImGui.EndTable();
-            }
-            if (dbItem.MateriaSlotCount > 0) {
-                ImGui.Separator();
-                ImGui.TextUnformatted($"{GetAddonString(491)}");// Materia
-                for (int i = 0;i < dbItem.MateriaSlotCount;i++)
-                {
-                    ImGui.ColorButton($"##Item_{item.ItemId}#Materia#{i}", new Vector4(34, 169, 34, 1), ImGuiColorEditFlags.None, new Vector2(16,16));
-                }
-                //Plugin.Log.Debug($"Item materia: {item.Materia}");
-            }
-            ImGui.Separator();
-            ImGui.TextUnformatted($"{GetAddonString(497)}");// Crafting & Repairs
-            ImGui.TextUnformatted($"{GetAddonString(498)} : {(item.Condition / 300f).ToString(false ? "F2" : "0.##").Truncate(2) + "%"}");
-            ImGui.TextUnformatted($"{GetAddonString(499)} : {(item.Spiritbond / 100f).ToString(false ? "F2" : "0.##").Truncate(2) + "%"}");
-            ImGui.TextUnformatted($"{GetAddonString(500)} : {GetJobNameFromId(dbItem.ClassJobRepair.Row)}");//Repair Level
-            ImGui.TextUnformatted($"{GetAddonString(518)} : {GetItemRepairResource(dbItem.ItemRepair.Row)}");//Materials
-            ImGui.TextUnformatted($"{GetAddonString(995)} : ");//Quick Repairs
-            ImGui.TextUnformatted($"{GetAddonString(993)} : ");//Materia Melding
-            ImGui.TextUnformatted($"{GetExtractableString(dbItem)}");
-            ImGui.TextUnformatted($"{GetSellableString(dbItem, item)}");//Materia Melding
-            if((item.CrafterContentID > 0))
-                ImGui.TextUnformatted($"Crafted");
-
-            ImGui.EndTooltip();
-        }
-        
-        public static void DrawItemTooltip(Inventory item)
-        {
-            if (Plugin.TextureProvider == null || Plugin.DataManager is null || Plugin.Log is null) return;
-            Lumina.Excel.GeneratedSheets.Item? dbItem = GetItemFromId(item.ItemId);
-            if (dbItem == null) return;
-            Lumina.Excel.GeneratedSheets.ItemLevel? ilvl = GetItemLevelFromId(dbItem.LevelItem.Row);
+            //ItemLevel? ilvl = GetItemLevelFromId(dbItem.LevelItem.Row);
+            ItemLevel? ilvl = itm.ItemLevel;
             if (ilvl == null) return;
 
             ImGui.BeginTooltip();
@@ -1455,16 +1284,163 @@ namespace Altoholic
                     ImGui.TableSetColumnIndex(1);
                     if (dbItem.IsUnique)
                     {
-                        ImGui.TextUnformatted($"{GetAddonString(494)}");// Unique
+                        ImGui.TextUnformatted($"{globalCache.AddonStorage.LoadAddonString(currentLocale, 494)}");// Unique
                     }
                     if (dbItem.IsUntradable)
                     {
                         ImGui.SameLine();
-                        ImGui.TextUnformatted($"{GetAddonString(495)}");// Untradable
+                        ImGui.TextUnformatted($"{globalCache.AddonStorage.LoadAddonString(currentLocale, 495)}");// Untradable
                     }
                     /*if (i.Is) No Binding value???
                     {
-                        ImGui.TextUnformatted($"{GetAddonString(496)}");// Binding
+                        ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(496)}");// Binding
+                    }*/
+                    ImGui.TableSetColumnIndex(2);
+                    ImGui.TextUnformatted("");
+                    ImGui.EndTable();
+                }
+            }
+            if (ImGui.BeginTable($"##DrawItemTooltip#Item_{item.ItemId}", 3))
+            {
+                ImGui.TableSetupColumn($"##DrawItemTooltip#Item_{item.ItemId}#Icon", ImGuiTableColumnFlags.WidthFixed, 55);
+                ImGui.TableSetupColumn($"##DrawItemTooltip#Item_{item.ItemId}#Name", ImGuiTableColumnFlags.WidthFixed, 305);
+                ImGui.TableNextRow();
+                ImGui.TableSetColumnIndex(0);
+                //DrawItemIcon(new Vector2(40, 40), item.HQ, item.ItemId);
+                DrawIcon_test(globalCache.IconStorage.LoadIcon(dbItem.Icon, item.HQ), new Vector2(40,40));
+                ImGui.TableSetColumnIndex(1);
+                ImGui.TextUnformatted($"{dbItem.Name} {(item.HQ ? (char)SeIconChar.HighQuality : "")}");
+                if (dbItem.IsGlamourous)
+                {
+                    Item? glamour = globalCache.ItemStorage.LoadItem(currentLocale, item.GlamourID);
+                    if (glamour != null)
+                    {
+                        ImGui.TextUnformatted($"{(char)SeIconChar.Glamoured} {glamour.Name}");
+                    }
+                }
+                ImGui.TableNextRow(); 
+                ImGui.TableSetColumnIndex(0);
+                ImGui.TextUnformatted($"{GetSlotName(currentLocale, globalCache, item.Slot)}");
+                ImGui.EndTable();
+            }
+            if(ImGui.BeginTable($"##DrawItemTooltip#Item_{item.ItemId}#Defense", 3))
+            {
+                ImGui.TableSetupColumn($"##DrawItemTooltip#Item_{item.ItemId}#Defense#Empty", ImGuiTableColumnFlags.WidthStretch);
+                ImGui.TableSetupColumn($"##DrawItemTooltip#Item_{item.ItemId}#Defense#Icon", ImGuiTableColumnFlags.WidthFixed, 100);
+                ImGui.TableSetupColumn($"##DrawItemTooltip#Item_{item.ItemId}#Defense#Name", ImGuiTableColumnFlags.WidthFixed, 100);
+                ImGui.TableNextRow();
+                ImGui.TableSetColumnIndex(0);
+                ImGui.TextUnformatted($"{globalCache.AddonStorage.LoadAddonString(currentLocale, 3244)}");// Defense
+                ImGui.TableSetColumnIndex(1);
+                ImGui.TextUnformatted($"{globalCache.AddonStorage.LoadAddonString(currentLocale, 3246)}");// Magic Defense
+                ImGui.TableNextRow();
+                ImGui.TableSetColumnIndex(0);
+                ImGui.TextUnformatted($"{dbItem.DefensePhys}");
+                ImGui.TableSetColumnIndex(1);
+                ImGui.TextUnformatted($"{dbItem.DefenseMag}");
+                ImGui.EndTable();
+            }
+            ImGui.Separator();
+            ImGui.TextUnformatted($"{globalCache.AddonStorage.LoadAddonString(currentLocale, 13775)} {ilvl.RowId}");// Item Level
+            ImGui.Separator();
+            ImGui.TextUnformatted($"{GetClassJobCategoryFromId(currentLocale, dbItem.ClassJobCategory.Value?.RowId)}");
+            ImGui.TextUnformatted($"{globalCache.AddonStorage.LoadAddonString(currentLocale, 1034)} {dbItem.LevelEquip}");
+            ImGui.Separator();
+            if (!dbItem.IsAdvancedMeldingPermitted)
+            { 
+                ImGui.TextUnformatted($"{globalCache.AddonStorage.LoadAddonString(currentLocale, 4655)}"); // Advanced Melding Forbidden
+            }
+            if (item.Stain > 0)
+            {
+                //Stain? dye = GetStainFromId(item.Stain);
+                string dye = globalCache.StainStorage.LoadStain(currentLocale, item.Stain);
+                if (!string.IsNullOrEmpty(dye))
+                {
+                    ImGui.TextUnformatted($"{dye}");
+                }
+            }
+            ImGui.Separator();
+            if (ImGui.BeginTable($"##DrawItemTooltip#Item_{item.ItemId}#Bonuses", 3))
+            {
+                //Todo: Conditional attributes since not every item will have the same
+                ImGui.TableSetupColumn($"##DrawItemTooltip#Item_{item.ItemId}#Bonuses#StrengthCrit", ImGuiTableColumnFlags.WidthFixed, 40);
+                ImGui.TableSetupColumn($"##DrawItemTooltip#Item_{item.ItemId}#Bonuses#Empty", ImGuiTableColumnFlags.WidthStretch);
+                ImGui.TableSetupColumn($"##DrawItemTooltip#Item_{item.ItemId}#Bonuses#VitSkS", ImGuiTableColumnFlags.WidthFixed, 305);
+                ImGui.TableNextRow();
+                ImGui.TableSetColumnIndex(0);
+                ImGui.TextUnformatted($"{globalCache.AddonStorage.LoadAddonString(currentLocale, 3226)} +");// Defense
+                ImGui.TableSetColumnIndex(1);
+                ImGui.TextUnformatted("");
+                ImGui.TableSetColumnIndex(2);
+                ImGui.TextUnformatted($"{globalCache.AddonStorage.LoadAddonString(currentLocale, 3227)} +");// Vitality
+                ImGui.TableNextRow();
+                ImGui.TableSetColumnIndex(0);
+                ImGui.TextUnformatted($"{globalCache.AddonStorage.LoadAddonString(currentLocale, 3241)} +");// Critical Hit
+                ImGui.TableSetColumnIndex(1);
+                ImGui.TextUnformatted("");
+                ImGui.TableSetColumnIndex(2);
+                ImGui.TextUnformatted($"{globalCache.AddonStorage.LoadAddonString(currentLocale, 3249)} +");// Skill Speed
+                ImGui.EndTable();
+            }
+            if (dbItem.MateriaSlotCount > 0) {
+                ImGui.Separator();
+                ImGui.TextUnformatted($"{globalCache.AddonStorage.LoadAddonString(currentLocale, 491)}");// Materia
+                for (int i = 0;i < dbItem.MateriaSlotCount;i++)
+                {
+                    ImGui.ColorButton($"##Item_{item.ItemId}#Materia#{i}", new Vector4(34, 169, 34, 1), ImGuiColorEditFlags.None, new Vector2(16,16));
+                }
+                //Plugin.Log.Debug($"Item materia: {item.Materia}");
+            }
+            ImGui.Separator();
+            ImGui.TextUnformatted($"{globalCache.AddonStorage.LoadAddonString(currentLocale, 497)}");// Crafting & Repairs
+            ImGui.TextUnformatted($"{globalCache.AddonStorage.LoadAddonString(currentLocale, 498)} : {(item.Condition / 300f).ToString(false ? "F2" : "0.##").Truncate(2) + "%"}");
+            ImGui.TextUnformatted($"{globalCache.AddonStorage.LoadAddonString(currentLocale, 499)} : {(item.Spiritbond / 100f).ToString(false ? "F2" : "0.##").Truncate(2) + "%"}");
+            ImGui.TextUnformatted($"{globalCache.AddonStorage.LoadAddonString(currentLocale, 500)} : {globalCache.JobStorage.GetName(currentLocale, dbItem.ClassJobRepair.Row)}");//Repair Level
+            ImGui.TextUnformatted($"{globalCache.AddonStorage.LoadAddonString(currentLocale, 518)} : {GetItemRepairResource(currentLocale, dbItem.ItemRepair.Row)}");//Materials
+            ImGui.TextUnformatted($"{globalCache.AddonStorage.LoadAddonString(currentLocale, 995)} : ");//Quick Repairs
+            ImGui.TextUnformatted($"{globalCache.AddonStorage.LoadAddonString(currentLocale, 993)} : ");//Materia Melding
+            ImGui.TextUnformatted($"{GetExtractableString(currentLocale, globalCache, dbItem)}");
+            ImGui.TextUnformatted($"{GetSellableString(currentLocale, globalCache, dbItem, item)}");//Materia Melding
+            if(item.CrafterContentID > 0)
+                ImGui.TextUnformatted("Crafted");
+
+            ImGui.EndTooltip();
+        }
+        
+        public static void DrawItemTooltip(ClientLanguage currentLocale, ref GlobalCache globalCache, Inventory item)
+        {
+            ItemItemLevel? itm = globalCache.ItemStorage.LoadItemWithItemLevel(currentLocale, item.ItemId);
+            Item? dbItem = itm?.Item;
+            if (dbItem == null) return;
+            //Lumina.Excel.GeneratedSheets.ItemLevel? ilvl = GetItemLevelFromId(dbItem.LevelItem.Row);
+            ItemLevel? ilvl = itm?.ItemLevel;
+            if (ilvl == null) return;
+
+            ImGui.BeginTooltip();
+
+            if (dbItem.IsUnique || dbItem.IsUntradable)
+            {
+                if (ImGui.BeginTable($"##DrawItemTooltip#Item_{item.ItemId}#Unique", 3))
+                {
+                    ImGui.TableSetupColumn($"##DrawItemTooltip#Item_{item.ItemId}#Unique#IsUnique", ImGuiTableColumnFlags.WidthStretch);
+                    ImGui.TableSetupColumn($"##DrawItemTooltip#Item_{item.ItemId}#Unique#IsUntradable", ImGuiTableColumnFlags.WidthFixed, 200);
+                    ImGui.TableSetupColumn($"##DrawItemTooltip#Item_{item.ItemId}#Unique#IsBinding", ImGuiTableColumnFlags.WidthStretch);
+                    ImGui.TableNextRow();
+                    ImGui.TableSetColumnIndex(0);
+                    ImGui.TextUnformatted("");
+                    ImGui.TableSetColumnIndex(1);
+                    if (dbItem.IsUnique)
+                    {
+                        ImGui.TextUnformatted($"{globalCache.AddonStorage.LoadAddonString(currentLocale, 494)}");// Unique
+                    }
+                    if (dbItem.IsUntradable)
+                    {
+                        ImGui.SameLine();
+                        ImGui.TextUnformatted($"{globalCache.AddonStorage.LoadAddonString(currentLocale, 495)}");// Untradable
+                    }
+                    /*if (i.Is) No Binding value???
+                    {
+                        ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(496)}");// Binding
                     }*/
                     ImGui.TableSetColumnIndex(2);
                     ImGui.TextUnformatted("");
@@ -1477,7 +1453,8 @@ namespace Altoholic
                 ImGui.TableSetupColumn($"##DrawItemTooltip#Item_{item.ItemId}#NameIcon#Name", ImGuiTableColumnFlags.WidthFixed, 305);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                DrawItemIcon(new Vector2(40, 40), item.HQ, item.ItemId);
+                //DrawItemIcon(new Vector2(40, 40), item.HQ, item.ItemId);
+                DrawIcon_test(globalCache.IconStorage.LoadIcon(dbItem.Icon, item.HQ), new Vector2(40, 40));
                 ImGui.TableSetColumnIndex(1);
                 ImGui.TextUnformatted($"{dbItem.Name} {(item.HQ ? (char)SeIconChar.HighQuality : "")}");
                 ImGui.EndTable();
@@ -1491,21 +1468,21 @@ namespace Altoholic
                 ImGui.TableSetColumnIndex(0);
                 ImGui.TextUnformatted($"{dbItem.ItemUICategory.Value?.Name}");
                 ImGui.TableSetColumnIndex(1);
-                ImGui.TextUnformatted($"{item.Quantity}/99 (Total: {item.Quantity})");
+                ImGui.TextUnformatted($"{item.Quantity}/{dbItem.StackSize} (Total: {item.Quantity})");
                 ImGui.TableSetColumnIndex(2);
                 ImGui.EndTable();
             }
 
             ImGui.Separator();
-            ImGui.TextUnformatted($"{GetAddonString(497)}");// Crafting & Repairs
+            ImGui.TextUnformatted($"{globalCache.AddonStorage.LoadAddonString(currentLocale, 497)}");// Crafting & Repairs
 
             ImGui.EndTooltip();
         }
         
-        public static void DrawEventItemTooltip(Inventory item)
+        public static void DrawEventItemTooltip(ClientLanguage currentLocale, GlobalCache globalCache, Inventory item)
         {
-            if (Plugin.TextureProvider == null || Plugin.DataManager is null || Plugin.Log is null) return;
-            Lumina.Excel.GeneratedSheets.EventItem? dbItem = GetEventItemFromId(item.ItemId);
+            //Lumina.Excel.GeneratedSheets.EventItem? dbItem = GetEventItemFromId(item.ItemId);
+            EventItem? dbItem = globalCache.ItemStorage.LoadEventItem(currentLocale, item.ItemId);
             if (dbItem == null) return;
 
             ImGui.BeginTooltip();
@@ -1516,7 +1493,8 @@ namespace Altoholic
                 ImGui.TableSetupColumn($"##DrawItemTooltip#Item_{item.ItemId}#NameIcon#Name", ImGuiTableColumnFlags.WidthFixed, 305);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                DrawItemIcon(new Vector2(40, 40), item.HQ, item.ItemId);
+                //DrawItemIcon(new Vector2(40, 40), item.HQ, item.ItemId);
+                DrawIcon_test(globalCache.IconStorage.LoadIcon(dbItem.Icon, item.HQ), new Vector2(40,40));
                 ImGui.TableSetColumnIndex(1);
                 ImGui.TextUnformatted($"{dbItem.Name} {(item.HQ ? (char)SeIconChar.HighQuality : "")}");
                 ImGui.EndTable();
@@ -1535,18 +1513,16 @@ namespace Altoholic
             }
 
             ImGui.Separator();
-            ImGui.TextUnformatted($"{GetAddonString(497)}");// Crafting & Repairs
+            ImGui.TextUnformatted($"{globalCache.AddonStorage.LoadAddonString(currentLocale, 497)}");// Crafting & Repairs
 
             ImGui.EndTooltip();
         }
         
-        public static void DrawCrystalTooltip(uint itemId, int amount)
+        public static void DrawCrystalTooltip(ClientLanguage currentLocale, ref GlobalCache globalCache, uint itemId, int amount)
         {
-            if (Plugin.TextureProvider == null || Plugin.DataManager is null || Plugin.Log is null) return;
-            Lumina.Excel.GeneratedSheets.Item? dbItem = GetItemFromId(itemId);
+            //Lumina.Excel.GeneratedSheets.Item? dbItem = GetItemFromId(itemId);
+            Item? dbItem = globalCache.ItemStorage.LoadItem(currentLocale, itemId);
             if (dbItem == null) return;
-            Lumina.Excel.GeneratedSheets.ItemLevel? ilvl = GetItemLevelFromId(dbItem.LevelItem.Row);
-            if (ilvl == null) return;
 
             ImGui.BeginTooltip();
 
@@ -1563,16 +1539,16 @@ namespace Altoholic
                     ImGui.TableSetColumnIndex(1);
                     if (dbItem.IsUnique)
                     {
-                        ImGui.TextUnformatted($"{GetAddonString(494)}");// Unique
+                        ImGui.TextUnformatted($"{globalCache.AddonStorage.LoadAddonString(currentLocale, 494)}");// Unique
                     }
                     if (dbItem.IsUntradable)
                     {
                         ImGui.SameLine();
-                        ImGui.TextUnformatted($"{GetAddonString(495)}");// Untradable
+                        ImGui.TextUnformatted($"{globalCache.AddonStorage.LoadAddonString(currentLocale, 495)}");// Untradable
                     }
                     /*if (i.Is) No Binding value???
                     {
-                        ImGui.TextUnformatted($"{GetAddonString(496)}");// Binding
+                        ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(496)}");// Binding
                     }*/
                     ImGui.TableSetColumnIndex(2);
                     ImGui.TextUnformatted("");
@@ -1585,7 +1561,8 @@ namespace Altoholic
                 ImGui.TableSetupColumn($"##DrawItemTooltip#Item_{dbItem.RowId}#Name", ImGuiTableColumnFlags.WidthFixed, 305);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                DrawItemIcon(new Vector2(40, 40), false, itemId);
+                //DrawItemIcon(new Vector2(40, 40), false, itemId);
+                DrawIcon_test(globalCache.IconStorage.LoadIcon(dbItem.Icon), new Vector2(40, 40));
                 ImGui.TableSetColumnIndex(1);
                 ImGui.TextUnformatted($"{dbItem.Name}");
                 ImGui.EndTable();
@@ -1604,14 +1581,14 @@ namespace Altoholic
             }
 
             ImGui.Separator();
-            ImGui.TextUnformatted($"{GetAddonString(497)}");// Crafting & Repairs
+            ImGui.TextUnformatted($"{globalCache.AddonStorage.LoadAddonString(currentLocale, 497)}");// Crafting & Repairs
 
             ImGui.EndTooltip();
         }
 
-        private static string GetExtractableString(Lumina.Excel.GeneratedSheets.Item item)
+        private static string GetExtractableString(ClientLanguage currentLocale, GlobalCache globalCache, Item item)
         {
-            string str = GetAddonString(1361);
+            string str = globalCache.AddonStorage.LoadAddonString(currentLocale, 1361);
             Plugin.Log.Debug($"extract str: {str} => item desynth {item.Desynth}");
             //str = str.Replace("<If(GreaterThan(IntegerParameter(1),0))>Y<Else/>N</If>", (item.AdditionalData) ? "Y" : "N");
             //str = str.Replace("<If(GreaterThan(IntegerParameter(2),0))>Y<Else/>N</If>", (item.IsGlamourous) ? "Y" : "N");
@@ -1621,22 +1598,17 @@ namespace Altoholic
             str = str.Replace(".00N", (item.Desynth == 0)? "N" : "Y");
             return str;
         }
-        private static string GetSellableString(Lumina.Excel.GeneratedSheets.Item item, Gear gear)
+        private static string GetSellableString(ClientLanguage currentLocale, GlobalCache globalCache, Item item, Gear gear)
         {
-            var price = item.PriceLow * (gear.HQ ? 1.1f : 1.0);
+            double price = item.PriceLow * (gear.HQ ? 1.1f : 1.0);
             //Plugin.Log.Debug($"PriceLow : {item.PriceLow}, PriceMid: {item.PriceMid}, stackValue {price}");
-            string str = GetAddonString(484);
+            string str = globalCache.AddonStorage.LoadAddonString(currentLocale, 484);
             //Plugin.Log.Debug($"price str: {str}");
-            if (item.PriceLow == 0) {
-                str = GetAddonString(503).Replace(" <If(IntegerParameter(1))><Else/> ", "");
-            }
-            else
-            {
+            str = item.PriceLow == 0 ? globalCache.AddonStorage.LoadAddonString(currentLocale, 503).Replace(" <If(IntegerParameter(1))><Else/> ", "") :
                 //str = str.Replace("<Format(IntegerParameter(1),FF022C)/>", price.ToString());
-                str = str.Replace(",", Math.Ceiling(price).ToString("N0"));
-                //str = str.Replace("<If(IntegerParameter(2))><Else/>　Market Prohibited</If>", "");
-                //str = str.Replace("　Market Prohibited", "");
-            }
+                str.Replace(",", Math.Ceiling(price).ToString("N0"));
+            //str = str.Replace("<If(IntegerParameter(2))><Else/>　Market Prohibited</If>", "");
+            //str = str.Replace("　Market Prohibited", "");
             return str;
         }
 
@@ -1668,17 +1640,28 @@ namespace Altoholic
             }
         }*/
 
-        public static string GetAddonString(int id)
+        /*public static string GetAddonString(int id)
         {
-            if (Plugin.DataManager is null || Plugin.Log is null) return string.Empty;
-            Lumina.Excel.ExcelSheet<Lumina.Excel.GeneratedSheets.Addon>? da = Plugin.DataManager.GetExcelSheet<Lumina.Excel.GeneratedSheets.Addon>(GetLocale());
-            if (da != null)
+            ExcelSheet<Addon>? da = Plugin.DataManager.GetExcelSheet<Addon>(GetLocale());
+            if (da == null)
             {
-                Lumina.Excel.GeneratedSheets.Addon? lumina = da.GetRow((uint)id)!;
-                if (lumina != null)
-                    return lumina.Text;
+                return string.Empty;
             }
-            return string.Empty;
+
+            Addon? lumina = da.GetRow((uint)id);
+            return lumina != null ? lumina.Text : string.Empty;
+        }*/
+
+        public static string GetAddonString(ClientLanguage currentLocale, int id)
+        {
+            ExcelSheet<Addon>? da = Plugin.DataManager.GetExcelSheet<Addon>(currentLocale);
+            if (da == null)
+            {
+                return string.Empty;
+            }
+
+            Addon? lumina = da.GetRow((uint)id);
+            return lumina != null ? lumina.Text : string.Empty;
         }
 
         /*public static string GetCurrencyTitle(ClientLanguage GetLocale(), int id)
@@ -1843,61 +1826,43 @@ namespace Altoholic
                 _ => string.Empty,
             };
         }*/
-        
 
-        public static string GetTribalNameFromId(uint id)
+
+        public static string GetTribalNameFromId(ClientLanguage currentLocale, uint id)
         {
-            if (Plugin.DataManager is null || Plugin.Log is null) return string.Empty;
-            Lumina.Excel.ExcelSheet<Lumina.Excel.GeneratedSheets.BeastTribe>? dbt = Plugin.DataManager.GetExcelSheet<Lumina.Excel.GeneratedSheets.BeastTribe>(GetLocale());
-            if (dbt != null)
-            {
-                Lumina.Excel.GeneratedSheets.BeastTribe? lumina = dbt.GetRow(id);
-                if (lumina != null)
-                    return lumina.Name;
-            }
-            return string.Empty;
+            ExcelSheet<BeastTribe>? dbt = Plugin.DataManager.GetExcelSheet<BeastTribe>(currentLocale);
+            BeastTribe? lumina = dbt?.GetRow(id);
+            return lumina != null ? lumina.Name : string.Empty;
         }
-        public static string GetTribalCurrencyFromId(uint id)
+        public static string GetTribalCurrencyFromId(ClientLanguage currentLocale, uint id)
         {
-            if (Plugin.DataManager is null || Plugin.Log is null) return string.Empty;
             //Plugin.Log.Debug($"GetItemNameFromId : {id}");
-            Lumina.Excel.ExcelSheet<Lumina.Excel.GeneratedSheets.BeastTribe>? dbt = Plugin.DataManager.GetExcelSheet<Lumina.Excel.GeneratedSheets.BeastTribe>(GetLocale());
-            if (dbt != null)
-            {
-                Lumina.Excel.GeneratedSheets.BeastTribe? lumina = dbt.GetRow(id);
-                if (lumina != null)
-                    return lumina.Name;
-            }
-            return string.Empty;
+            ExcelSheet<BeastTribe>? dbt = Plugin.DataManager.GetExcelSheet<BeastTribe>(currentLocale);
+            BeastTribe? lumina = dbt?.GetRow(id);
+            return lumina != null ? lumina.Name : string.Empty;
             /*var lumina = Plugin.DataManager.GetExcelSheet<Lumina.Excel.GeneratedSheets.BeastTribe>(GetLocale()).GetRow(id)!;
             return lumina.CurrencyItem.Value.Name;*/
         }
         public static string Capitalize(string str)
         {
-            return char.ToUpper(str[0]) + str.Substring(1);
+            return char.ToUpper(str[0]) + str[1..];
         }
 
         public static string CapitalizeSnakeCase(string str)
         {
             List<string> items = [];
-            foreach (var item in str.Split("_"))
-            {
-                items.Add(Capitalize(item));
-            }
+            items.AddRange(str.Split("_").Select(Capitalize));
             return string.Join("_", items);
         }
         
         public static string CapitalizeCurrency(string str)
         {
-            if (str == "MGP" || str == "MGF")
+            if (str is "MGP" or "MGF")
             {
                 return str;
             }
             List<string> items = [];
-            foreach (var item in str.Split("_"))
-            {
-                items.Add(Capitalize(item.ToLower()));
-            }
+            items.AddRange(str.Split("_").Select(item => Capitalize(item.ToLower())));
             return string.Join("_", items);
         }
 
@@ -1905,71 +1870,71 @@ namespace Altoholic
         {
             //Plugin.Log.Debug($"IsQuestCompleted questId: {questId}");
 
-            return FFXIVClientStructs.FFXIV.Client.Game.QuestManager.IsQuestComplete((uint)questId);
+            return QuestManager.IsQuestComplete((uint)questId);
         }
 
-        public static string GetClassJobCategoryFromId(uint? id)
+        public static string GetClassJobCategoryFromId(ClientLanguage currentLocale, uint? id)
         {
-            if (Plugin.DataManager is null || Plugin.Log is null || id is null) return string.Empty;
             //Plugin.Log.Debug($"GetItemNameFromId : {id}");
-            Lumina.Excel.ExcelSheet<Lumina.Excel.GeneratedSheets.ClassJobCategory>? djc = Plugin.DataManager.GetExcelSheet<Lumina.Excel.GeneratedSheets.ClassJobCategory>(GetLocale());
-            if (djc != null)
+            ExcelSheet<ClassJobCategory>? djc = Plugin.DataManager.GetExcelSheet<ClassJobCategory>(currentLocale);
+            if (djc == null)
             {
-                Lumina.Excel.GeneratedSheets.ClassJobCategory? lumina = djc.GetRow(id.Value);
-                if(lumina != null)
-                    return lumina.Name;
+                return string.Empty;
             }
-            return string.Empty;
+
+            if (id == null)
+            {
+                return string.Empty;
+            }
+
+            ClassJobCategory? lumina = djc.GetRow(id.Value);
+            return lumina != null ? lumina.Name : string.Empty;
         }
-        public static Lumina.Excel.GeneratedSheets.ClassJob? GetClassJobFromId(uint? id)
+        public static ClassJob? GetClassJobFromId(ClientLanguage currentLocale, uint? id)
         {
-            if (Plugin.DataManager is null || Plugin.Log is null || id is null) return null;
             //Plugin.Log.Debug($"GetItemNameFromId : {id}");
-            Lumina.Excel.ExcelSheet<Lumina.Excel.GeneratedSheets.ClassJob>? djc = Plugin.DataManager.GetExcelSheet<Lumina.Excel.GeneratedSheets.ClassJob>(GetLocale());
-            if (djc != null)
+            ExcelSheet<ClassJob>? djc = Plugin.DataManager.GetExcelSheet<ClassJob>(currentLocale);
+            if (id == null)
             {
-                Lumina.Excel.GeneratedSheets.ClassJob? lumina = djc.GetRow(id.Value);
-                return lumina;
+                return null;
             }
-            return null;
+
+            ClassJob? lumina = djc?.GetRow(id.Value);
+            return lumina;
         }
         
-        public static Lumina.Excel.GeneratedSheets.ClassJob? GetClassJobFromId(uint? id, Dalamud.ClientLanguage clientLanguage)
+        public static ClassJob? GetClassJobFromId(uint? id, ClientLanguage clientLanguage)
         {
-            if (Plugin.DataManager is null || Plugin.Log is null || id is null) return null;
             //Plugin.Log.Debug($"GetItemNameFromId : {id}");
-            Lumina.Excel.ExcelSheet<Lumina.Excel.GeneratedSheets.ClassJob>? djc = Plugin.DataManager.GetExcelSheet<Lumina.Excel.GeneratedSheets.ClassJob>(clientLanguage);
-            if (djc != null)
+            ExcelSheet<ClassJob>? djc = Plugin.DataManager.GetExcelSheet<ClassJob>(clientLanguage);
+
+            if (id == null)
             {
-                Lumina.Excel.GeneratedSheets.ClassJob? lumina = djc.GetRow(id.Value);
-                return lumina;
+                return null;
             }
-            return null;
+
+            ClassJob? lumina = djc?.GetRow(id.Value);
+            return lumina;
         }
 
-        public static string GetItemRepairResource(uint id)
+        public static string GetItemRepairResource(ClientLanguage currentLocale, uint id)
         {
-            if (Plugin.DataManager is null || Plugin.Log is null) return string.Empty;
-            Lumina.Excel.ExcelSheet<Lumina.Excel.GeneratedSheets.ItemRepairResource>? dirr = Plugin.DataManager.GetExcelSheet<Lumina.Excel.GeneratedSheets.ItemRepairResource>(GetLocale());
-            if (dirr != null)
+            ExcelSheet<ItemRepairResource>? dirr = Plugin.DataManager.GetExcelSheet<ItemRepairResource>(currentLocale);
+            if (dirr == null)
             {
-                Lumina.Excel.GeneratedSheets.ItemRepairResource? lumina = dirr.GetRow(id)!;
-                if (lumina != null)
-                {
-                    var itm = lumina.Item;
-                    if (itm != null)
-                    {
-                        var v = itm.Value;
-                        if (v != null)
-                            return v.Name;
-                    }
-                }
+                return string.Empty;
             }
-            return string.Empty;
+
+            ItemRepairResource? lumina = dirr.GetRow(id);
+            LazyRow<Item>? itm = lumina?.Item;
+            Item? v = itm?.Value;
+            return v != null ? v.Name : string.Empty;
         }
-        
-        public static string GetFCTag(Character localPlayer)
+
+        // ReSharper disable once InconsistentNaming
+        public static string GetFCTag(ClientLanguage currentLocale, GlobalCache globalCache, Character localPlayer)
         {
+            // ReSharper disable once InconsistentNaming
             string FCTag = string.Empty;
             if ((string.IsNullOrEmpty(localPlayer.CurrentWorld) || string.IsNullOrEmpty(localPlayer.CurrentDatacenter) || string.IsNullOrEmpty(localPlayer.CurrentWorld)) || (localPlayer.CurrentWorld == localPlayer.HomeWorld && localPlayer.CurrentRegion == localPlayer.Region))
             {
@@ -1977,111 +1942,76 @@ namespace Altoholic
             }
             else if (localPlayer.CurrentWorld != localPlayer.HomeWorld && localPlayer.CurrentRegion == localPlayer.Region)
             {
-                FCTag = GetAddonString(12541);
+                FCTag = globalCache.AddonStorage.LoadAddonString(currentLocale, 12541);
             }
             else if (localPlayer.CurrentWorld != localPlayer.HomeWorld && localPlayer.CurrentRegion != localPlayer.Region)
             {
-                FCTag = GetAddonString(12625);
+                FCTag = globalCache.AddonStorage.LoadAddonString(currentLocale, 12625);
             }
             else if (localPlayer.CurrentWorld != localPlayer.HomeWorld && localPlayer.CurrentRegion != localPlayer.Region)
             {
-                FCTag = GetAddonString(12627);
+                FCTag = globalCache.AddonStorage.LoadAddonString(currentLocale, 12627);
             }
             //Plugin.Log.Debug($"localPlayerRegion : {localPlayerRegion}");
             //Plugin.Log.Debug($"localPlayer.CurrentRegion : {localPlayer.CurrentRegion}");
             return FCTag;
         }
-        public static string GetCrystalName(int i)
+        public static string GetCrystalName(ClientLanguage currentLocale, GlobalCache globalCache, uint i)
         {
-            return i switch
-            {
-                0 => GetItemNameFromId(2),
-                1 => GetItemNameFromId(3),
-                2 => GetItemNameFromId(4),
-                3 => GetItemNameFromId(5),
-                4 => GetItemNameFromId(6),
-                5 => GetItemNameFromId(7),
-                6 => GetItemNameFromId(8),
-                7 => GetItemNameFromId(9),
-                8 => GetItemNameFromId(10),
-                9 => GetItemNameFromId(11),
-                10 => GetItemNameFromId(12),
-                11 => GetItemNameFromId(13),
-                12 => GetItemNameFromId(14),
-                13 => GetItemNameFromId(15),
-                14 => GetItemNameFromId(16),
-                15 => GetItemNameFromId(17),
-                16 => GetItemNameFromId(18),
-                17 => GetItemNameFromId(19),
-                _ => string.Empty
-            };
+            uint crystalId = i + 2;
+            Item? itm = globalCache.ItemStorage.LoadItem(currentLocale, crystalId);
+            return (itm is null) ? string.Empty : itm.Name;
         }
 
-        public static Lumina.Excel.GeneratedSheets.RetainerTask? GetRetainerTask(uint id)
+        public static RetainerTask? GetRetainerTask(ClientLanguage currentLocale, uint id)
         {
-            if (Plugin.DataManager is null || Plugin.Log is null) return null;
-            Lumina.Excel.ExcelSheet<Lumina.Excel.GeneratedSheets.RetainerTask>? drt = Plugin.DataManager.GetExcelSheet<Lumina.Excel.GeneratedSheets.RetainerTask>(GetLocale());
-            if (drt != null)
-            {
-                Lumina.Excel.GeneratedSheets.RetainerTask? lumina = drt.GetRow(id);
-                return lumina;
-            }
-            return null;
+            ExcelSheet<RetainerTask>? drt = Plugin.DataManager.GetExcelSheet<RetainerTask>(currentLocale);
+            RetainerTask? lumina = drt?.GetRow(id);
+            return lumina;
         }
-        public static Lumina.Excel.GeneratedSheets.RetainerTaskNormal? GetRetainerTaskNormal(uint id)
+        public static RetainerTaskNormal? GetRetainerTaskNormal(ClientLanguage currentLocale, uint id)
         {
-            if (Plugin.DataManager is null || Plugin.Log is null) return null;
-            Lumina.Excel.ExcelSheet<Lumina.Excel.GeneratedSheets.RetainerTaskNormal>? drtn = Plugin.DataManager.GetExcelSheet<Lumina.Excel.GeneratedSheets.RetainerTaskNormal>(GetLocale());
-            if (drtn != null)
-            {
-                Lumina.Excel.GeneratedSheets.RetainerTaskNormal? lumina = drtn.GetRow(id);
-                return lumina;
-            }
-            return null;
+            ExcelSheet<RetainerTaskNormal>? drtn = Plugin.DataManager.GetExcelSheet<RetainerTaskNormal>(currentLocale);
+            RetainerTaskNormal? lumina = drtn?.GetRow(id);
+            return lumina;
         }
-        public static Lumina.Excel.GeneratedSheets.RetainerTaskRandom? GetRetainerTaskRandom(uint id)
+        public static RetainerTaskRandom? GetRetainerTaskRandom(ClientLanguage currentLocale, uint id)
         {
-            if (Plugin.DataManager is null || Plugin.Log is null) return null;
-            Lumina.Excel.ExcelSheet<Lumina.Excel.GeneratedSheets.RetainerTaskRandom>? drtr = Plugin.DataManager.GetExcelSheet<Lumina.Excel.GeneratedSheets.RetainerTaskRandom>(GetLocale());
-            if (drtr != null)
-            {
-                Lumina.Excel.GeneratedSheets.RetainerTaskRandom? lumina = drtr.GetRow(id);
-                return lumina;
-            }
-            return null;
+            ExcelSheet<RetainerTaskRandom>? drtr = Plugin.DataManager.GetExcelSheet<RetainerTaskRandom>(currentLocale);
+            RetainerTaskRandom? lumina = drtr?.GetRow(id);
+            return lumina;
         }
 
         public static string UnixTimeStampToDateTime(long lastOnline)
         {
             DateTime dateTime = new(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
             dateTime = dateTime.AddSeconds(lastOnline).ToLocalTime();
-            return dateTime.ToString();
+            return dateTime.ToString(CultureInfo.InvariantCulture);
         }
 
 
 
         ////////////////////////Test
-        public static IDalamudTextureWrap? LoadIcon(uint icon_id, bool hq = false)
+        public static IDalamudTextureWrap? LoadIcon(uint iconId, bool hq = false)
         {
-            if (Plugin.TextureProvider is null  /*||Plugin.Log is null*/) return null;
-            if (icon_id == 0) icon_id = FALLBACK_ICON;
+            if (iconId == 0) iconId = FALLBACK_ICON;
             //Plugin.Log.Debug($"DrawIcon icon_id : {icon_id}");
-            return Plugin.TextureProvider.GetIcon(icon_id, hq ? IconFlags.ItemHighQuality : IconFlags.None);
+            return Plugin.TextureProvider.GetIcon(iconId, hq ? IconFlags.ItemHighQuality : IconFlags.None);
         }
-        public static void DrawIcon_test(IDalamudTextureWrap? icon, Vector2 icon_size)
+        public static void DrawIcon_test(IDalamudTextureWrap? icon, Vector2 iconSize)
         {
             if (icon != null)
             {
-                ImGui.Image(icon.ImGuiHandle, icon_size);
+                ImGui.Image(icon.ImGuiHandle, iconSize);
             }
         }
-        public static void DrawIcon_test(IDalamudTextureWrap? icon, Vector2 icon_size, Vector4 alpha)
+        public static void DrawIcon_test(IDalamudTextureWrap? icon, Vector2 iconSize, Vector4 alpha)
         {
             if (icon != null)
             {
-                ImGui.Image(icon.ImGuiHandle, icon_size, Vector2.Zero, Vector2.One, alpha);
+                ImGui.Image(icon.ImGuiHandle, iconSize, Vector2.Zero, Vector2.One, alpha);
             }
-        }// call this in the window constructor for all the images that won't change (gil, roles,classes,etc) and store them in global dictionary or something so it doesn't load them every draw
+        }
 
         /*public static void DrawIcon_test(Vector2 icon_size, bool hq, uint icon_id)
         {
@@ -2094,6 +2024,7 @@ namespace Altoholic
 
     }
 }
+
 public static class StringExt
 {
     public static string? Truncate(this string? value, int maxLength)

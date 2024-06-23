@@ -42,17 +42,16 @@ namespace Altoholic.Models
             if (Jobs is null) return false;
             foreach (PropertyInfo prop in Jobs.GetType().GetProperties())
             {
-                var value = prop.GetValue(Jobs);
-                if (value != null)
+                object? value = prop.GetValue(Jobs);
+                if (value is not Job job)
                 {
-                    if (value is Job job)
-                    {
-                        int job_level = job.Level;
-                        if (job_level >= level)
-                        {
-                            return true;
-                        }
-                    }
+                    continue;
+                }
+
+                int jobLevel = job.Level;
+                if (jobLevel >= level)
+                {
+                    return true;
                 }
             }
             return false;
@@ -64,14 +63,7 @@ namespace Altoholic.Models
         }
         public bool IsQuestCompleted(int id)
         {
-            if (HasQuest(id))
-            {
-                return Quests.First(q => q.Id == id).Completed;
-            }
-            else
-            {
-                return false;
-            }
+            return HasQuest(id) && Quests.First(q => q.Id == id).Completed;
         }
     }
 }
