@@ -11,85 +11,77 @@ namespace Altoholic.Database
 {
     public class Database
     {
-        public static Character? GetCharacter(IPluginLog Log, LiteDatabase db, ulong id)
+        public static Character? GetCharacter(IPluginLog log, LiteDatabase db, ulong id)
         {
-            Plugin.Log.Debug($"Database/GetCharacter entered db = {db}, Log = {Log}, id = {id}");
+            Plugin.Log.Debug($"Database/GetCharacter entered db = {db}, Log = {log}, id = {id}");
             try
             {
-                var col = db.GetCollection<Character>();
-                if (col != null)
-                {
-                    //var character = col.FindOne(cf => cf.FirstName == firstname && cf.LastName == lastname && cf.HomeWorld == homeworld);
-                    var character = col.FindOne(cf => cf.Id == id);
+                ILiteCollection<Character>? col = db.GetCollection<Character>();
+                //var character = col.FindOne(cf => cf.FirstName == firstname && cf.LastName == lastname && cf.HomeWorld == homeworld);
+                Character? character = col?.FindOne(cf => cf.Id == id);
 
-                    /*if (character is not null)
+                /*if (character is not null)
                     {
                         character.Retainers = GetCharacterRetainers(db, character.Id);
                     }*/
 
-                    return character;
-                }
-                else
-                {
-                    return null;
-                }
+                return character;
             }
             catch (Exception ex)
             {
                 // Todo: Add error handling to not crash game if db is opened in another program
                 Console.WriteLine(ex.ToString());
-                Log.Error(ex.ToString());
+                log.Error(ex.ToString());
                 return null;
             }
         }
 
-        public static List<Character> GetOthersCharacters(IPluginLog Log, LiteDatabase db, ulong id)
+        public static List<Character> GetOthersCharacters(IPluginLog log, LiteDatabase db, ulong id)
         {
             try
             {
-                var col = db.GetCollection<Character>();
-                if (col != null)
+                ILiteCollection<Character>? col = db.GetCollection<Character>();
+                if (col == null)
                 {
-                    //var characters = col.Find(cf => cf.FirstName != firstname && cf.LastName != lastname/*&& cf.HomeWorld != homeworld*/).ToList();
-                    //var characters = col.Find(cf => cf.Uuid != uuid).ToList();
-                    var characters = col.Find(cf => cf.Id != id).ToList();
-                    /*foreach (var c in characters)
+                    return [];
+                }
+
+                //var characters = col.Find(cf => cf.FirstName != firstname && cf.LastName != lastname/*&& cf.HomeWorld != homeworld*/).ToList();
+                //var characters = col.Find(cf => cf.Uuid != uuid).ToList();
+                List<Character> characters = col.Find(cf => cf.Id != id).ToList();
+                /*foreach (var c in characters)
                     {
                         c.Retainers = GetCharacterRetainers(db, c.Id);
                     }*/
 
-                    return characters;
-                }
-                else
-                {
-                    return [];
-                }
+                return characters;
+
             }
             catch (Exception ex)
             {
                 // Todo: Add error handling to not crash game if db is opened in another program
                 Console.WriteLine(ex.ToString());
-                Log.Error(ex.ToString());
+                log.Error(ex.ToString());
                 return [];
             }
         }
 
-        public static List<Character>? DeleteCharacter(IPluginLog Log, LiteDatabase db, ulong id)
+        public static List<Character>? DeleteCharacter(IPluginLog log, LiteDatabase db, ulong id)
         {
             try
             {
-                var col = db.GetCollection<Character>();
+                ILiteCollection<Character>? col = db.GetCollection<Character>();
                 col?.Delete(id);
-                var col2 = db.GetCollection<Blacklist>();
+                ILiteCollection<Blacklist>? col2 = db.GetCollection<Blacklist>();
                 col2?.Delete(id);
 
-                return GetOthersCharacters(Log, db, id);
+                return GetOthersCharacters(log, db, id);
             }
             catch (Exception ex)
             {
                 // Todo: Add error handling to not crash game if db is opened in another program
                 Console.WriteLine(ex.ToString());
-                Log.Error(ex.ToString());
+                log.Error(ex.ToString());
                 return null;
             }
         }
@@ -107,7 +99,7 @@ namespace Altoholic.Database
                     return;
                 }
 
-                Character c = new Character();
+                Character c;
                 //var char_exist = col.FindOne(cf => cf.FirstName == character.FirstName && cf.LastName == character.LastName && cf.HomeWorld == character.HomeWorld);
                 Character? charExist = col.FindOne(cf => cf.Id == character.Id);
                 if (charExist != null)
@@ -187,10 +179,10 @@ namespace Altoholic.Database
             }
         }
         
-        public static void UpdatePlaytime(IPluginLog Log, LiteDatabase db, ulong id, uint PlayTime, long PlayTimeUpdate)
+        public static void UpdatePlaytime(IPluginLog log, LiteDatabase db, ulong id, uint playTime, long playTimeUpdate)
         {
-            if (PlayTime == 0) return;
-            Plugin.Log.Debug($"UpdatePlayTime {id} {PlayTime} {PlayTimeUpdate}");
+            if (playTime == 0) return;
+            Plugin.Log.Debug($"UpdatePlayTime {id} {playTime} {playTimeUpdate}");
             try
             {
                 ILiteCollection<Character>? col = db.GetCollection<Character>();
@@ -199,21 +191,21 @@ namespace Altoholic.Database
                     return;
                 }
 
-                Character c = new();
+                Character c;
                 Character? charExist = col.FindOne(ce => ce.Id == id);
                 if (charExist != null)
                 {
                     c = charExist;
-                    c.PlayTime = PlayTime;
-                    c.LastPlayTimeUpdate = PlayTimeUpdate;
+                    c.PlayTime = playTime;
+                    c.LastPlayTimeUpdate = playTimeUpdate;
                 }
                 else
                 {
                     c = new Character()
                     {
                         Id = id,
-                        PlayTime = PlayTime,
-                        LastPlayTimeUpdate = PlayTimeUpdate,
+                        PlayTime = playTime,
+                        LastPlayTimeUpdate = playTimeUpdate,
                     };
                 }
 
@@ -223,19 +215,19 @@ namespace Altoholic.Database
             {
                 // Todo: Add error handling to not crash game if db is opened in another program
                 Console.WriteLine(ex.ToString());
-                Log.Error(ex.ToString());
+                log.Error(ex.ToString());
             }
         }
 
-        public static List<Character>? BlacklistCharacter(IPluginLog Log, LiteDatabase db, ulong id)
+        public static List<Character>? BlacklistCharacter(IPluginLog log, LiteDatabase db, ulong id)
         {
-            Plugin.Log.Debug($"Database/BlacklistCharacter entered db = {db}, Log = {Log}, id = {id}");
+            Plugin.Log.Debug($"Database/BlacklistCharacter entered db = {db}, Log = {log}, id = {id}");
             try
             {
                 ILiteCollection<Blacklist>? col = db.GetCollection<Blacklist>();
                 if (col == null)
                 {
-                    return GetOthersCharacters(Log, db, id);
+                    return GetOthersCharacters(log, db, id);
                 }
 
                 Blacklist? character = col.FindOne(cf => cf.Id == id);
@@ -247,14 +239,14 @@ namespace Altoholic.Database
                     };
                     col.Insert(blacklist);
                 }
-                DeleteCharacter(Log, db, id);
-                return GetOthersCharacters(Log, db, id);
+                DeleteCharacter(log, db, id);
+                return GetOthersCharacters(log, db, id);
             }
             catch (Exception ex)
             {
                 // Todo: Add error handling to not crash game if db is opened in another program
                 Console.WriteLine(ex.ToString());
-                Log.Error(ex.ToString());
+                log.Error(ex.ToString());
                 return null;
             }
         }

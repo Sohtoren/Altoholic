@@ -297,7 +297,7 @@ namespace Altoholic.Windows
                 ImGui.TableSetColumnIndex(0);
                 int val = 0;
                 Currencies c = 0;
-                switch (selectedCharacter.Profile.Grand_Company)
+                switch (selectedCharacter.Profile.GrandCompany)
                 {
                     case 1:
                         val = pc.Storm_Seal;
@@ -313,7 +313,7 @@ namespace Altoholic.Windows
                         break;
                 }
 
-                DrawCommonCurrency(val, c, Utils.GetGrandCompanyRankMaxSeals(_currentLocale, selectedCharacter.Profile.Grand_Company_Rank));
+                DrawCommonCurrency(val, c, Utils.GetGrandCompanyRankMaxSeals(_currentLocale, selectedCharacter.Profile.GrandCompanyRank));
             }
 
             if (

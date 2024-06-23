@@ -249,7 +249,7 @@ public class DetailsWindow : Window, IDisposable
             }
         }
 
-        if (selectedCharacter.Profile.Grand_Company is not 0)
+        if (selectedCharacter.Profile.GrandCompany is not 0)
         {
             ImGui.TextUnformatted("");
             ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 791)}"); //Grand Company
@@ -262,7 +262,7 @@ public class DetailsWindow : Window, IDisposable
             ImGui.TableSetColumnIndex(0);
             //Utils.DrawIcon(new Vector2(40, 40), false, Utils.GetGrandCompanyIcon(selected_character.Profile.Grand_Company));
             Utils.DrawIcon_test(
-                _globalCache.IconStorage.LoadIcon(Utils.GetGrandCompanyIcon(selectedCharacter.Profile.Grand_Company)),
+                _globalCache.IconStorage.LoadIcon(Utils.GetGrandCompanyIcon(selectedCharacter.Profile.GrandCompany)),
                 new Vector2(40, 40));
 
             ImGui.TableSetColumnIndex(1);
@@ -275,14 +275,14 @@ public class DetailsWindow : Window, IDisposable
                 ImGuiTableColumnFlags.WidthFixed, 50);
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
-            ImGui.TextUnformatted($"{Utils.GetGrandCompany(_currentLocale, selectedCharacter.Profile.Grand_Company)}");
+            ImGui.TextUnformatted($"{Utils.GetGrandCompany(_currentLocale, selectedCharacter.Profile.GrandCompany)}");
             ImGui.TextUnformatted(
-                $"{Utils.Capitalize(Utils.GetGrandCompanyRank(_currentLocale, selectedCharacter.Profile.Grand_Company, selectedCharacter.Profile.Grand_Company_Rank, selectedCharacter.Profile.Gender))}");
+                $"{Utils.Capitalize(Utils.GetGrandCompanyRank(_currentLocale, selectedCharacter.Profile.GrandCompany, selectedCharacter.Profile.GrandCompanyRank, selectedCharacter.Profile.Gender))}");
             ImGui.TableSetColumnIndex(1);
             //Utils.DrawIcon(new Vector2(48, 48), false, Utils.GetGrandCompanyRankIcon(selected_character.Profile.Grand_Company, selected_character.Profile.Grand_Company_Rank));
             Utils.DrawIcon_test(
                 _globalCache.IconStorage.LoadIcon(Utils.GetGrandCompanyRankIcon(
-                    selectedCharacter.Profile.Grand_Company, selectedCharacter.Profile.Grand_Company_Rank)),
+                    selectedCharacter.Profile.GrandCompany, selectedCharacter.Profile.GrandCompanyRank)),
                 new Vector2(48, 48));
         }
 
@@ -306,16 +306,16 @@ public class DetailsWindow : Window, IDisposable
             ImGui.TableSetColumnIndex(0);
             //Utils.DrawIcon(new Vector2(36, 36), false, Utils.GetTownIcon(selected_character.Profile.City_State));
             Utils.DrawIcon_test(
-                _globalCache.IconStorage.LoadIcon(Utils.GetTownIcon(selectedCharacter.Profile.City_State)),
+                _globalCache.IconStorage.LoadIcon(Utils.GetTownIcon(selectedCharacter.Profile.CityState)),
                 new Vector2(36, 36));
             ImGui.TableSetColumnIndex(1);
-            ImGui.TextUnformatted($"{Utils.GetTown(_currentLocale, selectedCharacter.Profile.City_State)}");
+            ImGui.TextUnformatted($"{Utils.GetTown(_currentLocale, selectedCharacter.Profile.CityState)}");
         }
 
         ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 795)}"); //Nameday
         ImGui.Separator();
         ImGui.TextUnformatted(
-            $"{Utils.GetNameday(selectedCharacter.Profile.Nameday_Day, selectedCharacter.Profile.Nameday_Month)}");
+            $"{Utils.GetNameday(selectedCharacter.Profile.NamedayDay, selectedCharacter.Profile.NamedayMonth)}");
         ImGui.TextUnformatted("");
         ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 796)}"); //Guardian
         ImGui.Separator();

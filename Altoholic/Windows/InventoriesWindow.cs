@@ -301,6 +301,7 @@ public class InventoriesWindow : Window, IDisposable
         {
             if (glamourTab)
             {
+                // Todo: implement
             }
         };
 
@@ -308,7 +309,7 @@ public class InventoriesWindow : Window, IDisposable
         {
             if (armoireTab)
             {
-
+                // Todo: implement
             }
         };
     }

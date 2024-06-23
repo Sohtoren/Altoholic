@@ -1,4 +1,3 @@
-using FFXIVClientStructs.FFXIV.Client.System.String;
 using System.Collections.Generic;
 
 namespace Altoholic.Models

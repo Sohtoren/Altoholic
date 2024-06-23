@@ -1,6 +1,3 @@
-using FFXIVClientStructs.FFXIV.Client.Game;
-using System.Runtime.InteropServices;
-
 namespace Altoholic.Models
 {
     public class Gear

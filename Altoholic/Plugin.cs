@@ -598,14 +598,14 @@ foreach(Retainer retainer in localPlayer.Retainers)
             {
                 Title = title,
                 TitleIsPrefix = prefixTitle,
-                Grand_Company = player.GrandCompany,
-                Grand_Company_Rank = player.GetGrandCompanyRank(),
+                GrandCompany = player.GrandCompany,
+                GrandCompanyRank = player.GetGrandCompanyRank(),
                 Race = player.Race,
                 Tribe = player.Tribe,
                 Gender = player.Sex,
-                City_State = player.StartTown,
-                Nameday_Day = player.BirthDay,
-                Nameday_Month = player.BirthMonth,
+                CityState = player.StartTown,
+                NamedayDay = player.BirthDay,
+                NamedayMonth = player.BirthMonth,
                 Guardian = player.GuardianDeity
             };
             _localPlayer.Jobs = new Jobs
