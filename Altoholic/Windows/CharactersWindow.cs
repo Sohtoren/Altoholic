@@ -224,7 +224,7 @@ namespace Altoholic.Windows
             }// Ending Gils Table
 
             ImGui.TableSetColumnIndex(7);
-            ImGui.TextUnformatted($"{GetLastOnlineFormatted(character.LastOnline/*, character.FirstName*/)}");
+            ImGui.TextUnformatted($"{Utils.GetLastOnlineFormatted(character.LastOnline/*, character.FirstName*/)}");
             if (pos > 0)
             {
                 if (ImGui.IsItemHovered())
@@ -243,20 +243,22 @@ namespace Altoholic.Windows
                     return;
                 }
                 ImGui.BeginTooltip();
-                ImGui.TextUnformatted($"Last updated on : {Utils.UnixTimeStampToDateTime(character.LastPlayTimeUpdate)} - {GetLastOnlineFormatted(character.LastPlayTimeUpdate)}");
+                ImGui.TextUnformatted($"Last updated on : {Utils.UnixTimeStampToDateTime(character.LastPlayTimeUpdate)} - {Utils.GetLastOnlineFormatted(character.LastPlayTimeUpdate)}");
                 ImGui.EndTooltip();
             }
 
-            if (character.LastPlayTimeUpdate > 0 && GetLastPlayTimeUpdateDiff(character.LastPlayTimeUpdate) > 7)
+            if (character.LastPlayTimeUpdate <= 0 || Utils.GetLastPlayTimeUpdateDiff(character.LastPlayTimeUpdate) <= 7)
             {
-                ImGui.SameLine();
-                ImGui.TextUnformatted($"{FontAwesomeIcon.Exclamation.ToIconString()}");
-                if (ImGui.IsItemHovered())
-                {
-                    ImGui.BeginTooltip();
-                    ImGui.TextUnformatted("More than 7 days since the last update, consider using the /playtime command");
-                    ImGui.EndTooltip();
-                }
+                return;
+            }
+
+            ImGui.SameLine();
+            ImGui.TextUnformatted($"{FontAwesomeIcon.Exclamation.ToIconString()}");
+            if (ImGui.IsItemHovered())
+            {
+                ImGui.BeginTooltip();
+                ImGui.TextUnformatted("More than 7 days since the last update, consider using the /playtime command");
+                ImGui.EndTooltip();
             }
 
             // Todo : Buttons
@@ -320,91 +322,15 @@ namespace Altoholic.Windows
             TotalWorlds = characters.Select(c => c.HomeWorld).Distinct().Count();
 
             Character currentCharacter = characters.First();
-            /*if (current_character_last_state == null || current_character_last_state != current_character)
-            {*/
             DrawCharacter(0, currentCharacter);
-            /*current_character_last_state = current_character;
-            called++;
-        }*/
-            //for(var i = 0; i < characters.Count;i++)
-            /*if (!others_drawn)
-            {*/
             for (int i = 1; i < characters.Count; i++)
             {
                 TotalPlayed += characters[i].PlayTime;
                 DrawCharacter(i, characters[i]);
             }
-            /*others_drawn = true;
-        }*/
         }
 
-        private static long GetLastPlayTimeUpdateDiff(long lastOnline)
-        {
-            long now = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-            long diff = now - lastOnline;
-            long diffDays = Math.Abs(diff / 86400);
-            return diffDays;
-        }
-        private static string GetLastOnlineFormatted(long lastOnline/*, string firstname*/)
-        {
-            long now = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-            long diff = now - lastOnline;
-            long diffDays = Math.Abs(diff / 86400);
-            long diffHours = Math.Abs(diff / 3600);
-            long diffMins = Math.Abs(diff / 60);
-
-            string? time;
-
-            //Plugin.Log.Debug($"{firstname} diffDays: {diffDays}, diffHours: {diffHours}, diffMins: {diffMins}");
-
-            if (lastOnline == 0)
-            {
-                time = "now";
-            }
-            else switch (diffDays)
-            {
-                case > 365:
-                    time = "Over a year ago";
-                    break;
-                case < 365 and > 30:
-                    {
-                        double tdiff = diffDays / 30.0;
-                        time = $"{Math.Floor(tdiff)} months ago";
-                        break;
-                    }
-                case < 30 and > 1:
-                    time = $"{diffDays} days ago";
-                    break;
-                case 1:
-                    time = "A day ago";
-                    break;
-                case 0 when diffHours is < 24 and > 1:
-                    time = $"{diffHours} hours ago";
-                    break;
-                /*else if (diffDays == 0 && diffHours == 1 && diffMins > 0)
-            {
-                time = string.Format("An hour and {diffMins} mins")
-            }*/
-                //else if (diffDays == 0 && diffHours == 1 && diffMins == 0)
-                case 0 when diffHours == 1:
-                    time = "One hour ago";
-                    break;
-                case 0 when diffHours == 0 && diffMins is < 60 and > 1:
-                    time = $"{diffMins} minutes ago";
-                    break;
-                case 0 when diffHours == 0 && diffMins == 1 && diff == 0:
-                    time = "One minutes ago";
-                    break;
-                case 0 when diffHours == 0 && diffMins <= 1:
-                    time = "A few seconds ago";
-                    break;
-                default:
-                    time = "Unknown";
-                    break;
-            }
-
-            return time;
-        }     
+            
     }
 
     public static class IEnumerableExtensions

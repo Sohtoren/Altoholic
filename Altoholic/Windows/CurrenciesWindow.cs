@@ -1,4 +1,4 @@
-using Altoholic.Cache;
+﻿using Altoholic.Cache;
 using Altoholic.Models;
 using Dalamud;
 using Dalamud.Game.Text;
@@ -8,6 +8,7 @@ using ImGuiNET;
 using Lumina.Excel.GeneratedSheets;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Numerics;
 using System.Reflection;
@@ -207,7 +208,6 @@ namespace Altoholic.Windows
                 selectedCharacter.HasAnyLevelJob(50)
             )
             {
-                Plugin.Log.Debug("Checkpoint B");
                 using var battleTab =
                     ImRaii.TabItem($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 3663)}");
                 if (battleTab)
@@ -221,7 +221,6 @@ namespace Altoholic.Windows
                 selectedCharacter.IsQuestCompleted(69208)
             )
             {
-                Plugin.Log.Debug("Checkpoint C");
                 using var othersTab =
                     ImRaii.TabItem($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 3664)}");
                 {
@@ -346,7 +345,6 @@ namespace Altoholic.Windows
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
             DrawCommonCurrency(pc.MGP, Currencies.MGP, 0);
-            Plugin.Log.Debug("Checkpoint A2");
         }
 
         private void DrawCommonCurrency(int currency, Currencies id, uint max)
@@ -376,7 +374,32 @@ namespace Altoholic.Windows
             ImGui.TextUnformatted(max != 0 ? $"{currency:N0}/{max:N0}" : $"{currency:N0}");
         }
 
-        private static DateTime GetNextThuesday()
+        private static string GetTurnIn(ClientLanguage currentLocale)
+        {
+            DateTime nextTuesdayDateUtc = GetNextTuesday();
+            DateTime nextTuesdayDate = DateTime.SpecifyKind(nextTuesdayDateUtc, DateTimeKind.Utc).ToLocalTime();
+            TimeSpan time = TimeSpan.FromSeconds(GetNextTuesdayRemainingTime());
+            return currentLocale switch
+            {
+                ClientLanguage.German =>
+                    $"Zurücksetzung: {time.TotalHours:00} Std. {time.Minutes:00} Min. {""}({nextTuesdayDate.Day}.{nextTuesdayDate.Month}., {nextTuesdayDate.Hour:D2}:{nextTuesdayDate.Minute:D2} Uhr)",
+                ClientLanguage.English =>
+                    $"Reset in {Math.Floor(time.TotalHours)}h {time.Minutes:00}m {""}[{nextTuesdayDate.Month}/{nextTuesdayDate.Day} {nextTuesdayDate.Hour:D2} {nextTuesdayDate.Minute:D2}]",
+                ClientLanguage.French =>
+                    $"Remise à zéro   : {time.TotalHours:00} {((nextTuesdayDate.Hour > 1) ? "heures" : "heure")} {time.Minutes:00} {((nextTuesdayDate.Minute > 1) ? "minutes" : "minute")} {""}[{nextTuesdayDate.Day}.{nextTuesdayDate.Month} {nextTuesdayDate.Hour:D2}h{nextTuesdayDate.Minute:D2}]",
+                ClientLanguage.Japanese =>
+                    $"リセット日時 : {time.TotalHours:00}時間{time.Minutes:00}分後{""}[{nextTuesdayDate.Day}/{nextTuesdayDate.Month} {nextTuesdayDate.Hour}:{nextTuesdayDate.Minute}]",
+            };
+        }
+        private static double GetNextTuesdayRemainingTime()
+        {
+            DateTime now = DateTime.UtcNow;
+            int daysuntilNexTuesday = ((int)DayOfWeek.Tuesday - (int)DateTime.Today.DayOfWeek + 7) % 7;
+            DateTime nextThuesday8AmUtc = now.AddDays(daysuntilNexTuesday).Date.AddHours(8);
+            double totalSeconds = (nextThuesday8AmUtc - now).TotalSeconds;
+            return totalSeconds;
+        }
+        private static DateTime GetNextTuesday()
         {
             DateTime today = DateTime.Today;
             // The (... + 7) % 7 ensures we end up with a value in the range [0, 6]
@@ -407,7 +430,7 @@ namespace Altoholic.Windows
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(1);
                 ImGui.TextUnformatted(
-                    $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 3668)} {GetNextThuesday()}"); // Todo: add relative duration 'til next thuesday
+                    $"{GetTurnIn(_currentLocale)}");
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
                 DrawBattleCurrency(pc.Allagan_Tomestone_Of_Poetics, Currencies.ALLAGAN_TOMESTONE_OF_POETICS, 2000,
@@ -421,7 +444,7 @@ namespace Altoholic.Windows
                 DrawBattleCurrency(pc.Allagan_Tomestone_Of_Comedy, Currencies.ALLAGAN_TOMESTONE_OF_COMEDY, 2000, true);
                 ImGui.TableSetColumnIndex(1);
                 ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 3502));
-                ImGui.TextUnformatted($"?/900"); // Todo: Find a way to get weekly amount
+                ImGui.TextUnformatted($"{pc.Weekly_Acquired_Tomestone}/{pc.Weekly_Limit_Tomestone}");
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
                 ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 5756));
@@ -558,9 +581,9 @@ namespace Altoholic.Windows
             ImGui.TableSetColumnIndex(1);
             if (max != 0)
             {
-                ImGui.TextUnformatted(total
-                    ? $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 3501)}"
-                    : $"{currency:N0}/{max:N0}");
+                if (total)
+                    ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 3501)}");
+                ImGui.TextUnformatted($"{currency:N0}/{max:N0}");
             }
             else
             {

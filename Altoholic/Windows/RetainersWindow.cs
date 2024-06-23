@@ -3,6 +3,8 @@ using Altoholic.Models;
 using CheapLoc;
 using Dalamud;
 using Dalamud.Game.Text;
+using Dalamud.Interface.Internal;
+using Dalamud.Interface;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
 using ImGuiNET;
@@ -35,6 +37,23 @@ namespace Altoholic.Windows
             };
             _plugin = plugin;
             _globalCache = globalCache;
+
+            _characterIcons = Plugin.PluginInterface.UiBuilder.LoadUld("ui/uld/Character.uld");
+            _characterTextures.Add(GearSlot.MH, _characterIcons.LoadTexturePart("ui/uld/Character_hr1.tex", 17));
+            _characterTextures.Add(GearSlot.HEAD, _characterIcons.LoadTexturePart("ui/uld/Character_hr1.tex", 19));
+            _characterTextures.Add(GearSlot.BODY, _characterIcons.LoadTexturePart("ui/uld/Character_hr1.tex", 20));
+            _characterTextures.Add(GearSlot.HANDS, _characterIcons.LoadTexturePart("ui/uld/Character_hr1.tex", 21));
+            _characterTextures.Add(GearSlot.BELT, _characterIcons.LoadTexturePart("ui/uld/Character_hr1.tex", 22));
+            _characterTextures.Add(GearSlot.LEGS, _characterIcons.LoadTexturePart("ui/uld/Character_hr1.tex", 23));
+            _characterTextures.Add(GearSlot.FEET, _characterIcons.LoadTexturePart("ui/uld/Character_hr1.tex", 24));
+            _characterTextures.Add(GearSlot.OH, _characterIcons.LoadTexturePart("ui/uld/Character_hr1.tex", 18));
+            _characterTextures.Add(GearSlot.EARS, _characterIcons.LoadTexturePart("ui/uld/Character_hr1.tex", 25));
+            _characterTextures.Add(GearSlot.NECK, _characterIcons.LoadTexturePart("ui/uld/Character_hr1.tex", 26));
+            _characterTextures.Add(GearSlot.WRISTS, _characterIcons.LoadTexturePart("ui/uld/Character_hr1.tex", 27));
+            _characterTextures.Add(GearSlot.LEFT_RING, _characterIcons.LoadTexturePart("ui/uld/Character_hr1.tex", 28));
+            _characterTextures.Add(GearSlot.RIGHT_RING, _characterIcons.LoadTexturePart("ui/uld/Character_hr1.tex", 28));
+            _characterTextures.Add(GearSlot.SOUL_CRYSTAL, _characterIcons.LoadTexturePart("ui/uld/Character_hr1.tex", 29));
+            _characterTextures.Add(GearSlot.EMPTY, Plugin.TextureProvider.GetTextureFromGame("ui/uld/fourth/DragTargetA_hr1.tex"));
         }
 
         public Func<Character> GetPlayer { get; set; } = null!;
@@ -45,6 +64,9 @@ namespace Altoholic.Windows
         private uint? _currentItem;
         private string _searchedItem = string.Empty;
         private string _lastSearchedItem = string.Empty;
+
+        private readonly UldWrapper _characterIcons;
+        private Dictionary<GearSlot, IDalamudTextureWrap?> _characterTextures = [];
 
         public override void OnClose()
         {
@@ -65,6 +87,9 @@ namespace Altoholic.Windows
             _currentItems = null;
             _searchedItem = string.Empty;
             _lastSearchedItem = string.Empty;
+
+            foreach (KeyValuePair<GearSlot, IDalamudTextureWrap?> loadedTexture in _characterTextures) loadedTexture.Value?.Dispose();
+            _characterIcons.Dispose();
         }
 
         public override void Draw()
@@ -208,7 +233,7 @@ namespace Altoholic.Windows
             List<Retainer> retainersWithItems = retainers.FindAll(r => r.Inventory.FindAll(ri => ri.ItemId == _currentItem).Count > 0);
             if (retainersWithItems.Count == 0)
             {
-                ImGui.TextUnformatted($"{Loc.Localize("NoItemOnAnyRetainer", "Item not found on any retainers.\nCheck if inventories are available and updated.")}");
+                ImGui.TextUnformatted($"{Loc.Localize("NoItemOnAnyRetainer", "Item not found on any retainers.\r\nCheck if inventories are available and updated.")}");
                 return;
             }
             using var table = ImRaii.Table($"###CharactersRetainer#All#SearchItemsTable#CharacterItems#Item#Table", 2, ImGuiTableFlags.Borders);
@@ -252,17 +277,13 @@ namespace Altoholic.Windows
                                     _currentRetainer = null;
                                 }
 
-                                foreach (Retainer currRetainer in currentCharacter.Retainers)
+                                foreach (Retainer currRetainer in currentCharacter.Retainers.Where(currRetainer => currRetainer.Name != "RETAINER").Where(currRetainer => ImGui.Selectable($"{currRetainer.Name}", currRetainer == _currentRetainer)))
                                 {
-                                    if (currRetainer.Name == "RETAINER") continue;
-                                    if (ImGui.Selectable($"{currRetainer.Name}", currRetainer == _currentRetainer))
-                                    {
-                                        _currentRetainer = currRetainer;
-                                        _currentItem = null;
-                                        _currentItems = null;
-                                        _searchedItem = string.Empty;
-                                        _lastSearchedItem = string.Empty;
-                                    }
+                                    _currentRetainer = currRetainer;
+                                    _currentItem = null;
+                                    _currentItems = null;
+                                    _searchedItem = string.Empty;
+                                    _lastSearchedItem = string.Empty;
                                 }
                             }
                         }
@@ -270,7 +291,7 @@ namespace Altoholic.Windows
                     ImGui.TableSetColumnIndex(1);
                     if (_currentRetainer is not null)
                     {
-                        DrawRetainer(_currentRetainer);
+                        DrawRetainer(_currentRetainer, currentCharacter);
                     }
                     else
                     {
@@ -289,7 +310,7 @@ namespace Altoholic.Windows
             }
         }
 
-        private void DrawRetainer(Retainer selectedRetainer)
+        private void DrawRetainer(Retainer selectedRetainer, Character retainerOwner)
         {
             using var tab = ImRaii.TabBar($"###Retainer#{selectedRetainer.Id}#TabBar");
             if (!tab) return;
@@ -297,7 +318,7 @@ namespace Altoholic.Windows
             {
                 if (detailsTab.Success)
                 {
-                    DrawRetainerDetails(selectedRetainer);
+                    DrawRetainerDetails(selectedRetainer, retainerOwner);
                 }
             };
             using (var inventoryTab = ImRaii.TabItem($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 520)}###Retainer#{selectedRetainer.Id}#TabBar#InventoryTab"))
@@ -320,7 +341,7 @@ namespace Altoholic.Windows
                 }
             };
         }
-        private void DrawRetainerDetails(Retainer selectedRetainer)
+        private void DrawRetainerDetails(Retainer selectedRetainer, Character retainerOwner)
         {
             using var charactersRetainerTable = ImRaii.Table($"###CharactersRetainerTable#RetainerTable{selectedRetainer.Id}", 2, ImGuiTableFlags.None, new Vector2(-1, 300));
             if (charactersRetainerTable)
@@ -376,28 +397,34 @@ namespace Altoholic.Windows
                     ImGui.TableSetColumnIndex(2);
                 }
 
-                using var gearTable = ImRaii.Table($"###CharactersRetainerTable#RetainerTable#Gear_{selectedRetainer.Id}#Gear", 3, ImGuiTableFlags.None, new Vector2(-1, 50));
-                if (gearTable)
+                using var gearTable =
+                    ImRaii.Table($"###CharactersRetainerTable#RetainerTable#Gear_{selectedRetainer.Id}#Gear", 3,
+                        ImGuiTableFlags.None, new Vector2(-1, 50));
+                if (!gearTable) return;
+                ImGui.TableSetupColumn(
+                    $"###CharactersRetainerTable#RetainerTable#Gear_{selectedRetainer.Id}#Gear#Col1",
+                    ImGuiTableColumnFlags.WidthStretch);
+                ImGui.TableSetupColumn(
+                    $"###CharactersRetainerTable#RetainerTable#Gear_{selectedRetainer.Id}#Gear#Col2",
+                    ImGuiTableColumnFlags.WidthFixed, 300);
+                ImGui.TableSetupColumn(
+                    $"###CharactersRetainerTable#RetainerTable#Gear_{selectedRetainer.Id}#Gear#Col3",
+                    ImGuiTableColumnFlags.WidthStretch);
+                ImGui.TableNextRow();
+                ImGui.TableSetColumnIndex(0);
+                ImGui.TableSetColumnIndex(1);
+                if (selectedRetainer.ClassJob != 0 && selectedRetainer.Gear.Count > 0)
                 {
-                    ImGui.TableSetupColumn($"###CharactersRetainerTable#RetainerTable#Gear_{selectedRetainer.Id}#Gear#Col1", ImGuiTableColumnFlags.WidthStretch);
-                    ImGui.TableSetupColumn($"###CharactersRetainerTable#RetainerTable#Gear_{selectedRetainer.Id}#Gear#Col2", ImGuiTableColumnFlags.WidthFixed, 300);
-                    ImGui.TableSetupColumn($"###CharactersRetainerTable#RetainerTable#Gear_{selectedRetainer.Id}#Gear#Col3", ImGuiTableColumnFlags.WidthStretch);
-                    ImGui.TableNextRow();
-                    ImGui.TableSetColumnIndex(0);
-                    ImGui.TableSetColumnIndex(1);
-                    if (selectedRetainer.ClassJob != 0 && selectedRetainer.Gear.Count > 0)
-                    {
-                        //Utils.DrawGear(selected_retainer.Gear, selected_retainer.ClassJob, selected_retainer.Level, 200, 180, true, Utils.GetRetainerJobMaxLevel((uint)selected_retainer.ClassJob,GetPlayer.Invoke()));
-                    }
-                    else
-                    {
-                        ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 5448)} {Loc.Localize("OpenRetainer", "Open the retainer to update the gear")}");
-                    }
-
+                    Utils.DrawGear(_currentLocale, ref _globalCache, ref _characterTextures,
+                        selectedRetainer.Gear, selectedRetainer.ClassJob, selectedRetainer.Level, 200, 180,
+                        true, Utils.GetRetainerJobMaxLevel(selectedRetainer.ClassJob, retainerOwner));
                 }
-                gearTable.Dispose();
+                else
+                {
+                    ImGui.TextUnformatted(
+                        $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 5448)} {Loc.Localize("OpenRetainer", "Open the retainer to update the gear")}");
+                }
             }
-            charactersRetainerTable.Dispose();
         }
 
         private void DrawInventories(Retainer selectedRetainer)

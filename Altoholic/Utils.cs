@@ -3,6 +3,7 @@ using Altoholic.Models;
 using Dalamud;
 using Dalamud.Game.Text;
 using Dalamud.Interface.Internal;
+using Dalamud.Interface.Utility.Raii;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Common.Math;
 using ImGuiNET;
@@ -1055,22 +1056,28 @@ namespace Altoholic
         }
 
         //public static void DrawGear(List<Gear> gears, uint job, int jobLevel, int middleWidth, int middleHeigth, bool retainer = false, int maxLevel = 0)
-        public static void DrawGear(ClientLanguage currentLocale, ref GlobalCache globalCache, ref Dictionary<GearSlot, IDalamudTextureWrap?> defaultTextures, List<Gear> gears, uint job, int jobLevel, int middleWidth, int middleHeigth, bool retainer = false, int maxLevel = 0)
+        public static void DrawGear(ClientLanguage currentLocale, ref GlobalCache globalCache,
+            ref Dictionary<GearSlot, IDalamudTextureWrap?> defaultTextures, List<Gear> gears, uint job, int jobLevel,
+            int middleWidth, int middleHeigth, bool retainer = false, int maxLevel = 0)
         {
             if (gears.Count == 0) return;
-            if (ImGui.BeginTable("###GearTableHeader", 3))
+            using (var gearTableHeader = ImRaii.Table("###GearTableHeader", 3))
             {
+                if (!gearTableHeader) return;
                 ImGui.TableSetupColumn("###GearTableHeader#MHColumn", ImGuiTableColumnFlags.WidthFixed, 44);
                 ImGui.TableSetupColumn("###GearTableHeader#RoleIconNameColumn", ImGuiTableColumnFlags.WidthStretch);
                 ImGui.TableSetupColumn("###GearTableHeader#RoleIconNameColumn", ImGuiTableColumnFlags.WidthFixed, 100);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
                 //DrawGearPiece(ref _globalCache, gears, GearSlot.MH, GetAddonString(11524), new Vector2(40, 40), 13775);
-                DrawGearPiece(currentLocale, ref globalCache, gears, GearSlot.MH, globalCache.AddonStorage.LoadAddonString(currentLocale, 11524), new Vector2(40, 40), /*ref*/ defaultTextures[GearSlot.MH], defaultTextures[GearSlot.EMPTY]);
+                DrawGearPiece(currentLocale, ref globalCache, gears, GearSlot.MH,
+                    globalCache.AddonStorage.LoadAddonString(currentLocale, 11524), new Vector2(40, 40), /*ref*/
+                    defaultTextures[GearSlot.MH], defaultTextures[GearSlot.EMPTY]);
                 ImGui.TableSetColumnIndex(1);
                 ImGui.TextUnformatted($"{globalCache.AddonStorage.LoadAddonString(currentLocale, 335)} {jobLevel}");
-                if (ImGui.BeginTable("###GearTable#RoleIconNameTable", 2))
+                using (var gearTableRoleIconNameTable = ImRaii.Table("###GearTable#RoleIconNameTable", 2))
                 {
+                    if (!gearTableRoleIconNameTable) return;
                     ImGui.TableSetupColumn("###GearTable#RoleColumn#RoleIcon", ImGuiTableColumnFlags.WidthFixed, 44);
                     ImGui.TableSetupColumn("###GearTable#RoleColumn#RoleName", ImGuiTableColumnFlags.WidthStretch);
                     ImGui.TableNextRow();
@@ -1079,98 +1086,118 @@ namespace Altoholic
                     DrawIcon_test(globalCache.IconStorage.LoadIcon(GetJobIcon(job)), new Vector2(40, 40));
                     ImGui.TableSetColumnIndex(1);
                     ImGui.TextUnformatted($"{globalCache.JobStorage.GetName(currentLocale, job)}");
-
-                    ImGui.EndTable();
                 }
-                ImGui.TableSetColumnIndex(2);
-                if(retainer)
-                    ImGui.TextUnformatted($"{globalCache.AddonStorage.LoadAddonString(currentLocale, 2325).Replace("[", "").Replace("]", "")}{maxLevel}");
 
-                ImGui.EndTable();
+                ImGui.TableSetColumnIndex(2);
+                if (retainer)
+                    ImGui.TextUnformatted(
+                        $"{globalCache.AddonStorage.LoadAddonString(currentLocale, 2325).Replace("[", "").Replace("]", "")}{maxLevel}");
             }
 
-            if (ImGui.BeginTable("###GearTable", 3))
+            using var gearTable = ImRaii.Table("###GearTable", 3);
+            if (!gearTable) return;
+            ImGui.TableSetupColumn("###GearTable#LeftGearColumnHeader", ImGuiTableColumnFlags.WidthFixed, 44);
+            ImGui.TableSetupColumn("###GearTable#CentralColumnHeader", ImGuiTableColumnFlags.WidthFixed, middleWidth);
+            ImGui.TableSetupColumn("###GearTable#RightGearColumnHeader", ImGuiTableColumnFlags.WidthFixed, 44);
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            using (var gearTableLeftGearColumn = ImRaii.Table("###GearTable#LeftGearColumn", 1))
             {
-                ImGui.TableSetupColumn("###GearTable#LeftGearColumnHeader", ImGuiTableColumnFlags.WidthFixed, 44);
-                ImGui.TableSetupColumn("###GearTable#CentralColumnHeader", ImGuiTableColumnFlags.WidthFixed, middleWidth);
-                ImGui.TableSetupColumn("###GearTable#RightGearColumnHeader", ImGuiTableColumnFlags.WidthFixed, 44);
+                if (!gearTableLeftGearColumn) return;
+                ImGui.TableSetupColumn("###GearTable#LeftGearColum#Column", ImGuiTableColumnFlags.WidthFixed, 42);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                if (ImGui.BeginTable("###GearTable#LeftGearColumn", 1))
-                {
-                    ImGui.TableSetupColumn("###GearTable#LeftGearColum#Column", ImGuiTableColumnFlags.WidthFixed, 42);
-                    ImGui.TableNextRow();
-                    ImGui.TableSetColumnIndex(0);
-                    //DrawGearPiece(ref _globalCache, gears, GearSlot.HEAD, GetAddonString(11525), new Vector2(40, 40), 10032);
-                    DrawGearPiece(currentLocale, ref globalCache, gears, GearSlot.HEAD, globalCache.AddonStorage.LoadAddonString(currentLocale, 11525), new Vector2(40, 40), /*ref*/ defaultTextures[GearSlot.HEAD], defaultTextures[GearSlot.EMPTY]);
+                //DrawGearPiece(ref _globalCache, gears, GearSlot.HEAD, GetAddonString(11525), new Vector2(40, 40), 10032);
+                DrawGearPiece(currentLocale, ref globalCache, gears, GearSlot.HEAD,
+                    globalCache.AddonStorage.LoadAddonString(currentLocale, 11525), new Vector2(40, 40), /*ref*/
+                    defaultTextures[GearSlot.HEAD], defaultTextures[GearSlot.EMPTY]);
 
-                    ImGui.TableNextRow();
-                    ImGui.TableSetColumnIndex(0);
-                    //DrawGearPiece(ref _globalCache, gears, GearSlot.BODY, GetAddonString(11526), new Vector2(40, 40), 10033);
-                    DrawGearPiece(currentLocale, ref globalCache, gears, GearSlot.BODY, globalCache.AddonStorage.LoadAddonString(currentLocale, 11526), new Vector2(40, 40), /*ref*/ defaultTextures[GearSlot.BODY], defaultTextures[GearSlot.EMPTY]);
+                ImGui.TableNextRow();
+                ImGui.TableSetColumnIndex(0);
+                //DrawGearPiece(ref _globalCache, gears, GearSlot.BODY, GetAddonString(11526), new Vector2(40, 40), 10033);
+                DrawGearPiece(currentLocale, ref globalCache, gears, GearSlot.BODY,
+                    globalCache.AddonStorage.LoadAddonString(currentLocale, 11526), new Vector2(40, 40), /*ref*/
+                    defaultTextures[GearSlot.BODY], defaultTextures[GearSlot.EMPTY]);
 
-                    ImGui.TableNextRow();
-                    ImGui.TableSetColumnIndex(0);
-                    //DrawGearPiece(ref _globalCache, gears, GearSlot.HANDS, GetAddonString(11527), new Vector2(40, 40), 10034);
-                    DrawGearPiece(currentLocale, ref globalCache, gears, GearSlot.HANDS, globalCache.AddonStorage.LoadAddonString(currentLocale, 11527), new Vector2(40, 40), /*ref*/ defaultTextures[GearSlot.HANDS], defaultTextures[GearSlot.EMPTY]);
+                ImGui.TableNextRow();
+                ImGui.TableSetColumnIndex(0);
+                //DrawGearPiece(ref _globalCache, gears, GearSlot.HANDS, GetAddonString(11527), new Vector2(40, 40), 10034);
+                DrawGearPiece(currentLocale, ref globalCache, gears, GearSlot.HANDS,
+                    globalCache.AddonStorage.LoadAddonString(currentLocale, 11527), new Vector2(40, 40), /*ref*/
+                    defaultTextures[GearSlot.HANDS], defaultTextures[GearSlot.EMPTY]);
 
-                    ImGui.TableNextRow();
-                    ImGui.TableSetColumnIndex(0);
-                    //DrawGearPiece(ref _globalCache, gears, GearSlot.LEGS, GetAddonString(11528), new Vector2(40, 40), 10035);
-                    DrawGearPiece(currentLocale, ref globalCache, gears, GearSlot.LEGS, globalCache.AddonStorage.LoadAddonString(currentLocale, 11528), new Vector2(40, 40), /*ref*/ defaultTextures[GearSlot.LEGS], defaultTextures[GearSlot.EMPTY]);
+                ImGui.TableNextRow();
+                ImGui.TableSetColumnIndex(0);
+                //DrawGearPiece(ref _globalCache, gears, GearSlot.LEGS, GetAddonString(11528), new Vector2(40, 40), 10035);
+                DrawGearPiece(currentLocale, ref globalCache, gears, GearSlot.LEGS,
+                    globalCache.AddonStorage.LoadAddonString(currentLocale, 11528), new Vector2(40, 40), /*ref*/
+                    defaultTextures[GearSlot.LEGS], defaultTextures[GearSlot.EMPTY]);
 
-                    ImGui.TableNextRow();
-                    ImGui.TableSetColumnIndex(0);
-                    //DrawGearPiece(ref _globalCache, gears, GearSlot.FEET, GetAddonString(11529), new Vector2(40, 40), 10035);
-                    DrawGearPiece(currentLocale, ref globalCache, gears, GearSlot.FEET, globalCache.AddonStorage.LoadAddonString(currentLocale, 11529), new Vector2(40, 40), /*ref*/ defaultTextures[GearSlot.FEET], defaultTextures[GearSlot.EMPTY]);
-                    ImGui.EndTable();
-                }
+                ImGui.TableNextRow();
+                ImGui.TableSetColumnIndex(0);
+                //DrawGearPiece(ref _globalCache, gears, GearSlot.FEET, GetAddonString(11529), new Vector2(40, 40), 10035);
+                DrawGearPiece(currentLocale, ref globalCache, gears, GearSlot.FEET,
+                    globalCache.AddonStorage.LoadAddonString(currentLocale, 11529), new Vector2(40, 40), /*ref*/
+                    defaultTextures[GearSlot.FEET], defaultTextures[GearSlot.EMPTY]);
+            }
 
-                ImGui.TableSetColumnIndex(1);
-                //DrawIcon(new Vector2(middleWidth, middleHeigth), false, 055396);
-                DrawIcon_test(globalCache.IconStorage.LoadIcon(055396), new Vector2(middleWidth, middleHeigth));
+            ImGui.TableSetColumnIndex(1);
+            //DrawIcon(new Vector2(middleWidth, middleHeigth), false, 055396);
+            DrawIcon_test(globalCache.IconStorage.LoadIcon(055396), new Vector2(middleWidth, middleHeigth));
 
-                ImGui.TableSetColumnIndex(2);
-                if (ImGui.BeginTable("###GearTable#RightGearColumn", 1))
-                {
-                    ImGui.TableSetupColumn("###GearTable#RightGearColum#Column", ImGuiTableColumnFlags.WidthFixed, 42);
-                    ImGui.TableNextRow();
-                    ImGui.TableSetColumnIndex(0);
-                    //DrawGearPiece(ref _globalCache, gears, GearSlot.OH, GetAddonString(12227), new Vector2(40, 40), 30067);
-                    DrawGearPiece(currentLocale, ref globalCache, gears, GearSlot.OH, globalCache.AddonStorage.LoadAddonString(currentLocale, 12227), new Vector2(40, 40), /*ref*/ defaultTextures[GearSlot.OH], defaultTextures[GearSlot.EMPTY]);
+            ImGui.TableSetColumnIndex(2);
+            using (var gearTableRightGearColumn = ImRaii.Table("###GearTable#RightGearColumn", 1))
+            {
+                if (!gearTableRightGearColumn) return;
+                ImGui.TableSetupColumn("###GearTable#RightGearColum#Column", ImGuiTableColumnFlags.WidthFixed, 42);
+                ImGui.TableNextRow();
+                ImGui.TableSetColumnIndex(0);
+                //DrawGearPiece(ref _globalCache, gears, GearSlot.OH, GetAddonString(12227), new Vector2(40, 40), 30067);
+                DrawGearPiece(currentLocale, ref globalCache, gears, GearSlot.OH,
+                    globalCache.AddonStorage.LoadAddonString(currentLocale, 12227), new Vector2(40, 40), /*ref*/
+                    defaultTextures[GearSlot.OH], defaultTextures[GearSlot.EMPTY]);
 
-                    ImGui.TableNextRow();
-                    ImGui.TableSetColumnIndex(0);
-                    //DrawGearPiece(ref _globalCache, gears, GearSlot.EARS, GetAddonString(11530), new Vector2(40, 40), 9293);
-                    DrawGearPiece(currentLocale, ref globalCache, gears, GearSlot.EARS, globalCache.AddonStorage.LoadAddonString(currentLocale, 11530), new Vector2(40, 40), /*ref*/ defaultTextures[GearSlot.EARS], defaultTextures[GearSlot.EMPTY]);
+                ImGui.TableNextRow();
+                ImGui.TableSetColumnIndex(0);
+                //DrawGearPiece(ref _globalCache, gears, GearSlot.EARS, GetAddonString(11530), new Vector2(40, 40), 9293);
+                DrawGearPiece(currentLocale, ref globalCache, gears, GearSlot.EARS,
+                    globalCache.AddonStorage.LoadAddonString(currentLocale, 11530), new Vector2(40, 40), /*ref*/
+                    defaultTextures[GearSlot.EARS], defaultTextures[GearSlot.EMPTY]);
 
-                    ImGui.TableNextRow();
-                    ImGui.TableSetColumnIndex(0);
-                    //DrawGearPiece(ref _globalCache, gears, GearSlot.NECK, GetAddonString(11531), new Vector2(40, 40), 9292);
-                    DrawGearPiece(currentLocale, ref globalCache, gears, GearSlot.NECK, globalCache.AddonStorage.LoadAddonString(currentLocale, 11531), new Vector2(40, 40), /*ref*/ defaultTextures[GearSlot.NECK], defaultTextures[GearSlot.EMPTY]);
+                ImGui.TableNextRow();
+                ImGui.TableSetColumnIndex(0);
+                //DrawGearPiece(ref _globalCache, gears, GearSlot.NECK, GetAddonString(11531), new Vector2(40, 40), 9292);
+                DrawGearPiece(currentLocale, ref globalCache, gears, GearSlot.NECK,
+                    globalCache.AddonStorage.LoadAddonString(currentLocale, 11531), new Vector2(40, 40), /*ref*/
+                    defaultTextures[GearSlot.NECK], defaultTextures[GearSlot.EMPTY]);
 
-                    ImGui.TableNextRow();
-                    ImGui.TableSetColumnIndex(0);
-                    //DrawGearPiece(ref _globalCache, gears, GearSlot.WRISTS, GetAddonString(11532), new Vector2(40, 40), 9294);
-                    DrawGearPiece(currentLocale, ref globalCache, gears, GearSlot.WRISTS, globalCache.AddonStorage.LoadAddonString(currentLocale, 11532), new Vector2(40, 40), /*ref*/ defaultTextures[GearSlot.WRISTS], defaultTextures[GearSlot.EMPTY]);
+                ImGui.TableNextRow();
+                ImGui.TableSetColumnIndex(0);
+                //DrawGearPiece(ref _globalCache, gears, GearSlot.WRISTS, GetAddonString(11532), new Vector2(40, 40), 9294);
+                DrawGearPiece(currentLocale, ref globalCache, gears, GearSlot.WRISTS,
+                    globalCache.AddonStorage.LoadAddonString(currentLocale, 11532), new Vector2(40, 40), /*ref*/
+                    defaultTextures[GearSlot.WRISTS], defaultTextures[GearSlot.EMPTY]);
 
-                    ImGui.TableNextRow();
-                    ImGui.TableSetColumnIndex(0);
-                    //DrawGearPiece(ref _globalCache, gears, GearSlot.RIGHT_RING, GetAddonString(11533), new Vector2(40, 40), 9295);
-                    DrawGearPiece(currentLocale, ref globalCache, gears, GearSlot.RIGHT_RING, globalCache.AddonStorage.LoadAddonString(currentLocale, 11533), new Vector2(40, 40), /*ref*/ defaultTextures[GearSlot.RIGHT_RING], defaultTextures[GearSlot.EMPTY]);
+                ImGui.TableNextRow();
+                ImGui.TableSetColumnIndex(0);
+                //DrawGearPiece(ref _globalCache, gears, GearSlot.RIGHT_RING, GetAddonString(11533), new Vector2(40, 40), 9295);
+                DrawGearPiece(currentLocale, ref globalCache, gears, GearSlot.RIGHT_RING,
+                    globalCache.AddonStorage.LoadAddonString(currentLocale, 11533), new Vector2(40, 40), /*ref*/
+                    defaultTextures[GearSlot.RIGHT_RING], defaultTextures[GearSlot.EMPTY]);
 
-                    ImGui.TableNextRow();
-                    ImGui.TableSetColumnIndex(0);
-                    //DrawGearPiece(ref _globalCache, gears, GearSlot.LEFT_RING, GetAddonString(11534), new Vector2(40, 40), 9295);
-                    DrawGearPiece(currentLocale, ref globalCache, gears, GearSlot.LEFT_RING, globalCache.AddonStorage.LoadAddonString(currentLocale, 11534), new Vector2(40, 40), /*ref*/ defaultTextures[GearSlot.LEFT_RING], defaultTextures[GearSlot.EMPTY]);
+                ImGui.TableNextRow();
+                ImGui.TableSetColumnIndex(0);
+                //DrawGearPiece(ref _globalCache, gears, GearSlot.LEFT_RING, GetAddonString(11534), new Vector2(40, 40), 9295);
+                DrawGearPiece(currentLocale, ref globalCache, gears, GearSlot.LEFT_RING,
+                    globalCache.AddonStorage.LoadAddonString(currentLocale, 11534), new Vector2(40, 40), /*ref*/
+                    defaultTextures[GearSlot.LEFT_RING], defaultTextures[GearSlot.EMPTY]);
 
-                    ImGui.TableNextRow();
-                    ImGui.TableSetColumnIndex(0);
-                    //DrawGearPiece(ref _globalCache, gears, GearSlot.SOUL_CRYSTAL, GetAddonString(12238), new Vector2(40, 40), 55396);//Todo: Find Soul Crystal empty icon
-                    DrawGearPiece(currentLocale, ref globalCache, gears, GearSlot.SOUL_CRYSTAL, globalCache.AddonStorage.LoadAddonString(currentLocale, 12238), new Vector2(40, 40), /*ref*/ defaultTextures[GearSlot.SOUL_CRYSTAL], defaultTextures[GearSlot.EMPTY]);
-                    ImGui.EndTable();
-                }
-                ImGui.EndTable();
+                ImGui.TableNextRow();
+                ImGui.TableSetColumnIndex(0);
+                //DrawGearPiece(ref _globalCache, gears, GearSlot.SOUL_CRYSTAL, GetAddonString(12238), new Vector2(40, 40), 55396);//Todo: Find Soul Crystal empty icon
+                DrawGearPiece(currentLocale, ref globalCache, gears, GearSlot.SOUL_CRYSTAL,
+                    globalCache.AddonStorage.LoadAddonString(currentLocale, 12238), new Vector2(40, 40), /*ref*/
+                    defaultTextures[GearSlot.SOUL_CRYSTAL], defaultTextures[GearSlot.EMPTY]);
             }
         }
 
@@ -1263,8 +1290,7 @@ namespace Altoholic
         public static void DrawGearTooltip(ClientLanguage currentLocale, ref GlobalCache globalCache, Gear item, ItemItemLevel itm)
         {
             //Lumina.Excel.GeneratedSheets.Item? dbItem = GetItemFromId(item.ItemId);
-            Item? dbItem = itm.Item;
-            if (dbItem == null) return;
+            Item dbItem = itm.Item;
             //ItemLevel? ilvl = GetItemLevelFromId(dbItem.LevelItem.Row);
             ItemLevel? ilvl = itm.ItemLevel;
             if (ilvl == null) return;
@@ -1273,40 +1299,45 @@ namespace Altoholic
 
             if (dbItem.IsUnique || dbItem.IsUntradable)
             {
-                if (ImGui.BeginTable($"##DrawItemTooltip#Item_{item.ItemId}#Unique", 3))
-                {
-                    ImGui.TableSetupColumn($"##DrawItemTooltip#Item_{item.ItemId}#Unique#IsUnique", ImGuiTableColumnFlags.WidthStretch);
-                    ImGui.TableSetupColumn($"##DrawItemTooltip#Item_{item.ItemId}#Unique#IsUntradable", ImGuiTableColumnFlags.WidthFixed, 200);
-                    ImGui.TableSetupColumn($"##DrawItemTooltip#Item_{item.ItemId}#Unique#IsBinding", ImGuiTableColumnFlags.WidthStretch);
-                    ImGui.TableNextRow();
-                    ImGui.TableSetColumnIndex(0);
-                    ImGui.TextUnformatted("");
-                    ImGui.TableSetColumnIndex(1);
-                    if (dbItem.IsUnique)
-                    {
-                        ImGui.TextUnformatted($"{globalCache.AddonStorage.LoadAddonString(currentLocale, 494)}");// Unique
-                    }
-                    if (dbItem.IsUntradable)
-                    {
-                        ImGui.SameLine();
-                        ImGui.TextUnformatted($"{globalCache.AddonStorage.LoadAddonString(currentLocale, 495)}");// Untradable
-                    }
-                    /*if (i.Is) No Binding value???
-                    {
-                        ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(496)}");// Binding
-                    }*/
-                    ImGui.TableSetColumnIndex(2);
-                    ImGui.TextUnformatted("");
-                    ImGui.EndTable();
-                }
-            }
-            if (ImGui.BeginTable($"##DrawItemTooltip#Item_{item.ItemId}", 3))
-            {
-                ImGui.TableSetupColumn($"##DrawItemTooltip#Item_{item.ItemId}#Icon", ImGuiTableColumnFlags.WidthFixed, 55);
-                ImGui.TableSetupColumn($"##DrawItemTooltip#Item_{item.ItemId}#Name", ImGuiTableColumnFlags.WidthFixed, 305);
+                using var drawItemTooltipItemUnique = ImRaii.Table($"##DrawItemTooltip#Item_{item.ItemId}#Unique", 3);
+                if (!drawItemTooltipItemUnique) return;
+                ImGui.TableSetupColumn($"###DrawItemTooltip#Item_{item.ItemId}#Unique#IsUnique",
+                    ImGuiTableColumnFlags.WidthStretch);
+                ImGui.TableSetupColumn($"###DrawItemTooltip#Item_{item.ItemId}#Unique#IsUntradable",
+                    ImGuiTableColumnFlags.WidthFixed, 200);
+                ImGui.TableSetupColumn($"###DrawItemTooltip#Item_{item.ItemId}#Unique#IsBinding",
+                    ImGuiTableColumnFlags.WidthStretch);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                //DrawItemIcon(new Vector2(40, 40), item.HQ, item.ItemId);
+                ImGui.TextUnformatted("");
+                ImGui.TableSetColumnIndex(1);
+                if (dbItem.IsUnique)
+                {
+                    ImGui.TextUnformatted(
+                        $"{globalCache.AddonStorage.LoadAddonString(currentLocale, 494)}"); // Unique
+                }
+
+                if (dbItem.IsUntradable)
+                {
+                    ImGui.SameLine();
+                    ImGui.TextUnformatted(
+                        $"{globalCache.AddonStorage.LoadAddonString(currentLocale, 495)}"); // Untradable
+                }
+
+                /*if (i.Is) No Binding value???
+                        {
+                            ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(496)}");// Binding
+                        }*/
+                ImGui.TableSetColumnIndex(2);
+                ImGui.TextUnformatted("");
+            }
+            using(var drawItemTooltipItem = ImRaii.Table($"##DrawItemTooltip#Item_{item.ItemId}", 3))
+            {
+                if (!drawItemTooltipItem) return;
+                ImGui.TableSetupColumn($"###DrawItemTooltip#Item_{item.ItemId}#Icon", ImGuiTableColumnFlags.WidthFixed, 55);
+                ImGui.TableSetupColumn($"###DrawItemTooltip#Item_{item.ItemId}#Name", ImGuiTableColumnFlags.WidthFixed, 305);
+                ImGui.TableNextRow();
+                ImGui.TableSetColumnIndex(0);
                 DrawIcon_test(globalCache.IconStorage.LoadIcon(dbItem.Icon, item.HQ), new Vector2(40,40));
                 ImGui.TableSetColumnIndex(1);
                 ImGui.TextUnformatted($"{dbItem.Name} {(item.HQ ? (char)SeIconChar.HighQuality : "")}");
@@ -1321,25 +1352,30 @@ namespace Altoholic
                 ImGui.TableNextRow(); 
                 ImGui.TableSetColumnIndex(0);
                 ImGui.TextUnformatted($"{GetSlotName(currentLocale, globalCache, item.Slot)}");
-                ImGui.EndTable();
             }
-            if(ImGui.BeginTable($"##DrawItemTooltip#Item_{item.ItemId}#Defense", 3))
+
+            using (var drawItemTooltipItemDefense = ImRaii.Table($"##DrawItemTooltip#Item_{item.ItemId}#Defense", 3))
             {
-                ImGui.TableSetupColumn($"##DrawItemTooltip#Item_{item.ItemId}#Defense#Empty", ImGuiTableColumnFlags.WidthStretch);
-                ImGui.TableSetupColumn($"##DrawItemTooltip#Item_{item.ItemId}#Defense#Icon", ImGuiTableColumnFlags.WidthFixed, 100);
-                ImGui.TableSetupColumn($"##DrawItemTooltip#Item_{item.ItemId}#Defense#Name", ImGuiTableColumnFlags.WidthFixed, 100);
+                if (!drawItemTooltipItemDefense) return;
+                ImGui.TableSetupColumn($"###DrawItemTooltip#Item_{item.ItemId}#Defense#Empty",
+                    ImGuiTableColumnFlags.WidthStretch);
+                ImGui.TableSetupColumn($"###DrawItemTooltip#Item_{item.ItemId}#Defense#Icon",
+                    ImGuiTableColumnFlags.WidthFixed, 100);
+                ImGui.TableSetupColumn($"###DrawItemTooltip#Item_{item.ItemId}#Defense#Name",
+                    ImGuiTableColumnFlags.WidthFixed, 100);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                ImGui.TextUnformatted($"{globalCache.AddonStorage.LoadAddonString(currentLocale, 3244)}");// Defense
+                ImGui.TextUnformatted($"{globalCache.AddonStorage.LoadAddonString(currentLocale, 3244)}"); // Defense
                 ImGui.TableSetColumnIndex(1);
-                ImGui.TextUnformatted($"{globalCache.AddonStorage.LoadAddonString(currentLocale, 3246)}");// Magic Defense
+                ImGui.TextUnformatted(
+                    $"{globalCache.AddonStorage.LoadAddonString(currentLocale, 3246)}"); // Magic Defense
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
                 ImGui.TextUnformatted($"{dbItem.DefensePhys}");
                 ImGui.TableSetColumnIndex(1);
                 ImGui.TextUnformatted($"{dbItem.DefenseMag}");
-                ImGui.EndTable();
             }
+
             ImGui.Separator();
             ImGui.TextUnformatted($"{globalCache.AddonStorage.LoadAddonString(currentLocale, 13775)} {ilvl.RowId}");// Item Level
             ImGui.Separator();
@@ -1360,12 +1396,13 @@ namespace Altoholic
                 }
             }
             ImGui.Separator();
-            if (ImGui.BeginTable($"##DrawItemTooltip#Item_{item.ItemId}#Bonuses", 3))
+            using (var drawItemTooltipItemBonuses = ImRaii.Table($"###DrawItemTooltip#Item_{item.ItemId}#Bonuses", 3))
             {
-                //Todo: Conditional attributes since not every item will have the same
-                ImGui.TableSetupColumn($"##DrawItemTooltip#Item_{item.ItemId}#Bonuses#StrengthCrit", ImGuiTableColumnFlags.WidthFixed, 40);
-                ImGui.TableSetupColumn($"##DrawItemTooltip#Item_{item.ItemId}#Bonuses#Empty", ImGuiTableColumnFlags.WidthStretch);
-                ImGui.TableSetupColumn($"##DrawItemTooltip#Item_{item.ItemId}#Bonuses#VitSkS", ImGuiTableColumnFlags.WidthFixed, 305);
+                if (!drawItemTooltipItemBonuses) return;
+                    //Todo: Conditional attributes since not every item will have the same
+                ImGui.TableSetupColumn($"###DrawItemTooltip#Item_{item.ItemId}#Bonuses#StrengthCrit", ImGuiTableColumnFlags.WidthFixed, 40);
+                ImGui.TableSetupColumn($"###DrawItemTooltip#Item_{item.ItemId}#Bonuses#Empty", ImGuiTableColumnFlags.WidthStretch);
+                ImGui.TableSetupColumn($"###DrawItemTooltip#Item_{item.ItemId}#Bonuses#VitSkS", ImGuiTableColumnFlags.WidthFixed, 305);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
                 ImGui.TextUnformatted($"{globalCache.AddonStorage.LoadAddonString(currentLocale, 3226)} +");// Defense
@@ -1380,7 +1417,6 @@ namespace Altoholic
                 ImGui.TextUnformatted("");
                 ImGui.TableSetColumnIndex(2);
                 ImGui.TextUnformatted($"{globalCache.AddonStorage.LoadAddonString(currentLocale, 3249)} +");// Skill Speed
-                ImGui.EndTable();
             }
             if (dbItem.MateriaSlotCount > 0) {
                 ImGui.Separator();
@@ -1406,7 +1442,7 @@ namespace Altoholic
 
             ImGui.EndTooltip();
         }
-        
+
         public static void DrawItemTooltip(ClientLanguage currentLocale, ref GlobalCache globalCache, Inventory item)
         {
             ItemItemLevel? itm = globalCache.ItemStorage.LoadItemWithItemLevel(currentLocale, item.ItemId);
@@ -1420,65 +1456,79 @@ namespace Altoholic
 
             if (dbItem.IsUnique || dbItem.IsUntradable)
             {
-                if (ImGui.BeginTable($"##DrawItemTooltip#Item_{item.ItemId}#Unique", 3))
+                using var drawItemTooltipItemUnique = ImRaii.Table($"##DrawItemTooltip#Item_{item.ItemId}#Unique", 3);
+                if (!drawItemTooltipItemUnique) return;
+                ImGui.TableSetupColumn($"###DrawItemTooltip#Item_{item.ItemId}#Unique#IsUnique",
+                    ImGuiTableColumnFlags.WidthStretch);
+                ImGui.TableSetupColumn($"###DrawItemTooltip#Item_{item.ItemId}#Unique#IsUntradable",
+                    ImGuiTableColumnFlags.WidthFixed, 200);
+                ImGui.TableSetupColumn($"###DrawItemTooltip#Item_{item.ItemId}#Unique#IsBinding",
+                    ImGuiTableColumnFlags.WidthStretch);
+                ImGui.TableNextRow();
+                ImGui.TableSetColumnIndex(0);
+                ImGui.TextUnformatted("");
+                ImGui.TableSetColumnIndex(1);
+                if (dbItem.IsUnique)
                 {
-                    ImGui.TableSetupColumn($"##DrawItemTooltip#Item_{item.ItemId}#Unique#IsUnique", ImGuiTableColumnFlags.WidthStretch);
-                    ImGui.TableSetupColumn($"##DrawItemTooltip#Item_{item.ItemId}#Unique#IsUntradable", ImGuiTableColumnFlags.WidthFixed, 200);
-                    ImGui.TableSetupColumn($"##DrawItemTooltip#Item_{item.ItemId}#Unique#IsBinding", ImGuiTableColumnFlags.WidthStretch);
-                    ImGui.TableNextRow();
-                    ImGui.TableSetColumnIndex(0);
-                    ImGui.TextUnformatted("");
-                    ImGui.TableSetColumnIndex(1);
-                    if (dbItem.IsUnique)
-                    {
-                        ImGui.TextUnformatted($"{globalCache.AddonStorage.LoadAddonString(currentLocale, 494)}");// Unique
-                    }
-                    if (dbItem.IsUntradable)
-                    {
-                        ImGui.SameLine();
-                        ImGui.TextUnformatted($"{globalCache.AddonStorage.LoadAddonString(currentLocale, 495)}");// Untradable
-                    }
-                    /*if (i.Is) No Binding value???
+                    ImGui.TextUnformatted(
+                        $"{globalCache.AddonStorage.LoadAddonString(currentLocale, 494)}"); // Unique
+                }
+
+                if (dbItem.IsUntradable)
+                {
+                    ImGui.SameLine();
+                    ImGui.TextUnformatted(
+                        $"{globalCache.AddonStorage.LoadAddonString(currentLocale, 495)}"); // Untradable
+                }
+
+                /*if (i.Is) No Binding value???
                     {
                         ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(496)}");// Binding
                     }*/
-                    ImGui.TableSetColumnIndex(2);
-                    ImGui.TextUnformatted("");
-                    ImGui.EndTable();
-                }
+                ImGui.TableSetColumnIndex(2);
+                ImGui.TextUnformatted("");
             }
-            if (ImGui.BeginTable($"##DrawItemTooltip#Item_{item.ItemId}#NameIcon", 2))
+
+            using (var drawItemTooltipItemNameIcon = ImRaii.Table($"##DrawItemTooltip#Item_{item.ItemId}#NameIcon", 2))
             {
-                ImGui.TableSetupColumn($"##DrawItemTooltip#Item_{item.ItemId}#NameIcon#Icon", ImGuiTableColumnFlags.WidthFixed, 55);
-                ImGui.TableSetupColumn($"##DrawItemTooltip#Item_{item.ItemId}#NameIcon#Name", ImGuiTableColumnFlags.WidthFixed, 305);
+                if (!drawItemTooltipItemNameIcon) return;
+                ImGui.TableSetupColumn($"###DrawItemTooltip#Item_{item.ItemId}#NameIcon#Icon",
+                    ImGuiTableColumnFlags.WidthFixed, 55);
+                ImGui.TableSetupColumn($"###DrawItemTooltip#Item_{item.ItemId}#NameIcon#Name",
+                    ImGuiTableColumnFlags.WidthFixed, 305);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
                 //DrawItemIcon(new Vector2(40, 40), item.HQ, item.ItemId);
                 DrawIcon_test(globalCache.IconStorage.LoadIcon(dbItem.Icon, item.HQ), new Vector2(40, 40));
                 ImGui.TableSetColumnIndex(1);
                 ImGui.TextUnformatted($"{dbItem.Name} {(item.HQ ? (char)SeIconChar.HighQuality : "")}");
-                ImGui.EndTable();
             }
-            if (ImGui.BeginTable($"##DrawItemTooltip#Item_{item.ItemId}#Category", 3))
+
+            using (var drawItemTooltipItemCategory =
+                   ImRaii.Table($"##DrawItemTooltip#Item_{item.ItemId}#Category", 3))
             {
-                ImGui.TableSetupColumn($"##DrawItemTooltip#Item_{item.ItemId}#Category#Icon", ImGuiTableColumnFlags.WidthFixed, 150);
-                ImGui.TableSetupColumn($"##DrawItemTooltip#Item_{item.ItemId}#Category#Name", ImGuiTableColumnFlags.WidthFixed, 200);
-                ImGui.TableSetupColumn($"##DrawItemTooltip#Item_{item.ItemId}#Category#Name", ImGuiTableColumnFlags.WidthFixed, 55);
+                if (!drawItemTooltipItemCategory) return;
+                ImGui.TableSetupColumn($"###DrawItemTooltip#Item_{item.ItemId}#Category#Icon",
+                    ImGuiTableColumnFlags.WidthFixed, 150);
+                ImGui.TableSetupColumn($"###DrawItemTooltip#Item_{item.ItemId}#Category#Name",
+                    ImGuiTableColumnFlags.WidthFixed, 200);
+                ImGui.TableSetupColumn($"###DrawItemTooltip#Item_{item.ItemId}#Category#Name",
+                    ImGuiTableColumnFlags.WidthFixed, 55);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
                 ImGui.TextUnformatted($"{dbItem.ItemUICategory.Value?.Name}");
                 ImGui.TableSetColumnIndex(1);
                 ImGui.TextUnformatted($"{item.Quantity}/{dbItem.StackSize} (Total: {item.Quantity})");
                 ImGui.TableSetColumnIndex(2);
-                ImGui.EndTable();
             }
 
             ImGui.Separator();
-            ImGui.TextUnformatted($"{globalCache.AddonStorage.LoadAddonString(currentLocale, 497)}");// Crafting & Repairs
+            ImGui.TextUnformatted(
+                $"{globalCache.AddonStorage.LoadAddonString(currentLocale, 497)}"); // Crafting & Repairs
 
             ImGui.EndTooltip();
         }
-        
+
         public static void DrawEventItemTooltip(ClientLanguage currentLocale, GlobalCache globalCache, Inventory item)
         {
             //Lumina.Excel.GeneratedSheets.EventItem? dbItem = GetEventItemFromId(item.ItemId);
@@ -1487,29 +1537,33 @@ namespace Altoholic
 
             ImGui.BeginTooltip();
 
-            if (ImGui.BeginTable($"##DrawItemTooltip#Item_{item.ItemId}#NameIcon", 2))
+            using (var drawEventItemTooltipItemNameIcon =
+                   ImRaii.Table($"###DrawEventItemTooltip#Item_{item.ItemId}#NameIcon", 2))
             {
-                ImGui.TableSetupColumn($"##DrawItemTooltip#Item_{item.ItemId}#NameIcon#Icon", ImGuiTableColumnFlags.WidthFixed, 55);
-                ImGui.TableSetupColumn($"##DrawItemTooltip#Item_{item.ItemId}#NameIcon#Name", ImGuiTableColumnFlags.WidthFixed, 305);
+                if (!drawEventItemTooltipItemNameIcon) return;
+                ImGui.TableSetupColumn($"###DrawEventItemTooltip#Item_{item.ItemId}#NameIcon#Icon",
+                    ImGuiTableColumnFlags.WidthFixed, 55);
+                ImGui.TableSetupColumn($"###DrawEventItemTooltip#Item_{item.ItemId}#NameIcon#Name",
+                    ImGuiTableColumnFlags.WidthFixed, 305);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
                 //DrawItemIcon(new Vector2(40, 40), item.HQ, item.ItemId);
-                DrawIcon_test(globalCache.IconStorage.LoadIcon(dbItem.Icon, item.HQ), new Vector2(40,40));
+                DrawIcon_test(globalCache.IconStorage.LoadIcon(dbItem.Icon, item.HQ), new Vector2(40, 40));
                 ImGui.TableSetColumnIndex(1);
                 ImGui.TextUnformatted($"{dbItem.Name} {(item.HQ ? (char)SeIconChar.HighQuality : "")}");
-                ImGui.EndTable();
             }
-            if (ImGui.BeginTable($"##DrawItemTooltip#Item_{item.ItemId}#Category", 3))
+
+            using (var drawEventItemTooltipItemCategory = ImRaii.Table($"###DrawEventItemTooltip#Item_{item.ItemId}#Category", 3))
             {
-                ImGui.TableSetupColumn($"##DrawItemTooltip#Item_{item.ItemId}#Category#Icon", ImGuiTableColumnFlags.WidthFixed, 150);
-                ImGui.TableSetupColumn($"##DrawItemTooltip#Item_{item.ItemId}#Category#Name", ImGuiTableColumnFlags.WidthFixed, 150);
-                ImGui.TableSetupColumn($"##DrawItemTooltip#Item_{item.ItemId}#Category#Name", ImGuiTableColumnFlags.WidthFixed, 100);
+                if (!drawEventItemTooltipItemCategory) return;
+                    ImGui.TableSetupColumn($"###DrawEventItemTooltip#Item_{item.ItemId}#Category#Icon", ImGuiTableColumnFlags.WidthFixed, 150);
+                ImGui.TableSetupColumn($"###DrawEventItemTooltip#Item_{item.ItemId}#Category#Name", ImGuiTableColumnFlags.WidthFixed, 150);
+                ImGui.TableSetupColumn($"###DrawEventItemTooltip#Item_{item.ItemId}#Category#Name", ImGuiTableColumnFlags.WidthFixed, 100);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
                 ImGui.TableSetColumnIndex(1);
                 ImGui.TableSetColumnIndex(2);
                 ImGui.TextUnformatted($"{item.Quantity}/99 (Total: {item.Quantity})");
-                ImGui.EndTable();
             }
 
             ImGui.Separator();
@@ -1517,8 +1571,9 @@ namespace Altoholic
 
             ImGui.EndTooltip();
         }
-        
-        public static void DrawCrystalTooltip(ClientLanguage currentLocale, ref GlobalCache globalCache, uint itemId, int amount)
+
+        public static void DrawCrystalTooltip(ClientLanguage currentLocale, ref GlobalCache globalCache, uint itemId,
+            int amount)
         {
             //Lumina.Excel.GeneratedSheets.Item? dbItem = GetItemFromId(itemId);
             Item? dbItem = globalCache.ItemStorage.LoadItem(currentLocale, itemId);
@@ -1528,60 +1583,75 @@ namespace Altoholic
 
             if (dbItem.IsUnique || dbItem.IsUntradable)
             {
-                if (ImGui.BeginTable($"##DrawItemTooltip#Item_{dbItem.RowId}#Unique", 3))
+                using var drawCrystalTooltipItemUnique =
+                    ImRaii.Table($"###DrawCrystalTooltip#Item_{dbItem.RowId}#Unique", 3);
+                if (!drawCrystalTooltipItemUnique) return;
+                ImGui.TableSetupColumn($"###DrawCrystalTooltip#Item_{dbItem.RowId}#Unique#IsUnique",
+                    ImGuiTableColumnFlags.WidthStretch);
+                ImGui.TableSetupColumn($"###DrawCrystalTooltip#Item_{dbItem.RowId}#Unique#IsUntradable",
+                    ImGuiTableColumnFlags.WidthFixed, 200);
+                ImGui.TableSetupColumn($"##DrawItem#DrawCrystalTooltipTooltip#Item_{dbItem.RowId}#Unique#IsBinding",
+                    ImGuiTableColumnFlags.WidthStretch);
+                ImGui.TableNextRow();
+                ImGui.TableSetColumnIndex(0);
+                ImGui.TextUnformatted("");
+                ImGui.TableSetColumnIndex(1);
+                if (dbItem.IsUnique)
                 {
-                    ImGui.TableSetupColumn($"##DrawItemTooltip#Item_{dbItem.RowId}#Unique#IsUnique", ImGuiTableColumnFlags.WidthStretch);
-                    ImGui.TableSetupColumn($"##DrawItemTooltip#Item_{dbItem.RowId}#Unique#IsUntradable", ImGuiTableColumnFlags.WidthFixed, 200);
-                    ImGui.TableSetupColumn($"##DrawItemTooltip#Item_{dbItem.RowId}#Unique#IsBinding", ImGuiTableColumnFlags.WidthStretch);
-                    ImGui.TableNextRow();
-                    ImGui.TableSetColumnIndex(0);
-                    ImGui.TextUnformatted("");
-                    ImGui.TableSetColumnIndex(1);
-                    if (dbItem.IsUnique)
-                    {
-                        ImGui.TextUnformatted($"{globalCache.AddonStorage.LoadAddonString(currentLocale, 494)}");// Unique
-                    }
-                    if (dbItem.IsUntradable)
-                    {
-                        ImGui.SameLine();
-                        ImGui.TextUnformatted($"{globalCache.AddonStorage.LoadAddonString(currentLocale, 495)}");// Untradable
-                    }
-                    /*if (i.Is) No Binding value???
+                    ImGui.TextUnformatted(
+                        $"{globalCache.AddonStorage.LoadAddonString(currentLocale, 494)}"); // Unique
+                }
+
+                if (dbItem.IsUntradable)
+                {
+                    ImGui.SameLine();
+                    ImGui.TextUnformatted(
+                        $"{globalCache.AddonStorage.LoadAddonString(currentLocale, 495)}"); // Untradable
+                }
+
+                /*if (i.Is) No Binding value???
                     {
                         ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(496)}");// Binding
                     }*/
-                    ImGui.TableSetColumnIndex(2);
-                    ImGui.TextUnformatted("");
-                    ImGui.EndTable();
-                }
+                ImGui.TableSetColumnIndex(2);
+                ImGui.TextUnformatted("");
             }
-            if (ImGui.BeginTable($"##DrawItemTooltip#Item_{dbItem.RowId}", 2))
+
+            using (var drawCrystalTooltipItem = ImRaii.Table($"###DrawCrystalTooltip#Item_{dbItem.RowId}", 2))
             {
-                ImGui.TableSetupColumn($"##DrawItemTooltip#Item_{dbItem.RowId}#Icon", ImGuiTableColumnFlags.WidthFixed, 55);
-                ImGui.TableSetupColumn($"##DrawItemTooltip#Item_{dbItem.RowId}#Name", ImGuiTableColumnFlags.WidthFixed, 305);
+                if (!drawCrystalTooltipItem) return;
+                ImGui.TableSetupColumn($"###DrawCrystalTooltip#Item_{dbItem.RowId}#Icon",
+                    ImGuiTableColumnFlags.WidthFixed, 55);
+                ImGui.TableSetupColumn($"###DrawCrystalTooltip#Item_{dbItem.RowId}#Name",
+                    ImGuiTableColumnFlags.WidthFixed, 305);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
                 //DrawItemIcon(new Vector2(40, 40), false, itemId);
                 DrawIcon_test(globalCache.IconStorage.LoadIcon(dbItem.Icon), new Vector2(40, 40));
                 ImGui.TableSetColumnIndex(1);
                 ImGui.TextUnformatted($"{dbItem.Name}");
-                ImGui.EndTable();
             }
-            if (ImGui.BeginTable($"##DrawItemTooltip#Item_{dbItem.RowId}", 3))
+
+            using (var drawCrystalTooltipItemCategory =
+                   ImRaii.Table($"###DrawCrystalTooltip#Item_{dbItem.RowId}#Category", 3))
             {
-                ImGui.TableSetupColumn($"##DrawItemTooltip#Item_{dbItem.RowId}#Icon", ImGuiTableColumnFlags.WidthFixed, 150);
-                ImGui.TableSetupColumn($"##DrawItemTooltip#Item_{dbItem.RowId}#Name", ImGuiTableColumnFlags.WidthFixed, 200);
-                ImGui.TableSetupColumn($"##DrawItemTooltip#Item_{dbItem.RowId}#Name", ImGuiTableColumnFlags.WidthFixed, 55);
+                if (!drawCrystalTooltipItemCategory) return;
+                ImGui.TableSetupColumn($"###DrawCrystalTooltip#Item_{dbItem.RowId}#Category#Icon",
+                    ImGuiTableColumnFlags.WidthFixed, 150);
+                ImGui.TableSetupColumn($"###DrawCrystalTooltip#Item_{dbItem.RowId}#Category#Name",
+                    ImGuiTableColumnFlags.WidthFixed, 200);
+                ImGui.TableSetupColumn($"###DrawCrystalTooltip#Item_{dbItem.RowId}#Category#Empty",
+                    ImGuiTableColumnFlags.WidthFixed, 55);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
                 ImGui.TextUnformatted($"{dbItem.ItemUICategory.Value?.Name}");
                 ImGui.TableSetColumnIndex(1);
                 ImGui.TextUnformatted($"{amount}/99 (Total: {amount})");
-                ImGui.EndTable();
             }
 
             ImGui.Separator();
-            ImGui.TextUnformatted($"{globalCache.AddonStorage.LoadAddonString(currentLocale, 497)}");// Crafting & Repairs
+            ImGui.TextUnformatted(
+                $"{globalCache.AddonStorage.LoadAddonString(currentLocale, 497)}"); // Crafting & Repairs
 
             ImGui.EndTooltip();
         }
@@ -2013,14 +2083,75 @@ namespace Altoholic
             }
         }
 
-        /*public static void DrawIcon_test(Vector2 icon_size, bool hq, uint icon_id)
+        public static long GetLastPlayTimeUpdateDiff(long lastOnline)
+           {
+               long now = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+               long diff = now - lastOnline;
+               long diffDays = Math.Abs(diff / 86400);
+               return diffDays;
+           }
+
+        public static string GetLastOnlineFormatted(long lastOnline /*, string firstname*/)
         {
-            var icon = LoadIcon(icon_id, hq);
-            if (icon != null)
+            long now = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+            long diff = now - lastOnline;
+            long diffDays = Math.Abs(diff / 86400);
+            long diffHours = Math.Abs(diff / 3600);
+            long diffMins = Math.Abs(diff / 60);
+
+            string? time;
+
+            //Plugin.Log.Debug($"{firstname} diffDays: {diffDays}, diffHours: {diffHours}, diffMins: {diffMins}");
+
+            if (lastOnline == 0)
             {
-                ImGui.Image(icon.ImGuiHandle, icon_size);
+                time = "now";
             }
-        }*/
+            else
+                switch (diffDays)
+                {
+                    case > 365:
+                        time = "Over a year ago";
+                        break;
+                    case < 365 and > 30:
+                        {
+                            double tdiff = diffDays / 30.0;
+                            time = $"{Math.Floor(tdiff)} months ago";
+                            break;
+                        }
+                    case < 30 and > 1:
+                        time = $"{diffDays} days ago";
+                        break;
+                    case 1:
+                        time = "A day ago";
+                        break;
+                    case 0 when diffHours is < 24 and > 1:
+                        time = $"{diffHours} hours ago";
+                        break;
+                    /*else if (diffDays == 0 && diffHours == 1 && diffMins > 0)
+                {
+                    time = string.Format("An hour and {diffMins} mins")
+                }*/
+                    //else if (diffDays == 0 && diffHours == 1 && diffMins == 0)
+                    case 0 when diffHours == 1:
+                        time = "One hour ago";
+                        break;
+                    case 0 when diffHours == 0 && diffMins is < 60 and > 1:
+                        time = $"{diffMins} minutes ago";
+                        break;
+                    case 0 when diffHours == 0 && diffMins == 1 && diff == 0:
+                        time = "One minutes ago";
+                        break;
+                    case 0 when diffHours == 0 && diffMins <= 1:
+                        time = "A few seconds ago";
+                        break;
+                    default:
+                        time = "Unknown";
+                        break;
+                }
+
+            return time;
+        }
 
     }
 }

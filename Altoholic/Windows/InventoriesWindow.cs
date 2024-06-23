@@ -238,7 +238,7 @@ public class InventoriesWindow : Window, IDisposable
         List<Character> characters = chars.FindAll(c => c.Inventory.FindAll(ci => ci.ItemId == _currentItem).Count > 0);
         if (characters.Count == 0)
         {
-            ImGui.TextUnformatted($"{Loc.Localize("NoItemOnAnyCharacter", "Item not found on any characters.\nCheck if inventories are available and updated.")}");
+            ImGui.TextUnformatted($"{Loc.Localize("NoItemOnAnyCharacter", "Item not found on any characters.\r\nCheck if inventories are available and updated.")}");
             return;
         }
         using var table = ImRaii.Table("###CharactersInventory#All#SearchItemsTable#CharacterItems#Item#Table", 2,
