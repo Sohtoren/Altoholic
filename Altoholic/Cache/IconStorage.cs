@@ -21,8 +21,16 @@ namespace Altoholic.Cache
             if (_icons.TryGetValue(id, out IDalamudTextureWrap? ret))
                 return ret;
 
-            //ret = provider.GetIcon(id)!;
             ret = provider.GetIcon(id, hq ? IconFlags.ItemHighQuality : IconFlags.None)!;
+            _icons[id] = ret;
+            return ret;
+        }
+        public IDalamudTextureWrap LoadHighResIcon(uint id)
+        {
+            if (_icons.TryGetValue(id, out IDalamudTextureWrap? ret))
+                return ret;
+
+            ret = provider.GetIcon(id)!;
             _icons[id] = ret;
             return ret;
         }

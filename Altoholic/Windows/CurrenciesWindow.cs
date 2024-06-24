@@ -375,7 +375,7 @@ namespace Altoholic.Windows
             DateTime nextTuesdayDateUtc = GetNextTuesday();
             DateTime nextTuesdayDate = DateTime.SpecifyKind(nextTuesdayDateUtc, DateTimeKind.Utc).ToLocalTime();
             TimeSpan time = TimeSpan.FromSeconds(GetNextTuesdayRemainingTime());
-            return currentLocale switch
+            string v = currentLocale switch
             {
                 ClientLanguage.German =>
                     $"Zurücksetzung: {time.TotalHours:00} Std. {time.Minutes:00} Min. {""}({nextTuesdayDate.Day}.{nextTuesdayDate.Month}., {nextTuesdayDate.Hour:D2}:{nextTuesdayDate.Minute:D2} Uhr)",
@@ -385,7 +385,9 @@ namespace Altoholic.Windows
                     $"Remise à zéro   : {time.TotalHours:00} {((nextTuesdayDate.Hour > 1) ? "heures" : "heure")} {time.Minutes:00} {((nextTuesdayDate.Minute > 1) ? "minutes" : "minute")} {""}[{nextTuesdayDate.Day}.{nextTuesdayDate.Month} {nextTuesdayDate.Hour:D2}h{nextTuesdayDate.Minute:D2}]",
                 ClientLanguage.Japanese =>
                     $"リセット日時 : {time.TotalHours:00}時間{time.Minutes:00}分後{""}[{nextTuesdayDate.Day}/{nextTuesdayDate.Month} {nextTuesdayDate.Hour}:{nextTuesdayDate.Minute}]",
+                _ => $"Reset in {Math.Floor(time.TotalHours)}h {time.Minutes:00}m {""}[{nextTuesdayDate.Month}/{nextTuesdayDate.Day} {nextTuesdayDate.Hour:D2} {nextTuesdayDate.Minute:D2}]",
             };
+            return v;
         }
         private static double GetNextTuesdayRemainingTime()
         {

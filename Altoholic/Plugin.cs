@@ -30,6 +30,7 @@ using Dalamud.Game.ClientState.Resolvers;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using Lumina.Excel.GeneratedSheets;
 using Lumina.Text;
+using System.Linq;
 using Quest = Altoholic.Models.Quest;
 
 namespace Altoholic
@@ -90,6 +91,7 @@ namespace Altoholic
 
         public Plugin()
         {
+
             _globalCache = new GlobalCache
             {
                 IconStorage = new IconStorage(TextureProvider),
@@ -97,6 +99,8 @@ namespace Altoholic
                 JobStorage = new JobStorage(),
                 AddonStorage = new AddonStorage(),
                 StainStorage = new StainStorage(),
+                MinionStorage = new MinionStorage(),
+                MountStorage = new MountStorage(),
             };
 
             nint playtimePtr = SigScanner.ScanText(PlaytimeSig);
@@ -116,6 +120,9 @@ namespace Altoholic
             }
             _currentLocale = Configuration.Language;
             _localization.SetupWithLangCode(PluginInterface.UiLanguage);
+
+            _globalCache.MountStorage.Init(_currentLocale);
+            _globalCache.MinionStorage.Init(_currentLocale);
 
             altoholicService = new Service(
                 () => _localPlayer,
@@ -160,6 +167,8 @@ namespace Altoholic
 
             CollectionWindow = new CollectionWindow(this, $"{Name} characters colletion", _globalCache)
             {
+                GetPlayer = () => altoholicService.GetPlayer(),
+                GetOthersCharactersList = () => altoholicService.GetOthersCharacters(),
             };
 
 
@@ -577,6 +586,9 @@ namespace Altoholic
             ref readonly UIState uistate = ref *UIState.Instance();//nullcheck?
             PlayerState player = uistate.PlayerState;
             _localPlayer.IsSprout = player.IsNovice();
+            _localPlayer.IsBattleMentor = player.IsBattleMentor();
+            _localPlayer.IsTradeMentor = player.IsTradeMentor();
+            _localPlayer.IsReturner = player.IsReturner();
             _localPlayer.HasPremiumSaddlebag = player.HasPremiumSaddlebag;
             _localPlayer.Profile = new Profile
             {
@@ -636,16 +648,23 @@ namespace Altoholic
                 Reaper = new Job { Level = player.ClassJobLevelArray[28], Exp = player.ClassJobExpArray[28] },
                 Sage = new Job { Level = player.ClassJobLevelArray[29], Exp = player.ClassJobExpArray[29] }
             };
-            _localPlayer.Jobs.Rogue.Level = player.ClassJobLevelArray[19];
-            _localPlayer.Jobs.Rogue.Exp = player.ClassJobExpArray[19];
-            _localPlayer.Jobs.Weaver.Level = player.ClassJobLevelArray[12];
-            _localPlayer.Jobs.Weaver.Exp = player.ClassJobExpArray[12];
-            //player.Attributes.
-            //Plugin.Log.Debug();
-            /*foreach (var a in player.Attributes)
+            foreach (uint i in _globalCache.MinionStorage.Get().Where(i => !_localPlayer.HasMinion(i)))
+            {
+                if (uistate.IsCompanionUnlocked(i))
                 {
+                    _localPlayer.Minions.Add(i);
+                }
+            }
 
-                }*/
+            GetMountFromState(player);
+        }
+
+        private void GetMountFromState(PlayerState player)
+        {
+            foreach (uint i in _globalCache.MountStorage.Get().Where(i => !_localPlayer.HasMount(i)).Where(i => player.IsMountUnlocked(i)))
+            {
+                _localPlayer.Mounts.Add(i);
+            }
         }
 
         private unsafe PlayerCurrencies GetPlayerCurrencies()
@@ -1317,6 +1336,9 @@ namespace Altoholic
                 Region = player.Item3,
                 CurrentRegion = player.Item3,
                 IsSprout = _localPlayer.IsSprout,
+                IsBattleMentor = _localPlayer.IsBattleMentor,
+                IsTradeMentor = _localPlayer.IsTradeMentor,
+                IsReturner = _localPlayer.IsReturner,
                 LastJob = _localPlayer.LastJob,
                 LastJobLevel = _localPlayer.LastJobLevel,
                 FCTag = _localPlayer.FCTag,

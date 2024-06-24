@@ -4,6 +4,7 @@ using Dalamud;
 using Dalamud.Game.Text;
 using Dalamud.Interface.Internal;
 using Dalamud.Interface.Utility.Raii;
+using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Common.Math;
 using ImGuiNET;
@@ -13,8 +14,8 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using static Dalamud.Plugin.Services.ITextureProvider;
 using ClassJob = Lumina.Excel.GeneratedSheets.ClassJob;
+using Mount = Lumina.Excel.GeneratedSheets.Mount;
 using Stain = Lumina.Excel.GeneratedSheets.Stain;
 
 namespace Altoholic
@@ -1294,6 +1295,106 @@ namespace Altoholic
 
             ImGui.EndTooltip();
         }
+        
+        public static void DrawMountTooltip(ClientLanguage currentLocale, ref GlobalCache globalCache, Models.Mount mount)
+        {
+            using var drawMountTooltip = ImRaii.Tooltip();
+            if (!drawMountTooltip) return;
+            using (var drawMountTooltipItem = ImRaii.Table($"###DrawMountTooltipItem#Mount_{mount.Id}", 2))
+            {
+                if (!drawMountTooltipItem) return;
+                ImGui.TableSetupColumn($"###DrawMountTooltipItem#Mount_{mount.Id}#Icon",
+                    ImGuiTableColumnFlags.WidthFixed, 55);
+                ImGui.TableSetupColumn($"###DrawMountTooltipItem#Mount_{mount.Id}#Name",
+                    ImGuiTableColumnFlags.WidthFixed, 305);
+                ImGui.TableNextRow();
+                ImGui.TableSetColumnIndex(0);
+                DrawIcon(globalCache.IconStorage.LoadIcon(mount.Icon), new Vector2(40, 40));
+                ImGui.TableSetColumnIndex(1);
+                switch (currentLocale)
+                {
+                    case ClientLanguage.German:
+                        ImGui.TextUnformatted($"{Capitalize(mount.GermanName)}");
+                        break;
+                    case ClientLanguage.English:
+                        ImGui.TextUnformatted($"{Capitalize(mount.EnglishName)}");
+                        break;
+                    case ClientLanguage.French:
+                        ImGui.TextUnformatted($"{Capitalize(mount.FrenchName)}");
+                        break;
+                    case ClientLanguage.Japanese:
+                        ImGui.TextUnformatted($"{Capitalize(mount.JapaneseName)}");
+                        break;
+                }
+            }
+            ImGui.Separator();
+            if (mount.Transient is null) return;
+            switch (currentLocale)
+            {
+                case ClientLanguage.German:
+                    ImGui.TextUnformatted($"{Capitalize(mount.Transient.GermanTooltip)}");
+                    break;
+                case ClientLanguage.English:
+                    ImGui.TextUnformatted($"{Capitalize(mount.Transient.EnglishTooltip)}");
+                    break;
+                case ClientLanguage.French:
+                    ImGui.TextUnformatted($"{Capitalize(mount.Transient.FrenchTooltip)}");
+                    break;
+                case ClientLanguage.Japanese:
+                    ImGui.TextUnformatted($"{Capitalize(mount.Transient.JapaneseTooltip)}");
+                    break;
+            }
+        }
+
+        public static void DrawMinionTooltip(ClientLanguage currentLocale, ref GlobalCache globalCache, Minion minion)
+        {
+            using var drawMinionTooltip = ImRaii.Tooltip();
+            if (!drawMinionTooltip) return;
+            using (var drawMinionTooltipTable = ImRaii.Table($"###DrawMinionTooltip#Minion_{minion.Id}", 2))
+            {
+                if (!drawMinionTooltipTable) return;
+                ImGui.TableSetupColumn($"###DrawMinionTooltip#Minion_{minion.Id}#Icon",
+                    ImGuiTableColumnFlags.WidthFixed, 55);
+                ImGui.TableSetupColumn($"###DrawMinionTooltip#Minion_{minion.Id}#Name",
+                    ImGuiTableColumnFlags.WidthFixed, 305);
+                ImGui.TableNextRow();
+                ImGui.TableSetColumnIndex(0);
+                DrawIcon(globalCache.IconStorage.LoadIcon(minion.Icon), new Vector2(40, 40));
+                ImGui.TableSetColumnIndex(1);
+                switch (currentLocale)
+                {
+                    case ClientLanguage.German:
+                        ImGui.TextUnformatted($"{Capitalize(minion.GermanName)}");
+                        break;
+                    case ClientLanguage.English:
+                        ImGui.TextUnformatted($"{Capitalize(minion.EnglishName)}");
+                        break;
+                    case ClientLanguage.French:
+                        ImGui.TextUnformatted($"{Capitalize(minion.FrenchName)}");
+                        break;
+                    case ClientLanguage.Japanese:
+                        ImGui.TextUnformatted($"{Capitalize(minion.JapaneseName)}");
+                        break;
+                }
+            }
+            ImGui.Separator();
+            if (minion.Transient is null) return;
+            switch (currentLocale)
+            {
+                case ClientLanguage.German:
+                    ImGui.TextUnformatted($"{Capitalize(minion.Transient.GermanTooltip)}");
+                    break;
+                case ClientLanguage.English:
+                    ImGui.TextUnformatted($"{Capitalize(minion.Transient.EnglishTooltip)}");
+                    break;
+                case ClientLanguage.French:
+                    ImGui.TextUnformatted($"{Capitalize(minion.Transient.FrenchTooltip)}");
+                    break;
+                case ClientLanguage.Japanese:
+                    ImGui.TextUnformatted($"{Capitalize(minion.Transient.JapaneseTooltip)}");
+                    break;
+            }
+        }
 
         private static string GetExtractableString(ClientLanguage currentLocale, GlobalCache globalCache, Item item)
         {
@@ -1360,6 +1461,126 @@ namespace Altoholic
             Addon? lumina = da.GetRow((uint)id);
             return lumina != null ? lumina.Text : string.Empty;
         }
+        
+        public static Companion? GetMinion(ClientLanguage currentLocale, uint id)
+        {
+            ExcelSheet<Companion>? dc = Plugin.DataManager.GetExcelSheet<Companion>(currentLocale);
+            Companion? lumina = dc?.GetRow(id);
+            return lumina;
+        }
+        public static CompanionTransient? GetCompanionTransient(ClientLanguage currentLocale, uint id)
+        {
+            ExcelSheet<CompanionTransient>? dct = Plugin.DataManager.GetExcelSheet<CompanionTransient>(currentLocale);
+            CompanionTransient? lumina = dct?.GetRow(id);
+            return lumina;
+        }
+        public static List<Minion>? GetAllMinions(ClientLanguage currentLocale)
+        {
+            List<Minion> returnedMinionsIds = [];
+            ExcelSheet<Companion>? dm = Plugin.DataManager.GetExcelSheet<Companion>(currentLocale);
+            using IEnumerator<Companion>? minionEnumerator = dm?.GetEnumerator();
+            if (minionEnumerator is null) return null;
+            while (minionEnumerator.MoveNext())
+            {
+                Companion minion = minionEnumerator.Current;
+                if (string.IsNullOrEmpty(minion.Singular)) continue;
+                if (minion.Icon == 0) continue;
+                Minion m = new() { Id = minion.RowId, Icon = minion.Icon, Transient = new Transient() };
+                CompanionTransient? ct = GetCompanionTransient(currentLocale, minion.RowId);
+                if (ct is null) return null;
+                switch (currentLocale)
+                {
+                    case ClientLanguage.German:
+                        m.GermanName = minion.Singular;
+                        m.Transient.GermanDescription = ct.Description;
+                        m.Transient.GermanDescriptionEnhanced = ct.DescriptionEnhanced;
+                        m.Transient.GermanTooltip = ct.Tooltip;
+                        break;
+                    case ClientLanguage.English:
+                        m.EnglishName = minion.Singular;
+                        m.Transient.EnglishDescription = ct.Description;
+                        m.Transient.EnglishDescriptionEnhanced = ct.DescriptionEnhanced;
+                        m.Transient.EnglishTooltip = ct.Tooltip;
+                        break;
+                    case ClientLanguage.French:
+                        m.FrenchName = minion.Singular;
+                        m.Transient.FrenchDescription = ct.Description;
+                        m.Transient.FrenchDescriptionEnhanced = ct.DescriptionEnhanced;
+                        m.Transient.FrenchTooltip = ct.Tooltip;
+                        break;
+                    case ClientLanguage.Japanese:
+                        m.JapaneseName = minion.Singular;
+                        m.Transient.JapaneseDescription = ct.Description;
+                        m.Transient.JapaneseDescriptionEnhanced = ct.DescriptionEnhanced;
+                        m.Transient.JapaneseTooltip = ct.Tooltip;
+                        break;
+                }
+
+                returnedMinionsIds.Add(m);
+            }
+
+            return returnedMinionsIds;
+        }
+
+        public static Mount? GetMount(ClientLanguage currentLocale, uint id)
+        {
+            ExcelSheet<Mount>? dm = Plugin.DataManager.GetExcelSheet<Mount>(currentLocale);
+            Mount? lumina = dm?.GetRow(id);
+            return lumina;
+        }
+        public static MountTransient? GetMountTransient(ClientLanguage currentLocale, uint id)
+        {
+            ExcelSheet<MountTransient>? dmt = Plugin.DataManager.GetExcelSheet<MountTransient>(currentLocale);
+            MountTransient? lumina = dmt?.GetRow(id);
+            return lumina;
+        }
+        public static List<Models.Mount>? GetAllMounts(ClientLanguage currentLocale)
+        {
+            List<Models.Mount> returnedMountsIds = [];
+            ExcelSheet<Mount>? dm = Plugin.DataManager.GetExcelSheet<Mount>(currentLocale);
+            using IEnumerator<Mount>? mountEnumerator = dm?.GetEnumerator();
+            if (mountEnumerator is null) return null;
+            while (mountEnumerator.MoveNext())
+            {
+                Mount mount = mountEnumerator.Current;
+                if (string.IsNullOrEmpty(mount.Singular)) continue;
+                if (mount.Icon == 0) continue;
+                Models.Mount m = new() { Id = mount.RowId, Icon = mount.Icon, Transient = new Transient() };
+                MountTransient? mt = GetMountTransient(currentLocale, mount.RowId);
+                if (mt is null) return null;
+                switch (currentLocale)
+                {
+                    case ClientLanguage.German:
+                        m.GermanName = mount.Singular;
+                        m.Transient.GermanDescription = mt.Description;
+                        m.Transient.GermanDescriptionEnhanced = mt.DescriptionEnhanced;
+                        m.Transient.GermanTooltip = mt.Tooltip;
+                        break;
+                    case ClientLanguage.English:
+                        m.EnglishName = mount.Singular;
+                        m.Transient.EnglishDescription = mt.Description;
+                        m.Transient.EnglishDescriptionEnhanced = mt.DescriptionEnhanced;
+                        m.Transient.EnglishTooltip = mt.Tooltip;
+                        break;
+                    case ClientLanguage.French:
+                        m.FrenchName = mount.Singular;
+                        m.Transient.FrenchDescription = mt.Description;
+                        m.Transient.FrenchDescriptionEnhanced = mt.DescriptionEnhanced;
+                        m.Transient.FrenchTooltip = mt.Tooltip;
+                        break;
+                    case ClientLanguage.Japanese:
+                        m.JapaneseName = mount.Singular;
+                        m.Transient.JapaneseDescription = mt.Description;
+                        m.Transient.JapaneseDescriptionEnhanced = mt.DescriptionEnhanced;
+                        m.Transient.JapaneseTooltip = mt.Tooltip;
+                        break;
+                }
+
+                returnedMountsIds.Add(m);
+            }
+
+            return returnedMountsIds;
+        }
 
         public static string GetTribalNameFromId(ClientLanguage currentLocale, uint id)
         {
@@ -1376,6 +1597,7 @@ namespace Altoholic
         }
         public static string Capitalize(string str)
         {
+            if(str.Length == 0) return str;;
             return char.ToUpper(str[0]) + str[1..];
         }
 
@@ -1591,7 +1813,6 @@ namespace Altoholic
 
             return time;
         }
-
     }
 }
 

@@ -117,7 +117,6 @@ namespace Altoholic.Windows
                 }
             };
         
-            //using (var bagsTab = ImRaii.TabItem($"{_globalCache.AddonStorage.LoadAddonString(358)}"))// Bags
             using (var inventoryTab = ImRaii.TabItem($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 520)}"))// Inventory
             {
                 if (inventoryTab.Success)
@@ -159,6 +158,7 @@ namespace Altoholic.Windows
                 }
             };
 
+            //Todo: anonymize
             //ImGui.EndTabBar();
             /*bool val = true;
             ImGui.Checkbox("Anonymize", ref val);*/

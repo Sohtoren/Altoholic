@@ -111,6 +111,9 @@ namespace Altoholic.Database
                     c.Datacenter = character.Datacenter;
                     c.Region = character.Region;
                     c.IsSprout = character.IsSprout;
+                    c.IsBattleMentor = character.IsBattleMentor;
+                    c.IsTradeMentor = character.IsTradeMentor;
+                    c.IsReturner = character.IsReturner;
                     c.LastJob = character.LastJob;
                     c.LastJobLevel = character.LastJobLevel;
                     c.FCTag = character.FCTag;
@@ -144,6 +147,9 @@ namespace Altoholic.Database
                         Datacenter = character.Datacenter,
                         Region = character.Region,
                         IsSprout = character.IsSprout,
+                        IsBattleMentor = character.IsBattleMentor,
+                        IsTradeMentor = character.IsTradeMentor,
+                        IsReturner = character.IsReturner,
                         LastJob = character.LastJob,
                         LastJobLevel = character.LastJobLevel,
                         FCTag = character.FCTag,

@@ -18,6 +18,9 @@ namespace Altoholic.Models
         public string Region {  get; set; } = string.Empty;
         public string CurrentRegion {  get; set; } = string.Empty;
         public bool IsSprout { get; set; } = false;
+        public bool IsBattleMentor { get; set; } = false;
+        public bool IsTradeMentor { get; set; } = false;
+        public bool IsReturner { get; set; } = false;
         public uint LastJob { get; set; } = 0;
         public int LastJobLevel { get; set; } = 0;
         public string FCTag { get; set; } = string.Empty;
@@ -36,6 +39,8 @@ namespace Altoholic.Models
         public List<Inventory> Saddle { get; set; } = [];
         public List<Gear> Gear { get; set; } = [];
         public List<Retainer> Retainers { get; set; } = [];
+        public List<uint> Minions { get; set; } = [];
+        public List<uint> Mounts { get; set; } = [];
 
         public bool HasAnyLevelJob(int level)
         {
@@ -64,6 +69,15 @@ namespace Altoholic.Models
         public bool IsQuestCompleted(int id)
         {
             return HasQuest(id) && Quests.First(q => q.Id == id).Completed;
+        }
+
+        public bool HasMinion(uint id)
+        {
+            return Minions.Count > 0 && Minions.Contains(id);
+        }
+        public bool HasMount(uint id)
+        {
+            return Mounts.Count > 0 && Mounts.Contains(id);
         }
     }
 }

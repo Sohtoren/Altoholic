@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Numerics;
 using Altoholic.Cache;
 using Altoholic.Models;
+using CheapLoc;
 using Dalamud;
 using Dalamud.Game.Text;
 using Dalamud.Interface.Utility.Raii;
@@ -41,19 +42,6 @@ public class ConfigWindow : Window, IDisposable
 
     public void Dispose() { }
 
-    public override void PreDraw()
-    {
-        // Flags must be added or removed before Draw() is being called, or they won't apply
-        if (_configuration.IsConfigWindowMovable)
-        {
-            Flags &= ~ImGuiWindowFlags.NoMove;
-        }
-        else
-        {
-            Flags |= ImGuiWindowFlags.NoMove;
-        }
-    }
-
     public override void Draw()
     {
         _selectedLanguage = _plugin.Configuration.Language;
@@ -88,11 +76,30 @@ public class ConfigWindow : Window, IDisposable
             }
         }
 
-        bool movable = _configuration.IsConfigWindowMovable;
-        if (ImGui.Checkbox("Movable Config Window", ref movable))
+        bool isObtainedOnlyEnabled = _configuration.ObtainedOnly;
+        if (ImGui.Checkbox("ObtainedOnly", ref isObtainedOnlyEnabled))
         {
-            _configuration.IsConfigWindowMovable = movable;
+            _configuration.ObtainedOnly = isObtainedOnlyEnabled;
             _configuration.Save();
+        }
+        if (ImGui.IsItemHovered())
+        {
+            using var tooltip = ImRaii.Tooltip();
+            if (!tooltip) return;
+            ImGui.TextUnformatted($"{Loc.Localize("ObtainedOnly", "Display unobtained items, mounts, minions, etc with a non spoiler icon")}");
+        }
+
+        bool isEnabled = _configuration.IsSpoilersEnabled;
+        if (ImGui.Checkbox("EnableSpoilers", ref isEnabled))
+        {
+            _configuration.IsSpoilersEnabled = isEnabled;
+            _configuration.Save();
+        }
+        if (ImGui.IsItemHovered())
+        {
+            using var tooltip = ImRaii.Tooltip();
+            if (!tooltip) return;
+            ImGui.TextUnformatted($"{Loc.Localize("Spoilers", "Display unobtained icons instead of placeholder")}");
         }
     }
 }

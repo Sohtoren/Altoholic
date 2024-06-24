@@ -141,7 +141,6 @@ namespace Altoholic.Windows
                 {
                     DrawAll(chars);
                 }
-                table.Dispose();
             }
             catch (Exception e)
             {
@@ -417,8 +416,7 @@ namespace Altoholic.Windows
             {
                 Inventory item = inventory[i];
                 if (saddle && !premium && i > 69) continue;
-                if (i is 0 or 10 or 20 or 30 or 40 or 50 or 60 or 70 or 80 or 90 or 100 or 110 or 120 or 130
-                   )
+                if (i % 10 == 0)
                 {
                     ImGui.TableNextRow();
                 }
@@ -460,7 +458,10 @@ namespace Altoholic.Windows
 
         private void DrawKeyInventory(string label, List<Inventory> inventory)
         {
-            int height = inventory.FindAll(i => i.ItemId != 0).ToList().Count switch
+            int itemCount = inventory.FindAll(i => i.ItemId != 0).ToList().Count;
+            int rows = (int)Math.Ceiling(itemCount / (double)7);
+            int height = rows * 36;
+            /*int height = inventory.FindAll(i => i.ItemId != 0).ToList().Count switch
             {
                 int i when i is >= 0 and <= 7 => 36,
                 int i when i is >= 8 and <= 14 => 72,
@@ -478,7 +479,7 @@ namespace Altoholic.Windows
                 int i when i is >= 92 and <= 98 => 504,
                 >= 99 and <= 105 => 540,
                 _ => -1
-            };
+            };*/
             using var table = ImRaii.Table($"###CharactersInventoryTable#Inventories#Inventory#{label}Table", 7, ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner, new Vector2(310, height));
             if (!table) return;
 
@@ -493,8 +494,7 @@ namespace Altoholic.Windows
             {
                 Inventory item = inventory[i];
                 if (item.ItemId == 0) continue;
-                if (i is 0 or 7 or 14 or 21 or 28 or 35 or 42 or 49 or 56 or 63 or 70 or 77 or 84 or 91 or 98
-                   )
+                if (i % 7 == 0)
                 {
                     ImGui.TableNextRow();
                 }

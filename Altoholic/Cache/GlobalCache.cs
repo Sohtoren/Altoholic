@@ -2,10 +2,12 @@
 {
     public class GlobalCache
     {
-        public IconStorage IconStorage { get; set; } = null!;
-        public ItemStorage ItemStorage { get; set; } = null!;
-        public JobStorage JobStorage{ get; set; } = null!;
-        public AddonStorage AddonStorage { get; set; } = null!;
-        public StainStorage StainStorage { get; set; } = null!;
+        public required IconStorage IconStorage { get; set; } = null!;
+        public required ItemStorage ItemStorage { get; set; } = null!;
+        public required JobStorage JobStorage{ get; set; } = null!;
+        public required AddonStorage AddonStorage { get; set; } = null!;
+        public required StainStorage StainStorage { get; set; } = null!;
+        public required MinionStorage MinionStorage { get; set; } = null!;
+        public required MountStorage MountStorage { get; set; } = null!;
     }
 }
