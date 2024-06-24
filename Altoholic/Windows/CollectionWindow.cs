@@ -49,7 +49,7 @@ namespace Altoholic.Windows
         private bool _obtainedMinionsOnly;
         private bool _obtainedMountsOnly;
 
-        public override void OnClose()
+        /*public override void OnClose()
         {
             Plugin.Log.Debug("CollectionWindow, OnClose() called");
             _currentCharacter = null;
@@ -59,10 +59,23 @@ namespace Altoholic.Windows
             _lastSearchedItem = string.Empty;
             _obtainedMinionsOnly = false;
             _obtainedMountsOnly = false;
-        }
+        }*/
 
         public void Dispose()
         {
+            Plugin.Log.Info("CollectionWindow, Dispose() called");
+            _currentCharacter = null;
+            _currentItem = null;
+            _currentItems = null;
+            _searchedItem = string.Empty;
+            _lastSearchedItem = string.Empty;
+            _obtainedMinionsOnly = false;
+            _obtainedMountsOnly = false;
+        }
+
+        public void Clear()
+        {
+            Plugin.Log.Info("CollectionWindow, Clear() called");
             _currentCharacter = null;
             _currentItem = null;
             _currentItems = null;
@@ -132,7 +145,7 @@ namespace Altoholic.Windows
 
         private void DrawAll(List<Character> chars)
         {
-
+            ImGui.TextUnformatted("");
         }
 
         public void DrawTabs(Character currentCharacter)
@@ -182,7 +195,7 @@ namespace Altoholic.Windows
             }
 
             using (var minionsTab =
-                   ImRaii.TabItem($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 8303)}"))
+                   ImRaii.TabItem($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 4902)}"))
             {
                 if (minionsTab.Success)
                 {
@@ -215,8 +228,6 @@ namespace Altoholic.Windows
                 }
             }
         }
-
-        
         
         private void DrawMinions(Character currentCharacter)
         {
@@ -247,11 +258,15 @@ namespace Altoholic.Windows
             ImGui.Text("");
             ImGui.TableSetColumnIndex(1);
             ImGui.TextUnformatted($"{currentCharacter.Minions.Count}");
-            if (_isSpoilerEnabled)
+            if (!_isSpoilerEnabled)
             {
                 ImGui.SameLine();
-                ImGui.TextUnformatted($"/ {_globalCache.MinionStorage.Count()}");
+                ImGui.TextUnformatted($"{Loc.Localize("ObtainedLowercase", "obtained")}");
+                return;
             }
+
+            ImGui.SameLine();
+            ImGui.TextUnformatted($"/ {_globalCache.MinionStorage.Count()}");
         }
 
         private void DrawMinionsCollection(Character currentCharacter)
@@ -260,7 +275,7 @@ namespace Altoholic.Windows
             int minionsCount = minions.Count;
             if (minionsCount == 0) return;
             int rows = (int)Math.Ceiling(minionsCount / (double)10);
-            int heigth = rows * 48 + 48;
+            int heigth = rows * 48 + 0;
 
             using var table = ImRaii.Table($"###MinionsTable", 10,
                 ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner, new Vector2(575, heigth));
@@ -356,11 +371,15 @@ namespace Altoholic.Windows
             ImGui.Text("");
             ImGui.TableSetColumnIndex(1);
             ImGui.TextUnformatted($"{currentCharacter.Mounts.Count}");
-            if (_isSpoilerEnabled)
+            if (!_isSpoilerEnabled)
             {
                 ImGui.SameLine();
-                ImGui.TextUnformatted($"/ {_globalCache.MountStorage.Count()}");
+                ImGui.TextUnformatted($"{Loc.Localize("ObtainedLowercase", "obtained")}");
+                return;
             }
+
+            ImGui.SameLine();
+            ImGui.TextUnformatted($"/ {_globalCache.MountStorage.Count()}");
         }
 
         private void DrawMountsCollection(Character currentCharacter)
@@ -368,7 +387,7 @@ namespace Altoholic.Windows
             List<uint> mounts = (_obtainedMountsOnly) ? currentCharacter.Mounts : _globalCache.MountStorage.Get();
             int mountsCount = mounts.Count;
             int rows =  (int)Math.Ceiling(mountsCount / (double)10);
-            int heigth = rows * 48 + 30;
+            int heigth = rows * 48 + rows;
 
             using var mountTable = ImRaii.Table($"###MountsTable", 10,
                 ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner, new Vector2(573, heigth));

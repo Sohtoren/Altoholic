@@ -64,6 +64,19 @@ namespace Altoholic.Windows
         public override void OnClose()
         {
             Plugin.Log.Debug("MainWindow, OnClose() called");
+            /*CharactersWindow.IsOpen = false;
+            CurrenciesWindow.IsOpen = false;
+            DetailsWindow.IsOpen = false;
+            JobsWindow.IsOpen = false;
+            InventoriesWindow.IsOpen = false;
+            RetainersWindow.IsOpen = false;
+            CollectionWindow.IsOpen = false;
+            CollectionWindow.OnClose();
+            ConfigWindow.IsOpen = false;*/
+        }
+
+        public void Clean()
+        {
             CharactersWindow.IsOpen = false;
             CurrenciesWindow.IsOpen = false;
             DetailsWindow.IsOpen = false;
@@ -76,6 +89,14 @@ namespace Altoholic.Windows
 
         public void Dispose()
         {
+            CharactersWindow.IsOpen = false;
+            CurrenciesWindow.IsOpen = false;
+            DetailsWindow.IsOpen = false;
+            JobsWindow.IsOpen = false;
+            InventoriesWindow.IsOpen = false;
+            RetainersWindow.IsOpen = false;
+            CollectionWindow.IsOpen = false;
+            ConfigWindow.IsOpen = false;
         }
 
         public override void Draw()

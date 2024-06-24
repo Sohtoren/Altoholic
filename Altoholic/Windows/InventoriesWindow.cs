@@ -67,7 +67,7 @@ namespace Altoholic.Windows
         private readonly Dictionary<InventoryType, IDalamudTextureWrap?> _armoryTabTextures = [];
         private InventoryType? _selectedTab;
 
-        public override void OnClose()
+        /*public override void OnClose()
         {
             Plugin.Log.Debug("InventoryWindow, OnClose() called");
             _currentCharacter = null;
@@ -77,10 +77,11 @@ namespace Altoholic.Windows
             _lastSearchedItem = string.Empty;
             _selectedArmory = null;
             _selectedTab = null;
-        }
+        }*/
 
         public void Dispose()
         {
+            Plugin.Log.Info("InventoriesWindow, Dispose() called");
             _currentCharacter = null;
             _currentItem = null;
             _currentItems = null;
@@ -91,6 +92,18 @@ namespace Altoholic.Windows
 
             foreach (var loadedTexture in _armoryTabTextures) loadedTexture.Value?.Dispose();
             _armouryBoard.Dispose();
+        }
+
+        public void Clear()
+        {
+            Plugin.Log.Info("InventoriesWindow, Clear() called");
+            _currentCharacter = null;
+            _currentItem = null;
+            _currentItems = null;
+            _searchedItem = string.Empty;
+            _lastSearchedItem = string.Empty;
+            _selectedArmory = null;
+            _selectedTab = null;
         }
 
         public override void Draw()

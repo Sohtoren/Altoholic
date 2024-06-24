@@ -45,16 +45,27 @@ namespace Altoholic.Windows
         private string _currentCurrency = string.Empty;
         private string _selectedCurrency;
 
-        public override void OnClose()
+        /*public override void OnClose()
         {
             Plugin.Log.Debug("DetailsWindow, OnClose() called");
             _currentCharacter = null;
+            _currentCurrency = string.Empty;
             _selectedCurrency = string.Empty;
-        }
+        }*/
 
         public void Dispose()
         {
+            Plugin.Log.Info("CurrenciesWindow, Dispose() called");
             _currentCharacter = null;
+            _currentCurrency = string.Empty;
+            _selectedCurrency = string.Empty;
+        }
+
+        public void Clear()
+        {
+            Plugin.Log.Info("CurrenciesWindow, Clear() called");
+            _currentCharacter = null;
+            _currentCurrency = string.Empty;
             _selectedCurrency = string.Empty;
         }
 

@@ -70,18 +70,15 @@ namespace Altoholic.Windows
         public override void OnClose()
         {
             Plugin.Log.Debug("CharactersWindow, OnClose() called");
-            //current_character_last_state = null;
         }
 
         public void Dispose()
         {
-            //current_character_last_state = null;
         }
 
         public override void Draw()
         {
             _currentLocale = _plugin.Configuration.Language;
-            //current_character_last_state = current_character;
             try
             {
                 //if (ImGui.BeginTable("Characters", 10, ImGuiTableFlags.ScrollY))

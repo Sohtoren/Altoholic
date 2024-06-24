@@ -60,14 +60,21 @@ public class DetailsWindow : Window, IDisposable
     private readonly UldWrapper _characterIcons;
     private Dictionary<GearSlot, IDalamudTextureWrap?> _characterTextures = [];
 
-    public override void OnClose()
+    /*public override void OnClose()
     {
         Plugin.Log.Debug("DetailsWindow, OnClose() called");
+        _currentCharacter = null;
+    }*/
+
+    public void Clear()
+    {
+        Plugin.Log.Info("DetailsWindow, Clear() called");
         _currentCharacter = null;
     }
 
     public void Dispose()
     {
+        Plugin.Log.Info("DetailsWindow, Dispose() called");
         _currentCharacter = null;
         foreach(KeyValuePair<GearSlot, IDalamudTextureWrap?> loadedTexture in _characterTextures) loadedTexture.Value?.Dispose();
         _characterIcons.Dispose();

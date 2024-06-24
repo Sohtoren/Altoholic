@@ -46,6 +46,11 @@ namespace Altoholic.Windows
         {
 
         }
+        public void Clear()
+        {
+            Plugin.Log.Info("JobsWindow, Clear() called");
+            _currentCharacter = null;
+        }
 
         public override void Draw()
         {

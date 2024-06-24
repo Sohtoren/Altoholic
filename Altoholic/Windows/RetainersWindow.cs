@@ -68,9 +68,19 @@ namespace Altoholic.Windows
         private readonly UldWrapper _characterIcons;
         private Dictionary<GearSlot, IDalamudTextureWrap?> _characterTextures = [];
 
-        public override void OnClose()
+        /*public override void OnClose()
         {
             Plugin.Log.Debug("RetainerWindow, OnClose() called");
+            _currentCharacter = null;
+            _currentRetainer = null;
+            _currentItem = null;
+            _currentItems = null;
+            _searchedItem = string.Empty;
+            _lastSearchedItem = string.Empty;
+        }*/
+        public void Clear()
+        {
+            Plugin.Log.Info("RetainerWindow, Clear() called");
             _currentCharacter = null;
             _currentRetainer = null;
             _currentItem = null;
@@ -81,6 +91,7 @@ namespace Altoholic.Windows
 
         public void Dispose()
         {
+            Plugin.Log.Info("RetainerWindow, Dispose() called");
             _currentCharacter = null;
             _currentRetainer = null;
             _currentItem = null;

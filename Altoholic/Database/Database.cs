@@ -135,6 +135,8 @@ namespace Altoholic.Database
                     c.Saddle = character.Saddle;
                     c.Gear = character.Gear;
                     c.Retainers = character.Retainers;
+                    c.Minions = character.Minions;
+                    c.Mounts = character.Mounts;
                 }
                 else
                 {
@@ -166,6 +168,8 @@ namespace Altoholic.Database
                         Saddle = character.Saddle,
                         Gear = character.Gear,
                         Retainers = character.Retainers,
+                        Minions = character.Minions,
+                        Mounts = character.Mounts,
                     };
                     if (character.PlayTime > 0)
                     {

@@ -218,7 +218,10 @@ namespace Altoholic
             _globalCache.JobStorage.Dispose();
             _globalCache.AddonStorage.Dispose();
             _globalCache.StainStorage.Dispose();
+            _globalCache.MinionStorage.Dispose();
+            _globalCache.MountStorage.Dispose();
 
+            CollectionWindow.Dispose();
             RetainersWindow.Dispose();
             InventoriesWindow.Dispose();
             JobsWindow.Dispose();
@@ -1236,15 +1239,22 @@ namespace Altoholic
             UpdateCharacter();
             CleanLastLocalCharacter();
 
-            MainWindow.IsOpen = false;
+            
             RetainersWindow.IsOpen = false;
+            RetainersWindow.Clear();
             InventoriesWindow.IsOpen = false;
+            InventoriesWindow.Clear();
             JobsWindow.IsOpen = false;
+            JobsWindow.Clear();
             ConfigWindow.IsOpen = false;
             CurrenciesWindow.IsOpen = false;
+            CurrenciesWindow.Clear();
             DetailsWindow.IsOpen = false;
+            DetailsWindow.Clear();
             CollectionWindow.IsOpen = false;
+            CollectionWindow.Clear();
             CharactersWindow.IsOpen = false;
+            MainWindow.IsOpen = false;
             _periodicTimer?.Dispose();
         }
 
@@ -1356,6 +1366,8 @@ namespace Altoholic
                 Saddle = _localPlayer.Saddle,
                 Gear = _localPlayer.Gear,
                 Retainers = _localPlayer.Retainers,
+                Minions = _localPlayer.Minions,
+                Mounts = _localPlayer.Mounts,
             };
 
         }
