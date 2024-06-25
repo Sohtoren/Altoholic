@@ -104,7 +104,8 @@ namespace Altoholic
                 TripleTriadCardStorage = new TripleTriadCardStorage(),
                 EmoteStorage = new EmoteStorage(),
                 BardingStorage = new BardingStorage(),
-                FramerKitStorage = new FramerKitStorage()
+                FramerKitStorage = new FramerKitStorage(),
+                OrchestrionRollStorage = new OrchestrionRollStorage()
             };
 
             nint playtimePtr = SigScanner.ScanText(PlaytimeSig);
@@ -131,6 +132,7 @@ namespace Altoholic
             _globalCache.EmoteStorage.Init(_currentLocale);
             _globalCache.BardingStorage.Init(_currentLocale);
             _globalCache.FramerKitStorage.Init(_currentLocale);
+            _globalCache.OrchestrionRollStorage.Init(_currentLocale);
             
 
             altoholicService = new Service(
@@ -696,6 +698,7 @@ namespace Altoholic
 
             GetMountFromState(player);
             GetFramerKitsFromState(player);
+            GetOrchestrionRollFromState(player);
         }
 
         private void GetMountFromState(PlayerState player)
@@ -711,6 +714,13 @@ namespace Altoholic
             foreach (uint i in _globalCache.FramerKitStorage.Get().Where(i => !_localPlayer.HasFramerKit(i)).Where(i => player.IsFramersKitUnlocked(i)))
             {
                     _localPlayer.FramerKits.Add(i);
+            }
+        }
+        private void GetOrchestrionRollFromState(PlayerState player)
+        {
+            foreach (uint i in _globalCache.OrchestrionRollStorage.Get().Where(i => !_localPlayer.HasOrchestrionRoll(i)).Where(i => player.IsOrchestrionRollUnlocked(i)))
+            {
+                    _localPlayer.OrchestrionRolls.Add(i);
             }
         }
 

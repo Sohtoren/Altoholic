@@ -32,6 +32,7 @@ namespace Altoholic
         {
             return "DC";
         }
+
         public static string GetDatacenterFromWorld(string name)
         {
             if (Array.Exists(Datacenter.Aether, w => w == name))
@@ -230,7 +231,8 @@ namespace Altoholic
                     {
                         if (gender == 0)
                         {
-                            ExcelSheet<GCRankLimsaMaleText>? dgcrlmt = Plugin.DataManager.GetExcelSheet<GCRankLimsaMaleText>(currentLocale);
+                            ExcelSheet<GCRankLimsaMaleText>? dgcrlmt =
+                                Plugin.DataManager.GetExcelSheet<GCRankLimsaMaleText>(currentLocale);
                             if (dgcrlmt == null)
                             {
                                 return string.Empty;
@@ -242,7 +244,8 @@ namespace Altoholic
                         }
                         else
                         {
-                            ExcelSheet<GCRankLimsaFemaleText>? dgcrlft = Plugin.DataManager.GetExcelSheet<GCRankLimsaFemaleText>(currentLocale);
+                            ExcelSheet<GCRankLimsaFemaleText>? dgcrlft =
+                                Plugin.DataManager.GetExcelSheet<GCRankLimsaFemaleText>(currentLocale);
                             if (dgcrlft == null)
                             {
                                 return string.Empty;
@@ -252,13 +255,15 @@ namespace Altoholic
                             if (lumina != null)
                                 return lumina.NameRank;
                         }
+
                         return string.Empty;
                     }
                 case 2:
                     {
                         if (gender == 0)
                         {
-                            ExcelSheet<GCRankUldahMaleText>? dgcrlmt = Plugin.DataManager.GetExcelSheet<GCRankUldahMaleText>(currentLocale);
+                            ExcelSheet<GCRankUldahMaleText>? dgcrlmt =
+                                Plugin.DataManager.GetExcelSheet<GCRankUldahMaleText>(currentLocale);
                             if (dgcrlmt == null)
                             {
                                 return string.Empty;
@@ -270,29 +275,34 @@ namespace Altoholic
                         }
                         else
                         {
-                            ExcelSheet<GCRankUldahFemaleText>? dgcrlft = Plugin.DataManager.GetExcelSheet<GCRankUldahFemaleText>(currentLocale);
+                            ExcelSheet<GCRankUldahFemaleText>? dgcrlft =
+                                Plugin.DataManager.GetExcelSheet<GCRankUldahFemaleText>(currentLocale);
                             GCRankUldahFemaleText? lumina = dgcrlft?.GetRow((uint)rank);
                             if (lumina != null)
                                 return lumina.NameRank;
                         }
+
                         return string.Empty;
                     }
                 case 3:
                     {
                         if (gender == 0)
                         {
-                            ExcelSheet<GCRankGridaniaMaleText>? dgcrlmt = Plugin.DataManager.GetExcelSheet<GCRankGridaniaMaleText>(currentLocale);
+                            ExcelSheet<GCRankGridaniaMaleText>? dgcrlmt =
+                                Plugin.DataManager.GetExcelSheet<GCRankGridaniaMaleText>(currentLocale);
                             GCRankGridaniaMaleText? lumina = dgcrlmt?.GetRow((uint)rank);
                             if (lumina != null)
                                 return lumina.NameRank;
                         }
                         else
                         {
-                            ExcelSheet<GCRankGridaniaFemaleText>? dgcrlft = Plugin.DataManager.GetExcelSheet<GCRankGridaniaFemaleText>(currentLocale);
+                            ExcelSheet<GCRankGridaniaFemaleText>? dgcrlft =
+                                Plugin.DataManager.GetExcelSheet<GCRankGridaniaFemaleText>(currentLocale);
                             GCRankGridaniaFemaleText? lumina = dgcrlft?.GetRow((uint)rank);
                             if (lumina != null)
                                 return lumina.NameRank;
                         }
+
                         return string.Empty;
                     }
                 default:
@@ -470,18 +480,22 @@ namespace Altoholic
             EventItem? lumina = deitm?.GetRow(id);
             return lumina;
         }
+
         public static IEnumerable<Item>? GetItemsFromName(ClientLanguage currentLocale, string name)
         {
             //Plugin.Log.Debug($"GetItemFromId : {id}");
             ExcelSheet<Item>? ditm = Plugin.DataManager.GetExcelSheet<Item>(currentLocale);
-            IEnumerable<Item>? items = ditm?.Where(i => i.Name.RawString.Contains(name.ToLower(), StringComparison.CurrentCultureIgnoreCase));
+            IEnumerable<Item>? items = ditm?.Where(i =>
+                i.Name.RawString.Contains(name.ToLower(), StringComparison.CurrentCultureIgnoreCase));
             return items;
         }
+
         public static Item? GetItemFromName(ClientLanguage currentLocale, string name)
         {
             //Plugin.Log.Debug($"GetItemFromId : {id}");
             ExcelSheet<Item>? ditm = Plugin.DataManager.GetExcelSheet<Item>(currentLocale);
-            Item? item = ditm?.FirstOrDefault(i => i.Name.RawString.Contains(name.ToLower(), StringComparison.CurrentCultureIgnoreCase));
+            Item? item = ditm?.FirstOrDefault(i =>
+                i.Name.RawString.Contains(name.ToLower(), StringComparison.CurrentCultureIgnoreCase));
             return item;
         }
 
@@ -548,6 +562,7 @@ namespace Altoholic
                 _ => FALLBACK_ICON,
             };
         }
+
         public static uint GetJobIconWithCorner(uint jobId)
         {
             return jobId switch
@@ -595,6 +610,7 @@ namespace Altoholic
                 _ => FALLBACK_ICON,
             };
         }
+
         public static uint GetJobIconWithCornerSmall(uint jobId)
         {
             return jobId switch
@@ -713,6 +729,7 @@ namespace Altoholic
                 ImGui.ProgressBar(progress, new Vector2(150, 10), "");
                 ImGui.PopStyleVar();
             }
+
             if (ImGui.IsItemHovered())
             {
                 if (active && !isMax)
@@ -917,7 +934,9 @@ namespace Altoholic
             ImGui.Image(texture.ImGuiHandle, size, uv0, uv1);
         }
 
-        public static void DrawGearPiece(ClientLanguage currentLocale, ref GlobalCache globalCache, List<Gear> gear, GearSlot slot, string tooltip, Vector2 icon_size, /*uint fallback_icon*/ IDalamudTextureWrap? fallbackTexture, IDalamudTextureWrap? emptySlot)
+        public static void DrawGearPiece(ClientLanguage currentLocale, ref GlobalCache globalCache, List<Gear> gear,
+            GearSlot slot, string tooltip, Vector2 icon_size, /*uint fallback_icon*/
+            IDalamudTextureWrap? fallbackTexture, IDalamudTextureWrap? emptySlot)
         {
             if (fallbackTexture is null || emptySlot is null) return;
             Gear? foundGear = gear.FirstOrDefault(g => g.Slot == (short)slot);
@@ -926,7 +945,7 @@ namespace Altoholic
             {
                 System.Numerics.Vector2 p = ImGui.GetCursorPos();
                 ImGui.Image(emptySlot.ImGuiHandle, new Vector2(42, 42));
-                ImGui.SetCursorPos(new Vector2(p.X + 1, p.Y+1));
+                ImGui.SetCursorPos(new Vector2(p.X + 1, p.Y + 1));
                 ImGui.Image(fallbackTexture.ImGuiHandle, new Vector2(40, 40));
                 if (ImGui.IsItemHovered())
                 {
@@ -938,7 +957,7 @@ namespace Altoholic
             else
             {
                 ItemItemLevel? i = globalCache.ItemStorage.LoadItemWithItemLevel(currentLocale, foundGear.ItemId);
-                if(i == null) return;
+                if (i == null) return;
                 DrawIcon(globalCache.IconStorage.LoadIcon(i.Item.Icon, foundGear.HQ), icon_size);
                 if (ImGui.IsItemHovered())
                 {
@@ -946,7 +965,9 @@ namespace Altoholic
                 }
             }
         }
-        public static void DrawGearTooltip(ClientLanguage currentLocale, ref GlobalCache globalCache, Gear item, ItemItemLevel itm)
+
+        public static void DrawGearTooltip(ClientLanguage currentLocale, ref GlobalCache globalCache, Gear item,
+            ItemItemLevel itm)
         {
             Item dbItem = itm.Item;
             ItemLevel? ilvl = itm.ItemLevel;
@@ -988,14 +1009,17 @@ namespace Altoholic
                 ImGui.TableSetColumnIndex(2);
                 ImGui.TextUnformatted("");
             }
-            using(var drawItemTooltipItem = ImRaii.Table($"##DrawItemTooltip#Item_{item.ItemId}", 3))
+
+            using (var drawItemTooltipItem = ImRaii.Table($"##DrawItemTooltip#Item_{item.ItemId}", 3))
             {
                 if (!drawItemTooltipItem) return;
-                ImGui.TableSetupColumn($"###DrawItemTooltip#Item_{item.ItemId}#Icon", ImGuiTableColumnFlags.WidthFixed, 55);
-                ImGui.TableSetupColumn($"###DrawItemTooltip#Item_{item.ItemId}#Name", ImGuiTableColumnFlags.WidthFixed, 305);
+                ImGui.TableSetupColumn($"###DrawItemTooltip#Item_{item.ItemId}#Icon", ImGuiTableColumnFlags.WidthFixed,
+                    55);
+                ImGui.TableSetupColumn($"###DrawItemTooltip#Item_{item.ItemId}#Name", ImGuiTableColumnFlags.WidthFixed,
+                    305);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                DrawIcon(globalCache.IconStorage.LoadIcon(dbItem.Icon, item.HQ), new Vector2(40,40));
+                DrawIcon(globalCache.IconStorage.LoadIcon(dbItem.Icon, item.HQ), new Vector2(40, 40));
                 ImGui.TableSetColumnIndex(1);
                 ImGui.TextUnformatted($"{dbItem.Name} {(item.HQ ? (char)SeIconChar.HighQuality : "")}");
                 if (dbItem.IsGlamourous)
@@ -1006,7 +1030,8 @@ namespace Altoholic
                         ImGui.TextUnformatted($"{(char)SeIconChar.Glamoured} {glamour.Name}");
                     }
                 }
-                ImGui.TableNextRow(); 
+
+                ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
                 ImGui.TextUnformatted($"{GetSlotName(currentLocale, globalCache, item.Slot)}");
             }
@@ -1034,15 +1059,19 @@ namespace Altoholic
             }
 
             ImGui.Separator();
-            ImGui.TextUnformatted($"{globalCache.AddonStorage.LoadAddonString(currentLocale, 13775)} {ilvl.RowId}");// Item Level
+            ImGui.TextUnformatted(
+                $"{globalCache.AddonStorage.LoadAddonString(currentLocale, 13775)} {ilvl.RowId}"); // Item Level
             ImGui.Separator();
             ImGui.TextUnformatted($"{GetClassJobCategoryFromId(currentLocale, dbItem.ClassJobCategory.Value?.RowId)}");
-            ImGui.TextUnformatted($"{globalCache.AddonStorage.LoadAddonString(currentLocale, 1034)} {dbItem.LevelEquip}");
+            ImGui.TextUnformatted(
+                $"{globalCache.AddonStorage.LoadAddonString(currentLocale, 1034)} {dbItem.LevelEquip}");
             ImGui.Separator();
             if (!dbItem.IsAdvancedMeldingPermitted)
-            { 
-                ImGui.TextUnformatted($"{globalCache.AddonStorage.LoadAddonString(currentLocale, 4655)}"); // Advanced Melding Forbidden
+            {
+                ImGui.TextUnformatted(
+                    $"{globalCache.AddonStorage.LoadAddonString(currentLocale, 4655)}"); // Advanced Melding Forbidden
             }
+
             if (item.Stain > 0)
             {
                 string dye = globalCache.StainStorage.LoadStain(currentLocale, item.Stain);
@@ -1051,49 +1080,65 @@ namespace Altoholic
                     ImGui.TextUnformatted($"{dye}");
                 }
             }
+
             ImGui.Separator();
             using (var drawItemTooltipItemBonuses = ImRaii.Table($"###DrawItemTooltip#Item_{item.ItemId}#Bonuses", 3))
             {
                 if (!drawItemTooltipItemBonuses) return;
-                    //Todo: Conditional attributes since not every item will have the same
-                ImGui.TableSetupColumn($"###DrawItemTooltip#Item_{item.ItemId}#Bonuses#StrengthCrit", ImGuiTableColumnFlags.WidthFixed, 40);
-                ImGui.TableSetupColumn($"###DrawItemTooltip#Item_{item.ItemId}#Bonuses#Empty", ImGuiTableColumnFlags.WidthStretch);
-                ImGui.TableSetupColumn($"###DrawItemTooltip#Item_{item.ItemId}#Bonuses#VitSkS", ImGuiTableColumnFlags.WidthFixed, 305);
+                //Todo: Conditional attributes since not every item will have the same
+                ImGui.TableSetupColumn($"###DrawItemTooltip#Item_{item.ItemId}#Bonuses#StrengthCrit",
+                    ImGuiTableColumnFlags.WidthFixed, 40);
+                ImGui.TableSetupColumn($"###DrawItemTooltip#Item_{item.ItemId}#Bonuses#Empty",
+                    ImGuiTableColumnFlags.WidthStretch);
+                ImGui.TableSetupColumn($"###DrawItemTooltip#Item_{item.ItemId}#Bonuses#VitSkS",
+                    ImGuiTableColumnFlags.WidthFixed, 305);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                ImGui.TextUnformatted($"{globalCache.AddonStorage.LoadAddonString(currentLocale, 3226)} +");// Defense
+                ImGui.TextUnformatted($"{globalCache.AddonStorage.LoadAddonString(currentLocale, 3226)} +"); // Defense
                 ImGui.TableSetColumnIndex(1);
                 ImGui.TextUnformatted("");
                 ImGui.TableSetColumnIndex(2);
-                ImGui.TextUnformatted($"{globalCache.AddonStorage.LoadAddonString(currentLocale, 3227)} +");// Vitality
+                ImGui.TextUnformatted($"{globalCache.AddonStorage.LoadAddonString(currentLocale, 3227)} +"); // Vitality
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                ImGui.TextUnformatted($"{globalCache.AddonStorage.LoadAddonString(currentLocale, 3241)} +");// Critical Hit
+                ImGui.TextUnformatted(
+                    $"{globalCache.AddonStorage.LoadAddonString(currentLocale, 3241)} +"); // Critical Hit
                 ImGui.TableSetColumnIndex(1);
                 ImGui.TextUnformatted("");
                 ImGui.TableSetColumnIndex(2);
-                ImGui.TextUnformatted($"{globalCache.AddonStorage.LoadAddonString(currentLocale, 3249)} +");// Skill Speed
+                ImGui.TextUnformatted(
+                    $"{globalCache.AddonStorage.LoadAddonString(currentLocale, 3249)} +"); // Skill Speed
             }
-            if (dbItem.MateriaSlotCount > 0) {
+
+            if (dbItem.MateriaSlotCount > 0)
+            {
                 ImGui.Separator();
-                ImGui.TextUnformatted($"{globalCache.AddonStorage.LoadAddonString(currentLocale, 491)}");// Materia
-                for (int i = 0;i < dbItem.MateriaSlotCount;i++)
+                ImGui.TextUnformatted($"{globalCache.AddonStorage.LoadAddonString(currentLocale, 491)}"); // Materia
+                for (int i = 0; i < dbItem.MateriaSlotCount; i++)
                 {
-                    ImGui.ColorButton($"##Item_{item.ItemId}#Materia#{i}", new Vector4(34, 169, 34, 1), ImGuiColorEditFlags.None, new Vector2(16,16));
+                    ImGui.ColorButton($"##Item_{item.ItemId}#Materia#{i}", new Vector4(34, 169, 34, 1),
+                        ImGuiColorEditFlags.None, new Vector2(16, 16));
                 }
                 //Plugin.Log.Debug($"Item materia: {item.Materia}");
             }
+
             ImGui.Separator();
-            ImGui.TextUnformatted($"{globalCache.AddonStorage.LoadAddonString(currentLocale, 497)}");// Crafting & Repairs
-            ImGui.TextUnformatted($"{globalCache.AddonStorage.LoadAddonString(currentLocale, 498)} : {(item.Condition / 300f).ToString(false ? "F2" : "0.##").Truncate(2) + "%"}");
-            ImGui.TextUnformatted($"{globalCache.AddonStorage.LoadAddonString(currentLocale, 499)} : {(item.Spiritbond / 100f).ToString(false ? "F2" : "0.##").Truncate(2) + "%"}");
-            ImGui.TextUnformatted($"{globalCache.AddonStorage.LoadAddonString(currentLocale, 500)} : {globalCache.JobStorage.GetName(currentLocale, dbItem.ClassJobRepair.Row)}");//Repair Level
-            ImGui.TextUnformatted($"{globalCache.AddonStorage.LoadAddonString(currentLocale, 518)} : {GetItemRepairResource(currentLocale, dbItem.ItemRepair.Row)}");//Materials
-            ImGui.TextUnformatted($"{globalCache.AddonStorage.LoadAddonString(currentLocale, 995)} : ");//Quick Repairs
-            ImGui.TextUnformatted($"{globalCache.AddonStorage.LoadAddonString(currentLocale, 993)} : ");//Materia Melding
+            ImGui.TextUnformatted(
+                $"{globalCache.AddonStorage.LoadAddonString(currentLocale, 497)}"); // Crafting & Repairs
+            ImGui.TextUnformatted(
+                $"{globalCache.AddonStorage.LoadAddonString(currentLocale, 498)} : {(item.Condition / 300f).ToString(false ? "F2" : "0.##").Truncate(2) + "%"}");
+            ImGui.TextUnformatted(
+                $"{globalCache.AddonStorage.LoadAddonString(currentLocale, 499)} : {(item.Spiritbond / 100f).ToString(false ? "F2" : "0.##").Truncate(2) + "%"}");
+            ImGui.TextUnformatted(
+                $"{globalCache.AddonStorage.LoadAddonString(currentLocale, 500)} : {globalCache.JobStorage.GetName(currentLocale, dbItem.ClassJobRepair.Row)}"); //Repair Level
+            ImGui.TextUnformatted(
+                $"{globalCache.AddonStorage.LoadAddonString(currentLocale, 518)} : {GetItemRepairResource(currentLocale, dbItem.ItemRepair.Row)}"); //Materials
+            ImGui.TextUnformatted($"{globalCache.AddonStorage.LoadAddonString(currentLocale, 995)} : "); //Quick Repairs
+            ImGui.TextUnformatted(
+                $"{globalCache.AddonStorage.LoadAddonString(currentLocale, 993)} : "); //Materia Melding
             ImGui.TextUnformatted($"{GetExtractableString(currentLocale, globalCache, dbItem)}");
-            ImGui.TextUnformatted($"{GetSellableString(currentLocale, globalCache, dbItem, item)}");//Materia Melding
-            if(item.CrafterContentID > 0)
+            ImGui.TextUnformatted($"{GetSellableString(currentLocale, globalCache, dbItem, item)}"); //Materia Melding
+            if (item.CrafterContentID > 0)
                 ImGui.TextUnformatted("Crafted");
 
             ImGui.EndTooltip();
@@ -1205,12 +1250,16 @@ namespace Altoholic
                 ImGui.TextUnformatted($"{dbItem.Name} {(item.HQ ? (char)SeIconChar.HighQuality : "")}");
             }
 
-            using (var drawEventItemTooltipItemCategory = ImRaii.Table($"###DrawEventItemTooltip#Item_{item.ItemId}#Category", 3))
+            using (var drawEventItemTooltipItemCategory =
+                   ImRaii.Table($"###DrawEventItemTooltip#Item_{item.ItemId}#Category", 3))
             {
                 if (!drawEventItemTooltipItemCategory) return;
-                    ImGui.TableSetupColumn($"###DrawEventItemTooltip#Item_{item.ItemId}#Category#Icon", ImGuiTableColumnFlags.WidthFixed, 150);
-                ImGui.TableSetupColumn($"###DrawEventItemTooltip#Item_{item.ItemId}#Category#Name", ImGuiTableColumnFlags.WidthFixed, 150);
-                ImGui.TableSetupColumn($"###DrawEventItemTooltip#Item_{item.ItemId}#Category#Name", ImGuiTableColumnFlags.WidthFixed, 100);
+                ImGui.TableSetupColumn($"###DrawEventItemTooltip#Item_{item.ItemId}#Category#Icon",
+                    ImGuiTableColumnFlags.WidthFixed, 150);
+                ImGui.TableSetupColumn($"###DrawEventItemTooltip#Item_{item.ItemId}#Category#Name",
+                    ImGuiTableColumnFlags.WidthFixed, 150);
+                ImGui.TableSetupColumn($"###DrawEventItemTooltip#Item_{item.ItemId}#Category#Name",
+                    ImGuiTableColumnFlags.WidthFixed, 100);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
                 ImGui.TableSetColumnIndex(1);
@@ -1219,7 +1268,8 @@ namespace Altoholic
             }
 
             ImGui.Separator();
-            ImGui.TextUnformatted($"{globalCache.AddonStorage.LoadAddonString(currentLocale, 497)}");// Crafting & Repairs
+            ImGui.TextUnformatted(
+                $"{globalCache.AddonStorage.LoadAddonString(currentLocale, 497)}"); // Crafting & Repairs
 
             ImGui.EndTooltip();
         }
@@ -1305,8 +1355,9 @@ namespace Altoholic
 
             ImGui.EndTooltip();
         }
-        
-        public static void DrawMountTooltip(ClientLanguage currentLocale, ref GlobalCache globalCache, Models.Mount mount)
+
+        public static void DrawMountTooltip(ClientLanguage currentLocale, ref GlobalCache globalCache,
+            Models.Mount mount)
         {
             using var drawMountTooltip = ImRaii.Tooltip();
             if (!drawMountTooltip) return;
@@ -1337,6 +1388,7 @@ namespace Altoholic
                         break;
                 }
             }
+
             ImGui.Separator();
             if (mount.Transient is null) return;
             switch (currentLocale)
@@ -1387,6 +1439,7 @@ namespace Altoholic
                         break;
                 }
             }
+
             ImGui.Separator();
             if (minion.Transient is null) return;
             switch (currentLocale)
@@ -1406,11 +1459,13 @@ namespace Altoholic
             }
         }
 
-        public static void DrawTTCTooltip(ClientLanguage currentLocale, ref GlobalCache globalCache, Models.TripleTriadCard tripleTriadCard)
+        public static void DrawTTCTooltip(ClientLanguage currentLocale, ref GlobalCache globalCache,
+            Models.TripleTriadCard tripleTriadCard)
         {
             using var drawTripleTriadCardTooltip = ImRaii.Tooltip();
             if (!drawTripleTriadCardTooltip) return;
-            using (var drawTripleTriadCardTooltipTable = ImRaii.Table($"###DrawTripleTriadCardTooltip#TripleTriadCard_{tripleTriadCard.Id}", 2))
+            using (var drawTripleTriadCardTooltipTable =
+                   ImRaii.Table($"###DrawTripleTriadCardTooltip#TripleTriadCard_{tripleTriadCard.Id}", 2))
             {
                 if (!drawTripleTriadCardTooltipTable) return;
                 ImGui.TableSetupColumn($"###DrawTripleTriadCardTooltip#TripleTriadCard_{tripleTriadCard.Id}#Icon",
@@ -1437,6 +1492,7 @@ namespace Altoholic
                         break;
                 }
             }
+
             ImGui.Separator();
             switch (currentLocale)
             {
@@ -1455,11 +1511,13 @@ namespace Altoholic
             }
         }
 
-        public static void DrawEmoteTooltip(ClientLanguage currentLocale, ref GlobalCache globalCache, Models.Emote emote)
+        public static void DrawEmoteTooltip(ClientLanguage currentLocale, ref GlobalCache globalCache,
+            Models.Emote emote)
         {
             using var drawTripleTriadCardTooltip = ImRaii.Tooltip();
             if (!drawTripleTriadCardTooltip) return;
-            using var drawTripleTriadCardTooltipTable = ImRaii.Table($"###DrawEmoteTooltip#TripleTriadCard_{emote.Id}", 2);
+            using var drawTripleTriadCardTooltipTable =
+                ImRaii.Table($"###DrawEmoteTooltip#Emote_{emote.Id}", 2);
             if (!drawTripleTriadCardTooltipTable) return;
             ImGui.TableSetupColumn($"###DrawEmoteTooltip#Emote_{emote.Id}#Icon",
                 ImGuiTableColumnFlags.WidthFixed, 55);
@@ -1504,11 +1562,13 @@ namespace Altoholic
             }
         }
 
-        public static void DrawBardingTooltip(ClientLanguage currentLocale, ref GlobalCache globalCache, Models.Barding barding, uint Icon)
+        public static void DrawBardingTooltip(ClientLanguage currentLocale, ref GlobalCache globalCache,
+            Models.Barding barding, uint Icon)
         {
             using var drawTripleTriadCardTooltip = ImRaii.Tooltip();
             if (!drawTripleTriadCardTooltip) return;
-            using var drawTripleTriadCardTooltipTable = ImRaii.Table($"###DrawBardingTooltip#TripleTriadCard_{barding.Id}", 2);
+            using var drawTripleTriadCardTooltipTable =
+                ImRaii.Table($"###DrawBardingTooltip#Barding_{barding.Id}", 2);
             if (!drawTripleTriadCardTooltipTable) return;
             ImGui.TableSetupColumn($"###DrawBardingTooltip#Barding_{barding.Id}#Icon",
                 ImGuiTableColumnFlags.WidthFixed, 55);
@@ -1535,11 +1595,13 @@ namespace Altoholic
             }
         }
 
-        public static void DrawFramerKitTooltip(ClientLanguage currentLocale, ref GlobalCache globalCache, FramerKit framerKit)
+        public static void DrawFramerKitTooltip(ClientLanguage currentLocale, ref GlobalCache globalCache,
+            FramerKit framerKit)
         {
             using var drawTripleTriadCardTooltip = ImRaii.Tooltip();
             if (!drawTripleTriadCardTooltip) return;
-            using var drawTripleTriadCardTooltipTable = ImRaii.Table($"###DrawFramerKitTooltip#TripleTriadCard_{framerKit.Id}", 2);
+            using var drawTripleTriadCardTooltipTable =
+                ImRaii.Table($"###DrawFramerKitTooltip#FramerKit_{framerKit.Id}", 2);
             if (!drawTripleTriadCardTooltipTable) return;
             ImGui.TableSetupColumn($"###DrawFramerKitTooltip#FramerKit_{framerKit.Id}#Icon",
                 ImGuiTableColumnFlags.WidthFixed, 55);
@@ -1566,7 +1628,40 @@ namespace Altoholic
             }
         }
 
-        private static string GetExtractableString(ClientLanguage currentLocale, GlobalCache globalCache, Item item)
+
+        public static void DrawOrchestrionRollTooltip(ClientLanguage currentLocale, ref GlobalCache globalCache, OrchestrionRoll orchestrionRoll)
+        {
+            using var drawTripleTriadCardTooltip = ImRaii.Tooltip();
+            if (!drawTripleTriadCardTooltip) return;
+            using var drawTripleTriadCardTooltipTable =
+                ImRaii.Table($"###DrawOrchestrionRollTooltip#OrchestrionRoll_{orchestrionRoll.Id}", 2);
+            if (!drawTripleTriadCardTooltipTable) return;
+            ImGui.TableSetupColumn($"###DrawOrchestrionRollTooltip#OrchestrionRoll_{orchestrionRoll.Id}#Icon",
+                ImGuiTableColumnFlags.WidthFixed, 55);
+            ImGui.TableSetupColumn($"###DrawOrchestrionRollTooltip#OrchestrionRoll_{orchestrionRoll.Id}#Name",
+                ImGuiTableColumnFlags.WidthFixed, 305);
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            DrawIcon(globalCache.IconStorage.LoadIcon(orchestrionRoll.Icon), new Vector2(40, 40));
+            ImGui.TableSetColumnIndex(1);
+            switch (currentLocale)
+            {
+                case ClientLanguage.German:
+                    ImGui.TextUnformatted($"{Capitalize(orchestrionRoll.GermanName)}");
+                    break;
+                case ClientLanguage.English:
+                    ImGui.TextUnformatted($"{Capitalize(orchestrionRoll.EnglishName)}");
+                    break;
+                case ClientLanguage.French:
+                    ImGui.TextUnformatted($"{Capitalize(orchestrionRoll.FrenchName)}");
+                    break;
+                case ClientLanguage.Japanese:
+                    ImGui.TextUnformatted($"{Capitalize(orchestrionRoll.JapaneseName)}");
+                    break;
+            }
+        }
+
+    private static string GetExtractableString(ClientLanguage currentLocale, GlobalCache globalCache, Item item)
         {
             string str = globalCache.AddonStorage.LoadAddonString(currentLocale, 1361);
             Plugin.Log.Debug($"extract str: {str} => item desynth {item.Desynth}");
@@ -1910,6 +2005,45 @@ namespace Altoholic
             }
 
             return returnedBardingsIds;
+        }
+
+        public static Orchestrion? GetOrchestrionRoll(ClientLanguage currentLocale, uint id)
+        {
+            ExcelSheet<Orchestrion>? dor = Plugin.DataManager.GetExcelSheet<Orchestrion>(currentLocale);
+            Orchestrion? lumina = dor?.GetRow(id);
+            return lumina;
+        }
+        public static List<OrchestrionRoll>? GetAllOrchestrionRolls(ClientLanguage currentLocale)
+        {
+            List<OrchestrionRoll> returnedOrchestrionRollIds = [];
+            ExcelSheet<Orchestrion>? dor = Plugin.DataManager.GetExcelSheet<Orchestrion>(currentLocale);
+            using IEnumerator<Orchestrion>? orchestrionRollEnumerator = dor?.GetEnumerator();
+            if (orchestrionRollEnumerator is null) return null;
+            while (orchestrionRollEnumerator.MoveNext())
+            {
+                Orchestrion orchestrionRoll = orchestrionRollEnumerator.Current;
+                if (string.IsNullOrEmpty(orchestrionRoll.Name) || orchestrionRoll.RowId == 0) continue;
+                OrchestrionRoll orchestrion = new() { Id = orchestrionRoll.RowId };
+                switch (currentLocale)
+                {
+                    case ClientLanguage.German:
+                        orchestrion.GermanName = orchestrionRoll.Name;
+                        break;
+                    case ClientLanguage.English:
+                        orchestrion.EnglishName = orchestrionRoll.Name;
+                        break;
+                    case ClientLanguage.French:
+                        orchestrion.FrenchName = orchestrionRoll.Name;
+                        break;
+                    case ClientLanguage.Japanese:
+                        orchestrion.JapaneseName = orchestrionRoll.Name;
+                        break;
+                }
+
+                returnedOrchestrionRollIds.Add(orchestrion);
+            }
+
+            return returnedOrchestrionRollIds;
         }
 
 

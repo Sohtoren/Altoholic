@@ -43,6 +43,7 @@ namespace Altoholic.Models
         public List<uint> Emotes { get; set; } = [];
         public List<uint> Bardings { get; set; } = [];
         public List<uint> FramerKits { get; set; } = [];
+        public List<uint> OrchestrionRolls { get; set; } = [];
 
         public bool HasAnyLevelJob(int level)
         {
@@ -97,6 +98,10 @@ namespace Altoholic.Models
         public bool HasFramerKit(uint id)
         {
             return FramerKits.Count > 0 && FramerKits.Contains(id);
+        }
+        public bool HasOrchestrionRoll(uint id)
+        {
+            return OrchestrionRolls.Count > 0 && OrchestrionRolls.Contains(id);
         }
     }
 }

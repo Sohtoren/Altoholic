@@ -10,8 +10,6 @@ using Dalamud.Game.Text;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
 using ImGuiNET;
-using Lumina.Excel.GeneratedSheets;
-using System.Diagnostics;
 using Emote = Altoholic.Models.Emote;
 using Mount = Altoholic.Models.Mount;
 using TripleTriadCard = Altoholic.Models.TripleTriadCard;
@@ -56,6 +54,7 @@ namespace Altoholic.Windows
         private bool _obtainedEmotesOnly;
         private bool _obtainedBardingsOnly;
         private bool _obtainedFramerKitsOnly;
+        private bool _obtainedOrchestrionRollsOnly;
 
         /*public override void OnClose()
         {
@@ -83,6 +82,7 @@ namespace Altoholic.Windows
             _obtainedEmotesOnly = false;
             _obtainedBardingsOnly = false;
             _obtainedFramerKitsOnly = false;
+            _obtainedOrchestrionRollsOnly = false;
         }
 
         public void Clear()
@@ -99,6 +99,7 @@ namespace Altoholic.Windows
             _obtainedEmotesOnly = false;
             _obtainedBardingsOnly = false;
             _obtainedFramerKitsOnly = false;
+            _obtainedOrchestrionRollsOnly = false;
         }
 
         public override void Draw()
@@ -110,6 +111,8 @@ namespace Altoholic.Windows
             _obtainedTripleTriadCardsOnly = _plugin.Configuration.ObtainedOnly;
             _obtainedEmotesOnly = _plugin.Configuration.ObtainedOnly;
             _obtainedBardingsOnly = _plugin.Configuration.ObtainedOnly;
+            _obtainedFramerKitsOnly = _plugin.Configuration.ObtainedOnly;
+            _obtainedOrchestrionRollsOnly = _plugin.Configuration.ObtainedOnly;
             List<Character> chars = [];
             chars.Insert(0, GetPlayer.Invoke());
             chars.AddRange(GetOthersCharactersList.Invoke());
@@ -231,11 +234,11 @@ namespace Altoholic.Windows
                 }
             }
 
-            using (var orchestrionsTab = ImRaii.TabItem("Orchestrion")) // same name in all languages
+            using (var orchestrionsTab = ImRaii.TabItem("Orchestrions")) // same name in all languages
             {
                 if (orchestrionsTab.Success)
                 {
-
+                    DrawOrchestrionRolls(currentCharacter);
                 }
             }
             
@@ -978,6 +981,129 @@ namespace Altoholic.Windows
                 if (ImGui.IsItemHovered())
                 {
                     Utils.DrawFramerKitTooltip(_currentLocale, ref _globalCache, f);
+                }
+
+                i++;
+            }
+        }
+
+        /**************************************************/
+        /*********************OrchestrionRoll**********************/
+        /**************************************************/
+        private void DrawOrchestrionRolls(Character currentCharacter)
+        {
+            using var orchestrionRollsTabTable = ImRaii.Table("###OrchestrionRollsTabTable", 1, ImGuiTableFlags.ScrollY);
+            if (!orchestrionRollsTabTable) return;
+            ImGui.TableSetupColumn($"###OrchestrionRollsTabTable#{currentCharacter.Id}#Col1",
+                ImGuiTableColumnFlags.WidthStretch);
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            if (ImGui.Checkbox($"{Loc.Localize("ObtainedOnly", "Obtained only")}", ref _obtainedOrchestrionRollsOnly))
+            {
+                _plugin.Configuration.ObtainedOnly = _obtainedOrchestrionRollsOnly;
+                _plugin.Configuration.Save();
+            }
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            DrawOrchestrionRollsCollection(currentCharacter);
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            using var orchestrionRollsTableAmount = ImRaii.Table("###OrchestrionRollsTableAmount", 2);
+            if (!orchestrionRollsTableAmount) return;
+            int widthCol1 = 455;
+            int widthCol2 = 145;
+            if (_isSpoilerEnabled)
+            {
+                widthCol1 = 480;
+                widthCol2 = 120;
+            }
+            ImGui.TableSetupColumn($"###OrchestrionRollsTableAmount#{currentCharacter.Id}#Amount#Col1",
+                ImGuiTableColumnFlags.WidthFixed, widthCol1);
+            ImGui.TableSetupColumn($"###OrchestrionRollsTableAmount#{currentCharacter.Id}#Amount#Col2",
+                ImGuiTableColumnFlags.WidthFixed, widthCol2);
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            ImGui.Text("");
+            ImGui.TableSetColumnIndex(1);
+            string endStr = string.Empty;
+            if (!_isSpoilerEnabled)
+            {
+                endStr += $"{Loc.Localize("ObtainedLowercase", " obtained")}";
+            }
+            else
+            {
+                endStr += $"/{_globalCache.OrchestrionRollStorage.Count()}";
+            }
+            ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 3501)}: {currentCharacter.OrchestrionRolls.Count}{endStr}");
+        }
+
+        private void DrawOrchestrionRollsCollection(Character currentCharacter)
+        {
+            List<uint> orchestrionRolls = (_obtainedOrchestrionRollsOnly) ? currentCharacter.OrchestrionRolls : _globalCache.OrchestrionRollStorage.Get();
+            int orchestrionRollsCount = orchestrionRolls.Count;
+            if (orchestrionRollsCount == 0) return;
+            int rows = (int)Math.Ceiling(orchestrionRollsCount / (double)10);
+            int heigth = rows * 48 + 0;
+
+            using var table = ImRaii.Table($"###OrchestrionRollsTable", 10,
+                ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner, new Vector2(572, heigth));
+            if (!table) return;
+
+            ImGui.TableSetupColumn($"###OrchestrionRollsTable#Col1",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+            ImGui.TableSetupColumn($"###OrchestrionRollsTable#Col2",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+            ImGui.TableSetupColumn($"###OrchestrionRollsTable#Col3",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+            ImGui.TableSetupColumn($"###OrchestrionRollsTable#Col4",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+            ImGui.TableSetupColumn($"###OrchestrionRollsTable#Col5",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+            ImGui.TableSetupColumn($"###OrchestrionRollsTable#Col6",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+            ImGui.TableSetupColumn($"###OrchestrionRollsTable#Col7",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+            ImGui.TableSetupColumn($"###OrchestrionRollsTable#Col8",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+            ImGui.TableSetupColumn($"###OrchestrionRollsTable#Col9",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+            ImGui.TableSetupColumn($"###OrchestrionRollsTable#Col10",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+
+            int i = 0;
+            foreach (uint fkId in orchestrionRolls)
+            {
+                if (i % 10 == 0)
+                {
+                    ImGui.TableNextRow();
+                }
+
+                ImGui.TableNextColumn();
+                OrchestrionRoll? f = _globalCache.OrchestrionRollStorage.GetOrchestrionRoll(_currentLocale, fkId);
+                if (f == null)
+                {
+                    continue;
+                }
+
+                if (currentCharacter.HasOrchestrionRoll(fkId))
+                {
+                    Utils.DrawIcon(_globalCache.IconStorage.LoadHighResIcon(f.Icon), new Vector2(48, 48));
+                }
+                else
+                {
+                    if (_isSpoilerEnabled)
+                    {
+                        Utils.DrawIcon(_globalCache.IconStorage.LoadHighResIcon(f.Icon), new Vector2(48, 48),
+                            new Vector4(1, 1, 1, 0.5f));
+                    }
+                    else
+                    {
+                        Utils.DrawIcon(_globalCache.IconStorage.LoadHighResIcon(000786), new Vector2(48, 48));
+                    }
+                }
+                if (ImGui.IsItemHovered())
+                {
+                    Utils.DrawOrchestrionRollTooltip(_currentLocale, ref _globalCache, f);
                 }
 
                 i++;
