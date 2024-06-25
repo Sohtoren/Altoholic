@@ -103,6 +103,8 @@ namespace Altoholic
                 MountStorage = new MountStorage(),
                 TripleTriadCardStorage = new TripleTriadCardStorage(),
                 EmoteStorage = new EmoteStorage(),
+                BardingStorage = new BardingStorage(),
+                FramerKitStorage = new FramerKitStorage()
             };
 
             nint playtimePtr = SigScanner.ScanText(PlaytimeSig);
@@ -127,6 +129,9 @@ namespace Altoholic
             _globalCache.MinionStorage.Init(_currentLocale);
             _globalCache.TripleTriadCardStorage.Init(_currentLocale);
             _globalCache.EmoteStorage.Init(_currentLocale);
+            _globalCache.BardingStorage.Init(_currentLocale);
+            _globalCache.FramerKitStorage.Init(_currentLocale);
+            
 
             altoholicService = new Service(
                 () => _localPlayer,
@@ -225,6 +230,9 @@ namespace Altoholic
             _globalCache.MinionStorage.Dispose();
             _globalCache.MountStorage.Dispose();
             _globalCache.TripleTriadCardStorage.Dispose();
+            _globalCache.EmoteStorage.Dispose();
+            _globalCache.BardingStorage.Dispose();
+            _globalCache.FramerKitStorage.Dispose();
 
             CollectionWindow.Dispose();
             RetainersWindow.Dispose();
@@ -678,7 +686,16 @@ namespace Altoholic
                 }
             }
 
+            foreach (uint i in _globalCache.BardingStorage.Get().Where(i => !_localPlayer.HasBarding(i)))
+            {
+                if (uistate.Buddy.CompanionInfo.IsBuddyEquipUnlocked(i))
+                {
+                    _localPlayer.Bardings.Add(i);
+                }
+            }
+
             GetMountFromState(player);
+            GetFramerKitsFromState(player);
         }
 
         private void GetMountFromState(PlayerState player)
@@ -686,6 +703,14 @@ namespace Altoholic
             foreach (uint i in _globalCache.MountStorage.Get().Where(i => !_localPlayer.HasMount(i)).Where(i => player.IsMountUnlocked(i)))
             {
                 _localPlayer.Mounts.Add(i);
+            }
+        }
+        
+        private void GetFramerKitsFromState(PlayerState player)
+        {
+            foreach (uint i in _globalCache.FramerKitStorage.Get().Where(i => !_localPlayer.HasFramerKit(i)).Where(i => player.IsFramersKitUnlocked(i)))
+            {
+                    _localPlayer.FramerKits.Add(i);
             }
         }
 

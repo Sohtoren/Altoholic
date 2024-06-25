@@ -37,7 +37,7 @@ namespace Altoholic.Cache
                 return null;
             }
 
-            ret = new Mount { Transient = new Transient() };
+            ret = new Mount { Id = mount.RowId, Transient = new Transient() };
             MountTransient? mt = Utils.GetMountTransient(lang, id);
             if (mt is null) return null;
             switch (lang)

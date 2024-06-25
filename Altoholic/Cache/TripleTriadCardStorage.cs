@@ -9,7 +9,7 @@ namespace Altoholic.Cache
 {
     public class TripleTriadCardStorage(int size = 120) : IDisposable
     {
-        private readonly Dictionary<uint, TripleTriadCard> _tripleTriadCardStorage = new(size);
+        private readonly Dictionary<uint, TripleTriadCard> _tripleTriadCard = new(size);
 
         public void Init(ClientLanguage currentLocale)
         {
@@ -21,13 +21,13 @@ namespace Altoholic.Cache
 
             foreach (TripleTriadCard tt in ttc)
             {
-                _tripleTriadCardStorage.Add(tt.Id, tt);
+                _tripleTriadCard.Add(tt.Id, tt);
             }
         }
 
         public TripleTriadCard? GetTripleTriadCard(ClientLanguage lang, uint id)
         {
-            if (_tripleTriadCardStorage.TryGetValue(id, out TripleTriadCard? ret))
+            if (_tripleTriadCard.TryGetValue(id, out TripleTriadCard? ret))
                 return ret;
 
             Lumina.Excel.GeneratedSheets.TripleTriadCard? ttc = Utils.GetTripleTriadCard(lang, id);
@@ -36,7 +36,7 @@ namespace Altoholic.Cache
                 return null;
             }
 
-            ret = new TripleTriadCard();
+            ret = new TripleTriadCard { Id = ttc.RowId };
             switch (lang)
             {
                 case ClientLanguage.German:
@@ -64,20 +64,20 @@ namespace Altoholic.Cache
 
         public void Add(uint id, TripleTriadCard ttc)
         {
-            _tripleTriadCardStorage.Add(id, ttc);
+            _tripleTriadCard.Add(id, ttc);
         }
 
         public int Count()
         {
-            return _tripleTriadCardStorage.Count;
+            return _tripleTriadCard.Count;
         }
         public List<uint> Get()
         {
-            return _tripleTriadCardStorage.Keys.ToList();
+            return _tripleTriadCard.Keys.ToList();
         }
         public void Dispose()
         {
-            _tripleTriadCardStorage.Clear();
+            _tripleTriadCard.Clear();
         }
     }
 }

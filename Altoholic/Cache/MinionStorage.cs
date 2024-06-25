@@ -36,7 +36,7 @@ namespace Altoholic.Cache
                 return null;
             }
 
-            ret = new Minion{Transient = new Transient()};
+            ret = new Minion { Id = companion.RowId, Transient = new Transient() };
             CompanionTransient? ct = Utils.GetCompanionTransient(lang, id);
             if (ct is null) return null;
             switch (lang)

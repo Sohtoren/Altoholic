@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using Altoholic.Models;
-using Dalamud.Logging;
 using Dalamud.Plugin.Services;
 using LiteDB;
 

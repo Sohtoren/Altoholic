@@ -1,8 +1,6 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 
 namespace Altoholic.Models
 {
@@ -43,6 +41,8 @@ namespace Altoholic.Models
         public List<uint> Mounts { get; set; } = [];
         public List<uint> TripleTriadCards { get; set; } = [];
         public List<uint> Emotes { get; set; } = [];
+        public List<uint> Bardings { get; set; } = [];
+        public List<uint> FramerKits { get; set; } = [];
 
         public bool HasAnyLevelJob(int level)
         {
@@ -89,6 +89,14 @@ namespace Altoholic.Models
         public bool HasEmote(uint id)
         {
             return Emotes.Count > 0 && Emotes.Contains(id);
+        }
+        public bool HasBarding(uint id)
+        {
+            return Bardings.Count > 0 && Bardings.Contains(id);
+        }
+        public bool HasFramerKit(uint id)
+        {
+            return FramerKits.Count > 0 && FramerKits.Contains(id);
         }
     }
 }

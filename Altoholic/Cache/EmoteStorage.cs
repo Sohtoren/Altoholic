@@ -8,7 +8,7 @@ namespace Altoholic.Cache
 {
     public class EmoteStorage(int size = 120) : IDisposable
     {
-        private readonly Dictionary<uint, Models.Emote> _emotesStorage = new(size);
+        private readonly Dictionary<uint, Models.Emote> _emotes = new(size);
 
         public void Init(ClientLanguage currentLocale)
         {
@@ -20,13 +20,13 @@ namespace Altoholic.Cache
 
             foreach (Models.Emote e in emotes)
             {
-                _emotesStorage.Add(e.Id, e);
+                _emotes.Add(e.Id, e);
             }
         }
 
         public Emote? GetEmote(ClientLanguage lang, uint id)
         {
-            if (_emotesStorage.TryGetValue(id, out Emote? ret))
+            if (_emotes.TryGetValue(id, out Emote? ret))
                 return ret;
 
             Lumina.Excel.GeneratedSheets.Emote? emote = Utils.GetEmote(lang, id);
@@ -35,7 +35,7 @@ namespace Altoholic.Cache
                 return null;
             }
 
-            ret = new Emote{TextCommand = new TextCommand()};
+            ret = new Emote{Id = emote.RowId ,TextCommand = new TextCommand()};
             Lumina.Excel.GeneratedSheets.TextCommand? tc = Utils.GetTextCommand(lang, emote.TextCommand.Row);
             if (tc is null) return null;
             switch (lang)
@@ -81,20 +81,20 @@ namespace Altoholic.Cache
 
         public void Add(uint id, Emote e)
         {
-            _emotesStorage.Add(id, e);
+            _emotes.Add(id, e);
         }
 
         public int Count()
         {
-            return _emotesStorage.Count;
+            return _emotes.Count;
         }
         public List<uint> Get()
         {
-            return _emotesStorage.Keys.ToList();
+            return _emotes.Keys.ToList();
         }
         public void Dispose()
         {
-            _emotesStorage.Clear();
+            _emotes.Clear();
         }
     }
 }

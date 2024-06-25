@@ -11,5 +11,7 @@
         public required MountStorage MountStorage { get; set; } = null!;
         public required TripleTriadCardStorage TripleTriadCardStorage { get; set; } = null!;
         public required EmoteStorage EmoteStorage { get; set; } = null!;
+        public required BardingStorage BardingStorage { get; set; } = null!;
+        public required FramerKitStorage FramerKitStorage { get; set; } = null!;
     }
 }

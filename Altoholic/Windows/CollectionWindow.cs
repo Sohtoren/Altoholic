@@ -10,7 +10,11 @@ using Dalamud.Game.Text;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
 using ImGuiNET;
+using Lumina.Excel.GeneratedSheets;
 using System.Diagnostics;
+using Emote = Altoholic.Models.Emote;
+using Mount = Altoholic.Models.Mount;
+using TripleTriadCard = Altoholic.Models.TripleTriadCard;
 
 namespace Altoholic.Windows
 {
@@ -35,7 +39,6 @@ namespace Altoholic.Windows
             };
             _plugin = plugin;
             _globalCache = globalCache;
-
         }
 
         public Func<Character> GetPlayer { get; init; } = null!;
@@ -51,6 +54,8 @@ namespace Altoholic.Windows
         private bool _obtainedMountsOnly;
         private bool _obtainedTripleTriadCardsOnly;
         private bool _obtainedEmotesOnly;
+        private bool _obtainedBardingsOnly;
+        private bool _obtainedFramerKitsOnly;
 
         /*public override void OnClose()
         {
@@ -75,6 +80,9 @@ namespace Altoholic.Windows
             _obtainedMinionsOnly = false;
             _obtainedMountsOnly = false;
             _obtainedTripleTriadCardsOnly = false;
+            _obtainedEmotesOnly = false;
+            _obtainedBardingsOnly = false;
+            _obtainedFramerKitsOnly = false;
         }
 
         public void Clear()
@@ -88,6 +96,9 @@ namespace Altoholic.Windows
             _obtainedMinionsOnly = false;
             _obtainedMountsOnly = false;
             _obtainedTripleTriadCardsOnly = false;
+            _obtainedEmotesOnly = false;
+            _obtainedBardingsOnly = false;
+            _obtainedFramerKitsOnly = false;
         }
 
         public override void Draw()
@@ -98,6 +109,7 @@ namespace Altoholic.Windows
             _obtainedMountsOnly = _plugin.Configuration.ObtainedOnly;
             _obtainedTripleTriadCardsOnly = _plugin.Configuration.ObtainedOnly;
             _obtainedEmotesOnly = _plugin.Configuration.ObtainedOnly;
+            _obtainedBardingsOnly = _plugin.Configuration.ObtainedOnly;
             List<Character> chars = [];
             chars.Insert(0, GetPlayer.Invoke());
             chars.AddRange(GetOthersCharactersList.Invoke());
@@ -164,7 +176,7 @@ namespace Altoholic.Windows
             {
                 if (bardingsTab.Success)
                 {
-                    //DrawBardings(currentCharacter);
+                    DrawBardings(currentCharacter);
                 }
             }
             using (var emotesTab =
@@ -188,7 +200,7 @@ namespace Altoholic.Windows
             {
                 if (framerKitTab.Success)
                 {
-                    //DrawEmotes(currentCharacter);
+                    DrawFramerKits(currentCharacter);
                 }
             }
             
@@ -721,6 +733,251 @@ namespace Altoholic.Windows
                 if (ImGui.IsItemHovered())
                 {
                     Utils.DrawEmoteTooltip(_currentLocale, ref _globalCache, emote);
+                }
+
+                i++;
+            }
+        }
+
+        /**************************************************/
+        /*********************Barding**********************/
+        /**************************************************/
+        private void DrawBardings(Character currentCharacter)
+        {
+            using var bardingsTabTable = ImRaii.Table("###BardingsTabTable", 1, ImGuiTableFlags.ScrollY);
+            if (!bardingsTabTable) return;
+            ImGui.TableSetupColumn($"###BardingsTabTable#{currentCharacter.Id}#Col1",
+                ImGuiTableColumnFlags.WidthStretch);
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            if (ImGui.Checkbox($"{Loc.Localize("ObtainedOnly", "Obtained only")}", ref _obtainedBardingsOnly))
+            {
+                _plugin.Configuration.ObtainedOnly = _obtainedBardingsOnly;
+                _plugin.Configuration.Save();
+            }
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            DrawBardingsCollection(currentCharacter);
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            using var bardingsTableAmount = ImRaii.Table("###BardingsTableAmount", 2);
+            if (!bardingsTableAmount) return;
+            int widthCol1 = 455;
+            int widthCol2 = 145;
+            if (_isSpoilerEnabled)
+            {
+                widthCol1 = 480;
+                widthCol2 = 120;
+            }
+            ImGui.TableSetupColumn($"###BardingsTableAmount#{currentCharacter.Id}#Amount#Col1",
+                ImGuiTableColumnFlags.WidthFixed, widthCol1);
+            ImGui.TableSetupColumn($"###BardingsTableAmount#{currentCharacter.Id}#Amount#Col2",
+                ImGuiTableColumnFlags.WidthFixed, widthCol2);
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            ImGui.Text("");
+            ImGui.TableSetColumnIndex(1);
+            string endStr = string.Empty;
+            if (!_isSpoilerEnabled)
+            {
+                endStr += $"{Loc.Localize("ObtainedLowercase", " obtained")}";
+            }
+            else
+            {
+                endStr += $"/{_globalCache.BardingStorage.Count()}";
+            }
+            ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 3501)}: {currentCharacter.Bardings.Count}{endStr}");
+        }
+
+        private void DrawBardingsCollection(Character currentCharacter)
+        {
+            List<uint> bardings = (_obtainedBardingsOnly) ? currentCharacter.Bardings : _globalCache.BardingStorage.Get();
+            int bardingsCount = bardings.Count;
+            if (bardingsCount == 0) return;
+            int rows = (int)Math.Ceiling(bardingsCount / (double)10);
+            int heigth = rows * 48 + 0;
+
+            using var table = ImRaii.Table($"###BardingsTable", 10,
+                ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner, new Vector2(572, heigth));
+            if (!table) return;
+
+            ImGui.TableSetupColumn($"###BardingsTable#Col1",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+            ImGui.TableSetupColumn($"###BardingsTable#Col2",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+            ImGui.TableSetupColumn($"###BardingsTable#Col3",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+            ImGui.TableSetupColumn($"###BardingsTable#Col4",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+            ImGui.TableSetupColumn($"###BardingsTable#Col5",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+            ImGui.TableSetupColumn($"###BardingsTable#Col6",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+            ImGui.TableSetupColumn($"###BardingsTable#Col7",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+            ImGui.TableSetupColumn($"###BardingsTable#Col8",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+            ImGui.TableSetupColumn($"###BardingsTable#Col9",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+            ImGui.TableSetupColumn($"###BardingsTable#Col10",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+
+            int i = 0;
+            foreach (uint bId in bardings)
+            {
+                if (i % 10 == 0)
+                {
+                    ImGui.TableNextRow();
+                }
+
+                ImGui.TableNextColumn();
+                Barding? b = _globalCache.BardingStorage.GetBarding(_currentLocale, bId);
+                if (b == null)
+                {
+                    continue;
+                }
+
+                if (currentCharacter.HasBarding(bId))
+                {
+                    Utils.DrawIcon(_globalCache.IconStorage.LoadHighResIcon(b.Icon), new Vector2(48, 48));
+                }
+                else
+                {
+                    if (_isSpoilerEnabled)
+                    {
+                        Utils.DrawIcon(_globalCache.IconStorage.LoadHighResIcon(b.Icon), new Vector2(48, 48),
+                            new Vector4(1, 1, 1, 0.5f));
+                    }
+                    else
+                    {
+                        Utils.DrawIcon(_globalCache.IconStorage.LoadHighResIcon(000786), new Vector2(48, 48));
+                    }
+                }
+                if (ImGui.IsItemHovered())
+                {
+                    Utils.DrawBardingTooltip(_currentLocale, ref _globalCache, b, b.Icon);
+                }
+
+                i++;
+            }
+        }
+        /**************************************************/
+        /*********************FramerKit**********************/
+        /**************************************************/
+        private void DrawFramerKits(Character currentCharacter)
+        {
+            using var framerKitsTabTable = ImRaii.Table("###FramerKitsTabTable", 1, ImGuiTableFlags.ScrollY);
+            if (!framerKitsTabTable) return;
+            ImGui.TableSetupColumn($"###FramerKitsTabTable#{currentCharacter.Id}#Col1",
+                ImGuiTableColumnFlags.WidthStretch);
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            if (ImGui.Checkbox($"{Loc.Localize("ObtainedOnly", "Obtained only")}", ref _obtainedFramerKitsOnly))
+            {
+                _plugin.Configuration.ObtainedOnly = _obtainedFramerKitsOnly;
+                _plugin.Configuration.Save();
+            }
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            DrawFramerKitsCollection(currentCharacter);
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            using var framerKitsTableAmount = ImRaii.Table("###FramerKitsTableAmount", 2);
+            if (!framerKitsTableAmount) return;
+            int widthCol1 = 455;
+            int widthCol2 = 145;
+            if (_isSpoilerEnabled)
+            {
+                widthCol1 = 480;
+                widthCol2 = 120;
+            }
+            ImGui.TableSetupColumn($"###FramerKitsTableAmount#{currentCharacter.Id}#Amount#Col1",
+                ImGuiTableColumnFlags.WidthFixed, widthCol1);
+            ImGui.TableSetupColumn($"###FramerKitsTableAmount#{currentCharacter.Id}#Amount#Col2",
+                ImGuiTableColumnFlags.WidthFixed, widthCol2);
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            ImGui.Text("");
+            ImGui.TableSetColumnIndex(1);
+            string endStr = string.Empty;
+            if (!_isSpoilerEnabled)
+            {
+                endStr += $"{Loc.Localize("ObtainedLowercase", " obtained")}";
+            }
+            else
+            {
+                endStr += $"/{_globalCache.FramerKitStorage.Count()}";
+            }
+            ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 3501)}: {currentCharacter.FramerKits.Count}{endStr}");
+        }
+
+        private void DrawFramerKitsCollection(Character currentCharacter)
+        {
+            List<uint> framerKits = (_obtainedFramerKitsOnly) ? currentCharacter.FramerKits : _globalCache.FramerKitStorage.Get();
+            int framerKitsCount = framerKits.Count;
+            if (framerKitsCount == 0) return;
+            int rows = (int)Math.Ceiling(framerKitsCount / (double)10);
+            int heigth = rows * 48 + 0;
+
+            using var table = ImRaii.Table($"###FramerKitsTable", 10,
+                ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner, new Vector2(572, heigth));
+            if (!table) return;
+
+            ImGui.TableSetupColumn($"###FramerKitsTable#Col1",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+            ImGui.TableSetupColumn($"###FramerKitsTable#Col2",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+            ImGui.TableSetupColumn($"###FramerKitsTable#Col3",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+            ImGui.TableSetupColumn($"###FramerKitsTable#Col4",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+            ImGui.TableSetupColumn($"###FramerKitsTable#Col5",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+            ImGui.TableSetupColumn($"###FramerKitsTable#Col6",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+            ImGui.TableSetupColumn($"###FramerKitsTable#Col7",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+            ImGui.TableSetupColumn($"###FramerKitsTable#Col8",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+            ImGui.TableSetupColumn($"###FramerKitsTable#Col9",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+            ImGui.TableSetupColumn($"###FramerKitsTable#Col10",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+
+            int i = 0;
+            foreach (uint fkId in framerKits)
+            {
+                if (i % 10 == 0)
+                {
+                    ImGui.TableNextRow();
+                }
+
+                ImGui.TableNextColumn();
+                FramerKit? f = _globalCache.FramerKitStorage.LoadItem(_currentLocale, fkId);
+                if (f == null)
+                {
+                    continue;
+                }
+
+                if (currentCharacter.HasFramerKit(fkId))
+                {
+                    Utils.DrawIcon(_globalCache.IconStorage.LoadHighResIcon(f.Icon), new Vector2(48, 48));
+                }
+                else
+                {
+                    if (_isSpoilerEnabled)
+                    {
+                        Utils.DrawIcon(_globalCache.IconStorage.LoadHighResIcon(f.Icon), new Vector2(48, 48),
+                            new Vector4(1, 1, 1, 0.5f));
+                    }
+                    else
+                    {
+                        Utils.DrawIcon(_globalCache.IconStorage.LoadHighResIcon(000786), new Vector2(48, 48));
+                    }
+                }
+                if (ImGui.IsItemHovered())
+                {
+                    Utils.DrawFramerKitTooltip(_currentLocale, ref _globalCache, f);
                 }
 
                 i++;

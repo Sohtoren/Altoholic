@@ -1,6 +1,8 @@
 ﻿using Dalamud;
 using Lumina.Excel.GeneratedSheets;
 using System.Collections.Generic;
+using System.Linq;
+using Item = Lumina.Excel.GeneratedSheets.Item;
 
 namespace Altoholic.Cache
 {
@@ -25,7 +27,7 @@ namespace Altoholic.Cache
             ret = new ItemItemLevel
             {
                 Item = dbItem,
-                ItemLevel = Utils.GetItemLevelFromId(dbItem.LevelItem.Row)!
+                ItemLevel = null
             };
             _items[id] = ret;
             return ret.Item;
@@ -54,6 +56,27 @@ namespace Altoholic.Cache
             return _items.Where(i => i.Value.item.Name == name).ToList();
         }*/
 
+        public Item? LoadItemFromName(ClientLanguage currentLocale, string name)
+        {
+            if (string.IsNullOrEmpty(name)) return null;
+
+            KeyValuePair<uint, ItemItemLevel> item = _items.FirstOrDefault(i => i.Value.Item.Name == name);
+            if (item.Value is not null)
+            {
+                return item.Value.Item;
+            }
+
+            Item? dbItem = Utils.GetItemFromName(currentLocale, name);
+            if (dbItem == null) return null;
+            ItemItemLevel ret = new()
+            {
+                Item = dbItem,
+                ItemLevel = null
+            };
+            _items[dbItem.RowId] = ret;
+            return ret.Item;
+        }
+
         public EventItem? LoadEventItem(ClientLanguage currentLocale, uint id)
         {
             if (_eventItems.TryGetValue(id, out EventItem? ret))
@@ -64,7 +87,6 @@ namespace Altoholic.Cache
             _eventItems[id] = item;
             return item;
         }
-
         public void Dispose()
         {
             _items.Clear();

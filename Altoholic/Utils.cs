@@ -19,6 +19,7 @@ using Stain = Lumina.Excel.GeneratedSheets.Stain;
 using TripleTriadCard = Lumina.Excel.GeneratedSheets.TripleTriadCard;
 using Emote = Lumina.Excel.GeneratedSheets.Emote;
 using TextCommand = Lumina.Excel.GeneratedSheets.TextCommand;
+using System.Xml.Linq;
 
 namespace Altoholic
 {
@@ -475,6 +476,13 @@ namespace Altoholic
             ExcelSheet<Item>? ditm = Plugin.DataManager.GetExcelSheet<Item>(currentLocale);
             IEnumerable<Item>? items = ditm?.Where(i => i.Name.RawString.Contains(name.ToLower(), StringComparison.CurrentCultureIgnoreCase));
             return items;
+        }
+        public static Item? GetItemFromName(ClientLanguage currentLocale, string name)
+        {
+            //Plugin.Log.Debug($"GetItemFromId : {id}");
+            ExcelSheet<Item>? ditm = Plugin.DataManager.GetExcelSheet<Item>(currentLocale);
+            Item? item = ditm?.FirstOrDefault(i => i.Name.RawString.Contains(name.ToLower(), StringComparison.CurrentCultureIgnoreCase));
+            return item;
         }
 
         public static ItemLevel? GetItemLevelFromId(uint id)
@@ -1453,9 +1461,9 @@ namespace Altoholic
             if (!drawTripleTriadCardTooltip) return;
             using var drawTripleTriadCardTooltipTable = ImRaii.Table($"###DrawEmoteTooltip#TripleTriadCard_{emote.Id}", 2);
             if (!drawTripleTriadCardTooltipTable) return;
-            ImGui.TableSetupColumn($"###DrawEmoteTooltip#TripleTriadCard_{emote.Id}#Icon",
+            ImGui.TableSetupColumn($"###DrawEmoteTooltip#Emote_{emote.Id}#Icon",
                 ImGuiTableColumnFlags.WidthFixed, 55);
-            ImGui.TableSetupColumn($"###DrawEmoteTooltip#TripleTriadCard_{emote.Id}#Name",
+            ImGui.TableSetupColumn($"###DrawEmoteTooltip#Emote_{emote.Id}#Name",
                 ImGuiTableColumnFlags.WidthFixed, 305);
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
@@ -1492,6 +1500,68 @@ namespace Altoholic
                     break;
                 case ClientLanguage.Japanese:
                     ImGui.TextUnformatted($"{Capitalize(emote.TextCommand.JapaneseDescription)}");
+                    break;
+            }
+        }
+
+        public static void DrawBardingTooltip(ClientLanguage currentLocale, ref GlobalCache globalCache, Models.Barding barding, uint Icon)
+        {
+            using var drawTripleTriadCardTooltip = ImRaii.Tooltip();
+            if (!drawTripleTriadCardTooltip) return;
+            using var drawTripleTriadCardTooltipTable = ImRaii.Table($"###DrawBardingTooltip#TripleTriadCard_{barding.Id}", 2);
+            if (!drawTripleTriadCardTooltipTable) return;
+            ImGui.TableSetupColumn($"###DrawBardingTooltip#Barding_{barding.Id}#Icon",
+                ImGuiTableColumnFlags.WidthFixed, 55);
+            ImGui.TableSetupColumn($"###DrawBardingTooltip#Barding_{barding.Id}#Name",
+                ImGuiTableColumnFlags.WidthFixed, 305);
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            DrawIcon(globalCache.IconStorage.LoadIcon(Icon), new Vector2(40, 40));
+            ImGui.TableSetColumnIndex(1);
+            switch (currentLocale)
+            {
+                case ClientLanguage.German:
+                    ImGui.TextUnformatted($"{Capitalize(barding.GermanName)}");
+                    break;
+                case ClientLanguage.English:
+                    ImGui.TextUnformatted($"{Capitalize(barding.EnglishName)}");
+                    break;
+                case ClientLanguage.French:
+                    ImGui.TextUnformatted($"{Capitalize(barding.FrenchName)}");
+                    break;
+                case ClientLanguage.Japanese:
+                    ImGui.TextUnformatted($"{Capitalize(barding.JapaneseName)}");
+                    break;
+            }
+        }
+
+        public static void DrawFramerKitTooltip(ClientLanguage currentLocale, ref GlobalCache globalCache, FramerKit framerKit)
+        {
+            using var drawTripleTriadCardTooltip = ImRaii.Tooltip();
+            if (!drawTripleTriadCardTooltip) return;
+            using var drawTripleTriadCardTooltipTable = ImRaii.Table($"###DrawFramerKitTooltip#TripleTriadCard_{framerKit.Id}", 2);
+            if (!drawTripleTriadCardTooltipTable) return;
+            ImGui.TableSetupColumn($"###DrawFramerKitTooltip#FramerKit_{framerKit.Id}#Icon",
+                ImGuiTableColumnFlags.WidthFixed, 55);
+            ImGui.TableSetupColumn($"###DrawFramerKitTooltip#FramerKit_{framerKit.Id}#Name",
+                ImGuiTableColumnFlags.WidthFixed, 305);
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            DrawIcon(globalCache.IconStorage.LoadIcon(framerKit.Icon), new Vector2(40, 40));
+            ImGui.TableSetColumnIndex(1);
+            switch (currentLocale)
+            {
+                case ClientLanguage.German:
+                    ImGui.TextUnformatted($"{Capitalize(framerKit.GermanName)}");
+                    break;
+                case ClientLanguage.English:
+                    ImGui.TextUnformatted($"{Capitalize(framerKit.EnglishName)}");
+                    break;
+                case ClientLanguage.French:
+                    ImGui.TextUnformatted($"{Capitalize(framerKit.FrenchName)}");
+                    break;
+                case ClientLanguage.Japanese:
+                    ImGui.TextUnformatted($"{Capitalize(framerKit.JapaneseName)}");
                     break;
             }
         }
@@ -1795,6 +1865,53 @@ namespace Altoholic
 
             return returnedEmotesIds;
         }
+
+        public static BuddyEquip? GetBarding(ClientLanguage currentLocale, uint id)
+        {
+            ExcelSheet<BuddyEquip>? dbe = Plugin.DataManager.GetExcelSheet<BuddyEquip>(currentLocale);
+            BuddyEquip? lumina = dbe?.GetRow(id);
+            return lumina;
+        }
+        public static List<Barding>? GetAllBardings(ClientLanguage currentLocale)
+        {
+            List<Barding> returnedBardingsIds = [];
+            ExcelSheet<BuddyEquip>? dbe = Plugin.DataManager.GetExcelSheet<BuddyEquip>(currentLocale);
+            using IEnumerator<BuddyEquip>? bardingEnumerator = dbe?.GetEnumerator();
+            if (bardingEnumerator is null) return null;
+            while (bardingEnumerator.MoveNext())
+            {
+                BuddyEquip barding = bardingEnumerator.Current;
+                if (string.IsNullOrEmpty(barding.Name) || barding.RowId == 0) continue;
+                Barding b = new() { Id = barding.RowId };
+                Item? item = GetItemFromName(currentLocale, barding.Name);
+
+                b.Icon = item?.Icon ?? barding.IconHead;
+                switch (currentLocale)
+                {
+                    case ClientLanguage.German:
+                        b.GermanName = barding.Name;
+                        break;
+                    case ClientLanguage.English:
+                        b.EnglishName = barding.Name;
+                        break;
+                    case ClientLanguage.French:
+                        b.FrenchName = barding.Name;
+                        break;
+                    case ClientLanguage.Japanese:
+                        b.JapaneseName = barding.Name;
+                        break;
+                }
+
+                b.IconHead = barding.IconHead;
+                b.IconBody = barding.IconBody;
+                b.IconLegs = barding.IconLegs;
+
+                returnedBardingsIds.Add(b);
+            }
+
+            return returnedBardingsIds;
+        }
+
 
         public static string GetTribalNameFromId(ClientLanguage currentLocale, uint id)
         {
