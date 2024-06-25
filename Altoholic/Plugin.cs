@@ -101,6 +101,8 @@ namespace Altoholic
                 StainStorage = new StainStorage(),
                 MinionStorage = new MinionStorage(),
                 MountStorage = new MountStorage(),
+                TripleTriadCardStorage = new TripleTriadCardStorage(),
+                EmoteStorage = new EmoteStorage(),
             };
 
             nint playtimePtr = SigScanner.ScanText(PlaytimeSig);
@@ -123,6 +125,8 @@ namespace Altoholic
 
             _globalCache.MountStorage.Init(_currentLocale);
             _globalCache.MinionStorage.Init(_currentLocale);
+            _globalCache.TripleTriadCardStorage.Init(_currentLocale);
+            _globalCache.EmoteStorage.Init(_currentLocale);
 
             altoholicService = new Service(
                 () => _localPlayer,
@@ -220,6 +224,7 @@ namespace Altoholic
             _globalCache.StainStorage.Dispose();
             _globalCache.MinionStorage.Dispose();
             _globalCache.MountStorage.Dispose();
+            _globalCache.TripleTriadCardStorage.Dispose();
 
             CollectionWindow.Dispose();
             RetainersWindow.Dispose();
@@ -656,6 +661,20 @@ namespace Altoholic
                 if (uistate.IsCompanionUnlocked(i))
                 {
                     _localPlayer.Minions.Add(i);
+                }
+            }
+            foreach (uint i in _globalCache.TripleTriadCardStorage.Get().Where(i => !_localPlayer.HasTTC(i)))
+            {
+                if (uistate.IsTripleTriadCardUnlocked((ushort)i))
+                {
+                    _localPlayer.TripleTriadCards.Add(i);
+                }
+            }
+            foreach (uint i in _globalCache.EmoteStorage.Get().Where(i => !_localPlayer.HasEmote(i)))
+            {
+                if (uistate.IsEmoteUnlocked((ushort)i))
+                {
+                    _localPlayer.Emotes.Add(i);
                 }
             }
 

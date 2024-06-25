@@ -4,7 +4,6 @@ using Dalamud;
 using Dalamud.Game.Text;
 using Dalamud.Interface.Internal;
 using Dalamud.Interface.Utility.Raii;
-using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Common.Math;
 using ImGuiNET;
@@ -17,6 +16,9 @@ using System.Linq;
 using ClassJob = Lumina.Excel.GeneratedSheets.ClassJob;
 using Mount = Lumina.Excel.GeneratedSheets.Mount;
 using Stain = Lumina.Excel.GeneratedSheets.Stain;
+using TripleTriadCard = Lumina.Excel.GeneratedSheets.TripleTriadCard;
+using Emote = Lumina.Excel.GeneratedSheets.Emote;
+using TextCommand = Lumina.Excel.GeneratedSheets.TextCommand;
 
 namespace Altoholic
 {
@@ -1396,6 +1398,104 @@ namespace Altoholic
             }
         }
 
+        public static void DrawTTCTooltip(ClientLanguage currentLocale, ref GlobalCache globalCache, Models.TripleTriadCard tripleTriadCard)
+        {
+            using var drawTripleTriadCardTooltip = ImRaii.Tooltip();
+            if (!drawTripleTriadCardTooltip) return;
+            using (var drawTripleTriadCardTooltipTable = ImRaii.Table($"###DrawTripleTriadCardTooltip#TripleTriadCard_{tripleTriadCard.Id}", 2))
+            {
+                if (!drawTripleTriadCardTooltipTable) return;
+                ImGui.TableSetupColumn($"###DrawTripleTriadCardTooltip#TripleTriadCard_{tripleTriadCard.Id}#Icon",
+                    ImGuiTableColumnFlags.WidthFixed, 55);
+                ImGui.TableSetupColumn($"###DrawTripleTriadCardTooltip#TripleTriadCard_{tripleTriadCard.Id}#Name",
+                    ImGuiTableColumnFlags.WidthFixed, 305);
+                ImGui.TableNextRow();
+                ImGui.TableSetColumnIndex(0);
+                DrawIcon(globalCache.IconStorage.LoadIcon(tripleTriadCard.Icon), new Vector2(40, 40));
+                ImGui.TableSetColumnIndex(1);
+                switch (currentLocale)
+                {
+                    case ClientLanguage.German:
+                        ImGui.TextUnformatted($"{Capitalize(tripleTriadCard.GermanName)}");
+                        break;
+                    case ClientLanguage.English:
+                        ImGui.TextUnformatted($"{Capitalize(tripleTriadCard.EnglishName)}");
+                        break;
+                    case ClientLanguage.French:
+                        ImGui.TextUnformatted($"{Capitalize(tripleTriadCard.FrenchName)}");
+                        break;
+                    case ClientLanguage.Japanese:
+                        ImGui.TextUnformatted($"{Capitalize(tripleTriadCard.JapaneseName)}");
+                        break;
+                }
+            }
+            ImGui.Separator();
+            switch (currentLocale)
+            {
+                case ClientLanguage.German:
+                    ImGui.TextUnformatted($"{Capitalize(tripleTriadCard.GermanDescription)}");
+                    break;
+                case ClientLanguage.English:
+                    ImGui.TextUnformatted($"{Capitalize(tripleTriadCard.EnglishDescription)}");
+                    break;
+                case ClientLanguage.French:
+                    ImGui.TextUnformatted($"{Capitalize(tripleTriadCard.FrenchDescription)}");
+                    break;
+                case ClientLanguage.Japanese:
+                    ImGui.TextUnformatted($"{Capitalize(tripleTriadCard.JapaneseDescription)}");
+                    break;
+            }
+        }
+
+        public static void DrawEmoteTooltip(ClientLanguage currentLocale, ref GlobalCache globalCache, Models.Emote emote)
+        {
+            using var drawTripleTriadCardTooltip = ImRaii.Tooltip();
+            if (!drawTripleTriadCardTooltip) return;
+            using var drawTripleTriadCardTooltipTable = ImRaii.Table($"###DrawEmoteTooltip#TripleTriadCard_{emote.Id}", 2);
+            if (!drawTripleTriadCardTooltipTable) return;
+            ImGui.TableSetupColumn($"###DrawEmoteTooltip#TripleTriadCard_{emote.Id}#Icon",
+                ImGuiTableColumnFlags.WidthFixed, 55);
+            ImGui.TableSetupColumn($"###DrawEmoteTooltip#TripleTriadCard_{emote.Id}#Name",
+                ImGuiTableColumnFlags.WidthFixed, 305);
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            DrawIcon(globalCache.IconStorage.LoadIcon(emote.Icon), new Vector2(40, 40));
+            ImGui.TableSetColumnIndex(1);
+            switch (currentLocale)
+            {
+                case ClientLanguage.German:
+                    ImGui.TextUnformatted($"{Capitalize(emote.GermanName)}");
+                    break;
+                case ClientLanguage.English:
+                    ImGui.TextUnformatted($"{Capitalize(emote.EnglishName)}");
+                    break;
+                case ClientLanguage.French:
+                    ImGui.TextUnformatted($"{Capitalize(emote.FrenchName)}");
+                    break;
+                case ClientLanguage.Japanese:
+                    ImGui.TextUnformatted($"{Capitalize(emote.JapaneseName)}");
+                    break;
+            }
+
+            if (emote.TextCommand is null) return;
+            ImGui.Separator();
+            switch (currentLocale)
+            {
+                case ClientLanguage.German:
+                    ImGui.TextUnformatted($"{Capitalize(emote.TextCommand.GermanDescription)}");
+                    break;
+                case ClientLanguage.English:
+                    ImGui.TextUnformatted($"{Capitalize(emote.TextCommand.EnglishDescription)}");
+                    break;
+                case ClientLanguage.French:
+                    ImGui.TextUnformatted($"{Capitalize(emote.TextCommand.FrenchDescription)}");
+                    break;
+                case ClientLanguage.Japanese:
+                    ImGui.TextUnformatted($"{Capitalize(emote.TextCommand.JapaneseDescription)}");
+                    break;
+            }
+        }
+
         private static string GetExtractableString(ClientLanguage currentLocale, GlobalCache globalCache, Item item)
         {
             string str = globalCache.AddonStorage.LoadAddonString(currentLocale, 1361);
@@ -1487,7 +1587,7 @@ namespace Altoholic
                 if (minion.Icon == 0) continue;
                 Minion m = new() { Id = minion.RowId, Icon = minion.Icon, Transient = new Transient() };
                 CompanionTransient? ct = GetCompanionTransient(currentLocale, minion.RowId);
-                if (ct is null) return null;
+                if (ct is null) continue;
                 switch (currentLocale)
                 {
                     case ClientLanguage.German:
@@ -1547,7 +1647,7 @@ namespace Altoholic
                 if (mount.Icon == 0) continue;
                 Models.Mount m = new() { Id = mount.RowId, Icon = mount.Icon, Transient = new Transient() };
                 MountTransient? mt = GetMountTransient(currentLocale, mount.RowId);
-                if (mt is null) return null;
+                if (mt is null) continue;
                 switch (currentLocale)
                 {
                     case ClientLanguage.German:
@@ -1580,6 +1680,120 @@ namespace Altoholic
             }
 
             return returnedMountsIds;
+        }
+
+        public static TripleTriadCard? GetTripleTriadCard(ClientLanguage currentLocale, uint id)
+        {
+            ExcelSheet<TripleTriadCard>? dttc = Plugin.DataManager.GetExcelSheet<TripleTriadCard>(currentLocale);
+            TripleTriadCard? lumina = dttc?.GetRow(id);
+            return lumina;
+        }
+        public static List<Models.TripleTriadCard>? GetAllTripletriadcards(ClientLanguage currentLocale)
+        {
+            List<Models.TripleTriadCard> returnedTripletriadcardsIds = [];
+            ExcelSheet<TripleTriadCard>? dm = Plugin.DataManager.GetExcelSheet<TripleTriadCard>(currentLocale);
+            using IEnumerator<TripleTriadCard>? tripletriadcardEnumerator = dm?.GetEnumerator();
+            if (tripletriadcardEnumerator is null) return null;
+            while (tripletriadcardEnumerator.MoveNext())
+            {
+                TripleTriadCard tripletriadcard = tripletriadcardEnumerator.Current;
+                if (string.IsNullOrEmpty(tripletriadcard.Name) || tripletriadcard.Name == "0") continue;
+                Models.TripleTriadCard ttc = new() { Id = tripletriadcard.RowId };
+                switch (currentLocale)
+                {
+                    case ClientLanguage.German:
+                        ttc.GermanName = tripletriadcard.Name;
+                        ttc.GermanDescription = tripletriadcard.Description;
+                        break;
+                    case ClientLanguage.English:
+                        ttc.EnglishName = tripletriadcard.Name;
+                        ttc.EnglishDescription = tripletriadcard.Description;
+                        break;
+                    case ClientLanguage.French:
+                        ttc.FrenchName = tripletriadcard.Name;
+                        ttc.FrenchDescription = tripletriadcard.Description;
+                        break;
+                    case ClientLanguage.Japanese:
+                        ttc.JapaneseName = tripletriadcard.Name;
+                        ttc.JapaneseDescription = tripletriadcard.Description;
+                        break;
+                }
+
+                ttc.Icon = tripletriadcard.RowId + 88000;
+
+                returnedTripletriadcardsIds.Add(ttc);
+            }
+
+            return returnedTripletriadcardsIds;
+        }
+
+        public static Emote? GetEmote(ClientLanguage currentLocale, uint id)
+        {
+            ExcelSheet<Emote>? dttc = Plugin.DataManager.GetExcelSheet<Emote>(currentLocale);
+            Emote? lumina = dttc?.GetRow(id);
+            return lumina;
+        }
+        public static TextCommand? GetTextCommand(ClientLanguage currentLocale, uint id)
+        {
+            ExcelSheet<TextCommand>? dtc = Plugin.DataManager.GetExcelSheet<TextCommand>(currentLocale);
+            TextCommand? lumina = dtc?.GetRow(id);
+            return lumina;
+        }
+        public static List<Models.Emote>? GetAllEmotes(ClientLanguage currentLocale)
+        {
+            List<Models.Emote> returnedEmotesIds = [];
+            ExcelSheet<Emote>? dm = Plugin.DataManager.GetExcelSheet<Emote>(currentLocale);
+            using IEnumerator<Emote>? emoteEnumerator = dm?.GetEnumerator();
+            if (emoteEnumerator is null) return null;
+            while (emoteEnumerator.MoveNext())
+            {
+                Emote emote = emoteEnumerator.Current;
+                if (string.IsNullOrEmpty(emote.Name) || emote.Name == "0") continue;
+                Models.Emote e = new() { Id = emote.RowId, TextCommand = new Models.TextCommand() };
+                TextCommand? tc = GetTextCommand(currentLocale, emote.TextCommand.Row);
+                if (tc is null) continue;
+                switch (currentLocale)
+                {
+                    case ClientLanguage.German:
+                        e.GermanName = emote.Name;
+                        e.TextCommand.GermanCommand = tc.Command;
+                        e.TextCommand.GermanShortCommand = tc.ShortCommand;
+                        e.TextCommand.GermanDescription= tc.Description;
+                        e.TextCommand.GermanAlias = tc.Alias;
+                        e.TextCommand.GermanShortAlias = tc.ShortAlias;
+                        break;
+                    case ClientLanguage.English:
+                        e.EnglishName = emote.Name;
+                        e.TextCommand.EnglishCommand = tc.Command;
+                        e.TextCommand.EnglishShortCommand = tc.ShortCommand;
+                        e.TextCommand.EnglishDescription = tc.Description;
+                        e.TextCommand.EnglishAlias = tc.Alias;
+                        e.TextCommand.EnglishShortAlias = tc.ShortAlias;
+                        break;
+                    case ClientLanguage.French:
+                        e.FrenchName = emote.Name;
+                        e.TextCommand.FrenchCommand = tc.Command;
+                        e.TextCommand.FrenchShortCommand = tc.ShortCommand;
+                        e.TextCommand.FrenchDescription = tc.Description;
+                        e.TextCommand.FrenchAlias = tc.Alias;
+                        e.TextCommand.FrenchShortAlias = tc.ShortAlias;
+                        break;
+                    case ClientLanguage.Japanese:
+                        e.JapaneseName = emote.Name;
+                        e.TextCommand.JapaneseCommand = tc.Command;
+                        e.TextCommand.JapaneseShortCommand = tc.ShortCommand;
+                        e.TextCommand.JapaneseDescription = tc.Description;
+                        e.TextCommand.JapaneseAlias = tc.Alias;
+                        e.TextCommand.JapaneseShortAlias = tc.ShortAlias;
+                        break;
+                }
+
+                e.Icon = emote.Icon;
+
+                returnedEmotesIds.Add(e);
+            }
+
+            return returnedEmotesIds;
         }
 
         public static string GetTribalNameFromId(ClientLanguage currentLocale, uint id)

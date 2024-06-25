@@ -8,14 +8,9 @@ using Mount = Altoholic.Models.Mount;
 
 namespace Altoholic.Cache
 {
-    public class MountStorage : IDisposable
+    public class MountStorage(int size = 120) : IDisposable
     {
-        private readonly Dictionary<uint, Mount> _mounts;
-
-        public MountStorage(int size = 120)
-        {
-            _mounts = new Dictionary<uint, Mount>(size);
-        }
+        private readonly Dictionary<uint, Mount> _mounts = new(size);
 
         public void Init(ClientLanguage currentLocale)
         {

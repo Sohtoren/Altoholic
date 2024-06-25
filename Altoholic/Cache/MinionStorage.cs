@@ -7,14 +7,10 @@ using System.Linq;
 
 namespace Altoholic.Cache
 {
-    public class MinionStorage : IDisposable
+    public class MinionStorage(int size = 120) : IDisposable
     {
-        private readonly Dictionary<uint, Minion> _minions;
+        private readonly Dictionary<uint, Minion> _minions = new(size);
 
-        public MinionStorage(int size = 120)
-        {
-            _minions = new Dictionary<uint, Minion>(size);
-        }
         public void Init(ClientLanguage currentLocale)
         {
             List<Minion>? minions = Utils.GetAllMinions(currentLocale);
@@ -34,7 +30,7 @@ namespace Altoholic.Cache
             if (_minions.TryGetValue(id, out Minion? ret))
                 return ret;
 
-            Lumina.Excel.GeneratedSheets.Companion? companion = Utils.GetMinion(lang, id);
+            Companion? companion = Utils.GetMinion(lang, id);
             if (companion is null)
             {
                 return null;

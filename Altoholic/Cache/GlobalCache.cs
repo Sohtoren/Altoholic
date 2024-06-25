@@ -9,5 +9,7 @@
         public required StainStorage StainStorage { get; set; } = null!;
         public required MinionStorage MinionStorage { get; set; } = null!;
         public required MountStorage MountStorage { get; set; } = null!;
+        public required TripleTriadCardStorage TripleTriadCardStorage { get; set; } = null!;
+        public required EmoteStorage EmoteStorage { get; set; } = null!;
     }
 }

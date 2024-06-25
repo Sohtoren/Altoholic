@@ -474,25 +474,7 @@ namespace Altoholic.Windows
             int itemCount = inventory.FindAll(i => i.ItemId != 0).ToList().Count;
             int rows = (int)Math.Ceiling(itemCount / (double)7);
             int height = rows * 36;
-            /*int height = inventory.FindAll(i => i.ItemId != 0).ToList().Count switch
-            {
-                int i when i is >= 0 and <= 7 => 36,
-                int i when i is >= 8 and <= 14 => 72,
-                int i when i is >= 15 and <= 21 => 108,
-                int i when i is >= 22 and <= 28 => 144,
-                int i when i is >= 29 and <= 35 => 180,
-                int i when i is >= 36 and <= 42 => 216,
-                int i when i is >= 43 and <= 49 => 252,
-                int i when i is >= 44 and <= 56 => 288,
-                int i when i is >= 57 and <= 63 => 234,
-                int i when i is >= 64 and <= 70 => 360,
-                int i when i is >= 71 and <= 77 => 396,
-                int i when i is >= 78 and <= 84 => 432,
-                int i when i is >= 85 and <= 91 => 468,
-                int i when i is >= 92 and <= 98 => 504,
-                >= 99 and <= 105 => 540,
-                _ => -1
-            };*/
+
             using var table = ImRaii.Table($"###CharactersInventoryTable#Inventories#Inventory#{label}Table", 7, ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner, new Vector2(310, height));
             if (!table) return;
 
@@ -646,7 +628,7 @@ namespace Altoholic.Windows
         private void DrawArmory(GlobalCache globalCache, Character selectedCharacter)
         {
             if (selectedCharacter.ArmoryInventory == null) return;
-            Plugin.Log.Debug($"{_armoryTabTextures.Count}");
+            //Plugin.Log.Debug($"{_armoryTabTextures.Count}");
             using var table = ImRaii.Table("###CharactersInventoryTable#Inventories#ArmoryInventoryTable", 3, ImGuiTableFlags.ScrollY);
             if (!table) return;
 
@@ -747,7 +729,7 @@ namespace Altoholic.Windows
             }
             if (ImGui.IsItemClicked())
             {
-                Plugin.Log.Debug($"{tooltip} clicked");
+                //Plugin.Log.Debug($"{tooltip} clicked");
                 _selectedTab = type;
                 _selectedArmory = new Dictionary<string, List<Gear>> { { tooltip, gear } };
             }

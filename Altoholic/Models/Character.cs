@@ -41,6 +41,8 @@ namespace Altoholic.Models
         public List<Retainer> Retainers { get; set; } = [];
         public List<uint> Minions { get; set; } = [];
         public List<uint> Mounts { get; set; } = [];
+        public List<uint> TripleTriadCards { get; set; } = [];
+        public List<uint> Emotes { get; set; } = [];
 
         public bool HasAnyLevelJob(int level)
         {
@@ -78,6 +80,15 @@ namespace Altoholic.Models
         public bool HasMount(uint id)
         {
             return Mounts.Count > 0 && Mounts.Contains(id);
+        }
+        
+        public bool HasTTC(uint id)
+        {
+            return TripleTriadCards.Count > 0 && TripleTriadCards.Contains(id);
+        }
+        public bool HasEmote(uint id)
+        {
+            return Emotes.Count > 0 && Emotes.Contains(id);
         }
     }
 }
