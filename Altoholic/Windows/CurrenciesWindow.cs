@@ -1,6 +1,6 @@
 ﻿using Altoholic.Cache;
 using Altoholic.Models;
-using Dalamud;
+using Dalamud.Game;
 using Dalamud.Game.Text;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
@@ -17,7 +17,7 @@ namespace Altoholic.Windows
     public class CurrenciesWindow : Window, IDisposable
     {
         private readonly Plugin _plugin;
-        private ClientLanguage _currentLocale;
+        private Dalamud.Game.ClientLanguage _currentLocale;
         private readonly GlobalCache _globalCache;
 
         public CurrenciesWindow(
@@ -72,7 +72,7 @@ namespace Altoholic.Windows
         public override void Draw()
         {
             _currentLocale = _plugin.Configuration.Language;
-            if(_selectedCurrency == "Currency" && _currentLocale != ClientLanguage.English) 
+            if(_selectedCurrency == "Currency" && _currentLocale != Dalamud.Game.ClientLanguage.English) 
                 _selectedCurrency = _globalCache.AddonStorage.LoadAddonString(_currentLocale, 761);
             List<Character> chars = [];
             chars.Insert(0, GetPlayer.Invoke());
@@ -358,11 +358,11 @@ namespace Altoholic.Windows
         private void DrawCommonCurrency(int currency, Currencies id, uint max)
         {
             using var charactersCurrenciesCommonCurrencyTableCurrencyTable =
-                ImRaii.Table($"###CharactersCurrencies#CommonCurrencyTable#CurrencyTable", 2);
+                ImRaii.Table("###CharactersCurrencies#CommonCurrencyTable#CurrencyTable", 2);
             if (!charactersCurrenciesCommonCurrencyTableCurrencyTable) return;
-            ImGui.TableSetupColumn($"###CharactersCurrencies#CommonCurrencyTable#CurrencyTable#Icon",
+            ImGui.TableSetupColumn("###CharactersCurrencies#CommonCurrencyTable#CurrencyTable#Icon",
                 ImGuiTableColumnFlags.WidthFixed, 50);
-            ImGui.TableSetupColumn($"###CharactersCurrencies#CommonCurrencyTable#CurrencyTable#Amount",
+            ImGui.TableSetupColumn("###CharactersCurrencies#CommonCurrencyTable#CurrencyTable#Amount",
                 ImGuiTableColumnFlags.WidthStretch);
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
@@ -381,22 +381,22 @@ namespace Altoholic.Windows
             ImGui.TextUnformatted(max != 0 ? $"{currency:N0}/{max:N0}" : $"{currency:N0}");
         }
 
-        private static string GetTurnIn(ClientLanguage currentLocale)
+        private static string GetTurnIn(Dalamud.Game.ClientLanguage currentLocale)
         {
             DateTime nextTuesdayDateUtc = GetNextTuesday();
             DateTime nextTuesdayDate = DateTime.SpecifyKind(nextTuesdayDateUtc, DateTimeKind.Utc).ToLocalTime();
             TimeSpan time = TimeSpan.FromSeconds(GetNextTuesdayRemainingTime());
             string v = currentLocale switch
             {
-                ClientLanguage.German =>
-                    $"Zurücksetzung: {time.TotalHours:00} Std. {time.Minutes:00} Min. {""}({nextTuesdayDate.Day}.{nextTuesdayDate.Month}., {nextTuesdayDate.Hour:D2}:{nextTuesdayDate.Minute:D2} Uhr)",
-                ClientLanguage.English =>
-                    $"Reset in {Math.Floor(time.TotalHours)}h {time.Minutes:00}m {""}[{nextTuesdayDate.Month}/{nextTuesdayDate.Day} {nextTuesdayDate.Hour:D2} {nextTuesdayDate.Minute:D2}]",
-                ClientLanguage.French =>
-                    $"Remise à zéro   : {time.TotalHours:00} {((nextTuesdayDate.Hour > 1) ? "heures" : "heure")} {time.Minutes:00} {((nextTuesdayDate.Minute > 1) ? "minutes" : "minute")} {""}[{nextTuesdayDate.Day}.{nextTuesdayDate.Month} {nextTuesdayDate.Hour:D2}h{nextTuesdayDate.Minute:D2}]",
-                ClientLanguage.Japanese =>
-                    $"リセット日時 : {time.TotalHours:00}時間{time.Minutes:00}分後{""}[{nextTuesdayDate.Day}/{nextTuesdayDate.Month} {nextTuesdayDate.Hour}:{nextTuesdayDate.Minute}]",
-                _ => $"Reset in {Math.Floor(time.TotalHours)}h {time.Minutes:00}m {""}[{nextTuesdayDate.Month}/{nextTuesdayDate.Day} {nextTuesdayDate.Hour:D2} {nextTuesdayDate.Minute:D2}]",
+                Dalamud.Game.ClientLanguage.German =>
+                    $"Zurücksetzung: {time.TotalHours:00} Std. {time.Minutes:00} Min. ({nextTuesdayDate.Day}.{nextTuesdayDate.Month}., {nextTuesdayDate.Hour:D2}:{nextTuesdayDate.Minute:D2} Uhr)",
+                Dalamud.Game.ClientLanguage.English =>
+                    $"Reset in {Math.Floor(time.TotalHours)}h {time.Minutes:00}m [{nextTuesdayDate.Month}/{nextTuesdayDate.Day} {nextTuesdayDate.Hour:D2} {nextTuesdayDate.Minute:D2}]",
+                Dalamud.Game.ClientLanguage.French =>
+                    $"Remise à zéro   : {time.TotalHours:00} {((nextTuesdayDate.Hour > 1) ? "heures" : "heure")} {time.Minutes:00} {((nextTuesdayDate.Minute > 1) ? "minutes" : "minute")} [{nextTuesdayDate.Day}.{nextTuesdayDate.Month} {nextTuesdayDate.Hour:D2}h{nextTuesdayDate.Minute:D2}]",
+                Dalamud.Game.ClientLanguage.Japanese =>
+                    $"リセット日時 : {time.TotalHours:00}時間{time.Minutes:00}分後[{nextTuesdayDate.Day}/{nextTuesdayDate.Month} {nextTuesdayDate.Hour}:{nextTuesdayDate.Minute}]",
+                _ => $"Reset in {Math.Floor(time.TotalHours)}h {time.Minutes:00}m [{nextTuesdayDate.Month}/{nextTuesdayDate.Day} {nextTuesdayDate.Hour:D2} {nextTuesdayDate.Minute:D2}]",
             };
             return v;
         }
@@ -436,29 +436,32 @@ namespace Altoholic.Windows
                 ImGui.TableSetupColumn(
                     $"###CharactersCurrencies#BattleCurrencyTable#AllaganTable#Weekly#{selectedCharacter.Id}",
                     ImGuiTableColumnFlags.WidthStretch);
-                ImGui.TableNextRow();
+                /*ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(1);
                 ImGui.TextUnformatted(
-                    $"{GetTurnIn(_currentLocale)}");
+                    $"{GetTurnIn(_currentLocale)}");*/
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
                 DrawBattleCurrency(pc.Allagan_Tomestone_Of_Poetics, Currencies.ALLAGAN_TOMESTONE_OF_POETICS, 2000,
                     true);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                DrawBattleCurrency(pc.Allagan_Tomestone_Of_Causality, Currencies.ALLAGAN_TOMESTONE_OF_CAUSALITY, 2000,
+                DrawBattleCurrency(pc.Allagan_Tomestone_Of_Aesthetics, Currencies.ALLAGAN_TOMESTONE_OF_AESTHETICS, 2000,
                     true);
-                ImGui.TableNextRow();
+                /*ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
                 DrawBattleCurrency(pc.Allagan_Tomestone_Of_Comedy, Currencies.ALLAGAN_TOMESTONE_OF_COMEDY, 2000, true);
                 ImGui.TableSetColumnIndex(1);
                 ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 3502));
-                ImGui.TextUnformatted($"{pc.Weekly_Acquired_Tomestone}/{pc.Weekly_Limit_Tomestone}");
+                ImGui.TextUnformatted($"{pc.Weekly_Acquired_Tomestone}/{pc.Weekly_Limit_Tomestone}");*/
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
                 ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 5756));
-                DrawBattleCurrency(pc.Allagan_Tomestone_Of_Astronomy, Currencies.ALLAGAN_TOMESTONE_OF_ASTRONOMY, 2000,
-                    true);
+                DrawBattleCurrency(pc.Allagan_Tomestone_Of_Causality, Currencies.ALLAGAN_TOMESTONE_OF_CAUSALITY, 2000,
+                    true, true);
+                ImGui.TableSetColumnIndex(1);
+                DrawBattleCurrency(pc.Allagan_Tomestone_Of_Comedy, Currencies.ALLAGAN_TOMESTONE_OF_COMEDY, 2000,
+                    true, true);
             }
 
             if (
@@ -564,7 +567,7 @@ namespace Altoholic.Windows
         }
 
         private void DrawBattleCurrency(int currency, Currencies id, uint max, bool total = false,
-            bool discontinued = true)
+            bool discontinued = false)
         {
             using var charactersCurrenciesBattleCurrencyTableCurrencyTable =
                 ImRaii.Table("###CharactersCurrencies#BattleCurrencyTable#CurrencyTable", 2);
@@ -577,7 +580,12 @@ namespace Altoholic.Windows
             ImGui.TableSetColumnIndex(0);
             Item? item = _globalCache.ItemStorage.LoadItem(_currentLocale, (uint)id);
             if (item == null) return;
-            Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(item.Icon), new Vector2(32, 32));
+            Vector4 alpha = !discontinued switch
+            {
+                true => new Vector4(1, 1, 1, 1),
+                false => new Vector4(1, 1, 1, 0.5f),
+            };
+            Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(item.Icon), new Vector2(32, 32), alpha);
             if (ImGui.IsItemHovered())
             {
                 ImGui.BeginTooltip();
@@ -617,14 +625,14 @@ namespace Altoholic.Windows
                 ImGui.Separator();
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                DrawOtherCurrency(pc.White_Crafters_Scrip, Currencies.WHITE_CRAFTERS_SCRIP, 4000, true);
-                ImGui.TableNextRow();
-                ImGui.TableSetColumnIndex(0);
                 DrawOtherCurrency(pc.Purple_Crafters_Scrip, Currencies.PURPLE_CRAFTERS_SCRIP, 4000, true);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
+                DrawOtherCurrency(pc.Orange_Crafters_Scrip, Currencies.ORANGE_CRAFTERS_SCRIP, 4000, true);
+                ImGui.TableNextRow();
+                ImGui.TableSetColumnIndex(0);
                 ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 5756));
-                DrawOtherCurrency(pc.Yellow_Crafters_Scrip, Currencies.YELLOW_CRAFTERS_SCRIP, 4000, true, true);
+                DrawOtherCurrency(pc.White_Crafters_Scrip, Currencies.WHITE_CRAFTERS_SCRIP, 4000, true, true);
 
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
@@ -632,14 +640,14 @@ namespace Altoholic.Windows
                 ImGui.Separator();
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                DrawOtherCurrency(pc.White_Gatherers_Scrip, Currencies.WHITE_GATHERERS_SCRIP, 4000, true);
+                DrawOtherCurrency(pc.Purple_Gatherers_Scrip, Currencies.PURPLE_CRAFTERS_SCRIP, 4000, true);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                DrawOtherCurrency(pc.Purple_Gatherers_Scrip, Currencies.PURPLE_GATHERERS_SCRIP, 4000, true);
+                DrawOtherCurrency(pc.Orange_Gatherers_Scrip, Currencies.ORANGE_GATHERERS_SCRIP, 4000, true);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
                 ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 5756));
-                DrawOtherCurrency(pc.Yellow_Gatherers_Scrip, Currencies.YELLOW_GATHERERS_SCRIP, 4000, true, true);
+                DrawOtherCurrency(pc.White_Gatherers_Scrip, Currencies.WHITE_GATHERERS_SCRIP, 4000, true, true);
             }
 
             if (!selectedCharacter.IsQuestCompleted(69208))
@@ -670,7 +678,12 @@ namespace Altoholic.Windows
             ImGui.TableSetColumnIndex(0);
             Item? item = _globalCache.ItemStorage.LoadItem(_currentLocale, (uint)id);
             if (item == null) return;
-            Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(item.Icon), new Vector2(32, 32));
+            Vector4 alpha = !discontinued switch
+            {
+                true => new Vector4(1, 1, 1, 1),
+                false => new Vector4(1, 1, 1, 0.5f),
+            };
+            Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(item.Icon), new Vector2(32, 32), alpha);
             if (ImGui.IsItemHovered())
             {
                 ImGui.BeginTooltip();

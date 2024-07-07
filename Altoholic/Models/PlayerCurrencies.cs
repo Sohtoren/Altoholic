@@ -3,6 +3,7 @@ namespace Altoholic.Models
     public class PlayerCurrencies
     {
         public int Achievement_Certificate { get; set; }
+        public int Allagan_Tomestone_Of_Aesthetics { get; set; }
         public int Allagan_Tomestone_Of_Allegory { get; set; }
         public int Allagan_Tomestone_Of_Aphorism { get; set; }
         public int Allagan_Tomestone_Of_Astronomy { get; set; }
@@ -50,6 +51,7 @@ namespace Altoholic.Models
         public int Irregular_Tomestone_Of_Esoterics { get; set; }
         public int Irregular_Tomestone_Of_Genesis_i { get; set; }
         public int Irregular_Tomestone_Of_Genesis_ii { get; set; }
+        public int Irregular_Tomestone_Of_Goetia { get; set; }
         public int Irregular_Tomestone_Of_Law { get; set; }
         public int Irregular_Tomestone_Of_Lore { get; set; }
         public int Irregular_Tomestone_Of_Mendacity { get; set; }
@@ -71,6 +73,8 @@ namespace Altoholic.Models
         public int MGP { get; set; }
         public int Namazu_Koban { get; set; }
         public int Omicron_Omnitoken { get; set; }
+        public int Orange_Crafters_Scrip { get; set; }
+        public int Orange_Gatherers_Scrip { get; set; }
         public int Purple_Crafters_Scrip { get; set; }
         public int Purple_Gatherers_Scrip { get; set; }
         public int Qitari_Compliment { get; set; }

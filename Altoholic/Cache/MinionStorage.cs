@@ -1,5 +1,5 @@
 ﻿using Altoholic.Models;
-using Dalamud;
+using Dalamud.Game;
 using Lumina.Excel.GeneratedSheets;
 using System;
 using System.Collections.Generic;
@@ -11,7 +11,7 @@ namespace Altoholic.Cache
     {
         private readonly Dictionary<uint, Minion> _minions = new(size);
 
-        public void Init(ClientLanguage currentLocale)
+        public void Init(Dalamud.Game.ClientLanguage currentLocale)
         {
             List<Minion>? minions = Utils.GetAllMinions(currentLocale);
             if (minions == null || minions.Count == 0)
@@ -25,7 +25,7 @@ namespace Altoholic.Cache
             }
         }
 
-        public Minion? GetMinion(ClientLanguage lang, uint id)
+        public Minion? GetMinion(Dalamud.Game.ClientLanguage lang, uint id)
         {
             if (_minions.TryGetValue(id, out Minion? ret))
                 return ret;
@@ -41,25 +41,25 @@ namespace Altoholic.Cache
             if (ct is null) return null;
             switch (lang)
             {
-                case ClientLanguage.German:
+                case Dalamud.Game.ClientLanguage.German:
                     ret.GermanName = companion.Singular;
                     ret.Transient.GermanDescription = ct.Description;
                     ret.Transient.GermanDescriptionEnhanced = ct.DescriptionEnhanced;
                     ret.Transient.GermanTooltip = ct.Tooltip;
                     break;
-                case ClientLanguage.English:
+                case Dalamud.Game.ClientLanguage.English:
                     ret.EnglishName = companion.Singular;
                     ret.Transient.EnglishDescription = ct.Description;
                     ret.Transient.EnglishDescriptionEnhanced = ct.DescriptionEnhanced;
                     ret.Transient.EnglishTooltip = ct.Tooltip;
                     break;
-                case ClientLanguage.French:
+                case Dalamud.Game.ClientLanguage.French:
                     ret.FrenchName = companion.Singular;
                     ret.Transient.FrenchDescription = ct.Description;
                     ret.Transient.FrenchDescriptionEnhanced = ct.DescriptionEnhanced;
                     ret.Transient.FrenchTooltip = ct.Tooltip;
                     break;
-                case ClientLanguage.Japanese:
+                case Dalamud.Game.ClientLanguage.Japanese:
                     ret.JapaneseName = companion.Singular;
                     ret.Transient.JapaneseDescription = ct.Description;
                     ret.Transient.JapaneseDescriptionEnhanced = ct.DescriptionEnhanced;

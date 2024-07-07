@@ -8,15 +8,15 @@ namespace Altoholic
 {
     public class Localization
     {
-        private static readonly string[] ApplicableLangCodes = { "de", "ja", "fr" };
+        private static readonly string[] ApplicableLangCodes = ["de", "ja", "fr"];
 
         private const string FallbackLangCode = "en";
         private const string LocResourceDirectory = "loc";
 
-        private readonly Assembly Assembly = Assembly.GetCallingAssembly();
+        private readonly Assembly _assembly = Assembly.GetCallingAssembly();
 
-        public void ExportLocalizable() => Loc.ExportLocalizableForAssembly(Assembly);
-        private void SetupWithFallbacks() => Loc.SetupWithFallbacks(Assembly);
+        public void ExportLocalizable() => Loc.ExportLocalizableForAssembly(_assembly);
+        private void SetupWithFallbacks() => Loc.SetupWithFallbacks(_assembly);
 
         public void SetupWithLangCode(string langCode)
         {
@@ -28,7 +28,7 @@ namespace Altoholic
 
             try
             {
-                Loc.Setup(ReadLocData(langCode), Assembly);
+                Loc.Setup(ReadLocData(langCode), _assembly);
             }
             catch (Exception)
             {

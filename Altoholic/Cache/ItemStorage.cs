@@ -1,4 +1,4 @@
-﻿using Dalamud;
+﻿using Dalamud.Game;
 using Lumina.Excel.GeneratedSheets;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +15,14 @@ namespace Altoholic.Cache
     {
         private readonly Dictionary<uint, ItemItemLevel> _items = new(size);
         private readonly Dictionary<uint, EventItem> _eventItems = new(size);
+        private List<uint> _armoireItems = [];
+
+        public void Init()
+        {
+            _armoireItems = Utils.GetArmoireIds();
+            Plugin.Log.Debug($"ItemStorage Init() {_armoireItems.Count} items");
+            Plugin.Log.Debug($"ItemStorage Init() contains? : {_armoireItems.Contains(41678)}");
+        }
 
         public Item? LoadItem(ClientLanguage currentLocale, uint id)
         {
@@ -87,6 +95,12 @@ namespace Altoholic.Cache
             _eventItems[id] = item;
             return item;
         }
+
+        public bool CanBeInArmoire(uint id)
+        {
+            return _armoireItems.Contains(id);
+        }
+        
         public void Dispose()
         {
             _items.Clear();

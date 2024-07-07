@@ -1,5 +1,5 @@
 using Altoholic.Cache;
-using Dalamud;
+
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
 using ImGuiNET;
@@ -11,16 +11,17 @@ namespace Altoholic.Windows
     public class MainWindow : Window, IDisposable
     {
         private readonly Plugin _plugin;
-        private CharactersWindow CharactersWindow { get; init; }
-        private DetailsWindow DetailsWindow { get; init; }
-        private JobsWindow JobsWindow { get; init; }
-        private CurrenciesWindow CurrenciesWindow { get; init; }
-        private InventoriesWindow InventoriesWindow { get; init; }
-        private RetainersWindow RetainersWindow { get; init; }
-        private CollectionWindow CollectionWindow { get; init; }
-        private ConfigWindow ConfigWindow { get; init; }
+        private CharactersWindow CharactersWindow { get; }
+        private DetailsWindow DetailsWindow { get; }
+        private JobsWindow JobsWindow { get; }
+        private CurrenciesWindow CurrenciesWindow { get; }
+        private InventoriesWindow InventoriesWindow { get; }
+        private RetainersWindow RetainersWindow { get; }
+        private CollectionWindow CollectionWindow { get; }
+        private ProgressWindow ProgressWindow { get; }
+        private ConfigWindow ConfigWindow { get; }
 
-        private ClientLanguage _currentLocale;
+        private Dalamud.Game.ClientLanguage _currentLocale;
 
         private readonly GlobalCache _globalCache;
 
@@ -35,6 +36,7 @@ namespace Altoholic.Windows
             InventoriesWindow inventoriesWindow,
             RetainersWindow retainersWindow,
             CollectionWindow collectionWindow,
+            ProgressWindow progressWindow,
             ConfigWindow configWindow
         )
             : base(name, ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse)
@@ -52,6 +54,7 @@ namespace Altoholic.Windows
             InventoriesWindow = inventoriesWindow;
             RetainersWindow = retainersWindow;
             CollectionWindow = collectionWindow;
+            ProgressWindow = progressWindow;
             ConfigWindow = configWindow;
         }
 
@@ -75,7 +78,7 @@ namespace Altoholic.Windows
             ConfigWindow.IsOpen = false;*/
         }
 
-        public void Clean()
+        public void Clear()
         {
             CharactersWindow.IsOpen = false;
             CurrenciesWindow.IsOpen = false;
@@ -84,6 +87,7 @@ namespace Altoholic.Windows
             InventoriesWindow.IsOpen = false;
             RetainersWindow.IsOpen = false;
             CollectionWindow.IsOpen = false;
+            ProgressWindow.IsOpen = false;
             ConfigWindow.IsOpen = false;
         }
 
@@ -96,13 +100,14 @@ namespace Altoholic.Windows
             InventoriesWindow.IsOpen = false;
             RetainersWindow.IsOpen = false;
             CollectionWindow.IsOpen = false;
+            ProgressWindow.IsOpen = false;
             ConfigWindow.IsOpen = false;
         }
 
         public override void Draw()
         {
             _currentLocale = _plugin.Configuration.Language;
-            using var tabBar = ImRaii.TabBar($"###MainWindow#Tabs");
+            using var tabBar = ImRaii.TabBar("###MainWindow#Tabs");
             if (!tabBar.Success) return;
             using (var charactersTab = ImRaii.TabItem($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 7543)}"))
             {
@@ -111,7 +116,7 @@ namespace Altoholic.Windows
                     //if(charactersWindow.DrawConditions())
                     CharactersWindow.Draw();
                 }
-            };
+            }
         
             using (var detailsTab = ImRaii.TabItem($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 6361)}"))
             {
@@ -119,7 +124,7 @@ namespace Altoholic.Windows
                 {
                     DetailsWindow.Draw();
                 }
-            };
+            }
 
 
             using (var jobsTab = ImRaii.TabItem($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 760)}"))
@@ -128,7 +133,7 @@ namespace Altoholic.Windows
                 {
                     JobsWindow.Draw();
                 }
-            };
+            }
         
             using (var currenciesTab = ImRaii.TabItem($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 761)}"))
             {
@@ -136,7 +141,7 @@ namespace Altoholic.Windows
                 {
                     CurrenciesWindow.Draw();
                 }
-            };
+            }
         
             using (var inventoryTab = ImRaii.TabItem($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 520)}"))// Inventory
             {
@@ -144,7 +149,7 @@ namespace Altoholic.Windows
                 {
                     InventoriesWindow.Draw();
                 }
-            };
+            }
         
             using (var retainersTab = ImRaii.TabItem($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 532)}"))
             {
@@ -152,24 +157,24 @@ namespace Altoholic.Windows
                 {
                     RetainersWindow.Draw();
                 }
-            };
+            }
 
-            using (var collectionTab = ImRaii.TabItem($"{((_currentLocale == ClientLanguage.French) ? _globalCache.AddonStorage.LoadAddonString(_currentLocale, 9515) : _globalCache.AddonStorage.LoadAddonString(_currentLocale, 12790))}")) //Pet&Mount&Orchestrion
+            using (var collectionTab = ImRaii.TabItem($"{((_currentLocale == Dalamud.Game.ClientLanguage.French) ? _globalCache.AddonStorage.LoadAddonString(_currentLocale, 9515) : _globalCache.AddonStorage.LoadAddonString(_currentLocale, 12790))}")) //Pet&Mount&Orchestrion
             {
                 if (collectionTab.Success)
                 {
-                    //3 tabs, pets, mount & orchestrion with list
                     CollectionWindow.Draw();
                 }
-            };
+            }
 
-            using (var progressTab = ImRaii.TabItem($"Progress"))
+            using (var progressTab = ImRaii.TabItem("Progress"))
             {
                 if (progressTab.Success)
                 {
                     //Double list like retainers, second list is the progress list (msq, event, yokai, trials,etc)
+                    ProgressWindow.Draw();
                 }
-            };
+            }
 
             using (var settingsTab = ImRaii.TabItem($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 10119)}"))
             {
@@ -177,7 +182,7 @@ namespace Altoholic.Windows
                 {
                     ConfigWindow.Draw();
                 }
-            };
+            }
 
             //Todo: anonymize
             //ImGui.EndTabBar();

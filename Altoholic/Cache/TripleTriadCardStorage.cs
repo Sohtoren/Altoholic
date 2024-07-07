@@ -1,5 +1,4 @@
-﻿using Altoholic.Models;
-using Dalamud;
+﻿
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +10,7 @@ namespace Altoholic.Cache
     {
         private readonly Dictionary<uint, TripleTriadCard> _tripleTriadCard = new(size);
 
-        public void Init(ClientLanguage currentLocale)
+        public void Init(Dalamud.Game.ClientLanguage currentLocale, GlobalCache globalCache)
         {
             List<TripleTriadCard>? ttc = Utils.GetAllTripletriadcards(currentLocale);
             if (ttc == null || ttc.Count == 0)
@@ -21,11 +20,12 @@ namespace Altoholic.Cache
 
             foreach (TripleTriadCard tt in ttc)
             {
+                globalCache.IconStorage.LoadHighResIcon(tt.Icon);
                 _tripleTriadCard.Add(tt.Id, tt);
             }
         }
 
-        public TripleTriadCard? GetTripleTriadCard(ClientLanguage lang, uint id)
+        public TripleTriadCard? GetTripleTriadCard(Dalamud.Game.ClientLanguage lang, uint id)
         {
             if (_tripleTriadCard.TryGetValue(id, out TripleTriadCard? ret))
                 return ret;
@@ -39,19 +39,19 @@ namespace Altoholic.Cache
             ret = new TripleTriadCard { Id = ttc.RowId };
             switch (lang)
             {
-                case ClientLanguage.German:
+                case Dalamud.Game.ClientLanguage.German:
                     ret.GermanName = ttc.Name;
                     ret.GermanDescription = ttc.Description;
                     break;
-                case ClientLanguage.English:
+                case Dalamud.Game.ClientLanguage.English:
                     ret.EnglishName = ttc.Name;
                     ret.EnglishDescription = ttc.Description;
                     break;
-                case ClientLanguage.French:
+                case Dalamud.Game.ClientLanguage.French:
                     ret.FrenchName = ttc.Name;
                     ret.FrenchDescription = ttc.Description;
                     break;
-                case ClientLanguage.Japanese:
+                case Dalamud.Game.ClientLanguage.Japanese:
                     ret.JapaneseName = ttc.Name;
                     ret.JapaneseDescription = ttc.Description;
                     break;

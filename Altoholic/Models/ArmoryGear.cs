@@ -1,6 +1,4 @@
-using FFXIVClientStructs.FFXIV.Client.Game;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 
 namespace Altoholic.Models
 {

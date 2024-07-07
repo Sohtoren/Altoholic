@@ -1,8 +1,9 @@
 using Altoholic.Cache;
 using Altoholic.Models;
-using Dalamud;
+using Dalamud.Game;
 using Dalamud.Game.Text;
 using Dalamud.Interface.Internal;
+using Dalamud.Interface.Textures.TextureWraps;
 using Dalamud.Interface.Windowing;
 using ImGuiNET;
 using System;
@@ -16,7 +17,7 @@ namespace Altoholic.Windows
     public class JobsWindow : Window, IDisposable
     {
         private readonly Plugin _plugin;
-        private ClientLanguage _currentLocale;
+        private Dalamud.Game.ClientLanguage _currentLocale;
         private readonly GlobalCache _globalCache;
         public JobsWindow(
             Plugin plugin,
@@ -34,7 +35,7 @@ namespace Altoholic.Windows
             _globalCache = globalCache;
             //_currentLocale = currentLocale;
 
-            _rolesTextureWrap = Plugin.TextureProvider.GetTextureFromGame("ui/uld/fourth/ToggleButton_hr1.tex");
+            _rolesTextureWrap = Plugin.TextureProvider.GetFromGame("ui/uld/fourth/ToggleButton_hr1.tex").RentAsync().Result;
         }
 
         public Func<Character> GetPlayer { get; init; } = null!;
@@ -111,7 +112,7 @@ namespace Altoholic.Windows
 
         private void DrawAll(List<Character> chars)
         {
-            using var charactersJobsAll = ImRaii.Table("###CharactersJobs#All", 41,
+            using var charactersJobsAll = ImRaii.Table("###CharactersJobs#All", 43,
                 ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner |
                 ImGuiTableFlags.ScrollX | ImGuiTableFlags.ScrollY);
             if (!charactersJobsAll) return;
@@ -136,6 +137,7 @@ namespace Altoholic.Windows
             ImGui.TableSetupColumn("###CharactersJobs#All#NIN", ImGuiTableColumnFlags.WidthFixed, 25);
             ImGui.TableSetupColumn("###CharactersJobs#All#SAM", ImGuiTableColumnFlags.WidthFixed, 25);
             ImGui.TableSetupColumn("###CharactersJobs#All#RPR", ImGuiTableColumnFlags.WidthFixed, 25);
+            ImGui.TableSetupColumn("###CharactersJobs#All#VPR", ImGuiTableColumnFlags.WidthFixed, 25);
             ImGui.TableSetupColumn("###CharactersJobs#All#ARC", ImGuiTableColumnFlags.WidthFixed, 25);
             ImGui.TableSetupColumn("###CharactersJobs#All#BRD", ImGuiTableColumnFlags.WidthFixed, 25);
             ImGui.TableSetupColumn("###CharactersJobs#All#MCH", ImGuiTableColumnFlags.WidthFixed, 25);
@@ -145,6 +147,7 @@ namespace Altoholic.Windows
             ImGui.TableSetupColumn("###CharactersJobs#All#ACN", ImGuiTableColumnFlags.WidthFixed, 25);
             ImGui.TableSetupColumn("###CharactersJobs#All#SMN", ImGuiTableColumnFlags.WidthFixed, 25);
             ImGui.TableSetupColumn("###CharactersJobs#All#RDM", ImGuiTableColumnFlags.WidthFixed, 25);
+            ImGui.TableSetupColumn("###CharactersJobs#All#PCT", ImGuiTableColumnFlags.WidthFixed, 25);
             ImGui.TableSetupColumn("###CharactersJobs#All#BLU", ImGuiTableColumnFlags.WidthFixed, 25);
             ImGui.TableSetupColumn("###CharactersJobs#All#CRP", ImGuiTableColumnFlags.WidthFixed, 25);
             ImGui.TableSetupColumn("###CharactersJobs#All#BSM", ImGuiTableColumnFlags.WidthFixed, 25);
@@ -338,8 +341,17 @@ namespace Altoholic.Windows
                 ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.RPR));
                 ImGui.EndTooltip();
             }
-
+            
             ImGui.TableSetColumnIndex(20);
+            ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.VPR, true));
+            if (ImGui.IsItemHovered())
+            {
+                ImGui.BeginTooltip();
+                ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.VPR));
+                ImGui.EndTooltip();
+            }
+
+            ImGui.TableSetColumnIndex(21);
             ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.ARC, true));
             if (ImGui.IsItemHovered())
             {
@@ -348,7 +360,7 @@ namespace Altoholic.Windows
                 ImGui.EndTooltip();
             }
 
-            ImGui.TableSetColumnIndex(21);
+            ImGui.TableSetColumnIndex(22);
             ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.BRD, true));
             if (ImGui.IsItemHovered())
             {
@@ -357,7 +369,7 @@ namespace Altoholic.Windows
                 ImGui.EndTooltip();
             }
 
-            ImGui.TableSetColumnIndex(22);
+            ImGui.TableSetColumnIndex(23);
             ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.MCH, true));
             if (ImGui.IsItemHovered())
             {
@@ -366,7 +378,7 @@ namespace Altoholic.Windows
                 ImGui.EndTooltip();
             }
 
-            ImGui.TableSetColumnIndex(23);
+            ImGui.TableSetColumnIndex(24);
             ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.DNC, true));
             if (ImGui.IsItemHovered())
             {
@@ -375,7 +387,7 @@ namespace Altoholic.Windows
                 ImGui.EndTooltip();
             }
 
-            ImGui.TableSetColumnIndex(24);
+            ImGui.TableSetColumnIndex(25);
             ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.THM, true));
             if (ImGui.IsItemHovered())
             {
@@ -384,7 +396,7 @@ namespace Altoholic.Windows
                 ImGui.EndTooltip();
             }
 
-            ImGui.TableSetColumnIndex(25);
+            ImGui.TableSetColumnIndex(26);
             ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.BLM, true));
             if (ImGui.IsItemHovered())
             {
@@ -393,7 +405,7 @@ namespace Altoholic.Windows
                 ImGui.EndTooltip();
             }
 
-            ImGui.TableSetColumnIndex(26);
+            ImGui.TableSetColumnIndex(27);
             ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.ACN, true));
             if (ImGui.IsItemHovered())
             {
@@ -402,7 +414,7 @@ namespace Altoholic.Windows
                 ImGui.EndTooltip();
             }
 
-            ImGui.TableSetColumnIndex(27);
+            ImGui.TableSetColumnIndex(28);
             ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.SMN, true));
             if (ImGui.IsItemHovered())
             {
@@ -411,7 +423,7 @@ namespace Altoholic.Windows
                 ImGui.EndTooltip();
             }
 
-            ImGui.TableSetColumnIndex(28);
+            ImGui.TableSetColumnIndex(29);
             ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.RDM, true));
             if (ImGui.IsItemHovered())
             {
@@ -419,8 +431,17 @@ namespace Altoholic.Windows
                 ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.RDM));
                 ImGui.EndTooltip();
             }
+            
+            ImGui.TableSetColumnIndex(30);
+            ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.PCT, true));
+            if (ImGui.IsItemHovered())
+            {
+                ImGui.BeginTooltip();
+                ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.PCT));
+                ImGui.EndTooltip();
+            }
 
-            ImGui.TableSetColumnIndex(29);
+            ImGui.TableSetColumnIndex(31);
             ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.BLU));
             if (ImGui.IsItemHovered())
             {
@@ -429,7 +450,7 @@ namespace Altoholic.Windows
                 ImGui.EndTooltip();
             }
 
-            ImGui.TableSetColumnIndex(30);
+            ImGui.TableSetColumnIndex(32);
             ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.CRP, true));
             if (ImGui.IsItemHovered())
             {
@@ -438,7 +459,7 @@ namespace Altoholic.Windows
                 ImGui.EndTooltip();
             }
 
-            ImGui.TableSetColumnIndex(31);
+            ImGui.TableSetColumnIndex(33);
             ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.BSM, true));
             if (ImGui.IsItemHovered())
             {
@@ -447,7 +468,7 @@ namespace Altoholic.Windows
                 ImGui.EndTooltip();
             }
 
-            ImGui.TableSetColumnIndex(32);
+            ImGui.TableSetColumnIndex(34);
             ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.ARM, true));
             if (ImGui.IsItemHovered())
             {
@@ -456,7 +477,7 @@ namespace Altoholic.Windows
                 ImGui.EndTooltip();
             }
 
-            ImGui.TableSetColumnIndex(33);
+            ImGui.TableSetColumnIndex(35);
             ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.GSM, true));
             if (ImGui.IsItemHovered())
             {
@@ -465,7 +486,7 @@ namespace Altoholic.Windows
                 ImGui.EndTooltip();
             }
 
-            ImGui.TableSetColumnIndex(34);
+            ImGui.TableSetColumnIndex(36);
             ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.LTW, true));
             if (ImGui.IsItemHovered())
             {
@@ -474,7 +495,7 @@ namespace Altoholic.Windows
                 ImGui.EndTooltip();
             }
 
-            ImGui.TableSetColumnIndex(35);
+            ImGui.TableSetColumnIndex(37);
             ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.WVR, true));
             if (ImGui.IsItemHovered())
             {
@@ -483,7 +504,7 @@ namespace Altoholic.Windows
                 ImGui.EndTooltip();
             }
 
-            ImGui.TableSetColumnIndex(36);
+            ImGui.TableSetColumnIndex(38);
             ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.ALC, true));
             if (ImGui.IsItemHovered())
             {
@@ -492,7 +513,7 @@ namespace Altoholic.Windows
                 ImGui.EndTooltip();
             }
 
-            ImGui.TableSetColumnIndex(37);
+            ImGui.TableSetColumnIndex(39);
             ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.CUL, true));
             if (ImGui.IsItemHovered())
             {
@@ -501,7 +522,7 @@ namespace Altoholic.Windows
                 ImGui.EndTooltip();
             }
 
-            ImGui.TableSetColumnIndex(38);
+            ImGui.TableSetColumnIndex(40);
             ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.MIN, true));
             if (ImGui.IsItemHovered())
             {
@@ -510,7 +531,7 @@ namespace Altoholic.Windows
                 ImGui.EndTooltip();
             }
 
-            ImGui.TableSetColumnIndex(39);
+            ImGui.TableSetColumnIndex(41);
             ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.BTN, true));
             if (ImGui.IsItemHovered())
             {
@@ -519,7 +540,7 @@ namespace Altoholic.Windows
                 ImGui.EndTooltip();
             }
 
-            ImGui.TableSetColumnIndex(40);
+            ImGui.TableSetColumnIndex(42);
             ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.FSH, true));
             if (ImGui.IsItemHovered())
             {
@@ -581,46 +602,50 @@ namespace Altoholic.Windows
                 ImGui.TableSetColumnIndex(19);
                 ImGui.TextUnformatted($"{currChar.Jobs.Reaper.Level}");
                 ImGui.TableSetColumnIndex(20);
-                ImGui.TextUnformatted($"{currChar.Jobs.Archer.Level}");
+                ImGui.TextUnformatted($"{currChar.Jobs.Viper.Level}");
                 ImGui.TableSetColumnIndex(21);
-                ImGui.TextUnformatted($"{currChar.Jobs.Bard.Level}");
+                ImGui.TextUnformatted($"{currChar.Jobs.Archer.Level}");
                 ImGui.TableSetColumnIndex(22);
-                ImGui.TextUnformatted($"{currChar.Jobs.Machinist.Level}");
+                ImGui.TextUnformatted($"{currChar.Jobs.Bard.Level}");
                 ImGui.TableSetColumnIndex(23);
-                ImGui.TextUnformatted($"{currChar.Jobs.Dancer.Level}");
+                ImGui.TextUnformatted($"{currChar.Jobs.Machinist.Level}");
                 ImGui.TableSetColumnIndex(24);
-                ImGui.TextUnformatted($"{currChar.Jobs.Thaumaturge.Level}");
+                ImGui.TextUnformatted($"{currChar.Jobs.Dancer.Level}");
                 ImGui.TableSetColumnIndex(25);
-                ImGui.TextUnformatted($"{currChar.Jobs.BlackMage.Level}");
+                ImGui.TextUnformatted($"{currChar.Jobs.Thaumaturge.Level}");
                 ImGui.TableSetColumnIndex(26);
-                ImGui.TextUnformatted($"{currChar.Jobs.Arcanist.Level}");
-                ImGui.TableSetColumnIndex(27);
-                ImGui.TextUnformatted($"{currChar.Jobs.Summoner.Level}");
-                ImGui.TableSetColumnIndex(28);
-                ImGui.TextUnformatted($"{currChar.Jobs.RedMage.Level}");
-                ImGui.TableSetColumnIndex(29);
                 ImGui.TextUnformatted($"{currChar.Jobs.BlackMage.Level}");
+                ImGui.TableSetColumnIndex(27);
+                ImGui.TextUnformatted($"{currChar.Jobs.Arcanist.Level}");
+                ImGui.TableSetColumnIndex(28);
+                ImGui.TextUnformatted($"{currChar.Jobs.Summoner.Level}");
+                ImGui.TableSetColumnIndex(29);
+                ImGui.TextUnformatted($"{currChar.Jobs.RedMage.Level}");
                 ImGui.TableSetColumnIndex(30);
-                ImGui.TextUnformatted($"{currChar.Jobs.Carpenter.Level}");
+                ImGui.TextUnformatted($"{currChar.Jobs.Pictomancer.Level}");
                 ImGui.TableSetColumnIndex(31);
-                ImGui.TextUnformatted($"{currChar.Jobs.Blacksmith.Level}");
+                ImGui.TextUnformatted($"{currChar.Jobs.BlackMage.Level}");
                 ImGui.TableSetColumnIndex(32);
-                ImGui.TextUnformatted($"{currChar.Jobs.Armorer.Level}");
+                ImGui.TextUnformatted($"{currChar.Jobs.Carpenter.Level}");
                 ImGui.TableSetColumnIndex(33);
-                ImGui.TextUnformatted($"{currChar.Jobs.Goldsmith.Level}");
+                ImGui.TextUnformatted($"{currChar.Jobs.Blacksmith.Level}");
                 ImGui.TableSetColumnIndex(34);
-                ImGui.TextUnformatted($"{currChar.Jobs.Leatherworker.Level}");
+                ImGui.TextUnformatted($"{currChar.Jobs.Armorer.Level}");
                 ImGui.TableSetColumnIndex(35);
-                ImGui.TextUnformatted($"{currChar.Jobs.Weaver.Level}");
+                ImGui.TextUnformatted($"{currChar.Jobs.Goldsmith.Level}");
                 ImGui.TableSetColumnIndex(36);
-                ImGui.TextUnformatted($"{currChar.Jobs.Alchemist.Level}");
+                ImGui.TextUnformatted($"{currChar.Jobs.Leatherworker.Level}");
                 ImGui.TableSetColumnIndex(37);
-                ImGui.TextUnformatted($"{currChar.Jobs.Culinarian.Level}");
+                ImGui.TextUnformatted($"{currChar.Jobs.Weaver.Level}");
                 ImGui.TableSetColumnIndex(38);
-                ImGui.TextUnformatted($"{currChar.Jobs.Miner.Level}");
+                ImGui.TextUnformatted($"{currChar.Jobs.Alchemist.Level}");
                 ImGui.TableSetColumnIndex(39);
-                ImGui.TextUnformatted($"{currChar.Jobs.Botanist.Level}");
+                ImGui.TextUnformatted($"{currChar.Jobs.Culinarian.Level}");
                 ImGui.TableSetColumnIndex(40);
+                ImGui.TextUnformatted($"{currChar.Jobs.Miner.Level}");
+                ImGui.TableSetColumnIndex(41);
+                ImGui.TextUnformatted($"{currChar.Jobs.Botanist.Level}");
+                ImGui.TableSetColumnIndex(42);
                 ImGui.TextUnformatted($"{currChar.Jobs.Fisher.Level}");
             }
         }
@@ -635,14 +660,14 @@ namespace Altoholic.Windows
                 {
                     DrawDoWDoMJobs(selectedCharacter);
                 }
-            };
+            }
             using (var DoHDoLTab = ImRaii.TabItem($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 1081)}###CharactersJobs#JobsTabs#DoHDoL#{selectedCharacter.Id}"))
             {
                 if (DoHDoLTab)
                 {
                     DrawDoHDoLJobs(selectedCharacter);
                 }
-            };
+            }
         }
 
         private void DrawDoWDoMJobs(Character selectedCharacter)
@@ -658,8 +683,8 @@ namespace Altoholic.Windows
             using (var charactersJobsDoWRoleTank = ImRaii.Table("###CharactersJobs#DoW#RoleTank", 2))
             {
                 if (!charactersJobsDoWRoleTank) return;
-                ImGui.TableSetupColumn($"###CharactersJobs#DoW#RoleTank#Icon", ImGuiTableColumnFlags.WidthFixed, 22);
-                ImGui.TableSetupColumn($"###CharactersJobs#DoW#RoleTank#Name", ImGuiTableColumnFlags.WidthStretch);
+                ImGui.TableSetupColumn("###CharactersJobs#DoW#RoleTank#Icon", ImGuiTableColumnFlags.WidthFixed, 22);
+                ImGui.TableSetupColumn("###CharactersJobs#DoW#RoleTank#Name", ImGuiTableColumnFlags.WidthStretch);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
                 Utils.DrawRoleTexture(ref _rolesTextureWrap, RoleIcon.Tank, new Vector2(20, 20));
@@ -673,8 +698,8 @@ namespace Altoholic.Windows
             using (var charactersJobsDoMRoleHealer = ImRaii.Table("###CharactersJobs#DoM#RoleHealer", 2))
             {
                 if (!charactersJobsDoMRoleHealer) return;
-                ImGui.TableSetupColumn($"###CharactersJobs#DoM#RoleHealer#Icon", ImGuiTableColumnFlags.WidthFixed, 22);
-                ImGui.TableSetupColumn($"###CharactersJobs#DoM#RoleHealer#Name", ImGuiTableColumnFlags.WidthStretch);
+                ImGui.TableSetupColumn("###CharactersJobs#DoM#RoleHealer#Icon", ImGuiTableColumnFlags.WidthFixed, 22);
+                ImGui.TableSetupColumn("###CharactersJobs#DoM#RoleHealer#Name", ImGuiTableColumnFlags.WidthStretch);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
                 Utils.DrawRoleTexture(ref _rolesTextureWrap, RoleIcon.Heal, new Vector2(20, 20));
@@ -788,12 +813,18 @@ namespace Altoholic.Windows
             DrawJobLine(selectedCharacter, ClassJob.THM);
 
             ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            DrawJobLine(selectedCharacter, ClassJob.VPR);
             ImGui.TableSetColumnIndex(1);
             DrawJobLine(selectedCharacter, ClassJob.SMN);
 
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(1);
             DrawJobLine(selectedCharacter, ClassJob.RDM);
+            
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(1);
+            DrawJobLine(selectedCharacter, ClassJob.PCT);
 
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(1);
@@ -986,6 +1017,13 @@ namespace Altoholic.Windows
 
                         break;
                     }
+                case ClassJob.VPR:
+                    {
+                        bool active = (selectedCharacter.Jobs.Viper.Level >= 70);
+                        DrawJob(selectedCharacter.Jobs.Viper, ClassJob.VPR, _globalCache.JobStorage.GetName(_currentLocale,(uint)ClassJob.VPR), active);
+
+                        break;
+                    }
                 case ClassJob.CNJ:
                 case ClassJob.WHM:
                     {
@@ -1088,6 +1126,13 @@ namespace Altoholic.Windows
                     {
                         bool active = (selectedCharacter.Jobs.RedMage.Level >= 50);
                         DrawJob(selectedCharacter.Jobs.RedMage, ClassJob.RDM, _globalCache.JobStorage.GetName(_currentLocale,(uint)ClassJob.RDM), active);
+
+                        break;
+                    }
+                case ClassJob.PCT:
+                    {
+                        bool active = (selectedCharacter.Jobs.Pictomancer.Level >= 50);
+                        DrawJob(selectedCharacter.Jobs.Pictomancer, ClassJob.PCT, _globalCache.JobStorage.GetName(_currentLocale,(uint)ClassJob.PCT), active);
 
                         break;
                     }
@@ -1222,7 +1267,7 @@ namespace Altoholic.Windows
                     }
                     ImGui.TableNextRow();
                     ImGui.TableSetColumnIndex(1);
-                    bool maxLevel = (jobId == ClassJob.BLU) ? job.Level == 80 : job.Level == 90;
+                    bool maxLevel = (jobId == ClassJob.BLU) ? job.Level == 80 : job.Level == 100;
                     Utils.DrawLevelProgressBar(job.Exp, _globalCache.JobStorage.GetNextLevelExp(job.Level), tooltip, active, maxLevel);
                 }
             if (ImGui.IsItemHovered())

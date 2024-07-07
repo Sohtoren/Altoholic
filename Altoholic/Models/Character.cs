@@ -21,6 +21,7 @@ namespace Altoholic.Models
         public bool IsReturner { get; set; } = false;
         public uint LastJob { get; set; } = 0;
         public int LastJobLevel { get; set; } = 0;
+        // ReSharper disable once InconsistentNaming
         public string FCTag { get; set; } = string.Empty;
         public string FreeCompany { get; set; } = string.Empty;
         public long LastOnline { get; set; } = 0;
@@ -44,6 +45,7 @@ namespace Altoholic.Models
         public List<uint> Bardings { get; set; } = [];
         public List<uint> FramerKits { get; set; } = [];
         public List<uint> OrchestrionRolls { get; set; } = [];
+        public List<uint> Ornaments { get; set; } = [];
 
         public bool HasAnyLevelJob(int level)
         {
@@ -82,7 +84,7 @@ namespace Altoholic.Models
         {
             return Mounts.Count > 0 && Mounts.Contains(id);
         }
-        
+        // ReSharper disable once InconsistentNaming
         public bool HasTTC(uint id)
         {
             return TripleTriadCards.Count > 0 && TripleTriadCards.Contains(id);
@@ -102,6 +104,11 @@ namespace Altoholic.Models
         public bool HasOrchestrionRoll(uint id)
         {
             return OrchestrionRolls.Count > 0 && OrchestrionRolls.Contains(id);
+        }
+        
+        public bool HasOrnament(uint id)
+        {
+            return Ornaments.Count > 0 && Ornaments.Contains(id);
         }
     }
 }

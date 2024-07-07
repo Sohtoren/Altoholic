@@ -1,5 +1,5 @@
-﻿using Altoholic.Models;
-using Dalamud;
+﻿
+using Dalamud.Game;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +11,7 @@ namespace Altoholic.Cache
     {
         private readonly Dictionary<uint, OrchestrionRoll> _orchestrionRolls = new(size);
 
-        public void Init(ClientLanguage currentLocale)
+        public void Init(Dalamud.Game.ClientLanguage currentLocale)
         {
             List<OrchestrionRoll>? orchestrions = Utils.GetAllOrchestrionRolls(currentLocale);
             if (orchestrions == null || orchestrions.Count == 0)
@@ -25,7 +25,7 @@ namespace Altoholic.Cache
             }
         }
 
-        public OrchestrionRoll? GetOrchestrionRoll(ClientLanguage lang, uint id)
+        public OrchestrionRoll? GetOrchestrionRoll(Dalamud.Game.ClientLanguage lang, uint id)
         {
             if (_orchestrionRolls.TryGetValue(id, out OrchestrionRoll? ret))
                 return ret;
@@ -39,16 +39,16 @@ namespace Altoholic.Cache
             ret = new OrchestrionRoll { Id = or.RowId };
             switch (lang)
             {
-                case ClientLanguage.German:
+                case Dalamud.Game.ClientLanguage.German:
                     ret.GermanName = or.Name;
                     break;
-                case ClientLanguage.English:
+                case Dalamud.Game.ClientLanguage.English:
                     ret.EnglishName = or.Name;
                     break;
-                case ClientLanguage.French:
+                case Dalamud.Game.ClientLanguage.French:
                     ret.FrenchName = or.Name;
                     break;
-                case ClientLanguage.Japanese:
+                case Dalamud.Game.ClientLanguage.Japanese:
                     ret.JapaneseName = or.Name;
                     break;
             }

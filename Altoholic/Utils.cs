@@ -1,8 +1,8 @@
 ﻿using Altoholic.Cache;
 using Altoholic.Models;
-using Dalamud;
+using Dalamud.Game;
 using Dalamud.Game.Text;
-using Dalamud.Interface.Internal;
+using Dalamud.Interface.Textures.TextureWraps;
 using Dalamud.Interface.Utility.Raii;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Common.Math;
@@ -19,7 +19,7 @@ using Stain = Lumina.Excel.GeneratedSheets.Stain;
 using TripleTriadCard = Lumina.Excel.GeneratedSheets.TripleTriadCard;
 using Emote = Lumina.Excel.GeneratedSheets.Emote;
 using TextCommand = Lumina.Excel.GeneratedSheets.TextCommand;
-using System.Xml.Linq;
+using Ornament = Lumina.Excel.GeneratedSheets.Ornament;
 
 namespace Altoholic
 {
@@ -559,6 +559,8 @@ namespace Altoholic
                 38 => 062038,
                 39 => 062039,
                 40 => 062040,
+                41 => 062041,
+                42 => 062042,
                 _ => FALLBACK_ICON,
             };
         }
@@ -607,6 +609,8 @@ namespace Altoholic
                 38 => 062138,
                 39 => 062139,
                 40 => 062140,
+                41 => 062141,
+                42 => 062142,
                 _ => FALLBACK_ICON,
             };
         }
@@ -655,6 +659,8 @@ namespace Altoholic
                 38 => 062263,
                 39 => 062264,
                 40 => 062265,
+                41 => 062266,
+                42 => 062267,
                 _ => FALLBACK_ICON,
             };
         }
@@ -855,6 +861,15 @@ namespace Altoholic
                 DrawGearPiece(currentLocale, ref globalCache, gears, GearSlot.FEET,
                     globalCache.AddonStorage.LoadAddonString(currentLocale, 11529), new Vector2(40, 40),
                     defaultTextures[GearSlot.FEET], defaultTextures[GearSlot.EMPTY]);
+                if (!retainer)
+                {
+                    ImGui.TableNextRow();
+                    ImGui.TableSetColumnIndex(0);
+                    //DrawGearPiece(ref _globalCache, gears, GearSlot.FEET, GetAddonString(11529), new Vector2(40, 40), 10035);
+                    DrawGearPiece(currentLocale, ref globalCache, gears, GearSlot.FACEWEAR,
+                        globalCache.AddonStorage.LoadAddonString(currentLocale, 16050), new Vector2(40, 40),
+                        defaultTextures[GearSlot.FACEWEAR], defaultTextures[GearSlot.EMPTY]);
+                }
             }
 
             ImGui.TableSetColumnIndex(1);
@@ -900,11 +915,37 @@ namespace Altoholic
                 globalCache.AddonStorage.LoadAddonString(currentLocale, 11534), new Vector2(40, 40),
                 defaultTextures[GearSlot.LEFT_RING], defaultTextures[GearSlot.EMPTY]);
 
-            ImGui.TableNextRow();
-            ImGui.TableSetColumnIndex(0);
-            DrawGearPiece(currentLocale, ref globalCache, gears, GearSlot.SOUL_CRYSTAL,
-                globalCache.AddonStorage.LoadAddonString(currentLocale, 12238), new Vector2(40, 40),
-                defaultTextures[GearSlot.SOUL_CRYSTAL], defaultTextures[GearSlot.EMPTY]);
+            if (!retainer)
+            {
+                ImGui.TableNextRow();
+                ImGui.TableSetColumnIndex(0);
+                DrawGearPiece(currentLocale, ref globalCache, gears, GearSlot.SOUL_CRYSTAL,
+                    globalCache.AddonStorage.LoadAddonString(currentLocale, 12238), new Vector2(40, 40),
+                    defaultTextures[GearSlot.SOUL_CRYSTAL], defaultTextures[GearSlot.EMPTY]);
+            }
+            else
+            {
+                ImGui.TableNextRow();
+                ImGui.TableSetColumnIndex(0);
+                DrawRetainerJob(currentLocale, ref globalCache, job);
+            }
+        }
+
+        public static void DrawRetainerJob(ClientLanguage currentLocale, ref GlobalCache globalCache, uint job)
+        {
+            IDalamudTextureWrap? iconTexture = globalCache.IconStorage.LoadRetainerJobIconTexture();
+            if (iconTexture == null)
+            {
+                Plugin.Log.Debug($"{iconTexture is null}");
+                return;
+            }
+            DrawRetainerJobIconFromTexture(ref iconTexture, (Models.ClassJob)job, new Vector2(44, 44));
+            if (ImGui.IsItemHovered())
+            {
+                ImGui.BeginTooltip();
+                ImGui.TextUnformatted(globalCache.AddonStorage.LoadAddonString(currentLocale, 379).Replace("ClassJob", globalCache.JobStorage.GetName(currentLocale, job)));
+                ImGui.EndTooltip();
+            }
         }
 
         public static (Vector2 uv0, Vector2 uv1) GetTextureCoordinate(Vector2 textureSize, int u, int v, int w, int h)
@@ -934,8 +975,40 @@ namespace Altoholic
             ImGui.Image(texture.ImGuiHandle, size, uv0, uv1);
         }
 
+        public static void DrawRetainerJobIconFromTexture(ref IDalamudTextureWrap texture, Models.ClassJob job,
+            Vector2 size)
+        {
+            (Vector2 uv0, Vector2 uv1) = job switch
+            {
+                Models.ClassJob.PLD => GetTextureCoordinate(texture.Size, 0, 150, 86, 90),
+                Models.ClassJob.MNK => GetTextureCoordinate(texture.Size, 90, 150, 86, 90),
+                Models.ClassJob.WAR => GetTextureCoordinate(texture.Size, 180, 150, 86, 86),
+                Models.ClassJob.DRG => GetTextureCoordinate(texture.Size, 0, 236, 86, 86),
+                Models.ClassJob.BRD => GetTextureCoordinate(texture.Size, 90, 236, 86, 86),
+                Models.ClassJob.WHM => GetTextureCoordinate(texture.Size, 180, 236, 86, 86),
+                Models.ClassJob.BLM => GetTextureCoordinate(texture.Size, 0, 322, 86, 86),
+                Models.ClassJob.SMN => GetTextureCoordinate(texture.Size, 90, 322, 86, 86),
+                Models.ClassJob.SCH => GetTextureCoordinate(texture.Size, 180, 322, 86, 86),
+                Models.ClassJob.NIN => GetTextureCoordinate(texture.Size, 0, 408, 86, 86),
+                Models.ClassJob.MCH => GetTextureCoordinate(texture.Size, 90, 408, 86, 86),
+                Models.ClassJob.DRK => GetTextureCoordinate(texture.Size, 180, 408, 86, 86),
+                Models.ClassJob.AST => GetTextureCoordinate(texture.Size, 0, 494, 86, 86),
+                Models.ClassJob.SAM => GetTextureCoordinate(texture.Size, 90, 494, 86, 86),
+                Models.ClassJob.RDM => GetTextureCoordinate(texture.Size, 180, 494, 86, 86),
+                Models.ClassJob.BLU => GetTextureCoordinate(texture.Size, 0, 580, 86, 86),
+                Models.ClassJob.GNB => GetTextureCoordinate(texture.Size, 90, 580, 86, 86),
+                Models.ClassJob.DNC => GetTextureCoordinate(texture.Size, 180, 580, 86, 86),
+                Models.ClassJob.SGE => GetTextureCoordinate(texture.Size, 0, 666, 86, 90),
+                Models.ClassJob.RPR => GetTextureCoordinate(texture.Size, 90, 666, 86, 90),
+                Models.ClassJob.VPR => GetTextureCoordinate(texture.Size, 180, 666, 86, 90),
+                Models.ClassJob.PCT => GetTextureCoordinate(texture.Size, 0, 752, 86, 86),
+                _ => GetTextureCoordinate(texture.Size, 0, 0, 0, 0)
+            };
+            ImGui.Image(texture.ImGuiHandle, size, uv0, uv1);
+        }
+
         public static void DrawGearPiece(ClientLanguage currentLocale, ref GlobalCache globalCache, List<Gear> gear,
-            GearSlot slot, string tooltip, Vector2 icon_size, /*uint fallback_icon*/
+            GearSlot slot, string tooltip, Vector2 iconSize, /*uint fallback_icon*/
             IDalamudTextureWrap? fallbackTexture, IDalamudTextureWrap? emptySlot)
         {
             if (fallbackTexture is null || emptySlot is null) return;
@@ -958,7 +1031,7 @@ namespace Altoholic
             {
                 ItemItemLevel? i = globalCache.ItemStorage.LoadItemWithItemLevel(currentLocale, foundGear.ItemId);
                 if (i == null) return;
-                DrawIcon(globalCache.IconStorage.LoadIcon(i.Item.Icon, foundGear.HQ), icon_size);
+                DrawIcon(globalCache.IconStorage.LoadIcon(i.Item.Icon, foundGear.HQ), iconSize);
                 if (ImGui.IsItemHovered())
                 {
                     DrawGearTooltip(currentLocale, ref globalCache, foundGear, i);
@@ -1144,13 +1217,13 @@ namespace Altoholic
             ImGui.EndTooltip();
         }
 
-        public static void DrawItemTooltip(ClientLanguage currentLocale, ref GlobalCache globalCache, Inventory item)
+        public static void DrawItemTooltip(ClientLanguage currentLocale, ref GlobalCache globalCache, Inventory item, bool armoire = false)
         {
             ItemItemLevel? itm = globalCache.ItemStorage.LoadItemWithItemLevel(currentLocale, item.ItemId);
             Item? dbItem = itm?.Item;
             if (dbItem == null) return;
-            ItemLevel? ilvl = itm?.ItemLevel;
-            if (ilvl == null) return;
+            /*ItemLevel? ilvl = itm?.ItemLevel;
+            Plugin.Log.Debug("ilvl is not null");*/
 
             ImGui.BeginTooltip();
 
@@ -1189,18 +1262,33 @@ namespace Altoholic
                 ImGui.TextUnformatted("");
             }
 
-            using (var drawItemTooltipItemNameIcon = ImRaii.Table($"##DrawItemTooltip#Item_{item.ItemId}#NameIcon", 2))
+            int col = (armoire) ? 4 : 2;
+            using (var drawItemTooltipItemNameIcon = ImRaii.Table($"##DrawItemTooltip#Item_{item.ItemId}#NameIcon", col))
             {
                 if (!drawItemTooltipItemNameIcon) return;
                 ImGui.TableSetupColumn($"###DrawItemTooltip#Item_{item.ItemId}#NameIcon#Icon",
                     ImGuiTableColumnFlags.WidthFixed, 55);
                 ImGui.TableSetupColumn($"###DrawItemTooltip#Item_{item.ItemId}#NameIcon#Name",
                     ImGuiTableColumnFlags.WidthFixed, 305);
+                if (armoire)
+                {
+                    ImGui.TableSetupColumn($"###DrawItemTooltip#Item_{item.ItemId}#NameIcon#Empty",
+                        ImGuiTableColumnFlags.WidthFixed, 50);
+                    ImGui.TableSetupColumn($"###DrawItemTooltip#Item_{item.ItemId}#NameIcon#Armoire",
+                        ImGuiTableColumnFlags.WidthStretch);
+                }
+
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
                 DrawIcon(globalCache.IconStorage.LoadIcon(dbItem.Icon, item.HQ), new Vector2(40, 40));
                 ImGui.TableSetColumnIndex(1);
                 ImGui.TextUnformatted($"{dbItem.Name} {(item.HQ ? (char)SeIconChar.HighQuality : "")}");
+                if (armoire)
+                {
+                    ImGui.TableSetColumnIndex(2);
+                    ImGui.TableSetColumnIndex(3);
+                    ImGui.TextUnformatted(globalCache.AddonStorage.LoadAddonString(currentLocale, 11991));
+                }
             }
 
             using (var drawItemTooltipItemCategory =
@@ -1563,7 +1651,7 @@ namespace Altoholic
         }
 
         public static void DrawBardingTooltip(ClientLanguage currentLocale, ref GlobalCache globalCache,
-            Models.Barding barding, uint Icon)
+            Barding barding, uint icon)
         {
             using var drawTripleTriadCardTooltip = ImRaii.Tooltip();
             if (!drawTripleTriadCardTooltip) return;
@@ -1576,7 +1664,7 @@ namespace Altoholic
                 ImGuiTableColumnFlags.WidthFixed, 305);
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
-            DrawIcon(globalCache.IconStorage.LoadIcon(Icon), new Vector2(40, 40));
+            DrawIcon(globalCache.IconStorage.LoadIcon(icon), new Vector2(40, 40));
             ImGui.TableSetColumnIndex(1);
             switch (currentLocale)
             {
@@ -1628,7 +1716,6 @@ namespace Altoholic
             }
         }
 
-
         public static void DrawOrchestrionRollTooltip(ClientLanguage currentLocale, ref GlobalCache globalCache, OrchestrionRoll orchestrionRoll)
         {
             using var drawTripleTriadCardTooltip = ImRaii.Tooltip();
@@ -1661,7 +1748,58 @@ namespace Altoholic
             }
         }
 
-    private static string GetExtractableString(ClientLanguage currentLocale, GlobalCache globalCache, Item item)
+        public static void DrawOrnamentTooltip(ClientLanguage currentLocale, ref GlobalCache globalCache, Models.Ornament ornament)
+        {
+            using var drawOrnamentTooltip = ImRaii.Tooltip();
+            if (!drawOrnamentTooltip) return;
+            using (var drawOrnamentTooltipItem = ImRaii.Table($"###DrawOrnamentTooltipItem#Ornament_{ornament.Id}", 2))
+            {
+                if (!drawOrnamentTooltipItem) return;
+                ImGui.TableSetupColumn($"###DrawOrnamentTooltipItem#Ornament_{ornament.Id}#Icon",
+                    ImGuiTableColumnFlags.WidthFixed, 55);
+                ImGui.TableSetupColumn($"###DrawOrnamentTooltipItem#Ornament_{ornament.Id}#Name",
+                    ImGuiTableColumnFlags.WidthFixed, 305);
+                ImGui.TableNextRow();
+                ImGui.TableSetColumnIndex(0);
+                DrawIcon(globalCache.IconStorage.LoadIcon(ornament.Icon), new Vector2(40, 40));
+                ImGui.TableSetColumnIndex(1);
+                switch (currentLocale)
+                {
+                    case ClientLanguage.German:
+                        ImGui.TextUnformatted($"{Capitalize(ornament.GermanName)}");
+                        break;
+                    case ClientLanguage.English:
+                        ImGui.TextUnformatted($"{Capitalize(ornament.EnglishName)}");
+                        break;
+                    case ClientLanguage.French:
+                        ImGui.TextUnformatted($"{Capitalize(ornament.FrenchName)}");
+                        break;
+                    case ClientLanguage.Japanese:
+                        ImGui.TextUnformatted($"{Capitalize(ornament.JapaneseName)}");
+                        break;
+                }
+            }
+
+            ImGui.Separator();
+            if (ornament.Transient is null) return;
+            switch (currentLocale)
+            {
+                case ClientLanguage.German:
+                    ImGui.TextUnformatted($"{Capitalize(ornament.Transient.GermanTooltip)}");
+                    break;
+                case ClientLanguage.English:
+                    ImGui.TextUnformatted($"{Capitalize(ornament.Transient.EnglishTooltip)}");
+                    break;
+                case ClientLanguage.French:
+                    ImGui.TextUnformatted($"{Capitalize(ornament.Transient.FrenchTooltip)}");
+                    break;
+                case ClientLanguage.Japanese:
+                    ImGui.TextUnformatted($"{Capitalize(ornament.Transient.JapaneseTooltip)}");
+                    break;
+            }
+        }
+
+        private static string GetExtractableString(ClientLanguage currentLocale, GlobalCache globalCache, Item item)
         {
             string str = globalCache.AddonStorage.LoadAddonString(currentLocale, 1361);
             Plugin.Log.Debug($"extract str: {str} => item desynth {item.Desynth}");
@@ -2046,6 +2184,75 @@ namespace Altoholic
             return returnedOrchestrionRollIds;
         }
 
+        public static Ornament? GetOrnament(ClientLanguage currentLocale, uint id)
+        {
+            ExcelSheet<Ornament>? dm = Plugin.DataManager.GetExcelSheet<Ornament>(currentLocale);
+            Ornament? lumina = dm?.GetRow(id);
+            return lumina;
+        }
+        public static Lumina.Excel.GeneratedSheets2.OrnamentTransient? GetOrnamentTransient(ClientLanguage currentLocale, uint id)
+        {
+            ExcelSheet<Lumina.Excel.GeneratedSheets2.OrnamentTransient>? dmt = Plugin.DataManager.GetExcelSheet<Lumina.Excel.GeneratedSheets2.OrnamentTransient>(currentLocale);
+            Lumina.Excel.GeneratedSheets2.OrnamentTransient? lumina = dmt?.GetRow(id);
+            return lumina;
+        }
+        public static List<Models.Ornament>? GetAllOrnaments(ClientLanguage currentLocale)
+        {
+            List<Models.Ornament> returnedOrnamentsIds = [];
+            ExcelSheet<Ornament>? dor = Plugin.DataManager.GetExcelSheet<Ornament>(currentLocale);
+            using IEnumerator<Ornament>? ornamentEnumerator = dor?.GetEnumerator();
+            if (ornamentEnumerator is null) return null;
+            while (ornamentEnumerator.MoveNext())
+            {
+                Ornament ornament = ornamentEnumerator.Current;
+                if (string.IsNullOrEmpty(ornament.Singular)) continue;
+                if (ornament.Icon == 0) continue;
+                Models.Ornament m = new() { Id = ornament.RowId, Icon = ornament.Icon, Transient = new Transient() };
+                Lumina.Excel.GeneratedSheets2.OrnamentTransient? ct = GetOrnamentTransient(currentLocale, ornament.RowId);
+                if (ct is null) continue;
+                switch (currentLocale)
+                {
+                    case ClientLanguage.German:
+                        m.GermanName = ornament.Singular;
+                        m.Transient.GermanDescription = ct.Unknown0;
+                        break;
+                    case ClientLanguage.English:
+                        m.EnglishName = ornament.Singular;
+                        m.Transient.EnglishDescription = ct.Unknown0;
+                        break;
+                    case ClientLanguage.French:
+                        m.FrenchName = ornament.Singular;
+                        m.Transient.FrenchDescription = ct.Unknown0;
+                        break;
+                    case ClientLanguage.Japanese:
+                        m.JapaneseName = ornament.Singular;
+                        m.Transient.JapaneseDescription = ct.Unknown0;
+                        break;
+                }
+
+                returnedOrnamentsIds.Add(m);
+            }
+
+            return returnedOrnamentsIds;
+        }
+
+        public static List<uint> GetArmoireIds()
+        {
+            List<uint> returnedCabinetsIds = [];
+            ExcelSheet<Cabinet>? dor = Plugin.DataManager.GetExcelSheet<Cabinet>(ClientLanguage.English);
+            using IEnumerator<Cabinet>? cabinetEnumerator = dor?.GetEnumerator();
+            if (cabinetEnumerator is null) return returnedCabinetsIds;
+            while (cabinetEnumerator.MoveNext())
+            {
+                Cabinet cabinet = cabinetEnumerator.Current;
+                Item? item = cabinet.Item?.Value;
+                if (item == null) continue;
+
+                returnedCabinetsIds.Add(item.RowId);
+            }
+
+            return returnedCabinetsIds;
+        }
 
         public static string GetTribalNameFromId(ClientLanguage currentLocale, uint id)
         {
@@ -2062,7 +2269,7 @@ namespace Altoholic
         }
         public static string Capitalize(string str)
         {
-            if(str.Length == 0) return str;;
+            if(str.Length == 0) return str;
             return char.ToUpper(str[0]) + str[1..];
         }
 

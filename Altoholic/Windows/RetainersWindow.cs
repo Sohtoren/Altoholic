@@ -1,10 +1,11 @@
 using Altoholic.Cache;
 using Altoholic.Models;
 using CheapLoc;
-using Dalamud;
+
 using Dalamud.Game.Text;
 using Dalamud.Interface.Internal;
 using Dalamud.Interface;
+using Dalamud.Interface.Textures.TextureWraps;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
 using ImGuiNET;
@@ -13,13 +14,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using ClassJob = Altoholic.Models.ClassJob;
 
 namespace Altoholic.Windows
 {
     public class RetainersWindow : Window, IDisposable
     {
         private readonly Plugin _plugin;
-        private ClientLanguage _currentLocale;
+        private Dalamud.Game.ClientLanguage _currentLocale;
         private GlobalCache _globalCache;
 
         public RetainersWindow(
@@ -53,7 +55,9 @@ namespace Altoholic.Windows
             _characterTextures.Add(GearSlot.LEFT_RING, _characterIcons.LoadTexturePart("ui/uld/Character_hr1.tex", 28));
             _characterTextures.Add(GearSlot.RIGHT_RING, _characterIcons.LoadTexturePart("ui/uld/Character_hr1.tex", 28));
             _characterTextures.Add(GearSlot.SOUL_CRYSTAL, _characterIcons.LoadTexturePart("ui/uld/Character_hr1.tex", 29));
-            _characterTextures.Add(GearSlot.EMPTY, Plugin.TextureProvider.GetTextureFromGame("ui/uld/fourth/DragTargetA_hr1.tex"));
+            _characterTextures.Add(GearSlot.EMPTY, Plugin.TextureProvider.GetFromGame("ui/uld/fourth/DragTargetA_hr1.tex").RentAsync().Result);
+
+            
         }
 
         public Func<Character> GetPlayer { get; set; } = null!;
@@ -112,7 +116,7 @@ namespace Altoholic.Windows
 
             try
             {
-                using var table = ImRaii.Table($"###CharactersRetainerTable", 2);
+                using var table = ImRaii.Table("###CharactersRetainerTable", 2);
                 if (!table) return;
 
                 ImGui.TableSetupColumn("###CharactersRetainerTable#CharactersListHeader", ImGuiTableColumnFlags.WidthFixed, 210);
@@ -221,7 +225,7 @@ namespace Altoholic.Windows
             Item? itm = _globalCache.ItemStorage.LoadItem(_currentLocale, (uint)_currentItem);
             if (itm == null) return;
             using (var itemIconTable =
-                ImRaii.Table($"###CharactersRetainer#All#SearchItemsTable#CharacterItems#ItemIconName", 2, ImGuiTableFlags.NoBordersInBody))
+                ImRaii.Table("###CharactersRetainer#All#SearchItemsTable#CharacterItems#ItemIconName", 2, ImGuiTableFlags.NoBordersInBody))
             {
                 if (itemIconTable)
                 {
@@ -246,7 +250,7 @@ namespace Altoholic.Windows
                 ImGui.TextUnformatted($"{Loc.Localize("NoItemOnAnyRetainer", "Item not found on any retainers.\r\nCheck if inventories are available and updated.")}");
                 return;
             }
-            using var table = ImRaii.Table($"###CharactersRetainer#All#SearchItemsTable#CharacterItems#Item#Table", 2, ImGuiTableFlags.Borders);
+            using ImRaii.IEndObject table = ImRaii.Table("###CharactersRetainer#All#SearchItemsTable#CharacterItems#Item#Table", 2, ImGuiTableFlags.Borders);
             if (!table) return;
             ImGui.TableSetupColumn("###CharactersRetainer#All#SearchItemsTable#CharacterItems#Item#Table#CharacterName", ImGuiTableColumnFlags.WidthFixed, 300);
             ImGui.TableSetupColumn("###CharactersRetainer#All#SearchItemsTable#CharacterItems#Item#Table#CharacterItem", ImGuiTableColumnFlags.WidthFixed, 50);
@@ -268,7 +272,7 @@ namespace Altoholic.Windows
             {
                 if (currentCharacter.Retainers.FindAll(r => r.Name != "RETAINER").Count > 0)
                 {
-                    using var table = ImRaii.Table($"###CharactersRetainerTable", 2);
+                    using var table = ImRaii.Table("###CharactersRetainerTable", 2);
                     if (!table) return;
 
                     ImGui.TableSetupColumn("###CharactersRetainerTable#RetainersListHeader", ImGuiTableColumnFlags.WidthFixed, 110);
@@ -330,14 +334,14 @@ namespace Altoholic.Windows
                 {
                     DrawRetainerDetails(selectedRetainer, retainerOwner);
                 }
-            };
+            }
             using (var inventoryTab = ImRaii.TabItem($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 520)}###Retainer#{selectedRetainer.Id}#TabBar#InventoryTab"))
             {
                 if (inventoryTab.Success)
                 {
                     DrawInventories(selectedRetainer);
                 }
-            };
+            }
             if (selectedRetainer.MarketItemCount <= 0)
             {
                 return;
@@ -349,7 +353,7 @@ namespace Altoholic.Windows
                 {
                     DrawMarket(selectedRetainer);
                 }
-            };
+            }
         }
         private void DrawRetainerDetails(Retainer selectedRetainer, Character retainerOwner)
         {

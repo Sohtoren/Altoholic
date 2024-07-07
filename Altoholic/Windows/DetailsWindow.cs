@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Numerics;
 using Altoholic.Cache;
 using Altoholic.Models;
-using Dalamud;
+
 using Dalamud.Game.Text;
 using Dalamud.Interface;
 using Dalamud.Interface.Internal;
+using Dalamud.Interface.Textures.TextureWraps;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
 using ImGuiNET;
@@ -17,7 +18,7 @@ namespace Altoholic.Windows;
 public class DetailsWindow : Window, IDisposable
 {
     private readonly Plugin _plugin;
-    private ClientLanguage _currentLocale;
+    private Dalamud.Game.ClientLanguage _currentLocale;
     private GlobalCache _globalCache;
 
     public DetailsWindow(
@@ -51,7 +52,8 @@ public class DetailsWindow : Window, IDisposable
         _characterTextures.Add(GearSlot.LEFT_RING, _characterIcons.LoadTexturePart("ui/uld/Character_hr1.tex", 28));
         _characterTextures.Add(GearSlot.RIGHT_RING, _characterIcons.LoadTexturePart("ui/uld/Character_hr1.tex", 28));
         _characterTextures.Add(GearSlot.SOUL_CRYSTAL, _characterIcons.LoadTexturePart("ui/uld/Character_hr1.tex", 29));
-        _characterTextures.Add(GearSlot.EMPTY, Plugin.TextureProvider.GetTextureFromGame("ui/uld/fourth/DragTargetA_hr1.tex"));
+        _characterTextures.Add(GearSlot.FACEWEAR, _characterIcons.LoadTexturePart("ui/uld/Character_hr1.tex", 55));
+        _characterTextures.Add(GearSlot.EMPTY, Plugin.TextureProvider.GetFromGame("ui/uld/fourth/DragTargetA_hr1.tex").RentAsync().Result);
     }
 
     public Func<Character>? GetPlayer { get; init; }
@@ -131,7 +133,7 @@ public class DetailsWindow : Window, IDisposable
         ImGui.TableSetupColumn("###CharactersDetailsTable#ProfileTable#GearCol", ImGuiTableColumnFlags.WidthStretch);
         ImGui.TableNextRow();
         ImGui.TableSetColumnIndex(0);
-        using var tabBar = ImRaii.TabBar($"###CharactersDetailsTable#ProfileTable#ProfileCol#ProfileTabBar");
+        using var tabBar = ImRaii.TabBar("###CharactersDetailsTable#ProfileTable#ProfileCol#ProfileTabBar");
         if (!tabBar.Success) return;
         /*if (ImGui.BeginTabItem($"{_globalCache.AddonStorage.LoadAddonString(currentLocale,758)}"))
         {

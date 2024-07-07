@@ -1,10 +1,9 @@
 using Altoholic.Cache;
 using Altoholic.Models;
 using CheapLoc;
-using Dalamud;
 using Dalamud.Game.Text;
 using Dalamud.Interface;
-using Dalamud.Interface.Internal;
+using Dalamud.Interface.Textures.TextureWraps;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
 using FFXIVClientStructs.FFXIV.Client.Game;
@@ -20,7 +19,7 @@ namespace Altoholic.Windows
     public class InventoriesWindow : Window, IDisposable
     {
         private readonly Plugin _plugin;
-        private ClientLanguage _currentLocale;
+        private Dalamud.Game.ClientLanguage _currentLocale;
         private GlobalCache _globalCache;
 
         public InventoriesWindow(
@@ -282,7 +281,7 @@ namespace Altoholic.Windows
                 {
                     DrawMainInventories(selectedCharacter);
                 }
-            };
+            }
             using (var armoryTab = ImRaii.TabItem($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 1370)}###CharactersInventoryTable#Inventories#{selectedCharacter.Id}#TabBar#ArmoryInventoryTab"))
             {
                 if (armoryTab)
@@ -306,7 +305,7 @@ namespace Altoholic.Windows
                     DrawArmory(_globalCache, selectedCharacter);
                     ImGui.TableSetColumnIndex(2);
                 }
-            };
+            }
 
             using (var glamourTab = ImRaii.TabItem($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 3735)}###CharactersInventoryTable#Inventories#{selectedCharacter.Id}#TabBar#GlamourInventoryTab"))
             {
@@ -314,7 +313,7 @@ namespace Altoholic.Windows
                 {
                     // Todo: implement
                 }
-            };
+            }
 
             using (var armoireTab = ImRaii.TabItem($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 3734)}###CharactersInventoryTable#Inventories#{selectedCharacter.Id}#TabBar#ArmoireInventoryTab"))
             {
@@ -322,7 +321,7 @@ namespace Altoholic.Windows
                 {
                     // Todo: implement
                 }
-            };
+            }
         }
 
         private void DrawMainInventories(Character selectedCharacter)
@@ -330,7 +329,8 @@ namespace Altoholic.Windows
             using var table = ImRaii.Table($"###CharactersInventoryTable#Inventories#{selectedCharacter.Id}", 2, ImGuiTableFlags.ScrollY);
             if (!table) return;
 
-            if (selectedCharacter.Inventory.Count != 278) return;
+            //if (selectedCharacter.Inventory.Count != 278) return;
+            if (selectedCharacter.Inventory.Count != 282) return;
             List<Inventory> inventory = [.. selectedCharacter.Inventory[..140].OrderByDescending(i => i.Quantity)];//Todo: Use ItemOrderModule
             List<Inventory> keysitems = [.. selectedCharacter.Inventory.Slice(141, 105).OrderByDescending(k => k.Quantity)];
             bool isKeyItemEmpty = (keysitems.FindAll(k => k.Quantity == 0).Count == 105);
@@ -407,6 +407,15 @@ namespace Altoholic.Windows
                 ImGui.TableSetColumnIndex(1);
                 ImGui.TextUnformatted($"{saddleBag.FindAll(i => i.ItemId != 0).Count}/{((selectedCharacter.HasPremiumSaddlebag) ? "140" : "70")}");
             }
+
+#if DEBUG
+            List<Inventory> unknownBag = selectedCharacter.Inventory.Slice(246, 36);
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            ImGui.TextUnformatted("Unknown bag");
+            //Plugin.Log.Debug($"{selected_character.FirstName} Saddle: {selected_character.Saddle.FindAll(k => k.Quantity == 0).Count}");
+            DrawInventory($"unknown", unknownBag);
+#endif
         }
 
         private void DrawInventory(string label, List<Inventory> inventory, bool saddle = false, bool premium = false)
@@ -450,21 +459,27 @@ namespace Altoholic.Windows
                         continue;
                     }
 
+                    bool armoire = _globalCache.ItemStorage.CanBeInArmoire(itm.RowId);
                     Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Icon, item.HQ), new Vector2(36, 36));
                     if (ImGui.IsItemHovered())
                     {
-                        Utils.DrawItemTooltip(_currentLocale, ref _globalCache, item);
+                        Utils.DrawItemTooltip(_currentLocale, ref _globalCache, item, armoire);
                     }
 
                     if (itm.StackSize <= 1)
                     {
-                        continue;
+                        ImGui.SetCursorPos(new Vector2(p.X + 26, p.Y + 20));
+                        ImGui.TextUnformatted($"{item.Quantity}");
+                        ImGui.SetCursorPos(p);
                     }
 
-                    ImGui.SetCursorPos(new Vector2(p.X + 26, p.Y + 20));
-                    ImGui.TextUnformatted($"{item.Quantity}");
+                    if (!armoire)
+                    {
+                        continue;
+                    }
+                    ImGui.SetCursorPos(p with { X = p.X + 20 });
+                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(066460), new Vector2(16, 16));
                     ImGui.SetCursorPos(p);
-
                 }
             }
         }
@@ -744,20 +759,10 @@ namespace Altoholic.Windows
             List<Gear>? inventory = _selectedArmory.Values.FirstOrDefault();
             if (inventory == null) return;
             inventory = [.. inventory.OrderByDescending(i => i.ItemId != 0)];
-            int height = inventory.FindAll(i => i.ItemId != 0).ToList().Count switch
-            {
-                int i when i >= 0 && i <= 5 => 48,
-                int i when i >= 6 && i <= 10 => 96,
-                int i when i >= 11 && i <= 15 => 144,
-                int i when i >= 16 && i <= 20 => 192,
-                int i when i >= 21 && i <= 25 => 240,
-                int i when i >= 26 && i <= 30 => 288,
-                int i when i >= 31 && i <= 35 => 336,
-                int i when i >= 36 && i <= 40 => 384,
-                int i when i >= 41 && i <= 45 => 432,
-                int i when i >= 46 && i <= 50 => 480,
-                _ => -1
-            };
+
+            int armoryCount = inventory.FindAll(i => i.ItemId != 0).ToList().Count;
+            int rows = (int)Math.Ceiling(armoryCount / (double)5);
+            int height = rows * 48;
 
             using (var tableHeader =
                    ImRaii.Table($"###CharactersInventoryTable#Inventories#ArmoryInventoryTable#{name}##Amount", 3))
@@ -806,8 +811,7 @@ namespace Altoholic.Windows
                     {
                         Gear gear = inventory[i];
                         if (gear.ItemId == 0) continue;
-                        if (i is 0 or 5 or 10 or 15 or 20 or 25 or 30 or 35 or 40 or 45
-                           )
+                        if (i % 5 == 0)
                         {
                             ImGui.TableNextRow();
                         }

@@ -1,5 +1,5 @@
-using Dalamud;
 using Dalamud.Configuration;
+using Dalamud.Game;
 using Dalamud.Plugin;
 using System;
 
@@ -11,14 +11,14 @@ namespace Altoholic
         public int Version { get; set; } = 0;
         public bool IsSpoilersEnabled { get; set; } = true; // Todo: Change this to false for release
         public bool ObtainedOnly { get; set; } = true;
-        public ClientLanguage Language { get; set; } = ClientLanguage.English;
+        public Dalamud.Game.ClientLanguage Language { get; set; } = Dalamud.Game.ClientLanguage.English;
         public Models.Sort CharacterWindowSort { get; set; } = Models.Sort.Auto;
 
         // the below exist just to make saving less cumbersome
         [NonSerialized]
-        private DalamudPluginInterface? _pluginInterface;
+        private IDalamudPluginInterface? _pluginInterface;
 
-        public void Initialize(DalamudPluginInterface pluginInterface)
+        public void Initialize(IDalamudPluginInterface pluginInterface)
         {
             _pluginInterface = pluginInterface;
         }

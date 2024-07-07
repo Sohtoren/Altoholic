@@ -1,6 +1,6 @@
 ﻿using Altoholic.Models;
-using Dalamud;
-using Dalamud.Interface.Utility.Raii;
+using Dalamud.Game;
+using Lumina.Excel.GeneratedSheets;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,7 +30,7 @@ namespace Altoholic.Cache
             if (_bardings.TryGetValue(id, out Barding? ret))
                 return ret;
 
-            Lumina.Excel.GeneratedSheets.BuddyEquip? b = Utils.GetBarding(lang, id);
+            BuddyEquip? b = Utils.GetBarding(lang, id);
             if (b is null)
             {
                 return null;

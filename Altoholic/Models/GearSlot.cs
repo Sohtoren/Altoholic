@@ -16,6 +16,7 @@ namespace Altoholic.Models
         RIGHT_RING = 11,
         LEFT_RING = 12,
         SOUL_CRYSTAL = 13,
+        FACEWEAR = 14,
         EMPTY = 99
     }
 }

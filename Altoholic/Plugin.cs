@@ -1,36 +1,33 @@
-using Dalamud.Game.Command;
-using Dalamud.Plugin;
-using System.IO;
-using Dalamud.Interface.Windowing;
-using Dalamud.Plugin.Services;
-using Altoholic.Windows;
-using LiteDB;
-using Altoholic.Models;
-using System.Collections.Generic;
-using System.Threading;
-using FFXIVClientStructs.FFXIV.Client.Game;
-using System;
-using Dalamud.Game.ClientState.Objects.SubKinds;
-using Dalamud.Hooking;
-using Dalamud.IoC;
-using Dalamud.Game;
-using System.Runtime.InteropServices;
-using Dalamud;
-using FFXIVClientStructs.FFXIV.Client.System.String;
-using FFXIVClientStructs.FFXIV.Client.Game.UI;
-using static FFXIVClientStructs.FFXIV.Client.UI.RaptureAtkModule;
-using Dalamud.Interface.Internal.Notifications;
-using Dalamud.Interface.ImGuiNotification;
-using Dalamud.Game.Text;
-using FFXIVClientStructs.FFXIV.Client.UI.Agent;
-using Dalamud.Memory;
-using Dalamud.Game.ClientState.Conditions;
 using Altoholic.Cache;
+using Altoholic.Models;
+using Altoholic.Windows;
+using Dalamud.Game;
+using Dalamud.Game.ClientState.Conditions;
+using Dalamud.Game.ClientState.Objects.SubKinds;
 using Dalamud.Game.ClientState.Resolvers;
+using Dalamud.Game.Command;
+using Dalamud.Game.Text;
+using Dalamud.Hooking;
+using Dalamud.Interface.ImGuiNotification;
+using Dalamud.Interface.Windowing;
+using Dalamud.IoC;
+using Dalamud.Plugin;
+using Dalamud.Plugin.Services;
+using FFXIVClientStructs.FFXIV.Client.Game;
+using FFXIVClientStructs.FFXIV.Client.Game.UI;
+using FFXIVClientStructs.FFXIV.Client.System.String;
 using FFXIVClientStructs.FFXIV.Client.UI;
+using FFXIVClientStructs.FFXIV.Client.UI.Agent;
+using LiteDB;
 using Lumina.Excel.GeneratedSheets;
 using Lumina.Text;
+using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
+using System.Threading;
+using static FFXIVClientStructs.FFXIV.Client.UI.RaptureAtkModule;
 using Quest = Altoholic.Models.Quest;
 
 namespace Altoholic
@@ -40,25 +37,18 @@ namespace Altoholic
         public static string Name => "Altoholic Plugin";
         private const string CommandName = "/altoholic";
         private readonly int[] _questIds = [65970, 66045, 66216, 66217, 66218, 66640, 66641, 66642, 66754, 66789, 66857, 66911, 66968, 66969, 66970, 67023, 67099, 67100, 67101, 67658, 67700, 67791, 67856, 68509, 68572, 68633, 68734, 68817, 69133, 69219, 69330, 69432, 70081, 70137, 70217, 69208, 67631, 69208];
-        //private DalamudPluginInterface PluginInterface { get; init; }
-        //private readonly ICommandManager commandManager;
-        //private readonly IClientState ClientState;
-        //private readonly IFramework framework;
-        //private readonly ILog Log;
-        //private readonly IDataManager Plugin.DataManager;
-        //private readonly ITextureProvider textureProvider;
-        //private readonly INotificationManager notificationManager;
-        [PluginService] public static DalamudPluginInterface PluginInterface { get; private set; } = null!;
-        [PluginService] public static IClientState ClientState { get; private set; } = null!;
-        [PluginService] public static ICommandManager CommandManager { get; private set; } = null!;
-        [PluginService] public static IFramework Framework { get; private set; } = null!;
-        [PluginService] public static IPluginLog Log { get; private set; } = null!;
-        [PluginService] public static IDataManager DataManager { get; private set; } = null!;
-        [PluginService] public static ITextureProvider TextureProvider { get; private set; } = null!;
-        [PluginService] public static INotificationManager NotificationManager { get; private set; } = null!;
+
+        [PluginService] public static IDalamudPluginInterface PluginInterface { get; set; } = null!;
+        [PluginService] public static IClientState ClientState { get; set; } = null!;
+        [PluginService] public static ICommandManager CommandManager { get; set; } = null!;
+        [PluginService] public static IFramework Framework { get; set; } = null!;
+        [PluginService] public static IPluginLog Log { get; set; } = null!;
+        [PluginService] public static IDataManager DataManager { get; set; } = null!;
+        [PluginService] public static ITextureProvider TextureProvider { get; set; } = null!;
+        [PluginService] public static INotificationManager NotificationManager { get; set; } = null!;
         [PluginService] public static ICondition Condition { get; set; } = null!;
-        [PluginService] public static ISigScanner SigScanner { get; private set; } = null!;
-        [PluginService] public static IGameInteropProvider Hook { get; private set; } = null!;
+        [PluginService] public static ISigScanner SigScanner { get; set; } = null!;
+        [PluginService] public static IGameInteropProvider Hook { get; set; } = null!;
 
         private const string PlaytimeSig = "E8 ?? ?? ?? ?? B9 ?? ?? ?? ?? 48 8B D3";
         private delegate long PlaytimeDelegate(uint param1, long param2, uint param3);
@@ -67,17 +57,17 @@ namespace Altoholic
         public Configuration Configuration { get; set; }
         public WindowSystem WindowSystem = new("Altoholic");
 
-        private ConfigWindow ConfigWindow { get; init; }
-        private MainWindow MainWindow { get; init; }
-        private CharactersWindow CharactersWindow { get; init; }
-        private DetailsWindow DetailsWindow { get; init; }
-        private JobsWindow JobsWindow { get; init; }
-        private CurrenciesWindow CurrenciesWindow { get; init; }
-        private InventoriesWindow InventoriesWindow { get; init; }
-        private RetainersWindow RetainersWindow { get; init; }
-        private CollectionWindow CollectionWindow { get; init; }
+        private ConfigWindow ConfigWindow { get; }
+        private MainWindow MainWindow { get; }
+        private CharactersWindow CharactersWindow { get; }
+        private DetailsWindow DetailsWindow { get; }
+        private JobsWindow JobsWindow { get; }
+        private CurrenciesWindow CurrenciesWindow { get; }
+        private InventoriesWindow InventoriesWindow { get; }
+        private RetainersWindow RetainersWindow { get; }
+        private CollectionWindow CollectionWindow { get; }
+        private ProgressWindow ProgressWindow { get; }
 
-        private readonly Service altoholicService = null!;
         private readonly LiteDatabase _db;
 
         private Character _localPlayer = new();
@@ -85,13 +75,11 @@ namespace Altoholic
 
         private readonly PeriodicTimer? _periodicTimer = null;
         public List<Character> OtherCharacters = [];
-        private static ClientLanguage _currentLocale;
         private readonly Localization _localization = new();
         private readonly GlobalCache _globalCache;
 
         public Plugin()
         {
-
             _globalCache = new GlobalCache
             {
                 IconStorage = new IconStorage(TextureProvider),
@@ -105,7 +93,8 @@ namespace Altoholic
                 EmoteStorage = new EmoteStorage(),
                 BardingStorage = new BardingStorage(),
                 FramerKitStorage = new FramerKitStorage(),
-                OrchestrionRollStorage = new OrchestrionRollStorage()
+                OrchestrionRollStorage = new OrchestrionRollStorage(),
+                OrnamentStorage = new OrnamentStorage()
             };
 
             nint playtimePtr = SigScanner.ScanText(PlaytimeSig);
@@ -123,21 +112,25 @@ namespace Altoholic
                 Configuration.Language = ClientState.ClientLanguage;
                 Configuration.Save();
             }
-            _currentLocale = Configuration.Language;
+            ClientLanguage currentLocale = Configuration.Language;
             _localization.SetupWithLangCode(PluginInterface.UiLanguage);
 
-            _globalCache.MountStorage.Init(_currentLocale);
-            _globalCache.MinionStorage.Init(_currentLocale);
-            _globalCache.TripleTriadCardStorage.Init(_currentLocale);
-            _globalCache.EmoteStorage.Init(_currentLocale);
-            _globalCache.BardingStorage.Init(_currentLocale);
-            _globalCache.FramerKitStorage.Init(_currentLocale);
-            _globalCache.OrchestrionRollStorage.Init(_currentLocale);
+            _globalCache.IconStorage.Init();
+            _globalCache.ItemStorage.Init();
+            _globalCache.MountStorage.Init(currentLocale);
+            _globalCache.MinionStorage.Init(currentLocale);
+            _globalCache.TripleTriadCardStorage.Init(currentLocale, _globalCache);
+            _globalCache.EmoteStorage.Init(currentLocale);
+            _globalCache.BardingStorage.Init(currentLocale);
+            _globalCache.FramerKitStorage.Init(currentLocale);
+            _globalCache.OrchestrionRollStorage.Init(currentLocale);
+            _globalCache.OrnamentStorage.Init(currentLocale);
             
 
-            altoholicService = new Service(
+            Service altoholicService = new(
                 () => _localPlayer,
-                () => OtherCharacters);
+                () => OtherCharacters
+            );
 
             ConfigWindow = new ConfigWindow(this, $"{Name} configuration", _globalCache);
             CharactersWindow = new CharactersWindow(this, $"{Name} characters", _db, _globalCache)
@@ -182,6 +175,12 @@ namespace Altoholic
                 GetOthersCharactersList = () => altoholicService.GetOthersCharacters(),
             };
 
+            ProgressWindow = new ProgressWindow(this, $"{Name} characters progress", _globalCache)
+            {
+                GetPlayer = () => altoholicService.GetPlayer(),
+                GetOthersCharactersList = () => altoholicService.GetOthersCharacters(),
+            };
+
 
             MainWindow = new MainWindow(
                 this,
@@ -194,6 +193,7 @@ namespace Altoholic
                 InventoriesWindow,
                 RetainersWindow,
                 CollectionWindow,
+                ProgressWindow,
                 ConfigWindow);
 
             WindowSystem.AddWindow(ConfigWindow);
@@ -235,6 +235,7 @@ namespace Altoholic
             _globalCache.EmoteStorage.Dispose();
             _globalCache.BardingStorage.Dispose();
             _globalCache.FramerKitStorage.Dispose();
+            _globalCache.OrnamentStorage.Dispose();
 
             CollectionWindow.Dispose();
             RetainersWindow.Dispose();
@@ -282,7 +283,7 @@ namespace Altoholic
             {
                 Log.Error("No character logged in, doing nothing");
 
-                NotificationManager.AddNotification(new Notification()
+                NotificationManager.AddNotification(new Notification
                 {
                     Title = "Altoholic",
                     Content = "This plugin need a character to be logged in",
@@ -365,7 +366,7 @@ namespace Altoholic
                 Plugin.Log.Debug($"Nameday_Month {localPlayer.Profile.Nameday_Month}");
                 Plugin.Log.Debug($"Guardian {Utils.GetGuardian(localPlayer.Profile.Guardian)}");*/
 #endif
-                PlayerCharacter? lPlayer = ClientState.LocalPlayer;
+                IPlayerCharacter? lPlayer = ClientState.LocalPlayer;
                 if (lPlayer != null)
                 {
                     _localPlayer.Attributes = new Attributes
@@ -486,7 +487,7 @@ namespace Altoholic
 
         private void OnFrameworkUpdate(IFramework framework)
         {
-            PlayerCharacter? lPlayer = ClientState.LocalPlayer;
+            IPlayerCharacter? lPlayer = ClientState.LocalPlayer;
             if (lPlayer == null)
             {
                 return;
@@ -574,17 +575,17 @@ namespace Altoholic
             if (_localPlayer.Id == 0) return;
             string title = string.Empty;
             bool prefixTitle = false;
-            RaptureAtkModule* raptureAtkModule = FFXIVClientStructs.FFXIV.Client.System.Framework.Framework.Instance()->GetUiModule()->GetRaptureAtkModule();
+            RaptureAtkModule* raptureAtkModule = FFXIVClientStructs.FFXIV.Client.System.Framework.Framework.Instance()->UIModule->GetRaptureAtkModule();
             if (raptureAtkModule != null)
             {
-                Span<NamePlateInfo> npi = raptureAtkModule->NamePlateInfoEntriesSpan;
+                Span<NamePlateInfo> npi = raptureAtkModule->NamePlateInfoEntries;
                 if (npi != null)
                 {
                     for (int i = 0; i < 50 && i < raptureAtkModule->NameplateInfoCount; i++)
                     {
                         ref NamePlateInfo namePlateInfo = ref npi[i];
                         if (ClientState.LocalPlayer == null) continue;
-                        if (namePlateInfo.ObjectID.ObjectID != ClientState.LocalPlayer.ObjectId)
+                        if (namePlateInfo.ObjectId.ObjectId != ClientState.LocalPlayer.EntityId)
                         {
                             continue;
                         }
@@ -624,47 +625,49 @@ namespace Altoholic
             };
             _localPlayer.Jobs = new Jobs
             {
-                Adventurer = new Job { Level = player.ClassJobLevelArray[-1], Exp = player.ClassJobExpArray[-1] },
-                Gladiator = new Job { Level = player.ClassJobLevelArray[1], Exp = player.ClassJobExpArray[1] },
-                Pugilist = new Job { Level = player.ClassJobLevelArray[0], Exp = player.ClassJobExpArray[0] },
-                Marauder = new Job { Level = player.ClassJobLevelArray[2], Exp = player.ClassJobExpArray[2] },
-                Lancer = new Job { Level = player.ClassJobLevelArray[4], Exp = player.ClassJobExpArray[4] },
-                Archer = new Job { Level = player.ClassJobLevelArray[3], Exp = player.ClassJobExpArray[3] },
-                Conjurer = new Job { Level = player.ClassJobLevelArray[6], Exp = player.ClassJobExpArray[6] },
-                Thaumaturge = new Job { Level = player.ClassJobLevelArray[5], Exp = player.ClassJobExpArray[5] },
-                Carpenter = new Job() { Level = player.ClassJobLevelArray[7], Exp = player.ClassJobExpArray[7] },
-                Blacksmith = new Job { Level = player.ClassJobLevelArray[8], Exp = player.ClassJobExpArray[8] },
-                Armorer = new Job { Level = player.ClassJobLevelArray[9], Exp = player.ClassJobExpArray[9] },
-                Goldsmith = new Job { Level = player.ClassJobLevelArray[10], Exp = player.ClassJobExpArray[10] },
-                Leatherworker = new Job { Level = player.ClassJobLevelArray[11], Exp = player.ClassJobExpArray[11] },
-                Weaver = new Job { Level = player.ClassJobLevelArray[12], Exp = player.ClassJobExpArray[12] },
-                Alchemist = new Job { Level = player.ClassJobLevelArray[13], Exp = player.ClassJobExpArray[13] },
-                Culinarian = new Job { Level = player.ClassJobLevelArray[14], Exp = player.ClassJobExpArray[14] },
-                Miner = new Job { Level = player.ClassJobLevelArray[15], Exp = player.ClassJobExpArray[15] },
-                Botanist = new Job { Level = player.ClassJobLevelArray[16], Exp = player.ClassJobExpArray[16] },
-                Fisher = new Job { Level = player.ClassJobLevelArray[17], Exp = player.ClassJobExpArray[17] },
-                Paladin = new Job { Level = player.ClassJobLevelArray[1], Exp = player.ClassJobExpArray[1] },
-                Monk = new Job { Level = player.ClassJobLevelArray[0], Exp = player.ClassJobExpArray[0] },
-                Warrior = new Job { Level = player.ClassJobLevelArray[2], Exp = player.ClassJobExpArray[2] },
-                Dragoon = new Job { Level = player.ClassJobLevelArray[4], Exp = player.ClassJobExpArray[4] },
-                Bard = new Job { Level = player.ClassJobLevelArray[3], Exp = player.ClassJobExpArray[3] },
-                WhiteMage = new Job { Level = player.ClassJobLevelArray[6], Exp = player.ClassJobExpArray[6] },
-                BlackMage = new Job { Level = player.ClassJobLevelArray[5], Exp = player.ClassJobExpArray[5] },
-                Arcanist = new Job { Level = player.ClassJobLevelArray[18], Exp = player.ClassJobExpArray[18] },
-                Summoner = new Job { Level = player.ClassJobLevelArray[18], Exp = player.ClassJobExpArray[18] },
-                Scholar = new Job { Level = player.ClassJobLevelArray[18], Exp = player.ClassJobExpArray[18] },
-                Ninja = new Job { Level = player.ClassJobLevelArray[19], Exp = player.ClassJobExpArray[19] },
-                Rogue = new Job { Level = player.ClassJobLevelArray[19], Exp = player.ClassJobExpArray[19] },
-                Machinist = new Job { Level = player.ClassJobLevelArray[20], Exp = player.ClassJobExpArray[20] },
-                DarkKnight = new Job { Level = player.ClassJobLevelArray[21], Exp = player.ClassJobExpArray[21] },
-                Astrologian = new Job { Level = player.ClassJobLevelArray[22], Exp = player.ClassJobExpArray[22] },
-                Samurai = new Job { Level = player.ClassJobLevelArray[23], Exp = player.ClassJobExpArray[23] },
-                RedMage = new Job { Level = player.ClassJobLevelArray[24], Exp = player.ClassJobExpArray[24] },
-                BlueMage = new Job { Level = player.ClassJobLevelArray[25], Exp = player.ClassJobExpArray[25] },
-                Gunbreaker = new Job { Level = player.ClassJobLevelArray[26], Exp = player.ClassJobExpArray[26] },
-                Dancer = new Job { Level = player.ClassJobLevelArray[27], Exp = player.ClassJobExpArray[27] },
-                Reaper = new Job { Level = player.ClassJobLevelArray[28], Exp = player.ClassJobExpArray[28] },
-                Sage = new Job { Level = player.ClassJobLevelArray[29], Exp = player.ClassJobExpArray[29] }
+                //Adventurer = new Job { Level = player.ClassJobLevels[-1], Exp = player.ClassJobExperience[-1] },
+                Gladiator = new Job { Level = player.ClassJobLevels[1], Exp = player.ClassJobExperience[1] },
+                Pugilist = new Job { Level = player.ClassJobLevels[0], Exp = player.ClassJobExperience[0] },
+                Marauder = new Job { Level = player.ClassJobLevels[2], Exp = player.ClassJobExperience[2] },
+                Lancer = new Job { Level = player.ClassJobLevels[4], Exp = player.ClassJobExperience[4] },
+                Archer = new Job { Level = player.ClassJobLevels[3], Exp = player.ClassJobExperience[3] },
+                Conjurer = new Job { Level = player.ClassJobLevels[6], Exp = player.ClassJobExperience[6] },
+                Thaumaturge = new Job { Level = player.ClassJobLevels[5], Exp = player.ClassJobExperience[5] },
+                Carpenter = new Job { Level = player.ClassJobLevels[7], Exp = player.ClassJobExperience[7] },
+                Blacksmith = new Job { Level = player.ClassJobLevels[8], Exp = player.ClassJobExperience[8] },
+                Armorer = new Job { Level = player.ClassJobLevels[9], Exp = player.ClassJobExperience[9] },
+                Goldsmith = new Job { Level = player.ClassJobLevels[10], Exp = player.ClassJobExperience[10] },
+                Leatherworker = new Job { Level = player.ClassJobLevels[11], Exp = player.ClassJobExperience[11] },
+                Weaver = new Job { Level = player.ClassJobLevels[12], Exp = player.ClassJobExperience[12] },
+                Alchemist = new Job { Level = player.ClassJobLevels[13], Exp = player.ClassJobExperience[13] },
+                Culinarian = new Job { Level = player.ClassJobLevels[14], Exp = player.ClassJobExperience[14] },
+                Miner = new Job { Level = player.ClassJobLevels[15], Exp = player.ClassJobExperience[15] },
+                Botanist = new Job { Level = player.ClassJobLevels[16], Exp = player.ClassJobExperience[16] },
+                Fisher = new Job { Level = player.ClassJobLevels[17], Exp = player.ClassJobExperience[17] },
+                Paladin = new Job { Level = player.ClassJobLevels[1], Exp = player.ClassJobExperience[1] },
+                Monk = new Job { Level = player.ClassJobLevels[0], Exp = player.ClassJobExperience[0] },
+                Warrior = new Job { Level = player.ClassJobLevels[2], Exp = player.ClassJobExperience[2] },
+                Dragoon = new Job { Level = player.ClassJobLevels[4], Exp = player.ClassJobExperience[4] },
+                Bard = new Job { Level = player.ClassJobLevels[3], Exp = player.ClassJobExperience[3] },
+                WhiteMage = new Job { Level = player.ClassJobLevels[6], Exp = player.ClassJobExperience[6] },
+                BlackMage = new Job { Level = player.ClassJobLevels[5], Exp = player.ClassJobExperience[5] },
+                Arcanist = new Job { Level = player.ClassJobLevels[18], Exp = player.ClassJobExperience[18] },
+                Summoner = new Job { Level = player.ClassJobLevels[18], Exp = player.ClassJobExperience[18] },
+                Scholar = new Job { Level = player.ClassJobLevels[18], Exp = player.ClassJobExperience[18] },
+                Ninja = new Job { Level = player.ClassJobLevels[19], Exp = player.ClassJobExperience[19] },
+                Rogue = new Job { Level = player.ClassJobLevels[19], Exp = player.ClassJobExperience[19] },
+                Machinist = new Job { Level = player.ClassJobLevels[20], Exp = player.ClassJobExperience[20] },
+                DarkKnight = new Job { Level = player.ClassJobLevels[21], Exp = player.ClassJobExperience[21] },
+                Astrologian = new Job { Level = player.ClassJobLevels[22], Exp = player.ClassJobExperience[22] },
+                Samurai = new Job { Level = player.ClassJobLevels[23], Exp = player.ClassJobExperience[23] },
+                RedMage = new Job { Level = player.ClassJobLevels[24], Exp = player.ClassJobExperience[24] },
+                BlueMage = new Job { Level = player.ClassJobLevels[25], Exp = player.ClassJobExperience[25] },
+                Gunbreaker = new Job { Level = player.ClassJobLevels[26], Exp = player.ClassJobExperience[26] },
+                Dancer = new Job { Level = player.ClassJobLevels[27], Exp = player.ClassJobExperience[27] },
+                Reaper = new Job { Level = player.ClassJobLevels[28], Exp = player.ClassJobExperience[28] },
+                Sage = new Job { Level = player.ClassJobLevels[29], Exp = player.ClassJobExperience[29] },
+                Viper = new Job { Level = player.ClassJobLevels[30], Exp = player.ClassJobExperience[30] },
+                Pictomancer = new Job { Level = player.ClassJobLevels[31], Exp = player.ClassJobExperience[31] },
             };
             foreach (uint i in _globalCache.MinionStorage.Get().Where(i => !_localPlayer.HasMinion(i)))
             {
@@ -699,6 +702,7 @@ namespace Altoholic
             GetMountFromState(player);
             GetFramerKitsFromState(player);
             GetOrchestrionRollFromState(player);
+            GetOrnamentFromState(player);
         }
 
         private void GetMountFromState(PlayerState player)
@@ -723,6 +727,14 @@ namespace Altoholic
                     _localPlayer.OrchestrionRolls.Add(i);
             }
         }
+        
+        private void GetOrnamentFromState(PlayerState player)
+        {
+            foreach (uint i in _globalCache.OrnamentStorage.Get().Where(i => !_localPlayer.HasOrnament(i)).Where(i => player.IsOrnamentUnlocked(i)))
+            {
+                    _localPlayer.Ornaments.Add(i);
+            }
+        }
 
         private unsafe PlayerCurrencies GetPlayerCurrencies()
         {
@@ -730,6 +742,7 @@ namespace Altoholic
             return new PlayerCurrencies
             {
                 Achievement_Certificate = inventoryManager.GetInventoryItemCount((uint)Currencies.ACHIEVEMENT_CERTIFICATE, false, false, false),
+                Allagan_Tomestone_Of_Aesthetics = inventoryManager.GetInventoryItemCount((uint)Currencies.ALLAGAN_TOMESTONE_OF_AESTHETICS, false, false, false),
                 Allagan_Tomestone_Of_Allegory = inventoryManager.GetInventoryItemCount((uint)Currencies.ALLAGAN_TOMESTONE_OF_ALLEGORY, false, false, false),
                 Allagan_Tomestone_Of_Aphorism = inventoryManager.GetInventoryItemCount((uint)Currencies.ALLAGAN_TOMESTONE_OF_APHORISM, false, false, false),
                 Allagan_Tomestone_Of_Astronomy = inventoryManager.GetInventoryItemCount((uint)Currencies.ALLAGAN_TOMESTONE_OF_ASTRONOMY, false, false, false),
@@ -777,6 +790,7 @@ namespace Altoholic
                 Irregular_Tomestone_Of_Esoterics = inventoryManager.GetInventoryItemCount((uint)Currencies.IRREGULAR_TOMESTONE_OF_ESOTERICS, false, false, false),
                 Irregular_Tomestone_Of_Genesis_i = inventoryManager.GetInventoryItemCount((uint)Currencies.IRREGULAR_TOMESTONE_OF_GENESIS_I, false, false, false),
                 Irregular_Tomestone_Of_Genesis_ii = inventoryManager.GetInventoryItemCount((uint)Currencies.IRREGULAR_TOMESTONE_OF_GENESIS_II, false, false, false),
+                Irregular_Tomestone_Of_Goetia = inventoryManager.GetInventoryItemCount((uint)Currencies.IRREGULAR_TOMESTONE_OF_GOETIA, false, false, false),
                 Irregular_Tomestone_Of_Law = inventoryManager.GetInventoryItemCount((uint)Currencies.IRREGULAR_TOMESTONE_OF_LAW, false, false, false),
                 Irregular_Tomestone_Of_Lore = inventoryManager.GetInventoryItemCount((uint)Currencies.IRREGULAR_TOMESTONE_OF_LORE, false, false, false),
                 Irregular_Tomestone_Of_Mendacity = inventoryManager.GetInventoryItemCount((uint)Currencies.IRREGULAR_TOMESTONE_OF_MENDACITY, false, false, false),
@@ -798,6 +812,8 @@ namespace Altoholic
                 MGP = inventoryManager.GetInventoryItemCount((uint)Currencies.MGP, false, false, false),
                 Namazu_Koban = inventoryManager.GetInventoryItemCount((uint)Currencies.NAMAZU_KOBAN, false, false, false),
                 Omicron_Omnitoken = inventoryManager.GetInventoryItemCount((uint)Currencies.OMICRON_OMNITOKEN, false, false, false),
+                Orange_Crafters_Scrip = inventoryManager.GetInventoryItemCount((uint)Currencies.ORANGE_CRAFTERS_SCRIP, false, false, false),
+                Orange_Gatherers_Scrip = inventoryManager.GetInventoryItemCount((uint)Currencies.ORANGE_GATHERERS_SCRIP, false, false, false),
                 Purple_Crafters_Scrip = inventoryManager.GetInventoryItemCount((uint)Currencies.PURPLE_CRAFTERS_SCRIP, false, false, false),
                 Purple_Gatherers_Scrip = inventoryManager.GetInventoryItemCount((uint)Currencies.PURPLE_GATHERERS_SCRIP, false, false, false),
                 Qitari_Compliment = inventoryManager.GetInventoryItemCount((uint)Currencies.QITARI_COMPLIMENT, false, false, false),
@@ -851,7 +867,7 @@ namespace Altoholic
         {
             foreach (int id in _questIds)
             {
-                Plugin.Log.Debug($"Checking quest {id}");
+                Log.Debug($"Checking quest {id}");
                 /*if(localPlayer.HasQuest(id) && localPlayer.IsQuestCompleted(id))
                     Plugin.Log.Debug($"{id} is completed");*/
 
@@ -864,7 +880,7 @@ namespace Altoholic
                 bool complete = Utils.IsQuestCompleted(id);
                 if (!_localPlayer.HasQuest(id))
                 {
-                    _localPlayer.Quests.Add(new Quest() { Id = id, Completed = complete });
+                    _localPlayer.Quests.Add(new Quest { Id = id, Completed = complete });
                 }
                 else
                 {
@@ -891,17 +907,17 @@ namespace Altoholic
                 InventoryItem.ItemFlags flags = ii.Flags;
                 Gear currGear = new()
                 {
-                    ItemId = ii.ItemID,
-                    HQ = flags.HasFlag(InventoryItem.ItemFlags.HQ),
+                    ItemId = ii.ItemId,
+                    HQ = flags.HasFlag(InventoryItem.ItemFlags.HighQuality),
                     CompanyCrestApplied = flags.HasFlag(InventoryItem.ItemFlags.CompanyCrestApplied),
                     Slot = ii.Slot,
                     Spiritbond = ii.Spiritbond,
                     Condition = ii.Condition,
-                    CrafterContentID = ii.CrafterContentID,
-                    Materia = (ushort)ii.Materia,
-                    MateriaGrade = (byte)ii.MateriaGrade,
-                    Stain = ii.Stain,
-                    GlamourID = ii.GlamourID,
+                    CrafterContentID = ii.CrafterContentId,
+                    Materia = ii.Materia.GetPinnableReference(),
+                    MateriaGrade = ii.MateriaGrades.GetPinnableReference(),
+                    Stain = ii.Stains.GetPinnableReference(),
+                    GlamourID = ii.GlamourId,
                 };
                 gearItems.Add(currGear);
             }
@@ -934,8 +950,8 @@ namespace Altoholic
                     InventoryItem.ItemFlags flags = ii.Flags;
                     Inventory currInv = new()
                     {
-                        ItemId = ii.ItemID,
-                        HQ = flags.HasFlag(InventoryItem.ItemFlags.HQ),
+                        ItemId = ii.ItemId,
+                        HQ = flags.HasFlag(InventoryItem.ItemFlags.HighQuality),
                         Quantity = ii.Quantity,
                     };
                     //Plugin.Log.Debug($"{currInv.ItemId}");
@@ -980,8 +996,8 @@ namespace Altoholic
                     InventoryItem.ItemFlags flags = ii.Flags;
                     Inventory currInv = new()
                     {
-                        ItemId = ii.ItemID,
-                        HQ = flags.HasFlag(InventoryItem.ItemFlags.HQ),
+                        ItemId = ii.ItemId,
+                        HQ = flags.HasFlag(InventoryItem.ItemFlags.HighQuality),
                         Quantity = ii.Quantity,
                     };
                     //Plugin.Log.Debug($"{currInv.ItemId}");
@@ -1030,17 +1046,17 @@ namespace Altoholic
                     InventoryItem.ItemFlags flags = ii.Flags;
                     Gear currGear = new()
                     {
-                        ItemId = ii.ItemID,
-                        HQ = flags.HasFlag(InventoryItem.ItemFlags.HQ),
+                        ItemId = ii.ItemId,
+                        HQ = flags.HasFlag(InventoryItem.ItemFlags.HighQuality),
                         CompanyCrestApplied = flags.HasFlag(InventoryItem.ItemFlags.CompanyCrestApplied),
                         Slot = ii.Slot,
                         Spiritbond = ii.Spiritbond,
                         Condition = ii.Condition,
-                        CrafterContentID = ii.CrafterContentID,
-                        Materia = (ushort)ii.Materia,
-                        MateriaGrade = (byte)ii.MateriaGrade,
-                        Stain = ii.Stain,
-                        GlamourID = ii.GlamourID,
+                        CrafterContentID = ii.CrafterContentId,
+                        Materia = ii.Materia.GetPinnableReference(),
+                        MateriaGrade = ii.MateriaGrades.GetPinnableReference(),
+                        Stain = ii.Stains.GetPinnableReference(),
+                        GlamourID = ii.GlamourId,
                     };
 
                     switch(kind)
@@ -1057,7 +1073,7 @@ namespace Altoholic
                         case InventoryType.ArmoryWrist: wrist.Add(currGear); break;
                         case InventoryType.ArmoryRings: rings.Add(currGear); break;
                         case InventoryType.ArmorySoulCrystal: soulCrystal.Add(currGear);break;
-                    };
+                    }
                 }
             }
 
@@ -1077,11 +1093,11 @@ namespace Altoholic
                 SoulCrystal = soulCrystal,
             };
         }
-        private unsafe void GetPlayerGlamourInventory()
+        private void GetPlayerGlamourInventory()
         {
             
         }
-        private unsafe void GetPlayerArmoireInventory()
+        private void GetPlayerArmoireInventory()
         {
             
         }
@@ -1096,8 +1112,8 @@ namespace Altoholic
             {
                 RetainerManager.Retainer* currentRetainer = retainerManager.GetRetainerBySortedIndex(i);
                 //if (!current_retainer->Available) continue;
-                ulong retainerId = currentRetainer->RetainerID;
-                string name = MemoryHelper.ReadSeStringNullTerminated((nint)currentRetainer->Name).TextValue;
+                ulong retainerId = currentRetainer->RetainerId;
+                string name = currentRetainer->NameString;
 
                 //Log.Debug($"current_retainer name: {name} id: {retainerId}");
                 if (name == "RETAINER") continue;
@@ -1105,7 +1121,7 @@ namespace Altoholic
                 Retainer? r = _localPlayer.Retainers.Find(r => r.Id == retainerId);
                 r ??= new Retainer
                 {
-                    Id = currentRetainer->RetainerID
+                    Id = currentRetainer->RetainerId
                 };
 
                 r.Available = currentRetainer->Available;
@@ -1114,11 +1130,11 @@ namespace Altoholic
                 r.Level = currentRetainer->Level;
                 r.Gils = currentRetainer->Gil;
                 r.Town = currentRetainer->Town;
-                r.MarketItemCount = currentRetainer->MarkerItemCount;// Todo: change the typo once dalamud update CS
+                r.MarketItemCount = currentRetainer->MarketItemCount;
                 r.MarketExpire = currentRetainer->MarketExpire;
-                r.VentureID = currentRetainer->VentureID;
+                r.VentureID = currentRetainer->VentureId;
                 r.LastUpdate = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-                r.DisplayOrder = retainerManager.DisplayOrder[i];
+                r.DisplayOrder = retainerManager.DisplayOrder.GetPinnableReference();
 
                 if (r.Id == retainerManager.LastSelectedRetainerId)
                 {
@@ -1161,8 +1177,8 @@ namespace Altoholic
                     InventoryItem.ItemFlags flags = ii.Flags;
                     Inventory currInv = new()
                     {
-                        ItemId = ii.ItemID,
-                        HQ = flags.HasFlag(InventoryItem.ItemFlags.HQ),
+                        ItemId = ii.ItemId,
+                        HQ = flags.HasFlag(InventoryItem.ItemFlags.HighQuality),
                         Quantity = ii.Quantity,
                     };
                     //Plugin.Log.Debug($"{currInv.ItemId}");
@@ -1179,63 +1195,57 @@ namespace Altoholic
         
         private unsafe List<Inventory> GetPlayerRetainerMarketInventory()
         {
-            unsafe
+            //var inv = InventoryManager.Instance()->GetInventoryContainer(InventoryType.EquippedItems);
+            ref readonly InventoryManager inventoryManager = ref *InventoryManager.Instance();
+            InventoryContainer inv = *inventoryManager.GetInventoryContainer(InventoryType.RetainerMarket);
+            List<Inventory> marketItems = [];
+            //for (var i = 0; i < inv->Size; i++)
+            for (int i = 0; i < inv.Size; i++)
             {
-                //var inv = InventoryManager.Instance()->GetInventoryContainer(InventoryType.EquippedItems);
-                ref readonly InventoryManager inventoryManager = ref *InventoryManager.Instance();
-                InventoryContainer inv = *inventoryManager.GetInventoryContainer(InventoryType.RetainerMarket);
-                List<Inventory> marketItems = [];
-                //for (var i = 0; i < inv->Size; i++)
-                for (int i = 0; i < inv.Size; i++)
+                //var ii = inv->Items[i];
+                InventoryItem ii = inv.Items[i];
+                InventoryItem.ItemFlags flags = ii.Flags;
+                Inventory currInv = new()
                 {
-                    //var ii = inv->Items[i];
-                    InventoryItem ii = inv.Items[i];
-                    InventoryItem.ItemFlags flags = ii.Flags;
-                    Inventory currInv = new()
-                    {
-                        ItemId = ii.ItemID,
-                        HQ = flags.HasFlag(InventoryItem.ItemFlags.HQ),
-                        Quantity = ii.Quantity,
-                    };
-                    //Plugin.Log.Debug($"{currInv.ItemId}");
-                    marketItems.Add(currInv);
-                }
-                return marketItems;
+                    ItemId = ii.ItemId,
+                    HQ = flags.HasFlag(InventoryItem.ItemFlags.HighQuality),
+                    Quantity = ii.Quantity,
+                };
+                //Plugin.Log.Debug($"{currInv.ItemId}");
+                marketItems.Add(currInv);
             }
+            return marketItems;
         }
         
         private unsafe List<Gear> GetPlayerRetainerEquippedGear()
         {
-            unsafe
+            //var inv = InventoryManager.Instance()->GetInventoryContainer(InventoryType.EquippedItems);
+            ref readonly InventoryManager inventoryManager = ref *InventoryManager.Instance();
+            InventoryContainer inv = *inventoryManager.GetInventoryContainer(InventoryType.RetainerEquippedItems);
+            List<Gear> gearItems = [];
+            //for (var i = 0; i < inv->Size; i++)
+            for (int i = 0; i < inv.Size; i++)
             {
-                //var inv = InventoryManager.Instance()->GetInventoryContainer(InventoryType.EquippedItems);
-                ref readonly InventoryManager inventoryManager = ref *InventoryManager.Instance();
-                InventoryContainer inv = *inventoryManager.GetInventoryContainer(InventoryType.RetainerEquippedItems);
-                List<Gear> gearItems = [];
-                //for (var i = 0; i < inv->Size; i++)
-                for (int i = 0; i < inv.Size; i++)
+                //var ii = inv->Items[i];
+                InventoryItem ii = inv.Items[i];
+                InventoryItem.ItemFlags flags = ii.Flags;
+                Gear currGear = new()
                 {
-                    //var ii = inv->Items[i];
-                    InventoryItem ii = inv.Items[i];
-                    InventoryItem.ItemFlags flags = ii.Flags;
-                    Gear currGear = new()
-                    {
-                        ItemId = ii.ItemID,
-                        HQ = flags.HasFlag(InventoryItem.ItemFlags.HQ),
-                        CompanyCrestApplied = flags.HasFlag(InventoryItem.ItemFlags.CompanyCrestApplied),
-                        Slot = ii.Slot,
-                        Spiritbond = ii.Spiritbond,
-                        Condition = ii.Condition,
-                        CrafterContentID = ii.CrafterContentID,
-                        Materia = (ushort)ii.Materia,
-                        MateriaGrade = (byte)ii.MateriaGrade,
-                        Stain = ii.Stain,
-                        GlamourID = ii.GlamourID,
-                    };
-                    gearItems.Add(currGear);
-                }
-                return gearItems;
+                    ItemId = ii.ItemId,
+                    HQ = flags.HasFlag(InventoryItem.ItemFlags.HighQuality),
+                    CompanyCrestApplied = flags.HasFlag(InventoryItem.ItemFlags.CompanyCrestApplied),
+                    Slot = ii.Slot,
+                    Spiritbond = ii.Spiritbond,
+                    Condition = ii.Condition,
+                    CrafterContentID = ii.CrafterContentId,
+                    Materia = ii.Materia.GetPinnableReference(),
+                    MateriaGrade = ii.MateriaGrades.GetPinnableReference(),
+                    Stain = ii.Stains.GetPinnableReference(),
+                    GlamourID = ii.GlamourId,
+                };
+                gearItems.Add(currGear);
             }
+            return gearItems;
         }
 
         private void CleanLastLocalCharacter()
@@ -1309,6 +1319,7 @@ namespace Altoholic
             CollectionWindow.Clear();
             CharactersWindow.IsOpen = false;
             MainWindow.IsOpen = false;
+            MainWindow.Clear();
             _periodicTimer?.Dispose();
         }
 
@@ -1352,8 +1363,8 @@ namespace Altoholic
 
         public (string, string, string) GetLocalPlayerNameWorldRegion()
         {
-            PlayerCharacter? local = ClientState.LocalPlayer;
-            if (local == null || local.HomeWorld?.GameData == null)
+            IPlayerCharacter? local = ClientState.LocalPlayer;
+            if (local == null || local.HomeWorld.GameData == null)
                 return (string.Empty, string.Empty, string.Empty);
             SeString? homeworld = local.HomeWorld.GameData.Name;
 

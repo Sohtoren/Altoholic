@@ -1,5 +1,5 @@
 ﻿using Altoholic.Models;
-using Dalamud;
+using Dalamud.Game;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,17 +8,17 @@ namespace Altoholic.Cache
 {
     public class EmoteStorage(int size = 120) : IDisposable
     {
-        private readonly Dictionary<uint, Models.Emote> _emotes = new(size);
+        private readonly Dictionary<uint, Emote> _emotes = new(size);
 
         public void Init(ClientLanguage currentLocale)
         {
-            List<Models.Emote>? emotes = Utils.GetAllEmotes(currentLocale);
+            List<Emote>? emotes = Utils.GetAllEmotes(currentLocale);
             if (emotes == null || emotes.Count == 0)
             {
                 return;
             }
 
-            foreach (Models.Emote e in emotes)
+            foreach (Emote e in emotes)
             {
                 _emotes.Add(e.Id, e);
             }

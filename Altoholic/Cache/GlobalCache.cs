@@ -14,5 +14,6 @@
         public required BardingStorage BardingStorage { get; set; } = null!;
         public required FramerKitStorage FramerKitStorage { get; set; } = null!;
         public required OrchestrionRollStorage OrchestrionRollStorage { get; set; } = null!;
+        public required OrnamentStorage OrnamentStorage { get; set; } = null!;
     }
 }

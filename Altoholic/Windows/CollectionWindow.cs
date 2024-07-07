@@ -5,7 +5,6 @@ using System.Numerics;
 using Altoholic.Cache;
 using Altoholic.Models;
 using CheapLoc;
-using Dalamud;
 using Dalamud.Game.Text;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
@@ -19,7 +18,7 @@ namespace Altoholic.Windows
     public class CollectionWindow : Window, IDisposable
     {
         private readonly Plugin _plugin;
-        private ClientLanguage _currentLocale;
+        private Dalamud.Game.ClientLanguage _currentLocale;
         private bool _isSpoilerEnabled;
         private GlobalCache _globalCache;
 
@@ -43,18 +42,17 @@ namespace Altoholic.Windows
         public Func<List<Character>> GetOthersCharactersList { get; set; } = null!;
 
         private Character? _currentCharacter;
-        private IEnumerable<Mount>? _currentItems;
-        private uint? _currentItem;
-        private string _searchedItem = string.Empty;
-        private string _lastSearchedItem = string.Empty;
 
+        private bool _obtainedBardingsOnly;
+        private bool _obtainedEmotesOnly;
+        private bool _obtainedOrnamentsOnly;
+        private bool _obtainedFramerKitsOnly;
+        
         private bool _obtainedMinionsOnly;
         private bool _obtainedMountsOnly;
-        private bool _obtainedTripleTriadCardsOnly;
-        private bool _obtainedEmotesOnly;
-        private bool _obtainedBardingsOnly;
-        private bool _obtainedFramerKitsOnly;
         private bool _obtainedOrchestrionRollsOnly;
+        
+        private bool _obtainedTripleTriadCardsOnly;
 
         /*public override void OnClose()
         {
@@ -72,34 +70,32 @@ namespace Altoholic.Windows
         {
             Plugin.Log.Info("CollectionWindow, Dispose() called");
             _currentCharacter = null;
-            _currentItem = null;
-            _currentItems = null;
-            _searchedItem = string.Empty;
-            _lastSearchedItem = string.Empty;
+            _obtainedBardingsOnly = false;
+            _obtainedEmotesOnly = false;
+            _obtainedOrnamentsOnly = false;
+            _obtainedFramerKitsOnly = false;
+            // Hairstyle
             _obtainedMinionsOnly = false;
             _obtainedMountsOnly = false;
-            _obtainedTripleTriadCardsOnly = false;
-            _obtainedEmotesOnly = false;
-            _obtainedBardingsOnly = false;
-            _obtainedFramerKitsOnly = false;
             _obtainedOrchestrionRollsOnly = false;
+            // Tomes
+            _obtainedTripleTriadCardsOnly = false;
         }
 
         public void Clear()
         {
             Plugin.Log.Info("CollectionWindow, Clear() called");
             _currentCharacter = null;
-            _currentItem = null;
-            _currentItems = null;
-            _searchedItem = string.Empty;
-            _lastSearchedItem = string.Empty;
+            _obtainedBardingsOnly = false;
+            _obtainedEmotesOnly = false;
+            _obtainedOrnamentsOnly = false;
+            _obtainedFramerKitsOnly = false;
+            // Hairstyle
             _obtainedMinionsOnly = false;
             _obtainedMountsOnly = false;
-            _obtainedTripleTriadCardsOnly = false;
-            _obtainedEmotesOnly = false;
-            _obtainedBardingsOnly = false;
-            _obtainedFramerKitsOnly = false;
             _obtainedOrchestrionRollsOnly = false;
+            // Tomes
+            _obtainedTripleTriadCardsOnly = false;
         }
 
         public override void Draw()
@@ -113,6 +109,7 @@ namespace Altoholic.Windows
             _obtainedBardingsOnly = _plugin.Configuration.ObtainedOnly;
             _obtainedFramerKitsOnly = _plugin.Configuration.ObtainedOnly;
             _obtainedOrchestrionRollsOnly = _plugin.Configuration.ObtainedOnly;
+            _obtainedOrnamentsOnly = _plugin.Configuration.ObtainedOnly;
             List<Character> chars = [];
             chars.Insert(0, GetPlayer.Invoke());
             chars.AddRange(GetOthersCharactersList.Invoke());
@@ -141,10 +138,6 @@ namespace Altoholic.Windows
                             foreach (Character currChar in chars.Where(currChar => ImGui.Selectable($"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}", currChar == _currentCharacter)))
                             {
                                 _currentCharacter = currChar;
-                                _currentItem = null;
-                                _currentItems = null;
-                                _searchedItem = string.Empty;
-                                _lastSearchedItem = string.Empty;
                             }
                         }
                     }
@@ -172,7 +165,7 @@ namespace Altoholic.Windows
 
         public void DrawTabs(Character currentCharacter)
         {
-            using var tabBar = ImRaii.TabBar($"###CollectionWindow#Tabs");
+            using var tabBar = ImRaii.TabBar("###CollectionWindow#Tabs");
             if (!tabBar.Success) return;
             using (var bardingsTab =
                    ImRaii.TabItem($"{Loc.Localize("Barding", "Barding")}")) // Harnisch Barding Barde バード
@@ -195,7 +188,7 @@ namespace Altoholic.Windows
             {
                 if (fashionAccessoriesTab.Success)
                 {
-                    //DrawEmotes(currentCharacter);
+                    DrawOrnaments(currentCharacter);
                 }
             }
             using (var framerKitTab =
@@ -315,31 +308,31 @@ namespace Altoholic.Windows
             int minionsCount = minions.Count;
             if (minionsCount == 0) return;
             int rows = (int)Math.Ceiling(minionsCount / (double)10);
-            int heigth = rows * 48 + 0;
+            int height = rows * 48 + 0;
 
-            using var table = ImRaii.Table($"###MinionsTable", 10,
-                ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner, new Vector2(575, heigth));
+            using var table = ImRaii.Table("###MinionsTable", 10,
+                ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner, new Vector2(575, height));
             if (!table) return;
 
-            ImGui.TableSetupColumn($"###MinionsTable#Col1",
+            ImGui.TableSetupColumn("###MinionsTable#Col1",
                 ImGuiTableColumnFlags.WidthFixed, 48);
-            ImGui.TableSetupColumn($"###MinionsTable#Col2",
+            ImGui.TableSetupColumn("###MinionsTable#Col2",
                 ImGuiTableColumnFlags.WidthFixed, 48);
-            ImGui.TableSetupColumn($"###MinionsTable#Col3",
+            ImGui.TableSetupColumn("###MinionsTable#Col3",
                 ImGuiTableColumnFlags.WidthFixed, 48);
-            ImGui.TableSetupColumn($"###MinionsTable#Col4",
+            ImGui.TableSetupColumn("###MinionsTable#Col4",
                 ImGuiTableColumnFlags.WidthFixed, 48);
-            ImGui.TableSetupColumn($"###MinionsTable#Col5",
+            ImGui.TableSetupColumn("###MinionsTable#Col5",
                 ImGuiTableColumnFlags.WidthFixed, 48);
-            ImGui.TableSetupColumn($"###MinionsTable#Col6",
+            ImGui.TableSetupColumn("###MinionsTable#Col6",
                 ImGuiTableColumnFlags.WidthFixed, 48);
-            ImGui.TableSetupColumn($"###MinionsTable#Col7",
+            ImGui.TableSetupColumn("###MinionsTable#Col7",
                 ImGuiTableColumnFlags.WidthFixed, 48);
-            ImGui.TableSetupColumn($"###MinionsTable#Col8",
+            ImGui.TableSetupColumn("###MinionsTable#Col8",
                 ImGuiTableColumnFlags.WidthFixed, 48);
-            ImGui.TableSetupColumn($"###MinionsTable#Col9",
+            ImGui.TableSetupColumn("###MinionsTable#Col9",
                 ImGuiTableColumnFlags.WidthFixed, 48);
-            ImGui.TableSetupColumn($"###MinionsTable#Col10",
+            ImGui.TableSetupColumn("###MinionsTable#Col10",
                 ImGuiTableColumnFlags.WidthFixed, 48);
 
             int i = 0;
@@ -437,31 +430,31 @@ namespace Altoholic.Windows
             List<uint> mounts = (_obtainedMountsOnly) ? currentCharacter.Mounts : _globalCache.MountStorage.Get();
             int mountsCount = mounts.Count;
             int rows =  (int)Math.Ceiling(mountsCount / (double)10);
-            int heigth = rows * 48 + rows;
+            int height = rows * 48 + rows;
 
-            using var mountTable = ImRaii.Table($"###MountsTable", 10,
-                ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner, new Vector2(573, heigth));
+            using var mountTable = ImRaii.Table("###MountsTable", 10,
+                ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner, new Vector2(573, height));
             if (!mountTable) return;
 
-            ImGui.TableSetupColumn($"###MountsTable#Col1",
+            ImGui.TableSetupColumn("###MountsTable#Col1",
                 ImGuiTableColumnFlags.WidthFixed, 48);
-            ImGui.TableSetupColumn($"###MountsTable#Col2",
+            ImGui.TableSetupColumn("###MountsTable#Col2",
                 ImGuiTableColumnFlags.WidthFixed, 48);
-            ImGui.TableSetupColumn($"###MountsTable#Col3",
+            ImGui.TableSetupColumn("###MountsTable#Col3",
                 ImGuiTableColumnFlags.WidthFixed, 48);
-            ImGui.TableSetupColumn($"###MountsTable#Col4",
+            ImGui.TableSetupColumn("###MountsTable#Col4",
                 ImGuiTableColumnFlags.WidthFixed, 48);
-            ImGui.TableSetupColumn($"###MountsTable#Col5",
+            ImGui.TableSetupColumn("###MountsTable#Col5",
                 ImGuiTableColumnFlags.WidthFixed, 48);
-            ImGui.TableSetupColumn($"###MountsTable#Col6",
+            ImGui.TableSetupColumn("###MountsTable#Col6",
                 ImGuiTableColumnFlags.WidthFixed, 48);
-            ImGui.TableSetupColumn($"###MountsTable#Col7",
+            ImGui.TableSetupColumn("###MountsTable#Col7",
                 ImGuiTableColumnFlags.WidthFixed, 48);
-            ImGui.TableSetupColumn($"###MountsTable#Col8",
+            ImGui.TableSetupColumn("###MountsTable#Col8",
                 ImGuiTableColumnFlags.WidthFixed, 48);
-            ImGui.TableSetupColumn($"###MountsTable#Col9",
+            ImGui.TableSetupColumn("###MountsTable#Col9",
                 ImGuiTableColumnFlags.WidthFixed, 48);
-            ImGui.TableSetupColumn($"###MountsTable#Col10",
+            ImGui.TableSetupColumn("###MountsTable#Col10",
                 ImGuiTableColumnFlags.WidthFixed, 48);
 
             int i = 0;
@@ -544,31 +537,31 @@ namespace Altoholic.Windows
             int tripleTriadCardsCount = tripleTriadCards.Count;
             if (tripleTriadCardsCount == 0) return;
             int rows = (int)Math.Ceiling(tripleTriadCardsCount / (double)10);
-            int heigth = rows * 48 + 0;
+            int height = rows * 48 + 0;
 
-            using var table = ImRaii.Table($"###TripleTriadCardsTable", 10,
-                ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner, new Vector2(575, heigth));
+            using var table = ImRaii.Table("###TripleTriadCardsTable", 10,
+                ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner, new Vector2(575, height));
             if (!table) return;
 
-            ImGui.TableSetupColumn($"###TripleTriadCardsTable#Col1",
+            ImGui.TableSetupColumn("###TripleTriadCardsTable#Col1",
                 ImGuiTableColumnFlags.WidthFixed, 48);
-            ImGui.TableSetupColumn($"###TripleTriadCardsTable#Col2",
+            ImGui.TableSetupColumn("###TripleTriadCardsTable#Col2",
                 ImGuiTableColumnFlags.WidthFixed, 48);
-            ImGui.TableSetupColumn($"###TripleTriadCardsTable#Col3",
+            ImGui.TableSetupColumn("###TripleTriadCardsTable#Col3",
                 ImGuiTableColumnFlags.WidthFixed, 48);
-            ImGui.TableSetupColumn($"###TripleTriadCardsTable#Col4",
+            ImGui.TableSetupColumn("###TripleTriadCardsTable#Col4",
                 ImGuiTableColumnFlags.WidthFixed, 48);
-            ImGui.TableSetupColumn($"###TripleTriadCardsTable#Col5",
+            ImGui.TableSetupColumn("###TripleTriadCardsTable#Col5",
                 ImGuiTableColumnFlags.WidthFixed, 48);
-            ImGui.TableSetupColumn($"###TripleTriadCardsTable#Col6",
+            ImGui.TableSetupColumn("###TripleTriadCardsTable#Col6",
                 ImGuiTableColumnFlags.WidthFixed, 48);
-            ImGui.TableSetupColumn($"###TripleTriadCardsTable#Col7",
+            ImGui.TableSetupColumn("###TripleTriadCardsTable#Col7",
                 ImGuiTableColumnFlags.WidthFixed, 48);
-            ImGui.TableSetupColumn($"###TripleTriadCardsTable#Col8",
+            ImGui.TableSetupColumn("###TripleTriadCardsTable#Col8",
                 ImGuiTableColumnFlags.WidthFixed, 48);
-            ImGui.TableSetupColumn($"###TripleTriadCardsTable#Col9",
+            ImGui.TableSetupColumn("###TripleTriadCardsTable#Col9",
                 ImGuiTableColumnFlags.WidthFixed, 48);
-            ImGui.TableSetupColumn($"###TripleTriadCardsTable#Col10",
+            ImGui.TableSetupColumn("###TripleTriadCardsTable#Col10",
                 ImGuiTableColumnFlags.WidthFixed, 48);
 
             int i = 0;
@@ -675,31 +668,31 @@ namespace Altoholic.Windows
             int emoteCount = emotes.Count;
             if (emoteCount == 0) return;
             int rows = (int)Math.Ceiling(emoteCount / (double)10);
-            int heigth = rows * 48 + 0;
+            int height = rows * 48 + 0;
 
-            using var table = ImRaii.Table($"###EmotesTable", 10,
-                ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner, new Vector2(571, heigth));
+            using var table = ImRaii.Table("###EmotesTable", 10,
+                ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner, new Vector2(571, height));
             if (!table) return;
 
-            ImGui.TableSetupColumn($"###EmotesTable#Col1",
+            ImGui.TableSetupColumn("###EmotesTable#Col1",
                 ImGuiTableColumnFlags.WidthFixed, 48);
-            ImGui.TableSetupColumn($"###EmotesTable#Col2",
+            ImGui.TableSetupColumn("###EmotesTable#Col2",
                 ImGuiTableColumnFlags.WidthFixed, 48);
-            ImGui.TableSetupColumn($"###EmotesTable#Col3",
+            ImGui.TableSetupColumn("###EmotesTable#Col3",
                 ImGuiTableColumnFlags.WidthFixed, 48);
-            ImGui.TableSetupColumn($"###EmotesTable#Col4",
+            ImGui.TableSetupColumn("###EmotesTable#Col4",
                 ImGuiTableColumnFlags.WidthFixed, 48);
-            ImGui.TableSetupColumn($"###EmotesTable#Col5",
+            ImGui.TableSetupColumn("###EmotesTable#Col5",
                 ImGuiTableColumnFlags.WidthFixed, 48);
-            ImGui.TableSetupColumn($"###EmotesTable#Col6",
+            ImGui.TableSetupColumn("###EmotesTable#Col6",
                 ImGuiTableColumnFlags.WidthFixed, 48);
-            ImGui.TableSetupColumn($"###EmotesTable#Col7",
+            ImGui.TableSetupColumn("###EmotesTable#Col7",
                 ImGuiTableColumnFlags.WidthFixed, 48);
-            ImGui.TableSetupColumn($"###EmotesTable#Col8",
+            ImGui.TableSetupColumn("###EmotesTable#Col8",
                 ImGuiTableColumnFlags.WidthFixed, 48);
-            ImGui.TableSetupColumn($"###EmotesTable#Col9",
+            ImGui.TableSetupColumn("###EmotesTable#Col9",
                 ImGuiTableColumnFlags.WidthFixed, 48);
-            ImGui.TableSetupColumn($"###EmotesTable#Col10",
+            ImGui.TableSetupColumn("###EmotesTable#Col10",
                 ImGuiTableColumnFlags.WidthFixed, 48);
 
             int i = 0;
@@ -798,31 +791,31 @@ namespace Altoholic.Windows
             int bardingsCount = bardings.Count;
             if (bardingsCount == 0) return;
             int rows = (int)Math.Ceiling(bardingsCount / (double)10);
-            int heigth = rows * 48 + 0;
+            int height = rows * 48 + 0;
 
-            using var table = ImRaii.Table($"###BardingsTable", 10,
-                ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner, new Vector2(572, heigth));
+            using var table = ImRaii.Table("###BardingsTable", 10,
+                ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner, new Vector2(572, height));
             if (!table) return;
 
-            ImGui.TableSetupColumn($"###BardingsTable#Col1",
+            ImGui.TableSetupColumn("###BardingsTable#Col1",
                 ImGuiTableColumnFlags.WidthFixed, 48);
-            ImGui.TableSetupColumn($"###BardingsTable#Col2",
+            ImGui.TableSetupColumn("###BardingsTable#Col2",
                 ImGuiTableColumnFlags.WidthFixed, 48);
-            ImGui.TableSetupColumn($"###BardingsTable#Col3",
+            ImGui.TableSetupColumn("###BardingsTable#Col3",
                 ImGuiTableColumnFlags.WidthFixed, 48);
-            ImGui.TableSetupColumn($"###BardingsTable#Col4",
+            ImGui.TableSetupColumn("###BardingsTable#Col4",
                 ImGuiTableColumnFlags.WidthFixed, 48);
-            ImGui.TableSetupColumn($"###BardingsTable#Col5",
+            ImGui.TableSetupColumn("###BardingsTable#Col5",
                 ImGuiTableColumnFlags.WidthFixed, 48);
-            ImGui.TableSetupColumn($"###BardingsTable#Col6",
+            ImGui.TableSetupColumn("###BardingsTable#Col6",
                 ImGuiTableColumnFlags.WidthFixed, 48);
-            ImGui.TableSetupColumn($"###BardingsTable#Col7",
+            ImGui.TableSetupColumn("###BardingsTable#Col7",
                 ImGuiTableColumnFlags.WidthFixed, 48);
-            ImGui.TableSetupColumn($"###BardingsTable#Col8",
+            ImGui.TableSetupColumn("###BardingsTable#Col8",
                 ImGuiTableColumnFlags.WidthFixed, 48);
-            ImGui.TableSetupColumn($"###BardingsTable#Col9",
+            ImGui.TableSetupColumn("###BardingsTable#Col9",
                 ImGuiTableColumnFlags.WidthFixed, 48);
-            ImGui.TableSetupColumn($"###BardingsTable#Col10",
+            ImGui.TableSetupColumn("###BardingsTable#Col10",
                 ImGuiTableColumnFlags.WidthFixed, 48);
 
             int i = 0;
@@ -920,31 +913,31 @@ namespace Altoholic.Windows
             int framerKitsCount = framerKits.Count;
             if (framerKitsCount == 0) return;
             int rows = (int)Math.Ceiling(framerKitsCount / (double)10);
-            int heigth = rows * 48 + 0;
+            int height = rows * 48 + 0;
 
-            using var table = ImRaii.Table($"###FramerKitsTable", 10,
-                ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner, new Vector2(572, heigth));
+            using var table = ImRaii.Table("###FramerKitsTable", 10,
+                ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner, new Vector2(572, height));
             if (!table) return;
 
-            ImGui.TableSetupColumn($"###FramerKitsTable#Col1",
+            ImGui.TableSetupColumn("###FramerKitsTable#Col1",
                 ImGuiTableColumnFlags.WidthFixed, 48);
-            ImGui.TableSetupColumn($"###FramerKitsTable#Col2",
+            ImGui.TableSetupColumn("###FramerKitsTable#Col2",
                 ImGuiTableColumnFlags.WidthFixed, 48);
-            ImGui.TableSetupColumn($"###FramerKitsTable#Col3",
+            ImGui.TableSetupColumn("###FramerKitsTable#Col3",
                 ImGuiTableColumnFlags.WidthFixed, 48);
-            ImGui.TableSetupColumn($"###FramerKitsTable#Col4",
+            ImGui.TableSetupColumn("###FramerKitsTable#Col4",
                 ImGuiTableColumnFlags.WidthFixed, 48);
-            ImGui.TableSetupColumn($"###FramerKitsTable#Col5",
+            ImGui.TableSetupColumn("###FramerKitsTable#Col5",
                 ImGuiTableColumnFlags.WidthFixed, 48);
-            ImGui.TableSetupColumn($"###FramerKitsTable#Col6",
+            ImGui.TableSetupColumn("###FramerKitsTable#Col6",
                 ImGuiTableColumnFlags.WidthFixed, 48);
-            ImGui.TableSetupColumn($"###FramerKitsTable#Col7",
+            ImGui.TableSetupColumn("###FramerKitsTable#Col7",
                 ImGuiTableColumnFlags.WidthFixed, 48);
-            ImGui.TableSetupColumn($"###FramerKitsTable#Col8",
+            ImGui.TableSetupColumn("###FramerKitsTable#Col8",
                 ImGuiTableColumnFlags.WidthFixed, 48);
-            ImGui.TableSetupColumn($"###FramerKitsTable#Col9",
+            ImGui.TableSetupColumn("###FramerKitsTable#Col9",
                 ImGuiTableColumnFlags.WidthFixed, 48);
-            ImGui.TableSetupColumn($"###FramerKitsTable#Col10",
+            ImGui.TableSetupColumn("###FramerKitsTable#Col10",
                 ImGuiTableColumnFlags.WidthFixed, 48);
 
             int i = 0;
@@ -1043,31 +1036,31 @@ namespace Altoholic.Windows
             int orchestrionRollsCount = orchestrionRolls.Count;
             if (orchestrionRollsCount == 0) return;
             int rows = (int)Math.Ceiling(orchestrionRollsCount / (double)10);
-            int heigth = rows * 48 + 0;
+            int height = rows * 48 + 0;
 
-            using var table = ImRaii.Table($"###OrchestrionRollsTable", 10,
-                ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner, new Vector2(572, heigth));
+            using var table = ImRaii.Table("###OrchestrionRollsTable", 10,
+                ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner, new Vector2(572, height));
             if (!table) return;
 
-            ImGui.TableSetupColumn($"###OrchestrionRollsTable#Col1",
+            ImGui.TableSetupColumn("###OrchestrionRollsTable#Col1",
                 ImGuiTableColumnFlags.WidthFixed, 48);
-            ImGui.TableSetupColumn($"###OrchestrionRollsTable#Col2",
+            ImGui.TableSetupColumn("###OrchestrionRollsTable#Col2",
                 ImGuiTableColumnFlags.WidthFixed, 48);
-            ImGui.TableSetupColumn($"###OrchestrionRollsTable#Col3",
+            ImGui.TableSetupColumn("###OrchestrionRollsTable#Col3",
                 ImGuiTableColumnFlags.WidthFixed, 48);
-            ImGui.TableSetupColumn($"###OrchestrionRollsTable#Col4",
+            ImGui.TableSetupColumn("###OrchestrionRollsTable#Col4",
                 ImGuiTableColumnFlags.WidthFixed, 48);
-            ImGui.TableSetupColumn($"###OrchestrionRollsTable#Col5",
+            ImGui.TableSetupColumn("###OrchestrionRollsTable#Col5",
                 ImGuiTableColumnFlags.WidthFixed, 48);
-            ImGui.TableSetupColumn($"###OrchestrionRollsTable#Col6",
+            ImGui.TableSetupColumn("###OrchestrionRollsTable#Col6",
                 ImGuiTableColumnFlags.WidthFixed, 48);
-            ImGui.TableSetupColumn($"###OrchestrionRollsTable#Col7",
+            ImGui.TableSetupColumn("###OrchestrionRollsTable#Col7",
                 ImGuiTableColumnFlags.WidthFixed, 48);
-            ImGui.TableSetupColumn($"###OrchestrionRollsTable#Col8",
+            ImGui.TableSetupColumn("###OrchestrionRollsTable#Col8",
                 ImGuiTableColumnFlags.WidthFixed, 48);
-            ImGui.TableSetupColumn($"###OrchestrionRollsTable#Col9",
+            ImGui.TableSetupColumn("###OrchestrionRollsTable#Col9",
                 ImGuiTableColumnFlags.WidthFixed, 48);
-            ImGui.TableSetupColumn($"###OrchestrionRollsTable#Col10",
+            ImGui.TableSetupColumn("###OrchestrionRollsTable#Col10",
                 ImGuiTableColumnFlags.WidthFixed, 48);
 
             int i = 0;
@@ -1104,6 +1097,129 @@ namespace Altoholic.Windows
                 if (ImGui.IsItemHovered())
                 {
                     Utils.DrawOrchestrionRollTooltip(_currentLocale, ref _globalCache, f);
+                }
+
+                i++;
+            }
+        }
+
+        /**************************************************/
+        /**********************Ornaments**********************/
+        /**************************************************/
+        private void DrawOrnaments(Character currentCharacter)
+        {
+            using var ornamentsTabTable = ImRaii.Table("###OrnamentsTabTable", 1, ImGuiTableFlags.ScrollY);
+            if (!ornamentsTabTable) return;
+            ImGui.TableSetupColumn($"###OrnamentsTabTable#{currentCharacter.Id}#Col1",
+                ImGuiTableColumnFlags.WidthStretch);
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            if (ImGui.Checkbox($"{Loc.Localize("ObtainedOnly", "Obtained only")}", ref _obtainedOrnamentsOnly))
+            {
+                _plugin.Configuration.ObtainedOnly = _obtainedOrnamentsOnly;
+                _plugin.Configuration.Save();
+            }
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            DrawOrnamentsCollection(currentCharacter);
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            using var ornamentsTableAornament = ImRaii.Table("###OrnamentsTableAornament", 2);
+            if (!ornamentsTableAornament) return;
+            int widthCol1 = 455;
+            int widthCol2 = 145;
+            if (_isSpoilerEnabled)
+            {
+                widthCol1 = 480;
+                widthCol2 = 120;
+            }
+            ImGui.TableSetupColumn($"###OrnamentsTableAornament#{currentCharacter.Id}#Aornament#Col1",
+                ImGuiTableColumnFlags.WidthFixed, widthCol1);
+            ImGui.TableSetupColumn($"###OrnamentsTableAornament#{currentCharacter.Id}#Aornament#Col2",
+                ImGuiTableColumnFlags.WidthFixed, widthCol2);
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            ImGui.Text("");
+            ImGui.TableSetColumnIndex(1);
+            string endStr = string.Empty;
+            if (!_isSpoilerEnabled)
+            {
+                endStr += $"{Loc.Localize("ObtainedLowercase", " obtained")}";
+            }
+            else
+            {
+                endStr += $"/{_globalCache.OrnamentStorage.Count()}";
+            }
+            ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 3501)}: {currentCharacter.Ornaments.Count}{endStr}");
+        }
+
+        private void DrawOrnamentsCollection(Character currentCharacter)
+        {
+            List<uint> ornaments = (_obtainedOrnamentsOnly) ? currentCharacter.Ornaments : _globalCache.OrnamentStorage.Get();
+            int ornamentsCount = ornaments.Count;
+            int rows = (int)Math.Ceiling(ornamentsCount / (double)10);
+            int height = rows * 48 + rows;
+
+            using var ornamentTable = ImRaii.Table("###OrnamentsTable", 10,
+                ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner, new Vector2(573, height));
+            if (!ornamentTable) return;
+
+            ImGui.TableSetupColumn("###OrnamentsTable#Col1",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+            ImGui.TableSetupColumn("###OrnamentsTable#Col2",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+            ImGui.TableSetupColumn("###OrnamentsTable#Col3",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+            ImGui.TableSetupColumn("###OrnamentsTable#Col4",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+            ImGui.TableSetupColumn("###OrnamentsTable#Col5",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+            ImGui.TableSetupColumn("###OrnamentsTable#Col6",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+            ImGui.TableSetupColumn("###OrnamentsTable#Col7",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+            ImGui.TableSetupColumn("###OrnamentsTable#Col8",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+            ImGui.TableSetupColumn("###OrnamentsTable#Col9",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+            ImGui.TableSetupColumn("###OrnamentsTable#Col10",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+
+            int i = 0;
+            foreach (uint ornamentId in ornaments)
+            {
+                if (i % 10 == 0)
+                {
+                    ImGui.TableNextRow();
+                }
+
+                ImGui.TableNextColumn();
+                Ornament? o = _globalCache.OrnamentStorage.GetOrnament(_currentLocale, ornamentId);
+                if (o == null)
+                {
+                    continue;
+                }
+
+                if (currentCharacter.HasOrnament(ornamentId))
+                {
+                    Utils.DrawIcon(_globalCache.IconStorage.LoadHighResIcon(o.Icon), new Vector2(48, 48));
+                }
+                else
+                {
+                    //Plugin.Log.Debug($"Ornament {ornamentId} not found");
+                    if (_isSpoilerEnabled)
+                    {
+                        Utils.DrawIcon(_globalCache.IconStorage.LoadHighResIcon(o.Icon), new Vector2(48, 48),
+                            new Vector4(1, 1, 1, 0.5f));
+                    }
+                    else
+                    {
+                        Utils.DrawIcon(_globalCache.IconStorage.LoadHighResIcon(000786), new Vector2(48, 48));
+                    }
+                }
+                if (ImGui.IsItemHovered())
+                {
+                    Utils.DrawOrnamentTooltip(_currentLocale, ref _globalCache, o);
                 }
 
                 i++;

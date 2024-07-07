@@ -1,10 +1,11 @@
 using Altoholic.Cache;
 using Altoholic.Models;
 using CheapLoc;
-using Dalamud;
+
 using Dalamud.Game.Text;
 using Dalamud.Interface;
 using Dalamud.Interface.Internal;
+using Dalamud.Interface.Textures.TextureWraps;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
 using ImGuiNET;
@@ -20,7 +21,7 @@ namespace Altoholic.Windows
     {
         private readonly Plugin _plugin;
         private readonly LiteDatabase _db;
-        private ClientLanguage _currentLocale;
+        private Dalamud.Game.ClientLanguage _currentLocale;
         private readonly GlobalCache _globalCache;
         public CharactersWindow(
             Plugin plugin,
@@ -45,27 +46,12 @@ namespace Altoholic.Windows
         public Func<Character> GetPlayer { get; init; } = null!;
         public Func<List<Character>> GetOthersCharactersList { get; set; } = null!;
         private long TotalGils { get; set; }
-        private uint TotalPlayed { get; set; }
+        private long TotalPlayed { get; set; }
         private int TotalCharacters { get; set; }
         private int TotalWorlds { get; set; }
 
         //public IDalamudTextureWrap? GilIcon { get; set; } = Utils.LoadIcon(065002);
         private IDalamudTextureWrap? GilIcon { get; }
-
-        //private Character? current_character_last_state {  get; set; }
-
-        /*public override bool DrawConditions()
-        {
-            Character? current_character = GetPlayer.Invoke();
-            if (current_character is null) return false;
-            Plugin.Log.Debug($"Same char? {current_character_last_state == current_character}");
-            if (current_character_last_state != null && current_character_last_state == current_character)
-            {
-                return false;
-            }
-
-            return true;
-        }*/
 
         public override void OnClose()
         {
@@ -81,9 +67,8 @@ namespace Altoholic.Windows
             _currentLocale = _plugin.Configuration.Language;
             try
             {
-                //if (ImGui.BeginTable("Characters", 10, ImGuiTableFlags.ScrollY))
-                //if (ImGui.BeginTable("Characters", 10))
-                using (var charactersTable = ImRaii.Table("###Characters", 9))
+                using (ImRaii.IEndObject charactersTable = ImRaii.Table("###Characters", 9))
+                //using (ImRaii.IEndObject charactersTable = ImRaii.Table("###Characters", 10))
                 {
                     if (!charactersTable) return;
                     ImGui.TableSetupColumn(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 330),
@@ -103,10 +88,10 @@ namespace Altoholic.Windows
                     ImGui.TableSetupColumn(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 2883),
                         ImGuiTableColumnFlags.WidthFixed, 110);
                     ImGui.TableSetupColumn("Last online", ImGuiTableColumnFlags.WidthFixed, 110);
-                    ImGui.TableSetupColumn($"{Loc.Localize("Playtime", "Playtime")}###Characters#Playtime",
-                        ImGuiTableColumnFlags.WidthStretch);
-                    //ImGui.TableSetupColumn("Playtime", ImGuiTableColumnFlags.WidthFixed, 80);
-                    //ImGui.TableSetupColumn("Actions", ImGuiTableColumnFlags.WidthStretch);
+                    //ImGui.TableSetupColumn("Last online", ImGuiTableColumnFlags.WidthFixed, 80);
+                    ImGui.TableSetupColumn($"{Loc.Localize("Playtime", "Playtime")}###Characters#Playtime",ImGuiTableColumnFlags.WidthStretch);
+                    /*ImGui.TableSetupColumn($"{Loc.Localize("Playtime", "Playtime")}###Characters#Playtime", ImGuiTableColumnFlags.WidthFixed, 200);
+                    ImGui.TableSetupColumn($"{Loc.Localize("Action", "Action")}###Characters#Action", ImGuiTableColumnFlags.WidthStretch);*/
                     ImGui.TableHeadersRow();
 
                     List<Character> chars = [];
@@ -124,7 +109,7 @@ namespace Altoholic.Windows
                             .ToList());
                 }
 
-                using var totalCharactersTable = ImRaii.Table("###TotalCharacters", 4);
+                using ImRaii.IEndObject totalCharactersTable = ImRaii.Table("###TotalCharacters", 4);
                 if (!totalCharactersTable) return;
                 ImGui.TableSetupColumn("###TotalCharacters#Count", ImGuiTableColumnFlags.WidthFixed, 440);
                 ImGui.TableSetupColumn("###TotalCharacters#Gils", ImGuiTableColumnFlags.WidthFixed, 110);
@@ -136,7 +121,7 @@ namespace Altoholic.Windows
                 ImGui.TextUnformatted($"Characters: {TotalCharacters}, Worlds: {TotalWorlds}");
                 ImGui.TableSetColumnIndex(1);
                 ImGui.Separator();
-                using (var charactersrGils = ImRaii.Table("###TotalCharacters#GilsTable", 2))
+                using (ImRaii.IEndObject charactersrGils = ImRaii.Table("###TotalCharacters#GilsTable", 2))
                 {
                     if (!charactersrGils) return;
                     ImGui.TableSetupColumn("###TotalCharacters#GilsTable#Icon", ImGuiTableColumnFlags.WidthFixed, 20);
@@ -170,11 +155,13 @@ namespace Altoholic.Windows
                 Plugin.Log.Debug("Altoholic : Exception : {0}", e);
             }
         }
+
         private void DrawCharacter(int pos, Character character)
         {
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
-            ImGui.TextUnformatted($"{(character.IsSprout ? (char)SeIconChar.BotanistSprout : "")}{character.FirstName}");
+            ImGui.TextUnformatted(
+                $"{(character.IsSprout ? (char)SeIconChar.BotanistSprout : "")}{character.FirstName}");
             ImGui.TableSetColumnIndex(1);
             ImGui.TextUnformatted($"{character.LastName}");
             ImGui.TableSetColumnIndex(2);
@@ -187,6 +174,7 @@ namespace Altoholic.Windows
                 ImGui.TextUnformatted(Utils.GetDatacenterFromWorld(character.HomeWorld));
                 ImGui.EndTooltip();
             }
+
             ImGui.TableSetColumnIndex(4);
             ImGui.TextUnformatted($"{character.LastJobLevel}");
             if (ImGui.IsItemHovered())
@@ -195,15 +183,18 @@ namespace Altoholic.Windows
                 ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, character.LastJob));
                 ImGui.EndTooltip();
             }
+
             ImGui.TableSetColumnIndex(5);
             ImGui.TextUnformatted($"{Utils.GetFCTag(_currentLocale, _globalCache, character)}");
 
             ImGui.TableSetColumnIndex(6);
-            using (var charactersCharacterGils = ImRaii.Table($"###Characters#Character#Gils#{character.Id}", 2))
+            using (ImRaii.IEndObject charactersCharacterGils = ImRaii.Table($"###Characters#Character#Gils#{character.Id}", 2))
             {
                 if (!charactersCharacterGils) return;
-                ImGui.TableSetupColumn($"###Characters#Character#Gils#Icon#{character.Id}", ImGuiTableColumnFlags.WidthFixed, 20);
-                ImGui.TableSetupColumn($"###Characters#Character#Gils#Amount#{character.Id}", ImGuiTableColumnFlags.WidthFixed, 90);
+                ImGui.TableSetupColumn($"###Characters#Character#Gils#Icon#{character.Id}",
+                    ImGuiTableColumnFlags.WidthFixed, 20);
+                ImGui.TableSetupColumn($"###Characters#Character#Gils#Amount#{character.Id}",
+                    ImGuiTableColumnFlags.WidthFixed, 90);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
                 Utils.DrawIcon(GilIcon, new Vector2(18, 18));
@@ -211,15 +202,16 @@ namespace Altoholic.Windows
                 if (character.Currencies is not null)
                 {
                     string gilText = $"{character.Currencies.Gil:N0}";
-                    float posX = ImGui.GetCursorPosX() + ImGui.GetColumnWidth() - ImGui.CalcTextSize(gilText).X - ImGui.GetScrollX() - (2 * ImGui.GetStyle().ItemSpacing.X);
+                    float posX = ImGui.GetCursorPosX() + ImGui.GetColumnWidth() - ImGui.CalcTextSize(gilText).X -
+                                 ImGui.GetScrollX() - (2 * ImGui.GetStyle().ItemSpacing.X);
                     if (posX > ImGui.GetCursorPosX())
                         ImGui.SetCursorPosX(posX);
                     ImGui.TextUnformatted($"{gilText}");
                 }
-            }// Ending Gils Table
+            } // Ending Gils Table
 
             ImGui.TableSetColumnIndex(7);
-            ImGui.TextUnformatted($"{Utils.GetLastOnlineFormatted(character.LastOnline/*, character.FirstName*/)}");
+            ImGui.TextUnformatted($"{Utils.GetLastOnlineFormatted(character.LastOnline /*, character.FirstName*/)}");
             if (pos > 0)
             {
                 if (ImGui.IsItemHovered())
@@ -229,6 +221,7 @@ namespace Altoholic.Windows
                     ImGui.EndTooltip();
                 }
             }
+
             ImGui.TableSetColumnIndex(8);
             ImGui.TextUnformatted($"{GeneratePlaytime(TimeSpan.FromMinutes(character.PlayTime))}");
             if (ImGui.IsItemHovered())
@@ -237,8 +230,10 @@ namespace Altoholic.Windows
                 {
                     return;
                 }
+
                 ImGui.BeginTooltip();
-                ImGui.TextUnformatted($"Last updated on : {Utils.UnixTimeStampToDateTime(character.LastPlayTimeUpdate)} - {Utils.GetLastOnlineFormatted(character.LastPlayTimeUpdate)}");
+                ImGui.TextUnformatted(
+                    $"Last updated on : {Utils.UnixTimeStampToDateTime(character.LastPlayTimeUpdate)} - {Utils.GetLastOnlineFormatted(character.LastPlayTimeUpdate)}");
                 ImGui.EndTooltip();
             }
 
@@ -248,7 +243,7 @@ namespace Altoholic.Windows
             }
 
             ImGui.SameLine();
-            ImGui.TextUnformatted($"{FontAwesomeIcon.Exclamation.ToIconString()}");
+            ImGui.TextUnformatted($"{FontAwesomeIcon.ExclamationTriangle.ToIconString()}");
             if (ImGui.IsItemHovered())
             {
                 ImGui.BeginTooltip();
@@ -264,6 +259,7 @@ namespace Altoholic.Windows
             // Todo : 5) Del => Delete char from altoholic
             // 4&5 could be same button with different modifier (alt BL /ctrl delete)
             //Put back actions code here
+            
         }
 
         public enum TimeOptions
@@ -312,25 +308,18 @@ namespace Altoholic.Windows
         {
             if(characters.Count == 0) return;
             TotalGils = characters.Select(c => c.Currencies?.Gil ?? 0).Sum();
-            TotalPlayed = 0;
             TotalCharacters = characters.Count;
             TotalWorlds = characters.Select(c => c.HomeWorld).Distinct().Count();
+            TotalPlayed = characters.Sum(c => c.PlayTime);
 
             Character currentCharacter = characters.First();
             DrawCharacter(0, currentCharacter);
             for (int i = 1; i < characters.Count; i++)
             {
-                TotalPlayed += characters[i].PlayTime;
                 DrawCharacter(i, characters[i]);
             }
         }
 
             
-    }
-
-    public static class IEnumerableExtensions
-    {
-        public static IEnumerable<(T item, int index)> WithIndex<T>(this IEnumerable<T> self)
-            => self.Select((item, index) => (item, index));
     }
 }
