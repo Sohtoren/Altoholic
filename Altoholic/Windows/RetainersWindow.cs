@@ -1,7 +1,7 @@
 using Altoholic.Cache;
 using Altoholic.Models;
 using CheapLoc;
-
+using Dalamud.Game;
 using Dalamud.Game.Text;
 using Dalamud.Interface.Internal;
 using Dalamud.Interface;
@@ -21,7 +21,7 @@ namespace Altoholic.Windows
     public class RetainersWindow : Window, IDisposable
     {
         private readonly Plugin _plugin;
-        private Dalamud.Game.ClientLanguage _currentLocale;
+        private ClientLanguage _currentLocale;
         private GlobalCache _globalCache;
 
         public RetainersWindow(
@@ -519,18 +519,26 @@ namespace Altoholic.Windows
                         continue;
                     }
 
+                    bool armoire = _globalCache.ItemStorage.CanBeInArmoire(itm.RowId);
                     Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Icon, item.HQ), new Vector2(36, 36));
                     if (ImGui.IsItemHovered())
                     {
-                        Utils.DrawItemTooltip(_currentLocale, ref _globalCache, item);
+                        Utils.DrawItemTooltip(_currentLocale, ref _globalCache, item, armoire);
                     }
 
-                    if (itm.StackSize <= 1)
+                    if (itm.StackSize > 1)
+                    {
+                        ImGui.SetCursorPos(new Vector2(p.X + 26, p.Y + 20));
+                        ImGui.TextUnformatted($"{item.Quantity}");
+                        ImGui.SetCursorPos(p);
+                    }
+
+                    if (!armoire)
                     {
                         continue;
                     }
-                    ImGui.SetCursorPos(new Vector2(p.X + 26, p.Y + 20));
-                    ImGui.TextUnformatted($"{item.Quantity}");
+                    ImGui.SetCursorPos(p with { X = p.X + 20 });
+                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(066460), new Vector2(16, 16));
                     ImGui.SetCursorPos(p);
                 }
             }
@@ -647,7 +655,17 @@ namespace Altoholic.Windows
                 {
                     Item? itm = _globalCache.ItemStorage.LoadItem(_currentLocale, item.ItemId);
                     if (itm == null) continue;
-                    ImGui.TextUnformatted($"{itm.Name}: {item.Quantity}");
+                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Icon, item.HQ), new Vector2(24 ,24));
+                    if (ImGui.IsItemHovered())
+                    {
+                        Utils.DrawItemTooltip(_currentLocale, ref _globalCache, item);
+                    }
+                    ImGui.SameLine();
+                    ImGui.TextUnformatted($"{itm.Name}");
+                    if (item.Quantity > 1)
+                    {
+                        ImGui.TextUnformatted($"{item.Quantity}");
+                    }
                 }
             }
             else

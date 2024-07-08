@@ -11,7 +11,7 @@ namespace Altoholic.Cache
     {
         private readonly Dictionary<uint, OrchestrionRoll> _orchestrionRolls = new(size);
 
-        public void Init(Dalamud.Game.ClientLanguage currentLocale)
+        public void Init(ClientLanguage currentLocale, GlobalCache globalCache)
         {
             List<OrchestrionRoll>? orchestrions = Utils.GetAllOrchestrionRolls(currentLocale);
             if (orchestrions == null || orchestrions.Count == 0)
@@ -19,13 +19,14 @@ namespace Altoholic.Cache
                 return;
             }
 
-            foreach (OrchestrionRoll tt in orchestrions)
+            foreach (OrchestrionRoll o in orchestrions)
             {
-                _orchestrionRolls.Add(tt.Id, tt);
+                globalCache.IconStorage.LoadIcon(o.Icon);
+                _orchestrionRolls.Add(o.Id, o);
             }
         }
 
-        public OrchestrionRoll? GetOrchestrionRoll(Dalamud.Game.ClientLanguage lang, uint id)
+        public OrchestrionRoll? GetOrchestrionRoll(ClientLanguage lang, uint id)
         {
             if (_orchestrionRolls.TryGetValue(id, out OrchestrionRoll? ret))
                 return ret;
@@ -39,16 +40,16 @@ namespace Altoholic.Cache
             ret = new OrchestrionRoll { Id = or.RowId };
             switch (lang)
             {
-                case Dalamud.Game.ClientLanguage.German:
+                case ClientLanguage.German:
                     ret.GermanName = or.Name;
                     break;
-                case Dalamud.Game.ClientLanguage.English:
+                case ClientLanguage.English:
                     ret.EnglishName = or.Name;
                     break;
-                case Dalamud.Game.ClientLanguage.French:
+                case ClientLanguage.French:
                     ret.FrenchName = or.Name;
                     break;
-                case Dalamud.Game.ClientLanguage.Japanese:
+                case ClientLanguage.Japanese:
                     ret.JapaneseName = or.Name;
                     break;
             }

@@ -105,7 +105,6 @@ namespace Altoholic.Models
         {
             return OrchestrionRolls.Count > 0 && OrchestrionRolls.Contains(id);
         }
-        
         public bool HasOrnament(uint id)
         {
             return Ornaments.Count > 0 && Ornaments.Contains(id);

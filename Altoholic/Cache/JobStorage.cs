@@ -26,22 +26,22 @@ namespace Altoholic.Cache
             _jobs = new Dictionary<uint, JobName>(size);
             for (uint i = 0; i <= 42; i++)
             {
-                ClassJob? jobde = Utils.GetClassJobFromId(i, Dalamud.Game.ClientLanguage.German);
+                ClassJob? jobde = Utils.GetClassJobFromId(i, ClientLanguage.German);
                 if (jobde == null) continue;
                 string de = jobde.Name;
                 string abbde = jobde.Abbreviation;
 
-                ClassJob? joben = Utils.GetClassJobFromId(i, Dalamud.Game.ClientLanguage.English);
+                ClassJob? joben = Utils.GetClassJobFromId(i, ClientLanguage.English);
                 if (joben == null) continue;
                 string en = joben.Name;
                 string abben = joben.Abbreviation;
 
-                ClassJob? jobfr = Utils.GetClassJobFromId(i, Dalamud.Game.ClientLanguage.French);
+                ClassJob? jobfr = Utils.GetClassJobFromId(i, ClientLanguage.French);
                 if (jobfr == null) continue;
                 string fr = jobfr.Name;
                 string abbfr = jobfr.Abbreviation;
 
-                ClassJob? jobja = Utils.GetClassJobFromId(i, Dalamud.Game.ClientLanguage.Japanese);
+                ClassJob? jobja = Utils.GetClassJobFromId(i, ClientLanguage.Japanese);
                 if (jobja == null) continue;
                 string ja = jobja.Name;
                 string abbja = jobja.Abbreviation;
@@ -65,14 +65,14 @@ namespace Altoholic.Cache
             }
         }
         
-        public string GetName(Dalamud.Game.ClientLanguage lang, uint job, bool abbreviation = false)
+        public string GetName(ClientLanguage lang, uint job, bool abbreviation = false)
         {
             return lang switch
             {
-                Dalamud.Game.ClientLanguage.German => (abbreviation) ? _jobs[job].GermanAbbreviation : Utils.Capitalize(_jobs[job].GermanName),
-                Dalamud.Game.ClientLanguage.English => (abbreviation) ? _jobs[job].EnglishAbbreviation : Utils.Capitalize(_jobs[job].EnglishName),
-                Dalamud.Game.ClientLanguage.French => (abbreviation) ? _jobs[job].FrenchAbbreviation : Utils.Capitalize(_jobs[job].FrenchName),
-                Dalamud.Game.ClientLanguage.Japanese => (abbreviation) ? _jobs[job].JapaneseAbbreviation : Utils.Capitalize(_jobs[job].JapaneseName),
+                ClientLanguage.German => (abbreviation) ? _jobs[job].GermanAbbreviation : Utils.Capitalize(_jobs[job].GermanName),
+                ClientLanguage.English => (abbreviation) ? _jobs[job].EnglishAbbreviation : Utils.Capitalize(_jobs[job].EnglishName),
+                ClientLanguage.French => (abbreviation) ? _jobs[job].FrenchAbbreviation : Utils.Capitalize(_jobs[job].FrenchName),
+                ClientLanguage.Japanese => (abbreviation) ? _jobs[job].JapaneseAbbreviation : Utils.Capitalize(_jobs[job].JapaneseName),
                 _ => (abbreviation) ? _jobs[job].EnglishAbbreviation : Utils.Capitalize(_jobs[job].EnglishName),
             };
         }

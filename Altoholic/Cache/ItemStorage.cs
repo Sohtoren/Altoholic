@@ -20,8 +20,6 @@ namespace Altoholic.Cache
         public void Init()
         {
             _armoireItems = Utils.GetArmoireIds();
-            Plugin.Log.Debug($"ItemStorage Init() {_armoireItems.Count} items");
-            Plugin.Log.Debug($"ItemStorage Init() contains? : {_armoireItems.Contains(41678)}");
         }
 
         public Item? LoadItem(ClientLanguage currentLocale, uint id)

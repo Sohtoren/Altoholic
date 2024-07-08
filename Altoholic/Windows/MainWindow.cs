@@ -1,5 +1,5 @@
 using Altoholic.Cache;
-
+using Dalamud.Game;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
 using ImGuiNET;
@@ -21,7 +21,7 @@ namespace Altoholic.Windows
         private ProgressWindow ProgressWindow { get; }
         private ConfigWindow ConfigWindow { get; }
 
-        private Dalamud.Game.ClientLanguage _currentLocale;
+        private ClientLanguage _currentLocale;
 
         private readonly GlobalCache _globalCache;
 
@@ -159,7 +159,7 @@ namespace Altoholic.Windows
                 }
             }
 
-            using (var collectionTab = ImRaii.TabItem($"{((_currentLocale == Dalamud.Game.ClientLanguage.French) ? _globalCache.AddonStorage.LoadAddonString(_currentLocale, 9515) : _globalCache.AddonStorage.LoadAddonString(_currentLocale, 12790))}")) //Pet&Mount&Orchestrion
+            using (var collectionTab = ImRaii.TabItem($"{((_currentLocale == ClientLanguage.French) ? _globalCache.AddonStorage.LoadAddonString(_currentLocale, 9515) : _globalCache.AddonStorage.LoadAddonString(_currentLocale, 12790))}")) //Pet&Mount&Orchestrion
             {
                 if (collectionTab.Success)
                 {

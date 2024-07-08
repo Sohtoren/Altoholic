@@ -17,7 +17,7 @@ namespace Altoholic.Windows
     public class JobsWindow : Window, IDisposable
     {
         private readonly Plugin _plugin;
-        private Dalamud.Game.ClientLanguage _currentLocale;
+        private ClientLanguage _currentLocale;
         private readonly GlobalCache _globalCache;
         public JobsWindow(
             Plugin plugin,

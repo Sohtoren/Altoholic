@@ -8,11 +8,11 @@ using Mount = Altoholic.Models.Mount;
 
 namespace Altoholic.Cache
 {
-    public class MountStorage(int size = 120) : IDisposable
+    public class MountStorage(int size = 0) : IDisposable
     {
         private readonly Dictionary<uint, Mount> _mounts = new(size);
 
-        public void Init(Dalamud.Game.ClientLanguage currentLocale)
+        public void Init(ClientLanguage currentLocale, GlobalCache globalCache)
         {
             List<Mount>? mounts = Utils.GetAllMounts(currentLocale);
             if (mounts == null || mounts.Count == 0)
@@ -22,11 +22,12 @@ namespace Altoholic.Cache
 
             foreach (Mount mount in mounts)
             {
+                globalCache.IconStorage.LoadIcon(mount.Icon);
                 _mounts.Add(mount.Id, mount);
             }
         }
 
-        public Mount? GetMount(Dalamud.Game.ClientLanguage lang, uint id)
+        public Mount? GetMount(ClientLanguage lang, uint id)
         {
             if (_mounts.TryGetValue(id, out Mount? ret))
                 return ret;
@@ -42,25 +43,25 @@ namespace Altoholic.Cache
             if (mt is null) return null;
             switch (lang)
             {
-                case Dalamud.Game.ClientLanguage.German:
+                case ClientLanguage.German:
                     ret.GermanName = mount.Singular;
                     ret.Transient.GermanDescription = mt.Description;
                     ret.Transient.GermanDescriptionEnhanced = mt.DescriptionEnhanced;
                     ret.Transient.GermanTooltip = mt.Tooltip;
                     break;
-                case Dalamud.Game.ClientLanguage.English:
+                case ClientLanguage.English:
                     ret.EnglishName = mount.Singular;
                     ret.Transient.EnglishDescription = mt.Description;
                     ret.Transient.EnglishDescriptionEnhanced = mt.DescriptionEnhanced;
                     ret.Transient.EnglishTooltip = mt.Tooltip;
                     break;
-                case Dalamud.Game.ClientLanguage.French:
+                case ClientLanguage.French:
                     ret.FrenchName = mount.Singular;
                     ret.Transient.FrenchDescription = mt.Description;
                     ret.Transient.FrenchDescriptionEnhanced = mt.DescriptionEnhanced;
                     ret.Transient.FrenchTooltip = mt.Tooltip;
                     break;
-                case Dalamud.Game.ClientLanguage.Japanese:
+                case ClientLanguage.Japanese:
                     ret.JapaneseName = mount.Singular;
                     ret.Transient.JapaneseDescription = mt.Description;
                     ret.Transient.JapaneseDescriptionEnhanced = mt.DescriptionEnhanced;

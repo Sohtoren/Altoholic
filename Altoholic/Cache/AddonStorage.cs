@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Dalamud.Game;
+using System;
 using System.Collections.Generic;
 
 namespace Altoholic.Cache
@@ -14,16 +15,16 @@ namespace Altoholic.Cache
     {
         private readonly Dictionary<int, AddonString> _addons = [];
 
-        public string LoadAddonString(Dalamud.Game.ClientLanguage lang, int id)
+        public string LoadAddonString(ClientLanguage lang, int id)
         {
             if (_addons.TryGetValue(id, out AddonString? ret))
             {
                 string str = lang switch
                 {
-                    Dalamud.Game.ClientLanguage.German => ret.German,
-                    Dalamud.Game.ClientLanguage.English => ret.English,
-                    Dalamud.Game.ClientLanguage.French => ret.French,
-                    Dalamud.Game.ClientLanguage.Japanese => ret.Japanese,
+                    ClientLanguage.German => ret.German,
+                    ClientLanguage.English => ret.English,
+                    ClientLanguage.French => ret.French,
+                    ClientLanguage.Japanese => ret.Japanese,
                     _ => ret.English,
                 };
                 if (!string.IsNullOrEmpty(str))
@@ -39,16 +40,16 @@ namespace Altoholic.Cache
 
                 switch (lang)
                 {
-                    case Dalamud.Game.ClientLanguage.German:
+                    case ClientLanguage.German:
                         ret.German = newstr;
                         break;
-                    case Dalamud.Game.ClientLanguage.English:
+                    case ClientLanguage.English:
                         ret.English = newstr;
                         break;
-                    case Dalamud.Game.ClientLanguage.French:
+                    case ClientLanguage.French:
                         ret.French = newstr;
                         break;
-                    case Dalamud.Game.ClientLanguage.Japanese:
+                    case ClientLanguage.Japanese:
                         ret.Japanese = newstr;
                         break;
                 }
@@ -66,16 +67,16 @@ namespace Altoholic.Cache
 
             switch (lang)
             {
-                case Dalamud.Game.ClientLanguage.German:
+                case ClientLanguage.German:
                     a.German = newaddonstr;
                     break;
-                case Dalamud.Game.ClientLanguage.English:
+                case ClientLanguage.English:
                     a.English = newaddonstr;
                     break;
-                case Dalamud.Game.ClientLanguage.French:
+                case ClientLanguage.French:
                     a.French = newaddonstr;
                     break;
-                case Dalamud.Game.ClientLanguage.Japanese:
+                case ClientLanguage.Japanese:
                     a.Japanese = newaddonstr;
                     break;
             }

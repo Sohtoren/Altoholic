@@ -10,7 +10,7 @@ namespace Altoholic.Cache
     {
         private readonly Dictionary<uint, Emote> _emotes = new(size);
 
-        public void Init(ClientLanguage currentLocale)
+        public void Init(ClientLanguage currentLocale, GlobalCache globalCache)
         {
             List<Emote>? emotes = Utils.GetAllEmotes(currentLocale);
             if (emotes == null || emotes.Count == 0)
@@ -20,6 +20,7 @@ namespace Altoholic.Cache
 
             foreach (Emote e in emotes)
             {
+                globalCache.IconStorage.LoadIcon(e.Icon);
                 _emotes.Add(e.Id, e);
             }
         }

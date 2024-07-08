@@ -15,14 +15,7 @@ namespace Altoholic.Database
             try
             {
                 ILiteCollection<Character>? col = db.GetCollection<Character>();
-                //var character = col.FindOne(cf => cf.FirstName == firstname && cf.LastName == lastname && cf.HomeWorld == homeworld);
                 Character? character = col?.FindOne(cf => cf.Id == id);
-
-                /*if (character is not null)
-                    {
-                        character.Retainers = GetCharacterRetainers(db, character.Id);
-                    }*/
-
                 return character;
             }
             catch (Exception ex)
@@ -44,14 +37,7 @@ namespace Altoholic.Database
                     return [];
                 }
 
-                //var characters = col.Find(cf => cf.FirstName != firstname && cf.LastName != lastname/*&& cf.HomeWorld != homeworld*/).ToList();
-                //var characters = col.Find(cf => cf.Uuid != uuid).ToList();
                 List<Character> characters = col.Find(cf => cf.Id != id).ToList();
-                /*foreach (var c in characters)
-                    {
-                        c.Retainers = GetCharacterRetainers(db, c.Id);
-                    }*/
-
                 return characters;
 
             }
@@ -98,7 +84,6 @@ namespace Altoholic.Database
                 }
 
                 Character c;
-                //var char_exist = col.FindOne(cf => cf.FirstName == character.FirstName && cf.LastName == character.LastName && cf.HomeWorld == character.HomeWorld);
                 Character? charExist = col.FindOne(cf => cf.Id == character.Id);
                 if (charExist != null)
                 {

@@ -1,6 +1,7 @@
 using Altoholic.Cache;
 using Altoholic.Models;
 using CheapLoc;
+using Dalamud.Game;
 using Dalamud.Game.Text;
 using Dalamud.Interface;
 using Dalamud.Interface.Textures.TextureWraps;
@@ -19,7 +20,7 @@ namespace Altoholic.Windows
     public class InventoriesWindow : Window, IDisposable
     {
         private readonly Plugin _plugin;
-        private Dalamud.Game.ClientLanguage _currentLocale;
+        private ClientLanguage _currentLocale;
         private GlobalCache _globalCache;
 
         public InventoriesWindow(
@@ -466,7 +467,7 @@ namespace Altoholic.Windows
                         Utils.DrawItemTooltip(_currentLocale, ref _globalCache, item, armoire);
                     }
 
-                    if (itm.StackSize <= 1)
+                    if (itm.StackSize > 1)
                     {
                         ImGui.SetCursorPos(new Vector2(p.X + 26, p.Y + 20));
                         ImGui.TextUnformatted($"{item.Quantity}");

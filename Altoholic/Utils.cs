@@ -467,7 +467,6 @@ namespace Altoholic
 
         public static Item? GetItemFromId(ClientLanguage currentLocale, uint id)
         {
-            //Plugin.Log.Debug($"GetItemFromId : {id}");
             ExcelSheet<Item>? ditm = Plugin.DataManager.GetExcelSheet<Item>(currentLocale);
             Item? lumina = ditm?.GetRow(id);
             return lumina;
@@ -475,7 +474,6 @@ namespace Altoholic
 
         public static EventItem? GetEventItemFromId(ClientLanguage currentLocale, uint id)
         {
-            //Plugin.Log.Debug($"GetItemFromId : {id}");
             ExcelSheet<EventItem>? deitm = Plugin.DataManager.GetExcelSheet<EventItem>(currentLocale);
             EventItem? lumina = deitm?.GetRow(id);
             return lumina;
@@ -483,7 +481,6 @@ namespace Altoholic
 
         public static IEnumerable<Item>? GetItemsFromName(ClientLanguage currentLocale, string name)
         {
-            //Plugin.Log.Debug($"GetItemFromId : {id}");
             ExcelSheet<Item>? ditm = Plugin.DataManager.GetExcelSheet<Item>(currentLocale);
             IEnumerable<Item>? items = ditm?.Where(i =>
                 i.Name.RawString.Contains(name.ToLower(), StringComparison.CurrentCultureIgnoreCase));
@@ -492,7 +489,6 @@ namespace Altoholic
 
         public static Item? GetItemFromName(ClientLanguage currentLocale, string name)
         {
-            //Plugin.Log.Debug($"GetItemFromId : {id}");
             ExcelSheet<Item>? ditm = Plugin.DataManager.GetExcelSheet<Item>(currentLocale);
             Item? item = ditm?.FirstOrDefault(i =>
                 i.Name.RawString.Contains(name.ToLower(), StringComparison.CurrentCultureIgnoreCase));
@@ -501,7 +497,6 @@ namespace Altoholic
 
         public static ItemLevel? GetItemLevelFromId(uint id)
         {
-            //Plugin.Log.Debug($"GetItemFromId : {id}");
             ExcelSheet<ItemLevel>? dilvl = Plugin.DataManager.GetExcelSheet<ItemLevel>(ClientLanguage.English);
             ItemLevel? lumina = dilvl?.GetRow(id);
             return lumina;
@@ -509,7 +504,6 @@ namespace Altoholic
 
         public static Stain? GetStainFromId(uint id, ClientLanguage clientLanguage)
         {
-            //Plugin.Log.Debug($"GetItemNameFromId : {id}");
             ExcelSheet<Stain>? ds = Plugin.DataManager.GetExcelSheet<Stain>(clientLanguage);
             Stain? lumina = ds?.GetRow(id);
             return lumina;
@@ -760,7 +754,6 @@ namespace Altoholic
 
         public static string GetSlotName(ClientLanguage currentLocale, GlobalCache globalCache, short id)
         {
-            //Plugin.Log.Debug($"GetItemNameFromId : {id}");
             return id switch
             {
                 0 => globalCache.AddonStorage.LoadAddonString(currentLocale, 11524),
@@ -829,35 +822,30 @@ namespace Altoholic
                 ImGui.TableSetupColumn("###GearTable#LeftGearColum#Column", ImGuiTableColumnFlags.WidthFixed, 42);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                //DrawGearPiece(ref _globalCache, gears, GearSlot.HEAD, GetAddonString(11525), new Vector2(40, 40), 10032);
                 DrawGearPiece(currentLocale, ref globalCache, gears, GearSlot.HEAD,
                     globalCache.AddonStorage.LoadAddonString(currentLocale, 11525), new Vector2(40, 40),
                     defaultTextures[GearSlot.HEAD], defaultTextures[GearSlot.EMPTY]);
 
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                //DrawGearPiece(ref _globalCache, gears, GearSlot.BODY, GetAddonString(11526), new Vector2(40, 40), 10033);
                 DrawGearPiece(currentLocale, ref globalCache, gears, GearSlot.BODY,
                     globalCache.AddonStorage.LoadAddonString(currentLocale, 11526), new Vector2(40, 40),
                     defaultTextures[GearSlot.BODY], defaultTextures[GearSlot.EMPTY]);
 
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                //DrawGearPiece(ref _globalCache, gears, GearSlot.HANDS, GetAddonString(11527), new Vector2(40, 40), 10034);
                 DrawGearPiece(currentLocale, ref globalCache, gears, GearSlot.HANDS,
                     globalCache.AddonStorage.LoadAddonString(currentLocale, 11527), new Vector2(40, 40),
                     defaultTextures[GearSlot.HANDS], defaultTextures[GearSlot.EMPTY]);
 
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                //DrawGearPiece(ref _globalCache, gears, GearSlot.LEGS, GetAddonString(11528), new Vector2(40, 40), 10035);
                 DrawGearPiece(currentLocale, ref globalCache, gears, GearSlot.LEGS,
                     globalCache.AddonStorage.LoadAddonString(currentLocale, 11528), new Vector2(40, 40),
                     defaultTextures[GearSlot.LEGS], defaultTextures[GearSlot.EMPTY]);
 
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                //DrawGearPiece(ref _globalCache, gears, GearSlot.FEET, GetAddonString(11529), new Vector2(40, 40), 10035);
                 DrawGearPiece(currentLocale, ref globalCache, gears, GearSlot.FEET,
                     globalCache.AddonStorage.LoadAddonString(currentLocale, 11529), new Vector2(40, 40),
                     defaultTextures[GearSlot.FEET], defaultTextures[GearSlot.EMPTY]);
@@ -865,7 +853,6 @@ namespace Altoholic
                 {
                     ImGui.TableNextRow();
                     ImGui.TableSetColumnIndex(0);
-                    //DrawGearPiece(ref _globalCache, gears, GearSlot.FEET, GetAddonString(11529), new Vector2(40, 40), 10035);
                     DrawGearPiece(currentLocale, ref globalCache, gears, GearSlot.FACEWEAR,
                         globalCache.AddonStorage.LoadAddonString(currentLocale, 16050), new Vector2(40, 40),
                         defaultTextures[GearSlot.FACEWEAR], defaultTextures[GearSlot.EMPTY]);
@@ -1008,12 +995,11 @@ namespace Altoholic
         }
 
         public static void DrawGearPiece(ClientLanguage currentLocale, ref GlobalCache globalCache, List<Gear> gear,
-            GearSlot slot, string tooltip, Vector2 iconSize, /*uint fallback_icon*/
+            GearSlot slot, string tooltip, Vector2 iconSize,
             IDalamudTextureWrap? fallbackTexture, IDalamudTextureWrap? emptySlot)
         {
             if (fallbackTexture is null || emptySlot is null) return;
             Gear? foundGear = gear.FirstOrDefault(g => g.Slot == (short)slot);
-            //Plugin.Log.Debug($"{slot}, {GEAR.ItemId}");
             if (foundGear == null || foundGear.ItemId == 0)
             {
                 System.Numerics.Vector2 p = ImGui.GetCursorPos();
@@ -1287,6 +1273,8 @@ namespace Altoholic
                 {
                     ImGui.TableSetColumnIndex(2);
                     ImGui.TableSetColumnIndex(3);
+                    DrawIcon(globalCache.IconStorage.LoadIcon(066460), new Vector2(16, 16));
+                    ImGui.SameLine();
                     ImGui.TextUnformatted(globalCache.AddonStorage.LoadAddonString(currentLocale, 11991));
                 }
             }

@@ -32,7 +32,7 @@ namespace Altoholic.Windows
             _globalCache = globalCache;
         }
 
-        private Dalamud.Game.ClientLanguage _selectedLanguage;
+        private ClientLanguage _selectedLanguage;
 
         public void Dispose() { }
 
@@ -43,21 +43,21 @@ namespace Altoholic.Windows
             using var langCombo = ImRaii.Combo($"{_globalCache.AddonStorage.LoadAddonString(_selectedLanguage, 338)}###LangCombo", _selectedLanguage.ToString());
             if (langCombo.Success)
             {
-                if (ImGui.Selectable(Dalamud.Game.ClientLanguage.German.ToString(), Dalamud.Game.ClientLanguage.German.ToString() == _selectedLanguage.ToString()))
+                if (ImGui.Selectable(ClientLanguage.German.ToString(), ClientLanguage.German.ToString() == _selectedLanguage.ToString()))
                 {
-                    _selectedLanguage = Dalamud.Game.ClientLanguage.German;
+                    _selectedLanguage = ClientLanguage.German;
                 }
-                if (ImGui.Selectable(Dalamud.Game.ClientLanguage.English.ToString(), Dalamud.Game.ClientLanguage.English.ToString() == _selectedLanguage.ToString()))
+                if (ImGui.Selectable(ClientLanguage.English.ToString(), ClientLanguage.English.ToString() == _selectedLanguage.ToString()))
                 {
-                    _selectedLanguage = Dalamud.Game.ClientLanguage.English;
+                    _selectedLanguage = ClientLanguage.English;
                 }
-                if (ImGui.Selectable(Dalamud.Game.ClientLanguage.French.ToString(), Dalamud.Game.ClientLanguage.French.ToString() == _selectedLanguage.ToString()))
+                if (ImGui.Selectable(ClientLanguage.French.ToString(), ClientLanguage.French.ToString() == _selectedLanguage.ToString()))
                 {
-                    _selectedLanguage = Dalamud.Game.ClientLanguage.French;
+                    _selectedLanguage = ClientLanguage.French;
                 }
-                if (ImGui.Selectable(Dalamud.Game.ClientLanguage.Japanese.ToString(), Dalamud.Game.ClientLanguage.Japanese.ToString() == _selectedLanguage.ToString()))
+                if (ImGui.Selectable(ClientLanguage.Japanese.ToString(), ClientLanguage.Japanese.ToString() == _selectedLanguage.ToString()))
                 {
-                    _selectedLanguage = Dalamud.Game.ClientLanguage.Japanese;
+                    _selectedLanguage = ClientLanguage.Japanese;
                 }
                 _configuration.Language = _selectedLanguage;
                 _plugin.ChangeLanguage(_selectedLanguage);

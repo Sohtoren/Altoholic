@@ -5,6 +5,7 @@ using System.Numerics;
 using Altoholic.Cache;
 using Altoholic.Models;
 using CheapLoc;
+using Dalamud.Game;
 using Dalamud.Game.Text;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
@@ -18,7 +19,7 @@ namespace Altoholic.Windows
     public class CollectionWindow : Window, IDisposable
     {
         private readonly Plugin _plugin;
-        private Dalamud.Game.ClientLanguage _currentLocale;
+        private ClientLanguage _currentLocale;
         private bool _isSpoilerEnabled;
         private GlobalCache _globalCache;
 
@@ -352,18 +353,18 @@ namespace Altoholic.Windows
 
                 if (currentCharacter.HasMinion(minionId))
                 {
-                    Utils.DrawIcon(_globalCache.IconStorage.LoadHighResIcon(m.Icon), new Vector2(48, 48));
+                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(m.Icon), new Vector2(48, 48));
                 }
                 else
                 {
                     if (_isSpoilerEnabled)
                     {
-                        Utils.DrawIcon(_globalCache.IconStorage.LoadHighResIcon(m.Icon), new Vector2(48, 48),
+                        Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(m.Icon), new Vector2(48, 48),
                             new Vector4(1, 1, 1, 0.5f));
                     }
                     else
                     {
-                        Utils.DrawIcon(_globalCache.IconStorage.LoadHighResIcon(000786), new Vector2(48, 48));
+                        Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(000786), new Vector2(48, 48));
                     }
                 }
                 if (ImGui.IsItemHovered())
@@ -474,18 +475,18 @@ namespace Altoholic.Windows
 
                 if (currentCharacter.HasMount(mountId))
                 {
-                    Utils.DrawIcon(_globalCache.IconStorage.LoadHighResIcon(m.Icon), new Vector2(48, 48));
+                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(m.Icon), new Vector2(48, 48));
                 }
                 else
                 {
                     if (_isSpoilerEnabled)
                     {
-                        Utils.DrawIcon(_globalCache.IconStorage.LoadHighResIcon(m.Icon), new Vector2(48, 48),
+                        Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(m.Icon), new Vector2(48, 48),
                             new Vector4(1, 1, 1, 0.5f));
                     }
                     else
                     {
-                        Utils.DrawIcon(_globalCache.IconStorage.LoadHighResIcon(000786), new Vector2(48, 48));
+                        Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(000786), new Vector2(48, 48));
                     }
                 }
                 if (ImGui.IsItemHovered())
@@ -582,18 +583,18 @@ namespace Altoholic.Windows
 
                 if (currentCharacter.HasTTC(ttcId))
                 {
-                    Utils.DrawIcon(_globalCache.IconStorage.LoadHighResIcon(ttc.Icon), new Vector2(48, 48));
+                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(ttc.Icon), new Vector2(48, 48));
                 }
                 else
                 {
                     if (_isSpoilerEnabled)
                     {
-                        Utils.DrawIcon(_globalCache.IconStorage.LoadHighResIcon(ttc.Icon), new Vector2(48, 48),
+                        Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(ttc.Icon), new Vector2(48, 48),
                             new Vector4(1, 1, 1, 0.5f));
                     }
                     else
                     {
-                        Utils.DrawIcon(_globalCache.IconStorage.LoadHighResIcon(060028), new Vector2(48, 48));
+                        Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(060028), new Vector2(48, 48));
                     }
                 }
                 if (ImGui.IsItemHovered())
@@ -712,18 +713,18 @@ namespace Altoholic.Windows
 
                 if (currentCharacter.HasEmote(emoteId))
                 {
-                    Utils.DrawIcon(_globalCache.IconStorage.LoadHighResIcon(emote.Icon), new Vector2(48, 48));
+                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(emote.Icon), new Vector2(48, 48));
                 }
                 else
                 {
                     if (_isSpoilerEnabled)
                     {
-                        Utils.DrawIcon(_globalCache.IconStorage.LoadHighResIcon(emote.Icon), new Vector2(48, 48),
+                        Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(emote.Icon), new Vector2(48, 48),
                             new Vector4(1, 1, 1, 0.5f));
                     }
                     else
                     {
-                        Utils.DrawIcon(_globalCache.IconStorage.LoadHighResIcon(000786), new Vector2(48, 48));
+                        Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(000786), new Vector2(48, 48));
                     }
                 }
                 if (ImGui.IsItemHovered())
@@ -835,18 +836,18 @@ namespace Altoholic.Windows
 
                 if (currentCharacter.HasBarding(bId))
                 {
-                    Utils.DrawIcon(_globalCache.IconStorage.LoadHighResIcon(b.Icon), new Vector2(48, 48));
+                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(b.Icon), new Vector2(48, 48));
                 }
                 else
                 {
                     if (_isSpoilerEnabled)
                     {
-                        Utils.DrawIcon(_globalCache.IconStorage.LoadHighResIcon(b.Icon), new Vector2(48, 48),
+                        Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(b.Icon), new Vector2(48, 48),
                             new Vector4(1, 1, 1, 0.5f));
                     }
                     else
                     {
-                        Utils.DrawIcon(_globalCache.IconStorage.LoadHighResIcon(000786), new Vector2(48, 48));
+                        Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(000786), new Vector2(48, 48));
                     }
                 }
                 if (ImGui.IsItemHovered())
@@ -957,18 +958,18 @@ namespace Altoholic.Windows
 
                 if (currentCharacter.HasFramerKit(fkId))
                 {
-                    Utils.DrawIcon(_globalCache.IconStorage.LoadHighResIcon(f.Icon), new Vector2(48, 48));
+                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(f.Icon), new Vector2(48, 48));
                 }
                 else
                 {
                     if (_isSpoilerEnabled)
                     {
-                        Utils.DrawIcon(_globalCache.IconStorage.LoadHighResIcon(f.Icon), new Vector2(48, 48),
+                        Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(f.Icon), new Vector2(48, 48),
                             new Vector4(1, 1, 1, 0.5f));
                     }
                     else
                     {
-                        Utils.DrawIcon(_globalCache.IconStorage.LoadHighResIcon(000786), new Vector2(48, 48));
+                        Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(000786), new Vector2(48, 48));
                     }
                 }
                 if (ImGui.IsItemHovered())
@@ -1080,18 +1081,18 @@ namespace Altoholic.Windows
 
                 if (currentCharacter.HasOrchestrionRoll(fkId))
                 {
-                    Utils.DrawIcon(_globalCache.IconStorage.LoadHighResIcon(f.Icon), new Vector2(48, 48));
+                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(f.Icon), new Vector2(48, 48));
                 }
                 else
                 {
                     if (_isSpoilerEnabled)
                     {
-                        Utils.DrawIcon(_globalCache.IconStorage.LoadHighResIcon(f.Icon), new Vector2(48, 48),
+                        Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(f.Icon), new Vector2(48, 48),
                             new Vector4(1, 1, 1, 0.5f));
                     }
                     else
                     {
-                        Utils.DrawIcon(_globalCache.IconStorage.LoadHighResIcon(000786), new Vector2(48, 48));
+                        Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(000786), new Vector2(48, 48));
                     }
                 }
                 if (ImGui.IsItemHovered())
@@ -1202,19 +1203,19 @@ namespace Altoholic.Windows
 
                 if (currentCharacter.HasOrnament(ornamentId))
                 {
-                    Utils.DrawIcon(_globalCache.IconStorage.LoadHighResIcon(o.Icon), new Vector2(48, 48));
+                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(o.Icon), new Vector2(48, 48));
                 }
                 else
                 {
                     //Plugin.Log.Debug($"Ornament {ornamentId} not found");
                     if (_isSpoilerEnabled)
                     {
-                        Utils.DrawIcon(_globalCache.IconStorage.LoadHighResIcon(o.Icon), new Vector2(48, 48),
+                        Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(o.Icon), new Vector2(48, 48),
                             new Vector4(1, 1, 1, 0.5f));
                     }
                     else
                     {
-                        Utils.DrawIcon(_globalCache.IconStorage.LoadHighResIcon(000786), new Vector2(48, 48));
+                        Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(000786), new Vector2(48, 48));
                     }
                 }
                 if (ImGui.IsItemHovered())

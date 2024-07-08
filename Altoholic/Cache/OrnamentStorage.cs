@@ -12,7 +12,7 @@ namespace Altoholic.Cache
     {
         private readonly Dictionary<uint, Ornament> _ornaments = new(size);
 
-        public void Init(ClientLanguage currentLocale)
+        public void Init(ClientLanguage currentLocale, GlobalCache globalCache)
         {
             List<Ornament>? ornaments = Utils.GetAllOrnaments(currentLocale);
             if (ornaments == null || ornaments.Count == 0)
@@ -22,6 +22,7 @@ namespace Altoholic.Cache
 
             foreach (Ornament ornament in ornaments.Where(ornament => ornament.Id is not (22 or 25 or 26 or 32))) //Those ids moved to facewear
             {
+                globalCache.IconStorage.LoadIcon(ornament.Icon);
                 _ornaments.Add(ornament.Id, ornament);
             }
         }

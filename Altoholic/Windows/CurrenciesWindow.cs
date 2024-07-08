@@ -17,7 +17,7 @@ namespace Altoholic.Windows
     public class CurrenciesWindow : Window, IDisposable
     {
         private readonly Plugin _plugin;
-        private Dalamud.Game.ClientLanguage _currentLocale;
+        private ClientLanguage _currentLocale;
         private readonly GlobalCache _globalCache;
 
         public CurrenciesWindow(
@@ -72,7 +72,7 @@ namespace Altoholic.Windows
         public override void Draw()
         {
             _currentLocale = _plugin.Configuration.Language;
-            if(_selectedCurrency == "Currency" && _currentLocale != Dalamud.Game.ClientLanguage.English) 
+            if(_selectedCurrency == "Currency" && _currentLocale != ClientLanguage.English) 
                 _selectedCurrency = _globalCache.AddonStorage.LoadAddonString(_currentLocale, 761);
             List<Character> chars = [];
             chars.Insert(0, GetPlayer.Invoke());
@@ -381,20 +381,20 @@ namespace Altoholic.Windows
             ImGui.TextUnformatted(max != 0 ? $"{currency:N0}/{max:N0}" : $"{currency:N0}");
         }
 
-        private static string GetTurnIn(Dalamud.Game.ClientLanguage currentLocale)
+        private static string GetTurnIn(ClientLanguage currentLocale)
         {
             DateTime nextTuesdayDateUtc = GetNextTuesday();
             DateTime nextTuesdayDate = DateTime.SpecifyKind(nextTuesdayDateUtc, DateTimeKind.Utc).ToLocalTime();
             TimeSpan time = TimeSpan.FromSeconds(GetNextTuesdayRemainingTime());
             string v = currentLocale switch
             {
-                Dalamud.Game.ClientLanguage.German =>
+                ClientLanguage.German =>
                     $"Zurücksetzung: {time.TotalHours:00} Std. {time.Minutes:00} Min. ({nextTuesdayDate.Day}.{nextTuesdayDate.Month}., {nextTuesdayDate.Hour:D2}:{nextTuesdayDate.Minute:D2} Uhr)",
-                Dalamud.Game.ClientLanguage.English =>
+                ClientLanguage.English =>
                     $"Reset in {Math.Floor(time.TotalHours)}h {time.Minutes:00}m [{nextTuesdayDate.Month}/{nextTuesdayDate.Day} {nextTuesdayDate.Hour:D2} {nextTuesdayDate.Minute:D2}]",
-                Dalamud.Game.ClientLanguage.French =>
+                ClientLanguage.French =>
                     $"Remise à zéro   : {time.TotalHours:00} {((nextTuesdayDate.Hour > 1) ? "heures" : "heure")} {time.Minutes:00} {((nextTuesdayDate.Minute > 1) ? "minutes" : "minute")} [{nextTuesdayDate.Day}.{nextTuesdayDate.Month} {nextTuesdayDate.Hour:D2}h{nextTuesdayDate.Minute:D2}]",
-                Dalamud.Game.ClientLanguage.Japanese =>
+                ClientLanguage.Japanese =>
                     $"リセット日時 : {time.TotalHours:00}時間{time.Minutes:00}分後[{nextTuesdayDate.Day}/{nextTuesdayDate.Month} {nextTuesdayDate.Hour}:{nextTuesdayDate.Minute}]",
                 _ => $"Reset in {Math.Floor(time.TotalHours)}h {time.Minutes:00}m [{nextTuesdayDate.Month}/{nextTuesdayDate.Day} {nextTuesdayDate.Hour:D2} {nextTuesdayDate.Minute:D2}]",
             };
@@ -457,6 +457,8 @@ namespace Altoholic.Windows
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
                 ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 5756));
+                ImGui.TableNextRow();
+                ImGui.TableSetColumnIndex(0);
                 DrawBattleCurrency(pc.Allagan_Tomestone_Of_Causality, Currencies.ALLAGAN_TOMESTONE_OF_CAUSALITY, 2000,
                     true, true);
                 ImGui.TableSetColumnIndex(1);

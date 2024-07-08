@@ -20,19 +20,19 @@ namespace Altoholic.Cache
             _stains = new Dictionary<uint, Stain>(size);
             for (uint i = 0; i <= 120; i++)
             {
-                Lumina.Excel.GeneratedSheets.Stain? stainde = Utils.GetStainFromId(i, Dalamud.Game.ClientLanguage.German);
+                Lumina.Excel.GeneratedSheets.Stain? stainde = Utils.GetStainFromId(i, ClientLanguage.German);
                 if (stainde == null) continue;
                 string de = stainde.Name;
 
-                Lumina.Excel.GeneratedSheets.Stain? stainen = Utils.GetStainFromId(i, Dalamud.Game.ClientLanguage.English);
+                Lumina.Excel.GeneratedSheets.Stain? stainen = Utils.GetStainFromId(i, ClientLanguage.English);
                 if (stainen == null) continue;
                 string en = stainen.Name;
 
-                Lumina.Excel.GeneratedSheets.Stain? stainfr = Utils.GetStainFromId(i, Dalamud.Game.ClientLanguage.French);
+                Lumina.Excel.GeneratedSheets.Stain? stainfr = Utils.GetStainFromId(i, ClientLanguage.French);
                 if (stainfr == null) continue;
                 string fr = stainfr.Name;
 
-                Lumina.Excel.GeneratedSheets.Stain? stainja = Utils.GetStainFromId(i, Dalamud.Game.ClientLanguage.Japanese);
+                Lumina.Excel.GeneratedSheets.Stain? stainja = Utils.GetStainFromId(i, ClientLanguage.Japanese);
                 if (stainja == null) continue;
                 string ja = stainja.Name;
 
@@ -46,14 +46,14 @@ namespace Altoholic.Cache
             }
         }
 
-        public string LoadStain(Dalamud.Game.ClientLanguage currentLocale, uint id)
+        public string LoadStain(ClientLanguage currentLocale, uint id)
         {
             return currentLocale switch
             {
-                Dalamud.Game.ClientLanguage.German => _stains[id].German,
-                Dalamud.Game.ClientLanguage.English => _stains[id].English,
-                Dalamud.Game.ClientLanguage.French => _stains[id].French,
-                Dalamud.Game.ClientLanguage.Japanese => _stains[id].Japanese,
+                ClientLanguage.German => _stains[id].German,
+                ClientLanguage.English => _stains[id].English,
+                ClientLanguage.French => _stains[id].French,
+                ClientLanguage.Japanese => _stains[id].Japanese,
                 _ => _stains[id].English,
             };
         }

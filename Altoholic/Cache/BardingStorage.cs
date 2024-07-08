@@ -11,7 +11,7 @@ namespace Altoholic.Cache
     {
         private readonly Dictionary<uint, Barding> _bardings = new(size);
 
-        public void Init(ClientLanguage currentLocale)
+        public void Init(ClientLanguage currentLocale, GlobalCache globalCache)
         {
             List<Barding>? bardings = Utils.GetAllBardings(currentLocale);
             if (bardings == null || bardings.Count == 0)
@@ -21,6 +21,7 @@ namespace Altoholic.Cache
 
             foreach (Barding b in bardings)
             {
+                globalCache.IconStorage.LoadIcon(b.Icon);
                 _bardings.Add(b.Id, b);
             }
         }

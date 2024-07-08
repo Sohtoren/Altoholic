@@ -117,14 +117,14 @@ namespace Altoholic
 
             _globalCache.IconStorage.Init();
             _globalCache.ItemStorage.Init();
-            _globalCache.MountStorage.Init(currentLocale);
-            _globalCache.MinionStorage.Init(currentLocale);
+            _globalCache.MountStorage.Init(currentLocale, _globalCache);
+            _globalCache.MinionStorage.Init(currentLocale, _globalCache);
             _globalCache.TripleTriadCardStorage.Init(currentLocale, _globalCache);
-            _globalCache.EmoteStorage.Init(currentLocale);
-            _globalCache.BardingStorage.Init(currentLocale);
-            _globalCache.FramerKitStorage.Init(currentLocale);
-            _globalCache.OrchestrionRollStorage.Init(currentLocale);
-            _globalCache.OrnamentStorage.Init(currentLocale);
+            _globalCache.EmoteStorage.Init(currentLocale, _globalCache);
+            _globalCache.BardingStorage.Init(currentLocale, _globalCache);
+            _globalCache.FramerKitStorage.Init(currentLocale, _globalCache);
+            _globalCache.OrchestrionRollStorage.Init(currentLocale, _globalCache);
+            _globalCache.OrnamentStorage.Init(currentLocale, _globalCache);
             
 
             Service altoholicService = new(
@@ -530,30 +530,6 @@ namespace Altoholic
             _localPlayer.LastJob = lPlayer.ClassJob.Id;
             _localPlayer.LastJobLevel = lPlayer.Level;
             _localPlayer.FCTag = lPlayer.CompanyTag.TextValue;
-            //Plugin.Log.Debug($"localPlayerFreeCompanyTag : {localPlayerFreeCompanyTag}");
-            //localPlayerFreeCompany = localPlayer..TextValue ?? string.Empty;
-            try
-            {
-                unsafe
-                {
-                    ref readonly AgentInspect agentInspect = ref *AgentInspect.Instance();
-                    _localPlayerFreeCompanyTest = agentInspect.FreeCompany.GuildName;
-                    /*Plugin.Log.Debug($"localPlayerFreeCompanyTest???");
-                        if(localPlayerFreeCompanyTest != null)
-                        {
-                            Plugin.Log.Debug($"localPlayerFreeCompanyTest : {localPlayerFreeCompanyTest}");
-                        }*/
-                    //localPlayerFreeCompanyTest = FFXIVClientStructs.FFXIV.Client.UI.Agent.AgentInspect.Instance()->FreeCompany.GuildName;
-                    //Log.Debug($"localPlayerFreeCompanyTest : {}");
-                    //Plugin.Log.Debug(System.Text.Encoding.UTF8.GetString(AgentInspect.Instance()->FreeCompany.GuildName));
-                    //Plugin.Log.Debug(System.Text.Encoding.UTF8.GetString(localPlayerFreeCompanyTest)); ;
-                    //Plugin.Log.Debug($"localPlayerFreeCompany : {localPlayerFreeCompanyTest}");
-                }
-            }
-            catch (Exception e)
-            {
-                Log.Error(e, "Could not get free company name");
-            }
             _localPlayer.Attributes = new Attributes
             {
                 Hp = lPlayer.MaxHp,
@@ -1138,7 +1114,11 @@ namespace Altoholic
 
                 if (r.Id == retainerManager.LastSelectedRetainerId)
                 {
-                    r.Inventory = GetPlayerRetainerInventory();
+                    List<Inventory> inventory = GetPlayerRetainerInventory();
+                    if (inventory.Count > 0)
+                    {
+                        r.Inventory = inventory;
+                    }
                     r.Gear = GetPlayerRetainerEquippedGear();
                     r.MarketInventory = GetPlayerRetainerMarketInventory();
                 }

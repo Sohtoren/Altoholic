@@ -1,7 +1,7 @@
 using Altoholic.Cache;
 using Altoholic.Models;
 using CheapLoc;
-
+using Dalamud.Game;
 using Dalamud.Game.Text;
 using Dalamud.Interface;
 using Dalamud.Interface.Internal;
@@ -21,7 +21,7 @@ namespace Altoholic.Windows
     {
         private readonly Plugin _plugin;
         private readonly LiteDatabase _db;
-        private Dalamud.Game.ClientLanguage _currentLocale;
+        private ClientLanguage _currentLocale;
         private readonly GlobalCache _globalCache;
         public CharactersWindow(
             Plugin plugin,
