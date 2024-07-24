@@ -128,28 +128,31 @@ namespace Altoholic.Windows
             //Plugin.Log.Debug("DrawAll called");
             using (var combo = ImRaii.Combo("###CharactersCurrencies#All#Combo", _selectedCurrency))
             {
-                if(!combo) return;
-                //Plugin.Log.Debug("BeginCombo");
-                List<string> names = [.. Enum.GetNames(typeof(Currencies))];
-                names.Sort();
-                foreach (string name in names)
+                if (combo)
                 {
-                    Item? item =
-                        _globalCache.ItemStorage.LoadItem(_currentLocale, (uint)Enum.Parse(typeof(Currencies), name));
-                    if (item == null) continue;
-                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(item.Icon), new Vector2(24, 24));
-                    ImGui.SameLine();
-                    string n = item.Name;
-                    if (n.Contains("Legendary")) n = $"Yo-Kai {n}";
-                    if (ImGui.Selectable(n, n == _selectedCurrency))
+                    //Plugin.Log.Debug("BeginCombo");
+                    List<string> names = [.. Enum.GetNames(typeof(Currencies))];
+                    names.Sort();
+                    foreach (string name in names)
                     {
-                        _selectedCurrency = n;
-                        Plugin.Log.Debug($"n:{n}");
-                        Plugin.Log.Debug($"selected_currency:{_selectedCurrency}");
-                        Plugin.Log.Debug(
-                            $"Currency selected : {Enum.Parse(typeof(Currencies), name)} {(uint)Enum.Parse(typeof(Currencies), name)}");
-                        Plugin.Log.Debug($"name : {Utils.CapitalizeCurrency(name)}");
-                        _currentCurrency = Utils.CapitalizeCurrency(name);
+                        Item? item =
+                            _globalCache.ItemStorage.LoadItem(_currentLocale,
+                                (uint)Enum.Parse(typeof(Currencies), name));
+                        if (item == null) continue;
+                        Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(item.Icon), new Vector2(24, 24));
+                        ImGui.SameLine();
+                        string n = item.Name;
+                        if (n.Contains("Legendary")) n = $"Yo-Kai {n}";
+                        if (ImGui.Selectable(n, n == _selectedCurrency))
+                        {
+                            _selectedCurrency = n;
+                            Plugin.Log.Debug($"n:{n}");
+                            Plugin.Log.Debug($"selected_currency:{_selectedCurrency}");
+                            Plugin.Log.Debug(
+                                $"Currency selected : {Enum.Parse(typeof(Currencies), name)} {(uint)Enum.Parse(typeof(Currencies), name)}");
+                            Plugin.Log.Debug($"name : {Utils.CapitalizeCurrency(name)}");
+                            _currentCurrency = Utils.CapitalizeCurrency(name);
+                        }
                     }
                 }
             }
