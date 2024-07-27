@@ -27,6 +27,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
+using static FFXIVClientStructs.FFXIV.Client.Game.UI.UIState.Delegates;
 using static FFXIVClientStructs.FFXIV.Client.UI.RaptureAtkModule;
 using Quest = Altoholic.Models.Quest;
 
@@ -94,7 +95,8 @@ namespace Altoholic
                 BardingStorage = new BardingStorage(),
                 FramerKitStorage = new FramerKitStorage(),
                 OrchestrionRollStorage = new OrchestrionRollStorage(),
-                OrnamentStorage = new OrnamentStorage()
+                OrnamentStorage = new OrnamentStorage(),
+                GlassesStorage = new GlassesStorage(),
             };
 
             nint playtimePtr = SigScanner.ScanText(PlaytimeSig);
@@ -117,15 +119,15 @@ namespace Altoholic
 
             _globalCache.IconStorage.Init();
             _globalCache.ItemStorage.Init();
-            _globalCache.MountStorage.Init(currentLocale, _globalCache);
-            _globalCache.MinionStorage.Init(currentLocale, _globalCache);
-            _globalCache.TripleTriadCardStorage.Init(currentLocale, _globalCache);
-            _globalCache.EmoteStorage.Init(currentLocale, _globalCache);
             _globalCache.BardingStorage.Init(currentLocale, _globalCache);
-            _globalCache.FramerKitStorage.Init(currentLocale, _globalCache);
-            _globalCache.OrchestrionRollStorage.Init(currentLocale, _globalCache);
+            _globalCache.EmoteStorage.Init(currentLocale, _globalCache);
             _globalCache.OrnamentStorage.Init(currentLocale, _globalCache);
-            
+            _globalCache.FramerKitStorage.Init(currentLocale, _globalCache);
+            _globalCache.GlassesStorage.Init(currentLocale, _globalCache);
+            _globalCache.MinionStorage.Init(currentLocale, _globalCache);
+            _globalCache.MountStorage.Init(currentLocale, _globalCache);
+            _globalCache.OrchestrionRollStorage.Init(currentLocale, _globalCache);
+            _globalCache.TripleTriadCardStorage.Init(currentLocale, _globalCache);
 
             Service altoholicService = new(
                 () => _localPlayer,
@@ -659,14 +661,16 @@ namespace Altoholic
                     _localPlayer.TripleTriadCards.Add(i);
                 }
             }
-            foreach (uint i in _globalCache.EmoteStorage.Get().Where(i => !_localPlayer.HasEmote(i)))
+            //foreach (uint i in _globalCache.EmoteStorage.Get().Where(i => !_localPlayer.HasEmote(i)))
+            foreach (KeyValuePair<uint, Models.Emote> i in _globalCache.EmoteStorage.GetAll().Where(i => !_localPlayer.HasEmote(i.Key)))
             {
-                if (uistate.IsEmoteUnlocked((ushort)i))
+                // Todo: Use UnlockLink instead of EmoteID
+                //if (uistate.IsEmoteUnlocked((ushort)i))
+                if(uistate.IsUnlockLinkUnlocked(i.Value.UnlockLink))
                 {
-                    _localPlayer.Emotes.Add(i);
+                    _localPlayer.Emotes.Add(i.Key);
                 }
             }
-
             foreach (uint i in _globalCache.BardingStorage.Get().Where(i => !_localPlayer.HasBarding(i)))
             {
                 if (uistate.Buddy.CompanionInfo.IsBuddyEquipUnlocked(i))
@@ -675,10 +679,16 @@ namespace Altoholic
                 }
             }
 
+            /*foreach (uint i in Enumerable.Range(1001,79))
+            {
+                Log.Debug($"uistate.IsUnlockLinkUnlocked(i): {uistate.IsUnlockLinkUnlocked(i)}");
+            }*/
+
             GetMountFromState(player);
             GetFramerKitsFromState(player);
             GetOrchestrionRollFromState(player);
             GetOrnamentFromState(player);
+            GetGlassesFromState(player);
         }
 
         private void GetMountFromState(PlayerState player)
@@ -703,12 +713,19 @@ namespace Altoholic
                     _localPlayer.OrchestrionRolls.Add(i);
             }
         }
-        
         private void GetOrnamentFromState(PlayerState player)
         {
             foreach (uint i in _globalCache.OrnamentStorage.Get().Where(i => !_localPlayer.HasOrnament(i)).Where(i => player.IsOrnamentUnlocked(i)))
             {
                     _localPlayer.Ornaments.Add(i);
+            }
+        }
+
+        private void GetGlassesFromState(PlayerState player)
+        {
+            foreach (uint i in _globalCache.GlassesStorage.Get().Where(i => !_localPlayer.HasGlasses(i)).Where(i => player.IsGlassesUnlocked((ushort)i)))
+            {
+                _localPlayer.Glasses.Add(i);
             }
         }
 

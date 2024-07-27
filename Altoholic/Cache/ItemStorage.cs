@@ -103,6 +103,7 @@ namespace Altoholic.Cache
         {
             _items.Clear();
             _eventItems.Clear();
+            _armoireItems.Clear();
         }
     }
 }

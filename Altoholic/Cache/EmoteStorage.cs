@@ -93,6 +93,10 @@ namespace Altoholic.Cache
         {
             return _emotes.Keys.ToList();
         }
+        public Dictionary<uint, Emote> GetAll()
+        {
+            return _emotes;
+        }
         public void Dispose()
         {
             _emotes.Clear();

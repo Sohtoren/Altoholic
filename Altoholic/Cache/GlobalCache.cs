@@ -15,5 +15,6 @@
         public required FramerKitStorage FramerKitStorage { get; set; } = null!;
         public required OrchestrionRollStorage OrchestrionRollStorage { get; set; } = null!;
         public required OrnamentStorage OrnamentStorage { get; set; } = null!;
+        public required GlassesStorage GlassesStorage { get; set; } = null!;
     }
 }

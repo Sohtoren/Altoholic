@@ -46,6 +46,7 @@ namespace Altoholic.Models
         public List<uint> FramerKits { get; set; } = [];
         public List<uint> OrchestrionRolls { get; set; } = [];
         public List<uint> Ornaments { get; set; } = [];
+        public List<uint> Glasses { get; set; } = [];
 
         public bool HasAnyLevelJob(int level)
         {
@@ -108,6 +109,10 @@ namespace Altoholic.Models
         public bool HasOrnament(uint id)
         {
             return Ornaments.Count > 0 && Ornaments.Contains(id);
+        }
+        public bool HasGlasses(uint id)
+        {
+            return Glasses.Count > 0 && Glasses.Contains(id);
         }
     }
 }

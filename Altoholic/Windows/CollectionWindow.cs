@@ -48,7 +48,8 @@ namespace Altoholic.Windows
         private bool _obtainedEmotesOnly;
         private bool _obtainedOrnamentsOnly;
         private bool _obtainedFramerKitsOnly;
-        
+        private bool _obtainedGlassesOnly;
+        //Hairstyle
         private bool _obtainedMinionsOnly;
         private bool _obtainedMountsOnly;
         private bool _obtainedOrchestrionRollsOnly;
@@ -75,6 +76,7 @@ namespace Altoholic.Windows
             _obtainedEmotesOnly = false;
             _obtainedOrnamentsOnly = false;
             _obtainedFramerKitsOnly = false;
+            _obtainedGlassesOnly = false;
             // Hairstyle
             _obtainedMinionsOnly = false;
             _obtainedMountsOnly = false;
@@ -91,6 +93,7 @@ namespace Altoholic.Windows
             _obtainedEmotesOnly = false;
             _obtainedOrnamentsOnly = false;
             _obtainedFramerKitsOnly = false;
+            _obtainedGlassesOnly = false;
             // Hairstyle
             _obtainedMinionsOnly = false;
             _obtainedMountsOnly = false;
@@ -103,14 +106,17 @@ namespace Altoholic.Windows
         {
             _currentLocale = _plugin.Configuration.Language;
             _isSpoilerEnabled = _plugin.Configuration.IsSpoilersEnabled;
+            _obtainedBardingsOnly = _plugin.Configuration.ObtainedOnly;
+            _obtainedEmotesOnly = _plugin.Configuration.ObtainedOnly;
+            _obtainedOrnamentsOnly = _plugin.Configuration.ObtainedOnly;
+            _obtainedFramerKitsOnly = _plugin.Configuration.ObtainedOnly;
+            _obtainedGlassesOnly = _plugin.Configuration.ObtainedOnly;
+
             _obtainedMinionsOnly = _plugin.Configuration.ObtainedOnly;
             _obtainedMountsOnly = _plugin.Configuration.ObtainedOnly;
-            _obtainedTripleTriadCardsOnly = _plugin.Configuration.ObtainedOnly;
-            _obtainedEmotesOnly = _plugin.Configuration.ObtainedOnly;
-            _obtainedBardingsOnly = _plugin.Configuration.ObtainedOnly;
-            _obtainedFramerKitsOnly = _plugin.Configuration.ObtainedOnly;
             _obtainedOrchestrionRollsOnly = _plugin.Configuration.ObtainedOnly;
-            _obtainedOrnamentsOnly = _plugin.Configuration.ObtainedOnly;
+            _obtainedTripleTriadCardsOnly = _plugin.Configuration.ObtainedOnly;
+            
             List<Character> chars = [];
             chars.Insert(0, GetPlayer.Invoke());
             chars.AddRange(GetOthersCharactersList.Invoke());
@@ -198,6 +204,14 @@ namespace Altoholic.Windows
                 if (framerKitTab.Success)
                 {
                     DrawFramerKits(currentCharacter);
+                }
+            }
+            using (var glassesTab =
+                   ImRaii.TabItem($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 16051)}"))
+            {
+                if (glassesTab.Success)
+                {
+                    DrawGlasses(currentCharacter);
                 }
             }
             
@@ -1125,8 +1139,8 @@ namespace Altoholic.Windows
             DrawOrnamentsCollection(currentCharacter);
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
-            using var ornamentsTableAornament = ImRaii.Table("###OrnamentsTableAornament", 2);
-            if (!ornamentsTableAornament) return;
+            using var ornamentsTableOrnament = ImRaii.Table("###OrnamentsTableOrnament", 2);
+            if (!ornamentsTableOrnament) return;
             int widthCol1 = 455;
             int widthCol2 = 145;
             if (_isSpoilerEnabled)
@@ -1134,9 +1148,9 @@ namespace Altoholic.Windows
                 widthCol1 = 480;
                 widthCol2 = 120;
             }
-            ImGui.TableSetupColumn($"###OrnamentsTableAornament#{currentCharacter.Id}#Aornament#Col1",
+            ImGui.TableSetupColumn($"###OrnamentsTableOrnament#{currentCharacter.Id}#Ornament#Col1",
                 ImGuiTableColumnFlags.WidthFixed, widthCol1);
-            ImGui.TableSetupColumn($"###OrnamentsTableAornament#{currentCharacter.Id}#Aornament#Col2",
+            ImGui.TableSetupColumn($"###OrnamentsTableOrnament#{currentCharacter.Id}#Ornament#Col2",
                 ImGuiTableColumnFlags.WidthFixed, widthCol2);
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
@@ -1221,6 +1235,129 @@ namespace Altoholic.Windows
                 if (ImGui.IsItemHovered())
                 {
                     Utils.DrawOrnamentTooltip(_currentLocale, ref _globalCache, o);
+                }
+
+                i++;
+            }
+        }
+
+        /**************************************************/
+        /*********************Glasses**********************/
+        /**************************************************/
+        private void DrawGlasses(Character currentCharacter)
+        {
+            using var glassesTabTable = ImRaii.Table("###GlassesTabTable", 1, ImGuiTableFlags.ScrollY);
+            if (!glassesTabTable) return;
+            ImGui.TableSetupColumn($"###GlassesTabTable#{currentCharacter.Id}#Col1",
+                ImGuiTableColumnFlags.WidthStretch);
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            if (ImGui.Checkbox($"{Loc.Localize("ObtainedOnly", "Obtained only")}", ref _obtainedGlassesOnly))
+            {
+                _plugin.Configuration.ObtainedOnly = _obtainedGlassesOnly;
+                _plugin.Configuration.Save();
+            }
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            DrawGlassesCollection(currentCharacter);
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            using var glassesTableGlasses= ImRaii.Table("###GlassesTableAglasse", 2);
+            if (!glassesTableGlasses) return;
+            int widthCol1 = 455;
+            int widthCol2 = 145;
+            if (_isSpoilerEnabled)
+            {
+                widthCol1 = 480;
+                widthCol2 = 120;
+            }
+            ImGui.TableSetupColumn($"###GlassesTableAglasse#{currentCharacter.Id}#Aglasse#Col1",
+                ImGuiTableColumnFlags.WidthFixed, widthCol1);
+            ImGui.TableSetupColumn($"###GlassesTableAglasse#{currentCharacter.Id}#Aglasse#Col2",
+                ImGuiTableColumnFlags.WidthFixed, widthCol2);
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            ImGui.Text("");
+            ImGui.TableSetColumnIndex(1);
+            string endStr = string.Empty;
+            if (!_isSpoilerEnabled)
+            {
+                endStr += $"{Loc.Localize("ObtainedLowercase", " obtained")}";
+            }
+            else
+            {
+                endStr += $"/{_globalCache.GlassesStorage.Count()}";
+            }
+            ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 3501)}: {currentCharacter.Glasses.Count}{endStr}");
+        }
+
+        private void DrawGlassesCollection(Character currentCharacter)
+        {
+            List<uint> glasses = (_obtainedGlassesOnly) ? currentCharacter.Glasses : _globalCache.GlassesStorage.Get();
+            int glassesCount = glasses.Count;
+            int rows = (int)Math.Ceiling(glassesCount / (double)10);
+            int height = rows * 48 + rows;
+
+            using var glasseTable = ImRaii.Table("###GlassesTable", 10,
+                ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner, new Vector2(573, height));
+            if (!glasseTable) return;
+
+            ImGui.TableSetupColumn("###GlassesTable#Col1",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+            ImGui.TableSetupColumn("###GlassesTable#Col2",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+            ImGui.TableSetupColumn("###GlassesTable#Col3",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+            ImGui.TableSetupColumn("###GlassesTable#Col4",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+            ImGui.TableSetupColumn("###GlassesTable#Col5",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+            ImGui.TableSetupColumn("###GlassesTable#Col6",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+            ImGui.TableSetupColumn("###GlassesTable#Col7",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+            ImGui.TableSetupColumn("###GlassesTable#Col8",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+            ImGui.TableSetupColumn("###GlassesTable#Col9",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+            ImGui.TableSetupColumn("###GlassesTable#Col10",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+
+            int i = 0;
+            foreach (uint glasseId in glasses)
+            {
+                if (i % 10 == 0)
+                {
+                    ImGui.TableNextRow();
+                }
+
+                ImGui.TableNextColumn();
+                Glasses? g = _globalCache.GlassesStorage.GetGlasses(_currentLocale, glasseId);
+                if (g == null)
+                {
+                    continue;
+                }
+
+                if (currentCharacter.HasGlasses(glasseId))
+                {
+                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(g.Icon), new Vector2(48, 48));
+                }
+                else
+                {
+                    //Plugin.Log.Debug($"Glasses {glasseId} not found");
+                    if (_isSpoilerEnabled)
+                    {
+                        Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(g.Icon), new Vector2(48, 48),
+                            new Vector4(1, 1, 1, 0.5f));
+                    }
+                    else
+                    {
+                        Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(000786), new Vector2(48, 48));
+                    }
+                }
+                if (ImGui.IsItemHovered())
+                {
+                    Utils.DrawGlassesTooltip(_currentLocale, ref _globalCache, g);
                 }
 
                 i++;

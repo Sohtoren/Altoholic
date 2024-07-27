@@ -14,7 +14,7 @@ namespace Altoholic.Cache
 
         public void Init()
         {
-            Plugin.Log.Debug("IconStoage Init() called");
+            Plugin.Log.Debug("IconStorage Init() called");
             _retainerIconsTexture = Plugin.TextureProvider.GetFromGame("ui/uld/Retainer_hr1.tex").RentAsync().Result;
         }
 

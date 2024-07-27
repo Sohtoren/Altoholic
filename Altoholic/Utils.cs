@@ -20,6 +20,7 @@ using TripleTriadCard = Lumina.Excel.GeneratedSheets.TripleTriadCard;
 using Emote = Lumina.Excel.GeneratedSheets.Emote;
 using TextCommand = Lumina.Excel.GeneratedSheets.TextCommand;
 using Ornament = Lumina.Excel.GeneratedSheets.Ornament;
+using Glasses = Lumina.Excel.GeneratedSheets.Glasses;
 
 namespace Altoholic
 {
@@ -1787,6 +1788,56 @@ namespace Altoholic
             }
         }
 
+        public static void DrawGlassesTooltip(ClientLanguage currentLocale, ref GlobalCache globalCache, Models.Glasses glasses)
+        {
+            using var drawGlassesTooltip = ImRaii.Tooltip();
+            if (!drawGlassesTooltip) return;
+            using (var drawGlassesDescriptionItem = ImRaii.Table($"###DrawGlassesDescriptionItem#Glasses_{glasses.Id}", 2))
+            {
+                if (!drawGlassesDescriptionItem) return;
+                ImGui.TableSetupColumn($"###DrawGlassesDescriptionItem#Glasses_{glasses.Id}#Icon",
+                    ImGuiTableColumnFlags.WidthFixed, 55);
+                ImGui.TableSetupColumn($"###DrawGlassesDescriptionItem#Glasses_{glasses.Id}#Name",
+                    ImGuiTableColumnFlags.WidthFixed, 305);
+                ImGui.TableNextRow();
+                ImGui.TableSetColumnIndex(0);
+                DrawIcon(globalCache.IconStorage.LoadIcon(glasses.Icon), new Vector2(40, 40));
+                ImGui.TableSetColumnIndex(1);
+                switch (currentLocale)
+                {
+                    case ClientLanguage.German:
+                        ImGui.TextUnformatted($"{Capitalize(glasses.GermanName)}");
+                        break;
+                    case ClientLanguage.English:
+                        ImGui.TextUnformatted($"{Capitalize(glasses.EnglishName)}");
+                        break;
+                    case ClientLanguage.French:
+                        ImGui.TextUnformatted($"{Capitalize(glasses.FrenchName)}");
+                        break;
+                    case ClientLanguage.Japanese:
+                        ImGui.TextUnformatted($"{Capitalize(glasses.JapaneseName)}");
+                        break;
+                }
+            }
+
+            ImGui.Separator();
+            switch (currentLocale)
+            {
+                case ClientLanguage.German:
+                    ImGui.TextUnformatted($"{Capitalize(glasses.GermanDescription)}");
+                    break;
+                case ClientLanguage.English:
+                    ImGui.TextUnformatted($"{Capitalize(glasses.EnglishDescription)}");
+                    break;
+                case ClientLanguage.French:
+                    ImGui.TextUnformatted($"{Capitalize(glasses.FrenchDescription)}");
+                    break;
+                case ClientLanguage.Japanese:
+                    ImGui.TextUnformatted($"{Capitalize(glasses.JapaneseDescription)}");
+                    break;
+            }
+        }
+
         private static string GetExtractableString(ClientLanguage currentLocale, GlobalCache globalCache, Item item)
         {
             string str = globalCache.AddonStorage.LoadAddonString(currentLocale, 1361);
@@ -2080,7 +2131,7 @@ namespace Altoholic
                 }
 
                 e.Icon = emote.Icon;
-
+                e.UnlockLink = emote.UnlockLink;
                 returnedEmotesIds.Add(e);
             }
 
@@ -2222,6 +2273,50 @@ namespace Altoholic
             }
 
             return returnedOrnamentsIds;
+        }
+
+        public static Glasses? GetGlasses(ClientLanguage currentLocale, uint id)
+        {
+            ExcelSheet<Glasses>? dm = Plugin.DataManager.GetExcelSheet<Glasses>(currentLocale);
+            Glasses? lumina = dm?.GetRow(id);
+            return lumina;
+        }
+        public static List<Models.Glasses>? GetAllGlasses(ClientLanguage currentLocale)
+        {
+            List<Models.Glasses> returnedGlassessIds = [];
+            ExcelSheet<Glasses>? dor = Plugin.DataManager.GetExcelSheet<Glasses>(currentLocale);
+            using IEnumerator<Glasses>? glassesEnumerator = dor?.GetEnumerator();
+            if (glassesEnumerator is null) return null;
+            while (glassesEnumerator.MoveNext())
+            {
+                Glasses glasses = glassesEnumerator.Current;
+                if (string.IsNullOrEmpty(glasses.Singular)) continue;
+                if (glasses.Icon == 0) continue;
+                Models.Glasses m = new() { Id = glasses.RowId, Icon = (uint)glasses.Icon };
+                switch (currentLocale)
+                {
+                    case ClientLanguage.German:
+                        m.GermanName = glasses.Singular;
+                        m.GermanDescription = glasses.Description;
+                        break;
+                    case ClientLanguage.English:
+                        m.EnglishName = glasses.Singular;
+                        m.EnglishDescription = glasses.Description;
+                        break;
+                    case ClientLanguage.French:
+                        m.FrenchName = glasses.Singular;
+                        m.FrenchDescription = glasses.Description;
+                        break;
+                    case ClientLanguage.Japanese:
+                        m.JapaneseName = glasses.Singular;
+                        m.JapaneseDescription = glasses.Description;
+                        break;
+                }
+
+                returnedGlassessIds.Add(m);
+            }
+
+            return returnedGlassessIds;
         }
 
         public static List<uint> GetArmoireIds()

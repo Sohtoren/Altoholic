@@ -1,14 +1,16 @@
 ﻿namespace Altoholic.Models
 {
-    public class Emote
+    public class Glasses
     {
         public uint Id { get; set; }
         public string GermanName { get; set; } = string.Empty;
+        public string GermanDescription { get; set; } = string.Empty;
         public string EnglishName { get; set; } = string.Empty;
+        public string EnglishDescription { get; set; } = string.Empty;
         public string FrenchName { get; set; } = string.Empty;
+        public string FrenchDescription { get; set; } = string.Empty;
         public string JapaneseName { get; set; } = string.Empty;
-        public TextCommand? TextCommand { get; set; }
+        public string JapaneseDescription { get; set; } = string.Empty;
         public uint Icon { get; set; }
-        public uint UnlockLink { get; set; }
     }
 }

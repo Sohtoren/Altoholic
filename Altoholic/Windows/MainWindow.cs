@@ -167,14 +167,14 @@ namespace Altoholic.Windows
                 }
             }
 
-            /*using (var progressTab = ImRaii.TabItem("Progress"))
+            using (var progressTab = ImRaii.TabItem("Progress"))
             {
                 if (progressTab.Success)
                 {
                     //Double list like retainers, second list is the progress list (msq, event, yokai, trials,etc)
                     ProgressWindow.Draw();
                 }
-            }*/
+            }
 
             using (var settingsTab = ImRaii.TabItem($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 10119)}"))
             {
