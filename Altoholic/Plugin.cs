@@ -1249,7 +1249,7 @@ namespace Altoholic
 
         private void CleanLastLocalCharacter()
         {
-            _localPlayer = null!;
+            _localPlayer = new Character();
             _localPlayerFreeCompanyTest = null;
             OtherCharacters = [];
         }
