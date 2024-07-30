@@ -661,14 +661,15 @@ namespace Altoholic
                     _localPlayer.TripleTriadCards.Add(i);
                 }
             }
-            //foreach (uint i in _globalCache.EmoteStorage.Get().Where(i => !_localPlayer.HasEmote(i)))
-            foreach (KeyValuePair<uint, Models.Emote> i in _globalCache.EmoteStorage.GetAll().Where(i => !_localPlayer.HasEmote(i.Key)))
+            foreach (uint i in _globalCache.EmoteStorage.Get().Where(i => !_localPlayer.HasEmote(i)))
+            //foreach (KeyValuePair<uint, Models.Emote> i in _globalCache.EmoteStorage.GetAll().Where(i => !_localPlayer.HasEmote(i.Key)))
             {
                 // Todo: Use UnlockLink instead of EmoteID
-                //if (uistate.IsEmoteUnlocked((ushort)i))
-                if(uistate.IsUnlockLinkUnlocked(i.Value.UnlockLink))
+                if (uistate.IsEmoteUnlocked((ushort)i))
+                //if(uistate.IsUnlockLinkUnlocked(i.Value.UnlockLink))
                 {
-                    _localPlayer.Emotes.Add(i.Key);
+                    //_localPlayer.Emotes.Add(i.Key);
+                    _localPlayer.Emotes.Add(i);
                 }
             }
             foreach (uint i in _globalCache.BardingStorage.Get().Where(i => !_localPlayer.HasBarding(i)))
