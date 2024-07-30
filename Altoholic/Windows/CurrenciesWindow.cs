@@ -406,8 +406,17 @@ namespace Altoholic.Windows
         private static double GetNextTuesdayRemainingTime()
         {
             DateTime now = DateTime.UtcNow;
-            int daysuntilNexTuesday = ((int)DayOfWeek.Tuesday - (int)DateTime.Today.DayOfWeek + 7) % 7;
-            DateTime nextThuesday8AmUtc = now.AddDays(daysuntilNexTuesday).Date.AddHours(8);
+            DateTime today = DateTime.Today;
+            int daysUntilTuesday;
+            if (today.DayOfWeek == DayOfWeek.Tuesday)
+            {
+                daysUntilTuesday = (((int)DayOfWeek.Monday - (int)today.DayOfWeek + 7) % 7) + 1;
+            }
+            else
+            {
+                daysUntilTuesday = ((int)DayOfWeek.Tuesday - (int)today.DayOfWeek + 7) % 7;
+            }
+            DateTime nextThuesday8AmUtc = now.AddDays(daysUntilTuesday).Date.AddHours(8);
             double totalSeconds = (nextThuesday8AmUtc - now).TotalSeconds;
             return totalSeconds;
         }
@@ -415,7 +424,16 @@ namespace Altoholic.Windows
         {
             DateTime today = DateTime.Today;
             // The (... + 7) % 7 ensures we end up with a value in the range [0, 6]
-            int daysUntilTuesday = ((int)DayOfWeek.Tuesday - (int)today.DayOfWeek + 7) % 7;
+            int daysUntilTuesday;
+            if (today.DayOfWeek == DayOfWeek.Tuesday)
+            {
+                daysUntilTuesday = (((int)DayOfWeek.Monday - (int)today.DayOfWeek + 7) % 7) + 1;
+            }
+            else
+            {
+                daysUntilTuesday = ((int)DayOfWeek.Tuesday - (int)today.DayOfWeek + 7) % 7;
+            }
+
             DateTime nextTuesday = today.AddDays(daysUntilTuesday).AddHours(8);
             return nextTuesday;
         }
@@ -439,10 +457,10 @@ namespace Altoholic.Windows
                 ImGui.TableSetupColumn(
                     $"###CharactersCurrencies#BattleCurrencyTable#AllaganTable#Weekly#{selectedCharacter.Id}",
                     ImGuiTableColumnFlags.WidthStretch);
-                /*ImGui.TableNextRow();
+                ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(1);
                 ImGui.TextUnformatted(
-                    $"{GetTurnIn(_currentLocale)}");*/
+                    $"{GetTurnIn(_currentLocale)}");
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
                 DrawBattleCurrency(pc.Allagan_Tomestone_Of_Poetics, Currencies.ALLAGAN_TOMESTONE_OF_POETICS, 2000,
@@ -451,12 +469,12 @@ namespace Altoholic.Windows
                 ImGui.TableSetColumnIndex(0);
                 DrawBattleCurrency(pc.Allagan_Tomestone_Of_Aesthetics, Currencies.ALLAGAN_TOMESTONE_OF_AESTHETICS, 2000,
                     true);
-                /*ImGui.TableNextRow();
+                ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                DrawBattleCurrency(pc.Allagan_Tomestone_Of_Comedy, Currencies.ALLAGAN_TOMESTONE_OF_COMEDY, 2000, true);
+                DrawBattleCurrency(pc.Allagan_Tomestone_Of_Heliometry, Currencies.ALLAGAN_TOMESTONE_OF_HELIOMETRY, 2000, true);
                 ImGui.TableSetColumnIndex(1);
                 ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 3502));
-                ImGui.TextUnformatted($"{pc.Weekly_Acquired_Tomestone}/{pc.Weekly_Limit_Tomestone}");*/
+                ImGui.TextUnformatted($"{pc.Weekly_Acquired_Tomestone}/{pc.Weekly_Limit_Tomestone}");
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
                 ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 5756));

@@ -13,6 +13,7 @@ namespace Altoholic.Models
         public int Allagan_Tomestone_Of_Esoterics { get; set; }
         public int Allagan_Tomestone_Of_Genesis { get; set; }
         public int Allagan_Tomestone_Of_Goetia { get; set; }
+        public int Allagan_Tomestone_Of_Heliometry { get; set; }
         public int Allagan_Tomestone_Of_Law { get; set; }
         public int Allagan_Tomestone_Of_Lore { get; set; }
         public int Allagan_Tomestone_Of_Mendacity { get; set; }
