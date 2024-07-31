@@ -136,10 +136,10 @@ namespace Altoholic.Windows
                     {
                         if (chars.Count > 0)
                         {
-                            if (ImGui.Selectable($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 970)}###CharactersCollectionTable#CharactersListBox#All", _currentCharacter == null))
+                            /*if (ImGui.Selectable($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 970)}###CharactersCollectionTable#CharactersListBox#All", _currentCharacter == null))
                             {
                                 _currentCharacter = null;
-                            }
+                            }*/
 
 #if DEBUG
                             for (int i = 0; i < 15; i++)
