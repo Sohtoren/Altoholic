@@ -218,7 +218,7 @@ namespace Altoholic.Windows
             ImGui.TableSetupColumn("###CharactersInventory#All#SearchItemsTable#Item", ImGuiTableColumnFlags.WidthFixed,
                 300);
             ImGui.TableSetupColumn("###CharactersInventory#All#SearchItemsTable#CharacterItems",
-                ImGuiTableColumnFlags.WidthFixed, 350);
+                ImGuiTableColumnFlags.WidthStretch);
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
             using (var itemlistbox = ImRaii.ListBox("###CharactersInventory#All#SearchItemsTable#Item#Listbox",
@@ -276,7 +276,7 @@ namespace Altoholic.Windows
                     ImGuiTableColumnFlags.WidthFixed, 300);
                 ImGui.TableSetupColumn(
                     "###CharactersInventory#All#SearchItemsTable#CharacterItems#Item#Table#CharacterItem",
-                    ImGuiTableColumnFlags.WidthFixed, 50);
+                    ImGuiTableColumnFlags.WidthStretch);
 
 #if DEBUG
                 for (int i = 0; i < 15; i++)
@@ -311,7 +311,7 @@ namespace Altoholic.Windows
                 ImGuiTableColumnFlags.WidthFixed, 300);
             ImGui.TableSetupColumn(
                 "###CharactersInventory#All#SearchItemsTable#CharacterItems#OverallAmountTable#Amount",
-                ImGuiTableColumnFlags.WidthFixed, 50);
+                ImGuiTableColumnFlags.WidthStretch);
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
             ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 3501)}");

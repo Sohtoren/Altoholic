@@ -86,7 +86,7 @@ namespace Altoholic.Windows
                         30);
                     ImGui.TableSetupColumn("FC", ImGuiTableColumnFlags.WidthFixed, 50);
                     ImGui.TableSetupColumn(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 2883),
-                        ImGuiTableColumnFlags.WidthFixed, 110);
+                        ImGuiTableColumnFlags.WidthFixed, 150);
                     ImGui.TableSetupColumn("Last online", ImGuiTableColumnFlags.WidthFixed, 110);
                     //ImGui.TableSetupColumn("Last online", ImGuiTableColumnFlags.WidthFixed, 80);
                     ImGui.TableSetupColumn($"{Loc.Localize("Playtime", "Playtime")}###Characters#Playtime",ImGuiTableColumnFlags.WidthStretch);
@@ -107,7 +107,7 @@ namespace Altoholic.Windows
 
 #if DEBUG
                     //Dummy generation
-                    for (int i = 0; i < 15; i++)
+                    for (int i = 0; i < 100; i++)
                     {
                         chars.Add(new Character()
                         {
@@ -116,7 +116,7 @@ namespace Altoholic.Windows
                             HomeWorld = $"Homeworld {i}",
                             Datacenter = $"EU",
                             FCTag = $"FC {i}",
-                            Currencies = new PlayerCurrencies(){Gil = i},
+                            Currencies = new PlayerCurrencies(){ Gil = 999999999 },
                             LastOnline = 0,
                             PlayTime = 0,
                         });
@@ -130,7 +130,7 @@ namespace Altoholic.Windows
                 using ImRaii.IEndObject totalCharactersTable = ImRaii.Table("###TotalCharacters", 4);
                 if (!totalCharactersTable) return;
                 ImGui.TableSetupColumn("###TotalCharacters#Count", ImGuiTableColumnFlags.WidthFixed, 440);
-                ImGui.TableSetupColumn("###TotalCharacters#Gils", ImGuiTableColumnFlags.WidthFixed, 110);
+                ImGui.TableSetupColumn("###TotalCharacters#Gils", ImGuiTableColumnFlags.WidthFixed, 150);
                 ImGui.TableSetupColumn("###TotalCharacters#Empty", ImGuiTableColumnFlags.WidthFixed, 110);
                 ImGui.TableSetupColumn("###TotalCharacters#Playtime", ImGuiTableColumnFlags.WidthStretch);
                 ImGui.TableNextRow();
@@ -143,7 +143,7 @@ namespace Altoholic.Windows
                 {
                     if (!charactersrGils) return;
                     ImGui.TableSetupColumn("###TotalCharacters#GilsTable#Icon", ImGuiTableColumnFlags.WidthFixed, 20);
-                    ImGui.TableSetupColumn("###TotalCharacters#GilsTable#Amount", ImGuiTableColumnFlags.WidthFixed, 90);
+                    ImGui.TableSetupColumn("###TotalCharacters#GilsTable#Amount", ImGuiTableColumnFlags.WidthFixed, 130);
                     ImGui.TableNextRow();
                     ImGui.TableSetColumnIndex(0);
                     Utils.DrawIcon(GilIcon, new Vector2(18, 18));
@@ -212,7 +212,7 @@ namespace Altoholic.Windows
                 ImGui.TableSetupColumn($"###Characters#Character#Gils#Icon#{character.Id}",
                     ImGuiTableColumnFlags.WidthFixed, 20);
                 ImGui.TableSetupColumn($"###Characters#Character#Gils#Amount#{character.Id}",
-                    ImGuiTableColumnFlags.WidthFixed, 90);
+                    ImGuiTableColumnFlags.WidthFixed, 130);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
                 Utils.DrawIcon(GilIcon, new Vector2(18, 18));
@@ -325,7 +325,7 @@ namespace Altoholic.Windows
         private void DrawCharacters(List<Character> characters)
         {
             if(characters.Count == 0) return;
-            TotalGils = characters.Select(c => c.Currencies?.Gil ?? 0).Sum();
+            TotalGils = characters.Select(c => c.Currencies?.Gil ?? 0).ToArray().Sum(g => (long)g);
             TotalCharacters = characters.Count;
             TotalWorlds = characters.Select(c => c.HomeWorld).Distinct().Count();
             TotalPlayed = characters.Sum(c => c.PlayTime);
@@ -337,7 +337,5 @@ namespace Altoholic.Windows
                 DrawCharacter(i, characters[i]);
             }
         }
-
-            
     }
 }

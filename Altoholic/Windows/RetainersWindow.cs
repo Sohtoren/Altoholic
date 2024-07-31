@@ -175,7 +175,8 @@ namespace Altoholic.Windows
             {
                 switch (_searchedItem.Length)
                 {
-                    case >= 3 when _searchedItem is "Gil" or "MGP" or "MGF" || _lastSearchedItem == _searchedItem:
+                    //case >= 3 when _searchedItem is "Gil" or "MGP" or "MGF" || _lastSearchedItem == _searchedItem:
+                    case >= 3 when _searchedItem is "MGP" or "MGF" || _lastSearchedItem == _searchedItem:
                         return;
                     case >= 3:
                         {
@@ -252,14 +253,14 @@ namespace Altoholic.Windows
                 }
             }
 
-            List<Retainer> retainersWithItems = retainers.FindAll(r => r.Inventory.FindAll(ri => ri.ItemId == _currentItem).Count > 0);
+            List<Retainer> retainersWithItems = (itm.RowId == 1) ? retainers : retainers.FindAll(r => r.Inventory.FindAll(ri => ri.ItemId == _currentItem).Count > 0);
             if (retainersWithItems.Count == 0)
             {
                 ImGui.TextUnformatted($"{Loc.Localize("NoItemOnAnyRetainer", "Item not found on any retainers.\r\nCheck if inventories are available and updated.")}");
                 return;
             }
 
-            uint overallAmount = 0;
+            long overallAmount = 0;
             using (ImRaii.IEndObject table =
                    ImRaii.Table("###CharactersRetainer#All#SearchItemsTable#CharacterItems#Item#Table", 2,
                        ImGuiTableFlags.Borders))
@@ -267,14 +268,14 @@ namespace Altoholic.Windows
                 if (!table) return;
                 ImGui.TableSetupColumn(
                     "###CharactersRetainer#All#SearchItemsTable#CharacterItems#Item#Table#CharacterName",
-                    ImGuiTableColumnFlags.WidthFixed, 300);
+                    ImGuiTableColumnFlags.WidthFixed, 150);
                 ImGui.TableSetupColumn(
                     "###CharactersRetainer#All#SearchItemsTable#CharacterItems#Item#Table#CharacterItem",
-                    ImGuiTableColumnFlags.WidthFixed, 50);
+                    ImGuiTableColumnFlags.WidthStretch);
                 //Plugin.Log.Debug($"retainers_with_items: {retainers_with_items}");
                 foreach (Retainer retainer in retainersWithItems)
                 {
-                    uint totalAmount = retainer.Inventory.FindAll(i => i.ItemId == _currentItem)
+                    long totalAmount = (itm.RowId == 1) ? retainers.Select(r => (long)r.Gils).Sum() : retainer.Inventory.FindAll(i => i.ItemId == _currentItem)
                         .Aggregate<Inventory, uint>(0, (current, inv) => current + inv.Quantity);
                     overallAmount += totalAmount;
                     ImGui.TableNextRow();
@@ -289,10 +290,10 @@ namespace Altoholic.Windows
             if (!overallAmountTable) return;
             ImGui.TableSetupColumn(
                 "###CharactersInventory#All#SearchItemsTable#CharacterItems#OverallAmountTable#Text",
-                ImGuiTableColumnFlags.WidthFixed, 306);
+                ImGuiTableColumnFlags.WidthFixed, 150);
             ImGui.TableSetupColumn(
                 "###CharactersInventory#All#SearchItemsTable#CharacterItems#OverallAmountTable#Amount",
-                ImGuiTableColumnFlags.WidthFixed, 44);
+                ImGuiTableColumnFlags.WidthStretch);
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
             ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 3501)}");

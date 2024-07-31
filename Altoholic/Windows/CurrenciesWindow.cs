@@ -184,50 +184,75 @@ namespace Altoholic.Windows
                 (uint)Enum.Parse(typeof(Currencies), _currentCurrency.ToUpper()));
             if (itm == null) return;
             Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Icon), new Vector2(64, 64));
-            using var charactersCurrenciesAllCurrencyTable =
-                ImRaii.Table("###CharactersCurrencies#All#CurrencyTable", 2, ImGuiTableFlags.Borders | ImGuiTableFlags.ScrollY);
-            if (!charactersCurrenciesAllCurrencyTable) return;
-            ImGui.TableSetupColumn("###CharactersCurrencies#All#CurrencyTable#CharacterName",
-                ImGuiTableColumnFlags.WidthFixed, 300);
-            ImGui.TableSetupColumn("###CharactersCurrencies#All#CurrencyTable#CharacterCurrency",
-                ImGuiTableColumnFlags.WidthFixed, 50);
+
+            long overallAmount = 0;
+            using (var charactersCurrenciesAllCurrencyTable =
+                   ImRaii.Table("###CharactersCurrencies#All#CurrencyTable", 2,
+                       ImGuiTableFlags.Borders | ImGuiTableFlags.ScrollY, new Vector2(-1, 380)))
+            {
+                if (!charactersCurrenciesAllCurrencyTable) return;
+                ImGui.TableSetupColumn("###CharactersCurrencies#All#CurrencyTable#CharacterName",
+                    ImGuiTableColumnFlags.WidthFixed, 300);
+                ImGui.TableSetupColumn("###CharactersCurrencies#All#CurrencyTable#CharacterCurrency",
+                    ImGuiTableColumnFlags.WidthStretch);
 #if DEBUG
-            for (int i = 0; i < 15; i++)
-            {
-                chars.Add(new Character()
+                for (int i = 0; i < 15; i++)
                 {
-                    FirstName = $"Dummy {i}",
-                    LastName = $"LN {i}",
-                    HomeWorld = $"Homeworld {i}",
-                    Datacenter = $"EU",
-                    FCTag = $"FC {i}",
-                    Currencies = new PlayerCurrencies() { Gil = i },
-                });
-            }
+                    chars.Add(new Character()
+                    {
+                        FirstName = $"Dummy {i}",
+                        LastName = $"LN {i}",
+                        HomeWorld = $"Homeworld {i}",
+                        Datacenter = $"EU",
+                        FCTag = $"FC {i}",
+                        Currencies = new PlayerCurrencies() { Gil = 999999999 },
+                    });
+                }
 #endif
-            foreach (Character character in chars)
-            {
-                //Plugin.Log.Debug($"{character.Currencies.Gil}");
-                ImGui.TableNextRow();
-                ImGui.TableSetColumnIndex(0);
-                ImGui.TextUnformatted(
-                    $"{character.FirstName} {character.LastName}{(char)SeIconChar.CrossWorld}{character.HomeWorld}");
-                if (character.Currencies is null)
+                foreach (Character character in chars)
                 {
-                    continue;
-                }
+                    //Plugin.Log.Debug($"{character.Currencies.Gil}");
+                    ImGui.TableNextRow();
+                    ImGui.TableSetColumnIndex(0);
+                    ImGui.TextUnformatted(
+                        $"{character.FirstName} {character.LastName}{(char)SeIconChar.CrossWorld}{character.HomeWorld}");
+                    if (character.Currencies is null)
+                    {
+                        continue;
+                    }
 
-                PropertyInfo? p = character.Currencies.GetType().GetProperty(_currentCurrency);
-                //Plugin.Log.Debug($"p: {p}");
-                if (p == null)
-                {
-                    continue;
-                }
+                    PropertyInfo? p = character.Currencies.GetType().GetProperty(_currentCurrency);
+                    //Plugin.Log.Debug($"p: {p}");
+                    if (p == null)
+                    {
+                        continue;
+                    }
 
-                //Plugin.Log.Debug($"v: {p.GetValue(character.Currencies, null):N0}");
-                ImGui.TableSetColumnIndex(1);
-                ImGui.TextUnformatted($"{p.GetValue(character.Currencies, null):N0}");
+                    object? amount = p.GetValue(character.Currencies, null);
+                    if (amount == null)
+                    {
+                        continue;
+                    }
+                    overallAmount += (int)amount;
+                    //Plugin.Log.Debug($"v: {p.GetValue(character.Currencies, null):N0}");
+                    ImGui.TableSetColumnIndex(1);
+                    ImGui.TextUnformatted($"{amount:N0}");
+                }
             }
+
+            using var overallAmountTable = ImRaii.Table("###CharactersCurrencies#All#SearchCurrenciesTable#CharacterCurrencies#OverallAmountTable", 2);
+            if (!overallAmountTable) return;
+            ImGui.TableSetupColumn(
+                "###CharactersCurrencies#All#SearchCurrenciesTable#CharacterCurrencies#OverallAmountTable#Text",
+                ImGuiTableColumnFlags.WidthFixed, 300);
+            ImGui.TableSetupColumn(
+                "###CharactersCurrencies#All#SearchCurrenciesTable#CharacterCurrencies#OverallAmountTable#Amount",
+                ImGuiTableColumnFlags.WidthStretch);
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 3501)}");
+            ImGui.TableSetColumnIndex(1);
+            ImGui.TextUnformatted($"{overallAmount}");
         }
 
         private void DrawPc(Character selectedCharacter)
@@ -389,7 +414,8 @@ namespace Altoholic.Windows
             DrawCommonCurrency(pc.MGP, Currencies.MGP, 0);
         }
 
-        private void DrawCommonCurrency(int currency, Currencies id, uint max)
+        //private void DrawCommonCurrency(int currency, Currencies id, uint max)
+        private void DrawCommonCurrency(long currency, Currencies id, uint max)
         {
             using var charactersCurrenciesCommonCurrencyTableCurrencyTable =
                 ImRaii.Table("###CharactersCurrencies#CommonCurrencyTable#CurrencyTable", 2);

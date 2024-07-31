@@ -17,7 +17,6 @@ using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using FFXIVClientStructs.FFXIV.Client.System.String;
 using FFXIVClientStructs.FFXIV.Client.UI;
-using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using LiteDB;
 using Lumina.Excel.GeneratedSheets;
 using Lumina.Text;
@@ -27,7 +26,6 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
-using static FFXIVClientStructs.FFXIV.Client.Game.UI.UIState.Delegates;
 using static FFXIVClientStructs.FFXIV.Client.UI.RaptureAtkModule;
 using Quest = Altoholic.Models.Quest;
 
