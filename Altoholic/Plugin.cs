@@ -101,7 +101,11 @@ namespace Altoholic
             _playtimeHook = Hook.HookFromAddress<PlaytimeDelegate>(playtimePtr, PlaytimePacket);
             _playtimeHook.Enable();
 
+#if DEBUG
             string dbpath = Path.Combine(PluginInterface.AssemblyLocation.Directory?.FullName!, "altoholic.db");
+#else 
+            string dbpath = Path.Combine(PluginInterface.GetPluginConfigDirectory(), "altoholic.db");
+#endif
             _db = new LiteDatabase(dbpath); // Todo: Make sure this don't crash the game when db is already opened
 
             Configuration = PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
