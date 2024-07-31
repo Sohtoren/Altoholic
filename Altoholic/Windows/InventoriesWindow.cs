@@ -355,7 +355,7 @@ namespace Altoholic.Windows
                 }
             }
 
-            using (var glamourTab = ImRaii.TabItem($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 3735)}###CharactersInventoryTable#Inventories#{selectedCharacter.Id}#TabBar#GlamourInventoryTab"))
+            /*using (var glamourTab = ImRaii.TabItem($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 3735)}###CharactersInventoryTable#Inventories#{selectedCharacter.Id}#TabBar#GlamourInventoryTab"))
             {
                 if (glamourTab)
                 {
@@ -369,7 +369,7 @@ namespace Altoholic.Windows
                 {
                     // Todo: implement
                 }
-            }
+            }*/
         }
 
         private void DrawMainInventories(Character selectedCharacter)
