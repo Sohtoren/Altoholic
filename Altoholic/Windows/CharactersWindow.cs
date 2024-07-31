@@ -67,7 +67,7 @@ namespace Altoholic.Windows
             _currentLocale = _plugin.Configuration.Language;
             try
             {
-                using (ImRaii.IEndObject charactersTable = ImRaii.Table("###Characters", 9))
+                using (ImRaii.IEndObject charactersTable = ImRaii.Table("###Characters", 9, ImGuiTableFlags.ScrollY, new Vector2(-1 , 470)))
                 //using (ImRaii.IEndObject charactersTable = ImRaii.Table("###Characters", 10))
                 {
                     if (!charactersTable) return;
@@ -104,6 +104,24 @@ namespace Altoholic.Windows
                         .ThenBy(c => c.HomeWorld == current.HomeWorld)
                         .ThenBy(c => c.FirstName)*/
                     );
+
+#if DEBUG
+                    //Dummy generation
+                    for (int i = 0; i < 15; i++)
+                    {
+                        chars.Add(new Character()
+                        {
+                            FirstName = $"Dummy {i}",
+                            LastName = $"LN {i}",
+                            HomeWorld = $"Homeworld {i}",
+                            Datacenter = $"EU",
+                            FCTag = $"FC {i}",
+                            Currencies = new PlayerCurrencies(){Gil = i},
+                            LastOnline = 0,
+                            PlayTime = 0,
+                        });
+                    }
+#endif
                     DrawCharacters(
                         chars
                             .ToList());
@@ -143,12 +161,12 @@ namespace Altoholic.Windows
                 ImGui.TableSetColumnIndex(3);
                 ImGui.Separator();
                 ImGui.TextUnformatted($"{GeneratePlaytime(TimeSpan.FromMinutes(TotalPlayed))}");
-                if (ImGui.IsItemHovered())
+                /*if (ImGui.IsItemHovered())
                 {
                     ImGui.BeginTooltip();
                     ImGui.TextUnformatted("as of the last auto /playtime check");
                     ImGui.EndTooltip();
-                }
+                }*/
             }
             catch (Exception e)
             {

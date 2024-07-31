@@ -134,13 +134,24 @@ namespace Altoholic.Windows
                 {
                     if (listBox)
                     {
-                        ImGui.SetScrollY(0);
                         if (chars.Count > 0)
                         {
                             if (ImGui.Selectable($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 970)}###CharactersCollectionTable#CharactersListBox#All", _currentCharacter == null))
                             {
                                 _currentCharacter = null;
                             }
+
+#if DEBUG
+                            for (int i = 0; i < 15; i++)
+                            {
+                                chars.Add(new Character()
+                                {
+                                    FirstName = $"Dummy {i}",
+                                    LastName = $"LN {i}",
+                                    HomeWorld = $"Homeworld {i}",
+                                });
+                            }
+#endif
 
                             foreach (Character currChar in chars.Where(currChar => ImGui.Selectable($"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}", currChar == _currentCharacter)))
                             {

@@ -87,24 +87,41 @@ namespace Altoholic.Windows
                 ImGui.TableSetupColumn("###CharactersCurrenciesTable#Currencies", ImGuiTableColumnFlags.WidthStretch);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                if (ImGui.BeginListBox("###CharactersCurrenciesTable#CharactersListBox", new Vector2(200, -1)))
+
+                using (var listbox =
+                       ImRaii.ListBox("###CharactersCurrenciesTable#CharactersListBox", new Vector2(200, -1)))
                 {
-                    ImGui.SetScrollY(0);
-                    if (ImGui.Selectable(
-                            $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 970)}###CharactersCurrenciesTable#CharactersListBox#All"))
+                    if (listbox)
                     {
-                        _currentCharacter = null;
-                    }
+                        if (ImGui.Selectable(
+                                $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 970)}###CharactersCurrenciesTable#CharactersListBox#All"))
+                        {
+                            _currentCharacter = null;
+                        }
 
-                    foreach (Character currChar in chars.Where(currChar =>
-                                 ImGui.Selectable(
-                                     $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}",
-                                     currChar == _currentCharacter)))
-                    {
-                        _currentCharacter = currChar;
-                    }
+#if DEBUG
+                        for (int i = 0; i < 15; i++)
+                        {
+                            chars.Add(new Character()
+                            {
+                                FirstName = $"Dummy {i}",
+                                LastName = $"LN {i}",
+                                HomeWorld = $"Homeworld {i}",
+                                Datacenter = $"EU",
+                                FCTag = $"FC {i}",
+                                Currencies = new PlayerCurrencies() { Gil = i },
+                            });
+                        }
+#endif
 
-                    ImGui.EndListBox();
+                        foreach (Character currChar in chars.Where(currChar =>
+                                     ImGui.Selectable(
+                                         $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}",
+                                         currChar == _currentCharacter)))
+                        {
+                            _currentCharacter = currChar;
+                        }
+                    }
                 }
 
                 ImGui.TableSetColumnIndex(1);
@@ -168,12 +185,26 @@ namespace Altoholic.Windows
             if (itm == null) return;
             Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Icon), new Vector2(64, 64));
             using var charactersCurrenciesAllCurrencyTable =
-                ImRaii.Table("###CharactersCurrencies#All#CurrencyTable", 2, ImGuiTableFlags.Borders);
+                ImRaii.Table("###CharactersCurrencies#All#CurrencyTable", 2, ImGuiTableFlags.Borders | ImGuiTableFlags.ScrollY);
             if (!charactersCurrenciesAllCurrencyTable) return;
             ImGui.TableSetupColumn("###CharactersCurrencies#All#CurrencyTable#CharacterName",
                 ImGuiTableColumnFlags.WidthFixed, 300);
             ImGui.TableSetupColumn("###CharactersCurrencies#All#CurrencyTable#CharacterCurrency",
                 ImGuiTableColumnFlags.WidthFixed, 50);
+#if DEBUG
+            for (int i = 0; i < 15; i++)
+            {
+                chars.Add(new Character()
+                {
+                    FirstName = $"Dummy {i}",
+                    LastName = $"LN {i}",
+                    HomeWorld = $"Homeworld {i}",
+                    Datacenter = $"EU",
+                    FCTag = $"FC {i}",
+                    Currencies = new PlayerCurrencies() { Gil = i },
+                });
+            }
+#endif
             foreach (Character character in chars)
             {
                 //Plugin.Log.Debug($"{character.Currencies.Gil}");

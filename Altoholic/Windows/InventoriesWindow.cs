@@ -126,13 +126,27 @@ namespace Altoholic.Windows
                 {
                     if (listBox)
                     {
-                        ImGui.SetScrollY(0);
                         if (chars.Count > 0)
                         {
                             if (ImGui.Selectable($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 970)}###CharactersInventoryTable#CharactersListBox#All", _currentCharacter == null))
                             {
                                 _currentCharacter = null;
                             }
+
+#if DEBUG
+                            for (int i = 0; i < 15; i++)
+                            {
+                                chars.Add(new Character()
+                                {
+                                    FirstName = $"Dummy {i}",
+                                    LastName = $"LN {i}",
+                                    HomeWorld = $"Homeworld {i}",
+                                    Datacenter = $"EU",
+                                    FCTag = $"FC {i}",
+                                    Currencies = new PlayerCurrencies() { Gil = i },
+                                });
+                            }
+#endif
 
                             foreach (Character currChar in chars.Where(currChar => ImGui.Selectable($"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}", currChar == _currentCharacter)))
                             {
@@ -212,7 +226,6 @@ namespace Altoholic.Windows
             {
                 if (itemlistbox)
                 {
-                    ImGui.SetScrollY(0);
                     foreach (Item item in currentItemsList.Where(
                                  item => ImGui.Selectable(item.Name, item.RowId == _currentItem)))
                     {
@@ -252,24 +265,58 @@ namespace Altoholic.Windows
                 ImGui.TextUnformatted($"{Loc.Localize("NoItemOnAnyCharacter", "Item not found on any characters.\r\nCheck if inventories are available and updated.")}");
                 return;
             }
-            using var table = ImRaii.Table("###CharactersInventory#All#SearchItemsTable#CharacterItems#Item#Table", 2,
-                ImGuiTableFlags.Borders);
-            if (!table) return;
-            ImGui.TableSetupColumn("###CharactersInventory#All#SearchItemsTable#CharacterItems#Item#Table#CharacterName",
-                ImGuiTableColumnFlags.WidthFixed, 300);
-            ImGui.TableSetupColumn("###CharactersInventory#All#SearchItemsTable#CharacterItems#Item#Table#CharacterItem",
-                ImGuiTableColumnFlags.WidthFixed, 50);
-            foreach (Character character in characters)
-            {
-                uint totalAmount = character.Inventory.FindAll(i => i.ItemId == _currentItem).Aggregate<Inventory, uint>(0, (current, inv) => current + inv.Quantity);
 
-                ImGui.TableNextRow();
-                ImGui.TableSetColumnIndex(0);
-                ImGui.TextUnformatted(
-                    $"{character.FirstName} {character.LastName}{(char)SeIconChar.CrossWorld}{character.HomeWorld}");
-                ImGui.TableSetColumnIndex(1);
-                ImGui.TextUnformatted($"{totalAmount}");
+            uint overallAmount = 0;
+            using (var table = ImRaii.Table("###CharactersInventory#All#SearchItemsTable#CharacterItems#Item#Table", 2,
+                       ImGuiTableFlags.Borders | ImGuiTableFlags.ScrollY, new Vector2(-1, 400)))
+            {
+                if (!table) return;
+                ImGui.TableSetupColumn(
+                    "###CharactersInventory#All#SearchItemsTable#CharacterItems#Item#Table#CharacterName",
+                    ImGuiTableColumnFlags.WidthFixed, 300);
+                ImGui.TableSetupColumn(
+                    "###CharactersInventory#All#SearchItemsTable#CharacterItems#Item#Table#CharacterItem",
+                    ImGuiTableColumnFlags.WidthFixed, 50);
+
+#if DEBUG
+                for (int i = 0; i < 15; i++)
+                {
+                    characters.Add(new Character()
+                    {
+                        FirstName = $"Dummy {i}",
+                        LastName = $"LN {i}",
+                        HomeWorld = $"Homeworld {i}",
+                    });
+                }
+#endif
+
+                foreach (Character character in characters)
+                {
+                    uint totalAmount = character.Inventory.FindAll(i => i.ItemId == _currentItem)
+                        .Aggregate<Inventory, uint>(0, (current, inv) => current + inv.Quantity);
+                    overallAmount += totalAmount;
+                    ImGui.TableNextRow();
+                    ImGui.TableSetColumnIndex(0);
+                    ImGui.TextUnformatted(
+                        $"{character.FirstName} {character.LastName}{(char)SeIconChar.CrossWorld}{character.HomeWorld}");
+                    ImGui.TableSetColumnIndex(1);
+                    ImGui.TextUnformatted($"{totalAmount}");
+                }
             }
+
+            using var overallAmountTable = ImRaii.Table("###CharactersInventory#All#SearchItemsTable#CharacterItems#OverallAmountTable", 2);
+            if (!overallAmountTable) return;
+            ImGui.TableSetupColumn(
+                "###CharactersInventory#All#SearchItemsTable#CharacterItems#OverallAmountTable#Text",
+                ImGuiTableColumnFlags.WidthFixed, 300);
+            ImGui.TableSetupColumn(
+                "###CharactersInventory#All#SearchItemsTable#CharacterItems#OverallAmountTable#Amount",
+                ImGuiTableColumnFlags.WidthFixed, 50);
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 3501)}");
+            ImGui.TableSetColumnIndex(1);
+            ImGui.TextUnformatted($"{overallAmount}");
         }
 
         private void DrawInventories(Character selectedCharacter)

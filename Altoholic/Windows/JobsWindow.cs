@@ -73,7 +73,6 @@ namespace Altoholic.Windows
                 {
                     if (listbox)
                     {
-                        ImGui.SetScrollY(0);
                         if (chars.Count > 0)
                         {
                             if (ImGui.Selectable(
@@ -82,6 +81,18 @@ namespace Altoholic.Windows
                             {
                                 _currentCharacter = null;
                             }
+
+#if DEBUG
+                            for (int i = 0; i < 15; i++)
+                            {
+                                chars.Add(new Character()
+                                {
+                                    FirstName = $"Dummy {i}",
+                                    LastName = $"LN {i}",
+                                    HomeWorld = $"Homeworld {i}",
+                                });
+                            }
+#endif
 
                             foreach (var currChar in chars.Where(currChar =>
                                          ImGui.Selectable(
@@ -173,381 +184,171 @@ namespace Altoholic.Windows
 
             ImGui.TableSetColumnIndex(1);
             ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.GLA, true));
-            if (ImGui.IsItemHovered())
-            {
-                ImGui.BeginTooltip();
-                ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.GLA));
-                ImGui.EndTooltip();
-            }
+            HoverJobName((uint)ClassJob.GLA);
 
             ImGui.TableSetColumnIndex(2);
             ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.PLD, true));
-            if (ImGui.IsItemHovered())
-            {
-                ImGui.BeginTooltip();
-                ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.PLD));
-                ImGui.EndTooltip();
-            }
+            HoverJobName((uint)ClassJob.PLD);
 
             ImGui.TableSetColumnIndex(3);
             ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.MRD, true));
-            if (ImGui.IsItemHovered())
-            {
-                ImGui.BeginTooltip();
-                ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.MRD));
-                ImGui.EndTooltip();
-            }
+            HoverJobName((uint)ClassJob.MRD);
 
             ImGui.TableSetColumnIndex(4);
             ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.WAR, true));
-            if (ImGui.IsItemHovered())
-            {
-                ImGui.BeginTooltip();
-                ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.WAR));
-                ImGui.EndTooltip();
-            }
+            HoverJobName((uint)ClassJob.WAR);
 
             ImGui.TableSetColumnIndex(5);
             ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.DRK, true));
-            if (ImGui.IsItemHovered())
-            {
-                ImGui.BeginTooltip();
-                ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.DRK));
-                ImGui.EndTooltip();
-            }
+            HoverJobName((uint)ClassJob.DRK);
 
             ImGui.TableSetColumnIndex(6);
             ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.GNB, true));
-            if (ImGui.IsItemHovered())
-            {
-                ImGui.BeginTooltip();
-                ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.GNB));
-                ImGui.EndTooltip();
-            }
+            HoverJobName((uint)ClassJob.GNB);
 
             ImGui.TableSetColumnIndex(7);
             ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.CNJ, true));
-            if (ImGui.IsItemHovered())
-            {
-                ImGui.BeginTooltip();
-                ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.CNJ));
-                ImGui.EndTooltip();
-            }
+            HoverJobName((uint)ClassJob.CNJ);
 
             ImGui.TableSetColumnIndex(8);
             ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.WHM, true));
-            if (ImGui.IsItemHovered())
-            {
-                ImGui.BeginTooltip();
-                ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.WHM));
-                ImGui.EndTooltip();
-            }
+            HoverJobName((uint)ClassJob.WHM);
 
             ImGui.TableSetColumnIndex(9);
             ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.SCH, true));
-            if (ImGui.IsItemHovered())
-            {
-                ImGui.BeginTooltip();
-                ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.SCH));
-                ImGui.EndTooltip();
-            }
+            HoverJobName((uint)ClassJob.SCH);
 
             ImGui.TableSetColumnIndex(10);
             ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.AST, true));
-            if (ImGui.IsItemHovered())
-            {
-                ImGui.BeginTooltip();
-                ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.AST));
-                ImGui.EndTooltip();
-            }
+            HoverJobName((uint)ClassJob.AST);
 
             ImGui.TableSetColumnIndex(11);
             ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.SGE, true));
-            if (ImGui.IsItemHovered())
-            {
-                ImGui.BeginTooltip();
-                ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.SGE));
-                ImGui.EndTooltip();
-            }
+            HoverJobName((uint)ClassJob.SGE);
 
             ImGui.TableSetColumnIndex(12);
             ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.PGL, true));
-            if (ImGui.IsItemHovered())
-            {
-                ImGui.BeginTooltip();
-                ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.PGL));
-                ImGui.EndTooltip();
-            }
+            HoverJobName((uint)ClassJob.PGL);
 
             ImGui.TableSetColumnIndex(13);
             ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.MNK, true));
-            if (ImGui.IsItemHovered())
-            {
-                ImGui.BeginTooltip();
-                ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.MNK));
-                ImGui.EndTooltip();
-            }
+            HoverJobName((uint)ClassJob.MNK);
 
             ImGui.TableSetColumnIndex(14);
             ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.LNC, true));
-            if (ImGui.IsItemHovered())
-            {
-                ImGui.BeginTooltip();
-                ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.LNC));
-                ImGui.EndTooltip();
-            }
+            HoverJobName((uint)ClassJob.LNC);
 
             ImGui.TableSetColumnIndex(15);
             ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.DRG, true));
-            if (ImGui.IsItemHovered())
-            {
-                ImGui.BeginTooltip();
-                ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.DRG));
-                ImGui.EndTooltip();
-            }
+            HoverJobName((uint)ClassJob.DRG);
 
             ImGui.TableSetColumnIndex(16);
             ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.ROG, true));
-            if (ImGui.IsItemHovered())
-            {
-                ImGui.BeginTooltip();
-                ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.ROG));
-                ImGui.EndTooltip();
-            }
+            HoverJobName((uint)ClassJob.ROG);
 
             ImGui.TableSetColumnIndex(17);
             ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.NIN, true));
-            if (ImGui.IsItemHovered())
-            {
-                ImGui.BeginTooltip();
-                ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.NIN));
-                ImGui.EndTooltip();
-            }
+            HoverJobName((uint)ClassJob.NIN);
 
             ImGui.TableSetColumnIndex(18);
             ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.SAM, true));
-            if (ImGui.IsItemHovered())
-            {
-                ImGui.BeginTooltip();
-                ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.SAM));
-                ImGui.EndTooltip();
-            }
+            HoverJobName((uint)ClassJob.SAM);
 
             ImGui.TableSetColumnIndex(19);
             ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.RPR, true));
-            if (ImGui.IsItemHovered())
-            {
-                ImGui.BeginTooltip();
-                ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.RPR));
-                ImGui.EndTooltip();
-            }
-            
+            HoverJobName((uint)ClassJob.RPR);
+
             ImGui.TableSetColumnIndex(20);
             ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.VPR, true));
-            if (ImGui.IsItemHovered())
-            {
-                ImGui.BeginTooltip();
-                ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.VPR));
-                ImGui.EndTooltip();
-            }
+            HoverJobName((uint)ClassJob.VPR);
 
             ImGui.TableSetColumnIndex(21);
             ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.ARC, true));
-            if (ImGui.IsItemHovered())
-            {
-                ImGui.BeginTooltip();
-                ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.ARC));
-                ImGui.EndTooltip();
-            }
+            HoverJobName((uint)ClassJob.ARC);
 
             ImGui.TableSetColumnIndex(22);
             ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.BRD, true));
-            if (ImGui.IsItemHovered())
-            {
-                ImGui.BeginTooltip();
-                ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.BRD));
-                ImGui.EndTooltip();
-            }
+            HoverJobName((uint)ClassJob.BRD);
 
             ImGui.TableSetColumnIndex(23);
             ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.MCH, true));
-            if (ImGui.IsItemHovered())
-            {
-                ImGui.BeginTooltip();
-                ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.MCH));
-                ImGui.EndTooltip();
-            }
+            HoverJobName((uint)ClassJob.MCH);
 
             ImGui.TableSetColumnIndex(24);
             ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.DNC, true));
-            if (ImGui.IsItemHovered())
-            {
-                ImGui.BeginTooltip();
-                ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.DNC));
-                ImGui.EndTooltip();
-            }
+            HoverJobName((uint)ClassJob.DNC);
 
             ImGui.TableSetColumnIndex(25);
             ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.THM, true));
-            if (ImGui.IsItemHovered())
-            {
-                ImGui.BeginTooltip();
-                ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.THM));
-                ImGui.EndTooltip();
-            }
+            HoverJobName((uint)ClassJob.THM);
 
             ImGui.TableSetColumnIndex(26);
             ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.BLM, true));
-            if (ImGui.IsItemHovered())
-            {
-                ImGui.BeginTooltip();
-                ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.BLM));
-                ImGui.EndTooltip();
-            }
+            HoverJobName((uint)ClassJob.BLM);
 
             ImGui.TableSetColumnIndex(27);
             ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.ACN, true));
-            if (ImGui.IsItemHovered())
-            {
-                ImGui.BeginTooltip();
-                ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.ACN));
-                ImGui.EndTooltip();
-            }
+            HoverJobName((uint)ClassJob.ACN);
 
             ImGui.TableSetColumnIndex(28);
             ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.SMN, true));
-            if (ImGui.IsItemHovered())
-            {
-                ImGui.BeginTooltip();
-                ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.SMN));
-                ImGui.EndTooltip();
-            }
+            HoverJobName((uint)ClassJob.SMN);
 
             ImGui.TableSetColumnIndex(29);
             ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.RDM, true));
-            if (ImGui.IsItemHovered())
-            {
-                ImGui.BeginTooltip();
-                ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.RDM));
-                ImGui.EndTooltip();
-            }
-            
+            HoverJobName((uint)ClassJob.RDM);
+
             ImGui.TableSetColumnIndex(30);
             ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.PCT, true));
-            if (ImGui.IsItemHovered())
-            {
-                ImGui.BeginTooltip();
-                ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.PCT));
-                ImGui.EndTooltip();
-            }
+            HoverJobName((uint)ClassJob.PCT);
 
             ImGui.TableSetColumnIndex(31);
             ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.BLU));
-            if (ImGui.IsItemHovered())
-            {
-                ImGui.BeginTooltip();
-                ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.BLU));
-                ImGui.EndTooltip();
-            }
+            HoverJobName((uint)ClassJob.BLU);
 
             ImGui.TableSetColumnIndex(32);
             ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.CRP, true));
-            if (ImGui.IsItemHovered())
-            {
-                ImGui.BeginTooltip();
-                ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.CRP));
-                ImGui.EndTooltip();
-            }
+            HoverJobName((uint)ClassJob.CRP);
 
             ImGui.TableSetColumnIndex(33);
             ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.BSM, true));
-            if (ImGui.IsItemHovered())
-            {
-                ImGui.BeginTooltip();
-                ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.BSM));
-                ImGui.EndTooltip();
-            }
+            HoverJobName((uint)ClassJob.BSM);
 
             ImGui.TableSetColumnIndex(34);
             ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.ARM, true));
-            if (ImGui.IsItemHovered())
-            {
-                ImGui.BeginTooltip();
-                ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.ARM));
-                ImGui.EndTooltip();
-            }
+            HoverJobName((uint)ClassJob.ARM);
 
             ImGui.TableSetColumnIndex(35);
             ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.GSM, true));
-            if (ImGui.IsItemHovered())
-            {
-                ImGui.BeginTooltip();
-                ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.MRD));
-                ImGui.EndTooltip();
-            }
+            HoverJobName((uint)ClassJob.MRD);
 
             ImGui.TableSetColumnIndex(36);
             ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.LTW, true));
-            if (ImGui.IsItemHovered())
-            {
-                ImGui.BeginTooltip();
-                ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.LTW));
-                ImGui.EndTooltip();
-            }
+            HoverJobName((uint)ClassJob.LTW);
 
             ImGui.TableSetColumnIndex(37);
             ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.WVR, true));
-            if (ImGui.IsItemHovered())
-            {
-                ImGui.BeginTooltip();
-                ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.WVR));
-                ImGui.EndTooltip();
-            }
+            HoverJobName((uint)ClassJob.WVR);
 
             ImGui.TableSetColumnIndex(38);
             ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.ALC, true));
-            if (ImGui.IsItemHovered())
-            {
-                ImGui.BeginTooltip();
-                ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.ALC));
-                ImGui.EndTooltip();
-            }
+            HoverJobName((uint)ClassJob.ALC);
 
             ImGui.TableSetColumnIndex(39);
             ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.CUL, true));
-            if (ImGui.IsItemHovered())
-            {
-                ImGui.BeginTooltip();
-                ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.CUL));
-                ImGui.EndTooltip();
-            }
+            HoverJobName((uint)ClassJob.CUL);
 
             ImGui.TableSetColumnIndex(40);
             ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.MIN, true));
-            if (ImGui.IsItemHovered())
-            {
-                ImGui.BeginTooltip();
-                ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.MIN));
-                ImGui.EndTooltip();
-            }
+            HoverJobName((uint)ClassJob.MIN);
 
             ImGui.TableSetColumnIndex(41);
             ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.BTN, true));
-            if (ImGui.IsItemHovered())
-            {
-                ImGui.BeginTooltip();
-                ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.BTN));
-                ImGui.EndTooltip();
-            }
+            HoverJobName((uint)ClassJob.BTN);
 
             ImGui.TableSetColumnIndex(42);
             ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.FSH, true));
-            if (ImGui.IsItemHovered())
-            {
-                ImGui.BeginTooltip();
-                ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.FSH));
-                ImGui.EndTooltip();
-            }
+            HoverJobName((uint)ClassJob.FSH);
 
             foreach (Character currChar in chars)
             {
@@ -565,91 +366,142 @@ namespace Altoholic.Windows
                 if (currChar.Jobs is null) continue;
                 ImGui.TableSetColumnIndex(1);
                 ImGui.TextUnformatted($"{currChar.Jobs.Gladiator.Level}");
+                HoverJobName((uint)ClassJob.GLA);
                 ImGui.TableSetColumnIndex(2);
                 ImGui.TextUnformatted($"{currChar.Jobs.Paladin.Level}");
+                HoverJobName((uint)ClassJob.PLD);
                 ImGui.TableSetColumnIndex(3);
                 ImGui.TextUnformatted($"{currChar.Jobs.Marauder.Level}");
+                HoverJobName((uint)ClassJob.MRD);
                 ImGui.TableSetColumnIndex(4);
                 ImGui.TextUnformatted($"{currChar.Jobs.Warrior.Level}");
+                HoverJobName((uint)ClassJob.WAR);
                 ImGui.TableSetColumnIndex(5);
                 ImGui.TextUnformatted($"{currChar.Jobs.DarkKnight.Level}");
+                HoverJobName((uint)ClassJob.DRK);
                 ImGui.TableSetColumnIndex(6);
                 ImGui.TextUnformatted($"{currChar.Jobs.Gunbreaker.Level}");
+                HoverJobName((uint)ClassJob.GNB);
                 ImGui.TableSetColumnIndex(7);
                 ImGui.TextUnformatted($"{currChar.Jobs.Conjurer.Level}");
+                HoverJobName((uint)ClassJob.CNJ);
                 ImGui.TableSetColumnIndex(8);
                 ImGui.TextUnformatted($"{currChar.Jobs.WhiteMage.Level}");
+                HoverJobName((uint)ClassJob.WHM);
                 ImGui.TableSetColumnIndex(9);
                 ImGui.TextUnformatted($"{currChar.Jobs.Scholar.Level}");
+                HoverJobName((uint)ClassJob.SCH);
                 ImGui.TableSetColumnIndex(10);
                 ImGui.TextUnformatted($"{currChar.Jobs.Astrologian.Level}");
+                HoverJobName((uint)ClassJob.AST);
                 ImGui.TableSetColumnIndex(11);
                 ImGui.TextUnformatted($"{currChar.Jobs.Sage.Level}");
+                HoverJobName((uint)ClassJob.SGE);
                 ImGui.TableSetColumnIndex(12);
                 ImGui.TextUnformatted($"{currChar.Jobs.Pugilist.Level}");
+                HoverJobName((uint)ClassJob.PGL);
                 ImGui.TableSetColumnIndex(13);
                 ImGui.TextUnformatted($"{currChar.Jobs.Monk.Level}");
+                HoverJobName((uint)ClassJob.MNK);
                 ImGui.TableSetColumnIndex(14);
                 ImGui.TextUnformatted($"{currChar.Jobs.Lancer.Level}");
+                HoverJobName((uint)ClassJob.LNC);
                 ImGui.TableSetColumnIndex(15);
                 ImGui.TextUnformatted($"{currChar.Jobs.Dragoon.Level}");
+                HoverJobName((uint)ClassJob.DRG);
                 ImGui.TableSetColumnIndex(16);
                 ImGui.TextUnformatted($"{currChar.Jobs.Rogue.Level}");
+                HoverJobName((uint)ClassJob.ROG);
                 ImGui.TableSetColumnIndex(17);
                 ImGui.TextUnformatted($"{currChar.Jobs.Ninja.Level}");
+                HoverJobName((uint)ClassJob.NIN);
                 ImGui.TableSetColumnIndex(18);
                 ImGui.TextUnformatted($"{currChar.Jobs.Samurai.Level}");
+                HoverJobName((uint)ClassJob.SAM);
                 ImGui.TableSetColumnIndex(19);
                 ImGui.TextUnformatted($"{currChar.Jobs.Reaper.Level}");
+                HoverJobName((uint)ClassJob.RPR);
                 ImGui.TableSetColumnIndex(20);
                 ImGui.TextUnformatted($"{currChar.Jobs.Viper.Level}");
+                HoverJobName((uint)ClassJob.VPR);
                 ImGui.TableSetColumnIndex(21);
                 ImGui.TextUnformatted($"{currChar.Jobs.Archer.Level}");
+                HoverJobName((uint)ClassJob.ARC);
                 ImGui.TableSetColumnIndex(22);
                 ImGui.TextUnformatted($"{currChar.Jobs.Bard.Level}");
+                HoverJobName((uint)ClassJob.BRD);
                 ImGui.TableSetColumnIndex(23);
                 ImGui.TextUnformatted($"{currChar.Jobs.Machinist.Level}");
+                HoverJobName((uint)ClassJob.MCH);
                 ImGui.TableSetColumnIndex(24);
                 ImGui.TextUnformatted($"{currChar.Jobs.Dancer.Level}");
+                HoverJobName((uint)ClassJob.DNC);
                 ImGui.TableSetColumnIndex(25);
                 ImGui.TextUnformatted($"{currChar.Jobs.Thaumaturge.Level}");
+                HoverJobName((uint)ClassJob.THM);
                 ImGui.TableSetColumnIndex(26);
                 ImGui.TextUnformatted($"{currChar.Jobs.BlackMage.Level}");
+                HoverJobName((uint)ClassJob.BLM);
                 ImGui.TableSetColumnIndex(27);
                 ImGui.TextUnformatted($"{currChar.Jobs.Arcanist.Level}");
+                HoverJobName((uint)ClassJob.ACN);
                 ImGui.TableSetColumnIndex(28);
                 ImGui.TextUnformatted($"{currChar.Jobs.Summoner.Level}");
+                HoverJobName((uint)ClassJob.SMN);
                 ImGui.TableSetColumnIndex(29);
                 ImGui.TextUnformatted($"{currChar.Jobs.RedMage.Level}");
+                HoverJobName((uint)ClassJob.RDM);
                 ImGui.TableSetColumnIndex(30);
                 ImGui.TextUnformatted($"{currChar.Jobs.Pictomancer.Level}");
+                HoverJobName((uint)ClassJob.PCT);
                 ImGui.TableSetColumnIndex(31);
-                ImGui.TextUnformatted($"{currChar.Jobs.BlackMage.Level}");
+                ImGui.TextUnformatted($"{currChar.Jobs.BlueMage.Level}");
+                HoverJobName((uint)ClassJob.BLU);
                 ImGui.TableSetColumnIndex(32);
                 ImGui.TextUnformatted($"{currChar.Jobs.Carpenter.Level}");
+                HoverJobName((uint)ClassJob.CRP);
                 ImGui.TableSetColumnIndex(33);
                 ImGui.TextUnformatted($"{currChar.Jobs.Blacksmith.Level}");
+                HoverJobName((uint)ClassJob.BSM);
                 ImGui.TableSetColumnIndex(34);
                 ImGui.TextUnformatted($"{currChar.Jobs.Armorer.Level}");
+                HoverJobName((uint)ClassJob.ARM);
                 ImGui.TableSetColumnIndex(35);
                 ImGui.TextUnformatted($"{currChar.Jobs.Goldsmith.Level}");
+                HoverJobName((uint)ClassJob.GSM);
                 ImGui.TableSetColumnIndex(36);
                 ImGui.TextUnformatted($"{currChar.Jobs.Leatherworker.Level}");
+                HoverJobName((uint)ClassJob.LTW);
                 ImGui.TableSetColumnIndex(37);
                 ImGui.TextUnformatted($"{currChar.Jobs.Weaver.Level}");
+                HoverJobName((uint)ClassJob.WVR);
                 ImGui.TableSetColumnIndex(38);
                 ImGui.TextUnformatted($"{currChar.Jobs.Alchemist.Level}");
+                HoverJobName((uint)ClassJob.ALC);
                 ImGui.TableSetColumnIndex(39);
                 ImGui.TextUnformatted($"{currChar.Jobs.Culinarian.Level}");
+                HoverJobName((uint)ClassJob.CUL);
                 ImGui.TableSetColumnIndex(40);
                 ImGui.TextUnformatted($"{currChar.Jobs.Miner.Level}");
+                HoverJobName((uint)ClassJob.MIN);
                 ImGui.TableSetColumnIndex(41);
                 ImGui.TextUnformatted($"{currChar.Jobs.Botanist.Level}");
+                HoverJobName((uint)ClassJob.BTN);
                 ImGui.TableSetColumnIndex(42);
                 ImGui.TextUnformatted($"{currChar.Jobs.Fisher.Level}");
+                HoverJobName((uint)ClassJob.FSH);
             }
         }
 
+        private void HoverJobName(uint job)
+        {
+            if (ImGui.IsItemHovered())
+            {
+                ImGui.BeginTooltip();
+                ImGui.TextUnformatted(_globalCache.JobStorage.GetName(_currentLocale, job));
+                ImGui.EndTooltip();
+            }
+        }
         private void DrawJobs(Character selectedCharacter)
         {
             using var tabBar = ImRaii.TabBar($"###CharactersJobs#JobsTabs#{selectedCharacter.Id}");

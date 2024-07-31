@@ -128,9 +128,19 @@ namespace Altoholic.Windows
                 {
                     if (listBox)
                     {
-                        ImGui.SetScrollY(0);
                         if (chars.Count > 0)
                         {
+#if DEBUG
+                            for (int i = 0; i < 15; i++)
+                            {
+                                chars.Add(new Character()
+                                {
+                                    FirstName = $"Dummy {i}",
+                                    LastName = $"LN {i}",
+                                    HomeWorld = $"Homeworld {i}",
+                                });
+                            }
+#endif
                             foreach (Character currChar in chars.Where(currChar =>
                                          ImGui.Selectable(
                                              $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}",
@@ -206,8 +216,6 @@ namespace Altoholic.Windows
             {
                 if (itemlistbox)
                 {
-
-                    ImGui.SetScrollY(0);
                     foreach (Item item in currentItemsList.Where(item =>
                                  ImGui.Selectable(item.Name, item.RowId == _currentItem)))
                     {
@@ -250,20 +258,46 @@ namespace Altoholic.Windows
                 ImGui.TextUnformatted($"{Loc.Localize("NoItemOnAnyRetainer", "Item not found on any retainers.\r\nCheck if inventories are available and updated.")}");
                 return;
             }
-            using ImRaii.IEndObject table = ImRaii.Table("###CharactersRetainer#All#SearchItemsTable#CharacterItems#Item#Table", 2, ImGuiTableFlags.Borders);
-            if (!table) return;
-            ImGui.TableSetupColumn("###CharactersRetainer#All#SearchItemsTable#CharacterItems#Item#Table#CharacterName", ImGuiTableColumnFlags.WidthFixed, 300);
-            ImGui.TableSetupColumn("###CharactersRetainer#All#SearchItemsTable#CharacterItems#Item#Table#CharacterItem", ImGuiTableColumnFlags.WidthFixed, 50);
-            //Plugin.Log.Debug($"retainers_with_items: {retainers_with_items}");
-            foreach (Retainer retainer in retainersWithItems)
+
+            uint overallAmount = 0;
+            using (ImRaii.IEndObject table =
+                   ImRaii.Table("###CharactersRetainer#All#SearchItemsTable#CharacterItems#Item#Table", 2,
+                       ImGuiTableFlags.Borders))
             {
-                uint totalAmount = retainer.Inventory.FindAll(i => i.ItemId == _currentItem).Aggregate<Inventory, uint>(0, (current, inv) => current + inv.Quantity);
-                ImGui.TableNextRow();
-                ImGui.TableSetColumnIndex(0);
-                ImGui.TextUnformatted($"{retainer.Name}");
-                ImGui.TableSetColumnIndex(1);
-                ImGui.TextUnformatted($"{totalAmount}");
+                if (!table) return;
+                ImGui.TableSetupColumn(
+                    "###CharactersRetainer#All#SearchItemsTable#CharacterItems#Item#Table#CharacterName",
+                    ImGuiTableColumnFlags.WidthFixed, 300);
+                ImGui.TableSetupColumn(
+                    "###CharactersRetainer#All#SearchItemsTable#CharacterItems#Item#Table#CharacterItem",
+                    ImGuiTableColumnFlags.WidthFixed, 50);
+                //Plugin.Log.Debug($"retainers_with_items: {retainers_with_items}");
+                foreach (Retainer retainer in retainersWithItems)
+                {
+                    uint totalAmount = retainer.Inventory.FindAll(i => i.ItemId == _currentItem)
+                        .Aggregate<Inventory, uint>(0, (current, inv) => current + inv.Quantity);
+                    overallAmount += totalAmount;
+                    ImGui.TableNextRow();
+                    ImGui.TableSetColumnIndex(0);
+                    ImGui.TextUnformatted($"{retainer.Name}");
+                    ImGui.TableSetColumnIndex(1);
+                    ImGui.TextUnformatted($"{totalAmount}");
+                }
             }
+
+            using var overallAmountTable = ImRaii.Table("###CharactersInventory#All#SearchItemsTable#CharacterItems#OverallAmountTable", 2);
+            if (!overallAmountTable) return;
+            ImGui.TableSetupColumn(
+                "###CharactersInventory#All#SearchItemsTable#CharacterItems#OverallAmountTable#Text",
+                ImGuiTableColumnFlags.WidthFixed, 306);
+            ImGui.TableSetupColumn(
+                "###CharactersInventory#All#SearchItemsTable#CharacterItems#OverallAmountTable#Amount",
+                ImGuiTableColumnFlags.WidthFixed, 44);
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 3501)}");
+            ImGui.TableSetColumnIndex(1);
+            ImGui.TextUnformatted($"{overallAmount}");
         }
 
         public void DrawRetainers(Character currentCharacter)

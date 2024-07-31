@@ -102,7 +102,17 @@ namespace Altoholic.Windows
                 {
                     if (listBox)
                     {
-                        ImGui.SetScrollY(0);
+#if DEBUG
+                        for (int i = 0; i < 15; i++)
+                        {
+                            chars.Add(new Character()
+                            {
+                                FirstName = $"Dummy {i}",
+                                LastName = $"LN {i}",
+                                HomeWorld = $"Homeworld {i}",
+                            });
+                        }
+#endif
                         foreach (Character currChar in chars.Where(currChar =>
                                      ImGui.Selectable(
                                          $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}",
