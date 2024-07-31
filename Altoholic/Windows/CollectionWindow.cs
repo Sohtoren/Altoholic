@@ -226,14 +226,14 @@ namespace Altoholic.Windows
                 }
             }
             
-            using (var hairsTab =
+            /*using (var hairsTab =
                    ImRaii.TabItem($"{Loc.Localize("Hairstyle", "Hairstyle")}")) // Frisur Hairstyle Coupe de cheveux 髪型
             {
                 if (hairsTab.Success)
                 {
 
                 }
-            }
+            }*/
 
             using (var minionsTab =
                    ImRaii.TabItem($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 4902)}"))
@@ -261,13 +261,13 @@ namespace Altoholic.Windows
                 }
             }
             
-            using (var tomesTab = ImRaii.TabItem("Tomes")) 
+            /*using (var tomesTab = ImRaii.TabItem("Tomes")) 
             {
                 if (tomesTab.Success)
                 {
 
                 }
-            }
+            }*/
             
             using (var tripleTriadTab = ImRaii.TabItem("Triple Triad")) 
             {
