@@ -3,7 +3,6 @@ using Altoholic.Models;
 using CheapLoc;
 using Dalamud.Game;
 using Dalamud.Game.Text;
-using Dalamud.Interface.Internal;
 using Dalamud.Interface;
 using Dalamud.Interface.Textures.TextureWraps;
 using Dalamud.Interface.Utility.Raii;
@@ -14,7 +13,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using ClassJob = Altoholic.Models.ClassJob;
 
 namespace Altoholic.Windows
 {
@@ -382,96 +380,96 @@ namespace Altoholic.Windows
                 return;
             }
 
-            using (var marketTab = ImRaii.TabItem($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 6556)}###Retainer#{selectedRetainer.Id}#TabBar#MarketTab"))
+            using var marketTab = ImRaii.TabItem($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 6556)}###Retainer#{selectedRetainer.Id}#TabBar#MarketTab");
+            if (marketTab.Success)
             {
-                if (marketTab.Success)
-                {
-                    DrawMarket(selectedRetainer);
-                }
+                DrawMarket(selectedRetainer);
             }
         }
         private void DrawRetainerDetails(Retainer selectedRetainer, Character retainerOwner)
         {
             using var charactersRetainerTable = ImRaii.Table($"###CharactersRetainerTable#RetainerTable{selectedRetainer.Id}", 2, ImGuiTableFlags.None, new Vector2(-1, 300));
-            if (charactersRetainerTable)
+            if (!charactersRetainerTable)
             {
-                ImGui.TableSetupColumn($"###CharactersRetainerTable#RetainerTable#Info_{selectedRetainer.Id}", ImGuiTableColumnFlags.WidthFixed, 200);
-                ImGui.TableSetupColumn($"###CharactersRetainerTable#RetainerTable#Gear_{selectedRetainer.Id}", ImGuiTableColumnFlags.WidthStretch);
+                return;
+            }
+
+            ImGui.TableSetupColumn($"###CharactersRetainerTable#RetainerTable#Info_{selectedRetainer.Id}", ImGuiTableColumnFlags.WidthFixed, 200);
+            ImGui.TableSetupColumn($"###CharactersRetainerTable#RetainerTable#Gear_{selectedRetainer.Id}", ImGuiTableColumnFlags.WidthStretch);
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            ImGui.TextUnformatted($"{selectedRetainer.Name}");
+            Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(065002), new Vector2(18, 18)); 
+            ImGui.SameLine(); ImGui.TextUnformatted($"{selectedRetainer.Gils}");
+            ImGui.TableSetColumnIndex(1);
+
+            using (var ventureTable = ImRaii.Table($"###CharactersRetainerTable#RetainerTable#Gear_{selectedRetainer.Id}#Venture", 3, ImGuiTableFlags.None, new Vector2(-1, 50)))
+            {
+                if (!ventureTable) return;
+                ImGui.TableSetupColumn($"###CharactersRetainerTable#RetainerTable#Gear_{selectedRetainer.Id}#Venture#Col1", ImGuiTableColumnFlags.WidthStretch);
+                ImGui.TableSetupColumn($"###CharactersRetainerTable#RetainerTable#Gear_{selectedRetainer.Id}#Venture#Col2", ImGuiTableColumnFlags.WidthFixed, 150);
+                ImGui.TableSetupColumn($"###CharactersRetainerTable#RetainerTable#Gear_{selectedRetainer.Id}#Venture#Col3", ImGuiTableColumnFlags.WidthStretch);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                ImGui.TextUnformatted($"{selectedRetainer.Name}");
-                Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(065002), new Vector2(18, 18)); 
-                ImGui.SameLine(); ImGui.TextUnformatted($"{selectedRetainer.Gils}");
                 ImGui.TableSetColumnIndex(1);
-
-                using (var ventureTable = ImRaii.Table($"###CharactersRetainerTable#RetainerTable#Gear_{selectedRetainer.Id}#Venture", 3, ImGuiTableFlags.None, new Vector2(-1, 50)))
+                ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 2322)}");
+                RetainerTask? venture = Utils.GetRetainerTask(_currentLocale, selectedRetainer.VentureID);
+                if (venture != null)
                 {
-                    if (!ventureTable) return;
-                    ImGui.TableSetupColumn($"###CharactersRetainerTable#RetainerTable#Gear_{selectedRetainer.Id}#Venture#Col1", ImGuiTableColumnFlags.WidthStretch);
-                    ImGui.TableSetupColumn($"###CharactersRetainerTable#RetainerTable#Gear_{selectedRetainer.Id}#Venture#Col2", ImGuiTableColumnFlags.WidthFixed, 150);
-                    ImGui.TableSetupColumn($"###CharactersRetainerTable#RetainerTable#Gear_{selectedRetainer.Id}#Venture#Col3", ImGuiTableColumnFlags.WidthStretch);
-                    ImGui.TableNextRow();
-                    ImGui.TableSetColumnIndex(0);
-                    ImGui.TableSetColumnIndex(1);
-                    ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 2322)}");
-                    RetainerTask? venture = Utils.GetRetainerTask(_currentLocale, selectedRetainer.VentureID);
-                    if (venture != null)
+                    if (venture.RetainerLevel > 0)
                     {
-                        if (venture.RetainerLevel > 0)
+                        ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 464)} {venture.RetainerLevel}");
+                    }
+                    if (!venture.IsRandom)
+                    {
+                        RetainerTaskNormal? task = Utils.GetRetainerTaskNormal(_currentLocale, venture.Task);
+                        if (task != null)
                         {
-                            ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 464)} {venture.RetainerLevel}");
-                        }
-                        if (!venture.IsRandom)
-                        {
-                            RetainerTaskNormal? task = Utils.GetRetainerTaskNormal(_currentLocale, venture.Task);
-                            if (task != null)
-                            {
-                                ImGui.SameLine();
-                                Item? item = task.Item.Value;
-                                if (item != null)
-                                    ImGui.TextUnformatted($"{item.Name}");
-                            }
-                        }
-                        else
-                        {
-                            RetainerTaskRandom? task = Utils.GetRetainerTaskRandom(_currentLocale, venture.Task);
-                            if (task != null)
-                            {
-                                ImGui.SameLine();
-                                ImGui.TextUnformatted($"{task.Name}");
-                            }
+                            ImGui.SameLine();
+                            Item? item = task.Item.Value;
+                            if (item != null)
+                                ImGui.TextUnformatted($"{item.Name}");
                         }
                     }
-                    ImGui.TableSetColumnIndex(2);
+                    else
+                    {
+                        RetainerTaskRandom? task = Utils.GetRetainerTaskRandom(_currentLocale, venture.Task);
+                        if (task != null)
+                        {
+                            ImGui.SameLine();
+                            ImGui.TextUnformatted($"{task.Name}");
+                        }
+                    }
                 }
+                ImGui.TableSetColumnIndex(2);
+            }
 
-                using var gearTable =
-                    ImRaii.Table($"###CharactersRetainerTable#RetainerTable#Gear_{selectedRetainer.Id}#Gear", 3,
-                        ImGuiTableFlags.None, new Vector2(-1, 50));
-                if (!gearTable) return;
-                ImGui.TableSetupColumn(
-                    $"###CharactersRetainerTable#RetainerTable#Gear_{selectedRetainer.Id}#Gear#Col1",
-                    ImGuiTableColumnFlags.WidthStretch);
-                ImGui.TableSetupColumn(
-                    $"###CharactersRetainerTable#RetainerTable#Gear_{selectedRetainer.Id}#Gear#Col2",
-                    ImGuiTableColumnFlags.WidthFixed, 300);
-                ImGui.TableSetupColumn(
-                    $"###CharactersRetainerTable#RetainerTable#Gear_{selectedRetainer.Id}#Gear#Col3",
-                    ImGuiTableColumnFlags.WidthStretch);
-                ImGui.TableNextRow();
-                ImGui.TableSetColumnIndex(0);
-                ImGui.TableSetColumnIndex(1);
-                if (selectedRetainer.ClassJob != 0 && selectedRetainer.Gear.Count > 0)
-                {
-                    Utils.DrawGear(_currentLocale, ref _globalCache, ref _characterTextures,
-                        selectedRetainer.Gear, selectedRetainer.ClassJob, selectedRetainer.Level, 200, 180,
-                        true, Utils.GetRetainerJobMaxLevel(selectedRetainer.ClassJob, retainerOwner));
-                }
-                else
-                {
-                    ImGui.TextUnformatted(
-                        $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 5448)} {Loc.Localize("OpenRetainer", "Open the retainer to update the gear")}");
-                }
+            using var gearTable =
+                ImRaii.Table($"###CharactersRetainerTable#RetainerTable#Gear_{selectedRetainer.Id}#Gear", 3,
+                    ImGuiTableFlags.None, new Vector2(-1, 50));
+            if (!gearTable) return;
+            ImGui.TableSetupColumn(
+                $"###CharactersRetainerTable#RetainerTable#Gear_{selectedRetainer.Id}#Gear#Col1",
+                ImGuiTableColumnFlags.WidthStretch);
+            ImGui.TableSetupColumn(
+                $"###CharactersRetainerTable#RetainerTable#Gear_{selectedRetainer.Id}#Gear#Col2",
+                ImGuiTableColumnFlags.WidthFixed, 300);
+            ImGui.TableSetupColumn(
+                $"###CharactersRetainerTable#RetainerTable#Gear_{selectedRetainer.Id}#Gear#Col3",
+                ImGuiTableColumnFlags.WidthStretch);
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            ImGui.TableSetColumnIndex(1);
+            if (selectedRetainer.ClassJob != 0 && selectedRetainer.Gear.Count > 0)
+            {
+                Utils.DrawGear(_currentLocale, ref _globalCache, ref _characterTextures,
+                    selectedRetainer.Gear, selectedRetainer.ClassJob, selectedRetainer.Level, 200, 180,
+                    true, Utils.GetRetainerJobMaxLevel(selectedRetainer.ClassJob, retainerOwner));
+            }
+            else
+            {
+                ImGui.TextUnformatted(
+                    $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 5448)} {Loc.Localize("OpenRetainer", "Open the retainer to update the gear")}");
             }
         }
 
@@ -697,10 +695,13 @@ namespace Altoholic.Windows
                     }
                     ImGui.SameLine();
                     ImGui.TextUnformatted($"{itm.Name}");
-                    if (item.Quantity > 1)
+                    if (item.Quantity <= 1)
                     {
-                        ImGui.TextUnformatted($"{item.Quantity}");
+                        continue;
                     }
+
+                    ImGui.SameLine();
+                    ImGui.TextUnformatted($"{item.Quantity}");
                 }
             }
             else
