@@ -16,6 +16,8 @@ namespace Altoholic.Database
             {
                 ILiteCollection<Character>? col = db.GetCollection<Character>();
                 Character? character = col?.FindOne(cf => cf.Id == id);
+                if (character != null)
+                    character.CurrenciesHistory = db.GetCollection<CurrenciesHistory>().Find(c => c.CharacterId == id).ToList();
                 return character;
             }
             catch (Exception ex)
@@ -163,6 +165,18 @@ namespace Altoholic.Database
 
                 Plugin.Log.Debug($"Updating character with c : id = {c.Id}, FirstName = {c.FirstName}, LastName = {c.LastName}, HomeWorld = {c.HomeWorld}, DataCenter = {c.Datacenter}, LastJob = {c.LastJob}, LastJobLevel = {c.LastJobLevel}, FCTag = {c.FCTag}, FreeCompany = {c.FreeCompany}, LastOnline = {c.LastOnline}, PlayTime = {c.PlayTime}, LastPlayTimeUpdate = {c.LastPlayTimeUpdate}, Quests = {c.Quests.Count}, Inventory = {c.Inventory.Count}, Gear {c.Gear.Count}, Retainers = {c.Retainers.Count}");
                 col.Upsert(c);
+
+                ILiteCollection<CurrenciesHistory>? chCol = db.GetCollection<CurrenciesHistory>();
+                if (chCol == null)
+                {
+                    return;
+                }
+                chCol.Insert(new CurrenciesHistory()
+                {
+                    CharacterId = character.Id,
+                    Datetime = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
+                    Currencies = character.Currencies
+                });
             }
             catch (Exception ex)
             {

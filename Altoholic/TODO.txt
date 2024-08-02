@@ -7,6 +7,8 @@ Allowances
 Timers
 MSQ Progress
 Location
+Gil (MGP as well?) history
+CSV export (gil history, characters with classes/jobs/reputations?)
 
 
 Add checkboxes in config window to allow selection of which column are displayed from on main window (First/Last names are mandatory)

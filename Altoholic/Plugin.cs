@@ -35,6 +35,7 @@ namespace Altoholic
     {
         public static string Name => "Altoholic Plugin";
         private const string CommandName = "/altoholic";
+        private const string SaveCommandName = "/altoholicsave";
         private readonly int[] _questIds = [65970, 66045, 66216, 66217, 66218, 66640, 66641, 66642, 66754, 66789, 66857, 66911, 66968, 66969, 66970, 67023, 67099, 67100, 67101, 67658, 67700, 67791, 67856, 68509, 68572, 68633, 68734, 68817, 69133, 69219, 69330, 69432, 70081, 70137, 70217, 69208, 67631, 69208];
 
         [PluginService] public static IDalamudPluginInterface PluginInterface { get; set; } = null!;
@@ -207,6 +208,10 @@ namespace Altoholic
             {
                 HelpMessage = "Show/hide Altoholic"
             });
+            CommandManager.AddHandler(SaveCommandName, new CommandInfo(OnSaveCommand)
+            {
+                HelpMessage = "Manually save current char"
+            });
 
             PluginInterface.UiBuilder.Draw += DrawUI;
             PluginInterface.UiBuilder.OpenConfigUi += DrawConfigUI;
@@ -261,6 +266,11 @@ namespace Altoholic
             _db.Dispose();
         }
 
+        private void OnSaveCommand(string command, string args)
+        {
+            Log.Debug("OnSaveCommand called");
+            UpdateCharacter();
+        }
         private void OnCommand(string command, string args)
         {
             Log.Debug("OnCommand called");

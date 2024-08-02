@@ -47,6 +47,7 @@ namespace Altoholic.Models
         public List<uint> OrchestrionRolls { get; set; } = [];
         public List<uint> Ornaments { get; set; } = [];
         public List<uint> Glasses { get; set; } = [];
+        public List<CurrenciesHistory> CurrenciesHistory { get; set; } = [];
 
         public bool HasAnyLevelJob(int level)
         {
