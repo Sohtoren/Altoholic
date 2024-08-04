@@ -13,6 +13,7 @@ using Dalamud.Interface.Windowing;
 using Dalamud.IoC;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
+using FFXIVClientStructs.FFXIV.Application.Network.WorkDefinitions;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using FFXIVClientStructs.FFXIV.Client.System.String;
@@ -36,7 +37,7 @@ namespace Altoholic
         public static string Name => "Altoholic Plugin";
         private const string CommandName = "/altoholic";
         private const string SaveCommandName = "/altoholicsave";
-        private readonly int[] _questIds = [65970, 66045, 66216, 66217, 66218, 66640, 66641, 66642, 66754, 66789, 66857, 66911, 66968, 66969, 66970, 67023, 67099, 67100, 67101, 67658, 67700, 67791, 67856, 68509, 68572, 68633, 68734, 68817, 69133, 69219, 69330, 69432, 70081, 70137, 70217, 69208, 67631, 69208];
+        private readonly int[] _questIds = [65970, 66045, 66216, 66217, 66218, 66640, 66641, 66642, 66754, 66789, 66857, 66911, 66968, 66969, 66970, 67023, 67099, 67100, 67101, 67658, 67700, 67791, 67856, 68509, 68572, 68633, 68734, 68817, 69133, 69219, 69330, 69432, 70081, 70137, 70217, 69208, 67631, 69208, 67009/*Arr Allied*/, 67921/*HW Allied*/, 68700/*SB Allied*/, 70324/*EW Allied*/];
 
         [PluginService] public static IDalamudPluginInterface PluginInterface { get; set; } = null!;
         [PluginService] public static IClientState ClientState { get; set; } = null!;
@@ -96,6 +97,7 @@ namespace Altoholic
                 OrchestrionRollStorage = new OrchestrionRollStorage(),
                 OrnamentStorage = new OrnamentStorage(),
                 GlassesStorage = new GlassesStorage(),
+                BeastTribesStorage = new BeastTribesStorage(),
             };
 
             nint playtimePtr = SigScanner.ScanText(PlaytimeSig);
@@ -131,6 +133,7 @@ namespace Altoholic
             _globalCache.MountStorage.Init(currentLocale, _globalCache);
             _globalCache.OrchestrionRollStorage.Init(currentLocale, _globalCache);
             _globalCache.TripleTriadCardStorage.Init(currentLocale, _globalCache);
+            _globalCache.BeastTribesStorage.Init(currentLocale, _globalCache);
 
             Service altoholicService = new(
                 () => _localPlayer,
@@ -398,6 +401,7 @@ namespace Altoholic
                     GetPlayerArmoireInventory();
                     GetPlayerCompletedQuest();
                     GetPlayerRetainer();
+                    GetPlayerBeastReputation();
 
                     /*
                     Log.Debug($"localPlayer.Inventory.Count : {localPlayer.Inventory.Count}");
@@ -599,6 +603,7 @@ namespace Altoholic
             _localPlayer.IsTradeMentor = player.IsTradeMentor();
             _localPlayer.IsReturner = player.IsReturner();
             _localPlayer.HasPremiumSaddlebag = player.HasPremiumSaddlebag;
+            _localPlayer.PlayerCommendations = player.PlayerCommendations;
             _localPlayer.Profile = new Profile
             {
                 Title = title,
@@ -898,6 +903,32 @@ namespace Altoholic
                     }
                 }
             }
+        }
+
+        private unsafe void GetPlayerBeastReputation()
+        {
+            ref readonly QuestManager qm = ref *QuestManager.Instance();
+            //QuestManager qm = new QuestManager();
+            List<BeastTribeRank> reputations = [];
+            for (uint i = 1; i <= _globalCache.BeastTribesStorage.Count(); i++)
+            {
+                BeastTribeRank? btr = _localPlayer.GetBeastReputation(i);
+                if (btr != null && btr.Rank ==
+                    _globalCache.BeastTribesStorage.GetBeastTribe(ClientLanguage.English, i)?.MaxRank)
+                {
+                    continue;
+                }
+
+                //BeastReputationWork t = *QuestManager.Instance()->GetBeastReputationById((ushort)i);
+                BeastReputationWork t = *qm.GetBeastReputationById((ushort)i);
+                //BeastReputationWork t = *qm.GetBeastReputationById(1);
+                ushort val = t.Value;
+                byte rank = t.Rank;
+                BeastTribeRank bt = new() { Id = i, Value = val, Rank = rank };
+                reputations.Add(bt);
+            }
+
+            _localPlayer.BeastReputations = reputations;
         }
 
         private unsafe void GetPlayerEquippedGear()
@@ -1314,7 +1345,12 @@ namespace Altoholic
             UpdateCharacter();
             CleanLastLocalCharacter();
 
-            
+
+
+            ProgressWindow.IsOpen = false;
+            ProgressWindow.Clear();
+            CollectionWindow.IsOpen = false;
+            CollectionWindow.Clear();
             RetainersWindow.IsOpen = false;
             RetainersWindow.Clear();
             InventoriesWindow.IsOpen = false;
@@ -1326,8 +1362,6 @@ namespace Altoholic
             CurrenciesWindow.Clear();
             DetailsWindow.IsOpen = false;
             DetailsWindow.Clear();
-            CollectionWindow.IsOpen = false;
-            CollectionWindow.Clear();
             CharactersWindow.IsOpen = false;
             MainWindow.IsOpen = false;
             MainWindow.Clear();
@@ -1433,6 +1467,7 @@ namespace Altoholic
                 PlayTime = _localPlayer.PlayTime,
                 LastPlayTimeUpdate = _localPlayer.LastPlayTimeUpdate,
                 HasPremiumSaddlebag = _localPlayer.HasPremiumSaddlebag,
+                PlayerCommendations = _localPlayer.PlayerCommendations,
                 Attributes = _localPlayer.Attributes,
                 Currencies = _localPlayer.Currencies,
                 Jobs = _localPlayer.Jobs,
@@ -1444,6 +1479,15 @@ namespace Altoholic
                 Retainers = _localPlayer.Retainers,
                 Minions = _localPlayer.Minions,
                 Mounts = _localPlayer.Mounts,
+                TripleTriadCards = _localPlayer.TripleTriadCards,
+                Emotes = _localPlayer.Emotes,
+                Bardings = _localPlayer.Bardings,
+                FramerKits = _localPlayer.FramerKits,
+                OrchestrionRolls = _localPlayer.OrchestrionRolls,
+                Ornaments = _localPlayer.Ornaments,
+                Glasses = _localPlayer.Glasses,
+                CurrenciesHistory = _localPlayer.CurrenciesHistory,
+                BeastReputations = _localPlayer.BeastReputations,
             };
 
         }

@@ -738,6 +738,107 @@ namespace Altoholic
             }
         }
 
+        public static BeastReputationRank? GetBeastReputationRank(ClientLanguage currentLocale, uint id)
+        {
+            ExcelSheet<BeastReputationRank>? btm = Plugin.DataManager.GetExcelSheet<BeastReputationRank>(currentLocale);
+            BeastReputationRank? lumina = btm?.GetRow(id);
+            return lumina;
+        }
+
+        public static List<BeastReputationRank>? GetBeastReputationRanks(ClientLanguage currentLocale)
+        {
+            List<BeastReputationRank> returnedbtsIds = [];
+            ExcelSheet<BeastReputationRank>? btm = Plugin.DataManager.GetExcelSheet<BeastReputationRank>(currentLocale);
+            using IEnumerator<BeastReputationRank>? btEnumerator = btm?.GetEnumerator();
+            if (btEnumerator is null) return null;
+            while (btEnumerator.MoveNext())
+            {
+                BeastReputationRank bt = btEnumerator.Current;
+                returnedbtsIds.Add(bt);
+            }
+            return returnedbtsIds;
+        }
+
+        public static BeastTribe? GetBeastTribe(ClientLanguage currentLocale, uint id)
+        {
+            ExcelSheet<BeastTribe>? dc = Plugin.DataManager.GetExcelSheet<BeastTribe>(currentLocale);
+            BeastTribe? lumina = dc?.GetRow(id);
+            return lumina;
+        }
+
+        public static List<BeastTribes>? GetAllBeastTribes(ClientLanguage currentLocale)
+        {
+            List<BeastTribes> returnedbtsIds = [];
+            ExcelSheet<BeastTribe>? btm = Plugin.DataManager.GetExcelSheet<BeastTribe>(currentLocale);
+            using IEnumerator<BeastTribe>? btEnumerator = btm?.GetEnumerator();
+            if (btEnumerator is null) return null;
+            while (btEnumerator.MoveNext())
+            {
+                BeastTribe bt = btEnumerator.Current;
+                if (string.IsNullOrEmpty(bt.Name)) continue;
+                if (bt.Icon == 0) continue;
+                BeastTribes b = new() { Id = bt.RowId, Icon = bt.Icon, MaxRank = bt.MaxRank, DisplayOrder = bt.DisplayOrder };
+                switch (currentLocale)
+                {
+                    case ClientLanguage.German:
+                        b.GermanName = bt.Name;
+                        break;
+                    case ClientLanguage.English:
+                        b.EnglishName = bt.Name;
+                        break;
+                    case ClientLanguage.French:
+                        b.FrenchName = bt.Name;
+                        break;
+                    case ClientLanguage.Japanese:
+                        b.JapaneseName = bt.Name;
+                        break;
+                }
+
+                returnedbtsIds.Add(b);
+            }
+
+            return returnedbtsIds;
+        }
+
+        private static Vector4 ConvertColorToVector4(uint color)
+        {
+            byte r = (byte)(color >> 24);
+            byte g = (byte)(color >> 16);
+            byte b = (byte)(color >> 8);
+            byte a = (byte)color;
+
+            return new Vector4(r / 255.0f, g / 255.0f, b / 255.0f, a / 255.0f);
+        }
+        public static void DrawReputationProgressBar(ClientLanguage currentLocale, GlobalCache globalCache, uint exp, bool isMax, uint reputationLevel, bool isAllied)
+        {
+            BeastReputationRank? brr = globalCache.BeastTribesStorage.GetRank(currentLocale, reputationLevel);
+            if (brr == null) return;
+
+            float progress = (float)exp / brr.RequiredReputation;
+            ImGui.ProgressBar(progress, new Vector2(550, 10), "");
+
+            using var charactersJobsJobLine = ImRaii.Table("###DrawReputationProgressBar#ReputationLine", 3);
+            if (!charactersJobsJobLine) return;
+            ImGui.TableSetupColumn("###DrawReputationProgressBar#ReputationLine#Level", ImGuiTableColumnFlags.WidthFixed, 300);
+            ImGui.TableSetupColumn("###DrawReputationProgressBar#ReputationLine#Empty", ImGuiTableColumnFlags.WidthFixed, 200);
+            ImGui.TableSetupColumn("###DrawReputationProgressBar#ReputationLine#Exp", ImGuiTableColumnFlags.WidthFixed, 100);
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            UIColor? c = brr.Color.Value;
+            if (c is not null)
+            {
+                ImGui.TextColored(ConvertColorToVector4(c.UIForeground),
+                    isAllied ? $"{reputationLevel+1}. {brr.Name}" : $"{reputationLevel}. {brr.AlliedNames}");
+            }
+            else
+            {
+                ImGui.TextUnformatted($"{reputationLevel}. {brr.Name}");
+            }
+            ImGui.TableSetColumnIndex(1);
+            ImGui.TableSetColumnIndex(2);
+            ImGui.TextUnformatted($"{exp}/{brr.RequiredReputation}");
+        }
+
         public static uint GetRoleIcon(uint roleId)
         {
             return roleId switch

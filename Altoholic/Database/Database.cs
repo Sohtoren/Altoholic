@@ -110,6 +110,7 @@ namespace Altoholic.Database
                         c.LastPlayTimeUpdate = character.LastPlayTimeUpdate;
                     }
                     c.HasPremiumSaddlebag = character.HasPremiumSaddlebag;
+                    c.PlayerCommendations = character.PlayerCommendations;
                     c.Attributes = character.Attributes;
                     c.Currencies = character.Currencies;
                     c.Jobs = character.Jobs;
@@ -122,6 +123,15 @@ namespace Altoholic.Database
                     c.Retainers = character.Retainers;
                     c.Minions = character.Minions;
                     c.Mounts = character.Mounts;
+                    c.TripleTriadCards = character.TripleTriadCards;
+                    c.Emotes = character.Emotes;
+                    c.Bardings = character.Bardings;
+                    c.FramerKits = character.FramerKits;
+                    c.OrchestrionRolls = character.OrchestrionRolls;
+                    c.Ornaments = character.Ornaments;
+                    c.Glasses = character.Glasses;
+                    c.CurrenciesHistory = character.CurrenciesHistory;
+                    c.BeastReputations = character.BeastReputations;
                 }
                 else
                 {
@@ -143,6 +153,7 @@ namespace Altoholic.Database
                         FreeCompany = character.FreeCompany,
                         LastOnline = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
                         HasPremiumSaddlebag = character.HasPremiumSaddlebag,
+                        PlayerCommendations = character.PlayerCommendations,
                         Attributes = character.Attributes,
                         Currencies = character.Currencies,
                         Jobs = character.Jobs,
@@ -155,6 +166,15 @@ namespace Altoholic.Database
                         Retainers = character.Retainers,
                         Minions = character.Minions,
                         Mounts = character.Mounts,
+                        TripleTriadCards = character.TripleTriadCards,
+                        Emotes = character.Emotes,
+                        Bardings = character.Bardings,
+                        FramerKits = character.FramerKits,
+                        OrchestrionRolls = character.OrchestrionRolls,
+                        Ornaments = character.Ornaments,
+                        Glasses = character.Glasses,
+                        CurrenciesHistory = character.CurrenciesHistory,
+                        BeastReputations = character.BeastReputations,
                     };
                     if (character.PlayTime > 0)
                     {

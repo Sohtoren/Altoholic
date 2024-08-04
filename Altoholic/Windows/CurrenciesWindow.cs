@@ -948,7 +948,8 @@ namespace Altoholic.Windows
 
             if (!selectedCharacter.IsQuestCompleted(70081) &&
                 !selectedCharacter.IsQuestCompleted(70137) &&
-                !selectedCharacter.IsQuestCompleted(70217))
+                !selectedCharacter.IsQuestCompleted(70217)
+            )
             {
                 return;
             }

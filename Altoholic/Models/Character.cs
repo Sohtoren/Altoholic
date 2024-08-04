@@ -28,6 +28,7 @@ namespace Altoholic.Models
         public uint PlayTime { get; set; } = 0;
         public long LastPlayTimeUpdate {  get; set; } = 0;
         public bool HasPremiumSaddlebag { get; set; } = false;
+        public short PlayerCommendations { get; set; } = 0;
         public Attributes? Attributes { get; set; }
         public PlayerCurrencies? Currencies { get; set; }
         public Jobs? Jobs { get; set; }
@@ -48,6 +49,7 @@ namespace Altoholic.Models
         public List<uint> Ornaments { get; set; } = [];
         public List<uint> Glasses { get; set; } = [];
         public List<CurrenciesHistory> CurrenciesHistory { get; set; } = [];
+        public List<BeastTribeRank> BeastReputations { get; set; } = [];
 
         public bool HasAnyLevelJob(int level)
         {
@@ -114,6 +116,11 @@ namespace Altoholic.Models
         public bool HasGlasses(uint id)
         {
             return Glasses.Count > 0 && Glasses.Contains(id);
+        }
+
+        public BeastTribeRank? GetBeastReputation(uint id)
+        {
+            return BeastReputations.Find(br => br.Id == id);
         }
     }
 }

@@ -35,6 +35,7 @@
 
   <ItemGroup>
     <Folder Include="Assets\" />
+    <Folder Include="Windows\Progress\" />
   </ItemGroup>
 
   <ItemGroup>

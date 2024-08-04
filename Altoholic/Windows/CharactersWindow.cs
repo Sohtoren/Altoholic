@@ -4,7 +4,6 @@ using CheapLoc;
 using Dalamud.Game;
 using Dalamud.Game.Text;
 using Dalamud.Interface;
-using Dalamud.Interface.Internal;
 using Dalamud.Interface.Textures.TextureWraps;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
