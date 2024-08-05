@@ -997,9 +997,11 @@ namespace Altoholic.Windows
             if (itm == null) return;
             Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Icon), new Vector2(32, 32));
             if (ImGui.IsItemHovered())
-                ImGui.SetTooltip(
-                    Utils.GetTribalCurrencyFromId(_currentLocale, (uint)tribalId)
-                );
+            {
+                ImGui.BeginTooltip();
+                ImGui.TextUnformatted(Utils.Capitalize(Utils.GetTribalCurrencyFromId(_currentLocale, (uint)tribalId)));
+                ImGui.EndTooltip();
+            }
             ImGui.TableSetColumnIndex(1);
             ImGui.TextUnformatted($"{currency}");
         }
