@@ -58,6 +58,7 @@ namespace Altoholic.Windows
 
         private bool _rightChevron = true;
         private bool _downChevron;
+        private bool _hasValueBeenSelected = false;
 
         public override void OnClose()
         {
@@ -256,7 +257,7 @@ namespace Altoholic.Windows
                 names.Add(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 5753));
                 hwUnlocked = true;
 
-                if (!arrUnlocked)
+                if (!_hasValueBeenSelected && !arrUnlocked)
                     _selectedExpansion = _globalCache.AddonStorage.LoadAddonString(_currentLocale, 5753);
             }
 
@@ -268,7 +269,7 @@ namespace Altoholic.Windows
                 names.Add(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 5754));
                 sbUnlocked = true;
 
-                if (!hwUnlocked)
+                if (!_hasValueBeenSelected && !hwUnlocked)
                     _selectedExpansion = _globalCache.AddonStorage.LoadAddonString(_currentLocale, 5754);
             }
 
@@ -279,20 +280,21 @@ namespace Altoholic.Windows
             {
                 shbUnlocked = true;
                 names.Add(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 8156));
-                if (!sbUnlocked)
+                if (!_hasValueBeenSelected && !sbUnlocked)
                     _selectedExpansion = _globalCache.AddonStorage.LoadAddonString(_currentLocale, 8156);
             }
 
             if (selectedCharacter.IsQuestCompleted(70081) ||
                 selectedCharacter.IsQuestCompleted(70137) ||
                 selectedCharacter.IsQuestCompleted(70217)
-            )
+               )
             {
                 names.Add(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 8160));
                 ewUnlocked = true;
-                if (!shbUnlocked) 
+                if (!_hasValueBeenSelected && !shbUnlocked)
                     _selectedExpansion = _globalCache.AddonStorage.LoadAddonString(_currentLocale, 8160);
             }
+
 
             /*
              if (selectedCharacter.IsQuestCompleted() &&
@@ -301,7 +303,7 @@ namespace Altoholic.Windows
                {
                    names.Add(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 8175));//DT
                     dtUnlocked = true;
-                    if (!ewUnlocked) 
+                    if (!ewUnlocked)
                         _selectedExpansion = _globalCache.AddonStorage.LoadAddonString(_currentLocale, 8175)
              */
 
@@ -314,6 +316,7 @@ namespace Altoholic.Windows
                         _selectedExpansion = name;
                         _rightChevron = true;
                         _downChevron = false;
+                        _hasValueBeenSelected = true;
                     }
                 }
             }

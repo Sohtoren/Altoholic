@@ -747,6 +747,11 @@ namespace Altoholic
             }
         }
 
+        /*private void GetBeastTribeRepFromState(PlayerState player)
+        {
+            player.GetBeastTribeRank(i);
+        }*/
+
         private unsafe PlayerCurrencies GetPlayerCurrencies()
         {
             ref InventoryManager inventoryManager = ref *InventoryManager.Instance();
@@ -923,13 +928,17 @@ namespace Altoholic
                 BeastReputationWork t = *qm.GetBeastReputationById((ushort)i);
                 //BeastReputationWork t = *qm.GetBeastReputationById(1);
                 ushort val = t.Value;
-                byte rank = t.Rank;
+                //byte rank = t.Rank;
+                byte rank = (byte)(t.Rank & 0x7F);
+#if DEBUG
+                Log.Debug($"GetPlayerBeastReputation: id: {i}, val: {val}, rank: {rank}");
+#endif
                 BeastTribeRank bt = new() { Id = i, Value = val, Rank = rank };
                 reputations.Add(bt);
             }
 
             _localPlayer.BeastReputations = reputations;
-        }
+        }//Todo: Replace this with the playerstate function once rep has been merge to CS
 
         private unsafe void GetPlayerEquippedGear()
         {
