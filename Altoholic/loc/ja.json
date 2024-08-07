@@ -18,5 +18,13 @@
   "NoItemFound": {
     "message": "アイテムが見つかりませんでした",
     "description": "NoItemFound"
+  },
+  "Barding": {
+    "message": "BARDING",
+    "Description": "Collection.Barding"
+  },
+  "FramerKit": {
+    "message": "FRAMER'S KIT",
+    "Description": "Collection.FramerKit"
   }
 }

@@ -330,7 +330,7 @@ namespace Altoholic.Windows
             ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 795)}"); //Nameday
             ImGui.Separator();
             ImGui.TextUnformatted(
-                $"{Utils.GetNameday(selectedCharacter.Profile.NamedayDay, selectedCharacter.Profile.NamedayMonth)}");
+                $"{Utils.GetNameday(_currentLocale, selectedCharacter.Profile.NamedayDay, selectedCharacter.Profile.NamedayMonth)}");
             ImGui.TextUnformatted("");
             ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 796)}"); //Guardian
             ImGui.Separator();

@@ -21,6 +21,7 @@ using Emote = Lumina.Excel.GeneratedSheets.Emote;
 using TextCommand = Lumina.Excel.GeneratedSheets.TextCommand;
 using Ornament = Lumina.Excel.GeneratedSheets.Ornament;
 using Glasses = Lumina.Excel.GeneratedSheets.Glasses;
+using System.Xml.Linq;
 
 namespace Altoholic
 {
@@ -187,26 +188,143 @@ namespace Altoholic
             };
         }
 
-        public static string GetNameday(int day, int month)
+        public static string GetNameday(ClientLanguage currentLocale, int day, int month)
         {
-            string nameday = day switch
+            string nameday = string.Empty;
+            string namedayMonth = string.Empty;
+            switch (currentLocale)
             {
-                1 or 21 => "st",
-                2 or 22 => "nd",
-                3 or 23 => "rd",
-                _ => "th",
-            };
-            string namedaymonth = month switch
-            {
-                1 or 21 => "st",
-                2 or 22 => "nd",
-                3 or 23 => "rd",
-                _ => "th",
-            };
-            return $"{day}{nameday} Sun of the {month}{namedaymonth} Astral Moon";
-        }
+                case ClientLanguage.German:
+                    {
+                        namedayMonth = month switch
+                        {
+                            1 => "1. Licht",
+                            2 => "1. Schatten",
+                            3 => "2. Licht",
+                            4 => "2. Schatten",
+                            5 => "3. Licht",
+                            6 => "3. Schatten",
+                            7 => "4. Licht",
+                            8 => "4. Schatten",
+                            9 => "5. Licht",
+                            10 => "5. Schatten",
+                            11 => "6. Licht",
+                            12 => "6. Schatten",
+                            _ => "",
+                        };
 
-        public static string GetGrandCompany(ClientLanguage currentLocale, int id)
+                        nameday = $"{day}. Sonne im {namedayMonth}mond";
+                    }
+                    break;
+                case ClientLanguage.English:
+                    {
+                        string namedayDay = day switch
+                        {
+                            1 => "1st",
+                            2 => "2nd",
+                            3 => "3rd",
+                            4 => "4th",
+                            5 => "5th",
+                            6 => "6th",
+                            7 => "7th",
+                            8 => "8th",
+                            9 => "9th",
+                            10 => "10th",
+                            11 => "11th",
+                            12 => "12th",
+                            13 => "13th",
+                            14 => "14th",
+                            15 => "15th",
+                            16 => "16th",
+                            17 => "17th",
+                            18 => "18th",
+                            19 => "19th",
+                            20 => "20th",
+                            21 => "21st",
+                            22 => "22nd",
+                            23 => "23rd",
+                            24 => "24th",
+                            25 => "25th",
+                            26 => "26th",
+                            27 => "27th",
+                            28 => "28th",
+                            29 => "29th",
+                            30 => "30th",
+                            31 => "31st",
+                            32 => "32nd",
+                            _ => "",
+                        };
+
+                        namedayMonth = month switch
+                        {
+                            1 => "1st Astral",
+                            2 => "1st Umbral",
+                            3 => "2nd Astral",
+                            4 => "2nd Umbral",
+                            5 => "3rd Astral",
+                            6 => "3rd Umbral",
+                            7 => "4th Astral",
+                            8 => "4th Umbral",
+                            9 => "5th Astral",
+                            10 => "5th Umbral",
+                            11 => "6th Astral",
+                            12 => "6th Umbral",
+                            _ => "",
+                        };
+                        nameday = $"{namedayDay} Sun of the {namedayMonth} Moon";
+                        break;
+                    }
+                case ClientLanguage.French:
+                    {
+
+                        namedayMonth = month switch
+                        {
+                            1 => "1re lune astrale",
+                            2 => "1re lune ombrale",
+                            3 => "2e lune astrale",
+                            4 => "2e lune ombrale",
+                            5 => "3e lune astrale",
+                            6 => "3e lune ombrale",
+                            7 => "4e lune astrale",
+                            8 => "4e lune ombrale",
+                            9 => "5e lune astrale",
+                            10 => "5e lune ombrale",
+                            11 => "6e lune astrale",
+                            12 => "6e lune ombrale",
+                            _ => "",
+                        };
+                        nameday = $"{((day == 1) ? "er" : "e")} soleil de la {namedayMonth}";
+                    }
+                    break;
+
+                case ClientLanguage.Japanese:
+                    {
+                        namedayMonth = month switch
+                        {
+                            1 => "星1月",
+                            2 => "霊1月",
+                            3 => "星2月",
+                            4 => "霊2月",
+                            5 => "星3月",
+                            6 => "霊3月",
+                            7 => "星4月",
+                            8 => "霊4月",
+                            9 => "星5月",
+                            10 => "霊5月",
+                            11 => "星6月",
+                            12 => "霊6月",
+                            _ => "",
+                        };
+
+                        nameday = $"{namedayMonth} {day}日";
+                    }
+                    break;
+            }
+
+            return nameday;
+    }
+
+    public static string GetGrandCompany(ClientLanguage currentLocale, int id)
         {
             ExcelSheet<GrandCompany>? dgc = Plugin.DataManager.GetExcelSheet<GrandCompany>(currentLocale);
             GrandCompany? lumina = dgc?.GetRow((uint)id);
@@ -241,7 +359,7 @@ namespace Altoholic
 
                             GCRankLimsaMaleText? lumina = dgcrlmt.GetRow((uint)rank);
                             if (lumina != null)
-                                return lumina.NameRank;
+                                return lumina.Singular;
                         }
                         else
                         {
@@ -254,7 +372,7 @@ namespace Altoholic
 
                             GCRankLimsaFemaleText? lumina = dgcrlft.GetRow((uint)rank);
                             if (lumina != null)
-                                return lumina.NameRank;
+                                return lumina.Singular;
                         }
 
                         return string.Empty;
@@ -272,7 +390,7 @@ namespace Altoholic
 
                             GCRankUldahMaleText? lumina = dgcrlmt.GetRow((uint)rank);
                             if (lumina != null)
-                                return lumina.NameRank;
+                                return lumina.Singular;
                         }
                         else
                         {
@@ -280,7 +398,7 @@ namespace Altoholic
                                 Plugin.DataManager.GetExcelSheet<GCRankUldahFemaleText>(currentLocale);
                             GCRankUldahFemaleText? lumina = dgcrlft?.GetRow((uint)rank);
                             if (lumina != null)
-                                return lumina.NameRank;
+                                return lumina.Singular;
                         }
 
                         return string.Empty;
@@ -293,7 +411,7 @@ namespace Altoholic
                                 Plugin.DataManager.GetExcelSheet<GCRankGridaniaMaleText>(currentLocale);
                             GCRankGridaniaMaleText? lumina = dgcrlmt?.GetRow((uint)rank);
                             if (lumina != null)
-                                return lumina.NameRank;
+                                return lumina.Singular;
                         }
                         else
                         {
@@ -301,7 +419,7 @@ namespace Altoholic
                                 Plugin.DataManager.GetExcelSheet<GCRankGridaniaFemaleText>(currentLocale);
                             GCRankGridaniaFemaleText? lumina = dgcrlft?.GetRow((uint)rank);
                             if (lumina != null)
-                                return lumina.NameRank;
+                                return lumina.Singular;
                         }
 
                         return string.Empty;

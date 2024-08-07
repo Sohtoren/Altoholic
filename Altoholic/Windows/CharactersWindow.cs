@@ -72,8 +72,6 @@ namespace Altoholic.Windows
                     if (!charactersTable) return;
                     ImGui.TableSetupColumn(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 330),
                         ImGuiTableColumnFlags.WidthFixed, 100);
-                    if (ImGui.IsItemHovered())
-                        ImGui.Text("hover");
                     ImGui.TableSetupColumn(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 331),
                         ImGuiTableColumnFlags.WidthFixed, 100);
                     ImGui.TableSetupColumn(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 4728),

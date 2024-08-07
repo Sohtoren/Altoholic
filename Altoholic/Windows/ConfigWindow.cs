@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Numerics;
 using Altoholic.Cache;
 using CheapLoc;
@@ -55,7 +55,7 @@ namespace Altoholic.Windows
                 {
                     _selectedLanguage = ClientLanguage.French;
                 }
-                if (ImGui.Selectable(ClientLanguage.Japanese.ToString(), ClientLanguage.Japanese.ToString() == _selectedLanguage.ToString()))
+                if (ImGui.Selectable("日本語", ClientLanguage.Japanese.ToString() == _selectedLanguage.ToString()))
                 {
                     _selectedLanguage = ClientLanguage.Japanese;
                 }
@@ -71,7 +71,7 @@ namespace Altoholic.Windows
             }
 
             bool isObtainedOnlyEnabled = _configuration.ObtainedOnly;
-            if (ImGui.Checkbox("ObtainedOnly", ref isObtainedOnlyEnabled))
+            if (ImGui.Checkbox("Obtained Only###ObtainedOnly", ref isObtainedOnlyEnabled))
             {
                 _configuration.ObtainedOnly = isObtainedOnlyEnabled;
                 _configuration.Save();
@@ -84,7 +84,7 @@ namespace Altoholic.Windows
             }
 
             bool isEnabled = _configuration.IsSpoilersEnabled;
-            if (ImGui.Checkbox("EnableSpoilers", ref isEnabled))
+            if (ImGui.Checkbox("Enable Spoilers####EnableSpoilers", ref isEnabled))
             {
                 _configuration.IsSpoilersEnabled = isEnabled;
                 _configuration.Save();

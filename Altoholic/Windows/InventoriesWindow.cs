@@ -394,6 +394,11 @@ namespace Altoholic.Windows
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
             ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 520)}");
+            if (_currentLocale == ClientLanguage.Japanese)
+            {
+                ImGui.SameLine();
+                ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 521)}");
+            }
             DrawInventory($"Inventory_{selectedCharacter.Id}", inventory);
             using (var inventoryAmountTable =
                    ImRaii.Table(
@@ -431,7 +436,12 @@ namespace Altoholic.Windows
 
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
-            ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 12212)}");
+            ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 882)}");
+            if (_currentLocale == ClientLanguage.Japanese)
+            {
+                ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 12212)}");
+            }
+
             //Plugin.Log.Debug($"{selected_character.FirstName} Saddle: {selected_character.Saddle.FindAll(k => k.Quantity == 0).Count}");
             int saddleCount = selectedCharacter.Saddle.FindAll(s => s.Quantity == 0).Count;
             if (saddleCount is 0 or 140)

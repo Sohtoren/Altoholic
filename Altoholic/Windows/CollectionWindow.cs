@@ -236,7 +236,7 @@ namespace Altoholic.Windows
             }*/
 
             using (var minionsTab =
-                   ImRaii.TabItem($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 4902)}"))
+                   ImRaii.TabItem($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 8303)}"))//Minions // 7595 for Katakana
             {
                 if (minionsTab.Success)
                 {
@@ -245,7 +245,7 @@ namespace Altoholic.Windows
             }
 
             using (var mountsTab =
-                   ImRaii.TabItem($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 4901)}")) // Mounts
+                   ImRaii.TabItem($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 8302)}")) // Mounts // 13971 for Katakana
             {
                 if (mountsTab.Success)
                 {
@@ -268,8 +268,9 @@ namespace Altoholic.Windows
 
                 }
             }*/
-            
-            using (var tripleTriadTab = ImRaii.TabItem("Triple Triad")) 
+
+            using (var tripleTriadTab =
+                   ImRaii.TabItem($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 12212)}"))
             {
                 if (tripleTriadTab.Success)
                 {

@@ -456,7 +456,7 @@ namespace Altoholic.Windows
                     $"Remise à zéro   : {time.TotalHours:00} {((nextTuesdayDate.Hour > 1) ? "heures" : "heure")} {time.Minutes:00} {((nextTuesdayDate.Minute > 1) ? "minutes" : "minute")} [{nextTuesdayDate.Day}.{nextTuesdayDate.Month} {nextTuesdayDate.Hour:D2}h{nextTuesdayDate.Minute:D2}]",
                 ClientLanguage.Japanese =>
                     $"リセット日時 : {time.TotalHours:00}時間{time.Minutes:00}分後[{nextTuesdayDate.Day}/{nextTuesdayDate.Month} {nextTuesdayDate.Hour}:{nextTuesdayDate.Minute}]",
-                _ => $"Reset in {Math.Floor(time.TotalHours)}h {time.Minutes:00}m [{nextTuesdayDate.Month}/{nextTuesdayDate.Day} {nextTuesdayDate.Hour:D2} {nextTuesdayDate.Minute:D2}]",
+                _ => $"Reset in {Math.Floor(time.TotalHours)}h {time.Minutes:00}m [{nextTuesdayDate.Day}/{nextTuesdayDate.Month} {nextTuesdayDate.Hour:D2} {nextTuesdayDate.Minute:D2}]",
             };
             return v;
         }
@@ -473,8 +473,8 @@ namespace Altoholic.Windows
             {
                 daysUntilTuesday = ((int)DayOfWeek.Tuesday - (int)today.DayOfWeek + 7) % 7;
             }
-            DateTime nextThuesday8AmUtc = now.AddDays(daysUntilTuesday).Date.AddHours(8);
-            double totalSeconds = (nextThuesday8AmUtc - now).TotalSeconds;
+            DateTime nextTuesday8AmUtc = now.AddDays(daysUntilTuesday).Date.AddHours(8);
+            double totalSeconds = (nextTuesday8AmUtc - now).TotalSeconds;
             return totalSeconds;
         }
         private static DateTime GetNextTuesday()
@@ -814,7 +814,7 @@ namespace Altoholic.Windows
             {
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                ImGui.TextUnformatted("A Realm Reborn");
+                ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 5752));
                 ImGui.TableNextRow();
                 if (selectedCharacter.IsQuestCompleted(66754))
                 {
@@ -860,7 +860,7 @@ namespace Altoholic.Windows
             {
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                ImGui.TextUnformatted("Heavensward");
+                ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 5753));
                 ImGui.TableNextRow();
                 if (selectedCharacter.IsQuestCompleted(67700))
                 {
@@ -891,7 +891,7 @@ namespace Altoholic.Windows
             {
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                ImGui.TextUnformatted("Stormblood");
+                ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 5754));
                 ImGui.TableNextRow();
                 if (selectedCharacter.IsQuestCompleted(68509))
                 {
@@ -922,7 +922,7 @@ namespace Altoholic.Windows
             {
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                ImGui.TextUnformatted("Shadowbringers");
+                ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 8156));
                 ImGui.TableNextRow();
                 if (selectedCharacter.IsQuestCompleted(69219))
                 {
@@ -956,7 +956,7 @@ namespace Altoholic.Windows
 
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
-            ImGui.TextUnformatted("Endwalker");
+            ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 8160));
             ImGui.TableNextRow();
             if (selectedCharacter.IsQuestCompleted(70081))
             {
