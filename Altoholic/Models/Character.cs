@@ -122,5 +122,10 @@ namespace Altoholic.Models
         {
             return BeastReputations.Find(br => br.Id == id);
         }
+
+        public bool HasBeastReputation(uint id)
+        {
+            return BeastReputations.Count > 0 && BeastReputations.Exists(br => br.Id == id);
+        }
     }
 }

@@ -895,27 +895,26 @@ namespace Altoholic
 
                 Log.Debug($"Quest not in store or not completed, checking if quest {id} is completed");
                 bool complete = Utils.IsQuestCompleted(id);
-                if (!_localPlayer.HasQuest(id))
+                Quest? q = _localPlayer.Quests.Find(q => q.Id == id);
+                if (q == null)
                 {
                     _localPlayer.Quests.Add(new Quest { Id = id, Completed = complete });
                 }
                 else
                 {
-                    Quest? q = _localPlayer.Quests.Find(q => q.Id == id);
-                    if (q != null)
-                    {
-                        q.Completed = complete;
-                    }
+                    q.Completed = complete;
                 }
             }
         }
 
         private unsafe void GetPlayerBeastReputation()
         {
+            int btCount = _globalCache.BeastTribesStorage.Count();
+            if (_localPlayer.BeastReputations.Count > btCount) _localPlayer.BeastReputations.Clear();
+
             ref readonly QuestManager qm = ref *QuestManager.Instance();
             //QuestManager qm = new QuestManager();
-            List<BeastTribeRank> reputations = [];
-            for (uint i = 1; i <= _globalCache.BeastTribesStorage.Count(); i++)
+            for (uint i = 1; i <= btCount; i++)
             {
                 BeastTribeRank? btr = _localPlayer.GetBeastReputation(i);
                 if (btr != null && btr.Rank ==
@@ -933,11 +932,22 @@ namespace Altoholic
 #if DEBUG
                 Log.Debug($"GetPlayerBeastReputation: id: {i}, val: {val}, rank: {rank}");
 #endif
-                BeastTribeRank bt = new() { Id = i, Value = val, Rank = rank };
-                reputations.Add(bt);
+                BeastTribeRank? b = _localPlayer.BeastReputations.Find(br => br.Id == i);
+                if (b == null)
+                {
+                    _localPlayer.BeastReputations.Add(new BeastTribeRank
+                    {
+                        Id = i,
+                        Value = val,
+                        Rank = rank
+                    });
+                }
+                else
+                {
+                    b.Value = val;
+                    b.Rank = rank;
+                }
             }
-
-            _localPlayer.BeastReputations = reputations;
         }//Todo: Replace this with the playerstate function once rep has been merge to CS
 
         private unsafe void GetPlayerEquippedGear()

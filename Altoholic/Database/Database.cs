@@ -46,7 +46,6 @@ namespace Altoholic.Database
             catch (Exception ex)
             {
                 // Todo: Add error handling to not crash game if db is opened in another program
-                Console.WriteLine(ex.ToString());
                 log.Error(ex.ToString());
                 return [];
             }
