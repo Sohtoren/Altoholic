@@ -74,6 +74,7 @@ namespace Altoholic.Windows
 
         public void Clear()
         {
+            Plugin.Log.Debug("ProgressWindow Clear() called");
             _currentCharacter = null;
             _selectedExpansion = _globalCache.AddonStorage.LoadAddonString(_currentLocale, 5752);
         }
@@ -478,6 +479,7 @@ namespace Altoholic.Windows
 
         private void DrawReputationLine(uint id, uint currentExp, uint rank, bool isAllied)
         {
+            //Plugin.Log.Debug($"id: {id}, currentExp: {currentExp}, rank: {rank}, isAllied: {isAllied}");
             BeastTribes? beastTribe = _globalCache.BeastTribesStorage.GetBeastTribe(_currentLocale, id);
             if (beastTribe == null) return;
 
@@ -502,6 +504,9 @@ namespace Altoholic.Windows
             }
 
             Utils.DrawReputationProgressBar(_currentLocale, _globalCache, currentExp, beastTribe.MaxRank == rank, rank, isAllied);
+
+            // Todo: if spoiler enabled, add a unique reward list (orchestrions, pets, framerkits) here and check it if brought/unlocked.
+            // If spoiler is disabled, unveil each reward by reputation rank
         }
     }
 }

@@ -106,10 +106,16 @@ namespace Altoholic
 
 #if DEBUG
             string dbpath = Path.Combine(PluginInterface.AssemblyLocation.Directory?.FullName!, "altoholic.db");
-#else 
+            Log.Info($"dbpath = {dbpath}");
+#else
             string dbpath = Path.Combine(PluginInterface.GetPluginConfigDirectory(), "altoholic.db");
 #endif
+            /*if (File.Exists(dbpath))
+            {*/
             _db = new LiteDatabase(dbpath); // Todo: Make sure this don't crash the game when db is already opened
+            /*}
+
+            _db2 = new SQLiteConnection(databasePath);*/
 
             Configuration = PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
             Configuration.Initialize(PluginInterface);
@@ -399,9 +405,9 @@ namespace Altoholic
                     GetPlayerArmoryInventory();
                     GetPlayerGlamourInventory();
                     GetPlayerArmoireInventory();
-                    GetPlayerCompletedQuest();
+                    GetPlayerCompletedQuests();
                     GetPlayerRetainer();
-                    GetPlayerBeastReputation();
+                    GetPlayerBeastReputations();
 
                     /*
                     Log.Debug($"localPlayer.Inventory.Count : {localPlayer.Inventory.Count}");
@@ -562,6 +568,7 @@ namespace Altoholic
             GetPlayerArmoireInventory();
             GetPlayerSaddleInventory();
             GetPlayerRetainer();
+            GetPlayerBeastReputations();
         }
 
         private unsafe void GetPlayerAttributesProfileAndJobs()
@@ -880,7 +887,7 @@ namespace Altoholic
             };
         }
 
-        private void GetPlayerCompletedQuest()
+        private void GetPlayerCompletedQuests()
         {
             foreach (int id in _questIds)
             {
@@ -893,8 +900,11 @@ namespace Altoholic
                     continue;
                 }
 
+#if DEBUG
                 Log.Debug($"Quest not in store or not completed, checking if quest {id} is completed");
+#endif
                 bool complete = Utils.IsQuestCompleted(id);
+                Log.Debug($"questCompleted? {complete}");
                 Quest? q = _localPlayer.Quests.Find(q => q.Id == id);
                 if (q == null)
                 {
@@ -907,7 +917,7 @@ namespace Altoholic
             }
         }
 
-        private unsafe void GetPlayerBeastReputation()
+        private unsafe void GetPlayerBeastReputations()
         {
             int btCount = _globalCache.BeastTribesStorage.Count();
             if (_localPlayer.BeastReputations.Count > btCount) _localPlayer.BeastReputations.Clear();
@@ -930,7 +940,7 @@ namespace Altoholic
                 //byte rank = t.Rank;
                 byte rank = (byte)(t.Rank & 0x7F);
 #if DEBUG
-                Log.Debug($"GetPlayerBeastReputation: id: {i}, val: {val}, rank: {rank}");
+                //Log.Debug($"GetPlayerBeastReputations: id: {i}, val: {val}, rank: {rank}, t.rank: {t.Rank}");
 #endif
                 BeastTribeRank? b = _localPlayer.BeastReputations.Find(br => br.Id == i);
                 if (b == null)
@@ -944,6 +954,7 @@ namespace Altoholic
                 }
                 else
                 {
+                    if (rank != 0 && (val == 0 && b.Value != 0)) continue;
                     b.Value = val;
                     b.Rank = rank;
                 }
@@ -1360,7 +1371,7 @@ namespace Altoholic
         private void OnCharacterLogout()
         {
             Log.Debug("Altoholic : OnCharacterLogout called");
-            GetPlayerCompletedQuest();
+            GetPlayerCompletedQuests();
             UpdateCharacter();
             CleanLastLocalCharacter();
 
