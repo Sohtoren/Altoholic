@@ -904,7 +904,6 @@ namespace Altoholic
                 Log.Debug($"Quest not in store or not completed, checking if quest {id} is completed");
 #endif
                 bool complete = Utils.IsQuestCompleted(id);
-                Log.Debug($"questCompleted? {complete}");
                 Quest? q = _localPlayer.Quests.Find(q => q.Id == id);
                 if (q == null)
                 {
