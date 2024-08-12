@@ -938,7 +938,7 @@ namespace Altoholic
             using var charactersJobsJobLine = ImRaii.Table("###DrawReputationProgressBar#ReputationLine", 3);
             if (!charactersJobsJobLine) return;
             ImGui.TableSetupColumn("###DrawReputationProgressBar#ReputationLine#Level", ImGuiTableColumnFlags.WidthFixed, 300);
-            ImGui.TableSetupColumn("###DrawReputationProgressBar#ReputationLine#Empty", ImGuiTableColumnFlags.WidthFixed, 200);
+            ImGui.TableSetupColumn("###DrawReputationProgressBar#ReputationLine#Empty", ImGuiTableColumnFlags.WidthFixed, 190);
             ImGui.TableSetupColumn("###DrawReputationProgressBar#ReputationLine#Exp", ImGuiTableColumnFlags.WidthFixed, 100);
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);

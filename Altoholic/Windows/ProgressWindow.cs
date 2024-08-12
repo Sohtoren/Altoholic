@@ -17,7 +17,8 @@ namespace Altoholic.Windows
     {
         private readonly Plugin _plugin;
         private ClientLanguage _currentLocale;
-        private readonly GlobalCache _globalCache;
+        private GlobalCache _globalCache;
+        private bool _isSpoilerEnabled;
 
         public ProgressWindow(
             Plugin plugin,
@@ -34,11 +35,6 @@ namespace Altoholic.Windows
             };
             _plugin = plugin;
             _globalCache = globalCache;
-
-            //_rolesIcons = Plugin.PluginInterface.UiBuilder.LoadUld("ui/uld/Retainer.uld");
-            //Plugin.Log.Debug($"Type: {rolesIcons.Uld?.FileInfo.Type}");
-            //rolesTextures.Add(Role.Tank, rolesIcons.LoadTexturePart("ui/uld/fourth/ToggleButton_hr1.tex", 4));
-            //_rolesTextureWrap = Plugin.TextureProvider.GetFromGame("ui/uld/Retainer_hr1.tex").RentAsync().Result;
 
             _commendationIcon = Plugin.TextureProvider.GetFromGame("ui/uld/Character_hr1.tex").RentAsync().Result;
             _chevronTexture = Plugin.TextureProvider.GetFromGame("ui/uld/fourth/ListItemB_hr1.tex").RentAsync().Result;
@@ -58,7 +54,7 @@ namespace Altoholic.Windows
 
         private bool _rightChevron = true;
         private bool _downChevron;
-        private bool _hasValueBeenSelected = false;
+        private bool _hasValueBeenSelected;
 
         public override void OnClose()
         {
@@ -82,6 +78,7 @@ namespace Altoholic.Windows
         public override void Draw()
         {
             _currentLocale = _plugin.Configuration.Language;
+            _isSpoilerEnabled = _plugin.Configuration.IsSpoilersEnabled;
             List<Character> chars = [];
             chars.Insert(0, GetPlayer.Invoke());
             chars.AddRange(GetOthersCharactersList.Invoke());
@@ -134,7 +131,7 @@ namespace Altoholic.Windows
             }
             catch (Exception e)
             {
-                Plugin.Log.Debug("Altoholic CharactersInventoryTable Exception : {0}", e);
+                Plugin.Log.Debug("Altoholic CharactersProgressTable Exception : {0}", e);
             }
         }
 
@@ -329,7 +326,7 @@ namespace Altoholic.Windows
 
             using ImRaii.IEndObject charactersReputationTable = ImRaii.Table("###CharactersProgress#Reputations##Reputation", 1, ImGuiTableFlags.ScrollY);
             if (!charactersReputationTable) return;
-            ImGui.TableSetupColumn("###CharactersProgress#ReputationsTable", ImGuiTableColumnFlags.WidthStretch);
+            ImGui.TableSetupColumn("###CharactersProgress#ReputationsTable", ImGuiTableColumnFlags.WidthFixed, 560);
             switch (_selectedExpansion)
             {
                 case "A Realm Reborn":
@@ -358,6 +355,7 @@ namespace Altoholic.Windows
                             ImGui.TableNextRow();
                             ImGui.TableSetColumnIndex(0);
                             DrawReputationLine(i, b.Value, b.Rank, arrAllied);
+                            DrawReward(selectedCharacter, i, b.Rank, arrAllied);
                         }
                     }
                     break;
@@ -385,6 +383,7 @@ namespace Altoholic.Windows
                             ImGui.TableNextRow();
                             ImGui.TableSetColumnIndex(0);
                             DrawReputationLine(i, b.Value, b.Rank, hwAllied);
+                            DrawReward(selectedCharacter, i, b.Rank, hwAllied);
                         }
                     }
                     break;
@@ -412,6 +411,7 @@ namespace Altoholic.Windows
                             ImGui.TableNextRow();
                             ImGui.TableSetColumnIndex(0);
                             DrawReputationLine(i, b.Value, b.Rank, sbAllied);
+                            DrawReward(selectedCharacter, i, b.Rank, sbAllied);
                         }
                     }
                     break;
@@ -438,6 +438,7 @@ namespace Altoholic.Windows
                             ImGui.TableNextRow();
                             ImGui.TableSetColumnIndex(0);
                             DrawReputationLine(i, b.Value, b.Rank, false);
+                            DrawReward(selectedCharacter, i, b.Rank, false);
                         }
                     }
                     break;
@@ -465,6 +466,7 @@ namespace Altoholic.Windows
                             ImGui.TableNextRow();
                             ImGui.TableSetColumnIndex(0);
                             DrawReputationLine(i, b.Value, b.Rank, ewAllied);
+                            DrawReward(selectedCharacter, i, b.Rank, ewAllied);
                         }
                     }
                     break;
@@ -507,6 +509,1042 @@ namespace Altoholic.Windows
 
             // Todo: if spoiler enabled, add a unique reward list (orchestrions, pets, framerkits) here and check it if brought/unlocked.
             // If spoiler is disabled, unveil each reward by reputation rank
+        }
+
+        private void DrawReward(Character currentCharacter, uint id, uint rank, bool isAllied)
+        {
+            if (rank < 3) return;
+            //Plugin.Log.Debug($"DrawReward: id={id}, rank={rank}, isAllied={isAllied}");
+            switch (id)
+            {
+                case 1: //Amaal'ja
+                    {
+                        if (ImGui.CollapsingHeader(
+                                $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 11429)}###Progress#BeastReputations#{id}#Reward"))
+                        {
+                            using var t = ImRaii.Table($"###Progress#BeastReputations#{id}#Reward#Table", 5);
+                            if (!t) break;
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Orchestrion1",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#FramerKit",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Minion1",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Mount1",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Minion2",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableNextRow();
+                            ImGui.TableSetColumnIndex(0);
+                            DrawOrchestrion(85, currentCharacter.HasOrchestrionRoll(85));
+                            ImGui.TableSetColumnIndex(1);
+                            uint? fkId = _globalCache.FramerKitStorage.GetFramerKitIdFromItemId(43957);
+                            if (fkId == null) return;
+                            DrawFramerKit(fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
+
+                            if (rank >= 4)
+                            {
+                                ImGui.TableSetColumnIndex(2);
+                                DrawMinion(58, currentCharacter.HasMinion(58));
+                                ImGui.TableSetColumnIndex(3);
+                                DrawMount(19, currentCharacter.HasMount(19));
+                            }
+
+                            if (isAllied)
+                            {
+                                ImGui.TableSetColumnIndex(4);
+                                DrawMinion(124, currentCharacter.HasMinion(124));
+                            }
+                        }
+
+                        break;
+                    }
+                case 2: //Sylph
+                    {
+                        if (ImGui.CollapsingHeader(
+                                $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 11429)}###Progress#BeastReputations#{id}#Reward"))
+                        {
+                            using var t = ImRaii.Table($"###Progress#BeastReputations#{id}#Reward#Table", 5);
+                            if (!t) break;
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Orchestrion1",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#FramerKit",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Minion1",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Mount1",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Minion2",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableNextRow();
+                            ImGui.TableSetColumnIndex(0);
+                            DrawOrchestrion(117, currentCharacter.HasOrchestrionRoll(117));
+                            ImGui.TableSetColumnIndex(1);
+                            uint? fkId = _globalCache.FramerKitStorage.GetFramerKitIdFromItemId(43956);
+                            if (fkId == null) return;
+                            DrawFramerKit(fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
+
+                            if (rank >= 4)
+                            {
+                                ImGui.TableSetColumnIndex(2);
+                                DrawMinion(50, currentCharacter.HasMinion(50));
+                                ImGui.TableSetColumnIndex(3);
+                                DrawMount(20, currentCharacter.HasMount(20));
+                            }
+
+                            if (isAllied)
+                            {
+                                ImGui.TableSetColumnIndex(4);
+                                DrawMinion(123, currentCharacter.HasMinion(123));
+                            }
+                        }
+
+                        break;
+                    }
+                case 3: //Kobold
+                    {
+                        if (ImGui.CollapsingHeader(
+                                $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 11429)}###Progress#BeastReputations#{id}#Reward"))
+                        {
+                            using var t = ImRaii.Table($"###Progress#BeastReputations#{id}#Reward#Table", 4);
+                            if (!t) break;
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#FramerKit",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Minion1",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Mount1",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Minion2",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableNextRow();
+                            ImGui.TableSetColumnIndex(0);
+                            uint? fkId = _globalCache.FramerKitStorage.GetFramerKitIdFromItemId(43955);
+                            if (fkId == null) return;
+                            DrawFramerKit(fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
+                            if (rank >= 4)
+                            {
+                                ImGui.TableSetColumnIndex(1);
+                                DrawMinion(60, currentCharacter.HasMinion(60));
+                                ImGui.TableSetColumnIndex(2);
+                                DrawMount(27, currentCharacter.HasMount(27));
+                            }
+
+                            if (isAllied)
+                            {
+                                ImGui.TableSetColumnIndex(3);
+                                DrawMinion(126, currentCharacter.HasMinion(126));
+                            }
+                        }
+
+                        break;
+                    }
+                case 4: //Sahagin
+                    {
+                        if (ImGui.CollapsingHeader(
+                                $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 11429)}###Progress#BeastReputations#{id}#Reward"))
+                        {
+                            using var t = ImRaii.Table($"###Progress#BeastReputations#{id}#Reward#Table", 4);
+                            if (!t) break;
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Minion1",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Mount1",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#FramerKit",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Minion2",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableNextRow();
+                            if (rank >= 4)
+                            {
+                                ImGui.TableSetColumnIndex(0);
+                                DrawMinion(61, currentCharacter.HasMinion(61));
+                                ImGui.TableSetColumnIndex(1);
+                                DrawMount(26, currentCharacter.HasMount(26));
+                                ImGui.TableSetColumnIndex(2);
+                                uint? fkId = _globalCache.FramerKitStorage.GetFramerKitIdFromItemId(43958);
+                                if (fkId == null) return;
+                                DrawFramerKit(fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
+                            }
+
+                            if (isAllied)
+                            {
+                                ImGui.TableSetColumnIndex(3);
+                                DrawMinion(127, currentCharacter.HasMinion(127));
+                            }
+                        }
+
+                        break;
+                    }
+                case 5: //Ixal
+                    {
+                        if (ImGui.CollapsingHeader(
+                                $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 11429)}###Progress#BeastReputations#{id}#Reward"))
+                        {
+                            using var t = ImRaii.Table($"###Progress#BeastReputations#{id}#Reward#Table", 4);
+                            if (!t) break;
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Minion1",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Mount1",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#FramerKit",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Minion2",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableNextRow();
+                            if (rank >= 4)
+                            {
+                                ImGui.TableSetColumnIndex(0);
+                                DrawMinion(59, currentCharacter.HasMinion(59));
+                                ImGui.TableSetColumnIndex(1);
+                                DrawMount(35, currentCharacter.HasMount(35));
+                            }
+
+                            if (rank >= 5)
+                            {
+                                ImGui.TableSetColumnIndex(2);
+                                uint? fkId = _globalCache.FramerKitStorage.GetFramerKitIdFromItemId(43959);
+                                if (fkId == null) return;
+                                DrawFramerKit(fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
+                            }
+
+                            if (isAllied)
+                            {
+                                ImGui.TableSetColumnIndex(3);
+                                DrawMinion(125, currentCharacter.HasMinion(125));
+                            }
+                        }
+
+                        break;
+                    }
+                case 6: //Vanu Vanu
+                    {
+                        if (ImGui.CollapsingHeader(
+                                $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 11429)}###Progress#BeastReputations#{id}#Reward"))
+                        {
+                            using var t = ImRaii.Table($"###Progress#BeastReputations#{id}#Reward#Table", 6);
+                            if (!t) break;
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Orchestrion1",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Minion1",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Emote1",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Minion2",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Mount1",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#FramerKit",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableNextRow();
+                            ImGui.TableSetColumnIndex(0);
+                            DrawOrchestrion(86, currentCharacter.HasOrchestrionRoll(86));
+                            if (rank >= 4)
+                            {
+                                ImGui.TableSetColumnIndex(1);
+                                DrawMinion(135, currentCharacter.HasMinion(135));
+                            }
+
+                            if (rank >= 6)
+                            {
+                                ImGui.TableSetColumnIndex(2);
+                                DrawEmote(120, currentCharacter.HasEmote(120));
+                            }
+
+                            if (rank >= 7)
+                            {
+                                ImGui.TableSetColumnIndex(3);
+                                DrawMinion(172, currentCharacter.HasMinion(172));
+                                ImGui.TableSetColumnIndex(4);
+                                DrawMount(53, currentCharacter.HasMount(53));
+                            }
+                            if (rank == 8)
+                            {
+                                ImGui.TableSetColumnIndex(5);
+                                uint? fkId = _globalCache.FramerKitStorage.GetFramerKitIdFromItemId(41371);
+                                if (fkId == null) return;
+                                DrawFramerKit(fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
+                            }
+                        }
+
+                        break;
+                    }
+                case 7: //Vath
+                    {
+                        if (ImGui.CollapsingHeader(
+                                $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 11429)}###Progress#BeastReputations#{id}#Reward"))
+                        {
+                            using var t = ImRaii.Table($"###Progress#BeastReputations#{id}#Reward#Table", 5);
+                            if (!t) break;
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Orchestrion1",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Minion1",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Minion2",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Mount1",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#FramerKit",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableNextRow();
+                            ImGui.TableSetColumnIndex(0);
+                            DrawOrchestrion(118, currentCharacter.HasOrchestrionRoll(118));
+                            if (rank >= 4)
+                            {
+                                ImGui.TableSetColumnIndex(1);
+                                DrawMinion(175, currentCharacter.HasMinion(175));
+                            }
+
+                            if (rank >= 7)
+                            {
+                                ImGui.TableSetColumnIndex(2);
+                                DrawMinion(156, currentCharacter.HasMinion(156));
+                                ImGui.TableSetColumnIndex(3);
+                                DrawMount(72, currentCharacter.HasMount(72));
+                            }
+                            if (rank == 8)
+                            {
+                                ImGui.TableSetColumnIndex(4);
+                                uint? fkId = _globalCache.FramerKitStorage.GetFramerKitIdFromItemId(41372);
+                                if (fkId == null) return;
+                                DrawFramerKit(fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
+                            }
+                        }
+
+                        break;
+                    }
+                case 8: //Moogle
+                    {
+                        if (ImGui.CollapsingHeader(
+                                $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 11429)}###Progress#BeastReputations#{id}#Reward"))
+                        {
+                            using var t = ImRaii.Table($"###Progress#BeastReputations#{id}#Reward#Table", 5);
+                            if (!t) break;
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Orchestrion1",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Minion1",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Emote1",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#FramerKit",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Minion2",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableNextRow();
+                            if (rank >= 7)
+                            {
+                                ImGui.TableSetColumnIndex(0);
+                                DrawEmote(126, currentCharacter.HasEmote(126));
+                                ImGui.TableSetColumnIndex(1);
+                                DrawMinion(184, currentCharacter.HasMinion(184));
+                                ImGui.TableSetColumnIndex(2);
+                                DrawMount(86, currentCharacter.HasMount(86));
+                            }
+
+                            if (rank == 8)
+                            {
+                                ImGui.TableSetColumnIndex(3);
+                                uint? fkId = _globalCache.FramerKitStorage.GetFramerKitIdFromItemId(41373);
+                                if (fkId == null) return;
+                                DrawFramerKit(fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
+                            }
+
+                            if (isAllied)
+                            {
+                                ImGui.TableSetColumnIndex(4);
+                                DrawMinion(235, currentCharacter.HasMinion(235));
+                            }
+                        }
+
+                        break;
+                    }
+                case 9: //Kojin
+                    {
+                        if (ImGui.CollapsingHeader(
+                                $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 11429)}###Progress#BeastReputations#{id}#Reward"))
+                        {
+                            using var t = ImRaii.Table($"###Progress#BeastReputations#{id}#Reward#Table", 7);
+                            if (!t) break;
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Minion1",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Orchestrion1",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Emote1",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Mount1",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#FramerKit",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Minion2",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Minion3",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableNextRow();
+                            if (rank >= 5)
+                            {
+                                ImGui.TableSetColumnIndex(0);
+                                DrawMinion(266, currentCharacter.HasMinion(266));
+                            }
+
+                            if (rank >= 6)
+                            {
+                                ImGui.TableSetColumnIndex(1);
+                                DrawOrchestrion(179, currentCharacter.HasOrchestrionRoll(179));
+                            }
+
+
+                            if (rank >= 8)
+                            {
+                                ImGui.TableSetColumnIndex(2);
+                                DrawEmote(167, currentCharacter.HasEmote(167));
+                                ImGui.TableSetColumnIndex(3);
+                                DrawMount(136, currentCharacter.HasMount(136));
+                                ImGui.TableSetColumnIndex(4);
+                                uint? fkId = _globalCache.FramerKitStorage.GetFramerKitIdFromItemId(40502);
+                                if (fkId == null) return;
+                                DrawFramerKit(fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
+                            }
+
+                            if (isAllied)
+                            {
+                                ImGui.TableSetColumnIndex(5);
+                                DrawMinion(323, currentCharacter.HasMinion(323));
+                                ImGui.TableSetColumnIndex(6);
+                                DrawMinion(328, currentCharacter.HasMinion(328));
+                            }
+                        }
+
+                        break;
+                    }
+                case 10: //Ananta
+                    {
+                        if (ImGui.CollapsingHeader(
+                                $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 11429)}###Progress#BeastReputations#{id}#Reward"))
+                        {
+                            using var t = ImRaii.Table($"###Progress#BeastReputations#{id}#Reward#Table", 7);
+                            if (!t) break;
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Minion1",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Emote1",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Orchestrion1",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Mount1",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Mount2",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#FramerKit",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Minion2",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableNextRow();
+                            if (rank >= 4)
+                            {
+                                ImGui.TableSetColumnIndex(0);
+                                DrawMinion(277, currentCharacter.HasMinion(277));
+                            }
+
+                            if (rank >= 5)
+                            {
+                                ImGui.TableSetColumnIndex(1);
+                                DrawEmote(64, currentCharacter.HasEmote(64));
+                                ImGui.TableSetColumnIndex(2);
+                                DrawOrchestrion(207, currentCharacter.HasOrchestrionRoll(207));
+                            }
+
+                            if (rank >= 7)
+                            {
+                                ImGui.TableSetColumnIndex(3);
+                                DrawMount(146, currentCharacter.HasMount(146));
+                            }
+
+                            if (rank >= 8)
+                            {
+                                ImGui.TableSetColumnIndex(4);
+                                DrawMount(148, currentCharacter.HasMount(148));
+                                ImGui.TableSetColumnIndex(5);
+                                uint? fkId = _globalCache.FramerKitStorage.GetFramerKitIdFromItemId(40503);
+                                if (fkId == null) return;
+                                DrawFramerKit(fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
+                            }
+
+                            if (isAllied)
+                            {
+                                ImGui.TableSetColumnIndex(6);
+                                DrawMinion(322, currentCharacter.HasMinion(322));
+                            }
+                        }
+
+                        break;
+                    }
+                case 11: //Namazu
+                    {
+                        if (ImGui.CollapsingHeader(
+                                $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 11429)}###Progress#BeastReputations#{id}#Reward"))
+                        {
+                            using var t = ImRaii.Table($"###Progress#BeastReputations#{id}#Reward#Table", 5);
+                            if (!t) break;
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Minion1",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Emote1",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Orchestrion1",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Mount1",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#FramerKit",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableNextRow();
+                            if (rank >= 4)
+                            {
+                                ImGui.TableSetColumnIndex(0);
+                                DrawMinion(302, currentCharacter.HasMinion(302));
+                            }
+
+                            if (rank >= 6)
+                            {
+                                ImGui.TableSetColumnIndex(1);
+                                DrawEmote(176, currentCharacter.HasEmote(176));
+                                ImGui.TableSetColumnIndex(2);
+                                DrawOrchestrion(231, currentCharacter.HasOrchestrionRoll(231));
+                            }
+
+                            if (rank >= 8)
+                            {
+                                ImGui.TableSetColumnIndex(3);
+                                DrawMount(164, currentCharacter.HasMount(164));
+                                ImGui.TableSetColumnIndex(4);
+                                uint? fkId = _globalCache.FramerKitStorage.GetFramerKitIdFromItemId(40504);
+                                if (fkId == null) return;
+                                DrawFramerKit(fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
+                            }
+                        }
+
+                        break;
+                    }
+                case 12: //Pixie
+                    {
+                        if (ImGui.CollapsingHeader(
+                                $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 11429)}###Progress#BeastReputations#{id}#Reward"))
+                        {
+                            using var t = ImRaii.Table($"###Progress#BeastReputations#{id}#Reward#Table", 4);
+                            if (!t) break;
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Minion1",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Mount1",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Orchestrion1",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#FramerKit",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableNextRow();
+                            if (rank >= 6)
+                            {
+                                ImGui.TableSetColumnIndex(0);
+                                DrawMinion(354, currentCharacter.HasMinion(354));
+                            }
+
+                            if (rank >= 7)
+                            {
+                                ImGui.TableSetColumnIndex(1);
+                                DrawMount(201, currentCharacter.HasMount(201));
+                            }
+
+                            if (rank >= 8)
+                            {
+                                ImGui.TableSetColumnIndex(2);
+                                DrawOrchestrion(345, currentCharacter.HasOrchestrionRoll(345));
+                                ImGui.TableSetColumnIndex(3);
+                                uint? fkId = _globalCache.FramerKitStorage.GetFramerKitIdFromItemId(39572);
+                                if (fkId == null) return;
+                                DrawFramerKit(fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
+                            }
+                        }
+
+                        break;
+                    }
+                case 13: //Qitari
+                    {
+                        if (ImGui.CollapsingHeader(
+                                $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 11429)}###Progress#BeastReputations#{id}#Reward"))
+                        {
+                            using var t = ImRaii.Table($"###Progress#BeastReputations#{id}#Reward#Table", 5);
+                            if (!t) break;
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Minion1",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Orchestrion1",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Mount1",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Minion2",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#FramerKit",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableNextRow();
+                            if (rank >= 4)
+                            {
+                                ImGui.TableSetColumnIndex(0);
+                                DrawMinion(369, currentCharacter.HasMinion(369));
+                            }
+                            
+                            if (rank >= 6)
+                            {
+                                ImGui.TableSetColumnIndex(1);
+                                DrawOrchestrion(371, currentCharacter.HasOrchestrionRoll(371));
+                            }
+
+                            if (rank >= 7)
+                            {
+                                ImGui.TableSetColumnIndex(2);
+                                DrawMount(215, currentCharacter.HasMount(215));
+                            }
+
+                            if (rank >= 8)
+                            {
+                                ImGui.TableSetColumnIndex(3);
+                                DrawMinion(370, currentCharacter.HasMinion(370));
+                                ImGui.TableSetColumnIndex(4);
+                                uint? fkId = _globalCache.FramerKitStorage.GetFramerKitIdFromItemId(39573);
+                                if (fkId == null) return;
+                                DrawFramerKit(fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
+                            }
+                        }
+
+                        break;
+                    }
+                case 14: //Dwarf
+                    {
+                        if (ImGui.CollapsingHeader(
+                                $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 11429)}###Progress#BeastReputations#{id}#Reward"))
+                        {
+                            using var t = ImRaii.Table($"###Progress#BeastReputations#{id}#Reward#Table", 5);
+                            if (!t) break;
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Minion1",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Orchestrion1",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Mount1",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Emote1",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#FramerKit",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableNextRow();
+                            if (rank >= 4)
+                            {
+                                ImGui.TableSetColumnIndex(0);
+                                DrawMinion(380, currentCharacter.HasMinion(380));
+                            }
+                            
+                            if (rank >= 6)
+                            {
+                                ImGui.TableSetColumnIndex(1);
+                                DrawOrchestrion(383, currentCharacter.HasOrchestrionRoll(383));
+                            }
+
+                            if (rank >= 7)
+                            {
+                                ImGui.TableSetColumnIndex(2);
+                                DrawMount(223, currentCharacter.HasMount(223));
+                            }
+
+                            if (rank >= 8)
+                            {
+                                ImGui.TableSetColumnIndex(3);
+                                DrawEmote(199, currentCharacter.HasEmote(199));
+                                ImGui.TableSetColumnIndex(4);
+                                uint? fkId = _globalCache.FramerKitStorage.GetFramerKitIdFromItemId(39574);
+                                if (fkId == null) return;
+                                DrawFramerKit(fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
+                            }
+                        }
+
+                        break;
+                    }
+                case 15: //Arkasodara
+                    {
+                        if (ImGui.CollapsingHeader(
+                                $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 11429)}###Progress#BeastReputations#{id}#Reward"))
+                        {
+                            using var t = ImRaii.Table($"###Progress#BeastReputations#{id}#Reward#Table", 5);
+                            if (!t) break;
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Minion1",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#TTCard1",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Mount1",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Orchestrion1",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#FramerKit",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableNextRow();
+                            if (rank >= 4)
+                            {
+                                ImGui.TableSetColumnIndex(0);
+                                DrawMinion(444, currentCharacter.HasMinion(444));
+                            }
+                            
+                            if (rank >= 5)
+                            {
+                                ImGui.TableSetColumnIndex(1);
+                                DrawTripleTriadCard(349, currentCharacter.HasTTC(349));
+                            }
+
+                            if (rank >= 7)
+                            {
+                                ImGui.TableSetColumnIndex(2);
+                                DrawMount(287, currentCharacter.HasMount(287));
+                            }
+
+                            if (rank >= 8)
+                            {
+                                ImGui.TableSetColumnIndex(3);
+                                DrawOrchestrion(514, currentCharacter.HasOrchestrionRoll(514));
+                                ImGui.TableSetColumnIndex(4);
+                                uint? fkId = _globalCache.FramerKitStorage.GetFramerKitIdFromItemId(39575);
+                                if (fkId == null) return;
+                                DrawFramerKit(fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
+                            }
+                        }
+
+                        break;
+                    }
+                case 16: //Omicron
+                    {
+                        if (ImGui.CollapsingHeader(
+                                $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 11429)}###Progress#BeastReputations#{id}#Reward"))
+                        {
+                            using var t = ImRaii.Table($"###Progress#BeastReputations#{id}#Reward#Table", 5);
+                            if (!t) break;
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#TTCard1",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Minion1",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Mount1",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#FramerKit",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Orchestrion1",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableNextRow();
+                            if (rank >= 4)
+                            {
+                                ImGui.TableSetColumnIndex(0);
+                                DrawTripleTriadCard(357, currentCharacter.HasTTC(357));
+                            }
+                            
+                            if (rank >= 5)
+                            {
+                                ImGui.TableSetColumnIndex(1);
+                                DrawMinion(457, currentCharacter.HasMinion(457));
+                            }
+
+                            if (rank >= 7)
+                            {
+                                ImGui.TableSetColumnIndex(2);
+                                DrawMount(298, currentCharacter.HasMount(298));
+                            }
+
+                            if (rank >= 8)
+                            {
+                                ImGui.TableSetColumnIndex(3);
+                                uint? fkId = _globalCache.FramerKitStorage.GetFramerKitIdFromItemId(38466);
+                                if (fkId == null) return;
+                                DrawFramerKit(fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
+                                ImGui.TableSetColumnIndex(4);
+                                DrawOrchestrion(514, currentCharacter.HasOrchestrionRoll(514));
+                            }
+                        }
+
+                        break;
+                    }
+                case 17: //Loporrit
+                    {
+                        if (ImGui.CollapsingHeader(
+                                $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 11429)}###Progress#BeastReputations#{id}#Reward"))
+                        {
+                            using var t = ImRaii.Table($"###Progress#BeastReputations#{id}#Reward#Table", 6);
+                            if (!t) break;
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Minion1",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Orchestrion1",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Mount1",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Emote",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#FramerKit",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Orchestrion",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableNextRow();
+                            if (rank >= 5)
+                            {
+                                ImGui.TableSetColumnIndex(0);
+                                DrawMinion(472, currentCharacter.HasMinion(472));
+                            }
+                            
+                            if (rank >= 6)
+                            {
+                                ImGui.TableSetColumnIndex(1);
+                                DrawOrchestrion(582, currentCharacter.HasOrchestrionRoll(582));
+                            }
+
+                            if (rank >= 7)
+                            {
+                                ImGui.TableSetColumnIndex(2);
+                                DrawMount(285, currentCharacter.HasMount(285));
+                            }
+
+                            if (rank >= 8)
+                            {
+                                ImGui.TableSetColumnIndex(3);
+                                DrawEmote(252, currentCharacter.HasEmote(252));
+                                ImGui.TableSetColumnIndex(4);
+                                uint? fkId = _globalCache.FramerKitStorage.GetFramerKitIdFromItemId(39576);
+                                if (fkId == null) return;
+                                DrawFramerKit(fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
+                                ImGui.TableSetColumnIndex(5);
+                                DrawOrchestrion(566, currentCharacter.HasOrchestrionRoll(566));
+                            }
+                        }
+
+                        break;
+                    }
+            }
+        }
+
+        private void DrawMinion(uint id, bool hasMinion)
+        {
+            Vector2 p = ImGui.GetCursorPos();
+            Minion? m = _globalCache.MinionStorage.GetMinion(_currentLocale, id);
+            if (m == null)
+            {
+                return;
+            }
+
+            if (!hasMinion)
+            {
+                if (_isSpoilerEnabled)
+                {
+                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(m.Icon), new Vector2(32, 32),
+                        new Vector4(1, 1, 1, 0.5f));
+                    if (ImGui.IsItemHovered())
+                    {
+                        Utils.DrawMinionTooltip(_currentLocale, ref _globalCache, m);
+                    }
+                }
+                else
+                {
+                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(000786), new Vector2(32, 32));
+                }
+            }
+            else
+            {
+                Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(m.Icon), new Vector2(32, 32));
+                if (ImGui.IsItemHovered())
+                {
+                    Utils.DrawMinionTooltip(_currentLocale, ref _globalCache, m);
+                }
+
+                ImGui.SetCursorPos(new Vector2(p.X + 26, p.Y + 20));
+                ImGui.TextUnformatted("\u2713");
+                ImGui.SetCursorPos(p);
+            }
+        }
+
+        private void DrawMount(uint id, bool hasMount)
+        {
+            Vector2 p = ImGui.GetCursorPos();
+            Mount? m = _globalCache.MountStorage.GetMount(_currentLocale, id);
+            if (m == null)
+            {
+                return;
+            }
+
+            if (!hasMount)
+            {
+                if (_isSpoilerEnabled)
+                {
+                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(m.Icon), new Vector2(32, 32),
+                        new Vector4(1, 1, 1, 0.5f));
+                    if (ImGui.IsItemHovered())
+                    {
+                        Utils.DrawMountTooltip(_currentLocale, ref _globalCache, m);
+                    }
+                }
+                else
+                {
+                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(000786), new Vector2(32, 32));
+                }
+            }
+            else
+            {
+                Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(m.Icon), new Vector2(32, 32));
+                if (ImGui.IsItemHovered())
+                {
+                    Utils.DrawMountTooltip(_currentLocale, ref _globalCache, m);
+                }
+
+                ImGui.SetCursorPos(new Vector2(p.X + 26, p.Y + 20));
+                ImGui.TextUnformatted("\u2713");
+                ImGui.SetCursorPos(p);
+            }
+        }
+
+        private void DrawEmote(uint id, bool hasEmote)
+        {
+            Vector2 p = ImGui.GetCursorPos();
+            Emote? e = _globalCache.EmoteStorage.GetEmote(_currentLocale, id);
+            if (e == null)
+            {
+                return;
+            }
+
+            if (!hasEmote)
+            {
+                if (_isSpoilerEnabled)
+                {
+                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(e.Icon), new Vector2(32, 32),
+                        new Vector4(1, 1, 1, 0.5f));
+                    if (ImGui.IsItemHovered())
+                    {
+                        Utils.DrawEmoteTooltip(_currentLocale, ref _globalCache, e);
+                    }
+                }
+                else
+                {
+                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(000786), new Vector2(32, 32));
+                }
+            }
+            else
+            {
+                Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(e.Icon), new Vector2(32, 32));
+                if (ImGui.IsItemHovered())
+                {
+                    Utils.DrawEmoteTooltip(_currentLocale, ref _globalCache, e);
+                }
+
+                ImGui.SetCursorPos(new Vector2(p.X + 26, p.Y + 20));
+                ImGui.TextUnformatted("\u2713");
+                ImGui.SetCursorPos(p);
+            }
+        }
+        private void DrawOrchestrion(uint id, bool hasOrchestrion)
+        {
+            Vector2 p = ImGui.GetCursorPos();
+            OrchestrionRoll? o = _globalCache.OrchestrionRollStorage.GetOrchestrionRoll(_currentLocale, id);
+            if (o == null)
+            {
+                return;
+            }
+
+            if (!hasOrchestrion)
+            {
+                if (_isSpoilerEnabled)
+                {
+                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(o.Icon), new Vector2(32, 32),
+                        new Vector4(1, 1, 1, 0.5f));
+                    if (ImGui.IsItemHovered())
+                    {
+                        Utils.DrawOrchestrionRollTooltip(_currentLocale, ref _globalCache, o);
+                    }
+                }
+                else
+                {
+                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(000786), new Vector2(32, 32));
+                }
+            }
+            else
+            {
+                Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(o.Icon), new Vector2(32, 32));
+                if (ImGui.IsItemHovered())
+                {
+                    Utils.DrawOrchestrionRollTooltip(_currentLocale, ref _globalCache, o);
+                }
+
+                ImGui.SetCursorPos(new Vector2(p.X + 26, p.Y + 20));
+                ImGui.TextUnformatted("\u2713");
+                ImGui.SetCursorPos(p);
+            }
+        }
+        
+        private void DrawFramerKit(uint id, bool hasFramerKit)
+        {
+            Vector2 p = ImGui.GetCursorPos();
+            FramerKit? f = _globalCache.FramerKitStorage.LoadItem(_currentLocale, id);
+            if (f == null)
+            {
+                return;
+            }
+            //Plugin.Log.Debug($"fk: {f.Id} name:{f.EnglishName}, icon:{f.Icon} itemId:{f.ItemId}");
+            if (!hasFramerKit)
+            {
+                if (_isSpoilerEnabled)
+                {
+                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(f.Icon), new Vector2(32, 32),
+                        new Vector4(1, 1, 1, 0.5f));
+                    if (ImGui.IsItemHovered())
+                    {
+                        Utils.DrawFramerKitTooltip(_currentLocale, ref _globalCache, f);
+                    }
+                }
+                else
+                {
+                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(000786), new Vector2(32, 32));
+                }
+            }
+            else
+            {
+                Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(f.Icon), new Vector2(32, 32));
+                if (ImGui.IsItemHovered())
+                {
+                    Utils.DrawFramerKitTooltip(_currentLocale, ref _globalCache, f);
+                }
+
+                ImGui.SetCursorPos(new Vector2(p.X + 26, p.Y + 20));
+                ImGui.TextUnformatted("\u2713");
+                ImGui.SetCursorPos(p);
+            }
+        }
+        
+        private void DrawTripleTriadCard(uint id, bool hasTripleTriadCard)
+        {
+            Vector2 p = ImGui.GetCursorPos();
+            TripleTriadCard? t = _globalCache.TripleTriadCardStorage.GetTripleTriadCard(_currentLocale, id);
+            if (t == null)
+            {
+                return;
+            }
+            //Plugin.Log.Debug($"fk: {f.Id} name:{f.EnglishName}, icon:{f.Icon} itemId:{f.ItemId}");
+            if (!hasTripleTriadCard)
+            {
+                if (_isSpoilerEnabled)
+                {
+                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(t.Icon), new Vector2(32, 32),
+                        new Vector4(1, 1, 1, 0.5f));
+                    if (ImGui.IsItemHovered())
+                    {
+                        Utils.DrawTTCTooltip(_currentLocale, ref _globalCache, t);
+                    }
+                }
+                else
+                {
+                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(000786), new Vector2(32, 32));
+                }
+            }
+            else
+            {
+                Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(t.Icon), new Vector2(32, 32));
+                if (ImGui.IsItemHovered())
+                {
+                    Utils.DrawTTCTooltip(_currentLocale, ref _globalCache, t);
+                }
+
+                ImGui.SetCursorPos(new Vector2(p.X + 26, p.Y + 20));
+                ImGui.TextUnformatted("\u2713");
+                ImGui.SetCursorPos(p);
+            }
         }
     }
 }

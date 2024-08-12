@@ -308,7 +308,7 @@ namespace Altoholic.Windows
                     using var table = ImRaii.Table("###CharactersRetainerTable", 2);
                     if (!table) return;
 
-                    ImGui.TableSetupColumn("###CharactersRetainerTable#RetainersListHeader", ImGuiTableColumnFlags.WidthFixed, 110);
+                    ImGui.TableSetupColumn("###CharactersRetainerTable#RetainersListHeader", ImGuiTableColumnFlags.WidthFixed, 130);
                     ImGui.TableSetupColumn("###CharactersRetainerTable#Inventories", ImGuiTableColumnFlags.WidthStretch);
                     ImGui.TableNextRow();
                     ImGui.TableSetColumnIndex(0);
