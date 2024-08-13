@@ -640,6 +640,7 @@ namespace Altoholic.Windows
                     }
                 case 4: //Sahagin
                     {
+                        if (rank < 4) return;
                         if (ImGui.CollapsingHeader(
                                 $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 11429)}###Progress#BeastReputations#{id}#Reward"))
                         {
@@ -654,17 +655,14 @@ namespace Altoholic.Windows
                             ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Minion2",
                                 ImGuiTableColumnFlags.WidthFixed, 36);
                             ImGui.TableNextRow();
-                            if (rank >= 4)
-                            {
-                                ImGui.TableSetColumnIndex(0);
-                                DrawMinion(61, currentCharacter.HasMinion(61));
-                                ImGui.TableSetColumnIndex(1);
-                                DrawMount(26, currentCharacter.HasMount(26));
-                                ImGui.TableSetColumnIndex(2);
-                                uint? fkId = _globalCache.FramerKitStorage.GetFramerKitIdFromItemId(43958);
-                                if (fkId == null) return;
-                                DrawFramerKit(fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
-                            }
+                            ImGui.TableSetColumnIndex(0);
+                            DrawMinion(61, currentCharacter.HasMinion(61));
+                            ImGui.TableSetColumnIndex(1);
+                            DrawMount(26, currentCharacter.HasMount(26));
+                            ImGui.TableSetColumnIndex(2);
+                            uint? fkId = _globalCache.FramerKitStorage.GetFramerKitIdFromItemId(43958);
+                            if (fkId == null) return;
+                            DrawFramerKit(fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
 
                             if (isAllied)
                             {
@@ -677,6 +675,7 @@ namespace Altoholic.Windows
                     }
                 case 5: //Ixal
                     {
+                        if (rank < 4) return;
                         if (ImGui.CollapsingHeader(
                                 $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 11429)}###Progress#BeastReputations#{id}#Reward"))
                         {
@@ -691,13 +690,10 @@ namespace Altoholic.Windows
                             ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Minion2",
                                 ImGuiTableColumnFlags.WidthFixed, 36);
                             ImGui.TableNextRow();
-                            if (rank >= 4)
-                            {
-                                ImGui.TableSetColumnIndex(0);
-                                DrawMinion(59, currentCharacter.HasMinion(59));
-                                ImGui.TableSetColumnIndex(1);
-                                DrawMount(35, currentCharacter.HasMount(35));
-                            }
+                            ImGui.TableSetColumnIndex(0);
+                            DrawMinion(59, currentCharacter.HasMinion(59));
+                            ImGui.TableSetColumnIndex(1);
+                            DrawMount(35, currentCharacter.HasMount(35));
 
                             if (rank >= 5)
                             {
@@ -718,6 +714,7 @@ namespace Altoholic.Windows
                     }
                 case 6: //Vanu Vanu
                     {
+                        if (rank < 4) return;
                         if (ImGui.CollapsingHeader(
                                 $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 11429)}###Progress#BeastReputations#{id}#Reward"))
                         {
@@ -738,11 +735,8 @@ namespace Altoholic.Windows
                             ImGui.TableNextRow();
                             ImGui.TableSetColumnIndex(0);
                             DrawOrchestrion(86, currentCharacter.HasOrchestrionRoll(86));
-                            if (rank >= 4)
-                            {
-                                ImGui.TableSetColumnIndex(1);
-                                DrawMinion(135, currentCharacter.HasMinion(135));
-                            }
+                            ImGui.TableSetColumnIndex(1);
+                            DrawMinion(135, currentCharacter.HasMinion(135));
 
                             if (rank >= 6)
                             {
@@ -770,6 +764,7 @@ namespace Altoholic.Windows
                     }
                 case 7: //Vath
                     {
+                        if (rank < 4) return;
                         if (ImGui.CollapsingHeader(
                                 $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 11429)}###Progress#BeastReputations#{id}#Reward"))
                         {
@@ -788,11 +783,8 @@ namespace Altoholic.Windows
                             ImGui.TableNextRow();
                             ImGui.TableSetColumnIndex(0);
                             DrawOrchestrion(118, currentCharacter.HasOrchestrionRoll(118));
-                            if (rank >= 4)
-                            {
-                                ImGui.TableSetColumnIndex(1);
-                                DrawMinion(175, currentCharacter.HasMinion(175));
-                            }
+                            ImGui.TableSetColumnIndex(1);
+                            DrawMinion(175, currentCharacter.HasMinion(175));
 
                             if (rank >= 7)
                             {
@@ -814,6 +806,7 @@ namespace Altoholic.Windows
                     }
                 case 8: //Moogle
                     {
+                        if (rank < 7) return;
                         if (ImGui.CollapsingHeader(
                                 $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 11429)}###Progress#BeastReputations#{id}#Reward"))
                         {
@@ -830,15 +823,12 @@ namespace Altoholic.Windows
                             ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Minion2",
                                 ImGuiTableColumnFlags.WidthFixed, 36);
                             ImGui.TableNextRow();
-                            if (rank >= 7)
-                            {
-                                ImGui.TableSetColumnIndex(0);
-                                DrawEmote(126, currentCharacter.HasEmote(126));
-                                ImGui.TableSetColumnIndex(1);
-                                DrawMinion(184, currentCharacter.HasMinion(184));
-                                ImGui.TableSetColumnIndex(2);
-                                DrawMount(86, currentCharacter.HasMount(86));
-                            }
+                            ImGui.TableSetColumnIndex(0);
+                            DrawEmote(126, currentCharacter.HasEmote(126));
+                            ImGui.TableSetColumnIndex(1);
+                            DrawMinion(184, currentCharacter.HasMinion(184));
+                            ImGui.TableSetColumnIndex(2);
+                            DrawMount(86, currentCharacter.HasMount(86));
 
                             if (rank == 8)
                             {
@@ -859,6 +849,7 @@ namespace Altoholic.Windows
                     }
                 case 9: //Kojin
                     {
+                        if (rank < 5) return;
                         if (ImGui.CollapsingHeader(
                                 $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 11429)}###Progress#BeastReputations#{id}#Reward"))
                         {
@@ -879,11 +870,8 @@ namespace Altoholic.Windows
                             ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Minion3",
                                 ImGuiTableColumnFlags.WidthFixed, 36);
                             ImGui.TableNextRow();
-                            if (rank >= 5)
-                            {
-                                ImGui.TableSetColumnIndex(0);
-                                DrawMinion(266, currentCharacter.HasMinion(266));
-                            }
+                            ImGui.TableSetColumnIndex(0);
+                            DrawMinion(266, currentCharacter.HasMinion(266));
 
                             if (rank >= 6)
                             {
@@ -917,6 +905,7 @@ namespace Altoholic.Windows
                     }
                 case 10: //Ananta
                     {
+                        if (rank < 4) return;
                         if (ImGui.CollapsingHeader(
                                 $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 11429)}###Progress#BeastReputations#{id}#Reward"))
                         {
@@ -937,11 +926,8 @@ namespace Altoholic.Windows
                             ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Minion2",
                                 ImGuiTableColumnFlags.WidthFixed, 36);
                             ImGui.TableNextRow();
-                            if (rank >= 4)
-                            {
-                                ImGui.TableSetColumnIndex(0);
-                                DrawMinion(277, currentCharacter.HasMinion(277));
-                            }
+                            ImGui.TableSetColumnIndex(0);
+                            DrawMinion(277, currentCharacter.HasMinion(277));
 
                             if (rank >= 5)
                             {
@@ -978,6 +964,7 @@ namespace Altoholic.Windows
                     }
                 case 11: //Namazu
                     {
+                        if (rank < 4) return;
                         if (ImGui.CollapsingHeader(
                                 $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 11429)}###Progress#BeastReputations#{id}#Reward"))
                         {
@@ -994,11 +981,8 @@ namespace Altoholic.Windows
                             ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#FramerKit",
                                 ImGuiTableColumnFlags.WidthFixed, 36);
                             ImGui.TableNextRow();
-                            if (rank >= 4)
-                            {
-                                ImGui.TableSetColumnIndex(0);
-                                DrawMinion(302, currentCharacter.HasMinion(302));
-                            }
+                            ImGui.TableSetColumnIndex(0);
+                            DrawMinion(302, currentCharacter.HasMinion(302));
 
                             if (rank >= 6)
                             {
@@ -1023,6 +1007,7 @@ namespace Altoholic.Windows
                     }
                 case 12: //Pixie
                     {
+                        if (rank < 6) return;
                         if (ImGui.CollapsingHeader(
                                 $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 11429)}###Progress#BeastReputations#{id}#Reward"))
                         {
@@ -1037,11 +1022,8 @@ namespace Altoholic.Windows
                             ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#FramerKit",
                                 ImGuiTableColumnFlags.WidthFixed, 36);
                             ImGui.TableNextRow();
-                            if (rank >= 6)
-                            {
-                                ImGui.TableSetColumnIndex(0);
-                                DrawMinion(354, currentCharacter.HasMinion(354));
-                            }
+                            ImGui.TableSetColumnIndex(0);
+                            DrawMinion(354, currentCharacter.HasMinion(354));
 
                             if (rank >= 7)
                             {
@@ -1064,6 +1046,7 @@ namespace Altoholic.Windows
                     }
                 case 13: //Qitari
                     {
+                        if (rank < 4) return;
                         if (ImGui.CollapsingHeader(
                                 $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 11429)}###Progress#BeastReputations#{id}#Reward"))
                         {
@@ -1080,11 +1063,8 @@ namespace Altoholic.Windows
                             ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#FramerKit",
                                 ImGuiTableColumnFlags.WidthFixed, 36);
                             ImGui.TableNextRow();
-                            if (rank >= 4)
-                            {
-                                ImGui.TableSetColumnIndex(0);
-                                DrawMinion(369, currentCharacter.HasMinion(369));
-                            }
+                            ImGui.TableSetColumnIndex(0);
+                            DrawMinion(369, currentCharacter.HasMinion(369));
                             
                             if (rank >= 6)
                             {
@@ -1113,6 +1093,7 @@ namespace Altoholic.Windows
                     }
                 case 14: //Dwarf
                     {
+                        if (rank < 4) return;
                         if (ImGui.CollapsingHeader(
                                 $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 11429)}###Progress#BeastReputations#{id}#Reward"))
                         {
@@ -1129,11 +1110,8 @@ namespace Altoholic.Windows
                             ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#FramerKit",
                                 ImGuiTableColumnFlags.WidthFixed, 36);
                             ImGui.TableNextRow();
-                            if (rank >= 4)
-                            {
-                                ImGui.TableSetColumnIndex(0);
-                                DrawMinion(380, currentCharacter.HasMinion(380));
-                            }
+                            ImGui.TableSetColumnIndex(0);
+                            DrawMinion(380, currentCharacter.HasMinion(380));
                             
                             if (rank >= 6)
                             {
@@ -1162,6 +1140,7 @@ namespace Altoholic.Windows
                     }
                 case 15: //Arkasodara
                     {
+                        if (rank < 4) return;
                         if (ImGui.CollapsingHeader(
                                 $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 11429)}###Progress#BeastReputations#{id}#Reward"))
                         {
@@ -1178,11 +1157,8 @@ namespace Altoholic.Windows
                             ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#FramerKit",
                                 ImGuiTableColumnFlags.WidthFixed, 36);
                             ImGui.TableNextRow();
-                            if (rank >= 4)
-                            {
-                                ImGui.TableSetColumnIndex(0);
-                                DrawMinion(444, currentCharacter.HasMinion(444));
-                            }
+                            ImGui.TableSetColumnIndex(0);
+                            DrawMinion(444, currentCharacter.HasMinion(444));
                             
                             if (rank >= 5)
                             {
@@ -1211,6 +1187,7 @@ namespace Altoholic.Windows
                     }
                 case 16: //Omicron
                     {
+                        if (rank < 4) return;
                         if (ImGui.CollapsingHeader(
                                 $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 11429)}###Progress#BeastReputations#{id}#Reward"))
                         {
@@ -1227,11 +1204,8 @@ namespace Altoholic.Windows
                             ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Orchestrion1",
                                 ImGuiTableColumnFlags.WidthFixed, 36);
                             ImGui.TableNextRow();
-                            if (rank >= 4)
-                            {
-                                ImGui.TableSetColumnIndex(0);
-                                DrawTripleTriadCard(357, currentCharacter.HasTTC(357));
-                            }
+                            ImGui.TableSetColumnIndex(0);
+                            DrawTripleTriadCard(357, currentCharacter.HasTTC(357));
                             
                             if (rank >= 5)
                             {
@@ -1260,6 +1234,7 @@ namespace Altoholic.Windows
                     }
                 case 17: //Loporrit
                     {
+                        if (rank < 5) return;
                         if (ImGui.CollapsingHeader(
                                 $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 11429)}###Progress#BeastReputations#{id}#Reward"))
                         {
@@ -1278,11 +1253,8 @@ namespace Altoholic.Windows
                             ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Orchestrion",
                                 ImGuiTableColumnFlags.WidthFixed, 36);
                             ImGui.TableNextRow();
-                            if (rank >= 5)
-                            {
-                                ImGui.TableSetColumnIndex(0);
-                                DrawMinion(472, currentCharacter.HasMinion(472));
-                            }
+                            ImGui.TableSetColumnIndex(0);
+                            DrawMinion(472, currentCharacter.HasMinion(472));
                             
                             if (rank >= 6)
                             {
