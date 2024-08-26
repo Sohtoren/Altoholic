@@ -137,9 +137,9 @@ namespace Altoholic.Windows
 
         public void DrawTabs(Character selectedCharacter)
         {
-            using var tab = ImRaii.TabBar($"###CharactersProgressTable#ProgressTabs#{selectedCharacter.Id}#TabBar");
+            using var tab = ImRaii.TabBar($"###CharactersProgressTable#ProgressTabs#{selectedCharacter.CharacterId}#TabBar");
             if (!tab) return; 
-            /*using (var msqTab = ImRaii.TabItem($"MSQ###Progress#Tabs#{selectedCharacter.Id}#TabBar#MSQ"))
+            /*using (var msqTab = ImRaii.TabItem($"MSQ###Progress#Tabs#{selectedCharacter.CharacterId}#TabBar#MSQ"))
             {
                 if (msqTab)
                 {
@@ -149,7 +149,7 @@ namespace Altoholic.Windows
 
             using (var eventTab =
                    ImRaii.TabItem(
-                       $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 665)}###Progress#Tabs#{selectedCharacter.Id}#TabBar#Events"))
+                       $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 665)}###Progress#Tabs#{selectedCharacter.CharacterId}#TabBar#Events"))
             {
                 if (eventTab)
                 {
@@ -159,7 +159,7 @@ namespace Altoholic.Windows
 
             using (ImRaii.IEndObject reputationTab =
                    ImRaii.TabItem(
-                       $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 102512)}###CharactersProgressTable#ProgressTabs#{selectedCharacter.Id}#TabBar#Tabs#Reputation"))
+                       $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 102512)}###CharactersProgressTable#ProgressTabs#{selectedCharacter.CharacterId}#TabBar#Tabs#Reputation"))
             {
                 if (reputationTab.Success)
                 {

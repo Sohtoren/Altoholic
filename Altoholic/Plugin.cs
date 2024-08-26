@@ -37,6 +37,7 @@ namespace Altoholic
         public static string Name => "Altoholic Plugin";
         private const string CommandName = "/altoholic";
         private const string SaveCommandName = "/altoholicsave";
+        private const string BlacklistCommandName = "/altoholicbl";
         private readonly int[] _questIds = [65970, 66045, 66216, 66217, 66218, 66640, 66641, 66642, 66754, 66789, 66857, 66911, 66968, 66969, 66970, 67023, 67099, 67100, 67101, 67658, 67700, 67791, 67856, 68509, 68572, 68633, 68734, 68817, 69133, 69219, 69330, 69432, 70081, 70137, 70217, 69208, 67631, 69208, 67009/*Arr Allied*/, 67921/*HW Allied*/, 68700/*SB Allied*/, 70324/*EW Allied*/];
 
         [PluginService] public static IDalamudPluginInterface PluginInterface { get; set; } = null!;
@@ -50,6 +51,7 @@ namespace Altoholic
         [PluginService] public static ICondition Condition { get; set; } = null!;
         [PluginService] public static ISigScanner SigScanner { get; set; } = null!;
         [PluginService] public static IGameInteropProvider Hook { get; set; } = null!;
+        [PluginService] public static IChatGui ChatGui { get; set; } = null!;
 
         private const string PlaytimeSig = "E8 ?? ?? ?? ?? B9 ?? ?? ?? ?? 48 8B D3";
         private delegate long PlaytimeDelegate(uint param1, long param2, uint param3);
@@ -77,6 +79,7 @@ namespace Altoholic
 
         private readonly PeriodicTimer? _periodicTimer = null;
         public List<Character> OtherCharacters = [];
+        public List<Blacklist> BlacklistedCharacters = [];
         private readonly Localization _localization = new();
         private readonly GlobalCache _globalCache;
 
@@ -140,6 +143,12 @@ namespace Altoholic
                 Database.Database.CheckOrCreateDatabases(_db);
             }
 
+            BlacklistedCharacters = Database.Database.GetBlacklists(_db);
+            Log.Debug("BlacklistedCharacters.Count: ", BlacklistedCharacters.Count);
+            foreach (Blacklist blacklistedCharacter in BlacklistedCharacters)
+            {
+                Log.Debug($"Blacklisted id: {blacklistedCharacter.CharacterId}");
+            }
 
             Configuration = PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
             Configuration.Initialize(PluginInterface);
@@ -245,6 +254,10 @@ namespace Altoholic
             {
                 HelpMessage = "Manually save current char"
             });
+            CommandManager.AddHandler(BlacklistCommandName, new CommandInfo(OnBlacklistCommand)
+            {
+                HelpMessage = "Remove current character from blacklist"
+            });
 
             PluginInterface.UiBuilder.Draw += DrawUI;
             PluginInterface.UiBuilder.OpenConfigUi += DrawConfigUI;
@@ -301,6 +314,19 @@ namespace Altoholic
             SqliteConnection.ClearAllPools();
         }
 
+        private void OnBlacklistCommand(string command, string args)
+        {
+            Log.Debug("OnBlacklistCommand called");
+            Blacklist? blacklist = BlacklistedCharacters.Find(b => b.CharacterId == ClientState.LocalContentId);
+            if (blacklist is null)
+            {
+                Utils.ChatMessage("Character not found in the blacklist");
+                return;
+            }
+            Database.Database.DeleteBlacklist(_db, blacklist.CharacterId);
+            BlacklistedCharacters.Remove(blacklist);
+            ChatGui.Print("Character removed from blacklist");
+        }
         private void OnSaveCommand(string command, string args)
         {
             Log.Debug("OnSaveCommand called");
@@ -347,37 +373,40 @@ namespace Altoholic
             if (_localPlayer.CharacterId == 0 || string.IsNullOrEmpty(_localPlayer.FirstName))
             {
                 Character? p = GetCharacterFromGameOrDatabase();
-                if (p is not null)
+                if (p is null) return;
+
+                _localPlayer = p;
+                //Plugin.Log.Debug($"localPlayerPlayTime : {localPlayerPlayTime}");
+                if (_localPlayer.PlayTime == 0) //still needed?
                 {
-                    _localPlayer = p;
-                    //Plugin.Log.Debug($"localPlayerPlayTime : {localPlayerPlayTime}");
-                    if (_localPlayer.PlayTime == 0)//still needed?
+                    Character? chara = Database.Database.GetCharacter(_db, _localPlayer.CharacterId);
+                    if (chara is not null)
                     {
-                        Character? chara = Database.Database.GetCharacter(_db, _localPlayer.CharacterId);
-                        if (chara is not null)
-                        {
-                            _localPlayer.PlayTime = chara.PlayTime;
-                            _localPlayer.LastPlayTimeUpdate = chara.LastPlayTimeUpdate;
-                        }
+                        _localPlayer.PlayTime = chara.PlayTime;
+                        _localPlayer.LastPlayTimeUpdate = chara.LastPlayTimeUpdate;
                     }
+                }
 
 #if DEBUG
-                    Log.Debug($"Character localLastPlayTimeUpdate : {_localPlayer.LastPlayTimeUpdate}");
+                Log.Debug($"Character localLastPlayTimeUpdate : {_localPlayer.LastPlayTimeUpdate}");
 
-                    /*foreach (Inventory inventory in _localPlayer.Inventory)
-                    {
-                        Plugin.Log.Debug($"{inventory.ItemId} {lumina.Singular} {inventory.HQ} {inventory.Quantity}");
-                    }*/
+                /*foreach (Inventory inventory in _localPlayer.Inventory)
+                {
+                    Plugin.Log.Debug($"{inventory.ItemId} {lumina.Singular} {inventory.HQ} {inventory.Quantity}");
+                }*/
 #endif
-                }
             }
+
             if (_localPlayer.CharacterId != 0)
             {
                 if (OtherCharacters.Count == 0)
                 {
                     OtherCharacters = Database.Database.GetOthersCharacters(_db, _localPlayer.CharacterId);
                 }
+
                 //Plugin.Log.Debug($"otherCharacters count {otherCharacters.Count}");
+
+                if (BlacklistedCharacters.Exists(b => b.CharacterId == _localPlayer.CharacterId)) return;
 
                 //Plugin.Log.Debug($"localPlayer.Quests.Count: {localPlayer.Quests.Count}");
                 if (_localPlayer.Quests.Count == 0)
@@ -398,11 +427,13 @@ namespace Altoholic
                         _localPlayer.Retainers = chara.Retainers;
                     }
                 }
+
+#if DEBUG
                 foreach (Gear i in _localPlayer.Gear)
                 {
                     Log.Debug($"Gear: {i.ItemId} {Enum.GetName(typeof(GearSlot), i.Slot)} {i.Slot}");
                 }
-#if DEBUG
+
                 /*Plugin.Log.Debug($"Title {localPlayer.Profile.Title}");
                 Plugin.Log.Debug($"Title Length {localPlayer.Profile.Title.Length}");
                 Plugin.Log.Debug($"Grand Company {localPlayer.Profile.Grand_Company}");
@@ -547,6 +578,8 @@ namespace Altoholic
             {
                 _localPlayer = new Character { CharacterId = ClientState.LocalContentId };
             }
+
+            if (BlacklistedCharacters.Exists(b => b.CharacterId == _localPlayer.CharacterId)) return;
 
             string name = lPlayer.Name.TextValue;
             if (string.IsNullOrEmpty(name)) return;
@@ -1349,7 +1382,9 @@ namespace Altoholic
 
         private void OnCharacterLogin()
         {
-            //Log.Info("Altoholic : OnCharacterLogin called");
+            Log.Info("Altoholic : OnCharacterLogin called");
+            OtherCharacters = Database.Database.GetOthersCharacters(_db, _localPlayer.CharacterId);
+
             Character? p = GetCharacterFromGameOrDatabase();
             if (p is null)
             {
@@ -1358,7 +1393,7 @@ namespace Altoholic
 
             _localPlayer = p;
             //Log.Info($"Character id is : {localPlayer.Id}");
-            OtherCharacters = Database.Database.GetOthersCharacters(_db, _localPlayer.CharacterId);
+            
             //Log.Info("Altoholic : Found {0} others players", otherCharacters.Count);
             //Todo: start timer after /playtime command
             /*_ = new XivChatEntry
@@ -1471,6 +1506,8 @@ namespace Altoholic
             if (_localPlayer.CharacterId == 0 || _localPlayer.FirstName.Length == 0) return;
 
             Log.Debug($"Updating characters with {_localPlayer.CharacterId} {_localPlayer.FirstName} {_localPlayer.LastName}{(char)SeIconChar.CrossWorld}{_localPlayer.HomeWorld}, {Utils.GetRegionFromWorld(_localPlayer.HomeWorld)}.");
+            Blacklist? b = Database.Database.GetBlacklist(_db, _localPlayer.CharacterId);
+            if (b != null) return;
             Character? charExist = Database.Database.GetCharacter(_db, _localPlayer.CharacterId);
             if (charExist == null)
             {
@@ -1484,6 +1521,7 @@ namespace Altoholic
 
         public Character? GetCharacterFromGameOrDatabase()
         {
+            if (BlacklistedCharacters.Exists(b => b.CharacterId == ClientState.LocalContentId)) return null;
             (string, string, string) player = GetLocalPlayerNameWorldRegion();
             if (string.IsNullOrEmpty(player.Item1) || string.IsNullOrEmpty(player.Item2) || string.IsNullOrEmpty(player.Item3)) return null;
 

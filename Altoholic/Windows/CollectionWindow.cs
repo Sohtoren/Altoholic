@@ -286,7 +286,7 @@ namespace Altoholic.Windows
         {
             using var minionsTabTable = ImRaii.Table("###MinionsTabTable", 1, ImGuiTableFlags.ScrollY);
             if (!minionsTabTable) return;
-            ImGui.TableSetupColumn($"###MinionsTabTable#{currentCharacter.Id}#Col1",
+            ImGui.TableSetupColumn($"###MinionsTabTable#{currentCharacter.CharacterId}#Col1",
                 ImGuiTableColumnFlags.WidthStretch);
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
@@ -309,9 +309,9 @@ namespace Altoholic.Windows
                 widthCol1 = 480;
                 widthCol2 = 120;
             }
-            ImGui.TableSetupColumn($"###MinionsTableAmount#{currentCharacter.Id}#Amount#Col1",
+            ImGui.TableSetupColumn($"###MinionsTableAmount#{currentCharacter.CharacterId}#Amount#Col1",
                 ImGuiTableColumnFlags.WidthFixed, widthCol1);
-            ImGui.TableSetupColumn($"###MinionsTableAmount#{currentCharacter.Id}#Amount#Col2",
+            ImGui.TableSetupColumn($"###MinionsTableAmount#{currentCharacter.CharacterId}#Amount#Col2",
                 ImGuiTableColumnFlags.WidthFixed, widthCol2);
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
@@ -409,7 +409,7 @@ namespace Altoholic.Windows
         {
             using var mountsTabTable = ImRaii.Table("###MountsTabTable", 1, ImGuiTableFlags.ScrollY);
             if (!mountsTabTable) return;
-            ImGui.TableSetupColumn($"###MountsTabTable#{currentCharacter.Id}#Col1",
+            ImGui.TableSetupColumn($"###MountsTabTable#{currentCharacter.CharacterId}#Col1",
                 ImGuiTableColumnFlags.WidthStretch);
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
@@ -432,9 +432,9 @@ namespace Altoholic.Windows
                 widthCol1 = 480;
                 widthCol2 = 120;
             }
-            ImGui.TableSetupColumn($"###MountsTableAmount#{currentCharacter.Id}#Amount#Col1",
+            ImGui.TableSetupColumn($"###MountsTableAmount#{currentCharacter.CharacterId}#Amount#Col1",
                 ImGuiTableColumnFlags.WidthFixed, widthCol1);
-            ImGui.TableSetupColumn($"###MountsTableAmount#{currentCharacter.Id}#Amount#Col2",
+            ImGui.TableSetupColumn($"###MountsTableAmount#{currentCharacter.CharacterId}#Amount#Col2",
                 ImGuiTableColumnFlags.WidthFixed, widthCol2);
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
@@ -531,7 +531,7 @@ namespace Altoholic.Windows
         {
             using var tripleTriadCardsTabTable = ImRaii.Table("###TripleTriadCardsTabTable", 1, ImGuiTableFlags.ScrollY);
             if (!tripleTriadCardsTabTable) return;
-            ImGui.TableSetupColumn($"###TripleTriadCardsTabTable#{currentCharacter.Id}#Col1",
+            ImGui.TableSetupColumn($"###TripleTriadCardsTabTable#{currentCharacter.CharacterId}#Col1",
                 ImGuiTableColumnFlags.WidthStretch);
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
@@ -547,9 +547,9 @@ namespace Altoholic.Windows
             ImGui.TableSetColumnIndex(0);
             using var tripleTriadCardsTableAmount = ImRaii.Table("###TripleTriadCardsTableAmount", 2);
             if (!tripleTriadCardsTableAmount) return;
-            ImGui.TableSetupColumn($"###TripleTriadCardsTableAmount#{currentCharacter.Id}#Amount#Col1",
+            ImGui.TableSetupColumn($"###TripleTriadCardsTableAmount#{currentCharacter.CharacterId}#Amount#Col1",
                 ImGuiTableColumnFlags.WidthFixed, 480);
-            ImGui.TableSetupColumn($"###TripleTriadCardsTableAmount#{currentCharacter.Id}#Amount#Col2",
+            ImGui.TableSetupColumn($"###TripleTriadCardsTableAmount#{currentCharacter.CharacterId}#Amount#Col2",
                 ImGuiTableColumnFlags.WidthFixed, 80);
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
@@ -639,7 +639,7 @@ namespace Altoholic.Windows
         {
             using var emoteTabTable = ImRaii.Table("###EmotesTabTable", 1, ImGuiTableFlags.ScrollY);
             if (!emoteTabTable) return;
-            ImGui.TableSetupColumn($"###EmotesTabTable#{currentCharacter.Id}#Col1",
+            ImGui.TableSetupColumn($"###EmotesTabTable#{currentCharacter.CharacterId}#Col1",
                 ImGuiTableColumnFlags.WidthStretch);
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
@@ -655,9 +655,9 @@ namespace Altoholic.Windows
             ImGui.TableSetColumnIndex(0);
             using var emoteTableAmount = ImRaii.Table("###EmotesTableAmount", 2);
             if (!emoteTableAmount) return;
-            ImGui.TableSetupColumn($"###EmotesTableAmount#{currentCharacter.Id}#Amount#Col1",
+            ImGui.TableSetupColumn($"###EmotesTableAmount#{currentCharacter.CharacterId}#Amount#Col1",
                 ImGuiTableColumnFlags.WidthFixed, 480);
-            ImGui.TableSetupColumn($"###EmotesTableAmount#{currentCharacter.Id}#Amount#Col2",
+            ImGui.TableSetupColumn($"###EmotesTableAmount#{currentCharacter.CharacterId}#Amount#Col2",
                 ImGuiTableColumnFlags.WidthFixed, 80);
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
@@ -769,7 +769,7 @@ namespace Altoholic.Windows
         {
             using var bardingsTabTable = ImRaii.Table("###BardingsTabTable", 1, ImGuiTableFlags.ScrollY);
             if (!bardingsTabTable) return;
-            ImGui.TableSetupColumn($"###BardingsTabTable#{currentCharacter.Id}#Col1",
+            ImGui.TableSetupColumn($"###BardingsTabTable#{currentCharacter.CharacterId}#Col1",
                 ImGuiTableColumnFlags.WidthStretch);
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
@@ -792,9 +792,9 @@ namespace Altoholic.Windows
                 widthCol1 = 480;
                 widthCol2 = 120;
             }
-            ImGui.TableSetupColumn($"###BardingsTableAmount#{currentCharacter.Id}#Amount#Col1",
+            ImGui.TableSetupColumn($"###BardingsTableAmount#{currentCharacter.CharacterId}#Amount#Col1",
                 ImGuiTableColumnFlags.WidthFixed, widthCol1);
-            ImGui.TableSetupColumn($"###BardingsTableAmount#{currentCharacter.Id}#Amount#Col2",
+            ImGui.TableSetupColumn($"###BardingsTableAmount#{currentCharacter.CharacterId}#Amount#Col2",
                 ImGuiTableColumnFlags.WidthFixed, widthCol2);
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
@@ -891,7 +891,7 @@ namespace Altoholic.Windows
         {
             using var framerKitsTabTable = ImRaii.Table("###FramerKitsTabTable", 1, ImGuiTableFlags.ScrollY);
             if (!framerKitsTabTable) return;
-            ImGui.TableSetupColumn($"###FramerKitsTabTable#{currentCharacter.Id}#Col1",
+            ImGui.TableSetupColumn($"###FramerKitsTabTable#{currentCharacter.CharacterId}#Col1",
                 ImGuiTableColumnFlags.WidthStretch);
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
@@ -914,9 +914,9 @@ namespace Altoholic.Windows
                 widthCol1 = 480;
                 widthCol2 = 120;
             }
-            ImGui.TableSetupColumn($"###FramerKitsTableAmount#{currentCharacter.Id}#Amount#Col1",
+            ImGui.TableSetupColumn($"###FramerKitsTableAmount#{currentCharacter.CharacterId}#Amount#Col1",
                 ImGuiTableColumnFlags.WidthFixed, widthCol1);
-            ImGui.TableSetupColumn($"###FramerKitsTableAmount#{currentCharacter.Id}#Amount#Col2",
+            ImGui.TableSetupColumn($"###FramerKitsTableAmount#{currentCharacter.CharacterId}#Amount#Col2",
                 ImGuiTableColumnFlags.WidthFixed, widthCol2);
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
@@ -1014,7 +1014,7 @@ namespace Altoholic.Windows
         {
             using var orchestrionRollsTabTable = ImRaii.Table("###OrchestrionRollsTabTable", 1, ImGuiTableFlags.ScrollY);
             if (!orchestrionRollsTabTable) return;
-            ImGui.TableSetupColumn($"###OrchestrionRollsTabTable#{currentCharacter.Id}#Col1",
+            ImGui.TableSetupColumn($"###OrchestrionRollsTabTable#{currentCharacter.CharacterId}#Col1",
                 ImGuiTableColumnFlags.WidthStretch);
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
@@ -1037,9 +1037,9 @@ namespace Altoholic.Windows
                 widthCol1 = 480;
                 widthCol2 = 120;
             }
-            ImGui.TableSetupColumn($"###OrchestrionRollsTableAmount#{currentCharacter.Id}#Amount#Col1",
+            ImGui.TableSetupColumn($"###OrchestrionRollsTableAmount#{currentCharacter.CharacterId}#Amount#Col1",
                 ImGuiTableColumnFlags.WidthFixed, widthCol1);
-            ImGui.TableSetupColumn($"###OrchestrionRollsTableAmount#{currentCharacter.Id}#Amount#Col2",
+            ImGui.TableSetupColumn($"###OrchestrionRollsTableAmount#{currentCharacter.CharacterId}#Amount#Col2",
                 ImGuiTableColumnFlags.WidthFixed, widthCol2);
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
@@ -1137,7 +1137,7 @@ namespace Altoholic.Windows
         {
             using var ornamentsTabTable = ImRaii.Table("###OrnamentsTabTable", 1, ImGuiTableFlags.ScrollY);
             if (!ornamentsTabTable) return;
-            ImGui.TableSetupColumn($"###OrnamentsTabTable#{currentCharacter.Id}#Col1",
+            ImGui.TableSetupColumn($"###OrnamentsTabTable#{currentCharacter.CharacterId}#Col1",
                 ImGuiTableColumnFlags.WidthStretch);
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
@@ -1160,9 +1160,9 @@ namespace Altoholic.Windows
                 widthCol1 = 480;
                 widthCol2 = 120;
             }
-            ImGui.TableSetupColumn($"###OrnamentsTableOrnament#{currentCharacter.Id}#Ornament#Col1",
+            ImGui.TableSetupColumn($"###OrnamentsTableOrnament#{currentCharacter.CharacterId}#Ornament#Col1",
                 ImGuiTableColumnFlags.WidthFixed, widthCol1);
-            ImGui.TableSetupColumn($"###OrnamentsTableOrnament#{currentCharacter.Id}#Ornament#Col2",
+            ImGui.TableSetupColumn($"###OrnamentsTableOrnament#{currentCharacter.CharacterId}#Ornament#Col2",
                 ImGuiTableColumnFlags.WidthFixed, widthCol2);
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
@@ -1260,7 +1260,7 @@ namespace Altoholic.Windows
         {
             using var glassesTabTable = ImRaii.Table("###GlassesTabTable", 1, ImGuiTableFlags.ScrollY);
             if (!glassesTabTable) return;
-            ImGui.TableSetupColumn($"###GlassesTabTable#{currentCharacter.Id}#Col1",
+            ImGui.TableSetupColumn($"###GlassesTabTable#{currentCharacter.CharacterId}#Col1",
                 ImGuiTableColumnFlags.WidthStretch);
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
@@ -1283,9 +1283,9 @@ namespace Altoholic.Windows
                 widthCol1 = 480;
                 widthCol2 = 120;
             }
-            ImGui.TableSetupColumn($"###GlassesTableAglasse#{currentCharacter.Id}#Aglasse#Col1",
+            ImGui.TableSetupColumn($"###GlassesTableAglasse#{currentCharacter.CharacterId}#Aglasse#Col1",
                 ImGuiTableColumnFlags.WidthFixed, widthCol1);
-            ImGui.TableSetupColumn($"###GlassesTableAglasse#{currentCharacter.Id}#Aglasse#Col2",
+            ImGui.TableSetupColumn($"###GlassesTableAglasse#{currentCharacter.CharacterId}#Aglasse#Col2",
                 ImGuiTableColumnFlags.WidthFixed, widthCol2);
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);

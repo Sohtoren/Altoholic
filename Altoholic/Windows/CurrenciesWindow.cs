@@ -259,7 +259,7 @@ namespace Altoholic.Windows
         {
             if (selectedCharacter.Currencies is null) return;
 
-            using var tabBar = ImRaii.TabBar($"###CharactersCurrencies#CurrencyTabs#{selectedCharacter.Id}");
+            using var tabBar = ImRaii.TabBar($"###CharactersCurrencies#CurrencyTabs#{selectedCharacter.CharacterId}");
             if (!tabBar) return;
             using (var commonTab = ImRaii.TabItem($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 3662)}"))
             {
@@ -337,9 +337,9 @@ namespace Altoholic.Windows
             PlayerCurrencies pc = selectedCharacter.Currencies;
 
             using var charactersCurrenciesCommonCurrencyTable =
-                ImRaii.Table($"###CharactersCurrencies#CommonCurrencyTable#{selectedCharacter.Id}", 1);
+                ImRaii.Table($"###CharactersCurrencies#CommonCurrencyTable#{selectedCharacter.CharacterId}", 1);
             if (!charactersCurrenciesCommonCurrencyTable) return;
-            ImGui.TableSetupColumn($"###CharactersCurrencies#CommonCurrencyTable#Currency#{selectedCharacter.Id}",
+            ImGui.TableSetupColumn($"###CharactersCurrencies#CommonCurrencyTable#Currency#{selectedCharacter.CharacterId}",
                 ImGuiTableColumnFlags.WidthStretch);
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
@@ -506,13 +506,13 @@ namespace Altoholic.Windows
                 ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 3500));
                 ImGui.Separator();
                 using var charactersCurrenciesBattleCurrencyTableAllaganTable =
-                    ImRaii.Table($"###CharactersCurrencies#BattleCurrencyTable#AllaganTable#{selectedCharacter.Id}", 2);
+                    ImRaii.Table($"###CharactersCurrencies#BattleCurrencyTable#AllaganTable#{selectedCharacter.CharacterId}", 2);
                 if (!charactersCurrenciesBattleCurrencyTableAllaganTable) return;
                 ImGui.TableSetupColumn(
-                    $"###CharactersCurrencies#BattleCurrencyTable#AllaganTable#Tomestone#{selectedCharacter.Id}",
+                    $"###CharactersCurrencies#BattleCurrencyTable#AllaganTable#Tomestone#{selectedCharacter.CharacterId}",
                     ImGuiTableColumnFlags.WidthStretch);
                 ImGui.TableSetupColumn(
-                    $"###CharactersCurrencies#BattleCurrencyTable#AllaganTable#Weekly#{selectedCharacter.Id}",
+                    $"###CharactersCurrencies#BattleCurrencyTable#AllaganTable#Weekly#{selectedCharacter.CharacterId}",
                     ImGuiTableColumnFlags.WidthStretch);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(1);
@@ -555,13 +555,13 @@ namespace Altoholic.Windows
                 ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 834));
                 ImGui.Separator();
                 using var charactersCurrenciesBattleCurrencyTablePvPTable = ImRaii.Table(
-                    $"###CharactersCurrencies#BattleCurrencyTable#PvPTable#{selectedCharacter.Id}", 2);
+                    $"###CharactersCurrencies#BattleCurrencyTable#PvPTable#{selectedCharacter.CharacterId}", 2);
                 if (!charactersCurrenciesBattleCurrencyTablePvPTable) return;
                 ImGui.TableSetupColumn(
-                    $"###CharactersCurrencies#BattleCurrencyTable#PvPTable#Wolf#{selectedCharacter.Id}",
+                    $"###CharactersCurrencies#BattleCurrencyTable#PvPTable#Wolf#{selectedCharacter.CharacterId}",
                     ImGuiTableColumnFlags.WidthStretch);
                 ImGui.TableSetupColumn(
-                    $"###CharactersCurrencies#BattleCurrencyTable#PvPTable#Trophy#{selectedCharacter.Id}",
+                    $"###CharactersCurrencies#BattleCurrencyTable#PvPTable#Trophy#{selectedCharacter.CharacterId}",
                     ImGuiTableColumnFlags.WidthStretch);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
@@ -583,16 +583,16 @@ namespace Altoholic.Windows
                 ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 838));
                 ImGui.Separator();
                 using var charactersCurrenciesBattleCurrencyTableHuntTable =
-                    ImRaii.Table($"###CharactersCurrencies#BattleCurrencyTable#HuntTable#{selectedCharacter.Id}", 3);
+                    ImRaii.Table($"###CharactersCurrencies#BattleCurrencyTable#HuntTable#{selectedCharacter.CharacterId}", 3);
                 if (!charactersCurrenciesBattleCurrencyTableHuntTable) return;
                 ImGui.TableSetupColumn(
-                    $"###CharactersCurrencies#BattleCurrencyTable#HuntTable#FirstCol#{selectedCharacter.Id}",
+                    $"###CharactersCurrencies#BattleCurrencyTable#HuntTable#FirstCol#{selectedCharacter.CharacterId}",
                     ImGuiTableColumnFlags.WidthStretch);
                 ImGui.TableSetupColumn(
-                    $"###CharactersCurrencies#BattleCurrencyTable#HuntTable#SecondCol#{selectedCharacter.Id}",
+                    $"###CharactersCurrencies#BattleCurrencyTable#HuntTable#SecondCol#{selectedCharacter.CharacterId}",
                     ImGuiTableColumnFlags.WidthStretch);
                 ImGui.TableSetupColumn(
-                    $"###CharactersCurrencies#BattleCurrencyTable#HuntTable#ThirdCol#{selectedCharacter.Id}",
+                    $"###CharactersCurrencies#BattleCurrencyTable#HuntTable#ThirdCol#{selectedCharacter.CharacterId}",
                     ImGuiTableColumnFlags.WidthStretch);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
@@ -636,10 +636,10 @@ namespace Altoholic.Windows
             ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 5768));
             ImGui.Separator();
             using var charactersCurrenciesBattleCurrencyTableFateTable =
-                ImRaii.Table($"###CharactersCurrencies#BattleCurrencyTable#FATETable#{selectedCharacter.Id}", 1);
+                ImRaii.Table($"###CharactersCurrencies#BattleCurrencyTable#FATETable#{selectedCharacter.CharacterId}", 1);
             if (!charactersCurrenciesBattleCurrencyTableFateTable) return;
             ImGui.TableSetupColumn(
-                $"###CharactersCurrencies#BattleCurrencyTable#FATETable#Bicolor#{selectedCharacter.Id}",
+                $"###CharactersCurrencies#BattleCurrencyTable#FATETable#Bicolor#{selectedCharacter.CharacterId}",
                 ImGuiTableColumnFlags.WidthStretch);
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
@@ -693,11 +693,11 @@ namespace Altoholic.Windows
             PlayerCurrencies pc = selectedCharacter.Currencies;
 
             using var charactersCurrenciesOthersCurrencyTable =
-                ImRaii.Table($"###CharactersCurrencies#OthersCurrencyTable#{selectedCharacter.Id}", 1);
+                ImRaii.Table($"###CharactersCurrencies#OthersCurrencyTable#{selectedCharacter.CharacterId}", 1);
             if (!charactersCurrenciesOthersCurrencyTable) return;
             if (selectedCharacter.HasQuest(67631))
             {
-                ImGui.TableSetupColumn($"###CharactersCurrencies#OthersCurrencyTable#Currency#{selectedCharacter.Id}",
+                ImGui.TableSetupColumn($"###CharactersCurrencies#OthersCurrencyTable#Currency#{selectedCharacter.CharacterId}",
                     ImGuiTableColumnFlags.WidthStretch);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
@@ -797,13 +797,13 @@ namespace Altoholic.Windows
             ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 5751));
             ImGui.Separator();
             using var charactersCurrenciesTribalCurrencyTable =
-                ImRaii.Table($"###CharactersCurrencies#TribalCurrencyTable#{selectedCharacter.Id}", 3);
+                ImRaii.Table($"###CharactersCurrencies#TribalCurrencyTable#{selectedCharacter.CharacterId}", 3);
             if (!charactersCurrenciesTribalCurrencyTable) return;
-            ImGui.TableSetupColumn($"###CharactersCurrencies#TribalCurrencyTable#Col1#{selectedCharacter.Id}",
+            ImGui.TableSetupColumn($"###CharactersCurrencies#TribalCurrencyTable#Col1#{selectedCharacter.CharacterId}",
                 ImGuiTableColumnFlags.WidthStretch);
-            ImGui.TableSetupColumn($"###CharactersCurrencies#TribalCurrencyTable#Col2#{selectedCharacter.Id}",
+            ImGui.TableSetupColumn($"###CharactersCurrencies#TribalCurrencyTable#Col2#{selectedCharacter.CharacterId}",
                 ImGuiTableColumnFlags.WidthStretch);
-            ImGui.TableSetupColumn($"###CharactersCurrencies#TribalCurrencyTable#Col3#{selectedCharacter.Id}",
+            ImGui.TableSetupColumn($"###CharactersCurrencies#TribalCurrencyTable#Col3#{selectedCharacter.CharacterId}",
                 ImGuiTableColumnFlags.WidthStretch);
             if (selectedCharacter.HasQuest(66754) ||
                 selectedCharacter.HasQuest(66789) ||

@@ -2,6 +2,6 @@
 {
     public class Blacklist
     {
-        public ulong Id { get; set; }
+        public ulong CharacterId { get; set; }
     }
 }

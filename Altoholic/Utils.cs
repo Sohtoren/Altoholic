@@ -35,6 +35,11 @@ namespace Altoholic
             return "DC";
         }
 
+        public static void ChatMessage(string message)
+        {
+            Plugin.ChatGui.Print($"[Altoholic]: {message}");
+        }
+
         public static string GetDatacenterFromWorld(string name)
         {
             if (Array.Exists(Datacenter.Aether, w => w == name))

@@ -504,16 +504,16 @@ namespace Altoholic.Windows
         }
         private void DrawJobs(Character selectedCharacter)
         {
-            using var tabBar = ImRaii.TabBar($"###CharactersJobs#JobsTabs#{selectedCharacter.Id}");
+            using var tabBar = ImRaii.TabBar($"###CharactersJobs#JobsTabs#{selectedCharacter.CharacterId}");
             if (!tabBar.Success) return;
-            using (var DoWDoMTab = ImRaii.TabItem($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 1080)}###CharactersJobs#JobsTabs#DoWDoM#{selectedCharacter.Id}"))
+            using (var DoWDoMTab = ImRaii.TabItem($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 1080)}###CharactersJobs#JobsTabs#DoWDoM#{selectedCharacter.CharacterId}"))
             {
                 if (DoWDoMTab)
                 {
                     DrawDoWDoMJobs(selectedCharacter);
                 }
             }
-            using (var DoHDoLTab = ImRaii.TabItem($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 1081)}###CharactersJobs#JobsTabs#DoHDoL#{selectedCharacter.Id}"))
+            using (var DoHDoLTab = ImRaii.TabItem($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 1081)}###CharactersJobs#JobsTabs#DoHDoL#{selectedCharacter.CharacterId}"))
             {
                 if (DoHDoLTab)
                 {
@@ -525,11 +525,11 @@ namespace Altoholic.Windows
         private void DrawDoWDoMJobs(Character selectedCharacter)
         {
             if (_rolesTextureWrap is null) return;
-            using var charactersJobsDoWDoMJobs = ImRaii.Table($"###CharactersJobs#DoWDoMJobs#{selectedCharacter.Id}", 2,
+            using var charactersJobsDoWDoMJobs = ImRaii.Table($"###CharactersJobs#DoWDoMJobs#{selectedCharacter.CharacterId}", 2,
                 ImGuiTableFlags.ScrollY);
             if (!charactersJobsDoWDoMJobs) return;
-            ImGui.TableSetupColumn($"###CharactersJobs#DoW#{selectedCharacter.Id}", ImGuiTableColumnFlags.WidthStretch);
-            ImGui.TableSetupColumn($"###CharactersJobs#DoM#{selectedCharacter.Id}", ImGuiTableColumnFlags.WidthStretch);
+            ImGui.TableSetupColumn($"###CharactersJobs#DoW#{selectedCharacter.CharacterId}", ImGuiTableColumnFlags.WidthStretch);
+            ImGui.TableSetupColumn($"###CharactersJobs#DoM#{selectedCharacter.CharacterId}", ImGuiTableColumnFlags.WidthStretch);
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
             using (var charactersJobsDoWRoleTank = ImRaii.Table("###CharactersJobs#DoW#RoleTank", 2))
@@ -687,10 +687,10 @@ namespace Altoholic.Windows
         {
             if (_rolesTextureWrap is null) return;
             using var charactersJobsDoHDoLJobs =
-                ImRaii.Table($"###CharactersJobs#DoHDoLJobs#{selectedCharacter.Id}", 2);
+                ImRaii.Table($"###CharactersJobs#DoHDoLJobs#{selectedCharacter.CharacterId}", 2);
             if (!charactersJobsDoHDoLJobs) return;
-            ImGui.TableSetupColumn($"###CharactersJobs#DoH#{selectedCharacter.Id}", ImGuiTableColumnFlags.WidthStretch);
-            ImGui.TableSetupColumn($"###CharactersJobs#DoL#{selectedCharacter.Id}", ImGuiTableColumnFlags.WidthStretch);
+            ImGui.TableSetupColumn($"###CharactersJobs#DoH#{selectedCharacter.CharacterId}", ImGuiTableColumnFlags.WidthStretch);
+            ImGui.TableSetupColumn($"###CharactersJobs#DoL#{selectedCharacter.CharacterId}", ImGuiTableColumnFlags.WidthStretch);
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
             using (var charactersJobsDoHRoleDoH = ImRaii.Table("###CharactersJobs#DoH#RoleDoH", 2))

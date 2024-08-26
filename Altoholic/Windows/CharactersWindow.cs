@@ -66,7 +66,8 @@ namespace Altoholic.Windows
             _currentLocale = _plugin.Configuration.Language;
             try
             {
-                using (ImRaii.IEndObject charactersTable = ImRaii.Table("###Characters", 9, ImGuiTableFlags.ScrollY, new Vector2(-1 , 470)))
+                //using (ImRaii.IEndObject charactersTable = ImRaii.Table("###Characters", 9, ImGuiTableFlags.ScrollY, new Vector2(-1 , 470)))
+                using (ImRaii.IEndObject charactersTable = ImRaii.Table("###Characters", 10, ImGuiTableFlags.ScrollY, new Vector2(-1, 470)))
                 //using (ImRaii.IEndObject charactersTable = ImRaii.Table("###Characters", 10))
                 {
                     if (!charactersTable) return;
@@ -86,20 +87,20 @@ namespace Altoholic.Windows
                         ImGuiTableColumnFlags.WidthFixed, 150);
                     ImGui.TableSetupColumn("Last online", ImGuiTableColumnFlags.WidthFixed, 110);
                     //ImGui.TableSetupColumn("Last online", ImGuiTableColumnFlags.WidthFixed, 80);
-                    ImGui.TableSetupColumn($"{Loc.Localize("Playtime", "Playtime")}###Characters#Playtime",ImGuiTableColumnFlags.WidthStretch);
-                    /*ImGui.TableSetupColumn($"{Loc.Localize("Playtime", "Playtime")}###Characters#Playtime", ImGuiTableColumnFlags.WidthFixed, 200);
-                    ImGui.TableSetupColumn($"{Loc.Localize("Action", "Action")}###Characters#Action", ImGuiTableColumnFlags.WidthStretch);*/
+                    ImGui.TableSetupColumn($"{Loc.Localize("Playtime", "Playtime")}###Characters#Playtime", ImGuiTableColumnFlags.WidthStretch);
+                    //ImGui.TableSetupColumn($"{Loc.Localize("Playtime", "Playtime")}###Characters#Playtime", ImGuiTableColumnFlags.WidthFixed, 200);
+                    ImGui.TableSetupColumn($"{Loc.Localize("Action", "Action")}###Characters#Action", ImGuiTableColumnFlags.WidthFixed, 40);
                     ImGui.TableHeadersRow();
 
                     List<Character> chars = [];
                     chars.Insert(0, GetPlayer.Invoke());
                     chars.AddRange(
                         GetOthersCharactersList.Invoke()
-                        //.OrderByDescending(c => c.LastOnline)
-                        /*.OrderBy(c => c.Datacenter)
-                        .ThenBy(c => c.Datacenter == current.Datacenter)
-                        .ThenBy(c => c.HomeWorld == current.HomeWorld)
-                        .ThenBy(c => c.FirstName)*/
+                    //.OrderByDescending(c => c.LastOnline)
+                    /*.OrderBy(c => c.Datacenter)
+                    .ThenBy(c => c.Datacenter == current.Datacenter)
+                    .ThenBy(c => c.HomeWorld == current.HomeWorld)
+                    .ThenBy(c => c.FirstName)*/
                     );
 
 #if DEBUG
@@ -203,12 +204,12 @@ namespace Altoholic.Windows
             ImGui.TextUnformatted($"{Utils.GetFCTag(_currentLocale, _globalCache, character)}");
 
             ImGui.TableSetColumnIndex(6);
-            using (ImRaii.IEndObject charactersCharacterGils = ImRaii.Table($"###Characters#Character#Gils#{character.Id}", 2))
+            using (ImRaii.IEndObject charactersCharacterGils = ImRaii.Table($"###Characters#Character#Gils#{character.CharacterId}", 2))
             {
                 if (!charactersCharacterGils) return;
-                ImGui.TableSetupColumn($"###Characters#Character#Gils#Icon#{character.Id}",
+                ImGui.TableSetupColumn($"###Characters#Character#Gils#Icon#{character.CharacterId}",
                     ImGuiTableColumnFlags.WidthFixed, 20);
-                ImGui.TableSetupColumn($"###Characters#Character#Gils#Amount#{character.Id}",
+                ImGui.TableSetupColumn($"###Characters#Character#Gils#Amount#{character.CharacterId}",
                     ImGuiTableColumnFlags.WidthFixed, 130);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
@@ -239,31 +240,34 @@ namespace Altoholic.Windows
 
             ImGui.TableSetColumnIndex(8);
             ImGui.TextUnformatted($"{GeneratePlaytime(TimeSpan.FromMinutes(character.PlayTime))}");
-            if (ImGui.IsItemHovered())
+            if (character.PlayTime > 0)
             {
-                if (character.LastPlayTimeUpdate <= 0)
+                if (ImGui.IsItemHovered())
                 {
-                    return;
+                    if (character.LastPlayTimeUpdate <= 0)
+                    {
+                        return;
+                    }
+
+                    ImGui.BeginTooltip();
+                    ImGui.TextUnformatted(
+                        $"Last updated on : {Utils.UnixTimeStampToDateTime(character.LastPlayTimeUpdate)} - {Utils.GetLastOnlineFormatted(character.LastPlayTimeUpdate)}");
+                    ImGui.EndTooltip();
                 }
-
-                ImGui.BeginTooltip();
-                ImGui.TextUnformatted(
-                    $"Last updated on : {Utils.UnixTimeStampToDateTime(character.LastPlayTimeUpdate)} - {Utils.GetLastOnlineFormatted(character.LastPlayTimeUpdate)}");
-                ImGui.EndTooltip();
             }
-
-            if (character.LastPlayTimeUpdate <= 0 || Utils.GetLastPlayTimeUpdateDiff(character.LastPlayTimeUpdate) <= 7)
+            if (character.LastPlayTimeUpdate > 0 && Utils.GetLastPlayTimeUpdateDiff(character.LastPlayTimeUpdate) >= 7)
             {
-                return;
-            }
-
-            ImGui.SameLine();
-            ImGui.TextUnformatted($"{FontAwesomeIcon.ExclamationTriangle.ToIconString()}");
-            if (ImGui.IsItemHovered())
-            {
-                ImGui.BeginTooltip();
-                ImGui.TextUnformatted("More than 7 days since the last update, consider using the /playtime command");
-                ImGui.EndTooltip();
+                ImGui.SameLine();
+                ImGui.PushFont(UiBuilder.IconFont);
+                ImGui.TextUnformatted($"{FontAwesomeIcon.ExclamationTriangle.ToIconString()}");
+                ImGui.PopFont();
+                if (ImGui.IsItemHovered())
+                {
+                    ImGui.BeginTooltip();
+                    ImGui.TextUnformatted(
+                        "More than 7 days since the last update, consider using the /playtime command");
+                    ImGui.EndTooltip();
+                }
             }
 
             // Todo : Buttons
@@ -274,7 +278,90 @@ namespace Altoholic.Windows
             // Todo : 5) Del => Delete char from altoholic
             // 4&5 could be same button with different modifier (alt BL /ctrl delete)
             //Put back actions code here
-            
+            ImGui.TableSetColumnIndex(9);
+            /*using ImRaii.IEndObject characterActions = ImRaii.Table($"###CharacterActions_{character.CharacterId}", 2);
+            if (!characterActions) return;
+            ImGui.TableSetupColumn($"###CharacterActions_{character.CharacterId}#Blacklist", ImGuiTableColumnFlags.WidthFixed,
+                20);
+            ImGui.TableSetupColumn($"###CharacterActions_{character.CharacterId}#Delete", ImGuiTableColumnFlags.WidthFixed, 20);
+            ImGui.TableNextRow();*/
+            /**************************Blacklist**************************/
+            //ImGui.TableSetColumnIndex(0);
+            ImGui.PushFont(UiBuilder.IconFont);
+            ImGui.TextUnformatted(FontAwesomeIcon.Ban.ToIconString());
+            if (ImGui.IsItemClicked())
+            //if (ImGui.Button(FontAwesomeIcon.Ban.ToIconString()))
+            {
+                ImGui.OpenPopup($"Blacklist {character.FirstName} {character.LastName}{(char)SeIconChar.CrossWorld}{character.HomeWorld}###BLModal_{character.CharacterId}");
+                // Todo: Add or find trigger to notify logic to delete character
+                // Todo: Add or find trigger to notify logic to update others character
+                // Todo: Improve this shit bc this is ugly AF
+                Plugin.Log.Debug($"Altoholic : Blacklist button for char {character.FirstName} {character.LastName}{(char)SeIconChar.CrossWorld}{character.HomeWorld} hitted");
+            }
+            ImGui.PopFont();
+            if (ImGui.IsItemHovered())
+            {
+                ImGui.BeginTooltip();
+                ImGui.TextUnformatted($"Blacklist {character.FirstName} {character.LastName}{(char)SeIconChar.CrossWorld}{character.HomeWorld}");
+                ImGui.EndTooltip();
+            }
+            using (ImRaii.IEndObject blacklist = ImRaii.PopupModal($"###BLModal_{character.CharacterId}"))
+            {
+                if (!blacklist) return;
+                ImGui.TextUnformatted("Are you sure you want to blacklist this character?");
+                ImGui.TextUnformatted("This will prevent this character to be added in the future");
+                ImGui.Separator();
+
+                if (ImGui.Button("OK", new Vector2(120, 0)))
+                {
+                    int result = Database.Database.BlacklistCharacter(_db, character.CharacterId);
+                    //this.SetOthersCharactersList(oC);
+                    Utils.ChatMessage(
+                        $"{character.FirstName} {character.LastName}{(char)SeIconChar.CrossWorld}{character.HomeWorld} has been blacklisted.");
+                    ImGui.CloseCurrentPopup();
+                }
+
+                ImGui.SetItemDefaultFocus();
+                ImGui.SameLine();
+                if (ImGui.Button("Cancel", new Vector2(120, 0))) { ImGui.CloseCurrentPopup(); }
+            }
+            /**************************Delete**************************/
+            /*ImGui.TableSetColumnIndex(1);
+            ImGui.PushFont(UiBuilder.IconFont);
+            if (ImGui.Button(FontAwesomeIcon.Times.ToIconString()))
+            {
+                ImGui.OpenPopup($"Delete {character.CharacterId}");
+
+                // Todo: Add or find trigger to notify logic to delete character
+                // Todo: Add or find trigger to notify logic to update others character
+                // Todo: Improve this shit bc this is ugly AF
+                Plugin.Log.Debug("Altoholic : Delete button for char {0} hitted", character.FirstName);
+            }
+
+            ImGui.PopFont();
+            if (ImGui.IsItemHovered())
+            {
+                ImGui.BeginTooltip();
+                ImGui.TextUnformatted("Delete this character");
+                ImGui.EndTooltip();
+            }
+
+            using ImRaii.IEndObject delete = ImRaii.PopupModal($"Delete {character.CharacterId}");
+            if (!delete) return;
+            ImGui.TextUnformatted("Are you sure you want to delete this char?");
+            ImGui.TextUnformatted("It will be added again the next time you log in on this character");
+            ImGui.Separator();
+
+            if (ImGui.Button("OK", new Vector2(120, 0)))
+            {
+                int result = Database.Database.DeleteCharacter(_db, character.CharacterId);
+                ImGui.CloseCurrentPopup();
+            }
+
+            ImGui.SetItemDefaultFocus();
+            ImGui.SameLine();
+            if (ImGui.Button("Cancel", new Vector2(120, 0))) { ImGui.CloseCurrentPopup(); }
+            */
         }
 
         public enum TimeOptions
@@ -308,10 +395,10 @@ namespace Altoholic.Windows
             string formatted =
                 $"{(time.Days > 0 ? $"{time.Days:n0} {(time.Days == 1 ? "Day" : "Days")}, " : string.Empty)}" +
                 $"{(time.Hours > 0 ? $"{time.Hours:n0} {(time.Hours == 1 ? "Hour" : "Hours")}, " : string.Empty)}" +
-                $"{(time.Minutes > 0 ? $"{time.Minutes:n0} {(time.Minutes == 1 ? "Minute": "Minutes")}, " : string.Empty)}";
+                $"{(time.Minutes > 0 ? $"{time.Minutes:n0} {(time.Minutes == 1 ? "Minute" : "Minutes")}, " : string.Empty)}";
 
             if (withSeconds)
-                formatted += $"{time.Seconds:n0} {(time.Seconds == 1 ? "Second" :  "Seconds")}";
+                formatted += $"{time.Seconds:n0} {(time.Seconds == 1 ? "Second" : "Seconds")}";
 
             if (formatted.EndsWith(", "))
                 formatted = formatted[..^2];
@@ -321,7 +408,7 @@ namespace Altoholic.Windows
 
         private void DrawCharacters(List<Character> characters)
         {
-            if(characters.Count == 0) return;
+            if (characters.Count == 0) return;
             TotalGils = characters.Select(c => c.Currencies?.Gil ?? 0).ToArray().Sum(g => (long)g);
             TotalCharacters = characters.Count;
             TotalWorlds = characters.Select(c => c.HomeWorld).Distinct().Count();

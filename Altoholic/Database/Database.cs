@@ -108,6 +108,11 @@ namespace Altoholic.Database
                                    """;
                 int result = db.Execute(sql);
                 Plugin.Log.Debug($"CREATE TABLE {CharacterTableName} result: {result}");
+                if (result == 0)
+                {
+                    int result2 = db.Execute($"CREATE INDEX idx_{CharacterTableName}_CharacterID ON {CharacterTableName}(CharacterId)");
+                    Plugin.Log.Debug($"CREATE INDEX idx_{CharacterTableName}_CharacterID ON {CharacterTableName}(CharacterId) result: {result2}");
+                }
             }
 
             if(!DoesTableExist(db, CharactersCurrenciesHistoryTableName))
@@ -121,6 +126,12 @@ namespace Altoholic.Database
                                      """;
                 int result2 = db.Execute(sql2);
                 Plugin.Log.Debug($"CREATE TABLE {CharactersCurrenciesHistoryTableName} result: {result2}");
+
+                if (result2 == 0)
+                {
+                    int result22 = db.Execute($"CREATE INDEX idx_{CharactersCurrenciesHistoryTableName}_CharacterID ON {CharactersCurrenciesHistoryTableName}(CharacterId)");
+                    Plugin.Log.Debug($"CREATE INDEX idx_{CharactersCurrenciesHistoryTableName}_CharacterID ON {CharactersCurrenciesHistoryTableName}(CharacterId) result: {result22}");
+                }
             }
 
             if (DoesTableExist(db, BlacklistTableName))
@@ -136,6 +147,11 @@ namespace Altoholic.Database
                                  """;
             int result3 = db.Execute(sql3);
             Plugin.Log.Debug($"CREATE TABLE {BlacklistTableName} result: {result3}");
+            if (result3 == 0)
+            {
+                int result32 = db.Execute($"CREATE INDEX idx_{BlacklistTableName}_CharacterID ON {BlacklistTableName}(CharacterId)");
+                Plugin.Log.Debug($"CREATE INDEX idx_{BlacklistTableName}_CharacterID ON {BlacklistTableName}(CharacterId) result: {result32}");
+            }
         }
 
         public static List<Character> GetDataFromLite(LiteDatabase db)
@@ -212,6 +228,9 @@ namespace Altoholic.Database
             Plugin.Log.Debug($"Database/GetCharacter entered db = {db}, id = {id}");
             try
             {
+                Blacklist? b = GetBlacklist(db, id);
+                if (b != null) return null;
+
                 const string sql = $"SELECT * FROM {CharacterTableName} WHERE CharacterId = @id";
                 DatabaseCharacter? dbCharacter = db.QueryFirstOrDefault<DatabaseCharacter>(sql, new { id });
                 if (dbCharacter == null) return null;
@@ -613,6 +632,11 @@ namespace Altoholic.Database
         {
             const string sql = $"SELECT * FROM {BlacklistTableName} WHERE CharacterId = @id";
             return db.QueryFirstOrDefault<Blacklist>(sql, new { id });
+        }
+        public static List<Blacklist> GetBlacklists(SqliteConnection db)
+        {
+            const string sql = $"SELECT * FROM {BlacklistTableName}";
+            return db.Query<Blacklist>(sql).AsList();
         }
 
         public static bool DeleteBlacklist(SqliteConnection db, ulong id)
