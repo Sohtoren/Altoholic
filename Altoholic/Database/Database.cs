@@ -45,12 +45,19 @@ namespace Altoholic.Database
             return new SqliteConnection("Data Source=" + dbPath);
         }
 
+        private static bool DoesTableExist(SqliteConnection db, string tableName)
+        {
+            Plugin.Log.Debug($"DoesTableExist: {tableName}");
+            string sql = $"SELECT name FROM sqlite_master WHERE type = 'table' AND name = '{tableName}';";
+            string? name = db.QueryFirstOrDefault<string>(sql);
+            Plugin.Log.Debug($"DoesTableExist returned name: {name}");
+            Plugin.Log.Debug($"DoesTableExist? : {(name != null && name == tableName)}");
+            return (name != null && name == tableName);
+        }
+
         public static void CheckOrCreateDatabases(SqliteConnection db)
         {
-            const string checkCharactersTableSql = $"SELECT name FROM sqlite_master WHERE type = 'table' AND name = '{CharacterTableName}';";
-            int checkCharactersTableResult = db.Execute(checkCharactersTableSql);
-            Plugin.Log.Debug($"checkCharactersTableResult: {checkCharactersTableResult}");
-            if (checkCharactersTableResult != 1)
+            if (!DoesTableExist(db, CharacterTableName))
             {
                 const string sql = $"""
                                    CREATE TABLE IF NOT EXISTS {CharacterTableName} (
@@ -103,10 +110,7 @@ namespace Altoholic.Database
                 Plugin.Log.Debug($"CREATE TABLE {CharacterTableName} result: {result}");
             }
 
-            const string checkCharactersCurrenciesHistoriesTableSql = $"SELECT name FROM sqlite_master WHERE type = 'table' AND name = '{CharactersCurrenciesHistoryTableName}';";
-            int charactersCurrenciesHistoriesTableResult = db.Execute(checkCharactersCurrenciesHistoriesTableSql);
-            Plugin.Log.Debug($"charactersCurrenciesHistoriesTableResult: {charactersCurrenciesHistoriesTableResult}");
-            if (charactersCurrenciesHistoriesTableResult != 1)
+            if(!DoesTableExist(db, CharactersCurrenciesHistoryTableName))
             {
                 const string sql2 = $"""
                                         CREATE TABLE IF NOT EXISTS {CharactersCurrenciesHistoryTableName}(
@@ -119,10 +123,7 @@ namespace Altoholic.Database
                 Plugin.Log.Debug($"CREATE TABLE {CharactersCurrenciesHistoryTableName} result: {result2}");
             }
 
-            const string checkBlacklistTableSql = $"SELECT name FROM sqlite_master WHERE type = 'table' AND name = '{BlacklistTableName}';";
-            int blacklistTableResult = db.Execute(checkBlacklistTableSql);
-            Plugin.Log.Debug($"blacklistTableResult: {blacklistTableResult}");
-            if (charactersCurrenciesHistoriesTableResult == 1)
+            if (DoesTableExist(db, BlacklistTableName))
             {
                 return;
             }
@@ -463,6 +464,8 @@ namespace Altoholic.Database
                 FCTag = character.FCTag,
                 FreeCompany = character.FreeCompany,
                 LastOnline = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
+                PlayTime = character.PlayTime,
+                LastPlayTimeUpdate = character.LastPlayTimeUpdate,
                 HasPremiumSaddlebag = character.HasPremiumSaddlebag,
                 PlayerCommendations = character.PlayerCommendations,
                 Attributes = attributes,
