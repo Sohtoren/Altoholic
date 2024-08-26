@@ -188,24 +188,24 @@ namespace Altoholic.Windows
             ImGui.SameLine();
             ImGui.TextUnformatted($"{selectedCharacter.PlayerCommendations}");
 
-            if (!selectedCharacter.IsQuestCompleted(66754) &&
-                !selectedCharacter.IsQuestCompleted(66789) &&
-                !selectedCharacter.IsQuestCompleted(66857) &&
-                !selectedCharacter.IsQuestCompleted(66911) &&
-                !selectedCharacter.IsQuestCompleted(67023) &&
-                !selectedCharacter.IsQuestCompleted(67700) &&
-                !selectedCharacter.IsQuestCompleted(67700) &&
-                !selectedCharacter.IsQuestCompleted(67791) &&
-                !selectedCharacter.IsQuestCompleted(67856) &&
-                !selectedCharacter.IsQuestCompleted(68509) &&
-                !selectedCharacter.IsQuestCompleted(68572) &&
-                !selectedCharacter.IsQuestCompleted(68633) &&
-                !selectedCharacter.IsQuestCompleted(69219) &&
-                !selectedCharacter.IsQuestCompleted(69330) &&
-                !selectedCharacter.IsQuestCompleted(69432) &&
-                !selectedCharacter.IsQuestCompleted(70081) &&
-                !selectedCharacter.IsQuestCompleted(70137) &&
-                !selectedCharacter.IsQuestCompleted(70217))
+            if (!selectedCharacter.HasQuest(66754) &&
+                !selectedCharacter.HasQuest(66789) &&
+                !selectedCharacter.HasQuest(66857) &&
+                !selectedCharacter.HasQuest(66911) &&
+                !selectedCharacter.HasQuest(67023) &&
+                !selectedCharacter.HasQuest(67700) &&
+                !selectedCharacter.HasQuest(67700) &&
+                !selectedCharacter.HasQuest(67791) &&
+                !selectedCharacter.HasQuest(67856) &&
+                !selectedCharacter.HasQuest(68509) &&
+                !selectedCharacter.HasQuest(68572) &&
+                !selectedCharacter.HasQuest(68633) &&
+                !selectedCharacter.HasQuest(69219) &&
+                !selectedCharacter.HasQuest(69330) &&
+                !selectedCharacter.HasQuest(69432) &&
+                !selectedCharacter.HasQuest(70081) &&
+                !selectedCharacter.HasQuest(70137) &&
+                !selectedCharacter.HasQuest(70217))
             {
                 return;
             }
@@ -236,20 +236,20 @@ namespace Altoholic.Windows
             bool shbUnlocked = false;
             bool ewUnlocked = false;
             List<string> names = [];
-            if (selectedCharacter.IsQuestCompleted(66754) ||
-                selectedCharacter.IsQuestCompleted(66789) ||
-                selectedCharacter.IsQuestCompleted(66857) ||
-                selectedCharacter.IsQuestCompleted(66911) ||
-                selectedCharacter.IsQuestCompleted(67023)
+            if (selectedCharacter.HasQuest(66754) ||
+                selectedCharacter.HasQuest(66789) ||
+                selectedCharacter.HasQuest(66857) ||
+                selectedCharacter.HasQuest(66911) ||
+                selectedCharacter.HasQuest(67023)
                )
             {
                 names.Add(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 5752));
                 arrUnlocked = true;
             }
 
-            if (selectedCharacter.IsQuestCompleted(67700) ||
-                selectedCharacter.IsQuestCompleted(67791) ||
-                selectedCharacter.IsQuestCompleted(67856)
+            if (selectedCharacter.HasQuest(67700) ||
+                selectedCharacter.HasQuest(67791) ||
+                selectedCharacter.HasQuest(67856)
                )
             {
                 names.Add(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 5753));
@@ -259,9 +259,9 @@ namespace Altoholic.Windows
                     _selectedExpansion = _globalCache.AddonStorage.LoadAddonString(_currentLocale, 5753);
             }
 
-            if (selectedCharacter.IsQuestCompleted(68509) ||
-                selectedCharacter.IsQuestCompleted(68572) ||
-                selectedCharacter.IsQuestCompleted(68633)
+            if (selectedCharacter.HasQuest(68509) ||
+                selectedCharacter.HasQuest(68572) ||
+                selectedCharacter.HasQuest(68633)
                )
             {
                 names.Add(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 5754));
@@ -271,9 +271,9 @@ namespace Altoholic.Windows
                     _selectedExpansion = _globalCache.AddonStorage.LoadAddonString(_currentLocale, 5754);
             }
 
-            if (selectedCharacter.IsQuestCompleted(69219) ||
-                selectedCharacter.IsQuestCompleted(69330) ||
-                selectedCharacter.IsQuestCompleted(69432)
+            if (selectedCharacter.HasQuest(69219) ||
+                selectedCharacter.HasQuest(69330) ||
+                selectedCharacter.HasQuest(69432)
                )
             {
                 shbUnlocked = true;
@@ -282,9 +282,9 @@ namespace Altoholic.Windows
                     _selectedExpansion = _globalCache.AddonStorage.LoadAddonString(_currentLocale, 8156);
             }
 
-            if (selectedCharacter.IsQuestCompleted(70081) ||
-                selectedCharacter.IsQuestCompleted(70137) ||
-                selectedCharacter.IsQuestCompleted(70217)
+            if (selectedCharacter.HasQuest(70081) ||
+                selectedCharacter.HasQuest(70137) ||
+                selectedCharacter.HasQuest(70217)
                )
             {
                 names.Add(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 8160));
@@ -295,9 +295,9 @@ namespace Altoholic.Windows
 
 
             /*
-             if (selectedCharacter.IsQuestCompleted() &&
-                   selectedCharacter.IsQuestCompleted() &&
-                   selectedCharacter.IsQuestCompleted())
+             if (selectedCharacter.HasQuest() &&
+                   selectedCharacter.HasQuest() &&
+                   selectedCharacter.HasQuest())
                {
                    names.Add(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 8175));//DT
                     dtUnlocked = true;
@@ -332,15 +332,15 @@ namespace Altoholic.Windows
                 case "A Realm Reborn":
                 case "新生エオルゼア":
                     {
-                        bool arrAllied = selectedCharacter.IsQuestCompleted(70324);
+                        bool arrAllied = selectedCharacter.HasQuest(70324);
                         for (uint i = 1; i <= 5; i++)
                         {
                             if (
-                                i == 1 && !selectedCharacter.IsQuestCompleted(66754) ||
-                                i == 2 && !selectedCharacter.IsQuestCompleted(66789) ||
-                                i == 3 && !selectedCharacter.IsQuestCompleted(66857) ||
-                                i == 4 && !selectedCharacter.IsQuestCompleted(66911) ||
-                                i == 5 && !selectedCharacter.IsQuestCompleted(67023)
+                                i == 1 && !selectedCharacter.HasQuest(66754) ||
+                                i == 2 && !selectedCharacter.HasQuest(66789) ||
+                                i == 3 && !selectedCharacter.HasQuest(66857) ||
+                                i == 4 && !selectedCharacter.HasQuest(66911) ||
+                                i == 5 && !selectedCharacter.HasQuest(67023)
                             )
                             {
                                 continue;
@@ -362,13 +362,13 @@ namespace Altoholic.Windows
                 case "Heavensward":
                 case "蒼天のイシュガルド":
                     {
-                        bool hwAllied = selectedCharacter.IsQuestCompleted(67921);
+                        bool hwAllied = selectedCharacter.HasQuest(67921);
                         for (uint i = 6; i <= 8; i++)
                         {
                             if (
-                                i == 6 && !selectedCharacter.IsQuestCompleted(67700) ||
-                                i == 7 && !selectedCharacter.IsQuestCompleted(67791) ||
-                                i == 8 && !selectedCharacter.IsQuestCompleted(67856)
+                                i == 6 && !selectedCharacter.HasQuest(67700) ||
+                                i == 7 && !selectedCharacter.HasQuest(67791) ||
+                                i == 8 && !selectedCharacter.HasQuest(67856)
                             )
                             {
                                 continue;
@@ -390,13 +390,13 @@ namespace Altoholic.Windows
                 case "Stormblood":
                 case "紅蓮のリベレーター":
                     {
-                        bool sbAllied = selectedCharacter.IsQuestCompleted(68700);
+                        bool sbAllied = selectedCharacter.HasQuest(68700);
                         for (uint i = 9; i <= 11; i++)
                         {
                             if (
-                                i == 9 && !selectedCharacter.IsQuestCompleted(68509) ||
-                                i == 10 && !selectedCharacter.IsQuestCompleted(68572) ||
-                                i == 11 && !selectedCharacter.IsQuestCompleted(68633)
+                                i == 9 && !selectedCharacter.HasQuest(68509) ||
+                                i == 10 && !selectedCharacter.HasQuest(68572) ||
+                                i == 11 && !selectedCharacter.HasQuest(68633)
                             )
                             {
                                 continue;
@@ -421,9 +421,9 @@ namespace Altoholic.Windows
                         for (uint i = 12; i <= 14; i++)
                         {
                             if (
-                                i == 12 && !selectedCharacter.IsQuestCompleted(69219) ||
-                                i == 13 && !selectedCharacter.IsQuestCompleted(69330) ||
-                                i == 14 && !selectedCharacter.IsQuestCompleted(69432)
+                                i == 12 && !selectedCharacter.HasQuest(69219) ||
+                                i == 13 && !selectedCharacter.HasQuest(69330) ||
+                                i == 14 && !selectedCharacter.HasQuest(69432)
                             )
                             {
                                 continue;
@@ -445,13 +445,13 @@ namespace Altoholic.Windows
                 case "Endwalker":
                 case "暁月編":
                     {
-                        bool ewAllied = selectedCharacter.IsQuestCompleted(70324);
+                        bool ewAllied = selectedCharacter.HasQuest(70324);
                         for (uint i = 15; i <= 17; i++)
                         {
                             if (
-                                i == 15 && !selectedCharacter.IsQuestCompleted(70081) ||
-                                i == 16 && !selectedCharacter.IsQuestCompleted(70137) ||
-                                i == 17 && !selectedCharacter.IsQuestCompleted(70217)
+                                i == 15 && !selectedCharacter.HasQuest(70081) ||
+                                i == 16 && !selectedCharacter.HasQuest(70137) ||
+                                i == 17 && !selectedCharacter.HasQuest(70217)
                             )
                             {
                                 continue;

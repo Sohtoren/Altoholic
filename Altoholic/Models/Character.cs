@@ -7,6 +7,7 @@ namespace Altoholic.Models
     public class Character
     {
         public ulong Id { get; init; } = 0;
+        public ulong CharacterId { get; init; } = 0;
         public string FirstName { get; set; } = string.Empty;
         public string LastName { get; set; } = string.Empty;
         public string HomeWorld { get; set; } = string.Empty;
@@ -33,7 +34,7 @@ namespace Altoholic.Models
         public PlayerCurrencies? Currencies { get; set; }
         public Jobs? Jobs { get; set; }
         public Profile? Profile { get; set; }
-        public List<Quest> Quests { get; set; } = [];
+        public List<int> Quests { get; set; } = [];
         public List<Inventory> Inventory { get; set; } = [];
         public ArmoryGear? ArmoryInventory { get; set; } = null;
         public List<Inventory> Saddle { get; set; } = [];
@@ -73,12 +74,13 @@ namespace Altoholic.Models
 
         public bool HasQuest(int id)
         {
-            return Quests.Exists(q => q.Id == id);
+            //return Quests.Exists(q => q.Id == id);
+            return Quests.Count > 0 && Quests.Contains(id);
         }
-        public bool IsQuestCompleted(int id)
+        /*public bool IsQuestCompleted(int id)
         {
             return HasQuest(id) && Quests.First(q => q.Id == id).Completed;
-        }
+        }*/
 
         public bool HasMinion(uint id)
         {

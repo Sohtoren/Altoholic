@@ -21,6 +21,7 @@ using FFXIVClientStructs.FFXIV.Client.UI;
 using LiteDB;
 using Lumina.Excel.GeneratedSheets;
 using Lumina.Text;
+using Microsoft.Data.Sqlite;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -28,7 +29,6 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using static FFXIVClientStructs.FFXIV.Client.UI.RaptureAtkModule;
-using Quest = Altoholic.Models.Quest;
 
 namespace Altoholic
 {
@@ -69,7 +69,8 @@ namespace Altoholic
         private CollectionWindow CollectionWindow { get; }
         private ProgressWindow ProgressWindow { get; }
 
-        private readonly LiteDatabase _db;
+        //private readonly LiteDatabase _db;
+        private readonly SqliteConnection _db;
 
         private Character _localPlayer = new();
         private Utf8String? _localPlayerFreeCompanyTest;
@@ -110,12 +111,35 @@ namespace Altoholic
 #else
             string dbpath = Path.Combine(PluginInterface.GetPluginConfigDirectory(), "altoholic.db");
 #endif
-            /*if (File.Exists(dbpath))
-            {*/
-            _db = new LiteDatabase(dbpath); // Todo: Make sure this don't crash the game when db is already opened
-            /*}
+            if (File.Exists(dbpath))
+            {
+                List<Character> characters = [];
+                bool isSQliteDb = Database.Database.IsSqLiteDatabase(dbpath);
+                if (!isSQliteDb)
+                {
+                    Log.Info("Database is not SQLite, starting migration");
+                    LiteDatabase db = new(dbpath);
+                    characters = Database.Database.GetDataFromLite(db);
+                    db.Dispose();
+                    File.Delete(dbpath);
+                }
 
-            _db2 = new SQLiteConnection(databasePath);*/
+                _db = Database.Database.CreateDatabaseConnection(dbpath);
+                _db.Open();
+                Database.Database.CheckOrCreateDatabases(_db);
+                if (!isSQliteDb)
+                {
+                    Database.Database.AddCharacters(_db, characters);
+                }
+                Log.Info("Migration finished");
+            }
+            else
+            {
+                _db = Database.Database.CreateDatabaseConnection(dbpath);
+                _db.Open();
+                Database.Database.CheckOrCreateDatabases(_db);
+            }
+
 
             Configuration = PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
             Configuration.Initialize(PluginInterface);
@@ -272,7 +296,9 @@ namespace Altoholic
             ClientState.Login -= OnCharacterLogin;
             ClientState.Logout -= OnCharacterLogout;
             Framework.Update -= OnFrameworkUpdate;
+            _db.Close();
             _db.Dispose();
+            SqliteConnection.ClearAllPools();
         }
 
         private void OnSaveCommand(string command, string args)
@@ -318,16 +344,16 @@ namespace Altoholic
             }
 
             //Plugin.Log.Debug($"localPlayerName : {localPlayer.FirstName} {localPlayer.LastName}");
-            if (_localPlayer.Id == 0 || string.IsNullOrEmpty(_localPlayer.FirstName))
+            if (_localPlayer.CharacterId == 0 || string.IsNullOrEmpty(_localPlayer.FirstName))
             {
-                Character? p = GetCharacterFromGameOrDB();
+                Character? p = GetCharacterFromGameOrDatabase();
                 if (p is not null)
                 {
                     _localPlayer = p;
                     //Plugin.Log.Debug($"localPlayerPlayTime : {localPlayerPlayTime}");
                     if (_localPlayer.PlayTime == 0)//still needed?
                     {
-                        Character? chara = Database.Database.GetCharacter(Log, _db, _localPlayer.Id);
+                        Character? chara = Database.Database.GetCharacter(_db, _localPlayer.CharacterId);
                         if (chara is not null)
                         {
                             _localPlayer.PlayTime = chara.PlayTime;
@@ -345,11 +371,11 @@ namespace Altoholic
 #endif
                 }
             }
-            if (_localPlayer.Id != 0)
+            if (_localPlayer.CharacterId != 0)
             {
                 if (OtherCharacters.Count == 0)
                 {
-                    OtherCharacters = Database.Database.GetOthersCharacters(Log, _db, _localPlayer.Id);
+                    OtherCharacters = Database.Database.GetOthersCharacters(_db, _localPlayer.CharacterId);
                 }
                 //Plugin.Log.Debug($"otherCharacters count {otherCharacters.Count}");
 
@@ -357,7 +383,7 @@ namespace Altoholic
                 if (_localPlayer.Quests.Count == 0)
                 {
                     //Plugin.Log.Debug("No quest found, fetching from db");
-                    Character? chara = Database.Database.GetCharacter(Log, _db, _localPlayer.Id);
+                    Character? chara = Database.Database.GetCharacter(_db, _localPlayer.CharacterId);
                     if (chara != null)
                     {
                         _localPlayer.Quests = chara.Quests;
@@ -366,7 +392,7 @@ namespace Altoholic
                 //Plugin.Log.Debug($"localPlayer.Quests.Count: {localPlayer.Quests.Count}");
                 if (_localPlayer.Retainers.Count == 0)
                 {
-                    Character? chara = Database.Database.GetCharacter(Log, _db, _localPlayer.Id);
+                    Character? chara = Database.Database.GetCharacter(_db, _localPlayer.CharacterId);
                     if (chara != null)
                     {
                         _localPlayer.Retainers = chara.Retainers;
@@ -493,7 +519,7 @@ namespace Altoholic
 #endif
                 if (_localPlayer.PlayTime == 0)
                 {
-                    Character? p = GetCharacterFromGameOrDB();
+                    Character? p = GetCharacterFromGameOrDatabase();
                     if (p is not null)
                     {
                         _localPlayer.PlayTime = p.PlayTime;
@@ -517,9 +543,9 @@ namespace Altoholic
                 return;
             }
 
-            if (_localPlayer.Id == 0)
+            if (_localPlayer.CharacterId == 0)
             {
-                _localPlayer = new Character { Id = ClientState.LocalContentId };
+                _localPlayer = new Character { CharacterId = ClientState.LocalContentId };
             }
 
             string name = lPlayer.Name.TextValue;
@@ -573,7 +599,7 @@ namespace Altoholic
 
         private unsafe void GetPlayerAttributesProfileAndJobs()
         {
-            if (_localPlayer.Id == 0) return;
+            if (_localPlayer.CharacterId == 0) return;
             string title = string.Empty;
             bool prefixTitle = false;
             RaptureAtkModule* raptureAtkModule = FFXIVClientStructs.FFXIV.Client.System.Framework.Framework.Instance()->UIModule->GetRaptureAtkModule();
@@ -895,7 +921,7 @@ namespace Altoholic
                 /*if(localPlayer.HasQuest(id) && localPlayer.IsQuestCompleted(id))
                     Plugin.Log.Debug($"{id} is completed");*/
 
-                if (_localPlayer.HasQuest(id) && _localPlayer.IsQuestCompleted(id))
+                if (_localPlayer.HasQuest(id)/* && _localPlayer.IsQuestCompleted(id)*/)
                 {
                     continue;
                 }
@@ -904,14 +930,9 @@ namespace Altoholic
                 Log.Debug($"Quest not in store or not completed, checking if quest {id} is completed");
 #endif
                 bool complete = Utils.IsQuestCompleted(id);
-                Quest? q = _localPlayer.Quests.Find(q => q.Id == id);
-                if (q == null)
+                if (complete)
                 {
-                    _localPlayer.Quests.Add(new Quest { Id = id, Completed = complete });
-                }
-                else
-                {
-                    q.Completed = complete;
+                    _localPlayer.Quests.Add(id);
                 }
             }
         }
@@ -1329,7 +1350,7 @@ namespace Altoholic
         private void OnCharacterLogin()
         {
             //Log.Info("Altoholic : OnCharacterLogin called");
-            Character? p = GetCharacterFromGameOrDB();
+            Character? p = GetCharacterFromGameOrDatabase();
             if (p is null)
             {
                 return;
@@ -1337,7 +1358,7 @@ namespace Altoholic
 
             _localPlayer = p;
             //Log.Info($"Character id is : {localPlayer.Id}");
-            OtherCharacters = Database.Database.GetOthersCharacters(Log, _db, _localPlayer.Id);
+            OtherCharacters = Database.Database.GetOthersCharacters(_db, _localPlayer.CharacterId);
             //Log.Info("Altoholic : Found {0} others players", otherCharacters.Count);
             //Todo: start timer after /playtime command
             /*_ = new XivChatEntry
@@ -1431,7 +1452,7 @@ namespace Altoholic
             long newPlayTimeUpdate = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
             _localPlayer.LastPlayTimeUpdate = newPlayTimeUpdate;
             Log.Debug($"Updating playtime with {player.Item1}, {player.Item2}, {totalPlaytime}, {newPlayTimeUpdate}.");
-            Database.Database.UpdatePlaytime(Log, _db, id, totalPlaytime, newPlayTimeUpdate);
+            Database.Database.UpdatePlaytime(_db, id, totalPlaytime, newPlayTimeUpdate);
             return result;
         }
 
@@ -1447,13 +1468,21 @@ namespace Altoholic
 
         public void UpdateCharacter()
         {
-            if (_localPlayer.Id == 0 || _localPlayer.FirstName.Length == 0) return;
+            if (_localPlayer.CharacterId == 0 || _localPlayer.FirstName.Length == 0) return;
 
-            Log.Debug($"Updating characters with {_localPlayer.Id} {_localPlayer.FirstName} {_localPlayer.LastName}{(char)SeIconChar.CrossWorld}{_localPlayer.HomeWorld}, {Utils.GetRegionFromWorld(_localPlayer.HomeWorld)}.");
-            Database.Database.UpdateCharacter(Log, _db, _localPlayer);
+            Log.Debug($"Updating characters with {_localPlayer.CharacterId} {_localPlayer.FirstName} {_localPlayer.LastName}{(char)SeIconChar.CrossWorld}{_localPlayer.HomeWorld}, {Utils.GetRegionFromWorld(_localPlayer.HomeWorld)}.");
+            Character? charExist = Database.Database.GetCharacter(_db, _localPlayer.CharacterId);
+            if (charExist == null)
+            {
+                Database.Database.AddCharacter(_db, _localPlayer);
+            }
+            else
+            {
+                Database.Database.UpdateCharacter(_db, _localPlayer);
+            }
         }
 
-        public Character? GetCharacterFromGameOrDB()
+        public Character? GetCharacterFromGameOrDatabase()
         {
             (string, string, string) player = GetLocalPlayerNameWorldRegion();
             if (string.IsNullOrEmpty(player.Item1) || string.IsNullOrEmpty(player.Item2) || string.IsNullOrEmpty(player.Item3)) return null;
@@ -1466,7 +1495,7 @@ namespace Altoholic
             }
 
             //Plugin.Log.Debug("Altoholic : Character names : 0 : {0}, 1: {1}, 2: {2}, 3: {3}", names[0], names[1], player.Item2, player.Item3);
-            Character? chara = Database.Database.GetCharacter(Log, _db, ClientState.LocalContentId);
+            Character? chara = Database.Database.GetCharacter(_db, ClientState.LocalContentId);
             if (chara != null)
             {
                 //Plugin.Log.Debug($"GetCharacterFromDB : id = {chara.Id}, FirstName = {chara.FirstName}, LastName = {chara.LastName}, HomeWorld = {chara.HomeWorld}, DataCenter = {chara.Datacenter}, LastJob = {chara.LastJob}, LastJobLevel = {chara.LastJobLevel}, FCTag = {chara.FCTag}, FreeCompany = {chara.FreeCompany}, LastOnline = {chara.LastOnline}, PlayTime = {chara.PlayTime}, LastPlayTimeUpdate = {chara.LastPlayTimeUpdate}");
@@ -1475,7 +1504,7 @@ namespace Altoholic
 
             return new Character
             {
-                Id = ClientState.LocalContentId,
+                CharacterId = ClientState.LocalContentId,
                 FirstName = names[0],
                 LastName = names[1],
                 HomeWorld = player.Item2,

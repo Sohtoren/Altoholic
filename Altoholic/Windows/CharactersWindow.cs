@@ -8,7 +8,7 @@ using Dalamud.Interface.Textures.TextureWraps;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
 using ImGuiNET;
-using LiteDB;
+using Microsoft.Data.Sqlite;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,13 +19,13 @@ namespace Altoholic.Windows
     public class CharactersWindow : Window, IDisposable
     {
         private readonly Plugin _plugin;
-        private readonly LiteDatabase _db;
+        private readonly SqliteConnection _db;
         private ClientLanguage _currentLocale;
         private readonly GlobalCache _globalCache;
         public CharactersWindow(
             Plugin plugin,
             string name,
-            LiteDatabase db,
+            SqliteConnection db,
             GlobalCache globalCache
         )
             : base(name, ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse)

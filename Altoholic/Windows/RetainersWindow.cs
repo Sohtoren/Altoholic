@@ -684,24 +684,40 @@ namespace Altoholic.Windows
             if (selectedRetainer.MarketInventory.Count > 0)
             {
                 ImGui.TextUnformatted($"On the market until: {Utils.UnixTimeStampToDateTime(selectedRetainer.MarketExpire)}");
-                foreach (Inventory item in selectedRetainer.MarketInventory.Where(item => item.ItemId != 0))
+                using (var table = ImRaii.Table($"###Retainer#{selectedRetainer.Id}#MarketTable", 2))
                 {
-                    Item? itm = _globalCache.ItemStorage.LoadItem(_currentLocale, item.ItemId);
-                    if (itm == null) continue;
-                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Icon, item.HQ), new Vector2(24 ,24));
-                    if (ImGui.IsItemHovered())
+                    if (!table) return;
+                    ImGui.TableSetupColumn(
+                        $"###Retainer#{selectedRetainer.Id}#MarketTable#Col1",
+                        ImGuiTableColumnFlags.WidthStretch);
+                    ImGui.TableSetupColumn(
+                        $"###Retainer#{selectedRetainer.Id}#MarketTable#Col2",
+                        ImGuiTableColumnFlags.WidthStretch);
+                    int count = 0;
+                    foreach (Inventory item in selectedRetainer.MarketInventory.Where(item => item.ItemId != 0))
                     {
-                        Utils.DrawItemTooltip(_currentLocale, ref _globalCache, item);
-                    }
-                    ImGui.SameLine();
-                    ImGui.TextUnformatted($"{itm.Name}");
-                    if (item.Quantity <= 1)
-                    {
-                        continue;
-                    }
+                        ImGui.TableNextRow();
+                        ImGui.TableSetColumnIndex(count >= 10 ? 1 : 0);
+                        Item? itm = _globalCache.ItemStorage.LoadItem(_currentLocale, item.ItemId);
+                        if (itm == null) continue;
+                        Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Icon, item.HQ), new Vector2(24, 24));
+                        if (ImGui.IsItemHovered())
+                        {
+                            Utils.DrawItemTooltip(_currentLocale, ref _globalCache, item);
+                        }
 
-                    ImGui.SameLine();
-                    ImGui.TextUnformatted($"{item.Quantity}");
+                        ImGui.SameLine();
+                        ImGui.TextUnformatted($"{itm.Name}");
+                        if (item.Quantity <= 1)
+                        {
+                            continue;
+                        }
+
+                        ImGui.SameLine();
+                        ImGui.TextUnformatted($"{item.Quantity}");
+
+                        count++;
+                    }
                 }
             }
             else
