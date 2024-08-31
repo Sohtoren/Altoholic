@@ -78,8 +78,9 @@ namespace Altoholic
         private Utf8String? _localPlayerFreeCompanyTest;
 
         private readonly PeriodicTimer? _periodicTimer = null;
+        private readonly Service _altoholicService;
         public List<Character> OtherCharacters = [];
-        public List<Blacklist> BlacklistedCharacters = [];
+        public List<Blacklist> BlacklistedCharacters;
         private readonly Localization _localization = new();
         private readonly GlobalCache _globalCache;
 
@@ -144,12 +145,13 @@ namespace Altoholic
             }
 
             BlacklistedCharacters = Database.Database.GetBlacklists(_db);
+#if DEBUG
             Log.Debug("BlacklistedCharacters.Count: ", BlacklistedCharacters.Count);
             foreach (Blacklist blacklistedCharacter in BlacklistedCharacters)
             {
                 Log.Debug($"Blacklisted id: {blacklistedCharacter.CharacterId}");
             }
-
+#endif
             Configuration = PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
             Configuration.Initialize(PluginInterface);
 
@@ -174,58 +176,59 @@ namespace Altoholic
             _globalCache.TripleTriadCardStorage.Init(currentLocale, _globalCache);
             _globalCache.BeastTribesStorage.Init(currentLocale, _globalCache);
 
-            Service altoholicService = new(
+            _altoholicService = new(
                 () => _localPlayer,
-                () => OtherCharacters
+                () => OtherCharacters,
+                () => BlacklistedCharacters
             );
 
             ConfigWindow = new ConfigWindow(this, $"{Name} configuration", _globalCache);
             CharactersWindow = new CharactersWindow(this, $"{Name} characters", _db, _globalCache)
             {
-                GetPlayer = () => altoholicService.GetPlayer(),
-                GetOthersCharactersList = () => altoholicService.GetOthersCharacters(),
+                GetPlayer = () => _altoholicService.GetPlayer(),
+                GetOthersCharactersList = () => _altoholicService.GetOthersCharacters(),
             };
 
             DetailsWindow = new DetailsWindow(this, $"{Name} characters details", _globalCache)
             {
-                GetPlayer = () => altoholicService.GetPlayer(),
-                GetOthersCharactersList = () => altoholicService.GetOthersCharacters(),
+                GetPlayer = () => _altoholicService.GetPlayer(),
+                GetOthersCharactersList = () => _altoholicService.GetOthersCharacters(),
             };
 
             JobsWindow = new JobsWindow(this, $"{Name} characters jobs", _globalCache)
             {
-                GetPlayer = () => altoholicService.GetPlayer(),
-                GetOthersCharactersList = () => altoholicService.GetOthersCharacters(),
+                GetPlayer = () => _altoholicService.GetPlayer(),
+                GetOthersCharactersList = () => _altoholicService.GetOthersCharacters(),
             };
 
             CurrenciesWindow = new CurrenciesWindow(this, $"{Name} characters currencies", _globalCache)
             {
-                GetPlayer = () => altoholicService.GetPlayer(),
-                GetOthersCharactersList = () => altoholicService.GetOthersCharacters(),
+                GetPlayer = () => _altoholicService.GetPlayer(),
+                GetOthersCharactersList = () => _altoholicService.GetOthersCharacters(),
             };
 
             InventoriesWindow = new InventoriesWindow(this, $"{Name} characters inventories", _globalCache)
             {
-                GetPlayer = () => altoholicService.GetPlayer(),
-                GetOthersCharactersList = () => altoholicService.GetOthersCharacters(),
+                GetPlayer = () => _altoholicService.GetPlayer(),
+                GetOthersCharactersList = () => _altoholicService.GetOthersCharacters(),
             };
 
             RetainersWindow = new RetainersWindow(this, $"{Name} characters retainers", _globalCache)
             {
-                GetPlayer = () => altoholicService.GetPlayer(),
-                GetOthersCharactersList = () => altoholicService.GetOthersCharacters(),
+                GetPlayer = () => _altoholicService.GetPlayer(),
+                GetOthersCharactersList = () => _altoholicService.GetOthersCharacters(),
             };
 
             CollectionWindow = new CollectionWindow(this, $"{Name} characters colletion", _globalCache)
             {
-                GetPlayer = () => altoholicService.GetPlayer(),
-                GetOthersCharactersList = () => altoholicService.GetOthersCharacters(),
+                GetPlayer = () => _altoholicService.GetPlayer(),
+                GetOthersCharactersList = () => _altoholicService.GetOthersCharacters(),
             };
 
             ProgressWindow = new ProgressWindow(this, $"{Name} characters progress", _globalCache)
             {
-                GetPlayer = () => altoholicService.GetPlayer(),
-                GetOthersCharactersList = () => altoholicService.GetOthersCharacters(),
+                GetPlayer = () => _altoholicService.GetPlayer(),
+                GetOthersCharactersList = () => _altoholicService.GetOthersCharacters(),
             };
 
 
@@ -399,14 +402,15 @@ namespace Altoholic
 
             if (_localPlayer.CharacterId != 0)
             {
-                if (OtherCharacters.Count == 0)
-                {
-                    OtherCharacters = Database.Database.GetOthersCharacters(_db, _localPlayer.CharacterId);
-                }
+                OtherCharacters = Database.Database.GetOthersCharacters(_db, _localPlayer.CharacterId);
 
                 //Plugin.Log.Debug($"otherCharacters count {otherCharacters.Count}");
 
-                if (BlacklistedCharacters.Exists(b => b.CharacterId == _localPlayer.CharacterId)) return;
+                if (_altoholicService.GetBlacklistedCharacters().Exists(b => b.CharacterId == _localPlayer.CharacterId))
+                {
+                    _altoholicService.SetPlayer(new Character() { CharacterId = 0 });
+                    return;
+                }
 
                 //Plugin.Log.Debug($"localPlayer.Quests.Count: {localPlayer.Quests.Count}");
                 if (_localPlayer.Quests.Count == 0)

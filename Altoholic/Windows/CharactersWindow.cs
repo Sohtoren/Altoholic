@@ -66,8 +66,8 @@ namespace Altoholic.Windows
             _currentLocale = _plugin.Configuration.Language;
             try
             {
-                //using (ImRaii.IEndObject charactersTable = ImRaii.Table("###Characters", 9, ImGuiTableFlags.ScrollY, new Vector2(-1 , 470)))
-                using (ImRaii.IEndObject charactersTable = ImRaii.Table("###Characters", 10, ImGuiTableFlags.ScrollY, new Vector2(-1, 470)))
+                using (ImRaii.IEndObject charactersTable = ImRaii.Table("###Characters", 9, ImGuiTableFlags.ScrollY, new Vector2(-1 , 470)))
+                //using (ImRaii.IEndObject charactersTable = ImRaii.Table("###Characters", 10, ImGuiTableFlags.ScrollY, new Vector2(-1, 470)))
                 //using (ImRaii.IEndObject charactersTable = ImRaii.Table("###Characters", 10))
                 {
                     if (!charactersTable) return;
@@ -89,11 +89,15 @@ namespace Altoholic.Windows
                     //ImGui.TableSetupColumn("Last online", ImGuiTableColumnFlags.WidthFixed, 80);
                     ImGui.TableSetupColumn($"{Loc.Localize("Playtime", "Playtime")}###Characters#Playtime", ImGuiTableColumnFlags.WidthStretch);
                     //ImGui.TableSetupColumn($"{Loc.Localize("Playtime", "Playtime")}###Characters#Playtime", ImGuiTableColumnFlags.WidthFixed, 200);
-                    ImGui.TableSetupColumn($"{Loc.Localize("Action", "Action")}###Characters#Action", ImGuiTableColumnFlags.WidthFixed, 40);
+                    //ImGui.TableSetupColumn($"{Loc.Localize("Action", "Action")}###Characters#Action", ImGuiTableColumnFlags.WidthFixed, 40);
                     ImGui.TableHeadersRow();
 
                     List<Character> chars = [];
-                    chars.Insert(0, GetPlayer.Invoke());
+                    Character p = GetPlayer.Invoke();
+                    if (p.CharacterId != 0)
+                    {
+                        chars.Insert(0, p);
+                    }
                     chars.AddRange(
                         GetOthersCharactersList.Invoke()
                     //.OrderByDescending(c => c.LastOnline)
@@ -278,7 +282,9 @@ namespace Altoholic.Windows
             // Todo : 5) Del => Delete char from altoholic
             // 4&5 could be same button with different modifier (alt BL /ctrl delete)
             //Put back actions code here
-            ImGui.TableSetColumnIndex(9);
+
+            //ImGui.TableSetColumnIndex(9);
+
             /*using ImRaii.IEndObject characterActions = ImRaii.Table($"###CharacterActions_{character.CharacterId}", 2);
             if (!characterActions) return;
             ImGui.TableSetupColumn($"###CharacterActions_{character.CharacterId}#Blacklist", ImGuiTableColumnFlags.WidthFixed,
@@ -287,15 +293,14 @@ namespace Altoholic.Windows
             ImGui.TableNextRow();*/
             /**************************Blacklist**************************/
             //ImGui.TableSetColumnIndex(0);
-            ImGui.PushFont(UiBuilder.IconFont);
+            
+            /*ImGui.PushFont(UiBuilder.IconFont);
             ImGui.TextUnformatted(FontAwesomeIcon.Ban.ToIconString());
             if (ImGui.IsItemClicked())
-            //if (ImGui.Button(FontAwesomeIcon.Ban.ToIconString()))
             {
                 ImGui.OpenPopup($"Blacklist {character.FirstName} {character.LastName}{(char)SeIconChar.CrossWorld}{character.HomeWorld}###BLModal_{character.CharacterId}");
                 // Todo: Add or find trigger to notify logic to delete character
                 // Todo: Add or find trigger to notify logic to update others character
-                // Todo: Improve this shit bc this is ugly AF
                 Plugin.Log.Debug($"Altoholic : Blacklist button for char {character.FirstName} {character.LastName}{(char)SeIconChar.CrossWorld}{character.HomeWorld} hitted");
             }
             ImGui.PopFont();
@@ -315,9 +320,11 @@ namespace Altoholic.Windows
                 if (ImGui.Button("OK", new Vector2(120, 0)))
                 {
                     int result = Database.Database.BlacklistCharacter(_db, character.CharacterId);
+                    //SetBlacklistedCharacter(character.CharacterId);
                     //this.SetOthersCharactersList(oC);
                     Utils.ChatMessage(
                         $"{character.FirstName} {character.LastName}{(char)SeIconChar.CrossWorld}{character.HomeWorld} has been blacklisted.");
+                    Utils.ChatMessage("Use /altoholicbl on this character to remove it from the blacklist");
                     ImGui.CloseCurrentPopup();
                 }
 
@@ -325,6 +332,8 @@ namespace Altoholic.Windows
                 ImGui.SameLine();
                 if (ImGui.Button("Cancel", new Vector2(120, 0))) { ImGui.CloseCurrentPopup(); }
             }
+            */
+
             /**************************Delete**************************/
             /*ImGui.TableSetColumnIndex(1);
             ImGui.PushFont(UiBuilder.IconFont);

@@ -225,7 +225,7 @@ namespace Altoholic.Database
 
         public static Character? GetCharacter(SqliteConnection db, ulong id)
         {
-            Plugin.Log.Debug($"Database/GetCharacter entered db = {db}, id = {id}");
+            Plugin.Log.Debug($"Database/GetCharacter entered with id = {id}");
             try
             {
                 Blacklist? b = GetBlacklist(db, id);
@@ -278,7 +278,7 @@ namespace Altoholic.Database
         {
             try
             {
-                const string sql = $"SELECT * FROM {CharacterTableName} WHERE CharacterId != @id";
+                const string sql = $"SELECT * FROM {CharacterTableName} WHERE CharacterId != @id AND CharacterId NOT IN (SELECT CharacterId FROM {BlacklistTableName})";
                 IEnumerable<DatabaseCharacter> dbCharacters = db.Query<DatabaseCharacter>(sql, new { id });
                 List<Character> cList = [];
                 foreach (DatabaseCharacter dbCharacter in dbCharacters)

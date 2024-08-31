@@ -30,6 +30,7 @@ namespace Altoholic
         // ReSharper disable once InconsistentNaming
         private const uint FALLBACK_ICON = 055396;
 
+        // ReSharper disable once InconsistentNaming
         public static string GetDCString()
         {
             return "DC";
