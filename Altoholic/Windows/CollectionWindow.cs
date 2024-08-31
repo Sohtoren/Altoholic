@@ -270,7 +270,7 @@ namespace Altoholic.Windows
             }*/
 
             using (var tripleTriadTab =
-                   ImRaii.TabItem($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 12212)}"))
+                   ImRaii.TabItem($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 9529)}")) //9991 for katakana
             {
                 if (tripleTriadTab.Success)
                 {

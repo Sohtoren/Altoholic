@@ -123,6 +123,7 @@ namespace Altoholic.Windows
 
         private void DrawAll(List<Character> chars)
         {
+            if (chars.Count > 0) return;
             using var charactersJobsAll = ImRaii.Table("###CharactersJobs#All", 43,
                 ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner |
                 ImGuiTableFlags.ScrollX | ImGuiTableFlags.ScrollY);

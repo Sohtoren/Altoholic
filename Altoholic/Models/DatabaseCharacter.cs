@@ -2,7 +2,6 @@ namespace TestNewDB.Models
 {
     public class DatabaseCharacter
     {
-        public ulong Id { get; init; } = 0;
         public ulong CharacterId { get; init; } = 0;
         public string FirstName { get; set; } = string.Empty;
         public string LastName { get; set; } = string.Empty;

@@ -61,8 +61,7 @@ namespace Altoholic.Database
             {
                 const string sql = $"""
                                    CREATE TABLE IF NOT EXISTS {CharacterTableName} (
-                                                   Id BIGINT PRIMARY KEY,
-                                                   CharacterId BIGINT,
+                                                   CharacterId BIGINT PRIMARY KEY,
                                                    FirstName NVARCHAR(255),
                                                    LastName NVARCHAR(255),
                                                    HomeWorld NVARCHAR(255),
@@ -119,7 +118,8 @@ namespace Altoholic.Database
             {
                 const string sql2 = $"""
                                         CREATE TABLE IF NOT EXISTS {CharactersCurrenciesHistoryTableName}(
-                                            CharacterId BIGINT PRIMARY KEY,
+                                            Id BIGINT PRIMARY KEY,
+                                            CharacterId BIGINT,
                                             Currencies TEXT,
                                             Datetime BIGINT
                                        );
