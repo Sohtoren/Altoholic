@@ -355,12 +355,12 @@ namespace Altoholic.Database
                 Character? c = GetCharacter(db, id);
                 if (c == null) return 0;
 
-                const string updateSql = $"UPDATE {CharacterTableName} SET [PlayTime] = @PlayTime, [LastPlayTimeUpdate] = @LastPlayTimeUpdate WHERE [CharacterId] = @CharacterId ";
+                const string updateSql = $"UPDATE {CharacterTableName} SET [PlayTime] = @PlayTime, [LastPlayTimeUpdate] = @LastPlayTimeUpdate WHERE [CharacterId] = @CharacterId";
                 int result = db.Execute(updateSql, new
                 {
-                    playTime,
-                    playTimeUpdate,
-                    id
+                    PlayTime = playTime,
+                    LastPlayTimeUpdate = playTimeUpdate,
+                    CharacterId = id
                 });
                 return result;
             }
