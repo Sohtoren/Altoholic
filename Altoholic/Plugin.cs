@@ -38,7 +38,7 @@ namespace Altoholic
         private const string CommandName = "/altoholic";
         private const string SaveCommandName = "/altoholicsave";
         private const string BlacklistCommandName = "/altoholicbl";
-        private readonly int[] _questIds = [65970, 66045, 66216, 66217, 66218, 66640, 66641, 66642, 66754, 66789, 66857, 66911, 66968, 66969, 66970, 67023, 67099, 67100, 67101, 67658, 67700, 67791, 67856, 68509, 68572, 68633, 68734, 68817, 69133, 69219, 69330, 69432, 70081, 70137, 70217, 69208, 67631, 69208, 67009/*Arr Allied*/, 67921/*HW Allied*/, 68700/*SB Allied*/, 70324/*EW Allied*/];
+        readonly Array _questIds = Enum.GetValues(typeof(Quests));
 
         [PluginService] public static IDalamudPluginInterface PluginInterface { get; set; } = null!;
         [PluginService] public static IClientState ClientState { get; set; } = null!;
@@ -308,6 +308,8 @@ namespace Altoholic
             CleanLastLocalCharacter();
 
             CommandManager.RemoveHandler(CommandName);
+            CommandManager.RemoveHandler(SaveCommandName);
+            CommandManager.RemoveHandler(BlacklistCommandName);
 
             ClientState.Login -= OnCharacterLogin;
             ClientState.Logout -= OnCharacterLogout;
@@ -408,7 +410,7 @@ namespace Altoholic
 
                 if (_altoholicService.GetBlacklistedCharacters().Exists(b => b.CharacterId == _localPlayer.CharacterId))
                 {
-                    _altoholicService.SetPlayer(new Character() { CharacterId = 0 });
+                    //_altoholicService.SetPlayer(new Character() { CharacterId = 0 });
                     return;
                 }
 
@@ -626,10 +628,10 @@ namespace Altoholic
             GetPlayerAttributesProfileAndJobs();
             GetPlayerEquippedGear();
             GetPlayerInventory();
+            GetPlayerSaddleInventory();
             GetPlayerArmoryInventory();
             GetPlayerGlamourInventory();
             GetPlayerArmoireInventory();
-            GetPlayerSaddleInventory();
             GetPlayerRetainer();
             GetPlayerBeastReputations();
         }
@@ -1229,6 +1231,15 @@ namespace Altoholic
 
         private unsafe void GetPlayerRetainer()
         {
+            if (
+                Condition[ConditionFlag.BoundByDuty] ||
+                Condition[ConditionFlag.BoundByDuty56] ||
+                Condition[ConditionFlag.BoundByDuty95]
+            )
+            {
+                return;
+            }
+
             ref readonly RetainerManager retainerManager = ref *RetainerManager.Instance();
             byte retainersCount = retainerManager.GetRetainerCount();
             if (retainersCount == 0) return;
@@ -1433,8 +1444,6 @@ namespace Altoholic
             GetPlayerCompletedQuests();
             UpdateCharacter();
             CleanLastLocalCharacter();
-
-
 
             ProgressWindow.IsOpen = false;
             ProgressWindow.Clear();
