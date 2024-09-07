@@ -18,10 +18,10 @@ namespace Altoholic.Models
             return GetLocalPlayer.Invoke();
         }
 
-        public void SetPlayer(Character player)
+        /*public void SetPlayer(Character player)
         {
             GetLocalPlayer.DynamicInvoke([player]);
-        }
+        }*/
         
         public List<Character> GetOthersCharacters()
         {

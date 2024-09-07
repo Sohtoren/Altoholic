@@ -21,7 +21,8 @@ using Emote = Lumina.Excel.GeneratedSheets.Emote;
 using TextCommand = Lumina.Excel.GeneratedSheets.TextCommand;
 using Ornament = Lumina.Excel.GeneratedSheets.Ornament;
 using Glasses = Lumina.Excel.GeneratedSheets.Glasses;
-using System.Xml.Linq;
+using Quest = Lumina.Excel.GeneratedSheets.Quest;
+using Altoholic.Database;
 
 namespace Altoholic
 {
@@ -2604,6 +2605,97 @@ namespace Altoholic
             //Plugin.Log.Debug($"IsQuestCompleted questId: {questId}");
 
             return QuestManager.IsQuestComplete((uint)questId);
+        }
+
+        public static Models.Quest? GetQuest(uint id)
+        {
+            Models.Quest q = new();
+            List<ClientLanguage> langs =
+                [ClientLanguage.German, ClientLanguage.English, ClientLanguage.French, ClientLanguage.Japanese];
+            foreach (ClientLanguage l in langs)
+            {
+                ExcelSheet<Quest>? dbe = Plugin.DataManager.GetExcelSheet<Quest>(l);
+                Quest? lumina = dbe?.GetRow(id);
+                if (lumina == null) return null;
+                switch (l)
+                {
+                    case ClientLanguage.German:
+                        {
+                            q.GermanName = lumina.Name;
+                            break;
+                        }
+                    case ClientLanguage.English:
+                        {
+                            q.Id = lumina.RowId;
+                            q.Icon = lumina.Icon;
+                            q.EnglishName = lumina.Name;
+                            break;
+                        }
+                    case ClientLanguage.French:
+                        {
+                            q.FrenchName = lumina.Name;
+                            break;
+                        }
+                    case ClientLanguage.Japanese:
+                        {
+                            q.JapaneseName = lumina.Name;
+                            break;
+                        }
+
+                }
+            }
+
+            return q;
+        }
+
+        public static List<List<bool>> GetCharactersMainScenarioQuests(List<Character> characters)
+        {
+            List<List<bool>> result = [];
+            foreach (Character character in characters)
+            {
+                List<bool> completedQuests =
+                [
+                    character.HasQuest((int)QuestIds.MSQ_A_REALM_REBORN),
+                    character.HasQuest((int)QuestIds.MSQ_A_REALM_AWOKEN),
+                    character.HasQuest((int)QuestIds.MSQ_THROUGH_THE_MAELSTROM),
+                    character.HasQuest((int)QuestIds.MSQ_DEFENDERS_OF_EORZEA),
+                    character.HasQuest((int)QuestIds.MSQ_DREAMS_OF_ICE),
+                    character.HasQuest((int)QuestIds.MSQ_BEFORE_THE_FALL_PART_1),
+                    character.HasQuest((int)QuestIds.MSQ_BEFORE_THE_FALL_PART_2),
+                    character.HasQuest((int)QuestIds.MSQ_HEAVENSWARD),
+                    character.HasQuest((int)QuestIds.MSQ_AS_GOES_LIGHT_SO_GOES_DARKNESS),
+                    character.HasQuest((int)QuestIds.MSQ_THE_GEARS_OF_CHANGE),
+                    character.HasQuest((int)QuestIds.MSQ_REVENGE_OF_THE_HORDE),
+                    character.HasQuest((int)QuestIds.MSQ_SOUL_SURRENDER),
+                    character.HasQuest((int)QuestIds.MSQ_THE_FAR_EDGE_OF_FATE_PART_1),
+                    character.HasQuest((int)QuestIds.MSQ_THE_FAR_EDGE_OF_FATE_PART_2),
+                    character.HasQuest((int)QuestIds.MSQ_STORMBLOOD),
+                    character.HasQuest((int)QuestIds.MSQ_THE_LEGEND_RETURNS),
+                    character.HasQuest((int)QuestIds.MSQ_RISE_OF_A_NEW_SUN),
+                    character.HasQuest((int)QuestIds.MSQ_UNDER_THE_MOONLIGHT),
+                    character.HasQuest((int)QuestIds.MSQ_PRELUDE_IN_VIOLET),
+                    character.HasQuest((int)QuestIds.MSQ_A_REQUIEM_FOR_HEROES_PART_1),
+                    character.HasQuest((int)QuestIds.MSQ_A_REQUIEM_FOR_HEROES_PART_2),
+                    character.HasQuest((int)QuestIds.MSQ_SHADOWBRINGER),
+                    character.HasQuest((int)QuestIds.MSQ_VOWS_OF_VIRTUE_DEEDS_OF_CRUELTY),
+                    character.HasQuest((int)QuestIds.MSQ_ECHOES_OF_A_FALLEN_STAR),
+                    character.HasQuest((int)QuestIds.MSQ_REFLECTIONS_IN_CRYSTAL),
+                    character.HasQuest((int)QuestIds.MSQ_FUTURES_REWRITTEN),
+                    character.HasQuest((int)QuestIds.MSQ_DEATH_UNTO_DAWN_PART_1),
+                    character.HasQuest((int)QuestIds.MSQ_DEATH_UNTO_DAWN_PART_2),
+                    character.HasQuest((int)QuestIds.MSQ_ENDWALKER),
+                    character.HasQuest((int)QuestIds.MSQ_NEWFOUND_ADVENTURE),
+                    character.HasQuest((int)QuestIds.MSQ_BURIED_MEMORY),
+                    character.HasQuest((int)QuestIds.MSQ_GODS_REVEL_LANDS_TREMBLE),
+                    character.HasQuest((int)QuestIds.MSQ_THE_DARK_THRONE),
+                    character.HasQuest((int)QuestIds.MSQ_GROWING_LIGHT_PART_1),
+                    character.HasQuest((int)QuestIds.MSQ_GROWING_LIGHT_PART_2),
+                    character.HasQuest((int)QuestIds.MSQ_DAWNTRAIL)
+                ];
+                result.Add(completedQuests);
+            }
+
+            return result;
         }
 
         public static string GetClassJobCategoryFromId(ClientLanguage currentLocale, uint? id)

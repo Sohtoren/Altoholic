@@ -38,7 +38,7 @@ namespace Altoholic
         private const string CommandName = "/altoholic";
         private const string SaveCommandName = "/altoholicsave";
         private const string BlacklistCommandName = "/altoholicbl";
-        readonly Array _questIds = Enum.GetValues(typeof(Quests));
+        private readonly Array _questIds = Enum.GetValues(typeof(QuestIds));
 
         [PluginService] public static IDalamudPluginInterface PluginInterface { get; set; } = null!;
         [PluginService] public static IClientState ClientState { get; set; } = null!;
@@ -103,6 +103,7 @@ namespace Altoholic
                 OrnamentStorage = new OrnamentStorage(),
                 GlassesStorage = new GlassesStorage(),
                 BeastTribesStorage = new BeastTribesStorage(),
+                QuestStorage = new QuestStorage()
             };
 
             nint playtimePtr = SigScanner.ScanText(PlaytimeSig);
@@ -175,6 +176,7 @@ namespace Altoholic
             _globalCache.OrchestrionRollStorage.Init(currentLocale, _globalCache);
             _globalCache.TripleTriadCardStorage.Init(currentLocale, _globalCache);
             _globalCache.BeastTribesStorage.Init(currentLocale, _globalCache);
+            _globalCache.QuestStorage.Init(_globalCache);
 
             _altoholicService = new(
                 () => _localPlayer,

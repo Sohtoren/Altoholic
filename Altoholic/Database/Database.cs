@@ -6,7 +6,6 @@ using Dapper;
 using LiteDB;
 using Microsoft.Data.Sqlite;
 using System.Linq;
-using TestNewDB.Models;
 
 namespace Altoholic.Database
 {

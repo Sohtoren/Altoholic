@@ -94,7 +94,7 @@ namespace Altoholic.Windows
                     if (listbox)
                     {
                         if (ImGui.Selectable(
-                                $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 970)}###CharactersCurrenciesTable#CharactersListBox#All"))
+                                $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 970)}###CharactersCurrenciesTable#CharactersListBox#All", _currentCharacter == null))
                         {
                             _currentCharacter = null;
                         }
@@ -284,8 +284,8 @@ namespace Altoholic.Windows
             }
 
             if (
-                selectedCharacter.HasQuest((int)Quests.CURRENCY_UNLOCK_CRAFTING_SCRIPS) ||
-                selectedCharacter.HasQuest((int)Quests.CURRENCY_UNLOCK_SKYBUILDERS_SCRIPS)
+                selectedCharacter.HasQuest((int)QuestIds.CURRENCY_UNLOCK_CRAFTING_SCRIPS) ||
+                selectedCharacter.HasQuest((int)QuestIds.CURRENCY_UNLOCK_SKYBUILDERS_SCRIPS)
             )
             {
                 using var othersTab =
@@ -298,23 +298,23 @@ namespace Altoholic.Windows
                 }
             }
 
-            if (!selectedCharacter.HasQuest((int)Quests.TRIBE_ARR_AMALJ_AA) &&
-                !selectedCharacter.HasQuest((int)Quests.TRIBE_ARR_SYLPHS) &&
-                !selectedCharacter.HasQuest((int)Quests.TRIBE_ARR_KOBOLDS) &&
-                !selectedCharacter.HasQuest((int)Quests.TRIBE_ARR_SAHAGIN) &&
-                !selectedCharacter.HasQuest((int)Quests.TRIBE_ARR_IXAL) &&
-                !selectedCharacter.HasQuest((int)Quests.TRIBE_HW_VANU_VANU) &&
-                !selectedCharacter.HasQuest((int)Quests.TRIBE_HW_VATH) &&
-                !selectedCharacter.HasQuest((int)Quests.TRIBE_HW_MOOGLES) &&
-                !selectedCharacter.HasQuest((int)Quests.TRIBE_SB_KOJIN) &&
-                !selectedCharacter.HasQuest((int)Quests.TRIBE_SB_ANANTA) &&
-                !selectedCharacter.HasQuest((int)Quests.TRIBE_SB_NAMAZU) &&
-                !selectedCharacter.HasQuest((int)Quests.TRIBE_SHB_PIXIES) &&
-                !selectedCharacter.HasQuest((int)Quests.TRIBE_SHB_QITARI) &&
-                !selectedCharacter.HasQuest((int)Quests.TRIBE_SHB_DWARVES) &&
-                !selectedCharacter.HasQuest((int)Quests.TRIBE_EW_ARKASODARA) &&
-                !selectedCharacter.HasQuest((int)Quests.TRIBE_EW_OMICRONS) &&
-                !selectedCharacter.HasQuest((int)Quests.TRIBE_EW_LOPORRITS))
+            if (!selectedCharacter.HasQuest((int)QuestIds.TRIBE_ARR_AMALJ_AA) &&
+                !selectedCharacter.HasQuest((int)QuestIds.TRIBE_ARR_SYLPHS) &&
+                !selectedCharacter.HasQuest((int)QuestIds.TRIBE_ARR_KOBOLDS) &&
+                !selectedCharacter.HasQuest((int)QuestIds.TRIBE_ARR_SAHAGIN) &&
+                !selectedCharacter.HasQuest((int)QuestIds.TRIBE_ARR_IXAL) &&
+                !selectedCharacter.HasQuest((int)QuestIds.TRIBE_HW_VANU_VANU) &&
+                !selectedCharacter.HasQuest((int)QuestIds.TRIBE_HW_VATH) &&
+                !selectedCharacter.HasQuest((int)QuestIds.TRIBE_HW_MOOGLES) &&
+                !selectedCharacter.HasQuest((int)QuestIds.TRIBE_SB_KOJIN) &&
+                !selectedCharacter.HasQuest((int)QuestIds.TRIBE_SB_ANANTA) &&
+                !selectedCharacter.HasQuest((int)QuestIds.TRIBE_SB_NAMAZU) &&
+                !selectedCharacter.HasQuest((int)QuestIds.TRIBE_SHB_PIXIES) &&
+                !selectedCharacter.HasQuest((int)QuestIds.TRIBE_SHB_QITARI) &&
+                !selectedCharacter.HasQuest((int)QuestIds.TRIBE_SHB_DWARVES) &&
+                !selectedCharacter.HasQuest((int)QuestIds.TRIBE_EW_ARKASODARA) &&
+                !selectedCharacter.HasQuest((int)QuestIds.TRIBE_EW_OMICRONS) &&
+                !selectedCharacter.HasQuest((int)QuestIds.TRIBE_EW_LOPORRITS))
             {
                 return;
             }
@@ -349,9 +349,9 @@ namespace Altoholic.Windows
             DrawCommonCurrency(pc.Gil, Currencies.GIL, 0);
 
             if (
-                selectedCharacter.HasQuest((int)Quests.CURRENCY_UNLOCK_SEAL_TWIN_ADDER) ||
-                selectedCharacter.HasQuest((int)Quests.CURRENCY_UNLOCK_SEAL_MAELSTROM) ||
-                selectedCharacter.HasQuest((int)Quests.CURRENCY_UNLOCK_SEAL_IMMORTAL_FLAMES)
+                selectedCharacter.HasQuest((int)QuestIds.CURRENCY_UNLOCK_SEAL_TWIN_ADDER) ||
+                selectedCharacter.HasQuest((int)QuestIds.CURRENCY_UNLOCK_SEAL_MAELSTROM) ||
+                selectedCharacter.HasQuest((int)QuestIds.CURRENCY_UNLOCK_SEAL_IMMORTAL_FLAMES)
             )
             {
                 ImGui.TableNextRow();
@@ -384,7 +384,7 @@ namespace Altoholic.Windows
             if (
                 selectedCharacter
                 .HasQuest(
-                    (int)Quests.CURRENCY_UNLOCK_VENTURE) /* || //Ventures on the currencies window is unlocked with MSQ, not the venture quest... (checked on boosted char tho)
+                    (int)QuestIds.CURRENCY_UNLOCK_VENTURE) /* || //Ventures on the currencies window is unlocked with MSQ, not the venture quest... (checked on boosted char tho)
                     selected_character.HasQuest(66968) ||
                     selected_character.HasQuest(66969) ||
                     selected_character.HasQuest(66970)*/
@@ -399,7 +399,7 @@ namespace Altoholic.Windows
                 DrawCommonCurrency(pc.Venture, Currencies.VENTURE, 0);
             }
 
-            if (!selectedCharacter.HasQuest((int)Quests.CURRENCY_UNLOCK_GOLD_SAUCER)) //add quest unlocking. Check if you can get MGP without completing the GC intro quest
+            if (!selectedCharacter.HasQuest((int)QuestIds.CURRENCY_UNLOCK_GOLD_SAUCER)) //add quest unlocking. Check if you can get MGP without completing the GC intro quest
             {
                 return;
             }
@@ -544,9 +544,9 @@ namespace Altoholic.Windows
             }
 
             if (
-                selectedCharacter.HasQuest((int)Quests.CURRENCY_UNLOCK_PVP_TWIN_ADDER) ||
-                selectedCharacter.HasQuest((int)Quests.CURRENCY_UNLOCK_PVP_MAELSTROM) ||
-                selectedCharacter.HasQuest((int)Quests.CURRENCY_UNLOCK_PVP_IMMORTAL_FLAMES) ||
+                selectedCharacter.HasQuest((int)QuestIds.CURRENCY_UNLOCK_PVP_TWIN_ADDER) ||
+                selectedCharacter.HasQuest((int)QuestIds.CURRENCY_UNLOCK_PVP_MAELSTROM) ||
+                selectedCharacter.HasQuest((int)QuestIds.CURRENCY_UNLOCK_PVP_IMMORTAL_FLAMES) ||
                 pc.Wolf_Mark > 0 ||
                 pc.Trophy_Crystal > 0
             )
@@ -570,10 +570,10 @@ namespace Altoholic.Windows
             }
 
             if (
-                selectedCharacter.HasQuest((int)Quests.CURRENCY_UNLOCK_HUNT_ARR_TWIN_ADDER) ||
-                selectedCharacter.HasQuest((int)Quests.CURRENCY_UNLOCK_HUNT_ARR_MAELSTROM) ||
-                selectedCharacter.HasQuest((int)Quests.CURRENCY_UNLOCK_HUNT_ARR_IMMORTAL_FLAMES) ||
-                selectedCharacter.HasQuest((int)Quests.CURRENCY_UNLOCK_BLUE_CARNIVAL) ||
+                selectedCharacter.HasQuest((int)QuestIds.CURRENCY_UNLOCK_HUNT_ARR_TWIN_ADDER) ||
+                selectedCharacter.HasQuest((int)QuestIds.CURRENCY_UNLOCK_HUNT_ARR_MAELSTROM) ||
+                selectedCharacter.HasQuest((int)QuestIds.CURRENCY_UNLOCK_HUNT_ARR_IMMORTAL_FLAMES) ||
+                selectedCharacter.HasQuest((int)QuestIds.CURRENCY_UNLOCK_BLUE_CARNIVAL) ||
                 pc.Allied_Seal > 0 ||
                 pc.Centurio_Seal > 0 ||
                 pc.Sack_of_Nuts > 0
@@ -596,10 +596,10 @@ namespace Altoholic.Windows
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
                 if (
-                    selectedCharacter.HasQuest((int)Quests.CURRENCY_UNLOCK_HUNT_ARR_TWIN_ADDER) ||
-                    selectedCharacter.HasQuest((int)Quests.CURRENCY_UNLOCK_HUNT_ARR_MAELSTROM) ||
-                    selectedCharacter.HasQuest((int)Quests.CURRENCY_UNLOCK_HUNT_ARR_IMMORTAL_FLAMES) ||
-                    selectedCharacter.HasQuest((int)Quests.CURRENCY_UNLOCK_BLUE_CARNIVAL) ||
+                    selectedCharacter.HasQuest((int)QuestIds.CURRENCY_UNLOCK_HUNT_ARR_TWIN_ADDER) ||
+                    selectedCharacter.HasQuest((int)QuestIds.CURRENCY_UNLOCK_HUNT_ARR_MAELSTROM) ||
+                    selectedCharacter.HasQuest((int)QuestIds.CURRENCY_UNLOCK_HUNT_ARR_IMMORTAL_FLAMES) ||
+                    selectedCharacter.HasQuest((int)QuestIds.CURRENCY_UNLOCK_BLUE_CARNIVAL) ||
                     pc.Allied_Seal > 0
                 )
                 {
@@ -607,8 +607,8 @@ namespace Altoholic.Windows
                 }
 
                 if (
-                    selectedCharacter.HasQuest((int)Quests.CURRENCY_UNLOCK_HUNT_HW) ||
-                    selectedCharacter.HasQuest((int)Quests.CURRENCY_UNLOCK_HUNT_SB) ||
+                    selectedCharacter.HasQuest((int)QuestIds.CURRENCY_UNLOCK_HUNT_HW) ||
+                    selectedCharacter.HasQuest((int)QuestIds.CURRENCY_UNLOCK_HUNT_SB) ||
                     pc.Centurio_Seal > 0
                 )
                 {
@@ -617,9 +617,9 @@ namespace Altoholic.Windows
                 }
 
                 if (
-                    selectedCharacter.HasQuest((int)Quests.CURRENCY_UNLOCK_HUNT_SHB) ||
-                    selectedCharacter.HasQuest((int)Quests.CURRENCY_UNLOCK_HUNT_EW) ||
-                    selectedCharacter.HasQuest((int)Quests.CURRENCY_UNLOCK_HUNT_DT) ||
+                    selectedCharacter.HasQuest((int)QuestIds.CURRENCY_UNLOCK_HUNT_SHB) ||
+                    selectedCharacter.HasQuest((int)QuestIds.CURRENCY_UNLOCK_HUNT_EW) ||
+                    selectedCharacter.HasQuest((int)QuestIds.CURRENCY_UNLOCK_HUNT_DT) ||
                     pc.Sack_of_Nuts > 0
                 )
                 {
@@ -697,7 +697,7 @@ namespace Altoholic.Windows
             using var charactersCurrenciesOthersCurrencyTable =
                 ImRaii.Table($"###CharactersCurrencies#OthersCurrencyTable#{selectedCharacter.CharacterId}", 1);
             if (!charactersCurrenciesOthersCurrencyTable) return;
-            if (selectedCharacter.HasQuest((int)Quests.CURRENCY_UNLOCK_CRAFTING_SCRIPS))
+            if (selectedCharacter.HasQuest((int)QuestIds.CURRENCY_UNLOCK_CRAFTING_SCRIPS))
             {
                 ImGui.TableSetupColumn($"###CharactersCurrencies#OthersCurrencyTable#Currency#{selectedCharacter.CharacterId}",
                     ImGuiTableColumnFlags.WidthStretch);
@@ -732,7 +732,7 @@ namespace Altoholic.Windows
                 DrawOtherCurrency(pc.White_Gatherers_Scrip, Currencies.WHITE_GATHERERS_SCRIP, 4000, true, true);
             }
 
-            if (!selectedCharacter.HasQuest((int)Quests.CURRENCY_UNLOCK_SKYBUILDERS_SCRIPS))
+            if (!selectedCharacter.HasQuest((int)QuestIds.CURRENCY_UNLOCK_SKYBUILDERS_SCRIPS))
             {
                 return;
             }
@@ -807,32 +807,32 @@ namespace Altoholic.Windows
                 ImGuiTableColumnFlags.WidthStretch);
             ImGui.TableSetupColumn($"###CharactersCurrencies#TribalCurrencyTable#Col3#{selectedCharacter.CharacterId}",
                 ImGuiTableColumnFlags.WidthStretch);
-            if (selectedCharacter.HasQuest((int)Quests.TRIBE_ARR_AMALJ_AA) ||
-                selectedCharacter.HasQuest((int)Quests.TRIBE_ARR_SYLPHS) ||
-                selectedCharacter.HasQuest((int)Quests.TRIBE_ARR_KOBOLDS) ||
-                selectedCharacter.HasQuest((int)Quests.TRIBE_ARR_SAHAGIN) ||
-                selectedCharacter.HasQuest((int)Quests.TRIBE_ARR_IXAL)
+            if (selectedCharacter.HasQuest((int)QuestIds.TRIBE_ARR_AMALJ_AA) ||
+                selectedCharacter.HasQuest((int)QuestIds.TRIBE_ARR_SYLPHS) ||
+                selectedCharacter.HasQuest((int)QuestIds.TRIBE_ARR_KOBOLDS) ||
+                selectedCharacter.HasQuest((int)QuestIds.TRIBE_ARR_SAHAGIN) ||
+                selectedCharacter.HasQuest((int)QuestIds.TRIBE_ARR_IXAL)
                )
             {
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
                 ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 5752));
                 ImGui.TableNextRow();
-                if (selectedCharacter.HasQuest((int)Quests.TRIBE_ARR_AMALJ_AA))
+                if (selectedCharacter.HasQuest((int)QuestIds.TRIBE_ARR_AMALJ_AA))
                 {
                     //ImGui.TableSetColumnIndex(0);
                     ImGui.TableNextColumn();
                     DrawTribalCurrency(pc.Steel_Amaljok, Currencies.STEEL_AMALJOK, Tribal.AMALJ_AA);
                 }
 
-                if (selectedCharacter.HasQuest((int)Quests.TRIBE_ARR_SYLPHS))
+                if (selectedCharacter.HasQuest((int)QuestIds.TRIBE_ARR_SYLPHS))
                 {
                     //ImGui.TableSetColumnIndex(1);
                     ImGui.TableNextColumn();
                     DrawTribalCurrency(pc.Sylphic_Goldleaf, Currencies.SYLPHIC_GOLDLEAF, Tribal.SYLPHS);
                 }
 
-                if (selectedCharacter.HasQuest((int)Quests.TRIBE_ARR_KOBOLDS))
+                if (selectedCharacter.HasQuest((int)QuestIds.TRIBE_ARR_KOBOLDS))
                 {
                     //ImGui.TableSetColumnIndex(2);
                     ImGui.TableNextColumn();
@@ -840,14 +840,14 @@ namespace Altoholic.Windows
                 }
 
                 //ImGui.TableNextRow();
-                if (selectedCharacter.HasQuest((int)Quests.TRIBE_ARR_SAHAGIN))
+                if (selectedCharacter.HasQuest((int)QuestIds.TRIBE_ARR_SAHAGIN))
                 {
                     //ImGui.TableSetColumnIndex(0);
                     ImGui.TableNextColumn();
                     DrawTribalCurrency(pc.Rainbowtide_Psashp, Currencies.RAINBOWTIDE_PSASHP, Tribal.SAHAGIN);
                 }
 
-                if (selectedCharacter.HasQuest((int)Quests.TRIBE_ARR_IXAL))
+                if (selectedCharacter.HasQuest((int)QuestIds.TRIBE_ARR_IXAL))
                 {
                     //ImGui.TableSetColumnIndex(1);
                     ImGui.TableNextColumn();
@@ -855,30 +855,30 @@ namespace Altoholic.Windows
                 }
             }
 
-            if (selectedCharacter.HasQuest((int)Quests.TRIBE_HW_VANU_VANU) ||
-                selectedCharacter.HasQuest((int)Quests.TRIBE_HW_VATH) ||
-                selectedCharacter.HasQuest((int)Quests.TRIBE_HW_MOOGLES)
+            if (selectedCharacter.HasQuest((int)QuestIds.TRIBE_HW_VANU_VANU) ||
+                selectedCharacter.HasQuest((int)QuestIds.TRIBE_HW_VATH) ||
+                selectedCharacter.HasQuest((int)QuestIds.TRIBE_HW_MOOGLES)
                )
             {
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
                 ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 5753));
                 ImGui.TableNextRow();
-                if (selectedCharacter.HasQuest((int)Quests.TRIBE_HW_VANU_VANU))
+                if (selectedCharacter.HasQuest((int)QuestIds.TRIBE_HW_VANU_VANU))
                 {
                     //ImGui.TableSetColumnIndex(0);
                     ImGui.TableNextColumn();
                     DrawTribalCurrency(pc.Vanu_Whitebone, Currencies.VANU_WHITEBONE, Tribal.VANU_VANU);
                 }
 
-                if (selectedCharacter.HasQuest((int)Quests.TRIBE_HW_VATH))
+                if (selectedCharacter.HasQuest((int)QuestIds.TRIBE_HW_VATH))
                 {
                     //ImGui.TableSetColumnIndex(1);
                     ImGui.TableNextColumn();
                     DrawTribalCurrency(pc.Black_Copper_Gil, Currencies.BLACK_COPPER_GIL, Tribal.VATH);
                 }
 
-                if (selectedCharacter.HasQuest((int)Quests.TRIBE_HW_MOOGLES))
+                if (selectedCharacter.HasQuest((int)QuestIds.TRIBE_HW_MOOGLES))
                 {
                     //ImGui.TableSetColumnIndex(2);
                     ImGui.TableNextColumn();
@@ -886,30 +886,30 @@ namespace Altoholic.Windows
                 }
             }
 
-            if (selectedCharacter.HasQuest((int)Quests.TRIBE_SB_KOJIN) ||
-                selectedCharacter.HasQuest((int)Quests.TRIBE_SB_ANANTA) ||
-                selectedCharacter.HasQuest((int)Quests.TRIBE_SB_NAMAZU)
+            if (selectedCharacter.HasQuest((int)QuestIds.TRIBE_SB_KOJIN) ||
+                selectedCharacter.HasQuest((int)QuestIds.TRIBE_SB_ANANTA) ||
+                selectedCharacter.HasQuest((int)QuestIds.TRIBE_SB_NAMAZU)
                )
             {
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
                 ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 5754));
                 ImGui.TableNextRow();
-                if (selectedCharacter.HasQuest((int)Quests.TRIBE_SB_KOJIN))
+                if (selectedCharacter.HasQuest((int)QuestIds.TRIBE_SB_KOJIN))
                 {
                     //ImGui.TableSetColumnIndex(0);
                     ImGui.TableNextColumn();
                     DrawTribalCurrency(pc.Kojin_Sango, Currencies.KOJIN_SANGO, Tribal.KOJIN);
                 }
 
-                if (selectedCharacter.HasQuest((int)Quests.TRIBE_SB_ANANTA))
+                if (selectedCharacter.HasQuest((int)QuestIds.TRIBE_SB_ANANTA))
                 {
                     //ImGui.TableSetColumnIndex(1);
                     ImGui.TableNextColumn();
                     DrawTribalCurrency(pc.Ananta_Dreamstaff, Currencies.ANANTA_DREAMSTAFF, Tribal.ANANTA);
                 }
 
-                if (selectedCharacter.HasQuest((int)Quests.TRIBE_SB_NAMAZU))
+                if (selectedCharacter.HasQuest((int)QuestIds.TRIBE_SB_NAMAZU))
                 {
                     //ImGui.TableSetColumnIndex(2);
                     ImGui.TableNextColumn();
@@ -917,30 +917,30 @@ namespace Altoholic.Windows
                 }
             }
 
-            if (selectedCharacter.HasQuest((int)Quests.TRIBE_SHB_PIXIES) ||
-                selectedCharacter.HasQuest((int)Quests.TRIBE_SHB_QITARI) ||
-                selectedCharacter.HasQuest((int)Quests.TRIBE_SHB_DWARVES)
+            if (selectedCharacter.HasQuest((int)QuestIds.TRIBE_SHB_PIXIES) ||
+                selectedCharacter.HasQuest((int)QuestIds.TRIBE_SHB_QITARI) ||
+                selectedCharacter.HasQuest((int)QuestIds.TRIBE_SHB_DWARVES)
                )
             {
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
                 ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 8156));
                 ImGui.TableNextRow();
-                if (selectedCharacter.HasQuest((int)Quests.TRIBE_SHB_PIXIES))
+                if (selectedCharacter.HasQuest((int)QuestIds.TRIBE_SHB_PIXIES))
                 {
                     //ImGui.TableSetColumnIndex(0);
                     ImGui.TableNextColumn();
                     DrawTribalCurrency(pc.Fae_Fancy, Currencies.FAE_FANCY, Tribal.PIXIES);
                 }
 
-                if (selectedCharacter.HasQuest((int)Quests.TRIBE_SHB_QITARI))
+                if (selectedCharacter.HasQuest((int)QuestIds.TRIBE_SHB_QITARI))
                 {
                     //ImGui.TableSetColumnIndex(1);
                     ImGui.TableNextColumn();
                     DrawTribalCurrency(pc.Qitari_Compliment, Currencies.QITARI_COMPLIMENT, Tribal.QITARI);
                 }
 
-                if (selectedCharacter.HasQuest((int)Quests.TRIBE_SHB_DWARVES))
+                if (selectedCharacter.HasQuest((int)QuestIds.TRIBE_SHB_DWARVES))
                 {
                     //ImGui.TableSetColumnIndex(2);
                     ImGui.TableNextColumn();
@@ -948,9 +948,9 @@ namespace Altoholic.Windows
                 }
             }
 
-            if (!selectedCharacter.HasQuest((int)Quests.TRIBE_EW_ARKASODARA) &&
-                !selectedCharacter.HasQuest((int)Quests.TRIBE_EW_OMICRONS) &&
-                !selectedCharacter.HasQuest((int)Quests.TRIBE_EW_LOPORRITS)
+            if (!selectedCharacter.HasQuest((int)QuestIds.TRIBE_EW_ARKASODARA) &&
+                !selectedCharacter.HasQuest((int)QuestIds.TRIBE_EW_OMICRONS) &&
+                !selectedCharacter.HasQuest((int)QuestIds.TRIBE_EW_LOPORRITS)
             )
             {
                 return;
@@ -960,21 +960,21 @@ namespace Altoholic.Windows
             ImGui.TableSetColumnIndex(0);
             ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 8160));
             ImGui.TableNextRow();
-            if (selectedCharacter.HasQuest((int)Quests.TRIBE_EW_ARKASODARA))
+            if (selectedCharacter.HasQuest((int)QuestIds.TRIBE_EW_ARKASODARA))
             {
                 //ImGui.TableSetColumnIndex(0);
                 ImGui.TableNextColumn();
                 DrawTribalCurrency(pc.Arkasodara_Pana, Currencies.ARKASODARA_PANA, Tribal.ARKASODARA);
             }
 
-            if (selectedCharacter.HasQuest((int)Quests.TRIBE_EW_OMICRONS))
+            if (selectedCharacter.HasQuest((int)QuestIds.TRIBE_EW_OMICRONS))
             {
                 //ImGui.TableSetColumnIndex(1);
                 ImGui.TableNextColumn();
                 DrawTribalCurrency(pc.Omicron_Omnitoken, Currencies.OMICRON_OMNITOKEN, Tribal.OMICRONS);
             }
 
-            if (!selectedCharacter.HasQuest((int)Quests.TRIBE_EW_LOPORRITS))
+            if (!selectedCharacter.HasQuest((int)QuestIds.TRIBE_EW_LOPORRITS))
             {
                 return;
             }

@@ -1,4 +1,4 @@
-namespace TestNewDB.Models
+namespace Altoholic.Models
 {
     public class DatabaseCharacter
     {

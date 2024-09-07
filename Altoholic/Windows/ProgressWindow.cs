@@ -2,6 +2,8 @@
 using Altoholic.Models;
 using Dalamud.Game;
 using Dalamud.Game.Text;
+using Dalamud.Game.Text.SeStringHandling;
+using Dalamud.Interface;
 using Dalamud.Interface.Textures.TextureWraps;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
@@ -98,6 +100,11 @@ namespace Altoholic.Windows
                 {
                     if (listBox)
                     {
+                        if (ImGui.Selectable(
+                                $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 970)}###CharactersCurrenciesTable#CharactersListBox#All", _currentCharacter == null))
+                        {
+                            _currentCharacter = null;
+                        }
 #if DEBUG
                         for (int i = 0; i < 15; i++)
                         {
@@ -128,6 +135,10 @@ namespace Altoholic.Windows
                 {
                     DrawTabs(_currentCharacter);
                 }
+                else
+                {
+                    DrawAll(chars);
+                }
             }
             catch (Exception e)
             {
@@ -135,27 +146,241 @@ namespace Altoholic.Windows
             }
         }
 
-        public void DrawTabs(Character selectedCharacter)
+        private void DrawAll(List<Character> chars)
         {
-            using var tab = ImRaii.TabBar($"###CharactersProgressTable#ProgressTabs#{selectedCharacter.CharacterId}#TabBar");
-            if (!tab) return; 
-            /*using (var msqTab = ImRaii.TabItem($"MSQ###Progress#Tabs#{selectedCharacter.CharacterId}#TabBar#MSQ"))
+            using var tab = ImRaii.TabBar("###CharactersProgressTable#All#TabBar");
+            if (!tab) return;
+            using (var msqTab = ImRaii.TabItem("MSQ###CharactersProgressTable#All#TabBar#MSQ"))
             {
                 if (msqTab)
                 {
-
+                    DrawMainScenarioQuest(chars);
                 }
             }
 
             using (var eventTab =
                    ImRaii.TabItem(
-                       $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 665)}###Progress#Tabs#{selectedCharacter.CharacterId}#TabBar#Events"))
+                       $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 665)}###CharactersProgressTable#All#TabBar#Events"))
             {
                 if (eventTab)
                 {
 
                 }
-            }*/
+            }
+        }
+
+        private void DrawMainScenarioQuest(List<Character> chars)
+        {
+            if (chars.Count == 0) return;
+            using var characterswMainScenarioQuestAll = ImRaii.Table("###CharactersProgress#All#MSQ", chars.Count + 1,
+                ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner |
+                ImGuiTableFlags.ScrollX | ImGuiTableFlags.ScrollY);
+            if (!characterswMainScenarioQuestAll) return;
+            ImGui.TableSetupColumn($"###CharactersProgress#All#MSQ#Name", ImGuiTableColumnFlags.WidthFixed, 200);
+            foreach (Character c in chars)
+            {
+                ImGui.TableSetupColumn($"###CharactersProgress#All#MSQ#{c.CharacterId}",
+                    ImGuiTableColumnFlags.WidthFixed, 15);
+            }
+
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 1898));
+            if (ImGui.IsItemHovered())
+            {
+                ImGui.BeginTooltip();
+                ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 14055));
+                ImGui.EndTooltip();
+            }
+
+            foreach (Character currChar in chars)
+            {
+                ImGui.TableNextColumn();
+                ImGui.TextUnformatted($"{currChar.FirstName[0]}.{currChar.LastName[0]}");
+                if (ImGui.IsItemHovered())
+                {
+                    ImGui.BeginTooltip();
+                    ImGui.TextUnformatted(
+                        $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
+                    ImGui.EndTooltip();
+                }
+            }
+
+            List<List<bool>> charactersQuests = Utils.GetCharactersMainScenarioQuests(chars);
+            DrawAllLine(chars, charactersQuests,
+                $"2.0 - {_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.MSQ_A_REALM_REBORN)}",
+                0);
+            DrawAllLine(chars, charactersQuests,
+                $"2.1 - {_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.MSQ_A_REALM_AWOKEN)}",
+                1);
+            DrawAllLine(chars, charactersQuests,
+                $"2.2 - {_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.MSQ_THROUGH_THE_MAELSTROM)}",
+                2);
+            DrawAllLine(chars, charactersQuests,
+                $"2.3 - {_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.MSQ_DEFENDERS_OF_EORZEA)}",
+                3);
+            DrawAllLine(chars, charactersQuests,
+                $"2.4 - {_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.MSQ_DREAMS_OF_ICE)}",
+                4);
+            DrawAllLine(chars, charactersQuests,
+                $"2.5 - {_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.MSQ_BEFORE_THE_FALL_PART_1)}",
+                5);
+            DrawAllLine(chars, charactersQuests,
+                $"2.55 - {_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.MSQ_BEFORE_THE_FALL_PART_2)}",
+                6);
+            DrawAllLine(chars, charactersQuests,
+                $"3.0 - {_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.MSQ_HEAVENSWARD)}",
+                7);
+            DrawAllLine(chars, charactersQuests,
+                $"3.1 - {_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.MSQ_AS_GOES_LIGHT_SO_GOES_DARKNESS)}",
+                8);
+            DrawAllLine(chars, charactersQuests,
+                $"3.2 - {_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.MSQ_THE_GEARS_OF_CHANGE)}",
+                9);
+            DrawAllLine(chars, charactersQuests,
+                $"3.3 - {_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.MSQ_REVENGE_OF_THE_HORDE)}",
+                10);
+            DrawAllLine(chars, charactersQuests,
+                $"3.4 - {_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.MSQ_SOUL_SURRENDER)}",
+                11);
+            DrawAllLine(chars, charactersQuests,
+                $"3.5 - {_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.MSQ_THE_FAR_EDGE_OF_FATE_PART_1)}",
+                12);
+            DrawAllLine(chars, charactersQuests,
+                $"3.56 - {_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.MSQ_THE_FAR_EDGE_OF_FATE_PART_2)}",
+                13);
+            DrawAllLine(chars, charactersQuests,
+                $"4.0 - {_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.MSQ_STORMBLOOD)}",
+                14);
+            DrawAllLine(chars, charactersQuests,
+                $"4.1 - {_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.MSQ_THE_LEGEND_RETURNS)}",
+                15);
+            DrawAllLine(chars, charactersQuests,
+                $"4.2 - {_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.MSQ_RISE_OF_A_NEW_SUN)}",
+                16);
+            DrawAllLine(chars, charactersQuests,
+                $"4.3 - {_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.MSQ_UNDER_THE_MOONLIGHT)}",
+                17);
+            DrawAllLine(chars, charactersQuests,
+                $"4.4 - {_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.MSQ_PRELUDE_IN_VIOLET)}",
+                18);
+            DrawAllLine(chars, charactersQuests,
+                $"4.5 - {_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.MSQ_A_REQUIEM_FOR_HEROES_PART_1)}",
+                19);
+            DrawAllLine(chars, charactersQuests,
+                $"4.56 - {_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.MSQ_A_REQUIEM_FOR_HEROES_PART_2)}",
+                20);
+            DrawAllLine(chars, charactersQuests,
+                $"5.0 - {_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.MSQ_SHADOWBRINGER)}",
+                21);
+            DrawAllLine(chars, charactersQuests,
+                $"5.1 - {_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.MSQ_VOWS_OF_VIRTUE_DEEDS_OF_CRUELTY)}",
+                22);
+            DrawAllLine(chars, charactersQuests,
+                $"5.2 - {_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.MSQ_ECHOES_OF_A_FALLEN_STAR)}",
+                23);
+            DrawAllLine(chars, charactersQuests,
+                $"5.3 - {_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.MSQ_REFLECTIONS_IN_CRYSTAL)}",
+                24);
+            DrawAllLine(chars, charactersQuests,
+                $"5.4 - {_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.MSQ_FUTURES_REWRITTEN)}",
+                25);
+            DrawAllLine(chars, charactersQuests,
+                $"5.5 - {_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.MSQ_DEATH_UNTO_DAWN_PART_1)}",
+                26);
+            DrawAllLine(chars, charactersQuests,
+                $"5.55 - {_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.MSQ_DEATH_UNTO_DAWN_PART_2)}",
+                27);
+            DrawAllLine(chars, charactersQuests,
+                $"6.0 - {_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.MSQ_ENDWALKER)}",
+                28);
+            DrawAllLine(chars, charactersQuests,
+                $"6.1 - {_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.MSQ_NEWFOUND_ADVENTURE)}",
+                29);
+            DrawAllLine(chars, charactersQuests,
+                $"6.2 - {_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.MSQ_BURIED_MEMORY)}",
+                30);
+            DrawAllLine(chars, charactersQuests,
+                $"6.3 - {_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.MSQ_GODS_REVEL_LANDS_TREMBLE)}",
+                31);
+            DrawAllLine(chars, charactersQuests,
+                $"6.4 - {_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.MSQ_THE_DARK_THRONE)}",
+                32);
+            DrawAllLine(chars, charactersQuests,
+                $"6.5 - {_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.MSQ_GROWING_LIGHT_PART_1)}",
+                33);
+            DrawAllLine(chars, charactersQuests,
+                $"6.55 - {_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.MSQ_GROWING_LIGHT_PART_2)}",
+                34);
+            DrawAllLine(chars, charactersQuests,
+                $"7.0 - {_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.MSQ_DAWNTRAIL)}",
+                35);
+        }
+
+        private void DrawEvent(List<Character> chars)
+        {
+            if (chars.Count == 0) return;
+            using var characterswMainScenarioQuestAll = ImRaii.Table("###CharactersProgress#All#Event", chars.Count + 1,
+                ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner |
+                ImGuiTableFlags.ScrollX | ImGuiTableFlags.ScrollY);
+            if (!characterswMainScenarioQuestAll) return;
+            ImGui.TableSetupColumn($"###CharactersProgress#All#Event#Name", ImGuiTableColumnFlags.WidthFixed, 200);
+            foreach (Character c in chars)
+            {
+                ImGui.TableSetupColumn($"###CharactersProgress#All#Event#{c.CharacterId}",
+                    ImGuiTableColumnFlags.WidthFixed, 15);
+            }
+
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 1898));
+            if (ImGui.IsItemHovered())
+            {
+                ImGui.BeginTooltip();
+                ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 14055));
+                ImGui.EndTooltip();
+            }
+
+            foreach (Character currChar in chars)
+            {
+                ImGui.TableNextColumn();
+                ImGui.TextUnformatted($"{currChar.FirstName[0]}.{currChar.LastName[0]}");
+                if (ImGui.IsItemHovered())
+                {
+                    ImGui.BeginTooltip();
+                    ImGui.TextUnformatted(
+                        $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
+                    ImGui.EndTooltip();
+                }
+            }
+
+            List<List<bool>> charactersQuests = Utils.GetCharactersMSQ(chars);
+        }
+
+        private static void DrawAllLine(List<Character> chars, List<List<bool>> charactersQuests, string name,  int msqIndex)
+        {
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            ImGui.TextUnformatted(name);
+            foreach ((List<bool> cq, int index) charactersQuest in charactersQuests.Select((cq, index) => (cq, index)))
+            {
+                ImGui.TableNextColumn();
+                ImGui.TextUnformatted(charactersQuest.cq[msqIndex] ? "\u2713" : "");
+                if (ImGui.IsItemHovered())
+                {
+                    ImGui.BeginTooltip();
+                    ImGui.TextUnformatted(name);
+                    ImGui.TextUnformatted(
+                        $"{chars[charactersQuest.index].FirstName} {chars[charactersQuest.index].LastName}{(char)SeIconChar.CrossWorld}{chars[charactersQuest.index].HomeWorld}");
+                    ImGui.EndTooltip();
+                }
+            }
+        }
+
+        public void DrawTabs(Character selectedCharacter)
+        {
+            using var tab = ImRaii.TabBar($"###CharactersProgressTable#ProgressTabs#{selectedCharacter.CharacterId}#TabBar");
+            if (!tab) return;
 
             using (ImRaii.IEndObject reputationTab =
                    ImRaii.TabItem(
@@ -188,23 +413,23 @@ namespace Altoholic.Windows
             ImGui.SameLine();
             ImGui.TextUnformatted($"{selectedCharacter.PlayerCommendations}");
 
-            if (!selectedCharacter.HasQuest((int)Quests.TRIBE_ARR_AMALJ_AA) &&
-                !selectedCharacter.HasQuest((int)Quests.TRIBE_ARR_SYLPHS) &&
-                !selectedCharacter.HasQuest((int)Quests.TRIBE_ARR_KOBOLDS) &&
-                !selectedCharacter.HasQuest((int)Quests.TRIBE_ARR_SAHAGIN) &&
-                !selectedCharacter.HasQuest((int)Quests.TRIBE_ARR_IXAL) &&
-                !selectedCharacter.HasQuest((int)Quests.TRIBE_HW_VANU_VANU) &&
-                !selectedCharacter.HasQuest((int)Quests.TRIBE_HW_VATH) &&
-                !selectedCharacter.HasQuest((int)Quests.TRIBE_HW_MOOGLES) &&
-                !selectedCharacter.HasQuest((int)Quests.TRIBE_SB_KOJIN) &&
-                !selectedCharacter.HasQuest((int)Quests.TRIBE_SB_ANANTA) &&
-                !selectedCharacter.HasQuest((int)Quests.TRIBE_SB_NAMAZU) &&
-                !selectedCharacter.HasQuest((int)Quests.TRIBE_SHB_PIXIES) &&
-                !selectedCharacter.HasQuest((int)Quests.TRIBE_SHB_QITARI) &&
-                !selectedCharacter.HasQuest((int)Quests.TRIBE_SHB_DWARVES) &&
-                !selectedCharacter.HasQuest((int)Quests.TRIBE_EW_ARKASODARA) &&
-                !selectedCharacter.HasQuest((int)Quests.TRIBE_EW_OMICRONS) &&
-                !selectedCharacter.HasQuest((int)Quests.TRIBE_EW_LOPORRITS))
+            if (!selectedCharacter.HasQuest((int)QuestIds.TRIBE_ARR_AMALJ_AA) &&
+                !selectedCharacter.HasQuest((int)QuestIds.TRIBE_ARR_SYLPHS) &&
+                !selectedCharacter.HasQuest((int)QuestIds.TRIBE_ARR_KOBOLDS) &&
+                !selectedCharacter.HasQuest((int)QuestIds.TRIBE_ARR_SAHAGIN) &&
+                !selectedCharacter.HasQuest((int)QuestIds.TRIBE_ARR_IXAL) &&
+                !selectedCharacter.HasQuest((int)QuestIds.TRIBE_HW_VANU_VANU) &&
+                !selectedCharacter.HasQuest((int)QuestIds.TRIBE_HW_VATH) &&
+                !selectedCharacter.HasQuest((int)QuestIds.TRIBE_HW_MOOGLES) &&
+                !selectedCharacter.HasQuest((int)QuestIds.TRIBE_SB_KOJIN) &&
+                !selectedCharacter.HasQuest((int)QuestIds.TRIBE_SB_ANANTA) &&
+                !selectedCharacter.HasQuest((int)QuestIds.TRIBE_SB_NAMAZU) &&
+                !selectedCharacter.HasQuest((int)QuestIds.TRIBE_SHB_PIXIES) &&
+                !selectedCharacter.HasQuest((int)QuestIds.TRIBE_SHB_QITARI) &&
+                !selectedCharacter.HasQuest((int)QuestIds.TRIBE_SHB_DWARVES) &&
+                !selectedCharacter.HasQuest((int)QuestIds.TRIBE_EW_ARKASODARA) &&
+                !selectedCharacter.HasQuest((int)QuestIds.TRIBE_EW_OMICRONS) &&
+                !selectedCharacter.HasQuest((int)QuestIds.TRIBE_EW_LOPORRITS))
             {
                 return;
             }
@@ -235,20 +460,20 @@ namespace Altoholic.Windows
             bool shbUnlocked = false;
             bool ewUnlocked = false;
             List<string> names = [];
-            if (selectedCharacter.HasQuest((int)Quests.TRIBE_ARR_AMALJ_AA) ||
-                selectedCharacter.HasQuest((int)Quests.TRIBE_ARR_SYLPHS) ||
-                selectedCharacter.HasQuest((int)Quests.TRIBE_ARR_KOBOLDS) ||
-                selectedCharacter.HasQuest((int)Quests.TRIBE_ARR_SAHAGIN) ||
-                selectedCharacter.HasQuest((int)Quests.TRIBE_ARR_IXAL)
+            if (selectedCharacter.HasQuest((int)QuestIds.TRIBE_ARR_AMALJ_AA) ||
+                selectedCharacter.HasQuest((int)QuestIds.TRIBE_ARR_SYLPHS) ||
+                selectedCharacter.HasQuest((int)QuestIds.TRIBE_ARR_KOBOLDS) ||
+                selectedCharacter.HasQuest((int)QuestIds.TRIBE_ARR_SAHAGIN) ||
+                selectedCharacter.HasQuest((int)QuestIds.TRIBE_ARR_IXAL)
                )
             {
                 names.Add(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 5752));
                 arrUnlocked = true;
             }
 
-            if (selectedCharacter.HasQuest((int)Quests.TRIBE_HW_VANU_VANU) ||
-                selectedCharacter.HasQuest((int)Quests.TRIBE_HW_VATH) ||
-                selectedCharacter.HasQuest((int)Quests.TRIBE_HW_MOOGLES)
+            if (selectedCharacter.HasQuest((int)QuestIds.TRIBE_HW_VANU_VANU) ||
+                selectedCharacter.HasQuest((int)QuestIds.TRIBE_HW_VATH) ||
+                selectedCharacter.HasQuest((int)QuestIds.TRIBE_HW_MOOGLES)
                )
             {
                 names.Add(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 5753));
@@ -258,9 +483,9 @@ namespace Altoholic.Windows
                     _selectedExpansion = _globalCache.AddonStorage.LoadAddonString(_currentLocale, 5753);
             }
 
-            if (selectedCharacter.HasQuest((int)Quests.TRIBE_SB_KOJIN) ||
-                selectedCharacter.HasQuest((int)Quests.TRIBE_SB_ANANTA) ||
-                selectedCharacter.HasQuest((int)Quests.TRIBE_SB_NAMAZU)
+            if (selectedCharacter.HasQuest((int)QuestIds.TRIBE_SB_KOJIN) ||
+                selectedCharacter.HasQuest((int)QuestIds.TRIBE_SB_ANANTA) ||
+                selectedCharacter.HasQuest((int)QuestIds.TRIBE_SB_NAMAZU)
                )
             {
                 names.Add(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 5754));
@@ -270,9 +495,9 @@ namespace Altoholic.Windows
                     _selectedExpansion = _globalCache.AddonStorage.LoadAddonString(_currentLocale, 5754);
             }
 
-            if (selectedCharacter.HasQuest((int)Quests.TRIBE_SHB_PIXIES) ||
-                selectedCharacter.HasQuest((int)Quests.TRIBE_SHB_QITARI) ||
-                selectedCharacter.HasQuest((int)Quests.TRIBE_SHB_DWARVES)
+            if (selectedCharacter.HasQuest((int)QuestIds.TRIBE_SHB_PIXIES) ||
+                selectedCharacter.HasQuest((int)QuestIds.TRIBE_SHB_QITARI) ||
+                selectedCharacter.HasQuest((int)QuestIds.TRIBE_SHB_DWARVES)
                )
             {
                 shbUnlocked = true;
@@ -281,9 +506,9 @@ namespace Altoholic.Windows
                     _selectedExpansion = _globalCache.AddonStorage.LoadAddonString(_currentLocale, 8156);
             }
 
-            if (selectedCharacter.HasQuest((int)Quests.TRIBE_EW_ARKASODARA) ||
-                selectedCharacter.HasQuest((int)Quests.TRIBE_EW_OMICRONS) ||
-                selectedCharacter.HasQuest((int)Quests.TRIBE_EW_LOPORRITS)
+            if (selectedCharacter.HasQuest((int)QuestIds.TRIBE_EW_ARKASODARA) ||
+                selectedCharacter.HasQuest((int)QuestIds.TRIBE_EW_OMICRONS) ||
+                selectedCharacter.HasQuest((int)QuestIds.TRIBE_EW_LOPORRITS)
                )
             {
                 names.Add(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 8160));
@@ -331,15 +556,15 @@ namespace Altoholic.Windows
                 case "A Realm Reborn":
                 case "新生エオルゼア":
                     {
-                        bool arrAllied = selectedCharacter.HasQuest((int)Quests.TRIBE_ARR_ALLIED);
+                        bool arrAllied = selectedCharacter.HasQuest((int)QuestIds.TRIBE_ARR_ALLIED);
                         for (uint i = 1; i <= 5; i++)
                         {
                             if (
-                                i == 1 && !selectedCharacter.HasQuest((int)Quests.TRIBE_ARR_AMALJ_AA) ||
-                                i == 2 && !selectedCharacter.HasQuest((int)Quests.TRIBE_ARR_SYLPHS) ||
-                                i == 3 && !selectedCharacter.HasQuest((int)Quests.TRIBE_ARR_KOBOLDS) ||
-                                i == 4 && !selectedCharacter.HasQuest((int)Quests.TRIBE_ARR_SAHAGIN) ||
-                                i == 5 && !selectedCharacter.HasQuest((int)Quests.TRIBE_ARR_IXAL)
+                                i == 1 && !selectedCharacter.HasQuest((int)QuestIds.TRIBE_ARR_AMALJ_AA) ||
+                                i == 2 && !selectedCharacter.HasQuest((int)QuestIds.TRIBE_ARR_SYLPHS) ||
+                                i == 3 && !selectedCharacter.HasQuest((int)QuestIds.TRIBE_ARR_KOBOLDS) ||
+                                i == 4 && !selectedCharacter.HasQuest((int)QuestIds.TRIBE_ARR_SAHAGIN) ||
+                                i == 5 && !selectedCharacter.HasQuest((int)QuestIds.TRIBE_ARR_IXAL)
                             )
                             {
                                 continue;
@@ -361,13 +586,13 @@ namespace Altoholic.Windows
                 case "Heavensward":
                 case "蒼天のイシュガルド":
                     {
-                        bool hwAllied = selectedCharacter.HasQuest((int)Quests.TRIBE_HW_ALLIED);
+                        bool hwAllied = selectedCharacter.HasQuest((int)QuestIds.TRIBE_HW_ALLIED);
                         for (uint i = 6; i <= 8; i++)
                         {
                             if (
-                                i == 6 && !selectedCharacter.HasQuest((int)Quests.TRIBE_HW_VANU_VANU) ||
-                                i == 7 && !selectedCharacter.HasQuest((int)Quests.TRIBE_HW_VATH) ||
-                                i == 8 && !selectedCharacter.HasQuest((int)Quests.TRIBE_HW_MOOGLES)
+                                i == 6 && !selectedCharacter.HasQuest((int)QuestIds.TRIBE_HW_VANU_VANU) ||
+                                i == 7 && !selectedCharacter.HasQuest((int)QuestIds.TRIBE_HW_VATH) ||
+                                i == 8 && !selectedCharacter.HasQuest((int)QuestIds.TRIBE_HW_MOOGLES)
                             )
                             {
                                 continue;
@@ -389,13 +614,13 @@ namespace Altoholic.Windows
                 case "Stormblood":
                 case "紅蓮のリベレーター":
                     {
-                        bool sbAllied = selectedCharacter.HasQuest((int)Quests.TRIBE_SB_ALLIED);
+                        bool sbAllied = selectedCharacter.HasQuest((int)QuestIds.TRIBE_SB_ALLIED);
                         for (uint i = 9; i <= 11; i++)
                         {
                             if (
-                                i == 9 && !selectedCharacter.HasQuest((int)Quests.TRIBE_SB_KOJIN) ||
-                                i == 10 && !selectedCharacter.HasQuest((int)Quests.TRIBE_SB_ANANTA) ||
-                                i == 11 && !selectedCharacter.HasQuest((int)Quests.TRIBE_SB_NAMAZU)
+                                i == 9 && !selectedCharacter.HasQuest((int)QuestIds.TRIBE_SB_KOJIN) ||
+                                i == 10 && !selectedCharacter.HasQuest((int)QuestIds.TRIBE_SB_ANANTA) ||
+                                i == 11 && !selectedCharacter.HasQuest((int)QuestIds.TRIBE_SB_NAMAZU)
                             )
                             {
                                 continue;
@@ -420,9 +645,9 @@ namespace Altoholic.Windows
                         for (uint i = 12; i <= 14; i++)
                         {
                             if (
-                                i == 12 && !selectedCharacter.HasQuest((int)Quests.TRIBE_SHB_PIXIES) ||
-                                i == 13 && !selectedCharacter.HasQuest((int)Quests.TRIBE_SHB_QITARI) ||
-                                i == 14 && !selectedCharacter.HasQuest((int)Quests.TRIBE_SHB_DWARVES)
+                                i == 12 && !selectedCharacter.HasQuest((int)QuestIds.TRIBE_SHB_PIXIES) ||
+                                i == 13 && !selectedCharacter.HasQuest((int)QuestIds.TRIBE_SHB_QITARI) ||
+                                i == 14 && !selectedCharacter.HasQuest((int)QuestIds.TRIBE_SHB_DWARVES)
                             )
                             {
                                 continue;
@@ -444,13 +669,13 @@ namespace Altoholic.Windows
                 case "Endwalker":
                 case "暁月編":
                     {
-                        bool ewAllied = selectedCharacter.HasQuest((int)Quests.TRIBE_EW_ALLIED);
+                        bool ewAllied = selectedCharacter.HasQuest((int)QuestIds.TRIBE_EW_ALLIED);
                         for (uint i = 15; i <= 17; i++)
                         {
                             if (
-                                i == 15 && !selectedCharacter.HasQuest((int)Quests.TRIBE_EW_ARKASODARA) ||
-                                i == 16 && !selectedCharacter.HasQuest((int)Quests.TRIBE_EW_OMICRONS) ||
-                                i == 17 && !selectedCharacter.HasQuest((int)Quests.TRIBE_EW_LOPORRITS)
+                                i == 15 && !selectedCharacter.HasQuest((int)QuestIds.TRIBE_EW_ARKASODARA) ||
+                                i == 16 && !selectedCharacter.HasQuest((int)QuestIds.TRIBE_EW_OMICRONS) ||
+                                i == 17 && !selectedCharacter.HasQuest((int)QuestIds.TRIBE_EW_LOPORRITS)
                             )
                             {
                                 continue;

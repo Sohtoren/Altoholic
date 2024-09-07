@@ -1,6 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using Altoholic.Models;
+using System.Collections.Generic;
 
-namespace Altoholic.Models
+namespace Altoholic.Database
 {
     public class Quest
     {
