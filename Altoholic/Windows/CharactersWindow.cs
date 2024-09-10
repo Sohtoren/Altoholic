@@ -334,6 +334,7 @@ namespace Altoholic.Windows
                     Utils.ChatMessage(
                         $"{character.FirstName} {character.LastName}{(char)SeIconChar.CrossWorld}{character.HomeWorld} has been blacklisted.");
                     Utils.ChatMessage("Use /altoholicbl on this character to remove it from the blacklist");
+                    Utils.ChatMessage("Close and re-open the window to refresh list");
                     ImGui.CloseCurrentPopup();
                 }
 

@@ -331,7 +331,7 @@ namespace Altoholic.Windows
 
         private void DrawMinionsCollection(Character currentCharacter)
         {
-            List<uint> minions = (_obtainedMinionsOnly) ? currentCharacter.Minions : _globalCache.MinionStorage.Get();
+            List<uint> minions = (_obtainedMinionsOnly) ? [..currentCharacter.Minions] : _globalCache.MinionStorage.Get();
             int minionsCount = minions.Count;
             if (minionsCount == 0) return;
             int rows = (int)Math.Ceiling(minionsCount / (double)10);
@@ -454,7 +454,7 @@ namespace Altoholic.Windows
 
         private void DrawMountsCollection(Character currentCharacter)
         {
-            List<uint> mounts = (_obtainedMountsOnly) ? currentCharacter.Mounts : _globalCache.MountStorage.Get();
+            List<uint> mounts = (_obtainedMountsOnly) ? [..currentCharacter.Mounts] : _globalCache.MountStorage.Get();
             int mountsCount = mounts.Count;
             int rows =  (int)Math.Ceiling(mountsCount / (double)10);
             int height = rows * 48 + rows;
@@ -560,7 +560,7 @@ namespace Altoholic.Windows
 
         private void DrawTripleTriadCardsCollection(Character currentCharacter)
         {
-            List<uint> tripleTriadCards = (_obtainedTripleTriadCardsOnly) ? currentCharacter.TripleTriadCards : _globalCache.TripleTriadCardStorage.Get();
+            List<uint> tripleTriadCards = (_obtainedTripleTriadCardsOnly) ? [..currentCharacter.TripleTriadCards] : _globalCache.TripleTriadCardStorage.Get();
             int tripleTriadCardsCount = tripleTriadCards.Count;
             if (tripleTriadCardsCount == 0) return;
             int rows = (int)Math.Ceiling(tripleTriadCardsCount / (double)10);
@@ -668,7 +668,7 @@ namespace Altoholic.Windows
 
         private void DrawEmotesCollection(Character currentCharacter)
         {
-            List<uint> emotes = (_obtainedEmotesOnly) ? currentCharacter.Emotes : _globalCache.EmoteStorage.Get();
+            List<uint> emotes = (_obtainedEmotesOnly) ? [..currentCharacter.Emotes] : _globalCache.EmoteStorage.Get();
 
             switch (currentCharacter.Profile?.GrandCompany)
             {
@@ -814,7 +814,7 @@ namespace Altoholic.Windows
 
         private void DrawBardingsCollection(Character currentCharacter)
         {
-            List<uint> bardings = (_obtainedBardingsOnly) ? currentCharacter.Bardings : _globalCache.BardingStorage.Get();
+            List<uint> bardings = (_obtainedBardingsOnly) ? [..currentCharacter.Bardings] : _globalCache.BardingStorage.Get();
             int bardingsCount = bardings.Count;
             if (bardingsCount == 0) return;
             int rows = (int)Math.Ceiling(bardingsCount / (double)10);
@@ -936,7 +936,7 @@ namespace Altoholic.Windows
 
         private void DrawFramerKitsCollection(Character currentCharacter)
         {
-            List<uint> framerKits = (_obtainedFramerKitsOnly) ? currentCharacter.FramerKits : _globalCache.FramerKitStorage.Get();
+            List<uint> framerKits = (_obtainedFramerKitsOnly) ? [..currentCharacter.FramerKits] : _globalCache.FramerKitStorage.Get();
             int framerKitsCount = framerKits.Count;
             if (framerKitsCount == 0) return;
             int rows = (int)Math.Ceiling(framerKitsCount / (double)10);
@@ -1059,7 +1059,7 @@ namespace Altoholic.Windows
 
         private void DrawOrchestrionRollsCollection(Character currentCharacter)
         {
-            List<uint> orchestrionRolls = (_obtainedOrchestrionRollsOnly) ? currentCharacter.OrchestrionRolls : _globalCache.OrchestrionRollStorage.Get();
+            List<uint> orchestrionRolls = (_obtainedOrchestrionRollsOnly) ? [..currentCharacter.OrchestrionRolls] : _globalCache.OrchestrionRollStorage.Get();
             int orchestrionRollsCount = orchestrionRolls.Count;
             if (orchestrionRollsCount == 0) return;
             int rows = (int)Math.Ceiling(orchestrionRollsCount / (double)10);
@@ -1182,7 +1182,7 @@ namespace Altoholic.Windows
 
         private void DrawOrnamentsCollection(Character currentCharacter)
         {
-            List<uint> ornaments = (_obtainedOrnamentsOnly) ? currentCharacter.Ornaments : _globalCache.OrnamentStorage.Get();
+            List<uint> ornaments = (_obtainedOrnamentsOnly) ? [..currentCharacter.Ornaments] : _globalCache.OrnamentStorage.Get();
             int ornamentsCount = ornaments.Count;
             int rows = (int)Math.Ceiling(ornamentsCount / (double)10);
             int height = rows * 48 + rows;
@@ -1305,7 +1305,7 @@ namespace Altoholic.Windows
 
         private void DrawGlassesCollection(Character currentCharacter)
         {
-            List<uint> glasses = (_obtainedGlassesOnly) ? currentCharacter.Glasses : _globalCache.GlassesStorage.Get();
+            List<uint> glasses = (_obtainedGlassesOnly) ? [..currentCharacter.Glasses] : _globalCache.GlassesStorage.Get();
             int glassesCount = glasses.Count;
             int rows = (int)Math.Ceiling(glassesCount / (double)10);
             int height = rows * 48 + rows;

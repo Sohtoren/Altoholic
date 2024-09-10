@@ -33,21 +33,21 @@ namespace Altoholic.Models
         public PlayerCurrencies? Currencies { get; set; }
         public Jobs? Jobs { get; set; }
         public Profile? Profile { get; set; }
-        public List<int> Quests { get; set; } = [];
+        public HashSet<int> Quests { get; set; } = [];
         public List<Inventory> Inventory { get; set; } = [];
         public ArmoryGear? ArmoryInventory { get; set; } = null;
         public List<Inventory> Saddle { get; set; } = [];
         public List<Gear> Gear { get; set; } = [];
         public List<Retainer> Retainers { get; set; } = [];
-        public List<uint> Minions { get; set; } = [];
-        public List<uint> Mounts { get; set; } = [];
-        public List<uint> TripleTriadCards { get; set; } = [];
-        public List<uint> Emotes { get; set; } = [];
-        public List<uint> Bardings { get; set; } = [];
-        public List<uint> FramerKits { get; set; } = [];
-        public List<uint> OrchestrionRolls { get; set; } = [];
-        public List<uint> Ornaments { get; set; } = [];
-        public List<uint> Glasses { get; set; } = [];
+        public HashSet<uint> Minions { get; set; } = [];
+        public HashSet<uint> Mounts { get; set; } = [];
+        public HashSet<uint> TripleTriadCards { get; set; } = [];
+        public HashSet<uint> Emotes { get; set; } = [];
+        public HashSet<uint> Bardings { get; set; } = [];
+        public HashSet<uint> FramerKits { get; set; } = [];
+        public HashSet<uint> OrchestrionRolls { get; set; } = [];
+        public HashSet<uint> Ornaments { get; set; } = [];
+        public HashSet<uint> Glasses { get; set; } = [];
         public List<CurrenciesHistory> CurrenciesHistory { get; set; } = [];
         public List<BeastTribeRank> BeastReputations { get; set; } = [];
 

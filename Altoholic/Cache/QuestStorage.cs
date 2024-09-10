@@ -21,7 +21,7 @@ namespace Altoholic.Cache
                 if (q == null) continue;
 
                 globalCache.IconStorage.LoadIcon(q.Icon);
-                _quests.Add(q.Id, q);
+                _quests.TryAdd(q.Id, q);
             }
         }
 
