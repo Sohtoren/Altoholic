@@ -2868,6 +2868,39 @@ namespace Altoholic
             return result;
         }
 
+        public static List<List<bool>> GetCharactersHildibrandQuests(List<Character> characters)
+        {
+            List<List<bool>> result = [];
+            foreach (Character character in characters)
+            {
+                List<bool> completedQuests =
+                [
+                    character.HasQuest((int)QuestIds.HILDIBRAND_ARR_THE_IMMACULATE_DECEPTION),
+                    character.HasQuest((int)QuestIds.HILDIBRAND_ARR_THE_THREE_COLLECTORS),
+                    character.HasQuest((int)QuestIds.HILDIBRAND_ARR_A_CASE_OF_INDECENCY),
+                    character.HasQuest((int)QuestIds.HILDIBRAND_ARR_THE_COLISEUM_CONUNDRUM),
+                    character.HasQuest((int)QuestIds.HILDIBRAND_ARR_HER_LAST_VOW),
+                    character.HasQuest((int)QuestIds.HILDIBRAND_HW_DONT_CALL_IT_A_COMEBACK),
+                    character.HasQuest((int)QuestIds.HILDIBRAND_HW_THE_MEASURE_OF_A_MAMMET),
+                    character.HasQuest((int)QuestIds.HILDIBRAND_HW_DONT_TRUST_ANYONE_OVER_SIXTY),
+                    character.HasQuest((int)QuestIds.HILDIBRAND_HW_IF_I_COULD_TURN_BACK_TIME),
+                    character.HasQuest((int)QuestIds.HILDIBRAND_SB_A_HINGAN_TALE_NASHU_GOES_EAST),
+                    character.HasQuest((int)QuestIds.HILDIBRAND_SB_OF_WOLVES_AND_GENTLEMEN),
+                    character.HasQuest((int)QuestIds.HILDIBRAND_SB_THE_BLADE_MISLAID),
+                    character.HasQuest((int)QuestIds.HILDIBRAND_SB_GOOD_SWORDS_GOOD_DOGS),
+                    character.HasQuest((int)QuestIds.HILDIBRAND_SB_DONT_DO_THE_DEWPRISM),
+                    character.HasQuest((int)QuestIds.HILDIBRAND_EW_A_SOULFUL_REUNION),
+                    character.HasQuest((int)QuestIds.HILDIBRAND_EW_THE_IMPERFECT_GENTLEMAN),
+                    character.HasQuest((int)QuestIds.HILDIBRAND_EW_GENERATIONAL_BONDING),
+                    character.HasQuest((int)QuestIds.HILDIBRAND_EW_NOT_FROM_AROUND_HERE),
+                    character.HasQuest((int)QuestIds.HILDIBRAND_EW_GENTLEMEN_AT_HEART),
+                ];
+                result.Add(completedQuests);
+            }
+
+            return result;
+        }
+
         public static string GetClassJobCategoryFromId(ClientLanguage currentLocale, uint? id)
         {
             //Plugin.Log.Debug($"GetItemNameFromId : {id}");
