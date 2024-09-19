@@ -2,7 +2,6 @@ using Altoholic.Cache;
 using Altoholic.Models;
 using Dalamud.Game;
 using Dalamud.Game.Text;
-using Dalamud.Interface.Internal;
 using Dalamud.Interface.Textures.TextureWraps;
 using Dalamud.Interface.Windowing;
 using ImGuiNET;
@@ -35,7 +34,7 @@ namespace Altoholic.Windows
             _globalCache = globalCache;
             //_currentLocale = currentLocale;
 
-            _rolesTextureWrap = Plugin.TextureProvider.GetFromGame("ui/uld/fourth/ToggleButton_hr1.tex").RentAsync().Result;
+            _rolesTextureWrap = _globalCache.IconStorage.LoadRoleIconTexture();
         }
 
         public Func<Character> GetPlayer { get; init; } = null!;

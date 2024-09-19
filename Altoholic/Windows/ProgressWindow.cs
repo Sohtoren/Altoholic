@@ -7,11 +7,16 @@ using Dalamud.Interface.Textures.TextureWraps;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
 using ImGuiNET;
+using Lumina.Excel.GeneratedSheets;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
+using System.Xml.Linq;
+using Emote = Altoholic.Models.Emote;
+using Mount = Altoholic.Models.Mount;
+using TripleTriadCard = Altoholic.Models.TripleTriadCard;
 
 namespace Altoholic.Windows
 {
@@ -42,6 +47,7 @@ namespace Altoholic.Windows
 
             _currentLocale = _plugin.Configuration.Language;
             _selectedExpansion = _globalCache.AddonStorage.LoadAddonString(_currentLocale, 5752);
+            _rolesTextureWrap = _globalCache.IconStorage.LoadRoleIconTexture();
         }
 
         public Func<Character> GetPlayer { get; set; } = null!;
@@ -52,6 +58,7 @@ namespace Altoholic.Windows
 
         private readonly IDalamudTextureWrap? _commendationIcon;
         private readonly IDalamudTextureWrap? _chevronTexture;
+        private IDalamudTextureWrap? _rolesTextureWrap;
 
         private bool _rightChevron = true;
         private bool _downChevron;
@@ -178,15 +185,43 @@ namespace Altoholic.Windows
                     DrawMainScenarioQuest(chars);
                 }
             }
+
+            using (var tribeTab =
+                   ImRaii.TabItem(
+                       $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 102512)}###CharactersProgressTable#All#TabBar#Tribes"))
+            {
+                if (tribeTab)
+                {
+                    DrawTribes(chars);
+                }
+            }
+
+            string rqText = _currentLocale switch
+            {
+                ClientLanguage.German => "Rollenauftrag",
+                ClientLanguage.English => "Role quest",
+                ClientLanguage.French => "Quête de rôle",
+                ClientLanguage.Japanese => "ロールクエスト",
+                _ => "Role quest",
+            };
+            using (var rolequestTab =
+                   ImRaii.TabItem(
+                       $"{rqText}###CharactersProgressTable#All#TabBar#RoleQuest"))
+            {
+                if (rolequestTab)
+                {
+                    DrawRoleQuestQuest(chars);
+                }
+            }
         }
 
         private void DrawMainScenarioQuest(List<Character> chars)
         {
             if (chars.Count == 0) return;
-            using var characterswMainScenarioQuestAll = ImRaii.Table("###CharactersProgress#All#MSQ", chars.Count + 1,
+            using var charactersMainScenarioQuestAll = ImRaii.Table("###CharactersProgress#All#MSQ", chars.Count + 1,
                 ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner |
                 ImGuiTableFlags.ScrollX | ImGuiTableFlags.ScrollY);
-            if (!characterswMainScenarioQuestAll) return;
+            if (!charactersMainScenarioQuestAll) return;
             ImGui.TableSetupColumn($"###CharactersProgress#All#MSQ#Name", ImGuiTableColumnFlags.WidthFixed, 250);
             foreach (Character c in chars)
             {
@@ -1074,10 +1109,10 @@ namespace Altoholic.Windows
         private void DrawHildibrandQuest(List<Character> chars)
         {
             if (chars.Count == 0) return;
-            using var characterswHildibrandQuestAll = ImRaii.Table("###CharactersProgress#All#Hildibrand", chars.Count + 1,
+            using var charactersHildibrandQuestAll = ImRaii.Table("###CharactersProgress#All#Hildibrand", chars.Count + 1,
                 ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner |
                 ImGuiTableFlags.ScrollX | ImGuiTableFlags.ScrollY);
-            if (!characterswHildibrandQuestAll) return;
+            if (!charactersHildibrandQuestAll) return;
             ImGui.TableSetupColumn($"###CharactersProgress#All#Hildibrand#Name", ImGuiTableColumnFlags.WidthFixed, 250);
             foreach (Character c in chars)
             {
@@ -1128,7 +1163,196 @@ namespace Altoholic.Windows
             DrawAllLine(chars, charactersQuests, $"{_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.HILDIBRAND_EW_GENERATIONAL_BONDING)}", 16);
             DrawAllLine(chars, charactersQuests, $"{_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.HILDIBRAND_EW_NOT_FROM_AROUND_HERE)}", 17);
             DrawAllLine(chars, charactersQuests, $"{_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.HILDIBRAND_EW_GENTLEMEN_AT_HEART)}", 18);
+        }
 
+        private void DrawRoleQuestQuest(List<Character> chars)
+        {
+            if (chars.Count == 0) return;
+            using var charactersRoleQuestQuestAll = ImRaii.Table("###CharactersProgress#All#RoleQuest", chars.Count + 1,
+                ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner |
+                ImGuiTableFlags.ScrollX | ImGuiTableFlags.ScrollY);
+            if (!charactersRoleQuestQuestAll) return;
+            ImGui.TableSetupColumn($"###CharactersProgress#All#RoleQuest#Name", ImGuiTableColumnFlags.WidthFixed, 250);
+            foreach (Character c in chars)
+            {
+                ImGui.TableSetupColumn($"###CharactersProgress#All#RoleQuest#{c.CharacterId}",
+                    ImGuiTableColumnFlags.WidthFixed, 15);
+            }
+
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 1898));
+            if (ImGui.IsItemHovered())
+            {
+                ImGui.BeginTooltip();
+                ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 14055));
+                ImGui.EndTooltip();
+            }
+
+            foreach (Character currChar in chars)
+            {
+                ImGui.TableNextColumn();
+                ImGui.TextUnformatted($"{currChar.FirstName[0]}.{currChar.LastName[0]}");
+                if (ImGui.IsItemHovered())
+                {
+                    ImGui.BeginTooltip();
+                    ImGui.TextUnformatted(
+                        $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
+                    ImGui.EndTooltip();
+                }
+            }
+
+            List<List<bool>> charactersQuests = Utils.GetCharactersRoleQuestQuests(chars);
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 8156)}");
+
+            DrawAllRoleQuestLine(RoleIcon.Tank, chars, charactersQuests,
+                $"{_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.ROLEQUEST_SHB_TANK_TO_HAVE_LOVED_AND_LOST)}",
+                0);
+            DrawAllRoleQuestLine(RoleIcon.Melee, chars, charactersQuests,
+                $"{_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.ROLEQUEST_SHB_PHYSICAL_COURAGE_BORN_OF_FEAR)}",
+                1, true);
+            DrawAllRoleQuestLine(RoleIcon.Caster, chars, charactersQuests,
+                $"{_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.ROLEQUEST_SHB_MRDPS_A_TEARFUL_REUNION)}",
+                2);
+            DrawAllRoleQuestLine(RoleIcon.Heal, chars, charactersQuests,
+                $"{_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.ROLEQUEST_SHB_HEALER_THE_SOUL_OF_TEMPERANCE)}",
+                3);
+            DrawAllRoleQuestLine(null, chars, charactersQuests,
+                $"{_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.ROLEQUEST_SHB_MASTER_SAFEKEEPING)}", 4);
+
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 8160)}");
+
+            DrawAllRoleQuestLine(RoleIcon.Tank, chars, charactersQuests,
+                $"{_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.ROLEQUEST_EW_TANK_A_PATH_UNVEILED)}", 5);
+            DrawAllRoleQuestLine(RoleIcon.Melee, chars, charactersQuests,
+                $"{_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.ROLEQUEST_EW_MELEE_TO_CALMER_SEAS)}", 6);
+            DrawAllRoleQuestLine(RoleIcon.Ranged, chars, charactersQuests,
+                $"{_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.ROLEQUEST_EW_PRDPS_LAID_TO_REST)}", 7);
+            DrawAllRoleQuestLine(RoleIcon.Caster, chars, charactersQuests,
+                $"{_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.ROLEQUEST_EW_MRDPS_EVER_MARCH_HEAVENSWARD)}",
+                8);
+            DrawAllRoleQuestLine(RoleIcon.Heal, chars, charactersQuests,
+                $"{_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.ROLEQUEST_EW_HEALER_THE_GIFT_OF_MERCY)}",
+                9);
+            DrawAllRoleQuestLine(null, chars, charactersQuests,
+                $"{_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.ROLEQUEST_EW_MASTER_FORLORN_GLORY)}", 10);
+
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 8175)}");
+
+            DrawAllRoleQuestLine(RoleIcon.Tank, chars, charactersQuests,
+                $"{_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.ROLEQUEST_DT_TANK_DREAMS_OF_A_NEW_DAY)}",
+                11);
+            DrawAllRoleQuestLine(RoleIcon.Melee, chars, charactersQuests,
+                $"{_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.ROLEQUEST_DT_MELEE_A_HUNTER_TRUE)}", 12);
+            DrawAllRoleQuestLine(RoleIcon.Ranged, chars, charactersQuests,
+                $"{_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.ROLEQUEST_DT_PRDPS_THE_MIGHTIEST_SHIELD)}",
+                13);
+            DrawAllRoleQuestLine(RoleIcon.Caster, chars, charactersQuests,
+                $"{_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.ROLEQUEST_DT_MRDPS_HEROES_AND_PRETENDERS)}",
+                14);
+            DrawAllRoleQuestLine(RoleIcon.Heal, chars, charactersQuests,
+                $"{_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.ROLEQUEST_DT_HEALER_AN_ANTIDOTE_FOR_ANARCHY)}",
+                15);
+        }
+
+        private void DrawTribes(List<Character> chars)
+        {
+            if (chars.Count == 0) return;
+            using var charactersTribeQuestAll = ImRaii.Table("###CharactersProgress#All#Tribe", chars.Count + 1,
+                ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner |
+                ImGuiTableFlags.ScrollX | ImGuiTableFlags.ScrollY);
+            if (!charactersTribeQuestAll) return;
+            ImGui.TableSetupColumn($"###CharactersProgress#All#Tribe#Name", ImGuiTableColumnFlags.WidthFixed, 250);
+            foreach (Character c in chars)
+            {
+                ImGui.TableSetupColumn($"###CharactersProgress#All#Tribe#{c.CharacterId}",
+                    ImGuiTableColumnFlags.WidthFixed, 15);
+            }
+
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 1898));
+            if (ImGui.IsItemHovered())
+            {
+                ImGui.BeginTooltip();
+                ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 14055));
+                ImGui.EndTooltip();
+            }
+
+            foreach (Character currChar in chars)
+            {
+                ImGui.TableNextColumn();
+                ImGui.TextUnformatted($"{currChar.FirstName[0]}.{currChar.LastName[0]}");
+                if (ImGui.IsItemHovered())
+                {
+                    ImGui.BeginTooltip();
+                    ImGui.TextUnformatted(
+                        $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
+                    ImGui.EndTooltip();
+                }
+            }
+
+            List<List<bool>> charactersQuests = Utils.GetCharactersTribeQuests(chars, _globalCache, _currentLocale);
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 5752));
+            DrawAllTribes(chars, charactersQuests, 1);
+            DrawAllTribes(chars, charactersQuests, 2);
+            DrawAllTribes(chars, charactersQuests, 3);
+            DrawAllTribes(chars, charactersQuests, 4);
+            DrawAllTribes(chars, charactersQuests, 5);
+
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 5753));
+            DrawAllTribes(chars, charactersQuests, 6);
+            DrawAllTribes(chars, charactersQuests, 7);
+            DrawAllTribes(chars, charactersQuests, 8);
+
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 5754));
+            DrawAllTribes(chars, charactersQuests, 9);
+            DrawAllTribes(chars, charactersQuests, 10);
+            DrawAllTribes(chars, charactersQuests, 11);
+
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 8156)}");
+            DrawAllTribes(chars, charactersQuests, 12);
+            DrawAllTribes(chars, charactersQuests, 13);
+            DrawAllTribes(chars, charactersQuests, 14);
+
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 8160)}");
+            DrawAllTribes(chars, charactersQuests, 15);
+            DrawAllTribes(chars, charactersQuests, 16);
+            DrawAllTribes(chars, charactersQuests, 17);
+
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 8175)}");
         }
 
         private static void DrawAllLine(List<Character> chars, List<List<bool>> charactersQuests, string name,
@@ -1150,6 +1374,102 @@ namespace Altoholic.Windows
                         $"{chars[charactersQuest.index].FirstName} {chars[charactersQuest.index].LastName}{(char)SeIconChar.CrossWorld}{chars[charactersQuest.index].HomeWorld}");
                     ImGui.EndTooltip();
                 }
+            }
+        }
+
+        private void DrawAllTribes(List<Character> chars, List<List<bool>> charactersQuests, int tribeIndex)
+        {
+            //Plugin.Log.Debug($"DrawAllLine: {chars.Count}, name: {name}, msqIndex: {msqIndex}");
+            BeastTribes? beastTribe = _globalCache.BeastTribesStorage.GetBeastTribe(_currentLocale, (uint)tribeIndex);
+            if (beastTribe == null) return;
+            string name = _currentLocale switch
+            {
+                ClientLanguage.German => beastTribe.GermanName,
+                ClientLanguage.English => beastTribe.EnglishName,
+                ClientLanguage.French => beastTribe.FrenchName,
+                ClientLanguage.Japanese => beastTribe.JapaneseName,
+                _ => beastTribe.EnglishName
+            };
+            BeastReputationRank? allied = _globalCache.BeastTribesStorage.GetRank(_currentLocale, 8);
+            string alliedName =  (allied == null) ? string.Empty : allied.Name;
+            name = $"{Utils.Capitalize(name)}";
+            if (alliedName != string.Empty && tribeIndex != 12 && tribeIndex != 13 && tribeIndex != 14)
+                name = $"{name} ({alliedName})";
+
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            ImGui.TextUnformatted(name);
+            foreach ((List<bool> cq, int index) charactersQuest in charactersQuests.Select((cq, index) => (cq, index)))
+            {
+                ImGui.TableNextColumn();
+                ImGui.TextUnformatted(charactersQuest.cq[tribeIndex-1] ? "\u2713" : "");
+                if (ImGui.IsItemHovered())
+                {
+                    ImGui.BeginTooltip();
+                    ImGui.TextUnformatted(name);
+                    ImGui.TextUnformatted(
+                        $"{chars[charactersQuest.index].FirstName} {chars[charactersQuest.index].LastName}{(char)SeIconChar.CrossWorld}{chars[charactersQuest.index].HomeWorld}");
+                    ImGui.EndTooltip();
+                }
+            }
+        }
+
+        private void DrawAllRoleQuestLine(RoleIcon? icon, List<Character> chars, List<List<bool>> charactersQuests, string name,
+            int msqIndex, bool shadowbringer = false)
+        {
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            DrawRoleQuestIcons(icon, shadowbringer);
+            ImGui.SameLine();
+            ImGui.TextUnformatted(name);
+            foreach ((List<bool> cq, int index) charactersQuest in charactersQuests.Select((cq, index) => (cq, index)))
+            {
+                ImGui.TableNextColumn();
+                ImGui.TextUnformatted(charactersQuest.cq[msqIndex] ? "\u2713" : "");
+                if (ImGui.IsItemHovered())
+                {
+                    ImGui.BeginTooltip();
+                    ImGui.TextUnformatted(name);
+                    ImGui.TextUnformatted(
+                        $"{chars[charactersQuest.index].FirstName} {chars[charactersQuest.index].LastName}{(char)SeIconChar.CrossWorld}{chars[charactersQuest.index].HomeWorld}");
+                    ImGui.EndTooltip();
+                }
+            }
+        }
+
+        private void DrawRoleQuestIcons(RoleIcon? icon, bool shadowbringer = false)
+        {
+            if (_rolesTextureWrap is null) return;
+            switch (icon)
+            {
+                case null:
+                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(062576), new Vector2(22, 22));
+                    break;
+                case RoleIcon.Tank:
+                    Utils.DrawRoleTexture(ref _rolesTextureWrap, RoleIcon.Tank, new Vector2(20, 20));
+                    break;
+                case RoleIcon.Melee:
+                    if (shadowbringer)
+                    {
+                        Utils.DrawRoleTexture(ref _rolesTextureWrap, RoleIcon.Melee, new Vector2(20, 20));
+                        ImGui.SameLine();
+                        Utils.DrawRoleTexture(ref _rolesTextureWrap, RoleIcon.Ranged, new Vector2(20, 20));
+                    }
+                    else
+                    {
+                        Utils.DrawRoleTexture(ref _rolesTextureWrap, RoleIcon.Melee, new Vector2(20, 20));
+                    }
+
+                    break;
+                case RoleIcon.Ranged:
+                    Utils.DrawRoleTexture(ref _rolesTextureWrap, RoleIcon.Ranged, new Vector2(20, 20));
+                    break;
+                case RoleIcon.Caster:
+                    Utils.DrawRoleTexture(ref _rolesTextureWrap, RoleIcon.Caster, new Vector2(20, 20));
+                    break;
+                case RoleIcon.Heal:
+                    Utils.DrawRoleTexture(ref _rolesTextureWrap, RoleIcon.Heal, new Vector2(20, 20));
+                    break;
             }
         }
 

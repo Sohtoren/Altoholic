@@ -10,12 +10,14 @@ namespace Altoholic.Cache
     {
         private readonly Dictionary<uint, IDalamudTextureWrap> _icons = new(size);
 
-        private IDalamudTextureWrap? _retainerIconsTexture;
+        private IDalamudTextureWrap? _retainerIconsTextureWrap;
+        private IDalamudTextureWrap? _rolesTextureWrap;
 
         public void Init()
         {
             Plugin.Log.Debug("IconStorage Init() called");
-            _retainerIconsTexture = Plugin.TextureProvider.GetFromGame("ui/uld/Retainer_hr1.tex").RentAsync().Result;
+            _retainerIconsTextureWrap = Plugin.TextureProvider.GetFromGame("ui/uld/Retainer_hr1.tex").RentAsync().Result;
+            _rolesTextureWrap = Plugin.TextureProvider.GetFromGame("ui/uld/fourth/ToggleButton_hr1.tex").RentAsync().Result;
         }
 
         public IDalamudTextureWrap this[uint id]
@@ -45,7 +47,12 @@ namespace Altoholic.Cache
 
         public IDalamudTextureWrap? LoadRetainerJobIconTexture()
         {
-            return _retainerIconsTexture;
+            return _retainerIconsTextureWrap;
+        }
+
+        public IDalamudTextureWrap? LoadRoleIconTexture()
+        {
+            return _rolesTextureWrap;
         }
 
         public void Dispose()
@@ -53,7 +60,8 @@ namespace Altoholic.Cache
             foreach (IDalamudTextureWrap icon in _icons.Values)
                 icon.Dispose();
 
-            _retainerIconsTexture?.Dispose();
+            _retainerIconsTextureWrap?.Dispose();
+            _rolesTextureWrap?.Dispose();
         }
     }
 }

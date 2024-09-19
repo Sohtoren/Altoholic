@@ -2901,6 +2901,68 @@ namespace Altoholic
             return result;
         }
 
+        public static List<List<bool>> GetCharactersRoleQuestQuests(List<Character> characters)
+        {
+            List<List<bool>> result = [];
+            foreach (Character character in characters)
+            {
+                List<bool> completedQuests =
+                [
+                    character.HasQuest((int)QuestIds.ROLEQUEST_SHB_TANK_TO_HAVE_LOVED_AND_LOST),
+                    character.HasQuest((int)QuestIds.ROLEQUEST_SHB_PHYSICAL_COURAGE_BORN_OF_FEAR),
+                    character.HasQuest((int)QuestIds.ROLEQUEST_SHB_MRDPS_A_TEARFUL_REUNION),
+                    character.HasQuest((int)QuestIds.ROLEQUEST_SHB_HEALER_THE_SOUL_OF_TEMPERANCE),
+                    character.HasQuest((int)QuestIds.ROLEQUEST_SHB_MASTER_SAFEKEEPING),
+                    character.HasQuest((int)QuestIds.ROLEQUEST_EW_TANK_A_PATH_UNVEILED),
+                    character.HasQuest((int)QuestIds.ROLEQUEST_EW_MELEE_TO_CALMER_SEAS),
+                    character.HasQuest((int)QuestIds.ROLEQUEST_EW_PRDPS_LAID_TO_REST),
+                    character.HasQuest((int)QuestIds.ROLEQUEST_EW_MRDPS_EVER_MARCH_HEAVENSWARD),
+                    character.HasQuest((int)QuestIds.ROLEQUEST_EW_HEALER_THE_GIFT_OF_MERCY),
+                    character.HasQuest((int)QuestIds.ROLEQUEST_EW_MASTER_FORLORN_GLORY),
+                    character.HasQuest((int)QuestIds.ROLEQUEST_DT_TANK_DREAMS_OF_A_NEW_DAY),
+                    character.HasQuest((int)QuestIds.ROLEQUEST_DT_MELEE_A_HUNTER_TRUE),
+                    character.HasQuest((int)QuestIds.ROLEQUEST_DT_PRDPS_THE_MIGHTIEST_SHIELD),
+                    character.HasQuest((int)QuestIds.ROLEQUEST_DT_MRDPS_HEROES_AND_PRETENDERS),
+                    character.HasQuest((int)QuestIds.ROLEQUEST_DT_HEALER_AN_ANTIDOTE_FOR_ANARCHY),
+
+                ];
+                result.Add(completedQuests);
+            }
+
+            return result;
+        }
+
+        public static List<List<bool>> GetCharactersTribeQuests(List<Character> characters, GlobalCache globalCache, ClientLanguage currentLocale)
+        {
+            List<List<bool>> result = [];
+            foreach (Character character in characters)
+            {
+                List<bool> completedQuests = [];
+
+                for (uint i = 1; i <= 17; i++)
+                {
+                    BeastTribeRank? rep = character.GetBeastReputation(i);
+                    BeastTribes? beastTribe = globalCache.BeastTribesStorage.GetBeastTribe(currentLocale, i);
+                    if (beastTribe == null || rep == null)
+                    {
+                        completedQuests.Add(false);
+                        continue;
+                    }
+
+                    uint maxRank = (i is 12 or 13 or 14) ? beastTribe.MaxRank : 8;
+                    bool done = maxRank == rep.Rank;
+                    /*Plugin.Log.Debug(
+                        $"{i}, cname: {character.FirstName}, name: {beastTribe?.EnglishName}, rep.Rank: {rep?.Rank}, maxrank: {beastTribe?.MaxRank}");*/
+
+                    completedQuests.Add(done);
+                }
+
+                result.Add(completedQuests);
+            }
+
+            return result;
+        }
+
         public static string GetClassJobCategoryFromId(ClientLanguage currentLocale, uint? id)
         {
             //Plugin.Log.Debug($"GetItemNameFromId : {id}");
