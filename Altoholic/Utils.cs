@@ -945,8 +945,10 @@ namespace Altoholic
             using var charactersJobsJobLine = ImRaii.Table("###DrawReputationProgressBar#ReputationLine", 3);
             if (!charactersJobsJobLine) return;
             ImGui.TableSetupColumn("###DrawReputationProgressBar#ReputationLine#Level", ImGuiTableColumnFlags.WidthFixed, 300);
-            ImGui.TableSetupColumn("###DrawReputationProgressBar#ReputationLine#Empty", ImGuiTableColumnFlags.WidthFixed, 190);
-            ImGui.TableSetupColumn("###DrawReputationProgressBar#ReputationLine#Exp", ImGuiTableColumnFlags.WidthFixed, 100);
+            ImGui.TableSetupColumn("###DrawReputationProgressBar#ReputationLine#Empty", ImGuiTableColumnFlags.WidthFixed,
+                brr.RequiredReputation == 0 ? 190 : 150);
+            ImGui.TableSetupColumn("###DrawReputationProgressBar#ReputationLine#Exp", ImGuiTableColumnFlags.WidthFixed,
+                brr.RequiredReputation == 0 ? 100 : 150);
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
             UIColor? c = brr.Color.Value;
@@ -3014,21 +3016,45 @@ namespace Altoholic
         {
             // ReSharper disable once InconsistentNaming
             string FCTag = string.Empty;
-            if ((string.IsNullOrEmpty(localPlayer.CurrentWorld) || string.IsNullOrEmpty(localPlayer.CurrentDatacenter) || string.IsNullOrEmpty(localPlayer.CurrentWorld)) || (localPlayer.CurrentWorld == localPlayer.HomeWorld && localPlayer.CurrentRegion == localPlayer.Region))
+            if (string.IsNullOrEmpty(localPlayer.CurrentWorld) || string.IsNullOrEmpty(localPlayer.CurrentDatacenter) || string.IsNullOrEmpty(localPlayer.CurrentWorld) || (localPlayer.CurrentWorld == localPlayer.HomeWorld && localPlayer.CurrentRegion == localPlayer.Region))
             {
                 FCTag = localPlayer.FCTag;
             }
             else if (localPlayer.CurrentWorld != localPlayer.HomeWorld && localPlayer.CurrentRegion == localPlayer.Region)
             {
-                FCTag = globalCache.AddonStorage.LoadAddonString(currentLocale, 12541);
+                //FCTag = globalCache.AddonStorage.LoadAddonString(currentLocale, 12541);
+                FCTag = currentLocale switch
+                {
+                    ClientLanguage.German => (localPlayer.Profile?.Gender == 0) ? "Wanderer" : "Wanderin",
+                    ClientLanguage.English => globalCache.AddonStorage.LoadAddonString(currentLocale, 12541),
+                    ClientLanguage.French => (localPlayer.Profile?.Gender == 0) ? "Baroudeur" : "Baroudeuse",
+                    ClientLanguage.Japanese => globalCache.AddonStorage.LoadAddonString(currentLocale, 12541),
+                    _ => globalCache.AddonStorage.LoadAddonString(currentLocale, 12541),
+                };
             }
             else if (localPlayer.CurrentWorld != localPlayer.HomeWorld && localPlayer.CurrentRegion != localPlayer.Region)
             {
-                FCTag = globalCache.AddonStorage.LoadAddonString(currentLocale, 12625);
+                //FCTag = globalCache.AddonStorage.LoadAddonString(currentLocale, 12625);
+                FCTag = currentLocale switch
+                {
+                    ClientLanguage.German => (localPlayer.Profile?.Gender == 0) ? "Reisender" : "Reisende",
+                    ClientLanguage.English => globalCache.AddonStorage.LoadAddonString(currentLocale, 12625),
+                    ClientLanguage.French => (localPlayer.Profile?.Gender == 0) ? "Explorateur" : "Exploratrice",
+                    ClientLanguage.Japanese => globalCache.AddonStorage.LoadAddonString(currentLocale, 12625),
+                    _ => globalCache.AddonStorage.LoadAddonString(currentLocale, 12625),
+                };
             }
             else if (localPlayer.CurrentWorld != localPlayer.HomeWorld && localPlayer.CurrentRegion != localPlayer.Region)
             {
-                FCTag = globalCache.AddonStorage.LoadAddonString(currentLocale, 12627);
+                //FCTag = globalCache.AddonStorage.LoadAddonString(currentLocale, 12627);
+                FCTag = currentLocale switch
+                {
+                    ClientLanguage.German => (localPlayer.Profile?.Gender == 0) ? "Voyageur" : "Voyageurin",
+                    ClientLanguage.English => globalCache.AddonStorage.LoadAddonString(currentLocale, 12627),
+                    ClientLanguage.French => (localPlayer.Profile?.Gender == 0) ? "Voyageur" : "Voyageuse",
+                    ClientLanguage.Japanese => globalCache.AddonStorage.LoadAddonString(currentLocale, 12627),
+                    _ => globalCache.AddonStorage.LoadAddonString(currentLocale, 12627),
+                };
             }
             //Plugin.Log.Debug($"localPlayerRegion : {localPlayerRegion}");
             //Plugin.Log.Debug($"localPlayer.CurrentRegion : {localPlayer.CurrentRegion}");

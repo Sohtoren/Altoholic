@@ -66,7 +66,6 @@ namespace Altoholic.Windows
             _currentLocale = _plugin.Configuration.Language;
             try
             {
-                //using (ImRaii.IEndObject charactersTable = ImRaii.Table("###Characters", 9, ImGuiTableFlags.ScrollY, new Vector2(-1 , 470)))
                 using (ImRaii.IEndObject charactersTable = ImRaii.Table("###Characters", 10, ImGuiTableFlags.ScrollY, new Vector2(-1, 470)))
                 //using (ImRaii.IEndObject charactersTable = ImRaii.Table("###Characters", 10))
                 {
@@ -82,7 +81,7 @@ namespace Altoholic.Windows
                         _globalCache.AddonStorage.LoadAddonString(_currentLocale,
                             464) /*_globalCache.AddonStorage.LoadAddonString(335)*/, ImGuiTableColumnFlags.WidthFixed,
                         30);
-                    ImGui.TableSetupColumn("FC", ImGuiTableColumnFlags.WidthFixed, 50);
+                    ImGui.TableSetupColumn("FC", ImGuiTableColumnFlags.WidthFixed, 70);
                     ImGui.TableSetupColumn(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 2883),
                         ImGuiTableColumnFlags.WidthFixed, 150);
                     ImGui.TableSetupColumn("Last online", ImGuiTableColumnFlags.WidthFixed, 110);
