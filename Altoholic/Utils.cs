@@ -23,6 +23,7 @@ using Ornament = Lumina.Excel.GeneratedSheets.Ornament;
 using Glasses = Lumina.Excel.GeneratedSheets.Glasses;
 using Quest = Lumina.Excel.GeneratedSheets.Quest;
 using Altoholic.Database;
+using CheapLoc;
 
 namespace Altoholic
 {
@@ -3175,6 +3176,48 @@ namespace Altoholic
                 }
 
             return time;
+        }
+
+        public enum TimeOptions
+        {
+            Normal = 0,
+            Seconds = 1,
+            Minutes = 2,
+            Hours = 4,
+            Days = 8,
+        }
+        public static TimeOptions TimeOption { get; set; } = TimeOptions.Normal;
+        public static string GeneratePlaytime(TimeSpan time, bool withSeconds = false)
+        {
+            return TimeOption switch
+            {
+                TimeOptions.Normal => GeneratePlaytimeString(time, withSeconds),
+                TimeOptions.Seconds => $"{time.TotalSeconds:n0} Seconds",
+                TimeOptions.Minutes => $"{time.TotalMinutes:n0} Minutes",
+                TimeOptions.Hours => $"{time.TotalHours:n2} Hours",
+                TimeOptions.Days => $"{time.TotalDays:n2} Days",
+                _ => GeneratePlaytimeString(time, withSeconds)
+            };
+        }
+
+        public static string GeneratePlaytimeString(TimeSpan time, bool withSeconds = false)
+        {
+            if (time == TimeSpan.Zero)
+            {
+                return Loc.Localize("NoPlaytimeFound", "No playtime found, use /playtime");
+            }
+            string formatted =
+                $"{(time.Days > 0 ? $"{time.Days:n0} {(time.Days == 1 ? "Day" : "Days")}, " : string.Empty)}" +
+                $"{(time.Hours > 0 ? $"{time.Hours:n0} {(time.Hours == 1 ? "Hour" : "Hours")}, " : string.Empty)}" +
+                $"{(time.Minutes > 0 ? $"{time.Minutes:n0} {(time.Minutes == 1 ? "Minute" : "Minutes")}, " : string.Empty)}";
+
+            if (withSeconds)
+                formatted += $"{time.Seconds:n0} {(time.Seconds == 1 ? "Second" : "Seconds")}";
+
+            if (formatted.EndsWith(", "))
+                formatted = formatted[..^2];
+
+            return formatted;
         }
     }
 }

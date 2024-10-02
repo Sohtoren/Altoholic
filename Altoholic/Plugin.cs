@@ -1,6 +1,7 @@
 using Altoholic.Cache;
 using Altoholic.Models;
 using Altoholic.Windows;
+using CheapLoc;
 using Dalamud.Game;
 using Dalamud.Game.ClientState.Conditions;
 using Dalamud.Game.ClientState.Objects.SubKinds;
@@ -406,6 +407,11 @@ namespace Altoholic
 
             if (_localPlayer.CharacterId != 0)
             {
+                if (_localPlayer.LastPlayTimeUpdate > 0 && Utils.GetLastPlayTimeUpdateDiff(_localPlayer.LastPlayTimeUpdate) >= 7)
+                {
+                    Utils.ChatMessage(Loc.Localize("LastPlaytimeOutdated", "More than 7 days since the last update, consider using the /playtime command"));
+                }
+
                 OtherCharacters = Database.Database.GetOthersCharacters(_db, _localPlayer.CharacterId);
 
                 //Plugin.Log.Debug($"otherCharacters count {otherCharacters.Count}");

@@ -161,7 +161,7 @@ namespace Altoholic.Windows
                 ImGui.Separator();
                 ImGui.TableSetColumnIndex(3);
                 ImGui.Separator();
-                ImGui.TextUnformatted($"{GeneratePlaytime(TimeSpan.FromMinutes(TotalPlayed))}");
+                ImGui.TextUnformatted($"{Utils.GeneratePlaytime(TimeSpan.FromMinutes(TotalPlayed))}");
                 /*if (ImGui.IsItemHovered())
                 {
                     ImGui.BeginTooltip();
@@ -242,7 +242,7 @@ namespace Altoholic.Windows
             }
 
             ImGui.TableSetColumnIndex(8);
-            ImGui.TextUnformatted($"{GeneratePlaytime(TimeSpan.FromMinutes(character.PlayTime))}");
+            ImGui.TextUnformatted($"{Utils.GeneratePlaytime(TimeSpan.FromMinutes(character.PlayTime))}");
             if (character.PlayTime > 0)
             {
                 if (ImGui.IsItemHovered())
@@ -268,7 +268,7 @@ namespace Altoholic.Windows
                 {
                     ImGui.BeginTooltip();
                     ImGui.TextUnformatted(
-                        "More than 7 days since the last update, consider using the /playtime command");
+                        Loc.Localize("LastPlaytimeOutdated", "More than 7 days since the last update, consider using the /playtime command"));
                     ImGui.EndTooltip();
                 }
             }
@@ -379,48 +379,6 @@ namespace Altoholic.Windows
             ImGui.SameLine();
             if (ImGui.Button("Cancel", new Vector2(120, 0))) { ImGui.CloseCurrentPopup(); }
             */
-        }
-
-        public enum TimeOptions
-        {
-            Normal = 0,
-            Seconds = 1,
-            Minutes = 2,
-            Hours = 4,
-            Days = 8,
-        }
-        public TimeOptions TimeOption { get; set; } = TimeOptions.Normal;
-        private string GeneratePlaytime(TimeSpan time, bool withSeconds = false)
-        {
-            return TimeOption switch
-            {
-                TimeOptions.Normal => GeneratePlaytimeString(time, withSeconds),
-                TimeOptions.Seconds => $"{time.TotalSeconds:n0} Seconds",
-                TimeOptions.Minutes => $"{time.TotalMinutes:n0} Minutes",
-                TimeOptions.Hours => $"{time.TotalHours:n2} Hours",
-                TimeOptions.Days => $"{time.TotalDays:n2} Days",
-                _ => GeneratePlaytimeString(time, withSeconds)
-            };
-        }
-
-        private static string GeneratePlaytimeString(TimeSpan time, bool withSeconds = false)
-        {
-            if (time == TimeSpan.Zero)
-            {
-                return "No playtime found, use /playtime";
-            }
-            string formatted =
-                $"{(time.Days > 0 ? $"{time.Days:n0} {(time.Days == 1 ? "Day" : "Days")}, " : string.Empty)}" +
-                $"{(time.Hours > 0 ? $"{time.Hours:n0} {(time.Hours == 1 ? "Hour" : "Hours")}, " : string.Empty)}" +
-                $"{(time.Minutes > 0 ? $"{time.Minutes:n0} {(time.Minutes == 1 ? "Minute" : "Minutes")}, " : string.Empty)}";
-
-            if (withSeconds)
-                formatted += $"{time.Seconds:n0} {(time.Seconds == 1 ? "Second" : "Seconds")}";
-
-            if (formatted.EndsWith(", "))
-                formatted = formatted[..^2];
-
-            return formatted;
         }
 
         private void DrawCharacters(List<Character> characters)
