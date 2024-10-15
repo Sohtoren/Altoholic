@@ -797,16 +797,15 @@ namespace Altoholic
             }
             foreach (Duty i in _globalCache.DutyStorage.GetAll().Where(i => !_localPlayer.IsDutyCompleted(i.Id)))
             {
-                string name = _globalCache.DutyStorage.LoadDuty(i.Id)?.EnglishName ?? string.Empty;
-                Log.Debug($"Checking duty {i}:{name}");
+                Log.Debug($"Checking duty {i.Id}:{i.EnglishName}");
                 if (Utils.IsDutyCompleted(i.Content))
                 {
-                    Log.Debug($"Duty {i}:{name} completed");
+                    Log.Debug($"Duty {i.Id}:{i.EnglishName} completed");
                     _localPlayer.Duties.Add(i.Id);
                 }
                 else
                 {
-                    Log.Debug($"Duty {i}:{name} not completed");
+                    Log.Debug($"Duty {i.Id}:{i.EnglishName} not completed");
                 }
             }
 
