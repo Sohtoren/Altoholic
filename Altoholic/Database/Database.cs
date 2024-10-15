@@ -5,6 +5,7 @@ using Altoholic.Models;
 using Dapper;
 using LiteDB;
 using Microsoft.Data.Sqlite;
+using System.Data;
 using System.Linq;
 
 namespace Altoholic.Database
@@ -52,6 +53,39 @@ namespace Altoholic.Database
             Plugin.Log.Debug($"DoesTableExist returned name: {name}");
             Plugin.Log.Debug($"DoesTableExist? : {(name != null && name == tableName)}");
             return (name != null && name == tableName);
+        }
+        /*private static bool DoesColumnExist(SqliteConnection db, string tableName, string columnName)
+        {
+            Plugin.Log.Debug($"DoesColumnExist: {tableName}, {columnName}");
+            return db.GetSchema("Columns").Select($"COLUMN_NAME='{columnName}' AND TABLE_NAME='{tableName}'").Length != 0;
+        }*/
+        /// <summary>
+        /// Checks if the given table contains a column with the given name.
+        /// </summary>
+        /// <param name="tableName">The table in this database to check.</param>
+        /// <param name="columnName">The column in the given table to look for.</param>
+        /// <param name="connection">The SQLiteConnection for this database.</param>
+        /// <returns>True if the given table contains a column with the given name.</returns>
+        public static bool DoesColumnExist(SqliteConnection connection, string tableName, string columnName)
+        {
+            Plugin.Log.Debug($"Entering DoesColumnExist: {tableName}, {columnName}");
+            IDataReader dr = connection.ExecuteReader("PRAGMA table_info(" + tableName + ")");
+            while (dr.Read())//loop through the various columns and their info
+            {
+                object value = dr.GetValue(1);//column 1 from the result contains the column names
+                if (!columnName.Equals(value))
+                {
+                    continue;
+                }
+
+                dr.Close();
+                Plugin.Log.Debug($"DoesColumnExist: {tableName}, {columnName} yes");
+                return true;
+            }
+
+            dr.Close();
+            Plugin.Log.Debug($"DoesColumnExist: {tableName}, {columnName} no");
+            return false;
         }
 
         public static void CheckOrCreateDatabases(SqliteConnection db)
@@ -101,7 +135,8 @@ namespace Altoholic.Database
                                                    OrchestrionRolls TEXT,
                                                    Ornaments TEXT,
                                                    Glasses TEXT,
-                                                   BeastReputations TEXT
+                                                   BeastReputations TEXT,
+                                                   Duties TEXT,
                                                );
                                    """;
                 int result = db.Execute(sql);
@@ -110,6 +145,16 @@ namespace Altoholic.Database
                 {
                     int result2 = db.Execute($"CREATE INDEX idx_{CharacterTableName}_CharacterID ON {CharacterTableName}(CharacterId)");
                     Plugin.Log.Debug($"CREATE INDEX idx_{CharacterTableName}_CharacterID ON {CharacterTableName}(CharacterId) result: {result2}");
+                }
+            }
+            else
+            {
+                if (!DoesColumnExist(db, CharacterTableName, "Duties"))
+                {
+                    Plugin.Log.Debug($"Column {CharacterTableName}.Duties does not exist");
+                    const string sql11 = $"ALTER TABLE {CharacterTableName} ADD COLUMN Duties TEXT";
+                    int result11 = db.Execute(sql11);
+                    Plugin.Log.Debug($"ALTER TABLE {CharacterTableName} ADD COLUMN Duties TEXT result: {result11}");
                 }
             }
 
@@ -335,7 +380,7 @@ namespace Altoholic.Database
 
             try
             {
-                const string updateSql = $"UPDATE {CharacterTableName} SET [FirstName] = @FirstName, [LastName] = @LastName, [HomeWorld] = @HomeWorld, [Datacenter] = @Datacenter, [Region] = @Region, [IsSprout] = @IsSprout, [IsBattleMentor] = @IsBattleMentor, [IsTradeMentor] = @IsTradeMentor, [IsReturner] = @IsReturner, [LastJob] = @LastJob, [LastJobLevel] = @LastJobLevel, [FCTag] = @FCTag, [FreeCompany] = @FreeCompany, [LastOnline] = @LastOnline, [PlayTime] = @PlayTime, [LastPlayTimeUpdate] = @LastPlayTimeUpdate, [HasPremiumSaddlebag] = @HasPremiumSaddlebag, [PlayerCommendations] = @PlayerCommendations, [Attributes] = @Attributes, [Currencies] = @Currencies, [Jobs] = @Jobs, [Profile] = @Profile, [Quests] = @Quests, [Inventory] = @Inventory, [ArmoryInventory] = @ArmoryInventory, [Saddle] = @Saddle, [Gear] = @Gear, [Retainers] = @Retainers, [Minions] = @Minions, [Mounts] = @Mounts, [TripleTriadCards] = @TripleTriadCards, [Emotes] = @Emotes, [Bardings] = @Bardings, [FramerKits] = @FramerKits, [OrchestrionRolls] = @OrchestrionRolls, [Ornaments] = @Ornaments, [Glasses] = @Glasses, [BeastReputations] = @BeastReputations WHERE [CharacterId] = @CharacterId";
+                const string updateSql = $"UPDATE {CharacterTableName} SET [FirstName] = @FirstName, [LastName] = @LastName, [HomeWorld] = @HomeWorld, [Datacenter] = @Datacenter, [Region] = @Region, [IsSprout] = @IsSprout, [IsBattleMentor] = @IsBattleMentor, [IsTradeMentor] = @IsTradeMentor, [IsReturner] = @IsReturner, [LastJob] = @LastJob, [LastJobLevel] = @LastJobLevel, [FCTag] = @FCTag, [FreeCompany] = @FreeCompany, [LastOnline] = @LastOnline, [PlayTime] = @PlayTime, [LastPlayTimeUpdate] = @LastPlayTimeUpdate, [HasPremiumSaddlebag] = @HasPremiumSaddlebag, [PlayerCommendations] = @PlayerCommendations, [Attributes] = @Attributes, [Currencies] = @Currencies, [Jobs] = @Jobs, [Profile] = @Profile, [Quests] = @Quests, [Inventory] = @Inventory, [ArmoryInventory] = @ArmoryInventory, [Saddle] = @Saddle, [Gear] = @Gear, [Retainers] = @Retainers, [Minions] = @Minions, [Mounts] = @Mounts, [TripleTriadCards] = @TripleTriadCards, [Emotes] = @Emotes, [Bardings] = @Bardings, [FramerKits] = @FramerKits, [OrchestrionRolls] = @OrchestrionRolls, [Ornaments] = @Ornaments, [Glasses] = @Glasses, [BeastReputations] = @BeastReputations, [Duties] = @Duties WHERE [CharacterId] = @CharacterId";
                 int result = db.Execute(updateSql, FormatCharacterForDatabase(character));
                 return result;
             }
@@ -368,29 +413,94 @@ namespace Altoholic.Database
                 Plugin.Log.Error(ex.ToString());
                 return 0; }
         }
-       
+
         public static Character FormatDatabaseCharacterFromDatabase(DatabaseCharacter databaseCharacter)
         {
-            Attributes? attributes = System.Text.Json.JsonSerializer.Deserialize<Attributes>(databaseCharacter.Attributes);
-            PlayerCurrencies? currencies = System.Text.Json.JsonSerializer.Deserialize<PlayerCurrencies>(databaseCharacter.Currencies);
-            Jobs? jobs = System.Text.Json.JsonSerializer.Deserialize<Jobs>(databaseCharacter.Jobs);
-            Profile? profile = System.Text.Json.JsonSerializer.Deserialize<Profile>(databaseCharacter.Profile);
-            List<int> quests = System.Text.Json.JsonSerializer.Deserialize<List<int>>(databaseCharacter.Quests) ?? [];
-            List<Inventory> inventory = System.Text.Json.JsonSerializer.Deserialize<List<Inventory>>(databaseCharacter.Inventory) ?? [];
-            ArmoryGear? armoryInventory = System.Text.Json.JsonSerializer.Deserialize<ArmoryGear>(databaseCharacter.ArmoryInventory);
-            List<Inventory> saddle = System.Text.Json.JsonSerializer.Deserialize<List<Inventory>>(databaseCharacter.Saddle) ?? [];
-            List<Gear> gear = System.Text.Json.JsonSerializer.Deserialize<List<Gear>>(databaseCharacter.Gear) ?? [];
-            List<Retainer> retainers = System.Text.Json.JsonSerializer.Deserialize<List<Retainer>>(databaseCharacter.Retainers) ?? [];
-            List<uint> minions = System.Text.Json.JsonSerializer.Deserialize<List<uint>>(databaseCharacter.Minions) ?? [];
-            List<uint> mounts = System.Text.Json.JsonSerializer.Deserialize<List<uint>>(databaseCharacter.Mounts) ?? [];
-            List<uint> tripleTriadCards = System.Text.Json.JsonSerializer.Deserialize<List<uint>>(databaseCharacter.TripleTriadCards) ?? [];
-            List<uint> emotes = System.Text.Json.JsonSerializer.Deserialize<List<uint>>(databaseCharacter.Emotes) ?? [];
-            List<uint> bardings = System.Text.Json.JsonSerializer.Deserialize<List<uint>>(databaseCharacter.Bardings) ?? [];
-            List<uint> framerkits = System.Text.Json.JsonSerializer.Deserialize<List<uint>>(databaseCharacter.FramerKits) ?? [];
-            List<uint> orchestrionRolls = System.Text.Json.JsonSerializer.Deserialize<List<uint>>(databaseCharacter.OrchestrionRolls) ?? [];
-            List<uint> ornaments = System.Text.Json.JsonSerializer.Deserialize<List<uint>>(databaseCharacter.Ornaments) ?? [];
-            List<uint> glasses = System.Text.Json.JsonSerializer.Deserialize<List<uint>>(databaseCharacter.Glasses) ?? [];
-            List<BeastTribeRank> beastReputations = System.Text.Json.JsonSerializer.Deserialize<List<BeastTribeRank>>(databaseCharacter.BeastReputations) ?? [];
+            Attributes? attributes = string.IsNullOrEmpty(databaseCharacter.Attributes)
+                ? null
+                : System.Text.Json.JsonSerializer.Deserialize<Attributes>(databaseCharacter.Attributes);
+            Plugin.Log.Debug("Attribes deserialized");
+            PlayerCurrencies? currencies = string.IsNullOrEmpty(databaseCharacter.Currencies)
+                ? null
+                : System.Text.Json.JsonSerializer.Deserialize<PlayerCurrencies>(databaseCharacter.Currencies);
+            Plugin.Log.Debug("Currencies deserialized");
+            Jobs? jobs = string.IsNullOrEmpty(databaseCharacter.Jobs)
+                ? null
+                : System.Text.Json.JsonSerializer.Deserialize<Jobs>(databaseCharacter.Jobs);
+            Plugin.Log.Debug("Jobs deserialized");
+            Profile? profile = string.IsNullOrEmpty(databaseCharacter.Profile)
+                ? null
+                : System.Text.Json.JsonSerializer.Deserialize<Profile>(databaseCharacter.Profile);
+            Plugin.Log.Debug("Profile deserialized");
+            List<int> quests = string.IsNullOrEmpty(databaseCharacter.Quests)
+                ? []
+                : System.Text.Json.JsonSerializer.Deserialize<List<int>>(databaseCharacter.Quests) ?? [];
+            Plugin.Log.Debug("Quests deserialized");
+            List<Inventory> inventory = string.IsNullOrEmpty(databaseCharacter.Inventory)
+                ? []
+                : System.Text.Json.JsonSerializer.Deserialize<List<Inventory>>(databaseCharacter.Inventory) ?? [];
+            Plugin.Log.Debug("Inventory deserialized");
+            ArmoryGear? armoryInventory = string.IsNullOrEmpty(databaseCharacter.ArmoryInventory)
+                ? null
+                : System.Text.Json.JsonSerializer.Deserialize<ArmoryGear>(databaseCharacter.ArmoryInventory);
+            Plugin.Log.Debug("ArmoryInventory deserialized");
+            List<Inventory> saddle = string.IsNullOrEmpty(databaseCharacter.Saddle)
+                ? []
+                : System.Text.Json.JsonSerializer.Deserialize<List<Inventory>>(databaseCharacter.Saddle) ?? [];
+            Plugin.Log.Debug("Saddle deserialized");
+            List<Gear> gear = string.IsNullOrEmpty(databaseCharacter.Gear)
+                ? []
+                : System.Text.Json.JsonSerializer.Deserialize<List<Gear>>(databaseCharacter.Gear) ?? [];
+            Plugin.Log.Debug("Gear deserialized");
+            List<Retainer> retainers = string.IsNullOrEmpty(databaseCharacter.Retainers)
+                ? []
+                : System.Text.Json.JsonSerializer.Deserialize<List<Retainer>>(databaseCharacter.Retainers) ?? [];
+            Plugin.Log.Debug("Retainers deserialized");
+            List<uint> minions = string.IsNullOrEmpty(databaseCharacter.Minions)
+                ? []
+                : System.Text.Json.JsonSerializer.Deserialize<List<uint>>(databaseCharacter.Minions) ?? [];
+            Plugin.Log.Debug("Minions deserialized");
+            List<uint> mounts = string.IsNullOrEmpty(databaseCharacter.Mounts)
+                ? []
+                : System.Text.Json.JsonSerializer.Deserialize<List<uint>>(databaseCharacter.Mounts) ?? [];
+            Plugin.Log.Debug("Mounts deserialized");
+            List<uint> tripleTriadCards = string.IsNullOrEmpty(databaseCharacter.TripleTriadCards)
+                ? []
+                : System.Text.Json.JsonSerializer.Deserialize<List<uint>>(databaseCharacter.TripleTriadCards) ?? [];
+            Plugin.Log.Debug("TripleTriadCards deserialized");
+            List<uint> emotes = string.IsNullOrEmpty(databaseCharacter.Emotes)
+                ? []
+                : System.Text.Json.JsonSerializer.Deserialize<List<uint>>(databaseCharacter.Emotes) ?? [];
+            Plugin.Log.Debug("Emotes deserialized");
+            List<uint> bardings = (string.IsNullOrEmpty(databaseCharacter.Bardings))
+                ? []
+                : System.Text.Json.JsonSerializer.Deserialize<List<uint>>(databaseCharacter.Bardings) ?? [];
+            Plugin.Log.Debug("Bardings deserialized");
+            List<uint> framerkits = string.IsNullOrEmpty(databaseCharacter.FramerKits)
+                ? []
+                : System.Text.Json.JsonSerializer.Deserialize<List<uint>>(databaseCharacter.FramerKits) ?? [];
+            Plugin.Log.Debug("FramerKits deserialized");
+            List<uint> orchestrionRolls = string.IsNullOrEmpty(databaseCharacter.OrchestrionRolls)
+                ? []
+                : System.Text.Json.JsonSerializer.Deserialize<List<uint>>(databaseCharacter.OrchestrionRolls) ?? [];
+            Plugin.Log.Debug("OrchestrionRolls deserialized");
+            List<uint> ornaments = string.IsNullOrEmpty(databaseCharacter.Ornaments)
+                ? []
+                : System.Text.Json.JsonSerializer.Deserialize<List<uint>>(databaseCharacter.Ornaments) ?? [];
+            Plugin.Log.Debug("Ornaments deserialized");
+            List<uint> glasses = string.IsNullOrEmpty(databaseCharacter.Glasses)
+                ? []
+                : System.Text.Json.JsonSerializer.Deserialize<List<uint>>(databaseCharacter.Glasses) ?? [];
+            Plugin.Log.Debug("Glasses deserialized");
+            List<BeastTribeRank> beastReputations = string.IsNullOrEmpty(databaseCharacter.BeastReputations)
+                ? []
+                : System.Text.Json.JsonSerializer.Deserialize<List<BeastTribeRank>>(databaseCharacter
+                    .BeastReputations) ?? [];
+            Plugin.Log.Debug("BeastReputations deserialized");
+            List<uint> duties = string.IsNullOrEmpty(databaseCharacter.Duties)
+                ? []
+                : System.Text.Json.JsonSerializer.Deserialize<List<uint>>(databaseCharacter.Duties) ?? [];
+            Plugin.Log.Debug("Duties deserialized");
 
             return new Character()
             {
@@ -436,6 +546,7 @@ namespace Altoholic.Database
                 Ornaments = [.. ornaments],
                 Glasses = [.. glasses],
                 BeastReputations = beastReputations,
+                Duties = [..duties],
             };
         }
 
@@ -461,6 +572,7 @@ namespace Altoholic.Database
             string ornaments = System.Text.Json.JsonSerializer.Serialize(character.Ornaments);
             string glasses = System.Text.Json.JsonSerializer.Serialize(character.Glasses);
             string beastReputations = System.Text.Json.JsonSerializer.Serialize(character.BeastReputations);
+            string duties = System.Text.Json.JsonSerializer.Serialize(character.Duties);
 
             return new DatabaseCharacter()
             {
@@ -506,14 +618,15 @@ namespace Altoholic.Database
                 Ornaments = ornaments,
                 Glasses = glasses,
                 BeastReputations = beastReputations,
+                Duties = duties
             };
         }
 
         public static int AddCharacter(SqliteConnection db, Character character)
         {
             Plugin.Log.Debug("Entering AddCharacter()");
-            const string insertQuery = $"INSERT INTO {CharacterTableName}([CharacterId], [FirstName], [LastName], [HomeWorld], [Datacenter], [Region], [IsSprout], [IsBattleMentor], [IsTradeMentor], [IsReturner], [LastJob], [LastJobLevel], [FCTag], [FreeCompany], [LastOnline], [PlayTime], [LastPlayTimeUpdate], [HasPremiumSaddlebag], [PlayerCommendations], [Attributes], [Currencies], [Jobs], [Profile], [Quests], [Inventory], [ArmoryInventory], [Saddle], [Gear], [Retainers], [Minions], [Mounts], [TripleTriadCards], [Emotes], [Bardings], [FramerKits], [OrchestrionRolls], [Ornaments], [Glasses], [BeastReputations]) " +
-                                       "VALUES (@CharacterId, @FirstName, @LastName, @HomeWorld, @Datacenter, @Region, @IsSprout, @IsBattleMentor, @IsTradeMentor, @IsReturner, @LastJob, @LastJobLevel, @FCTag, @FreeCompany, @LastOnline, @PlayTime, @LastPlayTimeUpdate, @HasPremiumSaddlebag, @PlayerCommendations, @Attributes, @Currencies, @Jobs, @Profile, @Quests, @Inventory, @ArmoryInventory, @Saddle, @Gear, @Retainers, @Minions, @Mounts, @TripleTriadCards, @Emotes, @Bardings, @FramerKits, @OrchestrionRolls, @Ornaments, @Glasses, @BeastReputations)";
+            const string insertQuery = $"INSERT INTO {CharacterTableName}([CharacterId], [FirstName], [LastName], [HomeWorld], [Datacenter], [Region], [IsSprout], [IsBattleMentor], [IsTradeMentor], [IsReturner], [LastJob], [LastJobLevel], [FCTag], [FreeCompany], [LastOnline], [PlayTime], [LastPlayTimeUpdate], [HasPremiumSaddlebag], [PlayerCommendations], [Attributes], [Currencies], [Jobs], [Profile], [Quests], [Inventory], [ArmoryInventory], [Saddle], [Gear], [Retainers], [Minions], [Mounts], [TripleTriadCards], [Emotes], [Bardings], [FramerKits], [OrchestrionRolls], [Ornaments], [Glasses], [BeastReputations], [Duties) " +
+                                       "VALUES (@CharacterId, @FirstName, @LastName, @HomeWorld, @Datacenter, @Region, @IsSprout, @IsBattleMentor, @IsTradeMentor, @IsReturner, @LastJob, @LastJobLevel, @FCTag, @FreeCompany, @LastOnline, @PlayTime, @LastPlayTimeUpdate, @HasPremiumSaddlebag, @PlayerCommendations, @Attributes, @Currencies, @Jobs, @Profile, @Quests, @Inventory, @ArmoryInventory, @Saddle, @Gear, @Retainers, @Minions, @Mounts, @TripleTriadCards, @Emotes, @Bardings, @FramerKits, @OrchestrionRolls, @Ornaments, @Glasses, @BeastReputations, @Duties)";
 
             int result = db.Execute(insertQuery, FormatCharacterForDatabase(character));
 
@@ -536,10 +649,11 @@ namespace Altoholic.Database
         public static int AddCharacterWithCurrenciesHistories(SqliteConnection db, Character character)
         {
             Plugin.Log.Debug("Entering AddCharacterWithCurrenciesHistories()");
-            const string insertQuery = $"INSERT INTO {CharacterTableName}([CharacterId], [FirstName], [LastName], [HomeWorld], [Datacenter], [Region], [IsSprout], [IsBattleMentor], [IsTradeMentor], [IsReturner], [LastJob], [LastJobLevel], [FCTag], [FreeCompany], [LastOnline], [PlayTime], [LastPlayTimeUpdate], [HasPremiumSaddlebag], [PlayerCommendations], [Attributes], [Currencies], [Jobs], [Profile], [Quests], [Inventory], [ArmoryInventory], [Saddle], [Gear], [Retainers], [Minions], [Mounts], [TripleTriadCards], [Emotes], [Bardings], [FramerKits], [OrchestrionRolls], [Ornaments], [Glasses], [BeastReputations]) " +
-                                       "VALUES (@CharacterId, @FirstName, @LastName, @HomeWorld, @Datacenter, @Region, @IsSprout, @IsBattleMentor, @IsTradeMentor, @IsReturner, @LastJob, @LastJobLevel, @FCTag, @FreeCompany, @LastOnline, @PlayTime, @LastPlayTimeUpdate, @HasPremiumSaddlebag, @PlayerCommendations, @Attributes, @Currencies, @Jobs, @Profile, @Quests, @Inventory, @ArmoryInventory, @Saddle, @Gear, @Retainers, @Minions, @Mounts, @TripleTriadCards, @Emotes, @Bardings, @FramerKits, @OrchestrionRolls, @Ornaments, @Glasses, @BeastReputations)";
+            /*const string insertQuery = $"INSERT INTO {CharacterTableName}([CharacterId], [FirstName], [LastName], [HomeWorld], [Datacenter], [Region], [IsSprout], [IsBattleMentor], [IsTradeMentor], [IsReturner], [LastJob], [LastJobLevel], [FCTag], [FreeCompany], [LastOnline], [PlayTime], [LastPlayTimeUpdate], [HasPremiumSaddlebag], [PlayerCommendations], [Attributes], [Currencies], [Jobs], [Profile], [Quests], [Inventory], [ArmoryInventory], [Saddle], [Gear], [Retainers], [Minions], [Mounts], [TripleTriadCards], [Emotes], [Bardings], [FramerKits], [OrchestrionRolls], [Ornaments], [Glasses], [BeastReputations], [Duties]) " +
+                                       "VALUES (@CharacterId, @FirstName, @LastName, @HomeWorld, @Datacenter, @Region, @IsSprout, @IsBattleMentor, @IsTradeMentor, @IsReturner, @LastJob, @LastJobLevel, @FCTag, @FreeCompany, @LastOnline, @PlayTime, @LastPlayTimeUpdate, @HasPremiumSaddlebag, @PlayerCommendations, @Attributes, @Currencies, @Jobs, @Profile, @Quests, @Inventory, @ArmoryInventory, @Saddle, @Gear, @Retainers, @Minions, @Mounts, @TripleTriadCards, @Emotes, @Bardings, @FramerKits, @OrchestrionRolls, @Ornaments, @Glasses, @BeastReputations, @Duties)";
 
-            int result = db.Execute(insertQuery, FormatCharacterForDatabase(character));
+            int result = db.Execute(insertQuery, FormatCharacterForDatabase(character));*/
+            int result = AddCharacter(db, character);
 
             Plugin.Log.Debug($"AddCharacterWithCurrenciesHistories result: {result}");
             if (result != 1)

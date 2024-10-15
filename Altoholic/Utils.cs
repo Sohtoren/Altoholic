@@ -24,6 +24,9 @@ using Glasses = Lumina.Excel.GeneratedSheets.Glasses;
 using Quest = Lumina.Excel.GeneratedSheets.Quest;
 using Altoholic.Database;
 using CheapLoc;
+using FFXIVClientStructs.FFXIV.Client.Game.UI;
+using Cabinet = Lumina.Excel.GeneratedSheets.Cabinet;
+using static Dalamud.Interface.Utility.Raii.ImRaii;
 
 namespace Altoholic
 {
@@ -2610,6 +2613,11 @@ namespace Altoholic
             return QuestManager.IsQuestComplete((uint)questId);
         }
 
+        public static bool IsDutyCompleted(uint dutyId)
+        {
+            return UIState.IsInstanceContentCompleted(dutyId);
+        }
+
         public static Models.Quest? GetQuest(uint id)
         {
             Models.Quest q = new();
@@ -2644,11 +2652,108 @@ namespace Altoholic
                             q.JapaneseName = lumina.Name;
                             break;
                         }
-
                 }
             }
 
             return q;
+        }
+
+        public static Duty? GetDuty(uint id)
+        {
+            Duty d = new();
+            List<ClientLanguage> langs =
+                [ClientLanguage.German, ClientLanguage.English, ClientLanguage.French, ClientLanguage.Japanese];
+            foreach (ClientLanguage l in langs)
+            {
+                ExcelSheet<ContentFinderCondition>? cfc =
+                    Plugin.DataManager.GetExcelSheet<ContentFinderCondition>(l);
+                ContentFinderCondition? duty = cfc?.GetRow(id);
+                if (duty == null || string.IsNullOrEmpty(duty.Name)) continue;
+
+                ExcelSheet<ContentFinderConditionTransient>? dbt =
+                    Plugin.DataManager.GetExcelSheet<ContentFinderConditionTransient>(l);
+                ContentFinderConditionTransient? cfct = dbt?.GetRow(duty.Transient);
+
+                switch (l)
+                {
+                    case ClientLanguage.German:
+                        {
+                            d.GermanName = duty.Name;
+                            d.GermanTransient = cfct?.Description ?? string.Empty;
+                            break;
+                        }
+                    case ClientLanguage.English:
+                        {
+                            d.Id = duty.RowId;
+                            d.Icon = duty.Icon;
+                            d.Image = duty.Image;
+                            if (duty.ContentType.Value != null)
+                            {
+                                d.ContentTypeId = duty.ContentType.Value.RowId;
+                            }
+
+                            d.Content = duty.Content;
+                            d.SortKey = duty.SortKey;
+                            d.TransientKey = duty.TransientKey;
+                            d.EnglishName = duty.Name;
+                            d.EnglishTransient = cfct?.Description ?? string.Empty;
+                            d.ExVersion = duty.TerritoryType.Value?.ExVersion.Value?.RowId;
+                            d.HighEndDuty = duty.HighEndDuty;
+                            d.AllowUndersized = duty.AllowUndersized;
+                            d.ContentMemberType = duty.ContentMemberType.Row;
+                            break;
+                        }
+                    case ClientLanguage.French:
+                        {
+                            d.FrenchName = duty.Name;
+                            d.FrenchTransient = cfct?.Description ?? string.Empty;
+                            break;
+                        }
+                    case ClientLanguage.Japanese:
+                        {
+                            d.JapaneseName = duty.Name;
+                            d.JapaneseTransient = cfct?.Description ?? string.Empty;
+                            break;
+                        }
+                }
+            }
+
+            return d;
+        }
+
+        public static List<Duty>? GetDutyList()
+        {
+            List<Duty> returnedDuties = [];
+
+            ExcelSheet<ContentFinderCondition>? dor =
+                Plugin.DataManager.GetExcelSheet<ContentFinderCondition>(ClientLanguage.English);
+            using IEnumerator<ContentFinderCondition>? duties = dor?.GetEnumerator();
+            if (duties is null) return null;
+            while (duties.MoveNext())
+            {
+                ContentFinderCondition duty = duties.Current;
+                if (string.IsNullOrEmpty(duty.Name)) continue;
+
+                Duty? d = GetDuty(duty.RowId);
+                if(d == null) continue;
+                returnedDuties.Add(d);
+            }
+
+            return returnedDuties;
+        }
+
+        private static DutyType GetDutyType(Duty duty, ContentFinderCondition cfc)
+        {
+            return duty switch
+            {
+                { ContentTypeId: 5 } when duty.EnglishName.Contains("Savage") => DutyType.Savage,
+                { ContentTypeId: 28 } => DutyType.Ultimate,
+                { ContentTypeId: 4, HighEndDuty: false } => DutyType.Extreme,
+                { ContentTypeId: 4, HighEndDuty: true } => DutyType.Unreal,
+                { ContentTypeId: 30, AllowUndersized: false } => DutyType.Criterion,
+                { ContentTypeId: 5, ContentMemberType: 4 } => DutyType.Alliance,
+                _ => DutyType.Unknown,
+            };
         }
 
         public static List<List<bool>> GetCharactersMainScenarioQuests(List<Character> characters)
@@ -3087,12 +3192,6 @@ namespace Altoholic
             return lumina;
         }
 
-        public static string UnixTimeStampToDateTime(long lastOnline)
-        {
-            DateTime dateTime = new(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
-            dateTime = dateTime.AddSeconds(lastOnline).ToLocalTime();
-            return dateTime.ToString(CultureInfo.InvariantCulture);
-        }
         public static void DrawIcon(IDalamudTextureWrap? icon, Vector2 iconSize)
         {
             if (icon != null)
@@ -3106,6 +3205,13 @@ namespace Altoholic
             {
                 ImGui.Image(icon.ImGuiHandle, iconSize, Vector2.Zero, Vector2.One, alpha);
             }
+        }
+
+        public static string UnixTimeStampToDateTime(long lastOnline)
+        {
+            DateTime dateTime = new(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+            dateTime = dateTime.AddSeconds(lastOnline).ToLocalTime();
+            return dateTime.ToString(CultureInfo.InvariantCulture);
         }
 
         public static long GetLastPlayTimeUpdateDiff(long lastOnline)

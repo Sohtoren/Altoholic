@@ -50,6 +50,7 @@ namespace Altoholic.Models
         public HashSet<uint> Glasses { get; set; } = [];
         public List<CurrenciesHistory> CurrenciesHistory { get; set; } = [];
         public List<BeastTribeRank> BeastReputations { get; set; } = [];
+        public HashSet<uint> Duties { get; set; } = [];
 
         public bool HasAnyLevelJob(int level)
         {
@@ -127,6 +128,11 @@ namespace Altoholic.Models
         public bool HasBeastReputation(uint id)
         {
             return BeastReputations.Count > 0 && BeastReputations.Exists(br => br.Id == id);
+        }
+
+        public bool IsDutyCompleted(uint id)
+        {
+            return Duties.Count > 0 && Duties.Contains(id);
         }
     }
 }

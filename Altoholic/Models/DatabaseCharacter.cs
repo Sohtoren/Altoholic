@@ -46,5 +46,6 @@ namespace Altoholic.Models
         public string Ornaments { get; set; } = string.Empty;
         public string Glasses { get; set; } = string.Empty;
         public string BeastReputations { get; set; } = string.Empty;
+        public string Duties { get; set; } = string.Empty;
     }
 }

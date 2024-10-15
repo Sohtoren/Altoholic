@@ -243,15 +243,10 @@ namespace Altoholic.Windows
 
             ImGui.TableSetColumnIndex(8);
             ImGui.TextUnformatted($"{Utils.GeneratePlaytime(TimeSpan.FromMinutes(character.PlayTime))}");
-            if (character.PlayTime > 0)
+            if (character is { PlayTime: > 0, LastPlayTimeUpdate: > 0 })
             {
                 if (ImGui.IsItemHovered())
                 {
-                    if (character.LastPlayTimeUpdate <= 0)
-                    {
-                        return;
-                    }
-
                     ImGui.BeginTooltip();
                     ImGui.TextUnformatted(
                         $"Last updated on : {Utils.UnixTimeStampToDateTime(character.LastPlayTimeUpdate)} - {Utils.GetLastOnlineFormatted(character.LastPlayTimeUpdate)}");

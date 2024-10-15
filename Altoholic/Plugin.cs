@@ -29,7 +29,10 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
+using static Dalamud.Interface.Utility.Raii.ImRaii;
+using static FFXIVClientStructs.FFXIV.Client.Game.UI.UIState.Delegates;
 using static FFXIVClientStructs.FFXIV.Client.UI.RaptureAtkModule;
+using InstanceContent = Lumina.Excel.GeneratedSheets.InstanceContent;
 
 namespace Altoholic
 {
@@ -104,7 +107,8 @@ namespace Altoholic
                 OrnamentStorage = new OrnamentStorage(),
                 GlassesStorage = new GlassesStorage(),
                 BeastTribesStorage = new BeastTribesStorage(),
-                QuestStorage = new QuestStorage()
+                QuestStorage = new QuestStorage(),
+                DutyStorage = new DutyStorage()
             };
 
             nint playtimePtr = SigScanner.ScanText(PlaytimeSig);
@@ -178,6 +182,7 @@ namespace Altoholic
             _globalCache.TripleTriadCardStorage.Init(currentLocale, _globalCache);
             _globalCache.BeastTribesStorage.Init(currentLocale, _globalCache);
             _globalCache.QuestStorage.Init(_globalCache);
+            _globalCache.DutyStorage.Init(_globalCache);
 
             _altoholicService = new(
                 () => _localPlayer,
@@ -407,9 +412,23 @@ namespace Altoholic
 
             if (_localPlayer.CharacterId != 0)
             {
+                if (_localPlayer.PlayTime == 0) //still needed?
+                {
+                    Character? chara = Database.Database.GetCharacter(_db, _localPlayer.CharacterId);
+                    if (chara is not null)
+                    {
+                        _localPlayer.PlayTime = chara.PlayTime;
+                        _localPlayer.LastPlayTimeUpdate = chara.LastPlayTimeUpdate;
+                    }
+                }
                 if (_localPlayer.LastPlayTimeUpdate > 0 && Utils.GetLastPlayTimeUpdateDiff(_localPlayer.LastPlayTimeUpdate) >= 7)
                 {
                     Utils.ChatMessage(Loc.Localize("LastPlaytimeOutdated", "More than 7 days since the last update, consider using the /playtime command"));
+                }
+
+                if (_localPlayer.PlayTime == 0)
+                {
+                    Utils.ChatMessage(Loc.Localize("NoPlaytimeFound", "No playtime found, use /playtime"));
                 }
 
                 OtherCharacters = Database.Database.GetOthersCharacters(_db, _localPlayer.CharacterId);
@@ -774,6 +793,20 @@ namespace Altoholic
                 if (uistate.Buddy.CompanionInfo.IsBuddyEquipUnlocked(i))
                 {
                     _localPlayer.Bardings.Add(i);
+                }
+            }
+            foreach (Duty i in _globalCache.DutyStorage.GetAll().Where(i => !_localPlayer.IsDutyCompleted(i.Id)))
+            {
+                string name = _globalCache.DutyStorage.LoadDuty(i.Id)?.EnglishName ?? string.Empty;
+                Log.Debug($"Checking duty {i}:{name}");
+                if (Utils.IsDutyCompleted(i.Content))
+                {
+                    Log.Debug($"Duty {i}:{name} completed");
+                    _localPlayer.Duties.Add(i.Id);
+                }
+                else
+                {
+                    Log.Debug($"Duty {i}:{name} not completed");
                 }
             }
 

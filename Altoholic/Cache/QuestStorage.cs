@@ -1,7 +1,5 @@
-﻿using Altoholic.Database;
-using Altoholic.Models;
+﻿using Altoholic.Models;
 using Dalamud.Game;
-using Lumina.Excel.GeneratedSheets;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -10,26 +10,26 @@ namespace Altoholic.Cache
 {
     public class GlassesStorage(int size = 120) : IDisposable
     {
-        private readonly Dictionary<uint, Glasses> _glassess = new(size);
+        private readonly Dictionary<uint, Glasses> _glasses = new(size);
 
         public void Init(ClientLanguage currentLocale, GlobalCache globalCache)
         {
-            List<Glasses>? glassess = Utils.GetAllGlasses(currentLocale);
-            if (glassess == null || glassess.Count == 0)
+            List<Glasses>? glasses = Utils.GetAllGlasses(currentLocale);
+            if (glasses == null || glasses.Count == 0)
             {
                 return;
             }
 
-            foreach (Glasses glasses in glassess.Where(glasses => glasses.Id is 1 or 13 or 25 or 37 or 49 or 61 or 73 or 85 or 97 or 109))
+            foreach (Glasses glass in glasses.Where(g => g.Id is 1 or 13 or 25 or 37 or 49 or 61 or 73 or 85 or 97 or 109))
             {
-                globalCache.IconStorage.LoadIcon(glasses.Icon);
-                _glassess.Add(glasses.Id, glasses);
+                globalCache.IconStorage.LoadIcon(glass.Icon);
+                _glasses.Add(glass.Id, glass);
             }
         }
 
         public Glasses? GetGlasses(ClientLanguage lang, uint id)
         {
-            if (_glassess.TryGetValue(id, out Glasses? ret))
+            if (_glasses.TryGetValue(id, out Glasses? ret))
                 return ret;
 
             Lumina.Excel.GeneratedSheets.Glasses? glasses = Utils.GetGlasses(lang, id);
@@ -66,20 +66,20 @@ namespace Altoholic.Cache
 
         public void Add(uint id, Glasses m)
         {
-            _glassess.Add(id, m);
+            _glasses.Add(id, m);
         }
 
         public int Count()
         {
-            return _glassess.Count;
+            return _glasses.Count;
         }
         public List<uint> Get()
         {
-            return _glassess.Keys.ToList();
+            return _glasses.Keys.ToList();
         }
         public void Dispose()
         {
-            _glassess.Clear();
+            _glasses.Clear();
         }
     }
 }

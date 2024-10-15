@@ -10,10 +10,8 @@ using ImGuiNET;
 using Lumina.Excel.GeneratedSheets;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
-using System.Xml.Linq;
 using Emote = Altoholic.Models.Emote;
 using Mount = Altoholic.Models.Mount;
 using TripleTriadCard = Altoholic.Models.TripleTriadCard;
@@ -158,6 +156,15 @@ namespace Altoholic.Windows
             using var tab = ImRaii.TabBar("###CharactersProgressTable#All#TabBar");
             if (!tab) return;
 
+            using (var dutyTab =
+                   ImRaii.TabItem(
+                       $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 2225)}###CharactersProgressTable#All#TabBar#Duty"))
+            {
+                if (dutyTab)
+                {
+                    DrawDuties(chars);
+                }
+            }
             using (var eventTab =
                    ImRaii.TabItem(
                        $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 665)}###CharactersProgressTable#All#TabBar#Events"))
@@ -214,6 +221,151 @@ namespace Altoholic.Windows
                 }
             }
         }
+
+        private void DrawDuties(List<Character> chars)
+        {
+            //List<KeyValuePair<int, bool>> characterDuties = Utils.GetCharacterDuties(chars);
+            List<Duty> duties = _globalCache.DutyStorage.GetAll();
+
+            string savage = _currentLocale switch
+            {
+                ClientLanguage.German => "episch",
+                ClientLanguage.English => "Savage",
+                ClientLanguage.French => "sadique",
+                ClientLanguage.Japanese => "零式",
+                _ => "Savage"
+            };
+            List<string> dutyNames =
+            [
+                _globalCache.AddonStorage.LoadAddonString(_currentLocale, 15403), //Criterion
+                _globalCache.AddonStorage.LoadAddonString(_currentLocale, 15402), //Variant
+                "Ultimate", //Ultimate
+                savage //Savage
+            ];
+
+
+            using var tab = ImRaii.TabBar("###CharactersProgressTable#All#TabBar#Duty#TabBar");
+            if (!tab) return;
+
+            using (var dungeonTab =
+                   ImRaii.TabItem(
+                       $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 8335)}###CharactersProgressTable#All#TabBar#Duty#TabBar#Dungeons"))
+            {
+                if (dungeonTab)
+                {
+                    DrawDuty(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 8335),
+                        duties.FindAll(d => d.ContentTypeId == 2), chars); //Dungeon
+                }
+            }
+
+            using (var trialTab =
+                   ImRaii.TabItem(
+                       $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 8608)}###CharactersProgressTable#All#TabBar#Duty#TabBar#Trials"))
+            {
+                if (trialTab)
+                {
+                    DrawDuty(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 8608),
+                        duties.FindAll(d => d.ContentTypeId == 4), chars); ////Trials
+                }
+            }
+
+            using (var raidTab =
+                   ImRaii.TabItem(
+                       $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 8609)}###CharactersProgressTable#All#TabBar#Duty#TabBar#Raids"))
+            {
+                if (raidTab)
+                {
+                    DrawDuty(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 8609),
+                        duties.FindAll(d => d.ContentTypeId == 5), chars); //Raids
+                }
+            }
+        }
+
+        private void DrawDuty(string duName, List<Duty> duties, List<Character> chars)
+        {
+            string[] expNames =
+            [
+                _globalCache.AddonStorage.LoadAddonString(_currentLocale, 5752),
+                _globalCache.AddonStorage.LoadAddonString(_currentLocale, 5753),
+                _globalCache.AddonStorage.LoadAddonString(_currentLocale, 5754),
+                _globalCache.AddonStorage.LoadAddonString(_currentLocale, 8156),
+                _globalCache.AddonStorage.LoadAddonString(_currentLocale, 8160),
+                _globalCache.AddonStorage.LoadAddonString(_currentLocale, 8175)
+            ];
+            foreach (var ex in expNames.Select((value, i) => new {i, value}))
+            {
+                List<Duty> expDuties = duties.FindAll(d => d.ExVersion == ex.i).OrderBy(d => d.SortKey).ToList();
+                if (ImGui.CollapsingHeader($"{ex.value}###Exp{ex.i}"))
+                {
+                    using var charactersEventTable = ImRaii.Table(
+                        $"###CharactersProgress#All#Duty#{duName}_{ex.i}#Table",
+                        chars.Count + 1,
+                        ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner |
+                        ImGuiTableFlags.ScrollX | ImGuiTableFlags.ScrollY);
+                    if (!charactersEventTable) return;
+                    ImGui.TableSetupColumn($"###CharactersProgress#All#Duty#{duName}_{ex.i}#Table#Name",
+                        ImGuiTableColumnFlags.WidthFixed, 260);
+                    foreach (Character c in chars)
+                    {
+                        ImGui.TableSetupColumn(
+                            $"###CharactersProgress#All#Duty#{duName}_{ex.i}#Table#{c.CharacterId}",
+                            ImGuiTableColumnFlags.WidthFixed, 15);
+                    }
+
+                    ImGui.TableNextRow();
+                    ImGui.TableSetColumnIndex(0);
+                    ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 2225));
+                    foreach (Character currChar in chars)
+                    {
+                        ImGui.TableNextColumn();
+                        ImGui.TextUnformatted($"{currChar.FirstName[0]}.{currChar.LastName[0]}");
+                        if (ImGui.IsItemHovered())
+                        {
+                            ImGui.BeginTooltip();
+                            ImGui.TextUnformatted(
+                                $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
+                            ImGui.EndTooltip();
+                        }
+                    }
+
+                    foreach (Duty expDuty in expDuties)
+                    {
+                        DrawAllDutyLine(chars, expDuty);
+                    }
+                    //FindByExp => FindByDutyType => OrderBySortKey
+                }
+
+            }
+        }
+        private void DrawAllDutyLine(List<Character> chars, Duty expDuty)
+        {
+            string name = _currentLocale switch
+            {
+                ClientLanguage.German => expDuty.GermanName,
+                ClientLanguage.English => expDuty.EnglishName,
+                ClientLanguage.French => expDuty.FrenchName,
+                ClientLanguage.Japanese => expDuty.JapaneseName,
+                _ => expDuty.EnglishName
+            };
+            //Plugin.Log.Debug($"DrawAllDutyLine: {chars.Count}, name: {expDuty.EnglishName}, msqIndex: {expDuty.Id}");
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            ImGui.TextUnformatted(Utils.Capitalize(name));
+            foreach (Character character in chars)
+            {
+                ImGui.TableNextColumn();
+                ImGui.TextUnformatted(character.IsDutyCompleted(expDuty.Id) ? "\u2713" : "");
+                if (ImGui.IsItemHovered())
+                {
+                    ImGui.BeginTooltip();
+                    ImGui.TextUnformatted(name);
+                    ImGui.TextUnformatted(
+                        $"{character.FirstName} {character.LastName}{(char)SeIconChar.CrossWorld}{character.HomeWorld}");
+                    ImGui.EndTooltip();
+                }
+            }
+        }
+
 
         private void DrawMainScenarioQuest(List<Character> chars)
         {
@@ -366,7 +518,6 @@ namespace Altoholic.Windows
         private void DrawEventQuest(List<Character> chars)
         {
             if (chars.Count == 0) return;
-            Stopwatch watch = System.Diagnostics.Stopwatch.StartNew();
             List<List<bool>> charactersQuests = Utils.GetCharactersEventsQuests(chars);
             ImGui.TextUnformatted($"{Loc.Localize("RecurringEvent",
                 "* As certain event do not change when reoccuring, completing them once will mark all of them done.")}");
@@ -1100,10 +1251,6 @@ namespace Altoholic.Windows
                         33);
                 }
             }
-
-
-            watch.Stop();
-            Plugin.Log.Debug($"watch.Elapsed.Microseconds: {watch.Elapsed.Microseconds}");
         }
 
         private void DrawHildibrandQuest(List<Character> chars)
@@ -1556,7 +1703,7 @@ namespace Altoholic.Windows
             bool sbUnlocked = false;
             bool shbUnlocked = false;
             bool ewUnlocked = false;
-            List<string> names = [];
+            List<string> expansionNames = [];
             if (selectedCharacter.HasQuest((int)QuestIds.TRIBE_ARR_AMALJ_AA) ||
                 selectedCharacter.HasQuest((int)QuestIds.TRIBE_ARR_SYLPHS) ||
                 selectedCharacter.HasQuest((int)QuestIds.TRIBE_ARR_KOBOLDS) ||
@@ -1564,7 +1711,7 @@ namespace Altoholic.Windows
                 selectedCharacter.HasQuest((int)QuestIds.TRIBE_ARR_IXAL)
                )
             {
-                names.Add(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 5752));
+                expansionNames.Add(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 5752));
                 arrUnlocked = true;
             }
 
@@ -1573,7 +1720,7 @@ namespace Altoholic.Windows
                 selectedCharacter.HasQuest((int)QuestIds.TRIBE_HW_MOOGLES)
                )
             {
-                names.Add(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 5753));
+                expansionNames.Add(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 5753));
                 hwUnlocked = true;
 
                 if (!_hasValueBeenSelected && !arrUnlocked)
@@ -1585,7 +1732,7 @@ namespace Altoholic.Windows
                 selectedCharacter.HasQuest((int)QuestIds.TRIBE_SB_NAMAZU)
                )
             {
-                names.Add(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 5754));
+                expansionNames.Add(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 5754));
                 sbUnlocked = true;
 
                 if (!_hasValueBeenSelected && !hwUnlocked)
@@ -1598,7 +1745,7 @@ namespace Altoholic.Windows
                )
             {
                 shbUnlocked = true;
-                names.Add(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 8156));
+                expansionNames.Add(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 8156));
                 if (!_hasValueBeenSelected && !sbUnlocked)
                     _selectedExpansion = _globalCache.AddonStorage.LoadAddonString(_currentLocale, 8156);
             }
@@ -1608,7 +1755,7 @@ namespace Altoholic.Windows
                 selectedCharacter.HasQuest((int)QuestIds.TRIBE_EW_LOPORRITS)
                )
             {
-                names.Add(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 8160));
+                expansionNames.Add(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 8160));
                 ewUnlocked = true;
                 if (!_hasValueBeenSelected && !shbUnlocked)
                     _selectedExpansion = _globalCache.AddonStorage.LoadAddonString(_currentLocale, 8160);
@@ -1620,7 +1767,7 @@ namespace Altoholic.Windows
                    selectedCharacter.HasQuest() &&
                    selectedCharacter.HasQuest())
                {
-                   names.Add(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 8175));//DT
+                   _expansionNames.Add(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 8175));//DT
                     dtUnlocked = true;
                     if (!ewUnlocked)
                         _selectedExpansion = _globalCache.AddonStorage.LoadAddonString(_currentLocale, 8175)
@@ -1630,7 +1777,7 @@ namespace Altoholic.Windows
             {
                 if (combo)
                 {
-                    foreach (string name in names.Where(name => ImGui.Selectable(name, name == _selectedExpansion)))
+                    foreach (string name in expansionNames.Where(name => ImGui.Selectable(name, name == _selectedExpansion)))
                     {
                         _selectedExpansion = name;
                         _rightChevron = true;
@@ -2814,7 +2961,8 @@ namespace Altoholic.Windows
             {
                 if (_isSpoilerEnabled)
                 {
-                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(t.Icon), new Vector2(32, 32),
+                    //Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(t.Icon), new Vector2(32, 32),
+                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(027662), new Vector2(32, 32),
                         new Vector4(1, 1, 1, 0.5f));
                     if (ImGui.IsItemHovered())
                     {
@@ -2828,7 +2976,8 @@ namespace Altoholic.Windows
             }
             else
             {
-                Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(t.Icon), new Vector2(32, 32));
+                //Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(t.Icon), new Vector2(32, 32));
+                Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(027662), new Vector2(32, 32));
                 if (ImGui.IsItemHovered())
                 {
                     Utils.DrawTTCTooltip(_currentLocale, ref _globalCache, t);
