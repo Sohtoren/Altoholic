@@ -136,7 +136,7 @@ namespace Altoholic.Database
                                                    Ornaments TEXT,
                                                    Glasses TEXT,
                                                    BeastReputations TEXT,
-                                                   Duties TEXT,
+                                                   Duties TEXT
                                                );
                                    """;
                 int result = db.Execute(sql);
