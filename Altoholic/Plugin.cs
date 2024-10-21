@@ -7,6 +7,8 @@ using Dalamud.Game.ClientState.Conditions;
 using Dalamud.Game.ClientState.Objects.SubKinds;
 using Dalamud.Game.ClientState.Resolvers;
 using Dalamud.Game.Command;
+using Dalamud.Game.Inventory.InventoryEventArgTypes;
+using Dalamud.Game.Inventory;
 using Dalamud.Game.Text;
 using Dalamud.Hooking;
 using Dalamud.Interface.ImGuiNotification;
@@ -57,6 +59,7 @@ namespace Altoholic
         [PluginService] public static IGameInteropProvider Hook { get; set; } = null!;
         [PluginService] public static IChatGui ChatGui { get; set; } = null!;
         [PluginService] public static IDutyState DutyState { get; set; } = null!;
+        [PluginService] public static IGameInventory GameInventory { get; set; } = null!;
 
         private const string PlaytimeSig = "E8 ?? ?? ?? ?? B9 ?? ?? ?? ?? 48 8B D3";
         private delegate long PlaytimeDelegate(uint param1, long param2, uint param3);
@@ -276,6 +279,10 @@ namespace Altoholic
             PluginInterface.UiBuilder.OpenMainUi += DrawMainUI;
             PluginInterface.LanguageChanged += _localization.SetupWithLangCode;
             DutyState.DutyCompleted += OnDutyCompleted;
+            GameInventory.ItemAdded += OnGameInventoryItemEvent;
+            GameInventory.ItemChanged += OnGameInventoryItemEvent;
+            GameInventory.ItemMerged += OnGameInventoryItemEvent;
+            GameInventory.ItemRemoved += OnGameInventoryItemEvent;
             ClientState.Login += OnCharacterLogin;
             ClientState.Logout += OnCharacterLogout;
             Framework.Update += OnFrameworkUpdate;
@@ -320,6 +327,10 @@ namespace Altoholic
             CommandManager.RemoveHandler(SaveCommandName);
             CommandManager.RemoveHandler(BlacklistCommandName);
 
+            GameInventory.ItemAdded -= OnGameInventoryItemEvent;
+            GameInventory.ItemChanged -= OnGameInventoryItemEvent;
+            GameInventory.ItemMerged -= OnGameInventoryItemEvent;
+            GameInventory.ItemRemoved -= OnGameInventoryItemEvent;
             DutyState.DutyCompleted -= OnDutyCompleted;
             ClientState.Login -= OnCharacterLogin;
             ClientState.Logout -= OnCharacterLogout;
@@ -502,6 +513,7 @@ namespace Altoholic
                     GetPlayerBeastReputations();
                     GetDuties();
 
+                    GetCollectionFromState();
                     /*
                     Log.Debug($"localPlayer.Inventory.Count : {localPlayer.Inventory.Count}");
                     Log.Debug($"localPlayer.Saddle.Count: {localPlayer.Saddle.Count}");
@@ -656,14 +668,7 @@ namespace Altoholic
             };
 
             GetPlayerAttributesProfileAndJobs();
-            GetPlayerEquippedGear();
-            GetPlayerInventory();
-            GetPlayerSaddleInventory();
-            GetPlayerArmoryInventory();
-            GetPlayerGlamourInventory();
-            GetPlayerArmoireInventory();
             GetPlayerRetainer();
-            GetPlayerBeastReputations();
         }
 
         private unsafe void GetPlayerAttributesProfileAndJobs()
@@ -766,6 +771,19 @@ namespace Altoholic
                 Viper = new Job { Level = player.ClassJobLevels[30], Exp = player.ClassJobExperience[30] },
                 Pictomancer = new Job { Level = player.ClassJobLevels[31], Exp = player.ClassJobExperience[31] },
             };
+            
+            
+
+            /*foreach (uint i in Enumerable.Range(1001,79))
+            {
+                Log.Debug($"uistate.IsUnlockLinkUnlocked(i): {uistate.IsUnlockLinkUnlocked(i)}");
+            }*/
+        }
+
+        private unsafe void GetCollectionFromState()
+        {
+            ref readonly UIState uistate = ref *UIState.Instance();//nullcheck?
+            PlayerState player = uistate.PlayerState;
             foreach (uint i in _globalCache.MinionStorage.Get().Where(i => !_localPlayer.HasMinion(i)))
             {
                 if (uistate.IsCompanionUnlocked(i))
@@ -781,11 +799,11 @@ namespace Altoholic
                 }
             }
             foreach (uint i in _globalCache.EmoteStorage.Get().Where(i => !_localPlayer.HasEmote(i)))
-            //foreach (KeyValuePair<uint, Models.Emote> i in _globalCache.EmoteStorage.GetAll().Where(i => !_localPlayer.HasEmote(i.Key)))
+                //foreach (KeyValuePair<uint, Models.Emote> i in _globalCache.EmoteStorage.GetAll().Where(i => !_localPlayer.HasEmote(i.Key)))
             {
                 // Todo: Use UnlockLink instead of EmoteID
                 if (uistate.IsEmoteUnlocked((ushort)i))
-                //if(uistate.IsUnlockLinkUnlocked(i.Value.UnlockLink))
+                    //if(uistate.IsUnlockLinkUnlocked(i.Value.UnlockLink))
                 {
                     //_localPlayer.Emotes.Add(i.Key);
                     _localPlayer.Emotes.Add(i);
@@ -798,12 +816,6 @@ namespace Altoholic
                     _localPlayer.Bardings.Add(i);
                 }
             }
-            
-
-            /*foreach (uint i in Enumerable.Range(1001,79))
-            {
-                Log.Debug($"uistate.IsUnlockLinkUnlocked(i): {uistate.IsUnlockLinkUnlocked(i)}");
-            }*/
 
             GetMountFromState(player);
             GetFramerKitsFromState(player);
@@ -814,12 +826,12 @@ namespace Altoholic
 
         private void GetMountFromState(PlayerState player)
         {
-            foreach (uint i in _globalCache.MountStorage.Get().Where(i => !_localPlayer.HasMount(i)).Where(i => player.IsMountUnlocked(i)))
+            foreach (uint i in _globalCache.MountStorage.Get().Where(i => !_localPlayer.HasMount(i))
+                         .Where(i => player.IsMountUnlocked(i)))
             {
                 _localPlayer.Mounts.Add(i);
             }
         }
-        
         private void GetFramerKitsFromState(PlayerState player)
         {
             foreach (uint i in _globalCache.FramerKitStorage.Get().Where(i => !_localPlayer.HasFramerKit(i)).Where(i => player.IsFramersKitUnlocked(i)))
@@ -1009,6 +1021,7 @@ namespace Altoholic
 
         private unsafe void GetPlayerBeastReputations()
         {
+            Log.Debug("GetPlayerBeastReputations entered");
             int btCount = _globalCache.BeastTribesStorage.Count();
             if (_localPlayer.BeastReputations.Count > btCount) _localPlayer.BeastReputations.Clear();
 
@@ -1449,6 +1462,8 @@ namespace Altoholic
 
             //RunInBackground(TimeSpan.FromMinutes(5));
             //RunInBackground(TimeSpan.FromSeconds(20));
+            GetPlayerBeastReputations();
+            GetCollectionFromState();
             GetDuties();
         }
 
@@ -1526,6 +1541,56 @@ namespace Altoholic
             if (_localPlayer.IsDutyCompleted(d.Id)) return;
             Log.Debug($"Duty {d.Id}:<{d.EnglishName}> not completed");
             _localPlayer.Duties.Add(d.Id);
+        }
+
+        private void OnGameInventoryItemEvent(GameInventoryEvent type, InventoryEventArgs data)
+        {
+            Log.Debug($"OnGameInventoryItemEvent entered, item {type}: {data.Item.ItemId}");
+            GameInventoryItem i = data.Item;
+            switch (i.ContainerType)
+            {
+                case GameInventoryType.Inventory1:
+                case GameInventoryType.Inventory2:
+                case GameInventoryType.Inventory3:
+                case GameInventoryType.Inventory4:
+                case GameInventoryType.KeyItems:
+                case GameInventoryType.Crystals:
+                    /*Inventory item = new()
+                    {
+                        ItemId = i.ItemId,
+                        HQ = i.IsHq,
+                        Quantity = i.Quantity,
+                    };
+                    _localPlayer.Inventory.Add(item);*/
+                    GetPlayerInventory();
+                    break;
+                case GameInventoryType.EquippedItems:
+                    GetPlayerEquippedGear();
+                    break;
+                case GameInventoryType.SaddleBag1:
+                case GameInventoryType.SaddleBag2:
+                case GameInventoryType.PremiumSaddleBag1:
+                case GameInventoryType.PremiumSaddleBag2:
+                    GetPlayerSaddleInventory();
+                    break;
+                case GameInventoryType.ArmoryMainHand:
+                case GameInventoryType.ArmoryHead:
+                case GameInventoryType.ArmoryBody:
+                case GameInventoryType.ArmoryHands:
+                case GameInventoryType.ArmoryLegs:
+                case GameInventoryType.ArmoryFeets:
+                case GameInventoryType.ArmoryOffHand:
+                case GameInventoryType.ArmoryEar:
+                case GameInventoryType.ArmoryNeck:
+                case GameInventoryType.ArmoryWrist:
+                case GameInventoryType.ArmoryRings:
+                case GameInventoryType.ArmorySoulCrystal:
+                    GetPlayerArmoryInventory();
+                    break;
+            }
+            
+            /*GetPlayerGlamourInventory();
+            GetPlayerArmoireInventory();*/
         }
 
         public void ReloadConfig()
