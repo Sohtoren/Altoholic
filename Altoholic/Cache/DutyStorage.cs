@@ -59,5 +59,10 @@ namespace Altoholic.Cache
         {
             _duties.Clear();
         }
+
+        public Duty? GetFromTerritory(ushort e)
+        {
+            return _duties.Values.FirstOrDefault(d => d.TerritoryType == e);
+        }
     }
 }

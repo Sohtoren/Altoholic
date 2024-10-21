@@ -2701,6 +2701,7 @@ namespace Altoholic
                             d.HighEndDuty = duty.HighEndDuty;
                             d.AllowUndersized = duty.AllowUndersized;
                             d.ContentMemberType = duty.ContentMemberType.Row;
+                            d.TerritoryType = duty.TerritoryType.Row;
                             break;
                         }
                     case ClientLanguage.French:

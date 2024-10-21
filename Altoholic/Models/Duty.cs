@@ -31,5 +31,6 @@
         public bool HighEndDuty { get; set; }
         public bool AllowUndersized { get; set; }
         public uint ContentMemberType {get; set; }
+        public uint TerritoryType { get; set; }
     }
 }

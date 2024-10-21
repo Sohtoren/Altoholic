@@ -56,6 +56,7 @@ namespace Altoholic
         [PluginService] public static ISigScanner SigScanner { get; set; } = null!;
         [PluginService] public static IGameInteropProvider Hook { get; set; } = null!;
         [PluginService] public static IChatGui ChatGui { get; set; } = null!;
+        [PluginService] public static IDutyState DutyState { get; set; } = null!;
 
         private const string PlaytimeSig = "E8 ?? ?? ?? ?? B9 ?? ?? ?? ?? 48 8B D3";
         private delegate long PlaytimeDelegate(uint param1, long param2, uint param3);
@@ -274,7 +275,7 @@ namespace Altoholic
             PluginInterface.UiBuilder.OpenConfigUi += DrawConfigUI;
             PluginInterface.UiBuilder.OpenMainUi += DrawMainUI;
             PluginInterface.LanguageChanged += _localization.SetupWithLangCode;
-
+            DutyState.DutyCompleted += OnDutyCompleted;
             ClientState.Login += OnCharacterLogin;
             ClientState.Logout += OnCharacterLogout;
             Framework.Update += OnFrameworkUpdate;
@@ -498,6 +499,7 @@ namespace Altoholic
                     GetPlayerCompletedQuests();
                     GetPlayerRetainer();
                     GetPlayerBeastReputations();
+                    GetDuties();
 
                     /*
                     Log.Debug($"localPlayer.Inventory.Count : {localPlayer.Inventory.Count}");
@@ -795,19 +797,7 @@ namespace Altoholic
                     _localPlayer.Bardings.Add(i);
                 }
             }
-            foreach (Duty i in _globalCache.DutyStorage.GetAll().Where(i => !_localPlayer.IsDutyCompleted(i.Id)))
-            {
-                Log.Debug($"Checking duty {i.Id}:{i.EnglishName}");
-                if (Utils.IsDutyCompleted(i.Content))
-                {
-                    Log.Debug($"Duty {i.Id}:{i.EnglishName} completed");
-                    _localPlayer.Duties.Add(i.Id);
-                }
-                else
-                {
-                    Log.Debug($"Duty {i.Id}:{i.EnglishName} not completed");
-                }
-            }
+            
 
             /*foreach (uint i in Enumerable.Range(1001,79))
             {
@@ -1130,7 +1120,6 @@ namespace Altoholic
             _localPlayer.Currencies = GetPlayerCurrencies();
         }
 
-
         private unsafe void GetPlayerSaddleInventory()
         {
             if (
@@ -1448,7 +1437,7 @@ namespace Altoholic
 
             _localPlayer = p;
             //Log.Info($"Character id is : {localPlayer.Id}");
-            
+
             //Log.Info("Altoholic : Found {0} others players", otherCharacters.Count);
             //Todo: start timer after /playtime command
             /*_ = new XivChatEntry
@@ -1459,6 +1448,24 @@ namespace Altoholic
 
             //RunInBackground(TimeSpan.FromMinutes(5));
             //RunInBackground(TimeSpan.FromSeconds(20));
+            GetDuties();
+        }
+
+        private void GetDuties()
+        {
+            foreach (Duty i in _globalCache.DutyStorage.GetAll().Where(i => !_localPlayer.IsDutyCompleted(i.Id)))
+            {
+                Log.Debug($"Checking duty {i.Id}:{i.EnglishName}");
+                if (Utils.IsDutyCompleted(i.Content))
+                {
+                    Log.Debug($"Duty {i.Id}:{i.EnglishName} completed");
+                    _localPlayer.Duties.Add(i.Id);
+                }
+                else
+                {
+                    Log.Debug($"Duty {i.Id}:{i.EnglishName} not completed");
+                }
+            }
         }
 
         /*private async void RunInBackground(TimeSpan timeSpan)
@@ -1504,6 +1511,20 @@ namespace Altoholic
             MainWindow.IsOpen = false;
             MainWindow.Clear();
             _periodicTimer?.Dispose();
+        }
+
+        private void OnDutyCompleted(object? sender, ushort e)
+        {
+            Log.Debug($"OnDutyCompleted entered with e: {e}");
+            Duty? d = _globalCache.DutyStorage.GetFromTerritory(e);
+            if (d == null || d.Id == 0)
+            {
+                return;
+            }
+
+            if (_localPlayer.IsDutyCompleted(d.Id)) return;
+            Log.Debug($"Duty {d.Id}:<{d.EnglishName}> not completed");
+            _localPlayer.Duties.Add(d.Id);
         }
 
         public void ReloadConfig()
