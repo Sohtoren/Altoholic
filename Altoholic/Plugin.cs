@@ -320,6 +320,7 @@ namespace Altoholic
             CommandManager.RemoveHandler(SaveCommandName);
             CommandManager.RemoveHandler(BlacklistCommandName);
 
+            DutyState.DutyCompleted -= OnDutyCompleted;
             ClientState.Login -= OnCharacterLogin;
             ClientState.Logout -= OnCharacterLogout;
             Framework.Update -= OnFrameworkUpdate;
