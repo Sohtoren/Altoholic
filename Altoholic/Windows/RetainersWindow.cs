@@ -1,4 +1,4 @@
-using Altoholic.Cache;
+﻿using Altoholic.Cache;
 using Altoholic.Models;
 using CheapLoc;
 using Dalamud.Game;
@@ -680,10 +680,15 @@ namespace Altoholic.Windows
         }
         private void DrawMarket(Retainer selectedRetainer)
         {
-            if (selectedRetainer.MarketItemCount == 0) return;
+            if (selectedRetainer.MarketItemCount == 0)
+            {
+                ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 12596)}");
+                return;
+            }
             if (selectedRetainer.MarketInventory.Count > 0)
             {
                 ImGui.TextUnformatted($"On the market until: {Utils.UnixTimeStampToDateTime(selectedRetainer.MarketExpire)}");
+                int count = 0;
                 using (var table = ImRaii.Table($"###Retainer#{selectedRetainer.Id}#MarketTable", 2))
                 {
                     if (!table) return;
@@ -693,11 +698,11 @@ namespace Altoholic.Windows
                     ImGui.TableSetupColumn(
                         $"###Retainer#{selectedRetainer.Id}#MarketTable#Col2",
                         ImGuiTableColumnFlags.WidthStretch);
-                    int count = 0;
+
                     foreach (Inventory item in selectedRetainer.MarketInventory.Where(item => item.ItemId != 0))
                     {
-                        ImGui.TableNextRow();
-                        ImGui.TableSetColumnIndex(count >= 10 ? 1 : 0);
+                        if(count % 2 == 0) ImGui.TableNextRow();
+                        ImGui.TableSetColumnIndex(count % 2 == 0 ? 0 : 1);
                         Item? itm = _globalCache.ItemStorage.LoadItem(_currentLocale, item.ItemId);
                         if (itm == null) continue;
                         Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Icon, item.HQ), new Vector2(24, 24));
@@ -705,7 +710,7 @@ namespace Altoholic.Windows
                         {
                             Utils.DrawItemTooltip(_currentLocale, ref _globalCache, item);
                         }
-
+                        count++;
                         ImGui.SameLine();
                         ImGui.TextUnformatted($"{itm.Name}");
                         if (item.Quantity <= 1)
@@ -715,10 +720,17 @@ namespace Altoholic.Windows
 
                         ImGui.SameLine();
                         ImGui.TextUnformatted($"{item.Quantity}");
-
-                        count++;
                     }
                 }
+                string selstr = _currentLocale switch
+                {
+                    ClientLanguage.German => $"{count} {(count == 1 ? "Gegenstand" : "Gegenstände")}",
+                    ClientLanguage.English => $"Selling {count} {(count == 1 ? "item" : "items")}",
+                    ClientLanguage.French => $"{count} objet{(count > 1 ? "s" : "")} en vente",
+                    ClientLanguage.Japanese => $"出品中（{count}件）",
+                    _ => ""
+                };
+                ImGui.TextUnformatted($"{selstr}");
             }
             else
             {
