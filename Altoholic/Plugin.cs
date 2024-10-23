@@ -31,10 +31,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
-using static Dalamud.Interface.Utility.Raii.ImRaii;
-using static FFXIVClientStructs.FFXIV.Client.Game.UI.UIState.Delegates;
 using static FFXIVClientStructs.FFXIV.Client.UI.RaptureAtkModule;
-using InstanceContent = Lumina.Excel.GeneratedSheets.InstanceContent;
 
 namespace Altoholic
 {
@@ -1545,8 +1542,11 @@ namespace Altoholic
 
         private void OnGameInventoryItemEvent(GameInventoryEvent type, InventoryEventArgs data)
         {
+            Log.Debug($"Condition[ConditionFlag.LoggingOut]: {Condition[ConditionFlag.LoggingOut]}");
+            if (Condition[ConditionFlag.LoggingOut]) return;
             Log.Debug($"OnGameInventoryItemEvent entered, item {type}: {data.Item.ItemId}");
             GameInventoryItem i = data.Item;
+            if (i.ItemId == 0 || i.ItemId == 1) return;
             switch (i.ContainerType)
             {
                 case GameInventoryType.Inventory1:

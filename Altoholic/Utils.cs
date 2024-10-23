@@ -2965,10 +2965,12 @@ namespace Altoholic
                     //character.HasQuest((int)QuestIds.EVENT_MOOGLE_TREASURE_TROVE_THE_SECOND_HUNT_FOR_GENESIS),
                     character.HasQuest((int)QuestIds.EVENT_THE_MAKE_IT_RAIN_CAMPAIGN_2024),
                     character.HasQuest((int)QuestIds.EVENT_BREAKING_BRICK_MOUNTAINS_2024),
-                    character.HasQuest((int)QuestIds.EVENT_BLUNDERVILLE_2024),
+                    character.HasQuest((int)QuestIds.EVENT_BLUNDERVILLE_2024_1),
                     character.HasQuest((int)QuestIds.EVENT_MOONFIRE_FAIRE_2024),
                     character.HasQuest((int)QuestIds.EVENT_THE_RISING_2024),
                     character.HasQuest((int)QuestIds.EVENT_ALL_SAINTS_WAKE_2024),
+                    //character.HasQuest((int)QuestIds.EVENT_MOOGLE_TREASURE_TROVE_THE_HUNT_FOR_GOETIA),
+                    character.HasQuest((int)QuestIds.EVENT_BLUNDERVILLE_2024_2),
                     //character.HasQuest((int)QuestIds.EVENT_STARLIGHT_CELEBRATION_2024),
                 ];
                 result.Add(completedQuests);

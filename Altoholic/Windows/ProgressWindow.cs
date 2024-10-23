@@ -621,6 +621,8 @@ namespace Altoholic.Windows
                         DrawAllLine(chars, charactersQuests,
                             $"{Loc.Localize("Event_AllSaintsWake", "All Saints' Wake")} (2024)",
                             119);
+                        DrawAllLine(chars, charactersQuests, $"{Loc.Localize("Event_Blunderville", "Blunderville")} **",
+                            120);
                         /*DrawAllLine(chars, charactersQuests, $"{Loc.Localize("Event_Starlight", "Starlight Celebration")} (2024)",
                             120);*/
                     }
@@ -1249,6 +1251,290 @@ namespace Altoholic.Windows
                     DrawAllLine(chars, charactersQuests,
                         $"{Loc.Localize("Event_Starlight", "Starlight Celebration")} (2016)",
                         33);
+                }
+            }
+
+
+
+            using (var blundervilleRewards = ImRaii.TabItem($"{Loc.Localize("Event_Blunderville", "Blunderville")} {_globalCache.AddonStorage.LoadAddonString(_currentLocale, 1885)}"))
+            {
+                if (blundervilleRewards.Success)
+                {
+                    using var charactersEventTable = ImRaii.Table(
+                        $"###CharactersProgress#All#Event#blundervilleRewards#Table",
+                        chars.Count + 1,
+                        ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner |
+                        ImGuiTableFlags.ScrollX | ImGuiTableFlags.ScrollY);
+                    if (!charactersEventTable) return;
+                    ImGui.TableSetupColumn($"###CharactersProgress#All#Event#blundervilleRewards#Name",
+                        ImGuiTableColumnFlags.WidthFixed, 260);
+                    foreach (Character c in chars)
+                    {
+                        ImGui.TableSetupColumn($"###CharactersProgress#All#Event#blundervilleRewards#{c.CharacterId}",
+                            ImGuiTableColumnFlags.WidthFixed, 15);
+                    }
+
+                    ImGui.TableNextRow();
+                    ImGui.TableSetColumnIndex(0);
+                    ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 1885));
+
+                    foreach (Character currChar in chars)
+                    {
+                        ImGui.TableNextColumn();
+                        ImGui.TextUnformatted($"{currChar.FirstName[0]}.{currChar.LastName[0]}");
+                        if (ImGui.IsItemHovered())
+                        {
+                            ImGui.BeginTooltip();
+                            ImGui.TextUnformatted(
+                                $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
+                            ImGui.EndTooltip();
+                        }
+                    }
+
+
+                    DrawBlundervilleRewards(chars);
+                }
+            }
+        }
+
+        private void DrawBlundervilleRewards(List<Character> chars)
+        {
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            Emote? e = _globalCache.EmoteStorage.GetEmote(_currentLocale, 276);
+            if (e != null)
+            {
+                Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(e.Icon), new Vector2(32, 32));
+                if (ImGui.IsItemHovered())
+                {
+                    Utils.DrawEmoteTooltip(_currentLocale, ref _globalCache, e);
+                }
+                ImGui.SameLine();
+                string name = _currentLocale switch
+                {
+                    ClientLanguage.German => e.GermanName,
+                    ClientLanguage.English => e.EnglishName,
+                    ClientLanguage.French => e.FrenchName,
+                    ClientLanguage.Japanese => e.JapaneseName,
+                    _ => e.EnglishName
+                };
+                ImGui.TextUnformatted(name);
+
+                foreach (Character currChar in chars)
+                {
+                    ImGui.TableNextColumn();
+                    ImGui.TextUnformatted(currChar.HasEmote(276) ? "\u2713" : "");
+                }
+            }
+
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            Mount? m = _globalCache.MountStorage.GetMount(_currentLocale, 330);
+            if (m != null)
+            {
+                Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(m.Icon), new Vector2(32, 32));
+                if (ImGui.IsItemHovered())
+                {
+                    Utils.DrawMountTooltip(_currentLocale, ref _globalCache, m);
+                }
+                ImGui.SameLine();
+                string name = _currentLocale switch
+                {
+                    ClientLanguage.German => m.GermanName,
+                    ClientLanguage.English => m.EnglishName,
+                    ClientLanguage.French => m.FrenchName,
+                    ClientLanguage.Japanese => m.JapaneseName,
+                    _ => m.EnglishName
+                };
+                ImGui.TextUnformatted(name);
+
+                foreach (Character currChar in chars)
+                {
+                    ImGui.TableNextColumn();
+                    ImGui.TextUnformatted(currChar.HasMount(330) ? "\u2713" : "");
+                }
+            }
+
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            Minion? mi = _globalCache.MinionStorage.GetMinion(_currentLocale, 499);
+            if (mi != null)
+            {
+                Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(mi.Icon), new Vector2(32, 32));
+                if (ImGui.IsItemHovered())
+                {
+                    Utils.DrawMinionTooltip(_currentLocale, ref _globalCache, mi);
+                }
+                ImGui.SameLine();
+                string name = _currentLocale switch
+                {
+                    ClientLanguage.German => mi.GermanName,
+                    ClientLanguage.English => mi.EnglishName,
+                    ClientLanguage.French => mi.FrenchName,
+                    ClientLanguage.Japanese => mi.JapaneseName,
+                    _ => mi.EnglishName
+                };
+                ImGui.TextUnformatted(Utils.Capitalize(name));
+
+                foreach (Character currChar in chars)
+                {
+                    ImGui.TableNextColumn();
+                    ImGui.TextUnformatted(currChar.HasMinion(499) ? "\u2713" : "");
+                }
+            }
+
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            Minion? mi2 = _globalCache.MinionStorage.GetMinion(_currentLocale, 500);
+            if (mi2 != null)
+            {
+                Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(mi2.Icon), new Vector2(32, 32));
+                if (ImGui.IsItemHovered())
+                {
+                    Utils.DrawMinionTooltip(_currentLocale, ref _globalCache, mi2);
+                }
+                string name = _currentLocale switch
+                {
+                    ClientLanguage.German => mi2.GermanName,
+                    ClientLanguage.English => mi2.EnglishName,
+                    ClientLanguage.French => mi2.FrenchName,
+                    ClientLanguage.Japanese => mi2.JapaneseName,
+                    _ => mi2.EnglishName
+                };
+                ImGui.SameLine();
+                ImGui.TextUnformatted(Utils.Capitalize(name));
+
+                foreach (Character currChar in chars)
+                {
+                    ImGui.TableNextColumn();
+                    ImGui.TextUnformatted(currChar.HasMinion(500) ? "\u2713" : "");
+                }
+            }
+
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            OrchestrionRoll? o = _globalCache.OrchestrionRollStorage.GetOrchestrionRoll(_currentLocale, 657);
+            if (o != null)
+            {
+                Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(o.Icon), new Vector2(32, 32));
+                if (ImGui.IsItemHovered())
+                {
+                    Utils.DrawOrchestrionRollTooltip(_currentLocale, ref _globalCache, o);
+                }
+                ImGui.SameLine();
+                string name = _currentLocale switch
+                {
+                    ClientLanguage.German => o.GermanName,
+                    ClientLanguage.English => o.EnglishName,
+                    ClientLanguage.French => o.FrenchName,
+                    ClientLanguage.Japanese => o.JapaneseName,
+                    _ => o.EnglishName
+                };
+                ImGui.TextUnformatted(name);
+
+                foreach (Character currChar in chars)
+                {
+                    ImGui.TableNextColumn();
+                    ImGui.TextUnformatted(currChar.HasOrchestrionRoll(657) ? "\u2713" : "");
+                }
+            }
+
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            uint? fkId = _globalCache.FramerKitStorage.GetFramerKitIdFromItemId(41377);
+            if (fkId != null)
+            {
+                FramerKit? fk = _globalCache.FramerKitStorage.LoadItem(_currentLocale, fkId.Value);
+                if (fk != null)
+                {
+                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(fk.Icon), new Vector2(32, 32));
+                    if (ImGui.IsItemHovered())
+                    {
+                        Utils.DrawFramerKitTooltip(_currentLocale, ref _globalCache, fk);
+                    }
+
+                    ImGui.SameLine();
+                    string name = _currentLocale switch
+                    {
+                        ClientLanguage.German => fk.GermanName,
+                        ClientLanguage.English => fk.EnglishName,
+                        ClientLanguage.French => fk.FrenchName,
+                        ClientLanguage.Japanese => fk.JapaneseName,
+                        _ => fk.EnglishName
+                    };
+                    ImGui.TextUnformatted(name);
+
+                    foreach (Character currChar in chars)
+                    {
+                        ImGui.TableNextColumn();
+                        ImGui.TextUnformatted(currChar.HasFramerKit(fkId.Value) ? "\u2713" : "");
+                    }
+                }
+            }
+
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            uint? fk2Id = _globalCache.FramerKitStorage.GetFramerKitIdFromItemId(41378);
+            if (fk2Id != null)
+            {
+                FramerKit? fk2 = _globalCache.FramerKitStorage.LoadItem(_currentLocale, fk2Id.Value);
+                if (fk2 != null)
+                {
+                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(fk2.Icon), new Vector2(32, 32));
+                    if (ImGui.IsItemHovered())
+                    {
+                        Utils.DrawFramerKitTooltip(_currentLocale, ref _globalCache, fk2);
+                    }
+
+                    ImGui.SameLine();
+                    string name = _currentLocale switch
+                    {
+                        ClientLanguage.German => fk2.GermanName,
+                        ClientLanguage.English => fk2.EnglishName,
+                        ClientLanguage.French => fk2.FrenchName,
+                        ClientLanguage.Japanese => fk2.JapaneseName,
+                        _ => fk2.EnglishName
+                    };
+                    ImGui.TextUnformatted(name);
+
+                    foreach (Character currChar in chars)
+                    {
+                        ImGui.TableNextColumn();
+                        ImGui.TextUnformatted(currChar.HasFramerKit(fk2Id.Value) ? "\u2713" : "");
+                    }
+                }
+            }
+
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            uint? fk3Id = _globalCache.FramerKitStorage.GetFramerKitIdFromItemId(41379);
+            if (fk3Id != null)
+            {
+                FramerKit? fk3 = _globalCache.FramerKitStorage.LoadItem(_currentLocale, fk3Id.Value);
+                if (fk3 != null)
+                {
+                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(fk3.Icon), new Vector2(32, 32));
+                    if (ImGui.IsItemHovered())
+                    {
+                        Utils.DrawFramerKitTooltip(_currentLocale, ref _globalCache, fk3);
+                    }
+
+                    ImGui.SameLine();
+                    string name = _currentLocale switch
+                    {
+                        ClientLanguage.German => fk3.GermanName,
+                        ClientLanguage.English => fk3.EnglishName,
+                        ClientLanguage.French => fk3.FrenchName,
+                        ClientLanguage.Japanese => fk3.JapaneseName,
+                        _ => fk3.EnglishName
+                    };
+                    ImGui.TextUnformatted(name);
+
+                    foreach (Character currChar in chars)
+                    {
+                        ImGui.TableNextColumn();
+                        ImGui.TextUnformatted(currChar.HasFramerKit(fk3Id.Value) ? "\u2713" : "");
+                    }
                 }
             }
         }

@@ -66,6 +66,7 @@ namespace Altoholic.Cache
                     ret.JapaneseName = dbItem.Name;
                     break;
             }
+            ret.Icon = dbItem.Icon;
             _framerKits[id] = ret;
             return ret;
         }
