@@ -22,11 +22,9 @@ using TextCommand = Lumina.Excel.GeneratedSheets.TextCommand;
 using Ornament = Lumina.Excel.GeneratedSheets.Ornament;
 using Glasses = Lumina.Excel.GeneratedSheets.Glasses;
 using Quest = Lumina.Excel.GeneratedSheets.Quest;
-using Altoholic.Database;
 using CheapLoc;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using Cabinet = Lumina.Excel.GeneratedSheets.Cabinet;
-using static Dalamud.Interface.Utility.Raii.ImRaii;
 
 namespace Altoholic
 {
@@ -1436,7 +1434,66 @@ namespace Altoholic
             ImGui.EndTooltip();
         }
 
-        public static void DrawItemTooltip(ClientLanguage currentLocale, ref GlobalCache globalCache, Inventory item, bool armoire = false)
+
+        public static void DrawItemTooltip(ClientLanguage currentLocale, ref GlobalCache globalCache, Item item)
+        {
+            ImGui.BeginTooltip();
+
+            if (item.IsUnique || item.IsUntradable)
+            {
+                using var drawItemTooltipItemUnique = ImRaii.Table($"##DrawItemTooltip#Item_{item.RowId}#Unique", 3);
+                if (!drawItemTooltipItemUnique) return;
+                ImGui.TableSetupColumn($"###DrawItemTooltip#Item_{item.RowId}#Unique#IsUnique",
+                    ImGuiTableColumnFlags.WidthStretch);
+                ImGui.TableSetupColumn($"###DrawItemTooltip#Item_{item.RowId}#Unique#IsUntradable",
+                    ImGuiTableColumnFlags.WidthFixed, 200);
+                ImGui.TableSetupColumn($"###DrawItemTooltip#Item_{item.RowId}#Unique#IsBinding",
+                    ImGuiTableColumnFlags.WidthStretch);
+                ImGui.TableNextRow();
+                ImGui.TableSetColumnIndex(0);
+                ImGui.TextUnformatted("");
+                ImGui.TableSetColumnIndex(1);
+                if (item.IsUnique)
+                {
+                    ImGui.TextUnformatted(
+                        $"{globalCache.AddonStorage.LoadAddonString(currentLocale, 494)}"); // Unique
+                }
+
+                if (item.IsUntradable)
+                {
+                    ImGui.SameLine();
+                    ImGui.TextUnformatted(
+                        $"{globalCache.AddonStorage.LoadAddonString(currentLocale, 495)}"); // Untradable
+                }
+
+                /*if (i.Is) No Binding value???
+                    {
+                        ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(496)}");// Binding
+                    }*/
+                ImGui.TableSetColumnIndex(2);
+                ImGui.TextUnformatted("");
+            }
+
+            using (var drawItemTooltipItemNameIcon = ImRaii.Table($"##DrawItemTooltip#Item_{item.RowId}#NameIcon", 2))
+            {
+                if (!drawItemTooltipItemNameIcon) return;
+                ImGui.TableSetupColumn($"###DrawItemTooltip#Item_{item.RowId}#NameIcon#Icon",
+                    ImGuiTableColumnFlags.WidthFixed, 55);
+                ImGui.TableSetupColumn($"###DrawItemTooltip#Item_{item.RowId}#NameIcon#Name",
+                    ImGuiTableColumnFlags.WidthFixed, 305);
+  
+                ImGui.TableNextRow();
+                ImGui.TableSetColumnIndex(0);
+                DrawIcon(globalCache.IconStorage.LoadIcon(item.Icon), new Vector2(40, 40));
+                ImGui.TableSetColumnIndex(1);
+                ImGui.TextUnformatted($"{item.Name}");
+            }
+
+            ImGui.TextUnformatted($"{item.ItemUICategory.Value?.Name}");
+
+            ImGui.EndTooltip();
+        }
+        public static void DrawInventoryItemTooltip(ClientLanguage currentLocale, ref GlobalCache globalCache, Inventory item, bool armoire = false)
         {
             ItemItemLevel? itm = globalCache.ItemStorage.LoadItemWithItemLevel(currentLocale, item.ItemId);
             Item? dbItem = itm?.Item;
@@ -1872,7 +1929,7 @@ namespace Altoholic
         }
 
         public static void DrawBardingTooltip(ClientLanguage currentLocale, ref GlobalCache globalCache,
-            Barding barding, uint icon)
+            Barding barding)
         {
             using var drawTripleTriadCardTooltip = ImRaii.Tooltip();
             if (!drawTripleTriadCardTooltip) return;
@@ -1885,7 +1942,7 @@ namespace Altoholic
                 ImGuiTableColumnFlags.WidthFixed, 305);
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
-            DrawIcon(globalCache.IconStorage.LoadIcon(icon), new Vector2(40, 40));
+            DrawIcon(globalCache.IconStorage.LoadIcon(barding.Icon), new Vector2(40, 40));
             ImGui.TableSetColumnIndex(1);
             switch (currentLocale)
             {
@@ -2588,6 +2645,18 @@ namespace Altoholic
             return char.ToUpper(str[0]) + str[1..];
         }
 
+        public static string CapitalizeSentence(string str)
+        {
+            if (str.Length == 0) return str;
+            string[] splits = str.Split(" ");
+            for (int i = 0; i < splits.Length; i++)
+            {
+                splits[i] = Capitalize(splits[i]);
+            }
+
+            return string.Join(" ", splits);
+        }
+
         public static string CapitalizeSnakeCase(string str)
         {
             List<string> items = [];
@@ -2968,8 +3037,8 @@ namespace Altoholic
                     character.HasQuest((int)QuestIds.EVENT_BLUNDERVILLE_2024_1),
                     character.HasQuest((int)QuestIds.EVENT_MOONFIRE_FAIRE_2024),
                     character.HasQuest((int)QuestIds.EVENT_THE_RISING_2024),
-                    character.HasQuest((int)QuestIds.EVENT_ALL_SAINTS_WAKE_2024),
                     //character.HasQuest((int)QuestIds.EVENT_MOOGLE_TREASURE_TROVE_THE_HUNT_FOR_GOETIA),
+                    character.HasQuest((int)QuestIds.EVENT_ALL_SAINTS_WAKE_2024),
                     character.HasQuest((int)QuestIds.EVENT_BLUNDERVILLE_2024_2),
                     //character.HasQuest((int)QuestIds.EVENT_STARLIGHT_CELEBRATION_2024),
                 ];

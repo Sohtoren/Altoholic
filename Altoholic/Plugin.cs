@@ -1542,7 +1542,7 @@ namespace Altoholic
 
         private void OnGameInventoryItemEvent(GameInventoryEvent type, InventoryEventArgs data)
         {
-            Log.Debug($"Condition[ConditionFlag.LoggingOut]: {Condition[ConditionFlag.LoggingOut]}");
+            //Log.Debug($"Condition[ConditionFlag.LoggingOut]: {Condition[ConditionFlag.LoggingOut]}");
             if (Condition[ConditionFlag.LoggingOut]) return;
             Log.Debug($"OnGameInventoryItemEvent entered, item {type}: {data.Item.ItemId}");
             GameInventoryItem i = data.Item;

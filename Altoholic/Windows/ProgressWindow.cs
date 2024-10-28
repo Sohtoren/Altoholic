@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using static Dalamud.Interface.Utility.Raii.ImRaii;
 using Emote = Altoholic.Models.Emote;
 using Mount = Altoholic.Models.Mount;
 using TripleTriadCard = Altoholic.Models.TripleTriadCard;
@@ -526,7 +527,7 @@ namespace Altoholic.Windows
                 "** For the Blunderville event, the introduction quest is used for completion.")
             }");
 
-        using var tabBar = ImRaii.TabBar("###progressEvent#Tabs", ImGuiTabBarFlags.Reorderable);
+            using var tabBar = ImRaii.TabBar("###progressEvent#Tabs", ImGuiTabBarFlags.Reorderable);
             if (!tabBar.Success) return;
             //Plugin.Log.Debug($"charactersEventQuests: {charactersQuests.Count}");
             /*DrawAllLine(chars, charactersQuests, $"{Loc.Localize("Event_Starlight", "Starlight Celebration")} (2010)", 0);
@@ -1256,7 +1257,9 @@ namespace Altoholic.Windows
 
 
 
-            using (var blundervilleRewards = ImRaii.TabItem($"{Loc.Localize("Event_Blunderville", "Blunderville")} {_globalCache.AddonStorage.LoadAddonString(_currentLocale, 1885)}"))
+            using (var blundervilleRewards =
+                   ImRaii.TabItem(
+                       $"{Loc.Localize("Event_Blunderville", "Blunderville")} {_globalCache.AddonStorage.LoadAddonString(_currentLocale, 1885)}"))
             {
                 if (blundervilleRewards.Success)
                 {
@@ -1295,13 +1298,162 @@ namespace Altoholic.Windows
                     DrawBlundervilleRewards(chars);
                 }
             }
+
+            string mogEventName = _currentLocale switch
+            {
+                ClientLanguage.German => "Mog Mog-Kollektion",
+                ClientLanguage.English => "Moogle Treasure Trove",
+                ClientLanguage.French => "Collection Mog Mog",
+                ClientLanguage.Japanese => "モグモグ★コレクション",
+                _ =>  "Moogle Treasure Trove"
+            };
+            using (var moogleRewards = ImRaii.TabItem($"{mogEventName}"))
+            {
+                if (moogleRewards.Success)
+                {
+                    DrawMoogleRewards(chars);
+                }
+            }
         }
 
-        private void DrawBlundervilleRewards(List<Character> chars)
+        private void DrawMoogleRewards(List<Character> chars)
+        {
+            string goetiaName = _currentLocale switch
+            {
+                ClientLanguage.German => "Goëtische Goldschätze",
+                ClientLanguage.English => "The Hunt for Goetia",
+                ClientLanguage.French => "L'aube de la goétie",
+                ClientLanguage.Japanese => "～黄金の魔典～",
+                _ => "The Hunt for Goetia"
+            };
+            if (ImGui.CollapsingHeader($"2024: {goetiaName}"))
+            {
+                using var charactersEventTable = ImRaii.Table(
+                    $"###CharactersProgress#All#Event#MogRewards#Table#Event2024_3",
+                    chars.Count + 1,
+                    ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner |
+                    ImGuiTableFlags.ScrollX | ImGuiTableFlags.ScrollY);
+                if (!charactersEventTable) return;
+                ImGui.TableSetupColumn($"###CharactersProgress#All#Event#MogRewards#Event2024_3#Name",
+                    ImGuiTableColumnFlags.WidthFixed, 270);
+                foreach (Character c in chars)
+                {
+                    ImGui.TableSetupColumn($"###CharactersProgress#All#Event#MogRewards#Event2024_3#{c.CharacterId}",
+                        ImGuiTableColumnFlags.WidthFixed, 15);
+                }
+
+                ImGui.TableNextRow();
+                ImGui.TableSetColumnIndex(0);
+                ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 1885));
+
+                foreach (Character currChar in chars)
+                {
+                    ImGui.TableNextColumn();
+                    ImGui.TextUnformatted($"{currChar.FirstName[0]}.{currChar.LastName[0]}");
+                    if (ImGui.IsItemHovered())
+                    {
+                        ImGui.BeginTooltip();
+                        ImGui.TextUnformatted(
+                            $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
+                        ImGui.EndTooltip();
+                    }
+                }
+
+                DrawAllCharsMount(chars, 192);
+                DrawAllCharsMount(chars, 126);
+                DrawAllCharsBarding(chars, 73);
+                ImGui.TableNextRow();
+                ImGui.TableSetColumnIndex(0);
+                Item? itm = _globalCache.ItemStorage.LoadItem(_currentLocale, 32835);
+                if (itm != null)
+                {
+                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Icon), new Vector2(32, 32));
+                    if (ImGui.IsItemHovered())
+                    {
+                        Utils.DrawItemTooltip(_currentLocale, ref _globalCache, itm);
+                    }
+
+                    ImGui.SameLine();
+                    ImGui.TextUnformatted(itm.Name);
+                    foreach (Character currChar in chars)
+                    {
+                        ImGui.TableNextColumn();
+                        ImGui.TextUnformatted("/");
+                        if (ImGui.IsItemHovered())
+                        {
+                            ImGui.BeginTooltip();
+                            ImGui.TextUnformatted("Hairstyles are currently not tracked");
+                            ImGui.EndTooltip();
+                        }
+                    }
+                }
+
+                DrawAllCharsOrchestrion(chars, 363);
+                DrawAllCharsEmote(chars, 215);
+                DrawAllCharsEmote(chars, 189);
+                DrawAllCharsMount(chars, 19);
+                DrawAllCharsMount(chars, 20);
+                DrawAllCharsMount(chars, 158);
+                DrawAllCharsMount(chars, 172);
+                DrawAllCharsMinion(chars, 58);
+                DrawAllCharsTripleTriadCard(chars, 105);
+                DrawAllCharsTripleTriadCard(chars, 106);
+                DrawAllCharsTripleTriadCard(chars, 228);
+                DrawAllCharsTripleTriadCard(chars, 271);
+                DrawAllCharsTripleTriadCard(chars, 303);
+                DrawAllCharsMinion(chars, 326);
+                DrawAllCharsMinion(chars, 336);
+                DrawAllCharsOrchestrion(chars, 231);
+            }
+            /*if (ImGui.CollapsingHeader($"2024: Moogle Treasure Trove: The Second Hunt for Genesis"))
+            {
+            }
+            if (ImGui.CollapsingHeader($"2024: Moogle Treasure Trove: The First Hunt for Genesis"))
+            {
+            }
+            if (ImGui.CollapsingHeader($"Moogle Treasure Trove: The 10th Anniversary Hunt"))
+            {
+            }
+            if (ImGui.CollapsingHeader($"Moogle Treasure Trove: The Hunt for Mendacity"))
+            {
+            }
+            if (ImGui.CollapsingHeader($"Moogle Treasure Trove: The Hunt for Creation"))
+            {
+            }
+            if (ImGui.CollapsingHeader($"Moogle Treasure Trove: The Hunt for Verity"))
+            {
+            }
+            if (ImGui.CollapsingHeader($"Moogle Treasure Trove: The Hunt for Scripture"))
+            {
+            }
+            if (ImGui.CollapsingHeader($"Moogle Treasure Trove: The Hunt for Lore"))
+            {
+            }
+            if (ImGui.CollapsingHeader($"Moogle Treasure Festival 2021 The Hunt for Pageantry"))
+            {
+            }
+            if (ImGui.CollapsingHeader($"Moogle Treasure Trove: The Hunt for Esoterics"))
+            {
+            }
+            if (ImGui.CollapsingHeader($"Moogle Treasure Trove: The Hunt for Law"))
+            {
+            }
+            if (ImGui.CollapsingHeader($"Moogle Treasure Trove: The Hunt for Soldiery"))
+            {
+            }
+            if (ImGui.CollapsingHeader($"Moogle Treasure Trove: The Hunt for Mythology"))
+            {
+            }
+            if (ImGui.CollapsingHeader($"Moogle Treasure Trove: The Hunt for Philosophy"))
+            {
+            }*/
+        }
+
+        private void DrawAllCharsEmote(List<Character> chars, uint id)
         {
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
-            Emote? e = _globalCache.EmoteStorage.GetEmote(_currentLocale, 276);
+            Emote? e = _globalCache.EmoteStorage.GetEmote(_currentLocale, id);
             if (e != null)
             {
                 Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(e.Icon), new Vector2(32, 32));
@@ -1323,97 +1475,101 @@ namespace Altoholic.Windows
                 foreach (Character currChar in chars)
                 {
                     ImGui.TableNextColumn();
-                    ImGui.TextUnformatted(currChar.HasEmote(276) ? "\u2713" : "");
+                    ImGui.TextUnformatted(currChar.HasEmote(id) ? "\u2713" : "");
+                    if (ImGui.IsItemHovered())
+                    {
+                        ImGui.BeginTooltip();
+                        ImGui.TextUnformatted(name);
+                        ImGui.TextUnformatted(
+                            $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
+                        ImGui.EndTooltip();
+                    }
                 }
             }
-
+        }
+        private void DrawAllCharsMount(List<Character> chars, uint id)
+        {
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
-            Mount? m = _globalCache.MountStorage.GetMount(_currentLocale, 330);
-            if (m != null)
+            Mount? mount = _globalCache.MountStorage.GetMount(_currentLocale, id);
+            if (mount != null)
             {
-                Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(m.Icon), new Vector2(32, 32));
+                Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(mount.Icon), new Vector2(32, 32));
                 if (ImGui.IsItemHovered())
                 {
-                    Utils.DrawMountTooltip(_currentLocale, ref _globalCache, m);
+                    Utils.DrawMountTooltip(_currentLocale, ref _globalCache, mount);
                 }
+
                 ImGui.SameLine();
                 string name = _currentLocale switch
                 {
-                    ClientLanguage.German => m.GermanName,
-                    ClientLanguage.English => m.EnglishName,
-                    ClientLanguage.French => m.FrenchName,
-                    ClientLanguage.Japanese => m.JapaneseName,
-                    _ => m.EnglishName
+                    ClientLanguage.German => mount.GermanName,
+                    ClientLanguage.English => Utils.CapitalizeSentence(mount.EnglishName),
+                    ClientLanguage.French => Utils.CapitalizeSentence(mount.FrenchName),
+                    ClientLanguage.Japanese => mount.JapaneseName,
+                    _ => Utils.CapitalizeSentence(mount.EnglishName)
                 };
                 ImGui.TextUnformatted(name);
 
                 foreach (Character currChar in chars)
                 {
                     ImGui.TableNextColumn();
-                    ImGui.TextUnformatted(currChar.HasMount(330) ? "\u2713" : "");
+                    ImGui.TextUnformatted(currChar.HasMount(id) ? "\u2713" : "");
+                    if (ImGui.IsItemHovered())
+                    {
+                        ImGui.BeginTooltip();
+                        ImGui.TextUnformatted(name);
+                        ImGui.TextUnformatted(
+                            $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
+                        ImGui.EndTooltip();
+                    }
                 }
             }
-
+        }
+        private void DrawAllCharsMinion(List<Character> chars, uint id)
+        {
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
-            Minion? mi = _globalCache.MinionStorage.GetMinion(_currentLocale, 499);
-            if (mi != null)
+            Minion? minion = _globalCache.MinionStorage.GetMinion(_currentLocale, id);
+            if (minion != null)
             {
-                Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(mi.Icon), new Vector2(32, 32));
+                Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(minion.Icon), new Vector2(32, 32));
                 if (ImGui.IsItemHovered())
                 {
-                    Utils.DrawMinionTooltip(_currentLocale, ref _globalCache, mi);
+                    Utils.DrawMinionTooltip(_currentLocale, ref _globalCache, minion);
                 }
+
                 ImGui.SameLine();
                 string name = _currentLocale switch
                 {
-                    ClientLanguage.German => mi.GermanName,
-                    ClientLanguage.English => mi.EnglishName,
-                    ClientLanguage.French => mi.FrenchName,
-                    ClientLanguage.Japanese => mi.JapaneseName,
-                    _ => mi.EnglishName
+                    ClientLanguage.German => minion.GermanName,
+                    ClientLanguage.English => Utils.CapitalizeSentence(minion.EnglishName),
+                    ClientLanguage.French => Utils.CapitalizeSentence(minion.FrenchName),
+                    ClientLanguage.Japanese => minion.JapaneseName,
+                    _ => Utils.CapitalizeSentence(minion.EnglishName)
                 };
-                ImGui.TextUnformatted(Utils.Capitalize(name));
+                ImGui.TextUnformatted(name);
 
                 foreach (Character currChar in chars)
                 {
                     ImGui.TableNextColumn();
-                    ImGui.TextUnformatted(currChar.HasMinion(499) ? "\u2713" : "");
+                    ImGui.TextUnformatted(currChar.HasMinion(id) ? "\u2713" : "");
+                    if (ImGui.IsItemHovered())
+                    {
+                        ImGui.BeginTooltip();
+                        ImGui.TextUnformatted(name);
+                        ImGui.TextUnformatted(
+                            $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
+                        ImGui.EndTooltip();
+                    }
                 }
             }
-
+        }
+        private void DrawAllCharsOrchestrion(List<Character> chars, uint id)
+        {
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
-            Minion? mi2 = _globalCache.MinionStorage.GetMinion(_currentLocale, 500);
-            if (mi2 != null)
-            {
-                Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(mi2.Icon), new Vector2(32, 32));
-                if (ImGui.IsItemHovered())
-                {
-                    Utils.DrawMinionTooltip(_currentLocale, ref _globalCache, mi2);
-                }
-                string name = _currentLocale switch
-                {
-                    ClientLanguage.German => mi2.GermanName,
-                    ClientLanguage.English => mi2.EnglishName,
-                    ClientLanguage.French => mi2.FrenchName,
-                    ClientLanguage.Japanese => mi2.JapaneseName,
-                    _ => mi2.EnglishName
-                };
-                ImGui.SameLine();
-                ImGui.TextUnformatted(Utils.Capitalize(name));
-
-                foreach (Character currChar in chars)
-                {
-                    ImGui.TableNextColumn();
-                    ImGui.TextUnformatted(currChar.HasMinion(500) ? "\u2713" : "");
-                }
-            }
-
-            ImGui.TableNextRow();
-            ImGui.TableSetColumnIndex(0);
-            OrchestrionRoll? o = _globalCache.OrchestrionRollStorage.GetOrchestrionRoll(_currentLocale, 657);
+            OrchestrionRoll? o = _globalCache.OrchestrionRollStorage.GetOrchestrionRoll(_currentLocale, id);
             if (o != null)
             {
                 Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(o.Icon), new Vector2(32, 32));
@@ -1435,13 +1591,23 @@ namespace Altoholic.Windows
                 foreach (Character currChar in chars)
                 {
                     ImGui.TableNextColumn();
-                    ImGui.TextUnformatted(currChar.HasOrchestrionRoll(657) ? "\u2713" : "");
+                    ImGui.TextUnformatted(currChar.HasOrchestrionRoll(id) ? "\u2713" : "");
+                    if (ImGui.IsItemHovered())
+                    {
+                        ImGui.BeginTooltip();
+                        ImGui.TextUnformatted(name);
+                        ImGui.TextUnformatted(
+                            $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
+                        ImGui.EndTooltip();
+                    }
                 }
             }
-
+        }
+        private void DrawAllCharsFramerKit(List<Character> chars, uint id)
+        {
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
-            uint? fkId = _globalCache.FramerKitStorage.GetFramerKitIdFromItemId(41377);
+            uint? fkId = _globalCache.FramerKitStorage.GetFramerKitIdFromItemId(id);
             if (fkId != null)
             {
                 FramerKit? fk = _globalCache.FramerKitStorage.LoadItem(_currentLocale, fkId.Value);
@@ -1468,75 +1634,130 @@ namespace Altoholic.Windows
                     {
                         ImGui.TableNextColumn();
                         ImGui.TextUnformatted(currChar.HasFramerKit(fkId.Value) ? "\u2713" : "");
+                        if (ImGui.IsItemHovered())
+                        {
+                            ImGui.BeginTooltip();
+                            ImGui.TextUnformatted(name);
+                            ImGui.TextUnformatted(
+                                $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
+                            ImGui.EndTooltip();
+                        }
                     }
                 }
             }
+        }
+        private void DrawAllCharsBarding(List<Character> chars, uint id)
+        {
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            Barding? b = _globalCache.BardingStorage.GetBarding(_currentLocale, id);
+            if (b != null)
+            {
+                Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(b.Icon), new Vector2(32, 32));
+                if (ImGui.IsItemHovered())
+                {
+                    Utils.DrawBardingTooltip(_currentLocale, ref _globalCache, b);
+                }
+
+                ImGui.SameLine();
+                string name = _currentLocale switch
+                {
+                    ClientLanguage.German => b.GermanName,
+                    ClientLanguage.English => b.EnglishName,
+                    ClientLanguage.French => b.FrenchName,
+                    ClientLanguage.Japanese => b.JapaneseName,
+                    _ => b.EnglishName
+                };
+                ImGui.TextUnformatted(name);
+
+                foreach (Character currChar in chars)
+                {
+                    ImGui.TableNextColumn();
+                    ImGui.TextUnformatted(currChar.HasBarding(id) ? "\u2713" : "");
+                    if (ImGui.IsItemHovered())
+                    {
+                        ImGui.BeginTooltip();
+                        ImGui.TextUnformatted(name);
+                        ImGui.TextUnformatted(
+                            $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
+                        ImGui.EndTooltip();
+                    }
+                }
+            }
+        }
+        private void DrawAllCharsTripleTriadCard(List<Character> chars, uint id)
+        {
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            TripleTriadCard? ttc = _globalCache.TripleTriadCardStorage.GetTripleTriadCard(_currentLocale, id);
+            if (ttc != null)
+            {
+                Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(ttc.Icon), new Vector2(32, 32));
+                if (ImGui.IsItemHovered())
+                {
+                    Utils.DrawTTCTooltip(_currentLocale, ref _globalCache, ttc);
+                }
+
+                ImGui.SameLine();
+                string name = _currentLocale switch
+                {
+                    ClientLanguage.German => ttc.GermanName,
+                    ClientLanguage.English => ttc.EnglishName,
+                    ClientLanguage.French => ttc.FrenchName,
+                    ClientLanguage.Japanese => ttc.JapaneseName,
+                    _ => ttc.EnglishName
+                };
+                ImGui.TextUnformatted(name);
+
+                foreach (Character currChar in chars)
+                {
+                    ImGui.TableNextColumn();
+                    ImGui.TextUnformatted(currChar.HasTTC(id) ? "\u2713" : "");
+                    if (ImGui.IsItemHovered())
+                    {
+                        ImGui.BeginTooltip();
+                        ImGui.TextUnformatted(name);
+                        ImGui.TextUnformatted(
+                            $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
+                        ImGui.EndTooltip();
+                    }
+                }
+            }
+        }
+        
+        private void DrawBlundervilleRewards(List<Character> chars)
+        {
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            DrawAllCharsEmote(chars, 276);
 
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
-            uint? fk2Id = _globalCache.FramerKitStorage.GetFramerKitIdFromItemId(41378);
-            if (fk2Id != null)
-            {
-                FramerKit? fk2 = _globalCache.FramerKitStorage.LoadItem(_currentLocale, fk2Id.Value);
-                if (fk2 != null)
-                {
-                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(fk2.Icon), new Vector2(32, 32));
-                    if (ImGui.IsItemHovered())
-                    {
-                        Utils.DrawFramerKitTooltip(_currentLocale, ref _globalCache, fk2);
-                    }
-
-                    ImGui.SameLine();
-                    string name = _currentLocale switch
-                    {
-                        ClientLanguage.German => fk2.GermanName,
-                        ClientLanguage.English => fk2.EnglishName,
-                        ClientLanguage.French => fk2.FrenchName,
-                        ClientLanguage.Japanese => fk2.JapaneseName,
-                        _ => fk2.EnglishName
-                    };
-                    ImGui.TextUnformatted(name);
-
-                    foreach (Character currChar in chars)
-                    {
-                        ImGui.TableNextColumn();
-                        ImGui.TextUnformatted(currChar.HasFramerKit(fk2Id.Value) ? "\u2713" : "");
-                    }
-                }
-            }
+            DrawAllCharsMount(chars, 330);
 
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
-            uint? fk3Id = _globalCache.FramerKitStorage.GetFramerKitIdFromItemId(41379);
-            if (fk3Id != null)
-            {
-                FramerKit? fk3 = _globalCache.FramerKitStorage.LoadItem(_currentLocale, fk3Id.Value);
-                if (fk3 != null)
-                {
-                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(fk3.Icon), new Vector2(32, 32));
-                    if (ImGui.IsItemHovered())
-                    {
-                        Utils.DrawFramerKitTooltip(_currentLocale, ref _globalCache, fk3);
-                    }
+            DrawAllCharsMinion(chars, 499);
 
-                    ImGui.SameLine();
-                    string name = _currentLocale switch
-                    {
-                        ClientLanguage.German => fk3.GermanName,
-                        ClientLanguage.English => fk3.EnglishName,
-                        ClientLanguage.French => fk3.FrenchName,
-                        ClientLanguage.Japanese => fk3.JapaneseName,
-                        _ => fk3.EnglishName
-                    };
-                    ImGui.TextUnformatted(name);
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            DrawAllCharsMinion(chars, 500);
 
-                    foreach (Character currChar in chars)
-                    {
-                        ImGui.TableNextColumn();
-                        ImGui.TextUnformatted(currChar.HasFramerKit(fk3Id.Value) ? "\u2713" : "");
-                    }
-                }
-            }
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            DrawAllCharsOrchestrion(chars, 657);
+
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            DrawAllCharsFramerKit(chars, 41377);
+
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            DrawAllCharsFramerKit(chars, 41378);
+
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            DrawAllCharsFramerKit(chars, 41379);
         }
 
         private void DrawHildibrandQuest(List<Character> chars)

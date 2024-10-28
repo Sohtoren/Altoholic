@@ -556,7 +556,7 @@ namespace Altoholic.Windows
                     Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Icon, item.HQ), new Vector2(36, 36));
                     if (ImGui.IsItemHovered())
                     {
-                        Utils.DrawItemTooltip(_currentLocale, ref _globalCache, item, armoire);
+                        Utils.DrawInventoryItemTooltip(_currentLocale, ref _globalCache, item, armoire);
                     }
 
                     if (itm.StackSize > 1)
@@ -708,7 +708,7 @@ namespace Altoholic.Windows
                         Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Icon, item.HQ), new Vector2(24, 24));
                         if (ImGui.IsItemHovered())
                         {
-                            Utils.DrawItemTooltip(_currentLocale, ref _globalCache, item);
+                            Utils.DrawInventoryItemTooltip(_currentLocale, ref _globalCache, item);
                         }
                         count++;
                         ImGui.SameLine();

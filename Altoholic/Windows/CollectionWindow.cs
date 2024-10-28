@@ -878,7 +878,7 @@ namespace Altoholic.Windows
                 }
                 if (ImGui.IsItemHovered())
                 {
-                    Utils.DrawBardingTooltip(_currentLocale, ref _globalCache, b, b.Icon);
+                    Utils.DrawBardingTooltip(_currentLocale, ref _globalCache, b);
                 }
 
                 i++;
