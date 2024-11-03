@@ -116,6 +116,8 @@ namespace Altoholic.Database
                                                    LastPlayTimeUpdate BIGINT,
                                                    HasPremiumSaddlebag BIT,
                                                    PlayerCommendations SMALLINT,
+                                                   CurrentFawear TEXT,
+                                                   CurrentOrnament SMALLINT,
                                                    Attributes TEXT,
                                                    Currencies TEXT,
                                                    Jobs TEXT,
@@ -136,7 +138,8 @@ namespace Altoholic.Database
                                                    Ornaments TEXT,
                                                    Glasses TEXT,
                                                    BeastReputations TEXT,
-                                                   Duties TEXT
+                                                   Duties TEXT,
+                                                   DutiesUnlocked TEXT
                                                );
                                    """;
                 int result = db.Execute(sql);
@@ -155,6 +158,27 @@ namespace Altoholic.Database
                     const string sql11 = $"ALTER TABLE {CharacterTableName} ADD COLUMN Duties TEXT";
                     int result11 = db.Execute(sql11);
                     Plugin.Log.Debug($"ALTER TABLE {CharacterTableName} ADD COLUMN Duties TEXT result: {result11}");
+                }
+                if (!DoesColumnExist(db, CharacterTableName, "DutiesUnlocked"))
+                {
+                    Plugin.Log.Debug($"Column {CharacterTableName}.DutiesUnlocked does not exist");
+                    const string sql12 = $"ALTER TABLE {CharacterTableName} ADD COLUMN DutiesUnlocked TEXT";
+                    int result12 = db.Execute(sql12);
+                    Plugin.Log.Debug($"ALTER TABLE {CharacterTableName} ADD COLUMN DutiesUnlocked TEXT result: {result12}");
+                }
+                if (!DoesColumnExist(db, CharacterTableName, "CurrentFacewear"))
+                {
+                    Plugin.Log.Debug($"Column {CharacterTableName}.CurrentFacewear does not exist");
+                    const string sql13 = $"ALTER TABLE {CharacterTableName} ADD COLUMN CurrentFacewear TEXT";
+                    int result13 = db.Execute(sql13);
+                    Plugin.Log.Debug($"ALTER TABLE {CharacterTableName} ADD COLUMN CurrentFacewear TEXT result: {result13}");
+                }
+                if (!DoesColumnExist(db, CharacterTableName, "CurrentOrnament"))
+                {
+                    Plugin.Log.Debug($"Column {CharacterTableName}.CurrentOrnament does not exist");
+                    const string sql14 = $"ALTER TABLE {CharacterTableName} ADD COLUMN CurrentOrnament SMALLINT";
+                    int result14 = db.Execute(sql14);
+                    Plugin.Log.Debug($"ALTER TABLE {CharacterTableName} ADD COLUMN CurrentOrnament TEXT result: {result14}");
                 }
             }
 
@@ -380,7 +404,7 @@ namespace Altoholic.Database
 
             try
             {
-                const string updateSql = $"UPDATE {CharacterTableName} SET [FirstName] = @FirstName, [LastName] = @LastName, [HomeWorld] = @HomeWorld, [Datacenter] = @Datacenter, [Region] = @Region, [IsSprout] = @IsSprout, [IsBattleMentor] = @IsBattleMentor, [IsTradeMentor] = @IsTradeMentor, [IsReturner] = @IsReturner, [LastJob] = @LastJob, [LastJobLevel] = @LastJobLevel, [FCTag] = @FCTag, [FreeCompany] = @FreeCompany, [LastOnline] = @LastOnline, [PlayTime] = @PlayTime, [LastPlayTimeUpdate] = @LastPlayTimeUpdate, [HasPremiumSaddlebag] = @HasPremiumSaddlebag, [PlayerCommendations] = @PlayerCommendations, [Attributes] = @Attributes, [Currencies] = @Currencies, [Jobs] = @Jobs, [Profile] = @Profile, [Quests] = @Quests, [Inventory] = @Inventory, [ArmoryInventory] = @ArmoryInventory, [Saddle] = @Saddle, [Gear] = @Gear, [Retainers] = @Retainers, [Minions] = @Minions, [Mounts] = @Mounts, [TripleTriadCards] = @TripleTriadCards, [Emotes] = @Emotes, [Bardings] = @Bardings, [FramerKits] = @FramerKits, [OrchestrionRolls] = @OrchestrionRolls, [Ornaments] = @Ornaments, [Glasses] = @Glasses, [BeastReputations] = @BeastReputations, [Duties] = @Duties WHERE [CharacterId] = @CharacterId";
+                const string updateSql = $"UPDATE {CharacterTableName} SET [FirstName] = @FirstName, [LastName] = @LastName, [HomeWorld] = @HomeWorld, [Datacenter] = @Datacenter, [Region] = @Region, [IsSprout] = @IsSprout, [IsBattleMentor] = @IsBattleMentor, [IsTradeMentor] = @IsTradeMentor, [IsReturner] = @IsReturner, [LastJob] = @LastJob, [LastJobLevel] = @LastJobLevel, [FCTag] = @FCTag, [FreeCompany] = @FreeCompany, [LastOnline] = @LastOnline, [PlayTime] = @PlayTime, [LastPlayTimeUpdate] = @LastPlayTimeUpdate, [HasPremiumSaddlebag] = @HasPremiumSaddlebag, [PlayerCommendations] = @PlayerCommendations, [CurrentFacewear] = @CurrentFacewear, [CurrentOrnament] = @CurrentOrnament, [Attributes] = @Attributes, [Currencies] = @Currencies, [Jobs] = @Jobs, [Profile] = @Profile, [Quests] = @Quests, [Inventory] = @Inventory, [ArmoryInventory] = @ArmoryInventory, [Saddle] = @Saddle, [Gear] = @Gear, [Retainers] = @Retainers, [Minions] = @Minions, [Mounts] = @Mounts, [TripleTriadCards] = @TripleTriadCards, [Emotes] = @Emotes, [Bardings] = @Bardings, [FramerKits] = @FramerKits, [OrchestrionRolls] = @OrchestrionRolls, [Ornaments] = @Ornaments, [Glasses] = @Glasses, [BeastReputations] = @BeastReputations, [Duties] = @Duties, [DutiesUnlocked] = @DutiesUnlocked WHERE [CharacterId] = @CharacterId";
                 int result = db.Execute(updateSql, FormatCharacterForDatabase(character));
                 return result;
             }
@@ -416,6 +440,9 @@ namespace Altoholic.Database
 
         public static Character FormatDatabaseCharacterFromDatabase(DatabaseCharacter databaseCharacter)
         {
+            ushort[] currentFacewear = string.IsNullOrEmpty(databaseCharacter.CurrentFacewear)
+                ? [0, 0]
+                : System.Text.Json.JsonSerializer.Deserialize<ushort[]>(databaseCharacter.CurrentFacewear) ?? [0,0];
             Attributes? attributes = string.IsNullOrEmpty(databaseCharacter.Attributes)
                 ? null
                 : System.Text.Json.JsonSerializer.Deserialize<Attributes>(databaseCharacter.Attributes);
@@ -501,6 +528,10 @@ namespace Altoholic.Database
                 ? []
                 : System.Text.Json.JsonSerializer.Deserialize<List<uint>>(databaseCharacter.Duties) ?? [];
             Plugin.Log.Debug("Duties deserialized");
+            List<uint> dutiesUnlocked = string.IsNullOrEmpty(databaseCharacter.DutiesUnlocked)
+                ? []
+                : System.Text.Json.JsonSerializer.Deserialize<List<uint>>(databaseCharacter.DutiesUnlocked) ?? [];
+            Plugin.Log.Debug("DutiesUnlocked deserialized");
 
             return new Character()
             {
@@ -526,6 +557,8 @@ namespace Altoholic.Database
                 LastPlayTimeUpdate = databaseCharacter.LastPlayTimeUpdate,
                 HasPremiumSaddlebag = databaseCharacter.HasPremiumSaddlebag,
                 PlayerCommendations = databaseCharacter.PlayerCommendations,
+                CurrentFacewear = currentFacewear,
+                CurrentOrnament = databaseCharacter.CurrentOrnament,
                 Attributes = attributes,
                 Currencies = currencies,
                 Jobs = jobs,
@@ -547,11 +580,13 @@ namespace Altoholic.Database
                 Glasses = [.. glasses],
                 BeastReputations = beastReputations,
                 Duties = [..duties],
+                DutiesUnlocked = [.. dutiesUnlocked]
             };
         }
 
         public static DatabaseCharacter FormatCharacterForDatabase(Character character)
         {
+            string currentFacewear = System.Text.Json.JsonSerializer.Serialize(character.CurrentFacewear);
             string attributes = System.Text.Json.JsonSerializer.Serialize(character.Attributes);
             string currencies = System.Text.Json.JsonSerializer.Serialize(character.Currencies);
             string jobs = System.Text.Json.JsonSerializer.Serialize(character.Jobs);
@@ -573,6 +608,7 @@ namespace Altoholic.Database
             string glasses = System.Text.Json.JsonSerializer.Serialize(character.Glasses);
             string beastReputations = System.Text.Json.JsonSerializer.Serialize(character.BeastReputations);
             string duties = System.Text.Json.JsonSerializer.Serialize(character.Duties);
+            string dutiesUnlocked = System.Text.Json.JsonSerializer.Serialize(character.DutiesUnlocked);
 
             return new DatabaseCharacter()
             {
@@ -598,6 +634,8 @@ namespace Altoholic.Database
                 LastPlayTimeUpdate = character.LastPlayTimeUpdate,
                 HasPremiumSaddlebag = character.HasPremiumSaddlebag,
                 PlayerCommendations = character.PlayerCommendations,
+                CurrentFacewear = currentFacewear,
+                CurrentOrnament = character.CurrentOrnament,
                 Attributes = attributes,
                 Currencies = currencies,
                 Jobs = jobs,
@@ -618,15 +656,16 @@ namespace Altoholic.Database
                 Ornaments = ornaments,
                 Glasses = glasses,
                 BeastReputations = beastReputations,
-                Duties = duties
+                Duties = duties,
+                DutiesUnlocked = dutiesUnlocked
             };
         }
 
         public static int AddCharacter(SqliteConnection db, Character character)
         {
             Plugin.Log.Debug("Entering AddCharacter()");
-            const string insertQuery = $"INSERT INTO {CharacterTableName}([CharacterId], [FirstName], [LastName], [HomeWorld], [Datacenter], [Region], [IsSprout], [IsBattleMentor], [IsTradeMentor], [IsReturner], [LastJob], [LastJobLevel], [FCTag], [FreeCompany], [LastOnline], [PlayTime], [LastPlayTimeUpdate], [HasPremiumSaddlebag], [PlayerCommendations], [Attributes], [Currencies], [Jobs], [Profile], [Quests], [Inventory], [ArmoryInventory], [Saddle], [Gear], [Retainers], [Minions], [Mounts], [TripleTriadCards], [Emotes], [Bardings], [FramerKits], [OrchestrionRolls], [Ornaments], [Glasses], [BeastReputations], [Duties]) " +
-                                       "VALUES (@CharacterId, @FirstName, @LastName, @HomeWorld, @Datacenter, @Region, @IsSprout, @IsBattleMentor, @IsTradeMentor, @IsReturner, @LastJob, @LastJobLevel, @FCTag, @FreeCompany, @LastOnline, @PlayTime, @LastPlayTimeUpdate, @HasPremiumSaddlebag, @PlayerCommendations, @Attributes, @Currencies, @Jobs, @Profile, @Quests, @Inventory, @ArmoryInventory, @Saddle, @Gear, @Retainers, @Minions, @Mounts, @TripleTriadCards, @Emotes, @Bardings, @FramerKits, @OrchestrionRolls, @Ornaments, @Glasses, @BeastReputations, @Duties)";
+            const string insertQuery = $"INSERT INTO {CharacterTableName}([CharacterId], [FirstName], [LastName], [HomeWorld], [Datacenter], [Region], [IsSprout], [IsBattleMentor], [IsTradeMentor], [IsReturner], [LastJob], [LastJobLevel], [FCTag], [FreeCompany], [LastOnline], [PlayTime], [LastPlayTimeUpdate], [HasPremiumSaddlebag], [PlayerCommendations], [CurrentFacewear], [CurrentOrnament], [Attributes], [Currencies], [Jobs], [Profile], [Quests], [Inventory], [ArmoryInventory], [Saddle], [Gear], [Retainers], [Minions], [Mounts], [TripleTriadCards], [Emotes], [Bardings], [FramerKits], [OrchestrionRolls], [Ornaments], [Glasses], [BeastReputations], [Duties], [DutiesUnlocked]) " +
+                                       "VALUES (@CharacterId, @FirstName, @LastName, @HomeWorld, @Datacenter, @Region, @IsSprout, @IsBattleMentor, @IsTradeMentor, @IsReturner, @LastJob, @LastJobLevel, @FCTag, @FreeCompany, @LastOnline, @PlayTime, @LastPlayTimeUpdate, @HasPremiumSaddlebag, @PlayerCommendations, @CurrentFacewear, @CurrentOrnament, @Attributes, @Currencies, @Jobs, @Profile, @Quests, @Inventory, @ArmoryInventory, @Saddle, @Gear, @Retainers, @Minions, @Mounts, @TripleTriadCards, @Emotes, @Bardings, @FramerKits, @OrchestrionRolls, @Ornaments, @Glasses, @BeastReputations, @Duties, @DutiesUnlocked)";
 
             int result = db.Execute(insertQuery, FormatCharacterForDatabase(character));
 

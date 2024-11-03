@@ -18,6 +18,8 @@ using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Application.Network.WorkDefinitions;
 using FFXIVClientStructs.FFXIV.Client.Game;
+using FFXIVClientStructs.FFXIV.Client.Game.Character;
+using FFXIVClientStructs.FFXIV.Client.Game.Control;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using FFXIVClientStructs.FFXIV.Client.System.String;
 using FFXIVClientStructs.FFXIV.Client.UI;
@@ -32,6 +34,8 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using static FFXIVClientStructs.FFXIV.Client.UI.RaptureAtkModule;
+using ImGuiNET;
+using Character = Altoholic.Models.Character;
 
 namespace Altoholic
 {
@@ -655,7 +659,12 @@ namespace Altoholic
                 }
             }
 
-            _localPlayer.LastJob = lPlayer.ClassJob.Id;
+            uint job = lPlayer.ClassJob.Id;
+            if (job != _localPlayer.LastJob)
+            {
+                GetPlayerEquippedGear();
+            }
+            _localPlayer.LastJob = job;
             _localPlayer.LastJobLevel = lPlayer.Level;
             _localPlayer.FCTag = lPlayer.CompanyTag.TextValue;
             _localPlayer.Attributes = new Attributes
@@ -768,8 +777,11 @@ namespace Altoholic
                 Viper = new Job { Level = player.ClassJobLevels[30], Exp = player.ClassJobExperience[30] },
                 Pictomancer = new Job { Level = player.ClassJobLevels[31], Exp = player.ClassJobExperience[31] },
             };
-            
-            
+
+            ref readonly BattleChara lp = ref *Control.GetLocalPlayer();
+            _localPlayer.CurrentFacewear[0] = lp.DrawData.GlassesIds[0];
+            _localPlayer.CurrentFacewear[1] = lp.DrawData.GlassesIds[1];
+            _localPlayer.CurrentOrnament = lp.OrnamentData.OrnamentId;
 
             /*foreach (uint i in Enumerable.Range(1001,79))
             {
@@ -1466,9 +1478,26 @@ namespace Altoholic
 
         private void GetDuties()
         {
-            foreach (Duty i in _globalCache.DutyStorage.GetAll().Where(i => !_localPlayer.IsDutyCompleted(i.Id)))
+            foreach (Duty i in _globalCache.DutyStorage.GetAll())
             {
-                Log.Debug($"Checking duty {i.Id}:{i.EnglishName}");
+                if (!_localPlayer.IsDutyUnlocked(i.Id))
+                {
+                    if (Utils.IsDutyUnlocked(i.Content))
+                    {
+                        Log.Debug($"Duty {i.Id}:{i.EnglishName} unlocked");
+                        _localPlayer.Duties.Add(i.Id);
+                    }
+                    else
+                    {
+                        Log.Debug($"Duty {i.Id}:{i.EnglishName} not unlocked");
+                    }
+                }
+
+                if (_localPlayer.IsDutyCompleted(i.Id))
+                {
+                    continue;
+                }
+
                 if (Utils.IsDutyCompleted(i.Content))
                 {
                     Log.Debug($"Duty {i.Id}:{i.EnglishName} completed");

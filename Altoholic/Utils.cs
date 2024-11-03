@@ -1006,7 +1006,7 @@ namespace Altoholic
 
         public static void DrawGear(ClientLanguage currentLocale, ref GlobalCache globalCache,
             ref Dictionary<GearSlot, IDalamudTextureWrap?> defaultTextures, List<Gear> gears, uint job, int jobLevel,
-            int middleWidth, int middleHeigth, bool retainer = false, int maxLevel = 0)
+            int middleWidth, int middleHeigth, bool retainer = false, int maxLevel = 0, ushort[]? currentFacewear = null)
         {
             if (gears.Count == 0) return;
             using (var gearTableHeader = ImRaii.Table("###GearTableHeader", 3))
@@ -1080,11 +1080,11 @@ namespace Altoholic
                 DrawGearPiece(currentLocale, ref globalCache, gears, GearSlot.FEET,
                     globalCache.AddonStorage.LoadAddonString(currentLocale, 11529), new Vector2(40, 40),
                     defaultTextures[GearSlot.FEET], defaultTextures[GearSlot.EMPTY]);
-                if (!retainer)
+                if (!retainer && currentFacewear is not null)
                 {
                     ImGui.TableNextRow();
                     ImGui.TableSetColumnIndex(0);
-                    DrawGearPiece(currentLocale, ref globalCache, gears, GearSlot.FACEWEAR,
+                    DrawFacewearPiece(currentLocale, ref globalCache, currentFacewear[0],
                         globalCache.AddonStorage.LoadAddonString(currentLocale, 16050), new Vector2(40, 40),
                         defaultTextures[GearSlot.FACEWEAR], defaultTextures[GearSlot.EMPTY]);
                 }
@@ -1252,6 +1252,34 @@ namespace Altoholic
                 if (ImGui.IsItemHovered())
                 {
                     DrawGearTooltip(currentLocale, ref globalCache, foundGear, i);
+                }
+            }
+        }
+        public static void DrawFacewearPiece(ClientLanguage currentLocale, ref GlobalCache globalCache, ushort id, string tooltip, Vector2 iconSize,
+            IDalamudTextureWrap? fallbackTexture, IDalamudTextureWrap? emptySlot)
+        {
+            if (fallbackTexture is null || emptySlot is null) return;
+            if (id == 0)
+            {
+                System.Numerics.Vector2 p = ImGui.GetCursorPos();
+                ImGui.Image(emptySlot.ImGuiHandle, new Vector2(42, 42));
+                ImGui.SetCursorPos(new Vector2(p.X + 1, p.Y + 1));
+                ImGui.Image(fallbackTexture.ImGuiHandle, new Vector2(40, 40));
+                if (ImGui.IsItemHovered())
+                {
+                    ImGui.BeginTooltip();
+                    ImGui.TextUnformatted(tooltip);
+                    ImGui.EndTooltip();
+                }
+            }
+            else
+            {
+                Models.Glasses? g = globalCache.GlassesStorage.GetGlasses(currentLocale, id);
+                if (g == null) return;
+                DrawIcon(globalCache.IconStorage.LoadIcon(g.Icon), iconSize);
+                if (ImGui.IsItemHovered())
+                {
+                    DrawGlassesTooltip(currentLocale, ref globalCache, g);
                 }
             }
         }
@@ -2685,6 +2713,10 @@ namespace Altoholic
         public static bool IsDutyCompleted(uint dutyId)
         {
             return UIState.IsInstanceContentCompleted(dutyId);
+        }
+        public static bool IsDutyUnlocked(uint dutyId)
+        {
+            return UIState.IsInstanceContentUnlocked(dutyId);
         }
 
         public static Models.Quest? GetQuest(uint id)

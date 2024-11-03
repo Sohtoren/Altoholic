@@ -158,7 +158,7 @@ namespace Altoholic.Windows
 
             ImGui.TableSetColumnIndex(1);
             Utils.DrawGear(_currentLocale, ref _globalCache, ref _characterTextures, selectedCharacter.Gear,
-                selectedCharacter.LastJob, selectedCharacter.LastJobLevel, 300, 350);
+                selectedCharacter.LastJob, selectedCharacter.LastJobLevel, 300, 350, false, 0, selectedCharacter.CurrentFacewear);
         }
 
         private void DrawAttributes(Character selectedCharacter)

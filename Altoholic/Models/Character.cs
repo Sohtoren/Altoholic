@@ -29,6 +29,8 @@ namespace Altoholic.Models
         public long LastPlayTimeUpdate {  get; set; } = 0;
         public bool HasPremiumSaddlebag { get; set; } = false;
         public short PlayerCommendations { get; set; } = 0;
+        public ushort[] CurrentFacewear { get; set; } = [0,0];
+        public ushort CurrentOrnament { get; set; } = 0;
         public Attributes? Attributes { get; set; }
         public PlayerCurrencies? Currencies { get; set; }
         public Jobs? Jobs { get; set; }
@@ -51,6 +53,7 @@ namespace Altoholic.Models
         public List<CurrenciesHistory> CurrenciesHistory { get; set; } = [];
         public List<BeastTribeRank> BeastReputations { get; set; } = [];
         public HashSet<uint> Duties { get; set; } = [];
+        public HashSet<uint> DutiesUnlocked { get; set; } = [];
 
         public bool HasAnyLevelJob(int level)
         {
@@ -133,6 +136,10 @@ namespace Altoholic.Models
         public bool IsDutyCompleted(uint id)
         {
             return Duties.Count > 0 && Duties.Contains(id);
+        }
+        public bool IsDutyUnlocked(uint id)
+        {
+            return DutiesUnlocked.Count > 0 && DutiesUnlocked.Contains(id);
         }
     }
 }

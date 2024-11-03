@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace Altoholic.Models
 {
     public class DatabaseCharacter
@@ -26,6 +28,8 @@ namespace Altoholic.Models
         public long LastPlayTimeUpdate { get; set; } = 0;
         public bool HasPremiumSaddlebag { get; set; } = false;
         public short PlayerCommendations { get; set; } = 0;
+        public string CurrentFacewear { get; set; } = string.Empty;
+        public ushort CurrentOrnament { get; set; } = 0;
         public string Attributes { get; set; } = string.Empty;
         public string Currencies { get; set; } = string.Empty;
         public string Jobs { get; set; } = string.Empty;
@@ -47,5 +51,6 @@ namespace Altoholic.Models
         public string Glasses { get; set; } = string.Empty;
         public string BeastReputations { get; set; } = string.Empty;
         public string Duties { get; set; } = string.Empty;
+        public string DutiesUnlocked { get; set; } = string.Empty;
     }
 }
