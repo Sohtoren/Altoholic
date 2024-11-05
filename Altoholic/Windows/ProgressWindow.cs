@@ -6,15 +6,18 @@ using Dalamud.Game.Text;
 using Dalamud.Interface.Textures.TextureWraps;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
+using FFXIVClientStructs.FFXIV.Component.Text;
 using ImGuiNET;
 using Lumina.Excel.GeneratedSheets;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
 using System.Linq;
 using System.Numerics;
 using static Dalamud.Interface.Utility.Raii.ImRaii;
 using Emote = Altoholic.Models.Emote;
 using Mount = Altoholic.Models.Mount;
+using Ornament = Altoholic.Models.Ornament;
 using TripleTriadCard = Altoholic.Models.TripleTriadCard;
 
 namespace Altoholic.Windows
@@ -62,6 +65,7 @@ namespace Altoholic.Windows
         private bool _rightChevron = true;
         private bool _downChevron;
         private bool _hasValueBeenSelected;
+        private int _currentOldMoogleReward;
 
         public override void OnClose()
         {
@@ -80,6 +84,7 @@ namespace Altoholic.Windows
             Plugin.Log.Debug("ProgressWindow Clear() called");
             _currentCharacter = null;
             _selectedExpansion = _globalCache.AddonStorage.LoadAddonString(_currentLocale, 5752);
+            _currentOldMoogleReward = 0;
         }
 
         public override void Draw()
@@ -366,7 +371,6 @@ namespace Altoholic.Windows
                 }
             }
         }
-
 
         private void DrawMainScenarioQuest(List<Character> chars)
         {
@@ -1255,8 +1259,6 @@ namespace Altoholic.Windows
                 }
             }
 
-
-
             using (var blundervilleRewards =
                    ImRaii.TabItem(
                        $"{Loc.Localize("Event_Blunderville", "Blunderville")} {_globalCache.AddonStorage.LoadAddonString(_currentLocale, 1885)}"))
@@ -1265,21 +1267,32 @@ namespace Altoholic.Windows
                 {
                     using var charactersEventTable = ImRaii.Table(
                         $"###CharactersProgress#All#Event#blundervilleRewards#Table",
-                        chars.Count + 1,
+                        chars.Count + 2,
                         ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner |
                         ImGuiTableFlags.ScrollX | ImGuiTableFlags.ScrollY);
                     if (!charactersEventTable) return;
                     ImGui.TableSetupColumn($"###CharactersProgress#All#Event#blundervilleRewards#Name",
                         ImGuiTableColumnFlags.WidthFixed, 260);
+                    ImGui.TableSetupColumn($"###CharactersProgress#All#Event#blundervilleRewards#Currency",
+                        ImGuiTableColumnFlags.WidthFixed, 25);
                     foreach (Character c in chars)
                     {
                         ImGui.TableSetupColumn($"###CharactersProgress#All#Event#blundervilleRewards#{c.CharacterId}",
-                            ImGuiTableColumnFlags.WidthFixed, 15);
+                            ImGuiTableColumnFlags.WidthFixed, 20);
                     }
 
                     ImGui.TableNextRow();
                     ImGui.TableSetColumnIndex(0);
                     ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 1885));
+
+                    ImGui.TableSetColumnIndex(1);
+                    Item? itm = _globalCache.ItemStorage.LoadItem(_currentLocale, (uint)Currencies.MGF);
+                    if (itm == null) return;
+                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Icon), new Vector2(16, 16));
+                    if (ImGui.IsItemHovered())
+                    {
+                        Utils.DrawItemTooltip(_currentLocale, ref _globalCache, itm);
+                    }
 
                     foreach (Character currChar in chars)
                     {
@@ -1318,6 +1331,8 @@ namespace Altoholic.Windows
 
         private void DrawMoogleRewards(List<Character> chars)
         {
+            Dictionary<int, string> mooglesNames = [];
+            mooglesNames[0] = Loc.Localize("OldMoogleEvent", "Old Events");
             string goetiaName = _currentLocale switch
             {
                 ClientLanguage.German => "Goëtische Goldschätze",
@@ -1330,21 +1345,33 @@ namespace Altoholic.Windows
             {
                 using var charactersEventTable = ImRaii.Table(
                     $"###CharactersProgress#All#Event#MogRewards#Table#Event2024_3",
-                    chars.Count + 1,
+                    chars.Count + 2,
                     ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner |
                     ImGuiTableFlags.ScrollX | ImGuiTableFlags.ScrollY);
                 if (!charactersEventTable) return;
                 ImGui.TableSetupColumn($"###CharactersProgress#All#Event#MogRewards#Event2024_3#Name",
                     ImGuiTableColumnFlags.WidthFixed, 270);
+                ImGui.TableSetupColumn($"###CharactersProgress#All#Event#MogRewards#Event2024_3#Currency",
+                    ImGuiTableColumnFlags.WidthFixed, 20);
                 foreach (Character c in chars)
                 {
                     ImGui.TableSetupColumn($"###CharactersProgress#All#Event#MogRewards#Event2024_3#{c.CharacterId}",
-                        ImGuiTableColumnFlags.WidthFixed, 15);
+                        ImGuiTableColumnFlags.WidthFixed, 20);
                 }
 
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
                 ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 1885));
+
+                ImGui.TableSetColumnIndex(1);
+                Item? itm = _globalCache.ItemStorage.LoadItem(_currentLocale,
+                    (uint)Currencies.IRREGULAR_TOMESTONE_OF_GOETIA);
+                if (itm == null) return;
+                Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Icon), new Vector2(16, 16));
+                if (ImGui.IsItemHovered())
+                {
+                    Utils.DrawItemTooltip(_currentLocale, ref _globalCache, itm);
+                }
 
                 foreach (Character currChar in chars)
                 {
@@ -1359,97 +1386,1168 @@ namespace Altoholic.Windows
                     }
                 }
 
-                DrawAllCharsMount(chars, 192);
-                DrawAllCharsMount(chars, 126);
-                DrawAllCharsBarding(chars, 73);
-                ImGui.TableNextRow();
-                ImGui.TableSetColumnIndex(0);
-                Item? itm = _globalCache.ItemStorage.LoadItem(_currentLocale, 32835);
-                if (itm != null)
-                {
-                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Icon), new Vector2(32, 32));
-                    if (ImGui.IsItemHovered())
-                    {
-                        Utils.DrawItemTooltip(_currentLocale, ref _globalCache, itm);
-                    }
+                DrawAllCharsMount(chars, 192, 50);
+                DrawAllCharsMount(chars, 126, 50);
+                DrawAllCharsBarding(chars, 73, 50);
+                DrawAllCharsHairstyle(chars, 32835, 50);
+                DrawAllCharsOrchestrion(chars, 363, 50);
+                DrawAllCharsEmote(chars, 215, 50);
+                DrawAllCharsEmote(chars, 189, 30);
+                DrawAllCharsMount(chars, 19, 30);
+                DrawAllCharsMount(chars, 20, 30);
+                DrawAllCharsMount(chars, 158, 30);
+                DrawAllCharsMount(chars, 172, 30);
+                DrawAllCharsMinion(chars, 58, 15);
+                DrawAllCharsTripleTriadCard(chars, 105, 10);
+                DrawAllCharsTripleTriadCard(chars, 106, 10);
+                DrawAllCharsTripleTriadCard(chars, 228, 7);
+                DrawAllCharsTripleTriadCard(chars, 271, 7);
+                DrawAllCharsTripleTriadCard(chars, 303, 7);
+                DrawAllCharsMinion(chars, 326, 7);
+                DrawAllCharsMinion(chars, 336, 7);
+                DrawAllCharsOrchestrion(chars, 231, 7);
+            }
 
-                    ImGui.SameLine();
-                    ImGui.TextUnformatted(itm.Name);
-                    foreach (Character currChar in chars)
+            string genesis2Name = _currentLocale switch
+            {
+                ClientLanguage.German => "Dimensionale Ursprünge - Teil 2",
+                ClientLanguage.English => "The Second Hunt for Genesis",
+                ClientLanguage.French => "Genèse d'une nouvelle dimension - Partie 2",
+                ClientLanguage.Japanese => "～新次元の創世 Part2～",
+                _ => "The Second Hunt for Genesis"
+            };
+            mooglesNames[2024_2] = genesis2Name;
+            string genesis1Name = _currentLocale switch
+            {
+                ClientLanguage.German => "Dimensionale Ursprünge - Teil 1",
+                ClientLanguage.English => "The First Hunt for Genesis",
+                ClientLanguage.French => "Genèse d'une nouvelle dimension - Partie 1",
+                ClientLanguage.Japanese => "～新次元の創世 Part1～",
+                _ => "The First Hunt for Genesis"
+            };
+            mooglesNames[2024_1] = genesis1Name;
+            string tenthAnniversaryName = _currentLocale switch
+            {
+                ClientLanguage.German => "10. Jubiläum",
+                ClientLanguage.English => "The 10th Anniversary Hunt",
+                ClientLanguage.French => "Spéciale 10e anniversaire",
+                ClientLanguage.Japanese => "\uff5e新生10周年スペシャル\uff5e",
+                _ => "The 10th Anniversary Hunt"
+            };
+            mooglesNames[2023_2] = tenthAnniversaryName;
+            string mendacityName = _currentLocale switch
+            {
+                ClientLanguage.German => "Tratsch aus Quatsch",
+                ClientLanguage.English => "The Hunt for Mendacity",
+                ClientLanguage.French => "Duplicité Kupo",
+                ClientLanguage.Japanese => "\uff5e虚構の刻\uff5e",
+                _ => "The Hunt for Mendacity"
+            };
+            mooglesNames[2023_1] = mendacityName;
+            string theHuntForCreationName = _currentLocale switch
+            {
+                ClientLanguage.German => "Allerlei Erinnerungen",
+                ClientLanguage.English => "The Hunt for Creation",
+                ClientLanguage.French => "Cosmogonie Kupo",
+                ClientLanguage.Japanese => "\uff5e万物の記憶\uff5e",
+                _ => "The Hunt for Creation"
+            };
+            mooglesNames[2022_3] = theHuntForCreationName;
+
+            string theHuntForVerityName = _currentLocale switch
+            {
+                ClientLanguage.German => "Die Stunde der Wahrheit",
+                ClientLanguage.English => "The Hunt for Verity",
+                ClientLanguage.French => "Véridicité Kupo",
+                ClientLanguage.Japanese => "\uff5e帰ってきた真理\uff5e",
+                _ => "The Hunt for Verity"
+            };
+            mooglesNames[2022_2] = theHuntForVerityName;
+
+            string theHuntForScriptureName = _currentLocale switch
+            {
+                ClientLanguage.German => "Theologisches Vermächtnis",
+                ClientLanguage.English => "The Hunt for Scripture",
+                ClientLanguage.French => "Théologie Kupo",
+                ClientLanguage.Japanese => "～聖典を継ぐ者～",
+                _ => "The Hunt for Scripture"
+            };
+            mooglesNames[2022_1] = theHuntForScriptureName;
+
+            string theHuntForLoreName = _currentLocale switch
+            {
+                ClientLanguage.German => "Sagenhafte Schätze",
+                ClientLanguage.English => "The Hunt for Lore",
+                ClientLanguage.French => "Tradition Kupo",
+                ClientLanguage.Japanese => "\uff5e炎獄の伝承\uff5e",
+                _ => "The Hunt for Lore"
+            };
+            mooglesNames[2021_3] = theHuntForLoreName;
+
+            string theHuntForPageantryName = _currentLocale switch
+            {
+                ClientLanguage.German => "Fan Festival",
+                ClientLanguage.English => "The Hunt for Pageantry",
+                ClientLanguage.French => "Festivités Kupo",
+                ClientLanguage.Japanese => "\uff5eファンフェススペシャル2021\uff5e",
+                _ => "The Hunt for Pageantry"
+            };
+            mooglesNames[2021_2] = theHuntForPageantryName;
+
+            string theHuntForEsotericsName = _currentLocale switch
+            {
+                ClientLanguage.German => "Esoterische Momente",
+                ClientLanguage.English => "The Hunt for Esoterics",
+                ClientLanguage.French => "Ésotérisme Kupo",
+                ClientLanguage.Japanese => "\uff5eもうひとつの禁書\uff5e",
+                _ => "The Hunt for Esoterics"
+            };
+            mooglesNames[2021_1] = theHuntForEsotericsName;
+
+            string theHuntForLawName = _currentLocale switch
+            {
+                ClientLanguage.German => "Emotionale Erinnerungen",
+                ClientLanguage.English => "The Hunt for Law",
+                ClientLanguage.French => "Réminiscence Kupo",
+                ClientLanguage.Japanese => "\uff5e追憶の法典\uff5e",
+                _ => "The Hunt for Law"
+            };
+            mooglesNames[2020_2] = theHuntForLawName;
+
+            string theHuntForSoldieryName = _currentLocale switch
+            {
+                ClientLanguage.German => "Strategische Schnitzeljag",
+                ClientLanguage.English => "The Hunt for Soldiery",
+                ClientLanguage.French => "Martialité Kupo",
+                ClientLanguage.Japanese => "\uff5e戦記ューフォーエバー\uff5e",
+                _ => "The Hunt for Soldiery"
+            };
+            mooglesNames[2020_1] = theHuntForSoldieryName;
+
+            string theHuntForMythologyName = _currentLocale switch
+            {
+                ClientLanguage.German => "Mythologische Mär",
+                ClientLanguage.English => "The Hunt for Mythology",
+                ClientLanguage.French => "Mythologie Kupo",
+                ClientLanguage.Japanese => "\uff5eそして神話へ…\uff5e",
+                _ => "The Hunt for Mythology"
+            };
+            mooglesNames[2019_2] = theHuntForMythologyName;
+
+            string theHuntForPhilosophyName = _currentLocale switch
+            {
+                ClientLanguage.German => "Philosophische Momente",
+                ClientLanguage.English => "The Hunt for Philosophy",
+                ClientLanguage.French => "Philosophie Kupo",
+                ClientLanguage.Japanese => "\uff5e哲学ふたたび\uff5e",
+                _ => "The Hunt for Philosophy"
+            };
+            mooglesNames[2019_1] = theHuntForPhilosophyName;
+
+            string n = (_currentOldMoogleReward == 0) ? mooglesNames[0] : mooglesNames[_currentOldMoogleReward];
+            using (var combo = ImRaii.Combo("###CharactersProgress#Reputations#Combo", n))
+            {
+                if (combo)
+                {
+                    foreach (KeyValuePair<int, string> name in mooglesNames.Where(name =>
+                                 ImGui.Selectable(name.Value, name.Value == n)))
                     {
-                        ImGui.TableNextColumn();
-                        ImGui.TextUnformatted("/");
-                        if (ImGui.IsItemHovered())
-                        {
-                            ImGui.BeginTooltip();
-                            ImGui.TextUnformatted("Hairstyles are currently not tracked");
-                            ImGui.EndTooltip();
-                        }
+                        _currentOldMoogleReward = name.Key;
                     }
                 }
+            }
 
-                DrawAllCharsOrchestrion(chars, 363);
-                DrawAllCharsEmote(chars, 215);
-                DrawAllCharsEmote(chars, 189);
-                DrawAllCharsMount(chars, 19);
-                DrawAllCharsMount(chars, 20);
-                DrawAllCharsMount(chars, 158);
-                DrawAllCharsMount(chars, 172);
-                DrawAllCharsMinion(chars, 58);
-                DrawAllCharsTripleTriadCard(chars, 105);
-                DrawAllCharsTripleTriadCard(chars, 106);
-                DrawAllCharsTripleTriadCard(chars, 228);
-                DrawAllCharsTripleTriadCard(chars, 271);
-                DrawAllCharsTripleTriadCard(chars, 303);
-                DrawAllCharsMinion(chars, 326);
-                DrawAllCharsMinion(chars, 336);
-                DrawAllCharsOrchestrion(chars, 231);
-            }
-            /*if (ImGui.CollapsingHeader($"2024: Moogle Treasure Trove: The Second Hunt for Genesis"))
+            switch (_currentOldMoogleReward)
             {
+                case 2024_2:
+                    {
+                        using var charactersEventTable = ImRaii.Table(
+                            $"###CharactersProgress#All#Event#MogRewards#Table#Event2024_2",
+                            chars.Count + 2,
+                            ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner |
+                            ImGuiTableFlags.ScrollX | ImGuiTableFlags.ScrollY);
+                        if (!charactersEventTable) return;
+                        ImGui.TableSetupColumn($"###CharactersProgress#All#Event#MogRewards#Event2024_2#Name",
+                            ImGuiTableColumnFlags.WidthFixed, 270);
+                        ImGui.TableSetupColumn($"###CharactersProgress#All#Event#MogRewards#Event2024_2#Currency",
+                            ImGuiTableColumnFlags.WidthFixed, 25);
+                        foreach (Character c in chars)
+                        {
+                            ImGui.TableSetupColumn(
+                                $"###CharactersProgress#All#Event#MogRewards#Event2024_2#{c.CharacterId}",
+                                ImGuiTableColumnFlags.WidthFixed, 20);
+                        }
+
+                        ImGui.TableNextRow();
+                        ImGui.TableSetColumnIndex(0);
+                        ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 1885));
+
+                        ImGui.TableSetColumnIndex(1);
+                        Item? itm = _globalCache.ItemStorage.LoadItem(_currentLocale,
+                            (uint)Currencies.IRREGULAR_TOMESTONE_OF_GENESIS_II);
+                        if (itm == null) return;
+                        Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Icon), new Vector2(16, 16));
+                        if (ImGui.IsItemHovered())
+                        {
+                            Utils.DrawItemTooltip(_currentLocale, ref _globalCache, itm);
+                        }
+
+                        foreach (Character currChar in chars)
+                        {
+                            ImGui.TableNextColumn();
+                            ImGui.TextUnformatted($"{currChar.FirstName[0]}.{currChar.LastName[0]}");
+                            if (ImGui.IsItemHovered())
+                            {
+                                ImGui.BeginTooltip();
+                                ImGui.TextUnformatted(
+                                    $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
+                                ImGui.EndTooltip();
+                            }
+                        }
+
+                        DrawAllCharsMount(chars, 211, 50);
+                        DrawAllCharsMount(chars, 224, 50);
+                        DrawAllCharsMinion(chars, 359, 50);
+                        DrawAllCharsOrchestrion(chars, 333, 50);
+                        DrawAllCharsBarding(chars, 54, 30);
+                        DrawAllCharsOrchestrion(chars, 76, 30);
+                        DrawAllCharsOrnament(chars, 7, 30);
+                        DrawAllCharsMount(chars, 35, 30);
+                        DrawAllCharsMount(chars, 30, 30);
+                        DrawAllCharsMount(chars, 77, 30);
+                        DrawAllCharsMount(chars, 144, 30);
+                        DrawAllCharsTripleTriadCard(chars, 103, 10);
+                        DrawAllCharsTripleTriadCard(chars, 104, 10);
+                        DrawAllCharsTripleTriadCard(chars, 267, 10);
+                        DrawAllCharsTripleTriadCard(chars, 282, 10);
+                        DrawAllCharsMinion(chars, 388, 7);
+                        DrawAllCharsMinion(chars, 148, 7);
+                        DrawAllCharsOrchestrion(chars, 207, 7);
+
+
+                        break;
+                    }
+                case 2024_1:
+                    {
+                        using var charactersEventTable = ImRaii.Table(
+                            $"###CharactersProgress#All#Event#MogRewards#Table#Event2024_1",
+                            chars.Count + 2,
+                            ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner |
+                            ImGuiTableFlags.ScrollX | ImGuiTableFlags.ScrollY);
+                        if (!charactersEventTable) return;
+                        ImGui.TableSetupColumn($"###CharactersProgress#All#Event#MogRewards#Event2024_1#Name",
+                            ImGuiTableColumnFlags.WidthFixed, 270);
+                        ImGui.TableSetupColumn($"###CharactersProgress#All#Event#MogRewards#Event2024_1#Currency",
+                            ImGuiTableColumnFlags.WidthFixed, 25);
+                        foreach (Character c in chars)
+                        {
+                            ImGui.TableSetupColumn(
+                                $"###CharactersProgress#All#Event#MogRewards#Event2024_1#{c.CharacterId}",
+                                ImGuiTableColumnFlags.WidthFixed, 20);
+                        }
+
+                        ImGui.TableNextRow();
+                        ImGui.TableSetColumnIndex(0);
+                        ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 1885));
+
+                        ImGui.TableSetColumnIndex(1);
+                        Item? itm = _globalCache.ItemStorage.LoadItem(_currentLocale,
+                            (uint)Currencies.IRREGULAR_TOMESTONE_OF_GENESIS_I);
+                        if (itm == null) return;
+                        Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Icon), new Vector2(16, 16));
+                        if (ImGui.IsItemHovered())
+                        {
+                            Utils.DrawItemTooltip(_currentLocale, ref _globalCache, itm);
+                        }
+
+                        foreach (Character currChar in chars)
+                        {
+                            ImGui.TableNextColumn();
+                            ImGui.TextUnformatted($"{currChar.FirstName[0]}.{currChar.LastName[0]}");
+                            if (ImGui.IsItemHovered())
+                            {
+                                ImGui.BeginTooltip();
+                                ImGui.TextUnformatted(
+                                    $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
+                                ImGui.EndTooltip();
+                            }
+                        }
+
+                        DrawAllCharsMount(chars, 242, 50);
+                        DrawAllCharsBarding(chars, 69, 50);
+                        DrawAllCharsHairstyle(chars, 28615, 50);
+                        DrawAllCharsMinion(chars, 319, 50);
+                        DrawAllCharsMount(chars, 208, 30);
+                        DrawAllCharsOrchestrion(chars, 254, 30);
+                        DrawAllCharsOrchestrion(chars, 78, 30);
+                        DrawAllCharsMount(chars, 27, 30);
+                        DrawAllCharsMount(chars, 43, 30);
+                        DrawAllCharsMount(chars, 76, 30);
+                        DrawAllCharsMount(chars, 133, 30);
+                        DrawAllCharsTripleTriadCard(chars, 111, 10);
+                        DrawAllCharsTripleTriadCard(chars, 102, 10);
+                        DrawAllCharsTripleTriadCard(chars, 249, 7);
+                        DrawAllCharsTripleTriadCard(chars, 261, 7);
+                        DrawAllCharsMinion(chars, 361, 7);
+                        DrawAllCharsMinion(chars, 144, 7);
+                        DrawAllCharsOrchestrion(chars, 179, 7);
+
+
+                        break;
+                    }
+                case 2023_2:
+                    {
+                        using var charactersEventTable = ImRaii.Table(
+                            $"###CharactersProgress#All#Event#MogRewards#Table#Event2023_2",
+                            chars.Count + 2,
+                            ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner |
+                            ImGuiTableFlags.ScrollX | ImGuiTableFlags.ScrollY);
+                        if (!charactersEventTable) return;
+                        ImGui.TableSetupColumn($"###CharactersProgress#All#Event#MogRewards#Event2023_2#Name",
+                            ImGuiTableColumnFlags.WidthFixed, 270);
+                        ImGui.TableSetupColumn($"###CharactersProgress#All#Event#MogRewards#Event2023_2#Currency",
+                            ImGuiTableColumnFlags.WidthFixed, 25);
+                        foreach (Character c in chars)
+                        {
+                            ImGui.TableSetupColumn(
+                                $"###CharactersProgress#All#Event#MogRewards#Event2023_2#{c.CharacterId}",
+                                ImGuiTableColumnFlags.WidthFixed, 20);
+                        }
+
+                        ImGui.TableNextRow();
+                        ImGui.TableSetColumnIndex(0);
+                        ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 1885));
+
+                        ImGui.TableSetColumnIndex(1);
+                        Item? itm = _globalCache.ItemStorage.LoadItem(_currentLocale,
+                            (uint)Currencies.IRREGULAR_TOMESTONE_OF_TENFOLD_PAGEANTRY);
+                        if (itm == null) return;
+                        Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Icon), new Vector2(16, 16));
+                        if (ImGui.IsItemHovered())
+                        {
+                            Utils.DrawItemTooltip(_currentLocale, ref _globalCache, itm);
+                        }
+
+                        foreach (Character currChar in chars)
+                        {
+                            ImGui.TableNextColumn();
+                            ImGui.TextUnformatted($"{currChar.FirstName[0]}.{currChar.LastName[0]}");
+                            if (ImGui.IsItemHovered())
+                            {
+                                ImGui.BeginTooltip();
+                                ImGui.TextUnformatted(
+                                    $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
+                                ImGui.EndTooltip();
+                            }
+                        }
+
+                        DrawAllCharsFramerKit(chars, 40501, 10);
+                        DrawAllCharsOrnament(chars, 14, 100);
+                        DrawAllCharsTripleTriadCard(chars, 68, 100);
+                        DrawAllCharsHairstyle(chars, 33706, 100);
+                        DrawAllCharsBarding(chars, 66, 100);
+                        DrawAllCharsEmote(chars, 181, 80);
+                        DrawAllCharsEmote(chars, 180, 50);
+                        DrawAllCharsEmote(chars, 213, 50);
+                        DrawAllCharsEmote(chars, 223, 50);
+                        DrawAllCharsEmote(chars, 214, 50);
+                        DrawAllCharsMount(chars, 189, 50);
+                        DrawAllCharsMount(chars, 236, 50);
+                        DrawAllCharsMount(chars, 150, 50);
+                        DrawAllCharsOrchestrion(chars, 45, 50);
+                        DrawAllCharsOrchestrion(chars, 386, 50);
+                        DrawAllCharsOrchestrion(chars, 507, 50);
+                        DrawAllCharsHairstyle(chars, 24234, 50);
+                        DrawAllCharsMinion(chars, 349, 50);
+                        DrawAllCharsMinion(chars, 352, 50);
+                        DrawAllCharsMount(chars, 116, 30);
+                        DrawAllCharsMount(chars, 115, 30);
+                        DrawAllCharsMount(chars, 133, 30);
+                        DrawAllCharsMount(chars, 144, 30);
+                        DrawAllCharsMount(chars, 158, 30);
+                        DrawAllCharsMount(chars, 172, 30);
+                        DrawAllCharsMount(chars, 182, 30);
+                        DrawAllCharsOrchestrion(chars, 257, 30);
+                        DrawAllCharsOrchestrion(chars, 258, 30);
+                        DrawAllCharsOrchestrion(chars, 259, 30);
+                        DrawAllCharsOrnament(chars, 2, 30);
+                        DrawAllCharsTripleTriadCard(chars, 83, 10);
+                        DrawAllCharsTripleTriadCard(chars, 84, 10);
+                        DrawAllCharsTripleTriadCard(chars, 235, 7);
+                        DrawAllCharsTripleTriadCard(chars, 250, 7);
+                        DrawAllCharsMinion(chars, 372, 7);
+                        DrawAllCharsMinion(chars, 373, 7);
+                        DrawAllCharsMinion(chars, 93, 7);
+                        DrawAllCharsMinion(chars, 110, 7);
+                        DrawAllCharsOrchestrion(chars, 345, 7);
+                        DrawAllCharsMinion(chars, 199, 1);
+
+
+
+                        break;
+                    }
+                case 2023_1:
+                    {
+                        using var charactersEventTable = ImRaii.Table(
+                            $"###CharactersProgress#All#Event#MogRewards#Table#Event2023_1",
+                            chars.Count + 2,
+                            ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner |
+                            ImGuiTableFlags.ScrollX | ImGuiTableFlags.ScrollY);
+                        if (!charactersEventTable) return;
+                        ImGui.TableSetupColumn($"###CharactersProgress#All#Event#MogRewards#Event2023_1#Name",
+                            ImGuiTableColumnFlags.WidthFixed, 270);
+                        ImGui.TableSetupColumn($"###CharactersProgress#All#Event#MogRewards#Event2023_1#Currency",
+                            ImGuiTableColumnFlags.WidthFixed, 50);
+                        foreach (Character c in chars)
+                        {
+                            ImGui.TableSetupColumn(
+                                $"###CharactersProgress#All#Event#MogRewards#Event2023_1#{c.CharacterId}",
+                                ImGuiTableColumnFlags.WidthFixed, 20);
+                        }
+
+                        ImGui.TableNextRow();
+                        ImGui.TableSetColumnIndex(0);
+                        ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 1885));
+
+                        ImGui.TableSetColumnIndex(1);
+                        Item? itm = _globalCache.ItemStorage.LoadItem(_currentLocale,
+                            (uint)Currencies.IRREGULAR_TOMESTONE_OF_MENDACITY);
+                        if (itm == null) return;
+                        Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Icon), new Vector2(16, 16));
+                        if (ImGui.IsItemHovered())
+                        {
+                            Utils.DrawItemTooltip(_currentLocale, ref _globalCache, itm);
+                        }
+
+                        foreach (Character currChar in chars)
+                        {
+                            ImGui.TableNextColumn();
+                            ImGui.TextUnformatted($"{currChar.FirstName[0]}.{currChar.LastName[0]}");
+                            if (ImGui.IsItemHovered())
+                            {
+                                ImGui.BeginTooltip();
+                                ImGui.TextUnformatted(
+                                    $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
+                                ImGui.EndTooltip();
+                            }
+                        }
+
+                        DrawAllCharsMount(chars, 121, 50);
+                        DrawAllCharsMount(chars, 130, 50);
+                        DrawAllCharsMount(chars, 225, 50);
+                        DrawAllCharsOrchestrion(chars, 324, 50);
+                        DrawAllCharsHairstyle(chars, 23369, 50);
+                        DrawAllCharsEmote(chars, 208, 30);
+                        DrawAllCharsMount(chars, 20, 30);
+                        DrawAllCharsMount(chars, 26, 30);
+                        DrawAllCharsMount(chars, 28, 30);
+                        DrawAllCharsMount(chars, 22, 30);
+                        DrawAllCharsMount(chars, 75, 30);
+                        DrawAllCharsMount(chars, 104, 30);
+                        DrawAllCharsMount(chars, 116, 30);
+                        DrawAllCharsMount(chars, 115, 30);
+                        DrawAllCharsTripleTriadCard(chars, 81, 10);
+                        DrawAllCharsTripleTriadCard(chars, 82, 10);
+                        DrawAllCharsTripleTriadCard(chars, 216, 7);
+                        DrawAllCharsTripleTriadCard(chars, 244, 7);
+                        DrawAllCharsMinion(chars, 82, 7);
+                        DrawAllCharsMinion(chars, 333, 7);
+                        DrawAllCharsOrchestrion(chars, 117, 7);
+                        DrawAllCharsOrchestrion(chars, 118, 7);
+
+
+                        break;
+                    }
+                case 2022_3:
+                    {
+                        using var charactersEventTable = ImRaii.Table(
+                            $"###CharactersProgress#All#Event#MogRewards#Table#Event2022_3",
+                            chars.Count + 2,
+                            ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner |
+                            ImGuiTableFlags.ScrollX | ImGuiTableFlags.ScrollY);
+                        if (!charactersEventTable) return;
+                        ImGui.TableSetupColumn($"###CharactersProgress#All#Event#MogRewards#Event2022_3#Name",
+                            ImGuiTableColumnFlags.WidthFixed, 270);
+                        ImGui.TableSetupColumn($"###CharactersProgress#All#Event#MogRewards#Event2022_3#Currency",
+                            ImGuiTableColumnFlags.WidthFixed, 50);
+                        foreach (Character c in chars)
+                        {
+                            ImGui.TableSetupColumn(
+                                $"###CharactersProgress#All#Event#MogRewards#Event2022_3#{c.CharacterId}",
+                                ImGuiTableColumnFlags.WidthFixed, 20);
+                        }
+
+                        ImGui.TableNextRow();
+                        ImGui.TableSetColumnIndex(0);
+                        ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 1885));
+
+                        ImGui.TableSetColumnIndex(1);
+                        Item? itm = _globalCache.ItemStorage.LoadItem(_currentLocale,
+                            (uint)Currencies.IRREGULAR_TOMESTONE_OF_CREATION);
+                        if (itm == null) return;
+                        Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Icon), new Vector2(16, 16));
+                        if (ImGui.IsItemHovered())
+                        {
+                            Utils.DrawItemTooltip(_currentLocale, ref _globalCache, itm);
+                        }
+
+                        foreach (Character currChar in chars)
+                        {
+                            ImGui.TableNextColumn();
+                            ImGui.TextUnformatted($"{currChar.FirstName[0]}.{currChar.LastName[0]}");
+                            if (ImGui.IsItemHovered())
+                            {
+                                ImGui.BeginTooltip();
+                                ImGui.TextUnformatted(
+                                    $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
+                                ImGui.EndTooltip();
+                            }
+                        }
+
+                        DrawAllCharsMount(chars, 182, 50);
+                        DrawAllCharsMount(chars, 209, 50);
+                        DrawAllCharsMount(chars, 112, 50);
+                        DrawAllCharsEmote(chars, 195, 50);
+                        DrawAllCharsOrchestrion(chars, 227, 50);
+                        DrawAllCharsOrchestrion(chars, 264, 50);
+                        DrawAllCharsEmote(chars, 207, 30);
+                        DrawAllCharsBarding(chars, 31, 30);
+                        DrawAllCharsMount(chars, 19, 30);
+                        DrawAllCharsMount(chars, 35, 30);
+                        DrawAllCharsMount(chars, 29, 30);
+                        DrawAllCharsMount(chars, 31, 30);
+                        DrawAllCharsMount(chars, 90, 30);
+                        DrawAllCharsMount(chars, 98, 30);
+                        DrawAllCharsOrchestrion(chars, 36, 10);
+                        DrawAllCharsOrchestrion(chars, 37, 10);
+                        DrawAllCharsOrchestrion(chars, 234, 7);
+                        DrawAllCharsOrchestrion(chars, 250, 7);
+                        DrawAllCharsMinion(chars, 256, 7);
+                        DrawAllCharsOrchestrion(chars, 85, 7);
+                        DrawAllCharsOrchestrion(chars, 86, 7);
+
+
+                        break;
+                    }
+                case 2022_2:
+                    {
+                        using var charactersEventTable = ImRaii.Table(
+                            $"###CharactersProgress#All#Event#MogRewards#Table#Event2022_2",
+                            chars.Count + 2,
+                            ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner |
+                            ImGuiTableFlags.ScrollX | ImGuiTableFlags.ScrollY);
+                        if (!charactersEventTable) return;
+                        ImGui.TableSetupColumn($"###CharactersProgress#All#Event#MogRewards#Event2022_2#Name",
+                            ImGuiTableColumnFlags.WidthFixed, 270);
+                        ImGui.TableSetupColumn($"###CharactersProgress#All#Event#MogRewards#Event2022_2#Currency",
+                            ImGuiTableColumnFlags.WidthFixed, 50);
+                        foreach (Character c in chars)
+                        {
+                            ImGui.TableSetupColumn(
+                                $"###CharactersProgress#All#Event#MogRewards#Event2022_2#{c.CharacterId}",
+                                ImGuiTableColumnFlags.WidthFixed, 20);
+                        }
+
+                        ImGui.TableNextRow();
+                        ImGui.TableSetColumnIndex(0);
+                        ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 1885));
+
+                        ImGui.TableSetColumnIndex(1);
+                        Item? itm = _globalCache.ItemStorage.LoadItem(_currentLocale,
+                            (uint)Currencies.IRREGULAR_TOMESTONE_OF_VERITY);
+                        if (itm == null) return;
+                        Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Icon), new Vector2(16, 16));
+                        if (ImGui.IsItemHovered())
+                        {
+                            Utils.DrawItemTooltip(_currentLocale, ref _globalCache, itm);
+                        }
+
+                        foreach (Character currChar in chars)
+                        {
+                            ImGui.TableNextColumn();
+                            ImGui.TextUnformatted($"{currChar.FirstName[0]}.{currChar.LastName[0]}");
+                            if (ImGui.IsItemHovered())
+                            {
+                                ImGui.BeginTooltip();
+                                ImGui.TextUnformatted(
+                                    $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
+                                ImGui.EndTooltip();
+                            }
+                        }
+
+                        DrawAllCharsMount(chars, 158, 50);
+                        DrawAllCharsMount(chars, 211, 50);
+                        DrawAllCharsMinion(chars, 314, 50);
+                        DrawAllCharsHairstyle(chars, 31406, 50);
+                        DrawAllCharsOrchestrion(chars, 263, 50);
+                        DrawAllCharsEmote(chars, 203, 30);
+                        DrawAllCharsMount(chars, 26, 30);
+                        DrawAllCharsMount(chars, 27, 30);
+                        DrawAllCharsMount(chars, 30, 30);
+                        DrawAllCharsMount(chars, 40, 30);
+                        DrawAllCharsMount(chars, 77, 30);
+                        DrawAllCharsMount(chars, 78, 30);
+                        DrawAllCharsTripleTriadCard(chars, 33, 10);
+                        DrawAllCharsTripleTriadCard(chars, 35, 10);
+                        DrawAllCharsTripleTriadCard(chars, 224, 7);
+                        DrawAllCharsTripleTriadCard(chars, 229, 7);
+                        DrawAllCharsMinion(chars, 243, 7);
+                        DrawAllCharsMinion(chars, 330, 7);
+                        DrawAllCharsOrchestrion(chars, 231, 7);
+
+                        break;
+                    }
+                case 2022_1:
+                    {
+                        using var charactersEventTable = ImRaii.Table(
+                            $"###CharactersProgress#All#Event#MogRewards#Table#Event2022_1",
+                            chars.Count + 2,
+                            ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner |
+                            ImGuiTableFlags.ScrollX | ImGuiTableFlags.ScrollY);
+                        if (!charactersEventTable) return;
+                        ImGui.TableSetupColumn($"###CharactersProgress#All#Event#MogRewards#Event2022_1#Name",
+                            ImGuiTableColumnFlags.WidthFixed, 270);
+                        ImGui.TableSetupColumn($"###CharactersProgress#All#Event#MogRewards#Event2022_1#Currency",
+                            ImGuiTableColumnFlags.WidthFixed, 50);
+                        foreach (Character c in chars)
+                        {
+                            ImGui.TableSetupColumn(
+                                $"###CharactersProgress#All#Event#MogRewards#Event2022_1#{c.CharacterId}",
+                                ImGuiTableColumnFlags.WidthFixed, 20);
+                        }
+
+                        ImGui.TableNextRow();
+                        ImGui.TableSetColumnIndex(0);
+                        ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 1885));
+
+                        ImGui.TableSetColumnIndex(1);
+                        Item? itm = _globalCache.ItemStorage.LoadItem(_currentLocale,
+                            (uint)Currencies.IRREGULAR_TOMESTONE_OF_SCRIPTURE);
+                        if (itm == null) return;
+                        Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Icon), new Vector2(16, 16));
+                        if (ImGui.IsItemHovered())
+                        {
+                            Utils.DrawItemTooltip(_currentLocale, ref _globalCache, itm);
+                        }
+
+                        foreach (Character currChar in chars)
+                        {
+                            ImGui.TableNextColumn();
+                            ImGui.TextUnformatted($"{currChar.FirstName[0]}.{currChar.LastName[0]}");
+                            if (ImGui.IsItemHovered())
+                            {
+                                ImGui.BeginTooltip();
+                                ImGui.TextUnformatted(
+                                    $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
+                                ImGui.EndTooltip();
+                            }
+                        }
+
+                        DrawAllCharsMount(chars, 172, 50);
+                        DrawAllCharsHairstyle(chars, 30113, 50);
+                        DrawAllCharsOrchestrion(chars, 262, 50);
+                        DrawAllCharsMount(chars, 19, 30);
+                        DrawAllCharsMount(chars, 20, 30);
+                        DrawAllCharsMount(chars, 28, 30);
+                        DrawAllCharsMount(chars, 43, 30);
+                        DrawAllCharsMount(chars, 75, 30);
+                        DrawAllCharsMount(chars, 76, 30);
+                        DrawAllCharsMinion(chars, 148, 7);
+                        DrawAllCharsMinion(chars, 254, 7);
+                        DrawAllCharsTripleTriadCard(chars, 213, 7);
+                        DrawAllCharsTripleTriadCard(chars, 215, 7);
+                        DrawAllCharsTripleTriadCard(chars, 209, 7);
+                        DrawAllCharsOrchestrion(chars, 179, 7);
+                        DrawAllCharsOrchestrion(chars, 207, 7);
+
+                        break;
+                    }
+                case 2021_3:
+                    {
+                        using var charactersEventTable = ImRaii.Table(
+                            $"###CharactersProgress#All#Event#MogRewards#Table#Event2021_3",
+                            chars.Count + 2,
+                            ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner |
+                            ImGuiTableFlags.ScrollX | ImGuiTableFlags.ScrollY);
+                        if (!charactersEventTable) return;
+                        ImGui.TableSetupColumn($"###CharactersProgress#All#Event#MogRewards#Event2021_3#Name",
+                            ImGuiTableColumnFlags.WidthFixed, 270);
+                        ImGui.TableSetupColumn($"###CharactersProgress#All#Event#MogRewards#Event2021_3#Currency",
+                            ImGuiTableColumnFlags.WidthFixed, 50);
+                        foreach (Character c in chars)
+                        {
+                            ImGui.TableSetupColumn(
+                                $"###CharactersProgress#All#Event#MogRewards#Event2021_3#{c.CharacterId}",
+                                ImGuiTableColumnFlags.WidthFixed, 20);
+                        }
+
+                        ImGui.TableNextRow();
+                        ImGui.TableSetColumnIndex(0);
+                        ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 1885));
+
+                        ImGui.TableSetColumnIndex(1);
+                        Item? itm = _globalCache.ItemStorage.LoadItem(_currentLocale,
+                            (uint)Currencies.IRREGULAR_TOMESTONE_OF_LORE);
+                        if (itm == null) return;
+                        Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Icon), new Vector2(16, 16));
+                        if (ImGui.IsItemHovered())
+                        {
+                            Utils.DrawItemTooltip(_currentLocale, ref _globalCache, itm);
+                        }
+
+                        foreach (Character currChar in chars)
+                        {
+                            ImGui.TableNextColumn();
+                            ImGui.TextUnformatted($"{currChar.FirstName[0]}.{currChar.LastName[0]}");
+                            if (ImGui.IsItemHovered())
+                            {
+                                ImGui.BeginTooltip();
+                                ImGui.TextUnformatted(
+                                    $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
+                                ImGui.EndTooltip();
+                            }
+                        }
+
+                        DrawAllCharsMount(chars, 144, 50);
+                        DrawAllCharsMount(chars, 90, 50);
+                        DrawAllCharsHairstyle(chars, 24234, 50);
+                        DrawAllCharsOrchestrion(chars, 261, 50);
+                        DrawAllCharsBarding(chars, 54, 30);
+                        DrawAllCharsMount(chars, 19, 30);
+                        DrawAllCharsMount(chars, 20, 30);
+                        DrawAllCharsMount(chars, 26, 30);
+                        DrawAllCharsMount(chars, 27, 30);
+                        DrawAllCharsMount(chars, 35, 30);
+                        DrawAllCharsMount(chars, 29, 30);
+                        DrawAllCharsMount(chars, 31, 30);
+                        DrawAllCharsMinion(chars, 144, 7);
+                        DrawAllCharsMinion(chars, 283, 7);
+                        DrawAllCharsTripleTriadCard(chars, 206, 7);
+                        DrawAllCharsTripleTriadCard(chars, 179, 7);
+                        DrawAllCharsTripleTriadCard(chars, 197, 7);
+                        DrawAllCharsOrchestrion(chars, 117, 7);
+                        DrawAllCharsOrchestrion(chars, 118, 7);
+
+                        break;
+                    }
+                case 2021_2:
+                    {
+                        using var charactersEventTable = ImRaii.Table(
+                            $"###CharactersProgress#All#Event#MogRewards#Table#Event2021_2",
+                            chars.Count + 2,
+                            ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner |
+                            ImGuiTableFlags.ScrollX | ImGuiTableFlags.ScrollY);
+                        if (!charactersEventTable) return;
+                        ImGui.TableSetupColumn($"###CharactersProgress#All#Event#MogRewards#Event2021_2#Name",
+                            ImGuiTableColumnFlags.WidthFixed, 270);
+                        ImGui.TableSetupColumn($"###CharactersProgress#All#Event#MogRewards#Event2021_2#Currency",
+                            ImGuiTableColumnFlags.WidthFixed, 50);
+                        foreach (Character c in chars)
+                        {
+                            ImGui.TableSetupColumn(
+                                $"###CharactersProgress#All#Event#MogRewards#Event2021_2#{c.CharacterId}",
+                                ImGuiTableColumnFlags.WidthFixed, 20);
+                        }
+
+                        ImGui.TableNextRow();
+                        ImGui.TableSetColumnIndex(0);
+                        ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 1885));
+
+                        ImGui.TableSetColumnIndex(1);
+                        Item? itm = _globalCache.ItemStorage.LoadItem(_currentLocale,
+                            (uint)Currencies.IRREGULAR_TOMESTONE_OF_PAGEANTRY);
+                        if (itm == null) return;
+                        Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Icon), new Vector2(16, 16));
+                        if (ImGui.IsItemHovered())
+                        {
+                            Utils.DrawItemTooltip(_currentLocale, ref _globalCache, itm);
+                        }
+
+                        foreach (Character currChar in chars)
+                        {
+                            ImGui.TableNextColumn();
+                            ImGui.TextUnformatted($"{currChar.FirstName[0]}.{currChar.LastName[0]}");
+                            if (ImGui.IsItemHovered())
+                            {
+                                ImGui.BeginTooltip();
+                                ImGui.TextUnformatted(
+                                    $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
+                                ImGui.EndTooltip();
+                            }
+                        }
+
+                        DrawAllCharsMount(chars, 133, 50);
+                        DrawAllCharsMount(chars, 115, 50);
+                        DrawAllCharsMount(chars, 116, 50);
+                        DrawAllCharsEmote(chars, 180, 50);
+                        DrawAllCharsEmote(chars, 181, 80);
+                        DrawAllCharsHairstyle(chars, 23369, 50);
+                        DrawAllCharsHairstyle(chars, 24233, 50);
+                        DrawAllCharsOrchestrion(chars, 257, 50);
+                        DrawAllCharsOrchestrion(chars, 258, 50);
+                        DrawAllCharsOrchestrion(chars, 259, 50);
+                        DrawAllCharsOrchestrion(chars, 260, 30);
+                        DrawAllCharsMinion(chars, 199, 1);
+                        DrawAllCharsMinion(chars, 270, 7);
+                        DrawAllCharsMinion(chars, 305, 7);
+                        DrawAllCharsMinion(chars, 197, 7);
+                        DrawAllCharsTripleTriadCard(chars, 201, 7);
+                        DrawAllCharsTripleTriadCard(chars, 190, 7);
+                        DrawAllCharsTripleTriadCard(chars, 191, 7);
+
+                        break;
+                    }
+                case 2021_1:
+                    {
+                        using var charactersEventTable = ImRaii.Table(
+                            $"###CharactersProgress#All#Event#MogRewards#Table#Event2021_1",
+                            chars.Count + 2,
+                            ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner |
+                            ImGuiTableFlags.ScrollX | ImGuiTableFlags.ScrollY);
+                        if (!charactersEventTable) return;
+                        ImGui.TableSetupColumn($"###CharactersProgress#All#Event#MogRewards#Event2021_1#Name",
+                            ImGuiTableColumnFlags.WidthFixed, 270);
+                        ImGui.TableSetupColumn($"###CharactersProgress#All#Event#MogRewards#Event2021_1#Currency",
+                            ImGuiTableColumnFlags.WidthFixed, 50);
+                        foreach (Character c in chars)
+                        {
+                            ImGui.TableSetupColumn(
+                                $"###CharactersProgress#All#Event#MogRewards#Event2021_1#{c.CharacterId}",
+                                ImGuiTableColumnFlags.WidthFixed, 20);
+                        }
+
+                        ImGui.TableNextRow();
+                        ImGui.TableSetColumnIndex(0);
+                        ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 1885));
+
+                        ImGui.TableSetColumnIndex(1);
+                        Item? itm = _globalCache.ItemStorage.LoadItem(_currentLocale,
+                            (uint)Currencies.IRREGULAR_TOMESTONE_OF_ESOTERICS);
+                        if (itm == null) return;
+                        Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Icon), new Vector2(16, 16));
+                        if (ImGui.IsItemHovered())
+                        {
+                            Utils.DrawItemTooltip(_currentLocale, ref _globalCache, itm);
+                        }
+
+                        foreach (Character currChar in chars)
+                        {
+                            ImGui.TableNextColumn();
+                            ImGui.TextUnformatted($"{currChar.FirstName[0]}.{currChar.LastName[0]}");
+                            if (ImGui.IsItemHovered())
+                            {
+                                ImGui.BeginTooltip();
+                                ImGui.TextUnformatted(
+                                    $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
+                                ImGui.EndTooltip();
+                            }
+                        }
+
+                        DrawAllCharsMount(chars, 115, 50);
+                        DrawAllCharsMount(chars, 150, 50);
+                        DrawAllCharsMount(chars, 112, 50);
+                        DrawAllCharsMount(chars, 121, 50);
+                        DrawAllCharsOrchestrion(chars, 580, 50);
+                        DrawAllCharsMount(chars, 19, 30);
+                        DrawAllCharsMount(chars, 20, 30);
+                        DrawAllCharsMount(chars, 26, 30);
+                        DrawAllCharsMount(chars, 27, 30);
+                        DrawAllCharsMount(chars, 35, 30);
+                        DrawAllCharsMount(chars, 30, 30);
+                        DrawAllCharsMount(chars, 40, 30);
+                        DrawAllCharsMount(chars, 22, 30);
+                        DrawAllCharsMinion(chars, 143, 7);
+                        DrawAllCharsMinion(chars, 272, 7);
+                        DrawAllCharsTripleTriadCard(chars, 85, 7);
+                        DrawAllCharsTripleTriadCard(chars, 177, 7);
+                        DrawAllCharsTripleTriadCard(chars, 182, 7);
+                        DrawAllCharsOrchestrion(chars, 85, 7);
+                        DrawAllCharsOrchestrion(chars, 86, 7);
+
+                        break;
+                    }
+                case 2020_2:
+                    {
+                        using var charactersEventTable = ImRaii.Table(
+                            $"###CharactersProgress#All#Event#MogRewards#Table#Event2020_2",
+                            chars.Count + 2,
+                            ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner |
+                            ImGuiTableFlags.ScrollX | ImGuiTableFlags.ScrollY);
+                        if (!charactersEventTable) return;
+                        ImGui.TableSetupColumn($"###CharactersProgress#All#Event#MogRewards#Event2020_2#Name",
+                            ImGuiTableColumnFlags.WidthFixed, 270);
+                        ImGui.TableSetupColumn($"###CharactersProgress#All#Event#MogRewards#Event2020_2#Currency",
+                            ImGuiTableColumnFlags.WidthFixed, 50);
+                        foreach (Character c in chars)
+                        {
+                            ImGui.TableSetupColumn(
+                                $"###CharactersProgress#All#Event#MogRewards#Event2020_2#{c.CharacterId}",
+                                ImGuiTableColumnFlags.WidthFixed, 20);
+                        }
+
+                        ImGui.TableNextRow();
+                        ImGui.TableSetColumnIndex(0);
+                        ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 1885));
+
+                        ImGui.TableSetColumnIndex(1);
+                        Item? itm = _globalCache.ItemStorage.LoadItem(_currentLocale,
+                            (uint)Currencies.IRREGULAR_TOMESTONE_OF_LAW);
+                        if (itm == null) return;
+                        Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Icon), new Vector2(16, 16));
+                        if (ImGui.IsItemHovered())
+                        {
+                            Utils.DrawItemTooltip(_currentLocale, ref _globalCache, itm);
+                        }
+
+                        foreach (Character currChar in chars)
+                        {
+                            ImGui.TableNextColumn();
+                            ImGui.TextUnformatted($"{currChar.FirstName[0]}.{currChar.LastName[0]}");
+                            if (ImGui.IsItemHovered())
+                            {
+                                ImGui.BeginTooltip();
+                                ImGui.TextUnformatted(
+                                    $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
+                                ImGui.EndTooltip();
+                            }
+                        }
+
+                        DrawAllCharsMount(chars, 130, 50);
+                        DrawAllCharsMount(chars, 104, 50);
+                        DrawAllCharsMount(chars, 116, 50);
+                        DrawAllCharsOrchestrion(chars, 43, 50);
+                        DrawAllCharsOrchestrion(chars, 92, 50);
+                        DrawAllCharsMount(chars, 19, 30);
+                        DrawAllCharsMount(chars, 20, 30);
+                        DrawAllCharsMount(chars, 26, 30);
+                        DrawAllCharsMount(chars, 27, 30);
+                        DrawAllCharsMount(chars, 30, 30);
+                        DrawAllCharsMount(chars, 28, 30);
+                        DrawAllCharsMount(chars, 43, 30);
+                        DrawAllCharsMinion(chars, 178, 7);
+                        DrawAllCharsMinion(chars, 179, 7);
+                        DrawAllCharsTripleTriadCard(chars, 116, 7);
+                        DrawAllCharsTripleTriadCard(chars, 137, 7);
+                        DrawAllCharsTripleTriadCard(chars, 64, 7);
+                        DrawAllCharsOrchestrion(chars, 231, 7);
+                        DrawAllCharsOrchestrion(chars, 30, 7);
+
+                        break;
+                    }
+                case 2020_1:
+                    {
+                        using var charactersEventTable = ImRaii.Table(
+                            $"###CharactersProgress#All#Event#MogRewards#Table#Event2020_1",
+                            chars.Count + 2,
+                            ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner |
+                            ImGuiTableFlags.ScrollX | ImGuiTableFlags.ScrollY);
+                        if (!charactersEventTable) return;
+                        ImGui.TableSetupColumn($"###CharactersProgress#All#Event#MogRewards#Event2020_1#Name",
+                            ImGuiTableColumnFlags.WidthFixed, 270);
+                        ImGui.TableSetupColumn($"###CharactersProgress#All#Event#MogRewards#Event2020_1#Currency",
+                            ImGuiTableColumnFlags.WidthFixed, 50);
+                        foreach (Character c in chars)
+                        {
+                            ImGui.TableSetupColumn(
+                                $"###CharactersProgress#All#Event#MogRewards#Event2020_1#{c.CharacterId}",
+                                ImGuiTableColumnFlags.WidthFixed, 20);
+                        }
+
+                        ImGui.TableNextRow();
+                        ImGui.TableSetColumnIndex(0);
+                        ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 1885));
+
+                        ImGui.TableSetColumnIndex(1);
+                        Item? itm = _globalCache.ItemStorage.LoadItem(_currentLocale,
+                            (uint)Currencies.IRREGULAR_TOMESTONE_OF_SOLDIERY);
+                        if (itm == null) return;
+                        Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Icon), new Vector2(16, 16));
+                        if (ImGui.IsItemHovered())
+                        {
+                            Utils.DrawItemTooltip(_currentLocale, ref _globalCache, itm);
+                        }
+
+                        foreach (Character currChar in chars)
+                        {
+                            ImGui.TableNextColumn();
+                            ImGui.TextUnformatted($"{currChar.FirstName[0]}.{currChar.LastName[0]}");
+                            if (ImGui.IsItemHovered())
+                            {
+                                ImGui.BeginTooltip();
+                                ImGui.TextUnformatted(
+                                    $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
+                                ImGui.EndTooltip();
+                            }
+                        }
+
+
+                        DrawAllCharsMount(chars, 121, 50);
+                        DrawAllCharsMount(chars, 78, 50);
+                        DrawAllCharsOrchestrion(chars, 45, 50);
+                        DrawAllCharsOrchestrion(chars, 78, 50);
+                        DrawAllCharsOrchestrion(chars, 76, 50);
+                        DrawAllCharsOrchestrion(chars, 77, 50);
+                        DrawAllCharsMount(chars, 19, 30);
+                        DrawAllCharsMount(chars, 20, 30);
+                        DrawAllCharsMount(chars, 26, 30);
+                        DrawAllCharsMount(chars, 27, 30);
+                        DrawAllCharsMount(chars, 35, 30);
+                        DrawAllCharsMount(chars, 29, 30);
+                        DrawAllCharsMount(chars, 31, 30);
+                        DrawAllCharsMinion(chars, 281, 7);
+                        DrawAllCharsMinion(chars, 141, 7);
+                        DrawAllCharsTripleTriadCard(chars, 43, 7);
+                        DrawAllCharsTripleTriadCard(chars, 55, 7);
+                        DrawAllCharsTripleTriadCard(chars, 98, 7);
+                        DrawAllCharsTripleTriadCard(chars, 168, 7);
+                        DrawAllCharsOrchestrion(chars, 179, 7);
+                        DrawAllCharsOrchestrion(chars, 207, 7);
+                        break;
+                    }
+                case 2019_2:
+                    {
+                        using var charactersEventTable = ImRaii.Table(
+                            $"###CharactersProgress#All#Event#MogRewards#Table#Event2019_2",
+                            chars.Count + 2,
+                            ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner |
+                            ImGuiTableFlags.ScrollX | ImGuiTableFlags.ScrollY);
+                        if (!charactersEventTable) return;
+                        ImGui.TableSetupColumn($"###CharactersProgress#All#Event#MogRewards#Event2019_2#Name",
+                            ImGuiTableColumnFlags.WidthFixed, 270);
+                        ImGui.TableSetupColumn($"###CharactersProgress#All#Event#MogRewards#Event2019_2#Currency",
+                            ImGuiTableColumnFlags.WidthFixed, 50);
+                        foreach (Character c in chars)
+                        {
+                            ImGui.TableSetupColumn(
+                                $"###CharactersProgress#All#Event#MogRewards#Event2019_2#{c.CharacterId}",
+                                ImGuiTableColumnFlags.WidthFixed, 20);
+                        }
+
+                        ImGui.TableNextRow();
+                        ImGui.TableSetColumnIndex(0);
+                        ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 1885));
+
+                        ImGui.TableSetColumnIndex(1);
+                        Item? itm = _globalCache.ItemStorage.LoadItem(_currentLocale,
+                            (uint)Currencies.IRREGULAR_TOMESTONE_OF_MYTHOLOGY);
+                        if (itm == null) return;
+                        Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Icon), new Vector2(16, 16));
+                        if (ImGui.IsItemHovered())
+                        {
+                            Utils.DrawItemTooltip(_currentLocale, ref _globalCache, itm);
+                        }
+
+                        foreach (Character currChar in chars)
+                        {
+                            ImGui.TableNextColumn();
+                            ImGui.TextUnformatted($"{currChar.FirstName[0]}.{currChar.LastName[0]}");
+                            if (ImGui.IsItemHovered())
+                            {
+                                ImGui.BeginTooltip();
+                                ImGui.TextUnformatted(
+                                    $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
+                                ImGui.EndTooltip();
+                            }
+                        }
+
+                        DrawAllCharsMount(chars, 112, 50);
+                        DrawAllCharsMount(chars, 77, 50);
+                        DrawAllCharsMount(chars, 98, 50);
+                        DrawAllCharsOrchestrion(chars, 45, 50);
+                        DrawAllCharsOrchestrion(chars, 78, 50);
+                        DrawAllCharsOrchestrion(chars, 76, 50);
+                        DrawAllCharsOrchestrion(chars, 77, 50);
+                        DrawAllCharsMount(chars, 19, 30);
+                        DrawAllCharsMount(chars, 20, 30);
+                        DrawAllCharsMount(chars, 26, 30);
+                        DrawAllCharsMount(chars, 27, 30);
+                        DrawAllCharsMount(chars, 35, 30);
+                        DrawAllCharsMount(chars, 30, 30);
+                        DrawAllCharsMount(chars, 40, 30);
+                        DrawAllCharsMinion(chars, 232, 7);
+                        DrawAllCharsMinion(chars, 259, 7);
+                        DrawAllCharsTripleTriadCard(chars, 52, 7);
+                        DrawAllCharsTripleTriadCard(chars, 219, 7);
+                        DrawAllCharsTripleTriadCard(chars, 110, 7);
+                        DrawAllCharsTripleTriadCard(chars, 99, 7);
+                        DrawAllCharsOrchestrion(chars, 117, 7);
+                        DrawAllCharsOrchestrion(chars, 118, 7);
+                        break;
+                    }
+                case 2019_1:
+                    {
+                        using var charactersEventTable = ImRaii.Table(
+                            $"###CharactersProgress#All#Event#MogRewards#Table#Event2019_1",
+                            chars.Count + 2,
+                            ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner |
+                            ImGuiTableFlags.ScrollX | ImGuiTableFlags.ScrollY);
+                        if (!charactersEventTable) return;
+                        ImGui.TableSetupColumn($"###CharactersProgress#All#Event#MogRewards#Event2019_1#Name",
+                            ImGuiTableColumnFlags.WidthFixed, 270);
+                        ImGui.TableSetupColumn($"###CharactersProgress#All#Event#MogRewards#Event2019_1#Currency",
+                            ImGuiTableColumnFlags.WidthFixed, 50);
+                        foreach (Character c in chars)
+                        {
+                            ImGui.TableSetupColumn(
+                                $"###CharactersProgress#All#Event#MogRewards#Event2019_1#{c.CharacterId}",
+                                ImGuiTableColumnFlags.WidthFixed, 20);
+                        }
+
+                        ImGui.TableNextRow();
+                        ImGui.TableSetColumnIndex(0);
+                        ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 1885));
+
+                        ImGui.TableSetColumnIndex(1);
+                        Item? itm = _globalCache.ItemStorage.LoadItem(_currentLocale,
+                            (uint)Currencies.IRREGULAR_TOMESTONE_OF_PHILOSOPHY);
+                        if (itm == null) return;
+                        Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Icon), new Vector2(16, 16));
+                        if (ImGui.IsItemHovered())
+                        {
+                            Utils.DrawItemTooltip(_currentLocale, ref _globalCache, itm);
+                        }
+
+                        foreach (Character currChar in chars)
+                        {
+                            ImGui.TableNextColumn();
+                            ImGui.TextUnformatted($"{currChar.FirstName[0]}.{currChar.LastName[0]}");
+                            if (ImGui.IsItemHovered())
+                            {
+                                ImGui.BeginTooltip();
+                                ImGui.TextUnformatted(
+                                    $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
+                                ImGui.EndTooltip();
+                            }
+                        }
+
+                        DrawAllCharsMount(chars, 67, 50);
+                        DrawAllCharsMount(chars, 75, 50);
+                        DrawAllCharsMount(chars, 76, 50);
+                        DrawAllCharsOrchestrion(chars, 45, 50);
+                        DrawAllCharsMount(chars, 19, 30);
+                        DrawAllCharsMount(chars, 20, 30);
+                        DrawAllCharsMount(chars, 26, 30);
+                        DrawAllCharsMount(chars, 27, 30);
+                        DrawAllCharsMount(chars, 28, 30);
+                        DrawAllCharsMount(chars, 35, 30);
+                        DrawAllCharsMount(chars, 43, 30);
+                        DrawAllCharsBarding(chars, 16, 30);
+                        DrawAllCharsMinion(chars, 188, 7);
+                        DrawAllCharsMinion(chars, 194, 7);
+                        DrawAllCharsMinion(chars, 215, 7);
+                        DrawAllCharsMinion(chars, 299, 7);
+                        DrawAllCharsTripleTriadCard(chars, 136, 7);
+                        DrawAllCharsTripleTriadCard(chars, 152, 7);
+                        DrawAllCharsTripleTriadCard(chars, 163, 7);
+                        DrawAllCharsTripleTriadCard(chars, 229, 7);
+                        DrawAllCharsOrchestrion(chars, 85, 7);
+                        DrawAllCharsOrchestrion(chars, 86, 7);
+                        break;
+                    }
             }
-            if (ImGui.CollapsingHeader($"2024: Moogle Treasure Trove: The First Hunt for Genesis"))
-            {
-            }
-            if (ImGui.CollapsingHeader($"Moogle Treasure Trove: The 10th Anniversary Hunt"))
-            {
-            }
-            if (ImGui.CollapsingHeader($"Moogle Treasure Trove: The Hunt for Mendacity"))
-            {
-            }
-            if (ImGui.CollapsingHeader($"Moogle Treasure Trove: The Hunt for Creation"))
-            {
-            }
-            if (ImGui.CollapsingHeader($"Moogle Treasure Trove: The Hunt for Verity"))
-            {
-            }
-            if (ImGui.CollapsingHeader($"Moogle Treasure Trove: The Hunt for Scripture"))
-            {
-            }
-            if (ImGui.CollapsingHeader($"Moogle Treasure Trove: The Hunt for Lore"))
-            {
-            }
-            if (ImGui.CollapsingHeader($"Moogle Treasure Festival 2021 The Hunt for Pageantry"))
-            {
-            }
-            if (ImGui.CollapsingHeader($"Moogle Treasure Trove: The Hunt for Esoterics"))
-            {
-            }
-            if (ImGui.CollapsingHeader($"Moogle Treasure Trove: The Hunt for Law"))
-            {
-            }
-            if (ImGui.CollapsingHeader($"Moogle Treasure Trove: The Hunt for Soldiery"))
-            {
-            }
-            if (ImGui.CollapsingHeader($"Moogle Treasure Trove: The Hunt for Mythology"))
-            {
-            }
-            if (ImGui.CollapsingHeader($"Moogle Treasure Trove: The Hunt for Philosophy"))
-            {
-            }*/
         }
 
-        private void DrawAllCharsEmote(List<Character> chars, uint id)
+        private void DrawAllCharsEmote(List<Character> chars, uint id, int cost)
         {
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
@@ -1472,6 +2570,8 @@ namespace Altoholic.Windows
                 };
                 ImGui.TextUnformatted(name);
 
+                ImGui.TableNextColumn();ImGui.TextUnformatted($"{cost}");
+
                 foreach (Character currChar in chars)
                 {
                     ImGui.TableNextColumn();
@@ -1487,7 +2587,7 @@ namespace Altoholic.Windows
                 }
             }
         }
-        private void DrawAllCharsMount(List<Character> chars, uint id)
+        private void DrawAllCharsMount(List<Character> chars, uint id, int cost)
         {
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
@@ -1511,6 +2611,8 @@ namespace Altoholic.Windows
                 };
                 ImGui.TextUnformatted(name);
 
+                ImGui.TableNextColumn();ImGui.TextUnformatted($"{cost}");
+
                 foreach (Character currChar in chars)
                 {
                     ImGui.TableNextColumn();
@@ -1526,7 +2628,7 @@ namespace Altoholic.Windows
                 }
             }
         }
-        private void DrawAllCharsMinion(List<Character> chars, uint id)
+        private void DrawAllCharsMinion(List<Character> chars, uint id, int cost)
         {
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
@@ -1550,6 +2652,8 @@ namespace Altoholic.Windows
                 };
                 ImGui.TextUnformatted(name);
 
+                ImGui.TableNextColumn();ImGui.TextUnformatted($"{cost}");
+
                 foreach (Character currChar in chars)
                 {
                     ImGui.TableNextColumn();
@@ -1565,7 +2669,7 @@ namespace Altoholic.Windows
                 }
             }
         }
-        private void DrawAllCharsOrchestrion(List<Character> chars, uint id)
+        private void DrawAllCharsOrchestrion(List<Character> chars, uint id, int cost)
         {
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
@@ -1588,6 +2692,8 @@ namespace Altoholic.Windows
                 };
                 ImGui.TextUnformatted(name);
 
+                ImGui.TableNextColumn();ImGui.TextUnformatted($"{cost}");
+
                 foreach (Character currChar in chars)
                 {
                     ImGui.TableNextColumn();
@@ -1603,7 +2709,7 @@ namespace Altoholic.Windows
                 }
             }
         }
-        private void DrawAllCharsFramerKit(List<Character> chars, uint id)
+        private void DrawAllCharsFramerKit(List<Character> chars, uint id, int cost)
         {
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
@@ -1630,6 +2736,8 @@ namespace Altoholic.Windows
                     };
                     ImGui.TextUnformatted(name);
 
+                    ImGui.TableNextColumn();ImGui.TextUnformatted($"{cost}");
+
                     foreach (Character currChar in chars)
                     {
                         ImGui.TableNextColumn();
@@ -1646,7 +2754,7 @@ namespace Altoholic.Windows
                 }
             }
         }
-        private void DrawAllCharsBarding(List<Character> chars, uint id)
+        private void DrawAllCharsBarding(List<Character> chars, uint id, int cost)
         {
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
@@ -1670,6 +2778,8 @@ namespace Altoholic.Windows
                 };
                 ImGui.TextUnformatted(name);
 
+                ImGui.TableNextColumn();ImGui.TextUnformatted($"{cost}");
+
                 foreach (Character currChar in chars)
                 {
                     ImGui.TableNextColumn();
@@ -1685,14 +2795,14 @@ namespace Altoholic.Windows
                 }
             }
         }
-        private void DrawAllCharsTripleTriadCard(List<Character> chars, uint id)
+        private void DrawAllCharsTripleTriadCard(List<Character> chars, uint id, int cost)
         {
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
             TripleTriadCard? ttc = _globalCache.TripleTriadCardStorage.GetTripleTriadCard(_currentLocale, id);
             if (ttc != null)
             {
-                Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(ttc.Icon), new Vector2(32, 32));
+                Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(027662), new Vector2(32, 32));
                 if (ImGui.IsItemHovered())
                 {
                     Utils.DrawTTCTooltip(_currentLocale, ref _globalCache, ttc);
@@ -1708,6 +2818,8 @@ namespace Altoholic.Windows
                     _ => ttc.EnglishName
                 };
                 ImGui.TextUnformatted(name);
+
+                ImGui.TableNextColumn();ImGui.TextUnformatted($"{cost}");
 
                 foreach (Character currChar in chars)
                 {
@@ -1725,39 +2837,91 @@ namespace Altoholic.Windows
             }
         }
         
-        private void DrawBlundervilleRewards(List<Character> chars)
+        private void DrawAllCharsOrnament(List<Character> chars, uint id, int cost)
         {
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
-            DrawAllCharsEmote(chars, 276);
+            Ornament? o = _globalCache.OrnamentStorage.GetOrnament(_currentLocale, id);
+            if (o != null)
+            {
+                Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(o.Icon), new Vector2(32, 32));
+                if (ImGui.IsItemHovered())
+                {
+                    Utils.DrawOrnamentTooltip(_currentLocale, ref _globalCache, o);
+                }
 
+                ImGui.SameLine();
+                string name = _currentLocale switch
+                {
+                    ClientLanguage.German => o.GermanName,
+                    ClientLanguage.English => o.EnglishName,
+                    ClientLanguage.French => o.FrenchName,
+                    ClientLanguage.Japanese => o.JapaneseName,
+                    _ => o.EnglishName
+                };
+                ImGui.TextUnformatted(name);
+
+                ImGui.TableNextColumn();ImGui.TextUnformatted($"{cost}");
+
+                foreach (Character currChar in chars)
+                {
+                    ImGui.TableNextColumn();
+                    ImGui.TextUnformatted(currChar.HasOrnament(id) ? "\u2713" : "");
+                    if (ImGui.IsItemHovered())
+                    {
+                        ImGui.BeginTooltip();
+                        ImGui.TextUnformatted(name);
+                        ImGui.TextUnformatted(
+                            $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
+                        ImGui.EndTooltip();
+                    }
+                }
+            }
+        }
+
+        private void DrawAllCharsHairstyle(List<Character> chars, uint id, int cost)
+        {
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
-            DrawAllCharsMount(chars, 330);
+            Item? itm = _globalCache.ItemStorage.LoadItem(_currentLocale, id);
+            if (itm != null)
+            {
+                Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Icon), new Vector2(32, 32));
+                if (ImGui.IsItemHovered())
+                {
+                    Utils.DrawItemTooltip(_currentLocale, ref _globalCache, itm);
+                }
 
-            ImGui.TableNextRow();
-            ImGui.TableSetColumnIndex(0);
-            DrawAllCharsMinion(chars, 499);
+                ImGui.SameLine();
+                ImGui.TextUnformatted(itm.Name);
 
-            ImGui.TableNextRow();
-            ImGui.TableSetColumnIndex(0);
-            DrawAllCharsMinion(chars, 500);
+                ImGui.TableNextColumn();
+                ImGui.TextUnformatted($"{cost}");
 
-            ImGui.TableNextRow();
-            ImGui.TableSetColumnIndex(0);
-            DrawAllCharsOrchestrion(chars, 657);
+                foreach (Character currChar in chars)
+                {
+                    ImGui.TableNextColumn();
+                    ImGui.TextUnformatted("/");
+                    if (ImGui.IsItemHovered())
+                    {
+                        ImGui.BeginTooltip();
+                        ImGui.TextUnformatted("Hairstyles are currently not tracked");
+                        ImGui.EndTooltip();
+                    }
+                }
+            }
+        }
 
-            ImGui.TableNextRow();
-            ImGui.TableSetColumnIndex(0);
-            DrawAllCharsFramerKit(chars, 41377);
-
-            ImGui.TableNextRow();
-            ImGui.TableSetColumnIndex(0);
-            DrawAllCharsFramerKit(chars, 41378);
-
-            ImGui.TableNextRow();
-            ImGui.TableSetColumnIndex(0);
-            DrawAllCharsFramerKit(chars, 41379);
+        private void DrawBlundervilleRewards(List<Character> chars)
+        {
+            DrawAllCharsEmote(chars, 276, 410);
+            DrawAllCharsMount(chars, 330, 410);
+            DrawAllCharsMinion(chars, 499,350);
+            DrawAllCharsMinion(chars, 500,350);
+            DrawAllCharsOrchestrion(chars, 657, 220);
+            DrawAllCharsFramerKit(chars, 41377,200);
+            DrawAllCharsFramerKit(chars, 41378,200);
+            DrawAllCharsFramerKit(chars, 41379,200);
         }
 
         private void DrawHildibrandQuest(List<Character> chars)
