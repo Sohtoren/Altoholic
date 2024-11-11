@@ -116,7 +116,7 @@ namespace Altoholic.Database
                                                    LastPlayTimeUpdate BIGINT,
                                                    HasPremiumSaddlebag BIT,
                                                    PlayerCommendations SMALLINT,
-                                                   CurrentFawear TEXT,
+                                                   CurrentFacewear TEXT,
                                                    CurrentOrnament SMALLINT,
                                                    Attributes TEXT,
                                                    Currencies TEXT,
@@ -165,6 +165,14 @@ namespace Altoholic.Database
                     const string sql12 = $"ALTER TABLE {CharacterTableName} ADD COLUMN DutiesUnlocked TEXT";
                     int result12 = db.Execute(sql12);
                     Plugin.Log.Debug($"ALTER TABLE {CharacterTableName} ADD COLUMN DutiesUnlocked TEXT result: {result12}");
+                }
+
+                if (DoesColumnExist(db, CharacterTableName, "CurrentFawear"))
+                {
+                    Plugin.Log.Debug($"Column {CharacterTableName}.CurrentFawear exist");
+                    const string sql131 = $"ALTER TABLE {CharacterTableName} DROP COLUMN CurrentFawear";
+                    int result131 = db.Execute(sql131);
+                    Plugin.Log.Debug($"ALTER TABLE {CharacterTableName} DROP COLUMN CurrentFawear result: {result131}");
                 }
                 if (!DoesColumnExist(db, CharacterTableName, "CurrentFacewear"))
                 {
