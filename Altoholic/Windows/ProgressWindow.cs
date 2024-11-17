@@ -563,7 +563,7 @@ namespace Altoholic.Windows
                                $"###CharactersProgress#All#Event#2024#Table",
                                chars.Count + 1,
                                ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner |
-                               ImGuiTableFlags.ScrollX, new Vector2(-1, 315)))
+                               ImGuiTableFlags.ScrollX, new Vector2(-1, 335)))
                     {
                         if (!charactersEventTable) return;
 

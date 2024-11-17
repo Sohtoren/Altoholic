@@ -915,7 +915,16 @@ namespace Altoholic
             return returnedbtsIds;
         }
 
-        private static Vector4 ConvertColorToVector4(uint color)
+        public static uint ConvertColorToAbgr(uint rgbColor)
+        {
+            var red = (byte)((rgbColor >> 16) & 0xFF);
+            var green = (byte)((rgbColor >> 8) & 0xFF);
+            var blue = (byte)(rgbColor & 0xFF);
+
+            // Adding alpha channel (fully opaque)
+            return (uint)((0xFF << 24) | (blue << 16) | (green << 8) | red);
+        }
+        public static Vector4 ConvertColorToVector4(uint color)
         {
             byte r = (byte)(color >> 24);
             byte g = (byte)(color >> 16);
@@ -1383,18 +1392,25 @@ namespace Altoholic
 
             if (item.Stain > 0)
             {
-                string dye = globalCache.StainStorage.LoadStain(currentLocale, item.Stain);
-                if (!string.IsNullOrEmpty(dye))
+                ImGui.Separator();
+                (string, Vector4) dye = globalCache.StainStorage.LoadStainWithColor(currentLocale, item.Stain);
+                if (!string.IsNullOrEmpty(dye.Item1))
                 {
-                    ImGui.TextUnformatted($"{dye}");
+                    ImGui.ColorButton($"##Gear_{item.ItemId}#Dye#1", dye.Item2,
+                        ImGuiColorEditFlags.None, new Vector2(16, 16));
+                    ImGui.SameLine();
+                    ImGui.TextColored(dye.Item2, dye.Item1);
                 }
             }
             if (item.Stain2 > 0)
             {
-                string dye2 = globalCache.StainStorage.LoadStain(currentLocale, item.Stain2);
-                if (!string.IsNullOrEmpty(dye2))
+                (string, Vector4) dye2 = globalCache.StainStorage.LoadStainWithColor(currentLocale, item.Stain2);
+                if (!string.IsNullOrEmpty(dye2.Item1))
                 {
-                    ImGui.TextUnformatted($"{dye2}");
+                    ImGui.ColorButton($"##Gear_{item.ItemId}#Dye#2", dye2.Item2,
+                        ImGuiColorEditFlags.None, new Vector2(16, 16));
+                    ImGui.SameLine();
+                    ImGui.TextColored(dye2.Item2, dye2.Item1);
                 }
             }
 
@@ -2757,7 +2773,6 @@ namespace Altoholic
 
         public static Duty? GetDuty(uint id)
         {
-            Plugin.Log.Debug($"GetDuty with id: {id}");
             Duty d = new();
             List<ClientLanguage> langs =
                 [ClientLanguage.German, ClientLanguage.English, ClientLanguage.French, ClientLanguage.Japanese];

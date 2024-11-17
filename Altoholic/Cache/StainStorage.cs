@@ -1,6 +1,9 @@
-﻿using Dalamud.Game;
+﻿using Altoholic.Models;
+using Dalamud.Game;
+using Lumina.Excel.Sheets;
 using System;
 using System.Collections.Generic;
+using System.Numerics;
 
 namespace Altoholic.Cache
 {
@@ -10,6 +13,7 @@ namespace Altoholic.Cache
         public string English { get; set; } = string.Empty;
         public string French { get; set; } = string.Empty;
         public string Japanese { get; set; } = string.Empty;
+        public Vector4 Color { get; set; }
     }
     public class StainStorage : IDisposable
     {
@@ -36,26 +40,44 @@ namespace Altoholic.Cache
                 if (stainja == null) continue;
                 string ja = stainja.Value.Name.ExtractText();
 
+                Plugin.Log.Debug($"stain {en} color: {stainen.Value.Color}");
+
                 _stains.Add(i, new Stain
                 {
                     German = de,
                     English = en,
                     French = fr,
                     Japanese = ja,
+                    Color = Utils.ConvertColorToVector4(Utils.ConvertColorToAbgr(stainen.Value.Color))
                 });
             }
         }
 
-        public string LoadStain(ClientLanguage currentLocale, uint id)
+        public string LoadStainName(ClientLanguage currentLocale, uint id)
         {
+            Stain s = _stains[id];
             return currentLocale switch
             {
-                ClientLanguage.German => _stains[id].German,
-                ClientLanguage.English => _stains[id].English,
-                ClientLanguage.French => _stains[id].French,
-                ClientLanguage.Japanese => _stains[id].Japanese,
-                _ => _stains[id].English,
+                ClientLanguage.German => s.German,
+                ClientLanguage.English => s.English,
+                ClientLanguage.French => s.French,
+                ClientLanguage.Japanese => s.Japanese,
+                _ => s.English,
             };
+        }
+
+        public (string, Vector4) LoadStainWithColor(ClientLanguage currentLocale, uint id)
+        {
+            Stain s = _stains[id];
+            string name = currentLocale switch
+            {
+                ClientLanguage.German => s.German,
+                ClientLanguage.English => s.English,
+                ClientLanguage.French => s.French,
+                ClientLanguage.Japanese => s.Japanese,
+                _ => s.English,
+            };
+            return (name, s.Color);
         }
 
         public void Dispose()
