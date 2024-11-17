@@ -1,6 +1,7 @@
 ﻿using Altoholic.Models;
 using Dalamud.Game;
-using Lumina.Excel.GeneratedSheets;
+using BeastReputationRank = Lumina.Excel.Sheets.BeastReputationRank;
+using BeastTribe = Lumina.Excel.Sheets.BeastTribe;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -49,20 +50,20 @@ namespace Altoholic.Cache
                 return null;
             }
 
-            BeastTribes b = new() { Id = bt.RowId, Icon = bt.Icon, MaxRank = bt.MaxRank, DisplayOrder = bt.DisplayOrder };
+            BeastTribes b = new() { Id = bt.Value.RowId, Icon = bt.Value.Icon, MaxRank = bt.Value.MaxRank, DisplayOrder = bt.Value.DisplayOrder };
             switch (lang)
             {
                 case ClientLanguage.German:
-                    b.GermanName = bt.Name;
+                    b.GermanName = bt.Value.Name.ExtractText();
                     break;
                 case ClientLanguage.English:
-                    b.EnglishName = bt.Name;
+                    b.EnglishName = bt.Value.Name.ExtractText();
                     break;
                 case ClientLanguage.French:
-                    b.FrenchName = bt.Name;
+                    b.FrenchName = bt.Value.Name.ExtractText();
                     break;
                 case ClientLanguage.Japanese:
-                    b.JapaneseName = bt.Name;
+                    b.JapaneseName = bt.Value.Name.ExtractText();
                     break;
             }
 
@@ -70,11 +71,7 @@ namespace Altoholic.Cache
         }
         public BeastReputationRank? GetRank(ClientLanguage lang, uint id)
         {
-            if (_beastTribeRanks.TryGetValue(id, out BeastReputationRank? ret))
-                return ret;
-
-            ret = Utils.GetBeastReputationRank(lang, id);
-            return ret;
+            return _beastTribeRanks.TryGetValue(id, out BeastReputationRank ret) ? ret : Utils.GetBeastReputationRank(lang, id);
         }
 
         public List<uint> Get()

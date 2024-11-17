@@ -8,7 +8,7 @@ using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
 using FFXIVClientStructs.FFXIV.Component.Text;
 using ImGuiNET;
-using Lumina.Excel.GeneratedSheets;
+using Lumina.Excel.Sheets;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlTypes;
@@ -518,6 +518,9 @@ namespace Altoholic.Windows
             DrawAllLine(chars, charactersQuests,
                 $"7.0 - {_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.MSQ_DAWNTRAIL)}",
                 35);
+            DrawAllLine(chars, charactersQuests,
+                $"7.1 - {_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.MSQ_CROSSROADS)}",
+                36);
         }
 
         private void DrawEventQuest(List<Character> chars)
@@ -628,8 +631,8 @@ namespace Altoholic.Windows
                             119);
                         DrawAllLine(chars, charactersQuests, $"{Loc.Localize("Event_Blunderville", "Blunderville")} **",
                             120);
-                        /*DrawAllLine(chars, charactersQuests, $"{Loc.Localize("Event_Starlight", "Starlight Celebration")} (2024)",
-                            120);*/
+                        DrawAllLine(chars, charactersQuests, $"{Loc.Localize("Event_Starlight", "Starlight Celebration")} (2024)",
+                            121);
                     }
                 }
             }
@@ -1288,10 +1291,10 @@ namespace Altoholic.Windows
                     ImGui.TableSetColumnIndex(1);
                     Item? itm = _globalCache.ItemStorage.LoadItem(_currentLocale, (uint)Currencies.MGF);
                     if (itm == null) return;
-                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Icon), new Vector2(16, 16));
+                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Value.Icon), new Vector2(16, 16));
                     if (ImGui.IsItemHovered())
                     {
-                        Utils.DrawItemTooltip(_currentLocale, ref _globalCache, itm);
+                        Utils.DrawItemTooltip(_currentLocale, ref _globalCache, itm.Value);
                     }
 
                     foreach (Character currChar in chars)
@@ -1367,10 +1370,10 @@ namespace Altoholic.Windows
                 Item? itm = _globalCache.ItemStorage.LoadItem(_currentLocale,
                     (uint)Currencies.IRREGULAR_TOMESTONE_OF_GOETIA);
                 if (itm == null) return;
-                Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Icon), new Vector2(16, 16));
+                Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Value.Icon), new Vector2(16, 16));
                 if (ImGui.IsItemHovered())
                 {
-                    Utils.DrawItemTooltip(_currentLocale, ref _globalCache, itm);
+                    Utils.DrawItemTooltip(_currentLocale, ref _globalCache, itm.Value);
                 }
 
                 foreach (Character currChar in chars)
@@ -1586,10 +1589,10 @@ namespace Altoholic.Windows
                         Item? itm = _globalCache.ItemStorage.LoadItem(_currentLocale,
                             (uint)Currencies.IRREGULAR_TOMESTONE_OF_GENESIS_II);
                         if (itm == null) return;
-                        Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Icon), new Vector2(16, 16));
+                        Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Value.Icon), new Vector2(16, 16));
                         if (ImGui.IsItemHovered())
                         {
-                            Utils.DrawItemTooltip(_currentLocale, ref _globalCache, itm);
+                            Utils.DrawItemTooltip(_currentLocale, ref _globalCache, itm.Value);
                         }
 
                         foreach (Character currChar in chars)
@@ -1654,10 +1657,10 @@ namespace Altoholic.Windows
                         Item? itm = _globalCache.ItemStorage.LoadItem(_currentLocale,
                             (uint)Currencies.IRREGULAR_TOMESTONE_OF_GENESIS_I);
                         if (itm == null) return;
-                        Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Icon), new Vector2(16, 16));
+                        Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Value.Icon), new Vector2(16, 16));
                         if (ImGui.IsItemHovered())
                         {
-                            Utils.DrawItemTooltip(_currentLocale, ref _globalCache, itm);
+                            Utils.DrawItemTooltip(_currentLocale, ref _globalCache, itm.Value);
                         }
 
                         foreach (Character currChar in chars)
@@ -1722,10 +1725,10 @@ namespace Altoholic.Windows
                         Item? itm = _globalCache.ItemStorage.LoadItem(_currentLocale,
                             (uint)Currencies.IRREGULAR_TOMESTONE_OF_TENFOLD_PAGEANTRY);
                         if (itm == null) return;
-                        Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Icon), new Vector2(16, 16));
+                        Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Value.Icon), new Vector2(16, 16));
                         if (ImGui.IsItemHovered())
                         {
-                            Utils.DrawItemTooltip(_currentLocale, ref _globalCache, itm);
+                            Utils.DrawItemTooltip(_currentLocale, ref _globalCache, itm.Value);
                         }
 
                         foreach (Character currChar in chars)
@@ -1813,10 +1816,10 @@ namespace Altoholic.Windows
                         Item? itm = _globalCache.ItemStorage.LoadItem(_currentLocale,
                             (uint)Currencies.IRREGULAR_TOMESTONE_OF_MENDACITY);
                         if (itm == null) return;
-                        Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Icon), new Vector2(16, 16));
+                        Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Value.Icon), new Vector2(16, 16));
                         if (ImGui.IsItemHovered())
                         {
-                            Utils.DrawItemTooltip(_currentLocale, ref _globalCache, itm);
+                            Utils.DrawItemTooltip(_currentLocale, ref _globalCache, itm.Value);
                         }
 
                         foreach (Character currChar in chars)
@@ -1885,10 +1888,10 @@ namespace Altoholic.Windows
                         Item? itm = _globalCache.ItemStorage.LoadItem(_currentLocale,
                             (uint)Currencies.IRREGULAR_TOMESTONE_OF_CREATION);
                         if (itm == null) return;
-                        Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Icon), new Vector2(16, 16));
+                        Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Value.Icon), new Vector2(16, 16));
                         if (ImGui.IsItemHovered())
                         {
-                            Utils.DrawItemTooltip(_currentLocale, ref _globalCache, itm);
+                            Utils.DrawItemTooltip(_currentLocale, ref _globalCache, itm.Value);
                         }
 
                         foreach (Character currChar in chars)
@@ -1956,10 +1959,10 @@ namespace Altoholic.Windows
                         Item? itm = _globalCache.ItemStorage.LoadItem(_currentLocale,
                             (uint)Currencies.IRREGULAR_TOMESTONE_OF_VERITY);
                         if (itm == null) return;
-                        Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Icon), new Vector2(16, 16));
+                        Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Value.Icon), new Vector2(16, 16));
                         if (ImGui.IsItemHovered())
                         {
-                            Utils.DrawItemTooltip(_currentLocale, ref _globalCache, itm);
+                            Utils.DrawItemTooltip(_currentLocale, ref _globalCache, itm.Value);
                         }
 
                         foreach (Character currChar in chars)
@@ -2024,10 +2027,10 @@ namespace Altoholic.Windows
                         Item? itm = _globalCache.ItemStorage.LoadItem(_currentLocale,
                             (uint)Currencies.IRREGULAR_TOMESTONE_OF_SCRIPTURE);
                         if (itm == null) return;
-                        Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Icon), new Vector2(16, 16));
+                        Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Value.Icon), new Vector2(16, 16));
                         if (ImGui.IsItemHovered())
                         {
-                            Utils.DrawItemTooltip(_currentLocale, ref _globalCache, itm);
+                            Utils.DrawItemTooltip(_currentLocale, ref _globalCache, itm.Value);
                         }
 
                         foreach (Character currChar in chars)
@@ -2089,10 +2092,10 @@ namespace Altoholic.Windows
                         Item? itm = _globalCache.ItemStorage.LoadItem(_currentLocale,
                             (uint)Currencies.IRREGULAR_TOMESTONE_OF_LORE);
                         if (itm == null) return;
-                        Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Icon), new Vector2(16, 16));
+                        Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Value.Icon), new Vector2(16, 16));
                         if (ImGui.IsItemHovered())
                         {
-                            Utils.DrawItemTooltip(_currentLocale, ref _globalCache, itm);
+                            Utils.DrawItemTooltip(_currentLocale, ref _globalCache, itm.Value);
                         }
 
                         foreach (Character currChar in chars)
@@ -2157,10 +2160,10 @@ namespace Altoholic.Windows
                         Item? itm = _globalCache.ItemStorage.LoadItem(_currentLocale,
                             (uint)Currencies.IRREGULAR_TOMESTONE_OF_PAGEANTRY);
                         if (itm == null) return;
-                        Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Icon), new Vector2(16, 16));
+                        Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Value.Icon), new Vector2(16, 16));
                         if (ImGui.IsItemHovered())
                         {
-                            Utils.DrawItemTooltip(_currentLocale, ref _globalCache, itm);
+                            Utils.DrawItemTooltip(_currentLocale, ref _globalCache, itm.Value);
                         }
 
                         foreach (Character currChar in chars)
@@ -2224,10 +2227,10 @@ namespace Altoholic.Windows
                         Item? itm = _globalCache.ItemStorage.LoadItem(_currentLocale,
                             (uint)Currencies.IRREGULAR_TOMESTONE_OF_ESOTERICS);
                         if (itm == null) return;
-                        Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Icon), new Vector2(16, 16));
+                        Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Value.Icon), new Vector2(16, 16));
                         if (ImGui.IsItemHovered())
                         {
-                            Utils.DrawItemTooltip(_currentLocale, ref _globalCache, itm);
+                            Utils.DrawItemTooltip(_currentLocale, ref _globalCache, itm.Value);
                         }
 
                         foreach (Character currChar in chars)
@@ -2293,10 +2296,10 @@ namespace Altoholic.Windows
                         Item? itm = _globalCache.ItemStorage.LoadItem(_currentLocale,
                             (uint)Currencies.IRREGULAR_TOMESTONE_OF_LAW);
                         if (itm == null) return;
-                        Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Icon), new Vector2(16, 16));
+                        Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Value.Icon), new Vector2(16, 16));
                         if (ImGui.IsItemHovered())
                         {
-                            Utils.DrawItemTooltip(_currentLocale, ref _globalCache, itm);
+                            Utils.DrawItemTooltip(_currentLocale, ref _globalCache, itm.Value);
                         }
 
                         foreach (Character currChar in chars)
@@ -2361,10 +2364,10 @@ namespace Altoholic.Windows
                         Item? itm = _globalCache.ItemStorage.LoadItem(_currentLocale,
                             (uint)Currencies.IRREGULAR_TOMESTONE_OF_SOLDIERY);
                         if (itm == null) return;
-                        Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Icon), new Vector2(16, 16));
+                        Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Value.Icon), new Vector2(16, 16));
                         if (ImGui.IsItemHovered())
                         {
-                            Utils.DrawItemTooltip(_currentLocale, ref _globalCache, itm);
+                            Utils.DrawItemTooltip(_currentLocale, ref _globalCache, itm.Value);
                         }
 
                         foreach (Character currChar in chars)
@@ -2431,10 +2434,10 @@ namespace Altoholic.Windows
                         Item? itm = _globalCache.ItemStorage.LoadItem(_currentLocale,
                             (uint)Currencies.IRREGULAR_TOMESTONE_OF_MYTHOLOGY);
                         if (itm == null) return;
-                        Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Icon), new Vector2(16, 16));
+                        Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Value.Icon), new Vector2(16, 16));
                         if (ImGui.IsItemHovered())
                         {
-                            Utils.DrawItemTooltip(_currentLocale, ref _globalCache, itm);
+                            Utils.DrawItemTooltip(_currentLocale, ref _globalCache, itm.Value);
                         }
 
                         foreach (Character currChar in chars)
@@ -2501,10 +2504,10 @@ namespace Altoholic.Windows
                         Item? itm = _globalCache.ItemStorage.LoadItem(_currentLocale,
                             (uint)Currencies.IRREGULAR_TOMESTONE_OF_PHILOSOPHY);
                         if (itm == null) return;
-                        Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Icon), new Vector2(16, 16));
+                        Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Value.Icon), new Vector2(16, 16));
                         if (ImGui.IsItemHovered())
                         {
-                            Utils.DrawItemTooltip(_currentLocale, ref _globalCache, itm);
+                            Utils.DrawItemTooltip(_currentLocale, ref _globalCache, itm.Value);
                         }
 
                         foreach (Character currChar in chars)
@@ -2886,14 +2889,14 @@ namespace Altoholic.Windows
             Item? itm = _globalCache.ItemStorage.LoadItem(_currentLocale, id);
             if (itm != null)
             {
-                Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Icon), new Vector2(32, 32));
+                Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Value.Icon), new Vector2(32, 32));
                 if (ImGui.IsItemHovered())
                 {
-                    Utils.DrawItemTooltip(_currentLocale, ref _globalCache, itm);
+                    Utils.DrawItemTooltip(_currentLocale, ref _globalCache, itm.Value);
                 }
 
                 ImGui.SameLine();
-                ImGui.TextUnformatted(itm.Name);
+                ImGui.TextUnformatted(itm.Value.Name.ExtractText());
 
                 ImGui.TableNextColumn();
                 ImGui.TextUnformatted($"{cost}");
@@ -3171,6 +3174,7 @@ namespace Altoholic.Windows
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
             ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 8175)}");
+            DrawAllTribes(chars, charactersQuests, 18);
         }
 
         private static void DrawAllLine(List<Character> chars, List<List<bool>> charactersQuests, string name,
@@ -3209,9 +3213,9 @@ namespace Altoholic.Windows
                 _ => beastTribe.EnglishName
             };
             BeastReputationRank? allied = _globalCache.BeastTribesStorage.GetRank(_currentLocale, 8);
-            string alliedName =  (allied == null) ? string.Empty : allied.Name;
+            string alliedName =  (allied == null) ? string.Empty : allied.Value.Name.ExtractText();
             name = $"{Utils.Capitalize(name)}";
-            if (alliedName != string.Empty && tribeIndex != 12 && tribeIndex != 13 && tribeIndex != 14)
+            if (alliedName != string.Empty && tribeIndex != 12 && tribeIndex != 13 && tribeIndex != 14 && tribeIndex != 18)
                 name = $"{name} ({alliedName})";
 
             ImGui.TableNextRow();
@@ -3344,7 +3348,8 @@ namespace Altoholic.Windows
                 !selectedCharacter.HasQuest((int)QuestIds.TRIBE_SHB_DWARVES) &&
                 !selectedCharacter.HasQuest((int)QuestIds.TRIBE_EW_ARKASODARA) &&
                 !selectedCharacter.HasQuest((int)QuestIds.TRIBE_EW_OMICRONS) &&
-                !selectedCharacter.HasQuest((int)QuestIds.TRIBE_EW_LOPORRITS))
+                !selectedCharacter.HasQuest((int)QuestIds.TRIBE_EW_LOPORRITS) &&
+                !selectedCharacter.HasQuest((int)QuestIds.TRIBE_DT_PELUPELU))
             {
                 return;
             }
@@ -3374,6 +3379,7 @@ namespace Altoholic.Windows
             bool sbUnlocked = false;
             bool shbUnlocked = false;
             bool ewUnlocked = false;
+            bool dtUnlocked = false;
             List<string> expansionNames = [];
             if (selectedCharacter.HasQuest((int)QuestIds.TRIBE_ARR_AMALJ_AA) ||
                 selectedCharacter.HasQuest((int)QuestIds.TRIBE_ARR_SYLPHS) ||
@@ -3431,18 +3437,14 @@ namespace Altoholic.Windows
                 if (!_hasValueBeenSelected && !shbUnlocked)
                     _selectedExpansion = _globalCache.AddonStorage.LoadAddonString(_currentLocale, 8160);
             }
-
-
-            /*
-             if (selectedCharacter.HasQuest() &&
-                   selectedCharacter.HasQuest() &&
-                   selectedCharacter.HasQuest())
+            if (selectedCharacter.HasQuest((int)QuestIds.TRIBE_DT_PELUPELU)
+                  )
                {
-                   _expansionNames.Add(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 8175));//DT
-                    dtUnlocked = true;
-                    if (!ewUnlocked)
-                        _selectedExpansion = _globalCache.AddonStorage.LoadAddonString(_currentLocale, 8175)
-             */
+                   expansionNames.Add(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 8175));
+                   dtUnlocked = true;
+                   if (!_hasValueBeenSelected && !ewUnlocked)
+                       _selectedExpansion = _globalCache.AddonStorage.LoadAddonString(_currentLocale, 8175);
+               }
 
             using (var combo = ImRaii.Combo("###CharactersProgress#Reputations#Combo", _selectedExpansion))
             {
@@ -3612,7 +3614,30 @@ namespace Altoholic.Windows
                 case "Dawntrail":
                 case "黄金編":
                     {
+                        //bool dtAllied = selectedCharacter.HasQuest((int)QuestIds.TRIBE_DT_ALLIED);
+                        bool dtAllied = false;
+                        for (uint i = 18; i <= 118; i++)
+                        {
+                            if (
+                                i == 18 && !selectedCharacter.HasQuest((int)QuestIds.TRIBE_DT_PELUPELU) /*||
+                                i == 19 && !selectedCharacter.HasQuest((int)QuestIds.TRIBE_DT_) ||
+                                i == 20 && !selectedCharacter.HasQuest((int)QuestIds.TRIBE_DT_)*/
+                            )
+                            {
+                                continue;
+                            }
 
+                            BeastTribeRank? b = selectedCharacter.GetBeastReputation(i);
+                            if (b == null)
+                            {
+                                continue;
+                            }
+
+                            ImGui.TableNextRow();
+                            ImGui.TableSetColumnIndex(0);
+                            DrawReputationLine(i, b.Value, b.Rank, dtAllied);
+                            DrawReward(selectedCharacter, i, b.Rank, dtAllied);
+                        }
                     }
                     break;
             }
@@ -4417,6 +4442,49 @@ namespace Altoholic.Windows
                                 DrawFramerKit(fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
                                 ImGui.TableSetColumnIndex(5);
                                 DrawOrchestrion(566, currentCharacter.HasOrchestrionRoll(566));
+                            }
+                        }
+
+                        break;
+                    }
+                case 18: //Pelupelu
+                    {
+                        if (rank < 4) return;
+                        if (ImGui.CollapsingHeader(
+                                $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 11429)}###Progress#BeastReputations#{id}#Reward"))
+                        {
+                            using var t = ImRaii.Table($"###Progress#BeastReputations#{id}#Reward#Table", 6);
+                            if (!t) break;
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Minion1",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Orchestrion1",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Mount1",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Emote",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#FramerKit",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Orchestrion",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableNextRow();
+                            ImGui.TableSetColumnIndex(0);
+                            DrawMinion(534, currentCharacter.HasMinion(534));
+                            ImGui.TableSetColumnIndex(1);
+                            DrawOrchestrion(708, currentCharacter.HasOrchestrionRoll(708));
+
+                            if (rank >= 6)
+                            {
+                                ImGui.TableSetColumnIndex(3);
+                                uint? fkId = _globalCache.FramerKitStorage.GetFramerKitIdFromItemId(44944);
+                                if (fkId == null) return;
+                                DrawFramerKit(fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
+                            }
+
+                            if (rank >= 5)
+                            {
+                                ImGui.TableSetColumnIndex(2);
+                                DrawMount(358, currentCharacter.HasMount(358));
                             }
                         }
 

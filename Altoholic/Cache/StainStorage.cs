@@ -20,21 +20,21 @@ namespace Altoholic.Cache
             _stains = new Dictionary<uint, Stain>(size);
             for (uint i = 0; i <= 120; i++)
             {
-                Lumina.Excel.GeneratedSheets.Stain? stainde = Utils.GetStainFromId(i, ClientLanguage.German);
+                Lumina.Excel.Sheets.Stain? stainde = Utils.GetStainFromId(i, ClientLanguage.German);
                 if (stainde == null) continue;
-                string de = stainde.Name;
+                string de = stainde.Value.Name.ExtractText();
 
-                Lumina.Excel.GeneratedSheets.Stain? stainen = Utils.GetStainFromId(i, ClientLanguage.English);
+                Lumina.Excel.Sheets.Stain? stainen = Utils.GetStainFromId(i, ClientLanguage.English);
                 if (stainen == null) continue;
-                string en = stainen.Name;
+                string en = stainen.Value.Name.ExtractText();
 
-                Lumina.Excel.GeneratedSheets.Stain? stainfr = Utils.GetStainFromId(i, ClientLanguage.French);
+                Lumina.Excel.Sheets.Stain? stainfr = Utils.GetStainFromId(i, ClientLanguage.French);
                 if (stainfr == null) continue;
-                string fr = stainfr.Name;
+                string fr = stainfr.Value.Name.ExtractText();
 
-                Lumina.Excel.GeneratedSheets.Stain? stainja = Utils.GetStainFromId(i, ClientLanguage.Japanese);
+                Lumina.Excel.Sheets.Stain? stainja = Utils.GetStainFromId(i, ClientLanguage.Japanese);
                 if (stainja == null) continue;
-                string ja = stainja.Name;
+                string ja = stainja.Value.Name.ExtractText();
 
                 _stains.Add(i, new Stain
                 {

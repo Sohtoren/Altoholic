@@ -1,7 +1,7 @@
 ﻿using Dalamud.Game;
 using System;
 using System.Collections.Generic;
-using ClassJob = Lumina.Excel.GeneratedSheets.ClassJob;
+using ClassJob = Lumina.Excel.Sheets.ClassJob;
 
 namespace Altoholic.Cache
 {
@@ -28,23 +28,23 @@ namespace Altoholic.Cache
             {
                 ClassJob? jobde = Utils.GetClassJobFromId(i, ClientLanguage.German);
                 if (jobde == null) continue;
-                string de = jobde.Name;
-                string abbde = jobde.Abbreviation;
+                string de = jobde.Value.Name.ExtractText();
+                string abbde = jobde.Value.Abbreviation.ExtractText();
 
                 ClassJob? joben = Utils.GetClassJobFromId(i, ClientLanguage.English);
                 if (joben == null) continue;
-                string en = joben.Name;
-                string abben = joben.Abbreviation;
+                string en = joben.Value.Name.ExtractText();
+                string abben = joben.Value.Abbreviation.ExtractText();
 
                 ClassJob? jobfr = Utils.GetClassJobFromId(i, ClientLanguage.French);
                 if (jobfr == null) continue;
-                string fr = jobfr.Name;
-                string abbfr = jobfr.Abbreviation;
+                string fr = jobfr.Value.Name.ExtractText();
+                string abbfr = jobfr.Value.Abbreviation.ExtractText();
 
                 ClassJob? jobja = Utils.GetClassJobFromId(i, ClientLanguage.Japanese);
                 if (jobja == null) continue;
-                string ja = jobja.Name;
-                string abbja = jobja.Abbreviation;
+                string ja = jobja.Value.Name.ExtractText();
+                string abbja = jobja.Value.Abbreviation.ExtractText();
 
                 _jobs.Add(i, new JobName
                 {

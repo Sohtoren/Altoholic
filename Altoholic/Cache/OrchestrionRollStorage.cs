@@ -31,26 +31,26 @@ namespace Altoholic.Cache
             if (_orchestrionRolls.TryGetValue(id, out OrchestrionRoll? ret))
                 return ret;
 
-            Lumina.Excel.GeneratedSheets.Orchestrion? or = Utils.GetOrchestrionRoll(lang, id);
+            Lumina.Excel.Sheets.Orchestrion? or = Utils.GetOrchestrionRoll(lang, id);
             if (or is null)
             {
                 return null;
             }
 
-            ret = new OrchestrionRoll { Id = or.RowId };
+            ret = new OrchestrionRoll { Id = or.Value.RowId };
             switch (lang)
             {
                 case ClientLanguage.German:
-                    ret.GermanName = or.Name;
+                    ret.GermanName = or.Value.Name.ExtractText();
                     break;
                 case ClientLanguage.English:
-                    ret.EnglishName = or.Name;
+                    ret.EnglishName = or.Value.Name.ExtractText();
                     break;
                 case ClientLanguage.French:
-                    ret.FrenchName = or.Name;
+                    ret.FrenchName = or.Value.Name.ExtractText();
                     break;
                 case ClientLanguage.Japanese:
-                    ret.JapaneseName = or.Name;
+                    ret.JapaneseName = or.Value.Name.ExtractText();
                     break;
             }
 

@@ -1,6 +1,6 @@
 ﻿using Altoholic.Models;
 using Dalamud.Game;
-using Lumina.Excel.GeneratedSheets;
+using Lumina.Excel.Sheets;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,38 +37,38 @@ namespace Altoholic.Cache
                 return null;
             }
 
-            ret = new Minion { Id = companion.RowId, Transient = new Transient() };
+            ret = new Minion { Id = companion.Value.RowId, Transient = new Transient() };
             CompanionTransient? ct = Utils.GetCompanionTransient(lang, id);
             if (ct is null) return null;
             switch (lang)
             {
                 case ClientLanguage.German:
-                    ret.GermanName = companion.Singular;
-                    ret.Transient.GermanDescription = ct.Description;
-                    ret.Transient.GermanDescriptionEnhanced = ct.DescriptionEnhanced;
-                    ret.Transient.GermanTooltip = ct.Tooltip;
+                    ret.GermanName = companion.Value.Singular.ExtractText();
+                    ret.Transient.GermanDescription = ct.Value.Description.ExtractText();
+                    ret.Transient.GermanDescriptionEnhanced = ct.Value.DescriptionEnhanced.ExtractText();
+                    ret.Transient.GermanTooltip = ct.Value.Tooltip.ExtractText();
                     break;
                 case ClientLanguage.English:
-                    ret.EnglishName = companion.Singular;
-                    ret.Transient.EnglishDescription = ct.Description;
-                    ret.Transient.EnglishDescriptionEnhanced = ct.DescriptionEnhanced;
-                    ret.Transient.EnglishTooltip = ct.Tooltip;
+                    ret.EnglishName = companion.Value.Singular.ExtractText();
+                    ret.Transient.EnglishDescription = ct.Value.Description.ExtractText();
+                    ret.Transient.EnglishDescriptionEnhanced = ct.Value.DescriptionEnhanced.ExtractText();
+                    ret.Transient.EnglishTooltip = ct.Value.Tooltip.ExtractText();
                     break;
                 case ClientLanguage.French:
-                    ret.FrenchName = companion.Singular;
-                    ret.Transient.FrenchDescription = ct.Description;
-                    ret.Transient.FrenchDescriptionEnhanced = ct.DescriptionEnhanced;
-                    ret.Transient.FrenchTooltip = ct.Tooltip;
+                    ret.FrenchName = companion.Value.Singular.ExtractText();
+                    ret.Transient.FrenchDescription = ct.Value.Description.ExtractText();
+                    ret.Transient.FrenchDescriptionEnhanced = ct.Value.DescriptionEnhanced.ExtractText();
+                    ret.Transient.FrenchTooltip = ct.Value.Tooltip.ExtractText();
                     break;
                 case ClientLanguage.Japanese:
-                    ret.JapaneseName = companion.Singular;
-                    ret.Transient.JapaneseDescription = ct.Description;
-                    ret.Transient.JapaneseDescriptionEnhanced = ct.DescriptionEnhanced;
-                    ret.Transient.JapaneseTooltip = ct.Tooltip;
+                    ret.JapaneseName = companion.Value.Singular.ExtractText();
+                    ret.Transient.JapaneseDescription = ct.Value.Description.ExtractText();
+                    ret.Transient.JapaneseDescriptionEnhanced = ct.Value.DescriptionEnhanced.ExtractText();
+                    ret.Transient.JapaneseTooltip = ct.Value.Tooltip.ExtractText();
                     break;
             }
 
-            ret.Icon = companion.Icon;
+            ret.Icon = companion.Value.Icon;
 
             return ret;
         }

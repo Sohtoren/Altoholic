@@ -26,7 +26,7 @@
         public uint Content { get; set; }
         public uint ContentTypeId { get; set; }
         public int SortKey { get; set; }
-        public int TransientKey { get; set; }
+        public uint TransientKey { get; set; }
         public uint? ExVersion { get; set; }
         public bool HighEndDuty { get; set; }
         public bool AllowUndersized { get; set; }

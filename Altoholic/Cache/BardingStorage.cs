@@ -1,6 +1,6 @@
 ﻿using Altoholic.Models;
 using Dalamud.Game;
-using Lumina.Excel.GeneratedSheets;
+using Lumina.Excel.Sheets;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,26 +37,26 @@ namespace Altoholic.Cache
                 return null;
             }
 
-            ret = new Barding { Id = b.RowId };
+            ret = new Barding { Id = b.Value.RowId };
             switch (lang)
             {
                 case ClientLanguage.German:
-                    ret.GermanName = b.Name;
+                    ret.GermanName = b.Value.Name.ExtractText();
                     break;
                 case ClientLanguage.English:
-                    ret.EnglishName = b.Name;
+                    ret.EnglishName = b.Value.Name.ExtractText();
                     break;
                 case ClientLanguage.French:
-                    ret.FrenchName = b.Name;
+                    ret.FrenchName = b.Value.Name.ExtractText();
                     break;
                 case ClientLanguage.Japanese:
-                    ret.JapaneseName = b.Name;
+                    ret.JapaneseName = b.Value.Name.ExtractText();
                     break;
             }
 
-            ret.IconHead = b.IconHead;
-            ret.IconBody = b.IconBody;
-            ret.IconLegs = b.IconLegs;
+            ret.IconHead = b.Value.IconHead;
+            ret.IconBody = b.Value.IconBody;
+            ret.IconLegs = b.Value.IconLegs;
 
             return ret;
         }

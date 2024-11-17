@@ -5,7 +5,7 @@ using Dalamud.Game.Text;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
 using ImGuiNET;
-using Lumina.Excel.GeneratedSheets;
+using Lumina.Excel.Sheets;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -156,9 +156,9 @@ namespace Altoholic.Windows
                             _globalCache.ItemStorage.LoadItem(_currentLocale,
                                 (uint)Enum.Parse(typeof(Currencies), name));
                         if (item == null) continue;
-                        Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(item.Icon), new Vector2(24, 24));
+                        Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(item.Value.Icon), new Vector2(24, 24));
                         ImGui.SameLine();
-                        string n = item.Name;
+                        string n = item.Value.Name.ExtractText();
                         if (n.Contains("Legendary")) n = $"Yo-Kai {n}";
                         if (ImGui.Selectable(n, n == _selectedCurrency))
                         {
@@ -183,7 +183,7 @@ namespace Altoholic.Windows
             Item? itm = _globalCache.ItemStorage.LoadItem(_currentLocale,
                 (uint)Enum.Parse(typeof(Currencies), _currentCurrency.ToUpper()));
             if (itm == null) return;
-            Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Icon), new Vector2(64, 64));
+            Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Value.Icon), new Vector2(64, 64));
 
             long overallAmount = 0;
             using (var charactersCurrenciesAllCurrencyTable =
@@ -261,7 +261,7 @@ namespace Altoholic.Windows
 
             using var tabBar = ImRaii.TabBar($"###CharactersCurrencies#CurrencyTabs#{selectedCharacter.CharacterId}");
             if (!tabBar) return;
-            using (var commonTab = ImRaii.TabItem($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 3662)}"))
+            using (var commonTab = ImRaii.TabItem($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 3662)}###CharactersCurrencies#CurrencyTabs#{selectedCharacter.CharacterId}#1"))
             {
                 //if (!) return;
                 if (commonTab)
@@ -276,7 +276,7 @@ namespace Altoholic.Windows
             )
             {
                 using var battleTab =
-                    ImRaii.TabItem($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 3663)}");
+                    ImRaii.TabItem($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 3663)}###CharactersCurrencies#CurrencyTabs#{selectedCharacter.CharacterId}#2");
                 if (battleTab)
                 {
                     DrawBattle(selectedCharacter);
@@ -289,7 +289,7 @@ namespace Altoholic.Windows
             )
             {
                 using var othersTab =
-                    ImRaii.TabItem($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 3664)}");
+                    ImRaii.TabItem($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 3664)}###CharactersCurrencies#CurrencyTabs#{selectedCharacter.CharacterId}#3");
                 {
                     if (othersTab)
                     {
@@ -298,33 +298,48 @@ namespace Altoholic.Windows
                 }
             }
 
-            if (!selectedCharacter.HasQuest((int)QuestIds.TRIBE_ARR_AMALJ_AA) &&
-                !selectedCharacter.HasQuest((int)QuestIds.TRIBE_ARR_SYLPHS) &&
-                !selectedCharacter.HasQuest((int)QuestIds.TRIBE_ARR_KOBOLDS) &&
-                !selectedCharacter.HasQuest((int)QuestIds.TRIBE_ARR_SAHAGIN) &&
-                !selectedCharacter.HasQuest((int)QuestIds.TRIBE_ARR_IXAL) &&
-                !selectedCharacter.HasQuest((int)QuestIds.TRIBE_HW_VANU_VANU) &&
-                !selectedCharacter.HasQuest((int)QuestIds.TRIBE_HW_VATH) &&
-                !selectedCharacter.HasQuest((int)QuestIds.TRIBE_HW_MOOGLES) &&
-                !selectedCharacter.HasQuest((int)QuestIds.TRIBE_SB_KOJIN) &&
-                !selectedCharacter.HasQuest((int)QuestIds.TRIBE_SB_ANANTA) &&
-                !selectedCharacter.HasQuest((int)QuestIds.TRIBE_SB_NAMAZU) &&
-                !selectedCharacter.HasQuest((int)QuestIds.TRIBE_SHB_PIXIES) &&
-                !selectedCharacter.HasQuest((int)QuestIds.TRIBE_SHB_QITARI) &&
-                !selectedCharacter.HasQuest((int)QuestIds.TRIBE_SHB_DWARVES) &&
-                !selectedCharacter.HasQuest((int)QuestIds.TRIBE_EW_ARKASODARA) &&
-                !selectedCharacter.HasQuest((int)QuestIds.TRIBE_EW_OMICRONS) &&
-                !selectedCharacter.HasQuest((int)QuestIds.TRIBE_EW_LOPORRITS))
+            if (selectedCharacter.HasQuest((int)QuestIds.TRIBE_ARR_AMALJ_AA) &&
+                selectedCharacter.HasQuest((int)QuestIds.TRIBE_ARR_SYLPHS) &&
+                selectedCharacter.HasQuest((int)QuestIds.TRIBE_ARR_KOBOLDS) &&
+                selectedCharacter.HasQuest((int)QuestIds.TRIBE_ARR_SAHAGIN) &&
+                selectedCharacter.HasQuest((int)QuestIds.TRIBE_ARR_IXAL) &&
+                selectedCharacter.HasQuest((int)QuestIds.TRIBE_HW_VANU_VANU) &&
+                selectedCharacter.HasQuest((int)QuestIds.TRIBE_HW_VATH) &&
+                selectedCharacter.HasQuest((int)QuestIds.TRIBE_HW_MOOGLES) &&
+                selectedCharacter.HasQuest((int)QuestIds.TRIBE_SB_KOJIN) &&
+                selectedCharacter.HasQuest((int)QuestIds.TRIBE_SB_ANANTA) &&
+                selectedCharacter.HasQuest((int)QuestIds.TRIBE_SB_NAMAZU) &&
+                selectedCharacter.HasQuest((int)QuestIds.TRIBE_SHB_PIXIES) &&
+                selectedCharacter.HasQuest((int)QuestIds.TRIBE_SHB_QITARI) &&
+                selectedCharacter.HasQuest((int)QuestIds.TRIBE_SHB_DWARVES) &&
+                selectedCharacter.HasQuest((int)QuestIds.TRIBE_EW_ARKASODARA) &&
+                selectedCharacter.HasQuest((int)QuestIds.TRIBE_EW_OMICRONS) &&
+                selectedCharacter.HasQuest((int)QuestIds.TRIBE_EW_LOPORRITS)
+               )
+            {
+
+                using var tribalTab =
+                    ImRaii.TabItem(
+                        $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 5750)}###CharactersCurrencies#CurrencyTabs#{selectedCharacter.CharacterId}#4");
+                {
+                    if (tribalTab)
+                    {
+                        DrawTribal(selectedCharacter);
+                    }
+                }
+            }
+
+            if (!selectedCharacter.HasQuest((int)QuestIds.TRIBE_DT_PELUPELU))
             {
                 return;
             }
 
-            using var tribalTab =
-                ImRaii.TabItem($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 5750)}");
+            using var currentExpansionTribalTab =
+                ImRaii.TabItem($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 5777)}###CharactersCurrencies#CurrencyTabs#{selectedCharacter.CharacterId}#5");
             {
-                if (tribalTab)
+                if (currentExpansionTribalTab)
                 {
-                    DrawTribal(selectedCharacter);
+                    DrawCurrentExpansionTribal(selectedCharacter);
                 }
             }
         }
@@ -428,11 +443,11 @@ namespace Altoholic.Windows
             Item? item =
                 _globalCache.ItemStorage.LoadItem(_currentLocale, (uint)id);
             if (item == null) return;
-            Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(item.Icon), new Vector2(32, 32));
+            Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(item.Value.Icon), new Vector2(32, 32));
             if (ImGui.IsItemHovered())
             {
                 ImGui.BeginTooltip();
-                ImGui.TextUnformatted($"{item.Name}");
+                ImGui.TextUnformatted($"{item.Value.Name}");
                 ImGui.EndTooltip();
             }
 
@@ -667,12 +682,12 @@ namespace Altoholic.Windows
                 true => new Vector4(1, 1, 1, 1),
                 false => new Vector4(1, 1, 1, 0.5f),
             };
-            Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(item.Icon), new Vector2(32, 32), alpha);
+            Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(item.Value.Icon), new Vector2(32, 32), alpha);
             if (ImGui.IsItemHovered())
             {
                 ImGui.BeginTooltip();
                 ImGui.TextUnformatted(
-                    $"{item.Name}{(discontinued ? "\r\n" + _globalCache.AddonStorage.LoadAddonString(_currentLocale, 5757) : string.Empty)}");
+                    $"{item.Value.Name}{(discontinued ? "\r\n" + _globalCache.AddonStorage.LoadAddonString(_currentLocale, 5757) : string.Empty)}");
                 ImGui.EndTooltip();
             }
 
@@ -765,12 +780,12 @@ namespace Altoholic.Windows
                 true => new Vector4(1, 1, 1, 1),
                 false => new Vector4(1, 1, 1, 0.5f),
             };
-            Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(item.Icon), new Vector2(32, 32), alpha);
+            Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(item.Value.Icon), new Vector2(32, 32), alpha);
             if (ImGui.IsItemHovered())
             {
                 ImGui.BeginTooltip();
                 ImGui.TextUnformatted(
-                    $"{item.Name}{(discontinued ? "\r\n" + _globalCache.AddonStorage.LoadAddonString(_currentLocale, 5757) : string.Empty)}");
+                    $"{item.Value.Name}{(discontinued ? "\r\n" + _globalCache.AddonStorage.LoadAddonString(_currentLocale, 5757) : string.Empty)}");
                 ImGui.EndTooltip();
             }
 
@@ -948,10 +963,9 @@ namespace Altoholic.Windows
                 }
             }
 
-            if (!selectedCharacter.HasQuest((int)QuestIds.TRIBE_EW_ARKASODARA) &&
-                !selectedCharacter.HasQuest((int)QuestIds.TRIBE_EW_OMICRONS) &&
-                !selectedCharacter.HasQuest((int)QuestIds.TRIBE_EW_LOPORRITS)
-            )
+            if (!selectedCharacter.HasQuest((int)QuestIds.TRIBE_EW_ARKASODARA) ||
+                !selectedCharacter.HasQuest((int)QuestIds.TRIBE_EW_OMICRONS) ||
+                !selectedCharacter.HasQuest((int)QuestIds.TRIBE_EW_LOPORRITS))
             {
                 return;
             }
@@ -962,14 +976,12 @@ namespace Altoholic.Windows
             ImGui.TableNextRow();
             if (selectedCharacter.HasQuest((int)QuestIds.TRIBE_EW_ARKASODARA))
             {
-                //ImGui.TableSetColumnIndex(0);
                 ImGui.TableNextColumn();
                 DrawTribalCurrency(pc.Arkasodara_Pana, Currencies.ARKASODARA_PANA, Tribal.ARKASODARA);
             }
 
             if (selectedCharacter.HasQuest((int)QuestIds.TRIBE_EW_OMICRONS))
             {
-                //ImGui.TableSetColumnIndex(1);
                 ImGui.TableNextColumn();
                 DrawTribalCurrency(pc.Omicron_Omnitoken, Currencies.OMICRON_OMNITOKEN, Tribal.OMICRONS);
             }
@@ -978,10 +990,41 @@ namespace Altoholic.Windows
             {
                 return;
             }
-
-            //ImGui.TableSetColumnIndex(2);
             ImGui.TableNextColumn();
             DrawTribalCurrency(pc.Loporrit_Carat, Currencies.LOPORRIT_CARAT, Tribal.LOPORRITS);
+        }
+        
+        private void DrawCurrentExpansionTribal(Character selectedCharacter)
+        {
+            if (selectedCharacter.Currencies == null) return;
+
+            PlayerCurrencies pc = selectedCharacter.Currencies;
+
+            ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 5751));
+            ImGui.Separator();
+            using var charactersCurrenciesTribalCurrencyTable =
+                ImRaii.Table($"###CharactersCurrencies#CurrentExpansionTribalCurrencyTable#{selectedCharacter.CharacterId}", 3);
+            if (!charactersCurrenciesTribalCurrencyTable) return;
+            ImGui.TableSetupColumn($"###CharactersCurrencies#CurrentExpansionTribalCurrencyTable#Col1#{selectedCharacter.CharacterId}",
+                ImGuiTableColumnFlags.WidthStretch);
+            ImGui.TableSetupColumn($"###CharactersCurrencies#CurrentExpansionTribalCurrencyTable#Col2#{selectedCharacter.CharacterId}",
+                ImGuiTableColumnFlags.WidthStretch);
+            ImGui.TableSetupColumn($"###CharactersCurrencies#CurrentExpansionTribalCurrencyTable#Col3#{selectedCharacter.CharacterId}",
+                ImGuiTableColumnFlags.WidthStretch);
+            if (selectedCharacter.HasQuest((int)QuestIds.TRIBE_DT_PELUPELU)
+               )
+            {
+                ImGui.TableNextRow();
+                ImGui.TableSetColumnIndex(0);
+                ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 8175));
+                ImGui.TableNextRow();
+                if (selectedCharacter.HasQuest((int)QuestIds.TRIBE_DT_PELUPELU))
+                {
+                    //ImGui.TableSetColumnIndex(0);
+                    ImGui.TableNextColumn();
+                    DrawTribalCurrency(pc.Pelu_Pelplume, Currencies.PELU_PELPLUME, Tribal.PELUPELU);
+                }
+            }
         }
 
         private void DrawTribalCurrency(int currency, Currencies id, Tribal tribalId)
@@ -997,7 +1040,7 @@ namespace Altoholic.Windows
             ImGui.TableSetColumnIndex(0);
             Item? itm = _globalCache.ItemStorage.LoadItem(_currentLocale, (uint)id);
             if (itm == null) return;
-            Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Icon), new Vector2(32, 32));
+            Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Value.Icon), new Vector2(32, 32));
             if (ImGui.IsItemHovered())
             {
                 ImGui.BeginTooltip();

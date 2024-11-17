@@ -30,34 +30,34 @@ namespace Altoholic.Cache
             if (_tripleTriadCard.TryGetValue(id, out TripleTriadCard? ret))
                 return ret;
 
-            Lumina.Excel.GeneratedSheets.TripleTriadCard? ttc = Utils.GetTripleTriadCard(lang, id);
+            Lumina.Excel.Sheets.TripleTriadCard? ttc = Utils.GetTripleTriadCard(lang, id);
             if (ttc is null)
             {
                 return null;
             }
 
-            ret = new TripleTriadCard { Id = ttc.RowId };
+            ret = new TripleTriadCard { Id = ttc.Value.RowId };
             switch (lang)
             {
                 case ClientLanguage.German:
-                    ret.GermanName = ttc.Name;
-                    ret.GermanDescription = ttc.Description;
+                    ret.GermanName = ttc.Value.Name.ExtractText();
+                    ret.GermanDescription = ttc.Value.Description.ExtractText();
                     break;
                 case ClientLanguage.English:
-                    ret.EnglishName = ttc.Name;
-                    ret.EnglishDescription = ttc.Description;
+                    ret.EnglishName = ttc.Value.Name.ExtractText();
+                    ret.EnglishDescription = ttc.Value.Description.ExtractText();
                     break;
                 case ClientLanguage.French:
-                    ret.FrenchName = ttc.Name;
-                    ret.FrenchDescription = ttc.Description;
+                    ret.FrenchName = ttc.Value.Name.ExtractText();
+                    ret.FrenchDescription = ttc.Value.Description.ExtractText();
                     break;
                 case ClientLanguage.Japanese:
-                    ret.JapaneseName = ttc.Name;
-                    ret.JapaneseDescription = ttc.Description;
+                    ret.JapaneseName = ttc.Value.Name.ExtractText();
+                    ret.JapaneseDescription = ttc.Value.Description.ExtractText();
                     break;
             }
 
-            ret.Icon = ttc.RowId + 88000;
+            ret.Icon = ttc.Value.RowId + 88000;
 
             return ret;
         }

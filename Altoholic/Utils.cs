@@ -1,30 +1,32 @@
 ﻿using Altoholic.Cache;
 using Altoholic.Models;
+using CheapLoc;
 using Dalamud.Game;
 using Dalamud.Game.Text;
 using Dalamud.Interface.Textures.TextureWraps;
 using Dalamud.Interface.Utility.Raii;
 using FFXIVClientStructs.FFXIV.Client.Game;
+using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using FFXIVClientStructs.FFXIV.Common.Math;
 using ImGuiNET;
 using Lumina.Excel;
-using Lumina.Excel.GeneratedSheets;
+using Lumina.Excel.Sheets;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using ClassJob = Lumina.Excel.GeneratedSheets.ClassJob;
-using Mount = Lumina.Excel.GeneratedSheets.Mount;
-using Stain = Lumina.Excel.GeneratedSheets.Stain;
-using TripleTriadCard = Lumina.Excel.GeneratedSheets.TripleTriadCard;
-using Emote = Lumina.Excel.GeneratedSheets.Emote;
-using TextCommand = Lumina.Excel.GeneratedSheets.TextCommand;
-using Ornament = Lumina.Excel.GeneratedSheets.Ornament;
-using Glasses = Lumina.Excel.GeneratedSheets.Glasses;
-using Quest = Lumina.Excel.GeneratedSheets.Quest;
-using CheapLoc;
-using FFXIVClientStructs.FFXIV.Client.Game.UI;
-using Cabinet = Lumina.Excel.GeneratedSheets.Cabinet;
+using ClassJob = Lumina.Excel.Sheets.ClassJob;
+using Mount = Lumina.Excel.Sheets.Mount;
+using Stain = Lumina.Excel.Sheets.Stain;
+using TripleTriadCard = Lumina.Excel.Sheets.TripleTriadCard;
+using Emote = Lumina.Excel.Sheets.Emote;
+using TextCommand = Lumina.Excel.Sheets.TextCommand;
+using Ornament = Lumina.Excel.Sheets.Ornament;
+using Glasses = Lumina.Excel.Sheets.Glasses;
+using Quest = Lumina.Excel.Sheets.Quest;
+using Cabinet = Lumina.Excel.Sheets.Cabinet;
+using System.Runtime.CompilerServices;
+
 
 namespace Altoholic
 {
@@ -139,7 +141,7 @@ namespace Altoholic
             ExcelSheet<Race>? dr = Plugin.DataManager.GetExcelSheet<Race>(currentLocale);
             Race? lumina = dr?.GetRow(race);
             if (lumina != null)
-                return gender == 0 ? lumina.Masculine : lumina.Feminine;
+                return gender == 0 ? lumina.Value.Masculine.ExtractText() : lumina.Value.Feminine.ExtractText();
             return string.Empty;
         }
 
@@ -148,7 +150,7 @@ namespace Altoholic
             ExcelSheet<Tribe>? dt = Plugin.DataManager.GetExcelSheet<Tribe>(currentLocale);
             Tribe? lumina = dt?.GetRow(tribe);
             if (lumina != null)
-                return gender == 0 ? lumina.Masculine : lumina.Feminine;
+                return gender == 0 ? lumina.Value.Masculine.ExtractText() : lumina.Value.Feminine.ExtractText();
             return string.Empty;
         }
 
@@ -156,7 +158,7 @@ namespace Altoholic
         {
             ExcelSheet<Town>? dt = Plugin.DataManager.GetExcelSheet<Town>(currentLocale);
             Town? lumina = dt?.GetRow((uint)town);
-            return lumina != null ? lumina.Name : string.Empty;
+            return lumina != null ? lumina.Value.Name.ExtractText() : string.Empty;
         }
 
         public static uint GetTownIcon(int town)
@@ -174,7 +176,7 @@ namespace Altoholic
         {
             ExcelSheet<GuardianDeity>? dg = Plugin.DataManager.GetExcelSheet<GuardianDeity>(currentLocale);
             GuardianDeity? lumina = dg?.GetRow((uint)guardian);
-            return lumina != null ? lumina.Name : string.Empty;
+            return lumina != null ? lumina.Value.Name.ExtractText() : string.Empty;
         }
 
         public static uint GetGuardianIcon(int guardian)
@@ -337,7 +339,7 @@ namespace Altoholic
         {
             ExcelSheet<GrandCompany>? dgc = Plugin.DataManager.GetExcelSheet<GrandCompany>(currentLocale);
             GrandCompany? lumina = dgc?.GetRow((uint)id);
-            return lumina != null ? lumina.Name : string.Empty;
+            return lumina != null ? lumina.Value.Name.ExtractText() : string.Empty;
         }
 
         public static uint GetGrandCompanyIcon(int company)
@@ -361,27 +363,17 @@ namespace Altoholic
                         {
                             ExcelSheet<GCRankLimsaMaleText>? dgcrlmt =
                                 Plugin.DataManager.GetExcelSheet<GCRankLimsaMaleText>(currentLocale);
-                            if (dgcrlmt == null)
-                            {
-                                return string.Empty;
-                            }
-
-                            GCRankLimsaMaleText? lumina = dgcrlmt.GetRow((uint)rank);
+                            GCRankLimsaMaleText? lumina = dgcrlmt?.GetRow((uint)rank);
                             if (lumina != null)
-                                return lumina.Singular;
+                                return lumina.Value.Singular.ExtractText();
                         }
                         else
                         {
                             ExcelSheet<GCRankLimsaFemaleText>? dgcrlft =
                                 Plugin.DataManager.GetExcelSheet<GCRankLimsaFemaleText>(currentLocale);
-                            if (dgcrlft == null)
-                            {
-                                return string.Empty;
-                            }
-
-                            GCRankLimsaFemaleText? lumina = dgcrlft.GetRow((uint)rank);
+                            GCRankLimsaFemaleText? lumina = dgcrlft?.GetRow((uint)rank);
                             if (lumina != null)
-                                return lumina.Singular;
+                                return lumina.Value.Singular.ExtractText();
                         }
 
                         return string.Empty;
@@ -392,14 +384,9 @@ namespace Altoholic
                         {
                             ExcelSheet<GCRankUldahMaleText>? dgcrlmt =
                                 Plugin.DataManager.GetExcelSheet<GCRankUldahMaleText>(currentLocale);
-                            if (dgcrlmt == null)
-                            {
-                                return string.Empty;
-                            }
-
-                            GCRankUldahMaleText? lumina = dgcrlmt.GetRow((uint)rank);
+                            GCRankUldahMaleText? lumina = dgcrlmt?.GetRow((uint)rank);
                             if (lumina != null)
-                                return lumina.Singular;
+                                return lumina.Value.Singular.ExtractText();
                         }
                         else
                         {
@@ -407,7 +394,7 @@ namespace Altoholic
                                 Plugin.DataManager.GetExcelSheet<GCRankUldahFemaleText>(currentLocale);
                             GCRankUldahFemaleText? lumina = dgcrlft?.GetRow((uint)rank);
                             if (lumina != null)
-                                return lumina.Singular;
+                                return lumina.Value.Singular.ExtractText();
                         }
 
                         return string.Empty;
@@ -420,7 +407,7 @@ namespace Altoholic
                                 Plugin.DataManager.GetExcelSheet<GCRankGridaniaMaleText>(currentLocale);
                             GCRankGridaniaMaleText? lumina = dgcrlmt?.GetRow((uint)rank);
                             if (lumina != null)
-                                return lumina.Singular;
+                                return lumina.Value.Singular.ExtractText();
                         }
                         else
                         {
@@ -428,7 +415,7 @@ namespace Altoholic
                                 Plugin.DataManager.GetExcelSheet<GCRankGridaniaFemaleText>(currentLocale);
                             GCRankGridaniaFemaleText? lumina = dgcrlft?.GetRow((uint)rank);
                             if (lumina != null)
-                                return lumina.Singular;
+                                return lumina.Value.Singular.ExtractText();
                         }
 
                         return string.Empty;
@@ -611,22 +598,23 @@ namespace Altoholic
         {
             ExcelSheet<Item>? ditm = Plugin.DataManager.GetExcelSheet<Item>(currentLocale);
             IEnumerable<Item>? items = ditm?.Where(i =>
-                i.Name.RawString.Contains(name.ToLower(), StringComparison.CurrentCultureIgnoreCase));
+                i.Name.ExtractText().Contains(name.ToLower(), StringComparison.CurrentCultureIgnoreCase));
             return items;
         }
+
 
         public static Item? GetItemFromName(ClientLanguage currentLocale, string name)
         {
             ExcelSheet<Item>? ditm = Plugin.DataManager.GetExcelSheet<Item>(currentLocale);
-            Item? item = ditm?.FirstOrDefault(i =>
-                i.Name.RawString.Contains(name.ToLower(), StringComparison.CurrentCultureIgnoreCase));
+            Item? item = ditm?.FirstOrNull(i =>
+                i.Name.ExtractText().Contains(name.ToLower(), StringComparison.CurrentCultureIgnoreCase));
             return item;
         }
 
         public static ItemLevel? GetItemLevelFromId(uint id)
         {
-            ExcelSheet<ItemLevel>? dilvl = Plugin.DataManager.GetExcelSheet<ItemLevel>(ClientLanguage.English);
-            ItemLevel? lumina = dilvl?.GetRow(id);
+            ExcelSheet<ItemLevel> dilvl = Plugin.DataManager.GetExcelSheet<ItemLevel>(ClientLanguage.English);
+            ItemLevel? lumina = dilvl.GetRow(id);
             return lumina;
         }
 
@@ -867,8 +855,8 @@ namespace Altoholic
 
         public static BeastReputationRank? GetBeastReputationRank(ClientLanguage currentLocale, uint id)
         {
-            ExcelSheet<BeastReputationRank>? btm = Plugin.DataManager.GetExcelSheet<BeastReputationRank>(currentLocale);
-            BeastReputationRank? lumina = btm?.GetRow(id);
+            ExcelSheet<BeastReputationRank> btm = Plugin.DataManager.GetExcelSheet<BeastReputationRank>(currentLocale);
+            BeastReputationRank? lumina = btm.GetRow(id);
             return lumina;
         }
 
@@ -902,22 +890,22 @@ namespace Altoholic
             while (btEnumerator.MoveNext())
             {
                 BeastTribe bt = btEnumerator.Current;
-                if (string.IsNullOrEmpty(bt.Name)) continue;
+                if (bt.Name.IsEmpty) continue;
                 if (bt.Icon == 0) continue;
                 BeastTribes b = new() { Id = bt.RowId, Icon = bt.Icon, MaxRank = bt.MaxRank, DisplayOrder = bt.DisplayOrder };
                 switch (currentLocale)
                 {
                     case ClientLanguage.German:
-                        b.GermanName = bt.Name;
+                        b.GermanName = bt.Name.ExtractText();
                         break;
                     case ClientLanguage.English:
-                        b.EnglishName = bt.Name;
+                        b.EnglishName = bt.Name.ExtractText();
                         break;
                     case ClientLanguage.French:
-                        b.FrenchName = bt.Name;
+                        b.FrenchName = bt.Name.ExtractText();
                         break;
                     case ClientLanguage.Japanese:
-                        b.JapaneseName = bt.Name;
+                        b.JapaneseName = bt.Name.ExtractText();
                         break;
                 }
 
@@ -941,31 +929,31 @@ namespace Altoholic
             BeastReputationRank? brr = globalCache.BeastTribesStorage.GetRank(currentLocale, reputationLevel);
             if (brr == null) return;
 
-            float progress = (float)exp / brr.RequiredReputation;
+            float progress = (float)exp / brr.Value.RequiredReputation;
             ImGui.ProgressBar(progress, new Vector2(550, 10), "");
 
             using var charactersJobsJobLine = ImRaii.Table("###DrawReputationProgressBar#ReputationLine", 3);
             if (!charactersJobsJobLine) return;
             ImGui.TableSetupColumn("###DrawReputationProgressBar#ReputationLine#Level", ImGuiTableColumnFlags.WidthFixed, 300);
             ImGui.TableSetupColumn("###DrawReputationProgressBar#ReputationLine#Empty", ImGuiTableColumnFlags.WidthFixed,
-                brr.RequiredReputation == 0 ? 190 : 150);
+                brr.Value.RequiredReputation == 0 ? 190 : 150);
             ImGui.TableSetupColumn("###DrawReputationProgressBar#ReputationLine#Exp", ImGuiTableColumnFlags.WidthFixed,
-                brr.RequiredReputation == 0 ? 100 : 150);
+                brr.Value.RequiredReputation == 0 ? 100 : 150);
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
-            UIColor? c = brr.Color.Value;
+            UIColor? c = brr.Value.Color.ValueNullable;
             if (c is not null)
             {
-                ImGui.TextColored(ConvertColorToVector4(c.UIForeground),
-                    isAllied ? $"{reputationLevel+1}. {brr.Name}" : $"{reputationLevel}. {brr.AlliedNames}");
+                ImGui.TextColored(ConvertColorToVector4(c.Value.UIForeground),
+                    isAllied ? $"{reputationLevel+1}. {brr.Value.Name}" : $"{reputationLevel}. {brr.Value.AlliedNames}");
             }
             else
             {
-                ImGui.TextUnformatted($"{reputationLevel}. {brr.Name}");
+                ImGui.TextUnformatted($"{reputationLevel}. {brr.Value.Name}");
             }
             ImGui.TableSetColumnIndex(1);
             ImGui.TableSetColumnIndex(2);
-            ImGui.TextUnformatted($"{exp}/{brr.RequiredReputation}");
+            ImGui.TextUnformatted($"{exp}/{brr.Value.RequiredReputation}");
         }
 
         public static uint GetRoleIcon(uint roleId)
@@ -1246,12 +1234,14 @@ namespace Altoholic
             }
             else
             {
-                ItemItemLevel? i = globalCache.ItemStorage.LoadItemWithItemLevel(currentLocale, foundGear.ItemId);
-                if (i == null) return;
-                DrawIcon(globalCache.IconStorage.LoadIcon(i.Item.Icon, foundGear.HQ), iconSize);
+                ItemItemLevel? itl = globalCache.ItemStorage.LoadItemWithItemLevel(currentLocale, foundGear.ItemId);
+                if (itl == null) return;
+                Item? i = itl.Item;
+                if(i == null) return;
+                DrawIcon(globalCache.IconStorage.LoadIcon(i.Value.Icon, foundGear.HQ), iconSize);
                 if (ImGui.IsItemHovered())
                 {
-                    DrawGearTooltip(currentLocale, ref globalCache, foundGear, i);
+                    DrawGearTooltip(currentLocale, ref globalCache, foundGear, itl);
                 }
             }
         }
@@ -1287,13 +1277,14 @@ namespace Altoholic
         public static void DrawGearTooltip(ClientLanguage currentLocale, ref GlobalCache globalCache, Gear item,
             ItemItemLevel itm)
         {
-            Item dbItem = itm.Item;
+            Item? dbItem = itm.Item;
+            if (dbItem == null) return;
             ItemLevel? ilvl = itm.ItemLevel;
             if (ilvl == null) return;
 
             ImGui.BeginTooltip();
 
-            if (dbItem.IsUnique || dbItem.IsUntradable)
+            if (dbItem.Value.IsUnique || dbItem.Value.IsUntradable)
             {
                 using var drawItemTooltipItemUnique = ImRaii.Table($"##DrawItemTooltip#Item_{item.ItemId}#Unique", 3);
                 if (!drawItemTooltipItemUnique) return;
@@ -1307,13 +1298,13 @@ namespace Altoholic
                 ImGui.TableSetColumnIndex(0);
                 ImGui.TextUnformatted("");
                 ImGui.TableSetColumnIndex(1);
-                if (dbItem.IsUnique)
+                if (dbItem.Value.IsUnique)
                 {
                     ImGui.TextUnformatted(
                         $"{globalCache.AddonStorage.LoadAddonString(currentLocale, 494)}"); // Unique
                 }
 
-                if (dbItem.IsUntradable)
+                if (dbItem.Value.IsUntradable)
                 {
                     ImGui.SameLine();
                     ImGui.TextUnformatted(
@@ -1337,15 +1328,15 @@ namespace Altoholic
                     305);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                DrawIcon(globalCache.IconStorage.LoadIcon(dbItem.Icon, item.HQ), new Vector2(40, 40));
+                DrawIcon(globalCache.IconStorage.LoadIcon(dbItem.Value.Icon, item.HQ), new Vector2(40, 40));
                 ImGui.TableSetColumnIndex(1);
-                ImGui.TextUnformatted($"{dbItem.Name} {(item.HQ ? (char)SeIconChar.HighQuality : "")}");
-                if (dbItem.IsGlamourous)
+                ImGui.TextUnformatted($"{dbItem.Value.Name} {(item.HQ ? (char)SeIconChar.HighQuality : "")}");
+                if (dbItem.Value.IsGlamorous)
                 {
                     Item? glamour = globalCache.ItemStorage.LoadItem(currentLocale, item.GlamourID);
                     if (glamour != null)
                     {
-                        ImGui.TextUnformatted($"{(char)SeIconChar.Glamoured} {glamour.Name}");
+                        ImGui.TextUnformatted($"{(char)SeIconChar.Glamoured} {glamour.Value.Name}");
                     }
                 }
 
@@ -1371,20 +1362,20 @@ namespace Altoholic
                     $"{globalCache.AddonStorage.LoadAddonString(currentLocale, 3246)}"); // Magic Defense
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                ImGui.TextUnformatted($"{dbItem.DefensePhys}");
+                ImGui.TextUnformatted($"{dbItem.Value.DefensePhys}");
                 ImGui.TableSetColumnIndex(1);
-                ImGui.TextUnformatted($"{dbItem.DefenseMag}");
+                ImGui.TextUnformatted($"{dbItem.Value.DefenseMag}");
             }
 
             ImGui.Separator();
             ImGui.TextUnformatted(
-                $"{globalCache.AddonStorage.LoadAddonString(currentLocale, 13775)} {ilvl.RowId}"); // Item Level
+                $"{globalCache.AddonStorage.LoadAddonString(currentLocale, 13775)} {ilvl.Value.RowId}"); // Item Level
             ImGui.Separator();
-            ImGui.TextUnformatted($"{GetClassJobCategoryFromId(currentLocale, dbItem.ClassJobCategory.Value?.RowId)}");
+            ImGui.TextUnformatted($"{GetClassJobCategoryFromId(currentLocale, dbItem.Value.ClassJobCategory.ValueNullable?.RowId)}");
             ImGui.TextUnformatted(
-                $"{globalCache.AddonStorage.LoadAddonString(currentLocale, 1034)} {dbItem.LevelEquip}");
+                $"{globalCache.AddonStorage.LoadAddonString(currentLocale, 1034)} {dbItem.Value.LevelEquip}");
             ImGui.Separator();
-            if (!dbItem.IsAdvancedMeldingPermitted)
+            if (!dbItem.Value.IsAdvancedMeldingPermitted)
             {
                 ImGui.TextUnformatted(
                     $"{globalCache.AddonStorage.LoadAddonString(currentLocale, 4655)}"); // Advanced Melding Forbidden
@@ -1428,11 +1419,11 @@ namespace Altoholic
                     $"{globalCache.AddonStorage.LoadAddonString(currentLocale, 3249)} +"); // Skill Speed
             }
 
-            if (dbItem.MateriaSlotCount > 0)
+            if (dbItem.Value.MateriaSlotCount > 0)
             {
                 ImGui.Separator();
                 ImGui.TextUnformatted($"{globalCache.AddonStorage.LoadAddonString(currentLocale, 491)}"); // Materia
-                for (int i = 0; i < dbItem.MateriaSlotCount; i++)
+                for (int i = 0; i < dbItem.Value.MateriaSlotCount; i++)
                 {
                     ImGui.ColorButton($"##Item_{item.ItemId}#Materia#{i}", new Vector4(34, 169, 34, 1),
                         ImGuiColorEditFlags.None, new Vector2(16, 16));
@@ -1448,14 +1439,14 @@ namespace Altoholic
             ImGui.TextUnformatted(
                 $"{globalCache.AddonStorage.LoadAddonString(currentLocale, 499)} : {(item.Spiritbond / 100f).ToString(false ? "F2" : "0.##").Truncate(2) + "%"}");
             ImGui.TextUnformatted(
-                $"{globalCache.AddonStorage.LoadAddonString(currentLocale, 500)} : {globalCache.JobStorage.GetName(currentLocale, dbItem.ClassJobRepair.Row)}"); //Repair Level
+                $"{globalCache.AddonStorage.LoadAddonString(currentLocale, 500)} : {globalCache.JobStorage.GetName(currentLocale, dbItem.Value.ClassJobRepair.RowId)}"); //Repair Level
             ImGui.TextUnformatted(
-                $"{globalCache.AddonStorage.LoadAddonString(currentLocale, 518)} : {GetItemRepairResource(currentLocale, dbItem.ItemRepair.Row)}"); //Materials
+                $"{globalCache.AddonStorage.LoadAddonString(currentLocale, 518)} : {GetItemRepairResource(currentLocale, dbItem.Value.ItemRepair.RowId)}"); //Materials
             ImGui.TextUnformatted($"{globalCache.AddonStorage.LoadAddonString(currentLocale, 995)} : "); //Quick Repairs
             ImGui.TextUnformatted(
                 $"{globalCache.AddonStorage.LoadAddonString(currentLocale, 993)} : "); //Materia Melding
-            ImGui.TextUnformatted($"{GetExtractableString(currentLocale, globalCache, dbItem)}");
-            ImGui.TextUnformatted($"{GetSellableString(currentLocale, globalCache, dbItem, item)}"); //Materia Melding
+            ImGui.TextUnformatted($"{GetExtractableString(currentLocale, globalCache, dbItem.Value)}");
+            ImGui.TextUnformatted($"{GetSellableString(currentLocale, globalCache, dbItem.Value, item)}"); //Materia Melding
             if (item.CrafterContentID > 0)
                 ImGui.TextUnformatted("Crafted");
 
@@ -1517,7 +1508,7 @@ namespace Altoholic
                 ImGui.TextUnformatted($"{item.Name}");
             }
 
-            ImGui.TextUnformatted($"{item.ItemUICategory.Value?.Name}");
+            ImGui.TextUnformatted($"{item.ItemUICategory.ValueNullable?.Name}");
 
             ImGui.EndTooltip();
         }
@@ -1531,7 +1522,7 @@ namespace Altoholic
 
             ImGui.BeginTooltip();
 
-            if (dbItem.IsUnique || dbItem.IsUntradable)
+            if (dbItem.Value.IsUnique || dbItem.Value.IsUntradable)
             {
                 using var drawItemTooltipItemUnique = ImRaii.Table($"##DrawItemTooltip#Item_{item.ItemId}#Unique", 3);
                 if (!drawItemTooltipItemUnique) return;
@@ -1545,13 +1536,13 @@ namespace Altoholic
                 ImGui.TableSetColumnIndex(0);
                 ImGui.TextUnformatted("");
                 ImGui.TableSetColumnIndex(1);
-                if (dbItem.IsUnique)
+                if (dbItem.Value.IsUnique)
                 {
                     ImGui.TextUnformatted(
                         $"{globalCache.AddonStorage.LoadAddonString(currentLocale, 494)}"); // Unique
                 }
 
-                if (dbItem.IsUntradable)
+                if (dbItem.Value.IsUntradable)
                 {
                     ImGui.SameLine();
                     ImGui.TextUnformatted(
@@ -1584,9 +1575,9 @@ namespace Altoholic
 
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                DrawIcon(globalCache.IconStorage.LoadIcon(dbItem.Icon, item.HQ), new Vector2(40, 40));
+                DrawIcon(globalCache.IconStorage.LoadIcon(dbItem.Value.Icon, item.HQ), new Vector2(40, 40));
                 ImGui.TableSetColumnIndex(1);
-                ImGui.TextUnformatted($"{dbItem.Name} {(item.HQ ? (char)SeIconChar.HighQuality : "")}");
+                ImGui.TextUnformatted($"{dbItem.Value.Name} {(item.HQ ? (char)SeIconChar.HighQuality : "")}");
                 if (armoire)
                 {
                     ImGui.TableSetColumnIndex(2);
@@ -1609,9 +1600,9 @@ namespace Altoholic
                     ImGuiTableColumnFlags.WidthFixed, 55);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                ImGui.TextUnformatted($"{dbItem.ItemUICategory.Value?.Name}");
+                ImGui.TextUnformatted($"{dbItem.Value.ItemUICategory.ValueNullable?.Name}");
                 ImGui.TableSetColumnIndex(1);
-                ImGui.TextUnformatted($"{item.Quantity}/{dbItem.StackSize} (Total: {item.Quantity})");
+                ImGui.TextUnformatted($"{item.Quantity}/{dbItem.Value.StackSize} (Total: {item.Quantity})");
                 ImGui.TableSetColumnIndex(2);
             }
 
@@ -1639,9 +1630,9 @@ namespace Altoholic
                     ImGuiTableColumnFlags.WidthFixed, 305);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                DrawIcon(globalCache.IconStorage.LoadIcon(dbItem.Icon, item.HQ), new Vector2(40, 40));
+                DrawIcon(globalCache.IconStorage.LoadIcon(dbItem.Value.Icon, item.HQ), new Vector2(40, 40));
                 ImGui.TableSetColumnIndex(1);
-                ImGui.TextUnformatted($"{dbItem.Name} {(item.HQ ? (char)SeIconChar.HighQuality : "")}");
+                ImGui.TextUnformatted($"{dbItem.Value.Name} {(item.HQ ? (char)SeIconChar.HighQuality : "")}");
             }
 
             using (var drawEventItemTooltipItemCategory =
@@ -1676,28 +1667,28 @@ namespace Altoholic
 
             ImGui.BeginTooltip();
 
-            if (dbItem.IsUnique || dbItem.IsUntradable)
+            if (dbItem.Value.IsUnique || dbItem.Value.IsUntradable)
             {
                 using var drawCrystalTooltipItemUnique =
-                    ImRaii.Table($"###DrawCrystalTooltip#Item_{dbItem.RowId}#Unique", 3);
+                    ImRaii.Table($"###DrawCrystalTooltip#Item_{dbItem.Value.RowId}#Unique", 3);
                 if (!drawCrystalTooltipItemUnique) return;
-                ImGui.TableSetupColumn($"###DrawCrystalTooltip#Item_{dbItem.RowId}#Unique#IsUnique",
+                ImGui.TableSetupColumn($"###DrawCrystalTooltip#Item_{dbItem.Value.RowId}#Unique#IsUnique",
                     ImGuiTableColumnFlags.WidthStretch);
-                ImGui.TableSetupColumn($"###DrawCrystalTooltip#Item_{dbItem.RowId}#Unique#IsUntradable",
+                ImGui.TableSetupColumn($"###DrawCrystalTooltip#Item_{dbItem.Value.RowId}#Unique#IsUntradable",
                     ImGuiTableColumnFlags.WidthFixed, 200);
-                ImGui.TableSetupColumn($"##DrawItem#DrawCrystalTooltipTooltip#Item_{dbItem.RowId}#Unique#IsBinding",
+                ImGui.TableSetupColumn($"##DrawItem#DrawCrystalTooltipTooltip#Item_{dbItem.Value.RowId}#Unique#IsBinding",
                     ImGuiTableColumnFlags.WidthStretch);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
                 ImGui.TextUnformatted("");
                 ImGui.TableSetColumnIndex(1);
-                if (dbItem.IsUnique)
+                if (dbItem.Value.IsUnique)
                 {
                     ImGui.TextUnformatted(
                         $"{globalCache.AddonStorage.LoadAddonString(currentLocale, 494)}"); // Unique
                 }
 
-                if (dbItem.IsUntradable)
+                if (dbItem.Value.IsUntradable)
                 {
                     ImGui.SameLine();
                     ImGui.TextUnformatted(
@@ -1712,33 +1703,33 @@ namespace Altoholic
                 ImGui.TextUnformatted("");
             }
 
-            using (var drawCrystalTooltipItem = ImRaii.Table($"###DrawCrystalTooltip#Item_{dbItem.RowId}", 2))
+            using (var drawCrystalTooltipItem = ImRaii.Table($"###DrawCrystalTooltip#Item_{dbItem.Value.RowId}", 2))
             {
                 if (!drawCrystalTooltipItem) return;
-                ImGui.TableSetupColumn($"###DrawCrystalTooltip#Item_{dbItem.RowId}#Icon",
+                ImGui.TableSetupColumn($"###DrawCrystalTooltip#Item_{dbItem.Value.RowId}#Icon",
                     ImGuiTableColumnFlags.WidthFixed, 55);
-                ImGui.TableSetupColumn($"###DrawCrystalTooltip#Item_{dbItem.RowId}#Name",
+                ImGui.TableSetupColumn($"###DrawCrystalTooltip#Item_{dbItem.Value.RowId}#Name",
                     ImGuiTableColumnFlags.WidthFixed, 305);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                DrawIcon(globalCache.IconStorage.LoadIcon(dbItem.Icon), new Vector2(40, 40));
+                DrawIcon(globalCache.IconStorage.LoadIcon(dbItem.Value.Icon), new Vector2(40, 40));
                 ImGui.TableSetColumnIndex(1);
-                ImGui.TextUnformatted($"{dbItem.Name}");
+                ImGui.TextUnformatted($"{dbItem.Value.Name}");
             }
 
             using (var drawCrystalTooltipItemCategory =
-                   ImRaii.Table($"###DrawCrystalTooltip#Item_{dbItem.RowId}#Category", 3))
+                   ImRaii.Table($"###DrawCrystalTooltip#Item_{dbItem.Value.RowId}#Category", 3))
             {
                 if (!drawCrystalTooltipItemCategory) return;
-                ImGui.TableSetupColumn($"###DrawCrystalTooltip#Item_{dbItem.RowId}#Category#Icon",
+                ImGui.TableSetupColumn($"###DrawCrystalTooltip#Item_{dbItem.Value.RowId}#Category#Icon",
                     ImGuiTableColumnFlags.WidthFixed, 150);
-                ImGui.TableSetupColumn($"###DrawCrystalTooltip#Item_{dbItem.RowId}#Category#Name",
+                ImGui.TableSetupColumn($"###DrawCrystalTooltip#Item_{dbItem.Value.RowId}#Category#Name",
                     ImGuiTableColumnFlags.WidthFixed, 200);
-                ImGui.TableSetupColumn($"###DrawCrystalTooltip#Item_{dbItem.RowId}#Category#Empty",
+                ImGui.TableSetupColumn($"###DrawCrystalTooltip#Item_{dbItem.Value.RowId}#Category#Empty",
                     ImGuiTableColumnFlags.WidthFixed, 55);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                ImGui.TextUnformatted($"{dbItem.ItemUICategory.Value?.Name}");
+                ImGui.TextUnformatted($"{dbItem.Value.ItemUICategory.ValueNullable?.Name}");
                 ImGui.TableSetColumnIndex(1);
                 ImGui.TextUnformatted($"{amount}/99 (Total: {amount})");
             }
@@ -2162,7 +2153,7 @@ namespace Altoholic
             //str = str.Replace("<If(GreaterThan(IntegerParameter(1),0))>Y<Else/>N</If>", (item.AdditionalData) ? "Y" : "N");
             //str = str.Replace("<If(GreaterThan(IntegerParameter(2),0))>Y<Else/>N</If>", (item.IsGlamourous) ? "Y" : "N");
             str = str.Replace("Extractable: YN", "Extractable: ");
-            str = str.Replace("Projectable: YN", (item.IsGlamourous) ? "Projectable: Y" : "Projectable: N");
+            str = str.Replace("Projectable: YN", (item.IsGlamorous) ? "Projectable: Y" : "Projectable: N");
             //str = str.Replace("<If(GreaterThan(IntegerParameter(3),0))><Value>IntegerParameter(4)</Value>.00<Else/>N</If>", (item.Desynth == 0)? "N" : "Y");
             str = str.Replace(".00N", (item.Desynth == 0)? "N" : "Y");
             return str;
@@ -2182,9 +2173,9 @@ namespace Altoholic
         }
 
         // ./SimpleTweaksPlugin/Tweaks/Tooltips/MateriaStats.cs
-        /*public static void Materia(ushort id, byte grade, Lumina.Excel.GeneratedSheets.ItemLevel itemLevel)
+        /*public static void Materia(ushort id, byte grade, Lumina.Excel.Sheets.ItemLevel itemLevel)
         {
-            var baseParams = new Dictionary<uint, Lumina.Excel.GeneratedSheets.BaseParam>();
+            var baseParams = new Dictionary<uint, Lumina.Excel.Sheets.BaseParam>();
             var baseParamDeltas = new Dictionary<uint, int>();
             var baseParamOriginal = new Dictionary<uint, int>();
             var baseParamLimits = new Dictionary<uint, int>();
@@ -2218,7 +2209,7 @@ namespace Altoholic
             }
 
             Addon? lumina = da.GetRow((uint)id);
-            return lumina != null ? lumina.Text : string.Empty;
+            return lumina != null ? lumina.Value.Text.ExtractText() : string.Empty;
         }
         
         public static Companion? GetMinion(ClientLanguage currentLocale, uint id)
@@ -2242,7 +2233,7 @@ namespace Altoholic
             while (minionEnumerator.MoveNext())
             {
                 Companion minion = minionEnumerator.Current;
-                if (string.IsNullOrEmpty(minion.Singular)) continue;
+                if (minion.Singular.IsEmpty) continue;
                 if (minion.Icon == 0) continue;
                 Minion m = new() { Id = minion.RowId, Icon = minion.Icon, Transient = new Transient() };
                 CompanionTransient? ct = GetCompanionTransient(currentLocale, minion.RowId);
@@ -2250,28 +2241,28 @@ namespace Altoholic
                 switch (currentLocale)
                 {
                     case ClientLanguage.German:
-                        m.GermanName = minion.Singular;
-                        m.Transient.GermanDescription = ct.Description;
-                        m.Transient.GermanDescriptionEnhanced = ct.DescriptionEnhanced;
-                        m.Transient.GermanTooltip = ct.Tooltip;
+                        m.GermanName = minion.Singular.ExtractText();
+                        m.Transient.GermanDescription = ct.Value.Description.ExtractText();
+                        m.Transient.GermanDescriptionEnhanced = ct.Value.DescriptionEnhanced.ExtractText();
+                        m.Transient.GermanTooltip = ct.Value.Tooltip.ExtractText();
                         break;
                     case ClientLanguage.English:
-                        m.EnglishName = minion.Singular;
-                        m.Transient.EnglishDescription = ct.Description;
-                        m.Transient.EnglishDescriptionEnhanced = ct.DescriptionEnhanced;
-                        m.Transient.EnglishTooltip = ct.Tooltip;
+                        m.EnglishName = minion.Singular.ExtractText();
+                        m.Transient.EnglishDescription = ct.Value.Description.ExtractText();
+                        m.Transient.EnglishDescriptionEnhanced = ct.Value.DescriptionEnhanced.ExtractText();
+                        m.Transient.EnglishTooltip = ct.Value.Tooltip.ExtractText();
                         break;
                     case ClientLanguage.French:
-                        m.FrenchName = minion.Singular;
-                        m.Transient.FrenchDescription = ct.Description;
-                        m.Transient.FrenchDescriptionEnhanced = ct.DescriptionEnhanced;
-                        m.Transient.FrenchTooltip = ct.Tooltip;
+                        m.FrenchName = minion.Singular.ExtractText();
+                        m.Transient.FrenchDescription = ct.Value.Description.ExtractText();
+                        m.Transient.FrenchDescriptionEnhanced = ct.Value.DescriptionEnhanced.ExtractText();
+                        m.Transient.FrenchTooltip = ct.Value.Tooltip.ExtractText();
                         break;
                     case ClientLanguage.Japanese:
-                        m.JapaneseName = minion.Singular;
-                        m.Transient.JapaneseDescription = ct.Description;
-                        m.Transient.JapaneseDescriptionEnhanced = ct.DescriptionEnhanced;
-                        m.Transient.JapaneseTooltip = ct.Tooltip;
+                        m.JapaneseName = minion.Singular.ExtractText();
+                        m.Transient.JapaneseDescription = ct.Value.Description.ExtractText();
+                        m.Transient.JapaneseDescriptionEnhanced = ct.Value.DescriptionEnhanced.ExtractText();
+                        m.Transient.JapaneseTooltip = ct.Value.Tooltip.ExtractText();
                         break;
                 }
 
@@ -2302,7 +2293,7 @@ namespace Altoholic
             while (mountEnumerator.MoveNext())
             {
                 Mount mount = mountEnumerator.Current;
-                if (string.IsNullOrEmpty(mount.Singular)) continue;
+                if (mount.Singular.IsEmpty) continue;
                 if (mount.Icon == 0) continue;
                 Models.Mount m = new() { Id = mount.RowId, Icon = mount.Icon, Transient = new Transient() };
                 MountTransient? mt = GetMountTransient(currentLocale, mount.RowId);
@@ -2310,28 +2301,28 @@ namespace Altoholic
                 switch (currentLocale)
                 {
                     case ClientLanguage.German:
-                        m.GermanName = mount.Singular;
-                        m.Transient.GermanDescription = mt.Description;
-                        m.Transient.GermanDescriptionEnhanced = mt.DescriptionEnhanced;
-                        m.Transient.GermanTooltip = mt.Tooltip;
+                        m.GermanName = mount.Singular.ExtractText();
+                        m.Transient.GermanDescription = mt.Value.Description.ExtractText();
+                        m.Transient.GermanDescriptionEnhanced = mt.Value.DescriptionEnhanced.ExtractText();
+                        m.Transient.GermanTooltip = mt.Value.Tooltip.ExtractText();
                         break;
                     case ClientLanguage.English:
-                        m.EnglishName = mount.Singular;
-                        m.Transient.EnglishDescription = mt.Description;
-                        m.Transient.EnglishDescriptionEnhanced = mt.DescriptionEnhanced;
-                        m.Transient.EnglishTooltip = mt.Tooltip;
+                        m.EnglishName = mount.Singular.ExtractText();
+                        m.Transient.EnglishDescription = mt.Value.Description.ExtractText();
+                        m.Transient.EnglishDescriptionEnhanced = mt.Value.DescriptionEnhanced.ExtractText();
+                        m.Transient.EnglishTooltip = mt.Value.Tooltip.ExtractText();
                         break;
                     case ClientLanguage.French:
-                        m.FrenchName = mount.Singular;
-                        m.Transient.FrenchDescription = mt.Description;
-                        m.Transient.FrenchDescriptionEnhanced = mt.DescriptionEnhanced;
-                        m.Transient.FrenchTooltip = mt.Tooltip;
+                        m.FrenchName = mount.Singular.ExtractText();
+                        m.Transient.FrenchDescription = mt.Value.Description.ExtractText();
+                        m.Transient.FrenchDescriptionEnhanced = mt.Value.DescriptionEnhanced.ExtractText();
+                        m.Transient.FrenchTooltip = mt.Value.Tooltip.ExtractText();
                         break;
                     case ClientLanguage.Japanese:
-                        m.JapaneseName = mount.Singular;
-                        m.Transient.JapaneseDescription = mt.Description;
-                        m.Transient.JapaneseDescriptionEnhanced = mt.DescriptionEnhanced;
-                        m.Transient.JapaneseTooltip = mt.Tooltip;
+                        m.JapaneseName = mount.Singular.ExtractText();
+                        m.Transient.JapaneseDescription = mt.Value.Description.ExtractText();
+                        m.Transient.JapaneseDescriptionEnhanced = mt.Value.DescriptionEnhanced.ExtractText();
+                        m.Transient.JapaneseTooltip = mt.Value.Tooltip.ExtractText();
                         break;
                 }
 
@@ -2356,25 +2347,25 @@ namespace Altoholic
             while (tripletriadcardEnumerator.MoveNext())
             {
                 TripleTriadCard tripletriadcard = tripletriadcardEnumerator.Current;
-                if (string.IsNullOrEmpty(tripletriadcard.Name) || tripletriadcard.Name == "0") continue;
+                if (tripletriadcard.Name.IsEmpty || tripletriadcard.Name == "0") continue;
                 Models.TripleTriadCard ttc = new() { Id = tripletriadcard.RowId };
                 switch (currentLocale)
                 {
                     case ClientLanguage.German:
-                        ttc.GermanName = tripletriadcard.Name;
-                        ttc.GermanDescription = tripletriadcard.Description;
+                        ttc.GermanName = tripletriadcard.Name.ExtractText();
+                        ttc.GermanDescription = tripletriadcard.Description.ExtractText();
                         break;
                     case ClientLanguage.English:
-                        ttc.EnglishName = tripletriadcard.Name;
-                        ttc.EnglishDescription = tripletriadcard.Description;
+                        ttc.EnglishName = tripletriadcard.Name.ExtractText();
+                        ttc.EnglishDescription = tripletriadcard.Description.ExtractText();
                         break;
                     case ClientLanguage.French:
-                        ttc.FrenchName = tripletriadcard.Name;
-                        ttc.FrenchDescription = tripletriadcard.Description;
+                        ttc.FrenchName = tripletriadcard.Name.ExtractText();
+                        ttc.FrenchDescription = tripletriadcard.Description.ExtractText();
                         break;
                     case ClientLanguage.Japanese:
-                        ttc.JapaneseName = tripletriadcard.Name;
-                        ttc.JapaneseDescription = tripletriadcard.Description;
+                        ttc.JapaneseName = tripletriadcard.Name.ExtractText();
+                        ttc.JapaneseDescription = tripletriadcard.Description.ExtractText();
                         break;
                 }
 
@@ -2388,14 +2379,14 @@ namespace Altoholic
 
         public static Emote? GetEmote(ClientLanguage currentLocale, uint id)
         {
-            ExcelSheet<Emote>? dttc = Plugin.DataManager.GetExcelSheet<Emote>(currentLocale);
-            Emote? lumina = dttc?.GetRow(id);
+            ExcelSheet<Emote> dttc = Plugin.DataManager.GetExcelSheet<Emote>(currentLocale);
+            Emote? lumina = dttc.GetRow(id);
             return lumina;
         }
         public static TextCommand? GetTextCommand(ClientLanguage currentLocale, uint id)
         {
-            ExcelSheet<TextCommand>? dtc = Plugin.DataManager.GetExcelSheet<TextCommand>(currentLocale);
-            TextCommand? lumina = dtc?.GetRow(id);
+            ExcelSheet<TextCommand> dtc = Plugin.DataManager.GetExcelSheet<TextCommand>(currentLocale);
+            TextCommand? lumina = dtc.GetRow(id);
             return lumina;
         }
         public static List<Models.Emote>? GetAllEmotes(ClientLanguage currentLocale)
@@ -2407,43 +2398,43 @@ namespace Altoholic
             while (emoteEnumerator.MoveNext())
             {
                 Emote emote = emoteEnumerator.Current;
-                if (string.IsNullOrEmpty(emote.Name) || emote.Name == "0") continue;
+                if (emote.Name.IsEmpty || emote.Name == "0") continue;
                 Models.Emote e = new() { Id = emote.RowId, TextCommand = new Models.TextCommand() };
-                TextCommand? tc = GetTextCommand(currentLocale, emote.TextCommand.Row);
+                TextCommand? tc = emote.TextCommand.ValueNullable;
                 if (tc is null) continue;
                 switch (currentLocale)
                 {
                     case ClientLanguage.German:
-                        e.GermanName = emote.Name;
-                        e.TextCommand.GermanCommand = tc.Command;
-                        e.TextCommand.GermanShortCommand = tc.ShortCommand;
-                        e.TextCommand.GermanDescription= tc.Description;
-                        e.TextCommand.GermanAlias = tc.Alias;
-                        e.TextCommand.GermanShortAlias = tc.ShortAlias;
+                        e.GermanName = emote.Name.ExtractText();
+                        e.TextCommand.GermanCommand = tc.Value.Command.ExtractText();
+                        e.TextCommand.GermanShortCommand = tc.Value.ShortCommand.ExtractText();
+                        e.TextCommand.GermanDescription= tc.Value.Description.ExtractText();
+                        e.TextCommand.GermanAlias = tc.Value.Alias.ExtractText();
+                        e.TextCommand.GermanShortAlias = tc.Value.ShortAlias.ExtractText();
                         break;
                     case ClientLanguage.English:
-                        e.EnglishName = emote.Name;
-                        e.TextCommand.EnglishCommand = tc.Command;
-                        e.TextCommand.EnglishShortCommand = tc.ShortCommand;
-                        e.TextCommand.EnglishDescription = tc.Description;
-                        e.TextCommand.EnglishAlias = tc.Alias;
-                        e.TextCommand.EnglishShortAlias = tc.ShortAlias;
+                        e.EnglishName = emote.Name.ExtractText();
+                        e.TextCommand.EnglishCommand = tc.Value.Command.ExtractText();
+                        e.TextCommand.EnglishShortCommand = tc.Value.ShortCommand.ExtractText();
+                        e.TextCommand.EnglishDescription = tc.Value.Description.ExtractText();
+                        e.TextCommand.EnglishAlias = tc.Value.Alias.ExtractText();
+                        e.TextCommand.EnglishShortAlias = tc.Value.ShortAlias.ExtractText();
                         break;
                     case ClientLanguage.French:
-                        e.FrenchName = emote.Name;
-                        e.TextCommand.FrenchCommand = tc.Command;
-                        e.TextCommand.FrenchShortCommand = tc.ShortCommand;
-                        e.TextCommand.FrenchDescription = tc.Description;
-                        e.TextCommand.FrenchAlias = tc.Alias;
-                        e.TextCommand.FrenchShortAlias = tc.ShortAlias;
+                        e.FrenchName = emote.Name.ExtractText();
+                        e.TextCommand.FrenchCommand = tc.Value.Command.ExtractText();
+                        e.TextCommand.FrenchShortCommand = tc.Value.ShortCommand.ExtractText();
+                        e.TextCommand.FrenchDescription = tc.Value.Description.ExtractText();
+                        e.TextCommand.FrenchAlias = tc.Value.Alias.ExtractText();
+                        e.TextCommand.FrenchShortAlias = tc.Value.ShortAlias.ExtractText();
                         break;
                     case ClientLanguage.Japanese:
-                        e.JapaneseName = emote.Name;
-                        e.TextCommand.JapaneseCommand = tc.Command;
-                        e.TextCommand.JapaneseShortCommand = tc.ShortCommand;
-                        e.TextCommand.JapaneseDescription = tc.Description;
-                        e.TextCommand.JapaneseAlias = tc.Alias;
-                        e.TextCommand.JapaneseShortAlias = tc.ShortAlias;
+                        e.JapaneseName = emote.Name.ExtractText();
+                        e.TextCommand.JapaneseCommand = tc.Value.Command.ExtractText();
+                        e.TextCommand.JapaneseShortCommand = tc.Value.ShortCommand.ExtractText();
+                        e.TextCommand.JapaneseDescription = tc.Value.Description.ExtractText();
+                        e.TextCommand.JapaneseAlias = tc.Value.Alias.ExtractText();
+                        e.TextCommand.JapaneseShortAlias = tc.Value.ShortAlias.ExtractText();
                         break;
                 }
 
@@ -2465,36 +2456,33 @@ namespace Altoholic
         {
             List<Barding> returnedBardingsIds = [];
             ExcelSheet<BuddyEquip>? dbe = Plugin.DataManager.GetExcelSheet<BuddyEquip>(currentLocale);
-            using IEnumerator<BuddyEquip>? bardingEnumerator = dbe?.GetEnumerator();
-            if (bardingEnumerator is null) return null;
+            using IEnumerator<BuddyEquip>? bardingEnumerator = dbe.GetEnumerator();
             while (bardingEnumerator.MoveNext())
             {
                 BuddyEquip barding = bardingEnumerator.Current;
-                if (string.IsNullOrEmpty(barding.Name) || barding.RowId == 0) continue;
+                if (barding.Name.IsEmpty || barding.RowId == 0) continue;
                 Barding b = new() { Id = barding.RowId };
-                Item? item = GetItemFromName(currentLocale, barding.Name);
-
-                b.Icon = item?.Icon ?? barding.IconHead;
+                Item? item = GetItemFromName(currentLocale, barding.Name.ExtractText());
+                b.Icon = (item is null || item.Value.RowId == 0) ? barding.IconHead: item.Value.Icon;
                 switch (currentLocale)
                 {
                     case ClientLanguage.German:
-                        b.GermanName = barding.Name;
+                        b.GermanName = barding.Name.ExtractText();
                         break;
                     case ClientLanguage.English:
-                        b.EnglishName = barding.Name;
+                        b.EnglishName = barding.Name.ExtractText();
                         break;
                     case ClientLanguage.French:
-                        b.FrenchName = barding.Name;
+                        b.FrenchName = barding.Name.ExtractText();
                         break;
                     case ClientLanguage.Japanese:
-                        b.JapaneseName = barding.Name;
+                        b.JapaneseName = barding.Name.ExtractText();
                         break;
                 }
 
                 b.IconHead = barding.IconHead;
                 b.IconBody = barding.IconBody;
                 b.IconLegs = barding.IconLegs;
-
                 returnedBardingsIds.Add(b);
             }
 
@@ -2516,21 +2504,21 @@ namespace Altoholic
             while (orchestrionRollEnumerator.MoveNext())
             {
                 Orchestrion orchestrionRoll = orchestrionRollEnumerator.Current;
-                if (string.IsNullOrEmpty(orchestrionRoll.Name) || orchestrionRoll.RowId == 0) continue;
+                if (orchestrionRoll.Name.IsEmpty || orchestrionRoll.RowId == 0) continue;
                 OrchestrionRoll orchestrion = new() { Id = orchestrionRoll.RowId };
                 switch (currentLocale)
                 {
                     case ClientLanguage.German:
-                        orchestrion.GermanName = orchestrionRoll.Name;
+                        orchestrion.GermanName = orchestrionRoll.Name.ExtractText();
                         break;
                     case ClientLanguage.English:
-                        orchestrion.EnglishName = orchestrionRoll.Name;
+                        orchestrion.EnglishName = orchestrionRoll.Name.ExtractText();
                         break;
                     case ClientLanguage.French:
-                        orchestrion.FrenchName = orchestrionRoll.Name;
+                        orchestrion.FrenchName = orchestrionRoll.Name.ExtractText();
                         break;
                     case ClientLanguage.Japanese:
-                        orchestrion.JapaneseName = orchestrionRoll.Name;
+                        orchestrion.JapaneseName = orchestrionRoll.Name.ExtractText();
                         break;
                 }
 
@@ -2546,10 +2534,10 @@ namespace Altoholic
             Ornament? lumina = dm?.GetRow(id);
             return lumina;
         }
-        public static Lumina.Excel.GeneratedSheets2.OrnamentTransient? GetOrnamentTransient(ClientLanguage currentLocale, uint id)
+        public static OrnamentTransient? GetOrnamentTransient(ClientLanguage currentLocale, uint id)
         {
-            ExcelSheet<Lumina.Excel.GeneratedSheets2.OrnamentTransient>? dmt = Plugin.DataManager.GetExcelSheet<Lumina.Excel.GeneratedSheets2.OrnamentTransient>(currentLocale);
-            Lumina.Excel.GeneratedSheets2.OrnamentTransient? lumina = dmt?.GetRow(id);
+            ExcelSheet<OrnamentTransient>? dmt = Plugin.DataManager.GetExcelSheet<OrnamentTransient>(currentLocale);
+            OrnamentTransient? lumina = dmt?.GetRow(id);
             return lumina;
         }
         public static List<Models.Ornament>? GetAllOrnaments(ClientLanguage currentLocale)
@@ -2561,28 +2549,28 @@ namespace Altoholic
             while (ornamentEnumerator.MoveNext())
             {
                 Ornament ornament = ornamentEnumerator.Current;
-                if (string.IsNullOrEmpty(ornament.Singular)) continue;
+                if (ornament.Singular.IsEmpty) continue;
                 if (ornament.Icon == 0) continue;
                 Models.Ornament m = new() { Id = ornament.RowId, Icon = ornament.Icon, Transient = new Transient() };
-                Lumina.Excel.GeneratedSheets2.OrnamentTransient? ct = GetOrnamentTransient(currentLocale, ornament.RowId);
+                OrnamentTransient? ct = GetOrnamentTransient(currentLocale, ornament.RowId);
                 if (ct is null) continue;
                 switch (currentLocale)
                 {
                     case ClientLanguage.German:
-                        m.GermanName = ornament.Singular;
-                        m.Transient.GermanDescription = ct.Unknown0;
+                        m.GermanName = ornament.Singular.ExtractText();
+                        m.Transient.GermanDescription = ct.Value.Unknown0.ExtractText();
                         break;
                     case ClientLanguage.English:
-                        m.EnglishName = ornament.Singular;
-                        m.Transient.EnglishDescription = ct.Unknown0;
+                        m.EnglishName = ornament.Singular.ExtractText();
+                        m.Transient.EnglishDescription = ct.Value.Unknown0.ExtractText();
                         break;
                     case ClientLanguage.French:
-                        m.FrenchName = ornament.Singular;
-                        m.Transient.FrenchDescription = ct.Unknown0;
+                        m.FrenchName = ornament.Singular.ExtractText();
+                        m.Transient.FrenchDescription = ct.Value.Unknown0.ExtractText();
                         break;
                     case ClientLanguage.Japanese:
-                        m.JapaneseName = ornament.Singular;
-                        m.Transient.JapaneseDescription = ct.Unknown0;
+                        m.JapaneseName = ornament.Singular.ExtractText();
+                        m.Transient.JapaneseDescription = ct.Value.Unknown0.ExtractText();
                         break;
                 }
 
@@ -2607,26 +2595,26 @@ namespace Altoholic
             while (glassesEnumerator.MoveNext())
             {
                 Glasses glasses = glassesEnumerator.Current;
-                if (string.IsNullOrEmpty(glasses.Singular)) continue;
+                if (glasses.Singular.IsEmpty) continue;
                 if (glasses.Icon == 0) continue;
                 Models.Glasses m = new() { Id = glasses.RowId, Icon = (uint)glasses.Icon };
                 switch (currentLocale)
                 {
                     case ClientLanguage.German:
-                        m.GermanName = glasses.Singular;
-                        m.GermanDescription = glasses.Description;
+                        m.GermanName = glasses.Singular.ExtractText();
+                        m.GermanDescription = glasses.Description.ExtractText();
                         break;
                     case ClientLanguage.English:
-                        m.EnglishName = glasses.Singular;
-                        m.EnglishDescription = glasses.Description;
+                        m.EnglishName = glasses.Singular.ExtractText();
+                        m.EnglishDescription = glasses.Description.ExtractText();
                         break;
                     case ClientLanguage.French:
-                        m.FrenchName = glasses.Singular;
-                        m.FrenchDescription = glasses.Description;
+                        m.FrenchName = glasses.Singular.ExtractText();
+                        m.FrenchDescription = glasses.Description.ExtractText();
                         break;
                     case ClientLanguage.Japanese:
-                        m.JapaneseName = glasses.Singular;
-                        m.JapaneseDescription = glasses.Description;
+                        m.JapaneseName = glasses.Singular.ExtractText();
+                        m.JapaneseDescription = glasses.Description.ExtractText();
                         break;
                 }
 
@@ -2645,10 +2633,10 @@ namespace Altoholic
             while (cabinetEnumerator.MoveNext())
             {
                 Cabinet cabinet = cabinetEnumerator.Current;
-                Item? item = cabinet.Item?.Value;
+                Item? item = cabinet.Item.ValueNullable;
                 if (item == null) continue;
 
-                returnedCabinetsIds.Add(item.RowId);
+                returnedCabinetsIds.Add(item.Value.RowId);
             }
 
             return returnedCabinetsIds;
@@ -2658,14 +2646,14 @@ namespace Altoholic
         {
             ExcelSheet<BeastTribe>? dbt = Plugin.DataManager.GetExcelSheet<BeastTribe>(currentLocale);
             BeastTribe? lumina = dbt?.GetRow(id);
-            return lumina != null ? lumina.Name : string.Empty;
+            return lumina != null ? lumina.Value.Name.ExtractText() : string.Empty;
         }
         public static string GetTribalCurrencyFromId(ClientLanguage currentLocale, uint id)
         {
             //Plugin.Log.Debug($"GetItemNameFromId : {id}");
             ExcelSheet<BeastTribe>? dbt = Plugin.DataManager.GetExcelSheet<BeastTribe>(currentLocale);
             BeastTribe? lumina = dbt?.GetRow(id);
-            return lumina != null ? lumina.Name : string.Empty;
+            return lumina != null ? lumina.Value.Name.ExtractText() : string.Empty;
         }
         public static string Capitalize(string str)
         {
@@ -2726,31 +2714,31 @@ namespace Altoholic
                 [ClientLanguage.German, ClientLanguage.English, ClientLanguage.French, ClientLanguage.Japanese];
             foreach (ClientLanguage l in langs)
             {
-                ExcelSheet<Quest>? dbe = Plugin.DataManager.GetExcelSheet<Quest>(l);
-                Quest? lumina = dbe?.GetRow(id);
-                if (lumina == null) return null;
+                ExcelSheet<Quest> dbe = Plugin.DataManager.GetExcelSheet<Quest>(l);
+                Quest lumina = dbe.GetRow(id);
+                if (lumina.RowId == 0) return null;
                 switch (l)
                 {
                     case ClientLanguage.German:
                         {
-                            q.GermanName = lumina.Name;
+                            q.GermanName = lumina.Name.ExtractText();
                             break;
                         }
                     case ClientLanguage.English:
                         {
                             q.Id = lumina.RowId;
                             q.Icon = lumina.Icon;
-                            q.EnglishName = lumina.Name;
+                            q.EnglishName = lumina.Name.ExtractText();
                             break;
                         }
                     case ClientLanguage.French:
                         {
-                            q.FrenchName = lumina.Name;
+                            q.FrenchName = lumina.Name.ExtractText();
                             break;
                         }
                     case ClientLanguage.Japanese:
                         {
-                            q.JapaneseName = lumina.Name;
+                            q.JapaneseName = lumina.Name.ExtractText();
                             break;
                         }
                 }
@@ -2761,6 +2749,7 @@ namespace Altoholic
 
         public static Duty? GetDuty(uint id)
         {
+            Plugin.Log.Debug($"GetDuty with id: {id}");
             Duty d = new();
             List<ClientLanguage> langs =
                 [ClientLanguage.German, ClientLanguage.English, ClientLanguage.French, ClientLanguage.Japanese];
@@ -2769,52 +2758,52 @@ namespace Altoholic
                 ExcelSheet<ContentFinderCondition>? cfc =
                     Plugin.DataManager.GetExcelSheet<ContentFinderCondition>(l);
                 ContentFinderCondition? duty = cfc?.GetRow(id);
-                if (duty == null || string.IsNullOrEmpty(duty.Name)) continue;
+                if (duty == null || duty.Value.Name.IsEmpty) continue;
 
                 ExcelSheet<ContentFinderConditionTransient>? dbt =
                     Plugin.DataManager.GetExcelSheet<ContentFinderConditionTransient>(l);
-                ContentFinderConditionTransient? cfct = dbt?.GetRow(duty.Transient);
+                ContentFinderConditionTransient? cfct = dbt?.GetRow(duty.Value.RowId);
 
                 switch (l)
                 {
                     case ClientLanguage.German:
                         {
-                            d.GermanName = duty.Name;
-                            d.GermanTransient = cfct?.Description ?? string.Empty;
+                            d.GermanName = duty.Value.Name.ExtractText();
+                            d.GermanTransient = cfct?.Description.ExtractText() ?? string.Empty;
                             break;
                         }
                     case ClientLanguage.English:
                         {
-                            d.Id = duty.RowId;
-                            d.Icon = duty.Icon;
-                            d.Image = duty.Image;
-                            if (duty.ContentType.Value != null)
+                            d.Id = duty.Value.RowId;
+                            d.Icon = duty.Value.Icon;
+                            d.Image = duty.Value.Image;
+                            if (duty.Value.ContentType.ValueNullable != null)
                             {
-                                d.ContentTypeId = duty.ContentType.Value.RowId;
+                                d.ContentTypeId = duty.Value.ContentType.Value.RowId;
                             }
 
-                            d.Content = duty.Content;
-                            d.SortKey = duty.SortKey;
-                            d.TransientKey = duty.TransientKey;
-                            d.EnglishName = duty.Name;
-                            d.EnglishTransient = cfct?.Description ?? string.Empty;
-                            d.ExVersion = duty.TerritoryType.Value?.ExVersion.Value?.RowId;
-                            d.HighEndDuty = duty.HighEndDuty;
-                            d.AllowUndersized = duty.AllowUndersized;
-                            d.ContentMemberType = duty.ContentMemberType.Row;
-                            d.TerritoryType = duty.TerritoryType.Row;
+                            d.Content = duty.Value.Content.RowId;
+                            d.SortKey = duty.Value.SortKey;
+                            d.TransientKey = duty.Value.Transient.RowId;
+                            d.EnglishName = duty.Value.Name.ExtractText();
+                            d.EnglishTransient = cfct?.Description.ExtractText() ?? string.Empty;
+                            d.ExVersion = duty.Value.TerritoryType.ValueNullable?.ExVersion.ValueNullable?.RowId;
+                            d.HighEndDuty = duty.Value.HighEndDuty;
+                            d.AllowUndersized = duty.Value.AllowUndersized;
+                            d.ContentMemberType = duty.Value.ContentMemberType.RowId;
+                            d.TerritoryType = duty.Value.TerritoryType.RowId;
                             break;
                         }
                     case ClientLanguage.French:
                         {
-                            d.FrenchName = duty.Name;
-                            d.FrenchTransient = cfct?.Description ?? string.Empty;
+                            d.FrenchName = duty.Value.Name.ExtractText();
+                            d.FrenchTransient = cfct?.Description.ExtractText() ?? string.Empty;
                             break;
                         }
                     case ClientLanguage.Japanese:
                         {
-                            d.JapaneseName = duty.Name;
-                            d.JapaneseTransient = cfct?.Description ?? string.Empty;
+                            d.JapaneseName = duty.Value.Name.ExtractText();
+                            d.JapaneseTransient = cfct?.Description.ExtractText() ?? string.Empty;
                             break;
                         }
                 }
@@ -2834,7 +2823,7 @@ namespace Altoholic
             while (duties.MoveNext())
             {
                 ContentFinderCondition duty = duties.Current;
-                if (string.IsNullOrEmpty(duty.Name)) continue;
+                if (duty.Name.IsEmpty) continue;
 
                 Duty? d = GetDuty(duty.RowId);
                 if(d == null) continue;
@@ -2900,7 +2889,8 @@ namespace Altoholic
                     character.HasQuest((int)QuestIds.MSQ_THE_DARK_THRONE),
                     character.HasQuest((int)QuestIds.MSQ_GROWING_LIGHT_PART_1),
                     character.HasQuest((int)QuestIds.MSQ_GROWING_LIGHT_PART_2),
-                    character.HasQuest((int)QuestIds.MSQ_DAWNTRAIL)
+                    character.HasQuest((int)QuestIds.MSQ_DAWNTRAIL),
+                    character.HasQuest((int)QuestIds.MSQ_CROSSROADS)
                 ];
                 result.Add(completedQuests);
             }
@@ -3072,7 +3062,7 @@ namespace Altoholic
                     //character.HasQuest((int)QuestIds.EVENT_MOOGLE_TREASURE_TROVE_THE_HUNT_FOR_GOETIA),
                     character.HasQuest((int)QuestIds.EVENT_ALL_SAINTS_WAKE_2024),
                     character.HasQuest((int)QuestIds.EVENT_BLUNDERVILLE_2024_2),
-                    //character.HasQuest((int)QuestIds.EVENT_STARLIGHT_CELEBRATION_2024),
+                    character.HasQuest((int)QuestIds.EVENT_STARLIGHT_CELEBRATION_2024),
                 ];
                 result.Add(completedQuests);
             }
@@ -3190,7 +3180,7 @@ namespace Altoholic
             }
 
             ClassJobCategory? lumina = djc.GetRow(id.Value);
-            return lumina != null ? lumina.Name : string.Empty;
+            return lumina != null ? lumina.Value.Name.ExtractText() : string.Empty;
         }
         
         public static ClassJob? GetClassJobFromId(uint? id, ClientLanguage clientLanguage)
@@ -3216,9 +3206,9 @@ namespace Altoholic
             }
 
             ItemRepairResource? lumina = dirr.GetRow(id);
-            LazyRow<Item>? itm = lumina?.Item;
+            RowRef<Item>? itm = lumina?.Item;
             Item? v = itm?.Value;
-            return v != null ? v.Name : string.Empty;
+            return v != null ? v.Value.Name.ExtractText() : string.Empty;
         }
 
         // ReSharper disable once InconsistentNaming
@@ -3274,7 +3264,7 @@ namespace Altoholic
         {
             uint crystalId = i + 2;
             Item? itm = globalCache.ItemStorage.LoadItem(currentLocale, crystalId);
-            return (itm is null) ? string.Empty : itm.Name;
+            return (itm is null) ? string.Empty : itm.Value.Name.ExtractText();
         }
 
         public static RetainerTask? GetRetainerTask(ClientLanguage currentLocale, uint id)
@@ -3439,5 +3429,51 @@ public static class StringExt
         return value?.Length > maxLength
             ? value[..maxLength]
             : value;
+    }
+}
+
+public static class ListExt
+{
+    /// <summary> Return the first object fulfilling the predicate or null for structs. </summary>
+    /// <param name="values"> The enumerable. </param>
+    /// <param name="predicate"> The predicate. </param>
+    /// <returns> The first object fulfilling the predicate, or a null-optional. </returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    public static T? FirstOrNull<T>(this IEnumerable<T> values, Func<T, bool> predicate) where T : struct
+    {
+        foreach (T val in values)
+            if (predicate(val))
+                return val;
+
+        return null;
+    }
+
+    public static bool TryGetFirst<T>(this IEnumerable<T> values, out T result) where T : struct
+    {
+        using IEnumerator<T> e = values.GetEnumerator();
+        if (e.MoveNext())
+        {
+            result = e.Current;
+            return true;
+        }
+        result = default;
+        return false;
+    }
+
+    public static bool TryGetFirst<T>(this IEnumerable<T> values, Predicate<T> predicate, out T result) where T : struct
+    {
+        using IEnumerator<T> e = values.GetEnumerator();
+        while (e.MoveNext())
+        {
+            if (!predicate(e.Current))
+            {
+                continue;
+            }
+
+            result = e.Current;
+            return true;
+        }
+        result = default;
+        return false;
     }
 }

@@ -1,6 +1,6 @@
 ﻿using Altoholic.Models;
 using Dalamud.Game;
-using Lumina.Excel.GeneratedSheets2;
+using Lumina.Excel.Sheets;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,7 +20,7 @@ namespace Altoholic.Cache
                 return;
             }
 
-            foreach (Glasses glass in glasses.Where(g => g.Id is 1 or 13 or 25 or 37 or 49 or 61 or 73 or 85 or 97 or 109))
+            foreach (Glasses glass in glasses.Where(g => g.Id is 1 or 13 or 25 or 37 or 49 or 61 or 73 or 85 or 97 or 109 or 121 or 133 or 145 or 157 or 169 or 181 or 193 or 205))
             {
                 globalCache.IconStorage.LoadIcon(glass.Icon);
                 _glasses.Add(glass.Id, glass);
@@ -32,34 +32,34 @@ namespace Altoholic.Cache
             if (_glasses.TryGetValue(id, out Glasses? ret))
                 return ret;
 
-            Lumina.Excel.GeneratedSheets.Glasses? glasses = Utils.GetGlasses(lang, id);
+            Lumina.Excel.Sheets.Glasses? glasses = Utils.GetGlasses(lang, id);
             if (glasses is null)
             {
                 return null;
             }
 
-            ret = new Glasses { Id = glasses.RowId };
+            ret = new Glasses { Id = glasses.Value.RowId };
             switch (lang)
             {
                 case ClientLanguage.German:
-                    ret.GermanName = glasses.Singular;
-                    ret.GermanDescription = glasses.Description;
+                    ret.GermanName = glasses.Value.Singular.ExtractText();
+                    ret.GermanDescription = glasses.Value.Description.ExtractText();
                     break;
                 case ClientLanguage.English:
-                    ret.EnglishName = glasses.Singular;
-                    ret.EnglishDescription = glasses.Description;
+                    ret.EnglishName = glasses.Value.Singular.ExtractText();
+                    ret.EnglishDescription = glasses.Value.Description.ExtractText();
                     break;
                 case ClientLanguage.French:
-                    ret.FrenchName = glasses.Singular;
-                    ret.FrenchDescription = glasses.Description;
+                    ret.FrenchName = glasses.Value.Singular.ExtractText();
+                    ret.FrenchDescription = glasses.Value.Description.ExtractText();
                     break;
                 case ClientLanguage.Japanese:
-                    ret.JapaneseName = glasses.Singular;
-                    ret.JapaneseDescription = glasses.Description;
+                    ret.JapaneseName = glasses.Value.Singular.ExtractText();
+                    ret.JapaneseDescription = glasses.Value.Description.ExtractText();
                     break;
             }
 
-            ret.Icon = (uint)glasses.Icon;
+            ret.Icon = (uint)glasses.Value.Icon;
 
             return ret;
         }

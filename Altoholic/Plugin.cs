@@ -5,7 +5,6 @@ using CheapLoc;
 using Dalamud.Game;
 using Dalamud.Game.ClientState.Conditions;
 using Dalamud.Game.ClientState.Objects.SubKinds;
-using Dalamud.Game.ClientState.Resolvers;
 using Dalamud.Game.Command;
 using Dalamud.Game.Inventory.InventoryEventArgTypes;
 using Dalamud.Game.Inventory;
@@ -24,7 +23,7 @@ using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using FFXIVClientStructs.FFXIV.Client.System.String;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using LiteDB;
-using Lumina.Excel.GeneratedSheets;
+using Lumina.Excel.Sheets;
 using Lumina.Text;
 using Microsoft.Data.Sqlite;
 using System;
@@ -638,28 +637,24 @@ namespace Altoholic
                 _localPlayer.FirstName = names[0];
                 _localPlayer.LastName = names[1];
             }
-            ExcelResolver<World> hw = lPlayer.HomeWorld;
+            World? hw = lPlayer.HomeWorld.ValueNullable;
+            if (hw != null)
             {
-                World? hwgd = hw.GameData;
-                if (hwgd != null)
-                {
-                    _localPlayer.HomeWorld = hwgd.Name ?? string.Empty;
-                    _localPlayer.Datacenter = Utils.GetDatacenterFromWorld(_localPlayer.HomeWorld);
-                    _localPlayer.Region = Utils.GetRegionFromWorld(_localPlayer.HomeWorld);
-                }
+                _localPlayer.HomeWorld = hw.Value.Name.ExtractText();
+                _localPlayer.Datacenter = Utils.GetDatacenterFromWorld(_localPlayer.HomeWorld);
+                _localPlayer.Region = Utils.GetRegionFromWorld(_localPlayer.HomeWorld);
             }
-            ExcelResolver<World> cw = lPlayer.CurrentWorld;
+            
+            World? cw = lPlayer.CurrentWorld.ValueNullable;
+            if (cw != null)
             {
-                World? cwhd = cw.GameData;
-                if (cwhd != null)
-                {
-                    _localPlayer.CurrentWorld = cwhd.Name ?? string.Empty;
-                    _localPlayer.CurrentDatacenter = Utils.GetDatacenterFromWorld(_localPlayer.CurrentWorld);
-                    _localPlayer.CurrentRegion = Utils.GetRegionFromWorld(_localPlayer.CurrentWorld);
-                }
+                _localPlayer.CurrentWorld = cw.Value.Name.ExtractText();
+                _localPlayer.CurrentDatacenter = Utils.GetDatacenterFromWorld(_localPlayer.CurrentWorld);
+                _localPlayer.CurrentRegion = Utils.GetRegionFromWorld(_localPlayer.CurrentWorld);
             }
 
-            uint job = lPlayer.ClassJob.Id;
+
+            uint job = lPlayer.ClassJob.RowId;
             if (job != _localPlayer.LastJob)
             {
                 GetPlayerEquippedGear();
@@ -955,6 +950,7 @@ namespace Altoholic
                 Omicron_Omnitoken = inventoryManager.GetInventoryItemCount((uint)Currencies.OMICRON_OMNITOKEN, false, false, false),
                 Orange_Crafters_Scrip = inventoryManager.GetInventoryItemCount((uint)Currencies.ORANGE_CRAFTERS_SCRIP, false, false, false),
                 Orange_Gatherers_Scrip = inventoryManager.GetInventoryItemCount((uint)Currencies.ORANGE_GATHERERS_SCRIP, false, false, false),
+                Pelu_Pelplume = inventoryManager.GetInventoryItemCount((uint)Currencies.PELU_PELPLUME, false, false, false),
                 Purple_Crafters_Scrip = inventoryManager.GetInventoryItemCount((uint)Currencies.PURPLE_CRAFTERS_SCRIP, false, false, false),
                 Purple_Gatherers_Scrip = inventoryManager.GetInventoryItemCount((uint)Currencies.PURPLE_GATHERERS_SCRIP, false, false, false),
                 Qitari_Compliment = inventoryManager.GetInventoryItemCount((uint)Currencies.QITARI_COMPLIMENT, false, false, false),
@@ -1132,7 +1128,7 @@ namespace Altoholic
                     {
                         ItemId = ii.ItemId,
                         HQ = flags.HasFlag(InventoryItem.ItemFlags.HighQuality),
-                        Quantity = ii.Quantity,
+                        Quantity = (uint)ii.Quantity,
                     };
                     //Plugin.Log.Debug($"{currInv.ItemId}");
                     items.Add(currInv);
@@ -1177,7 +1173,7 @@ namespace Altoholic
                     {
                         ItemId = ii.ItemId,
                         HQ = flags.HasFlag(InventoryItem.ItemFlags.HighQuality),
-                        Quantity = ii.Quantity,
+                        Quantity = (uint)ii.Quantity,
                     };
                     //Plugin.Log.Debug($"{currInv.ItemId}");
                     items.Add(currInv);
@@ -1371,7 +1367,7 @@ namespace Altoholic
                     {
                         ItemId = ii.ItemId,
                         HQ = flags.HasFlag(InventoryItem.ItemFlags.HighQuality),
-                        Quantity = ii.Quantity,
+                        Quantity = (uint)ii.Quantity,
                     };
                     //Plugin.Log.Debug($"{currInv.ItemId}");
                     items.Add(currInv);
@@ -1401,7 +1397,7 @@ namespace Altoholic
                 {
                     ItemId = ii.ItemId,
                     HQ = flags.HasFlag(InventoryItem.ItemFlags.HighQuality),
-                    Quantity = ii.Quantity,
+                    Quantity = (uint)ii.Quantity,
                 };
                 //Plugin.Log.Debug($"{currInv.ItemId}");
                 marketItems.Add(currInv);
@@ -1527,7 +1523,7 @@ namespace Altoholic
             Plugin.Log.Debug($"{periodicTimer}");
         }*/
 
-        private void OnCharacterLogout()
+        private void OnCharacterLogout(int type, int code)
         {
             Log.Debug("Altoholic : OnCharacterLogout called");
             GetPlayerCompletedQuests();
@@ -1663,9 +1659,9 @@ namespace Altoholic
         public (string, string, string) GetLocalPlayerNameWorldRegion()
         {
             IPlayerCharacter? local = ClientState.LocalPlayer;
-            if (local == null || local.HomeWorld.GameData == null)
+            if (local == null || local.HomeWorld.ValueNullable == null)
                 return (string.Empty, string.Empty, string.Empty);
-            SeString? homeworld = local.HomeWorld.GameData.Name;
+            string homeworld = local.HomeWorld.Value.Name.ExtractText();
 
             return ($"{local.Name}", $"{homeworld}", $"{Utils.GetRegionFromWorld(homeworld)}");
         }

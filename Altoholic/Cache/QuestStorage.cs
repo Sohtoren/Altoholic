@@ -17,6 +17,10 @@ namespace Altoholic.Cache
             {
                 Quest? q = Utils.GetQuest((uint)id);
                 if (q == null) continue;
+                //Plugin.Log.Debug($"QuestStorage Quest Id: {q.Id}, Name: {q.EnglishName}, Icon: {q.Icon}");
+
+                //Todo remove when fixed
+                q.Icon = 100323;
 
                 globalCache.IconStorage.LoadIcon(q.Icon);
                 _quests.TryAdd(q.Id, q);

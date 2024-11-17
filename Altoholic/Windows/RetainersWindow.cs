@@ -8,7 +8,7 @@ using Dalamud.Interface.Textures.TextureWraps;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
 using ImGuiNET;
-using Lumina.Excel.GeneratedSheets;
+using Lumina.Excel.Sheets;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -216,7 +216,7 @@ namespace Altoholic.Windows
                 if (itemlistbox)
                 {
                     foreach (Item item in currentItemsList.Where(item =>
-                                 ImGui.Selectable(item.Name, item.RowId == _currentItem)))
+                                 ImGui.Selectable(item.Name.ExtractText(), item.RowId == _currentItem)))
                     {
                         _currentItem = item.RowId;
                     }
@@ -244,14 +244,14 @@ namespace Altoholic.Windows
                         ImGuiTableColumnFlags.WidthFixed, 300);
                     ImGui.TableNextRow();
                     ImGui.TableSetColumnIndex(0);
-                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Icon), new Vector2(36, 36));
+                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Value.Icon), new Vector2(36, 36));
 
                     ImGui.TableSetColumnIndex(1);
-                    ImGui.TextUnformatted($"{itm.Name}");
+                    ImGui.TextUnformatted($"{itm.Value.Name}");
                 }
             }
 
-            List<Retainer> retainersWithItems = (itm.RowId == 1) ? retainers : retainers.FindAll(r => r.Inventory.FindAll(ri => ri.ItemId == _currentItem).Count > 0);
+            List<Retainer> retainersWithItems = (itm.Value.RowId == 1) ? retainers : retainers.FindAll(r => r.Inventory.FindAll(ri => ri.ItemId == _currentItem).Count > 0);
             if (retainersWithItems.Count == 0)
             {
                 ImGui.TextUnformatted($"{Loc.Localize("NoItemOnAnyRetainer", "Item not found on any retainers.\r\nCheck if inventories are available and updated.")}");
@@ -273,7 +273,7 @@ namespace Altoholic.Windows
                 //Plugin.Log.Debug($"retainers_with_items: {retainers_with_items}");
                 foreach (Retainer retainer in retainersWithItems)
                 {
-                    long totalAmount = (itm.RowId == 1) ? retainers.Select(r => (long)r.Gils).Sum() : retainer.Inventory.FindAll(i => i.ItemId == _currentItem)
+                    long totalAmount = (itm.Value.RowId == 1) ? retainers.Select(r => (long)r.Gils).Sum() : retainer.Inventory.FindAll(i => i.ItemId == _currentItem)
                         .Aggregate<Inventory, uint>(0, (current, inv) => current + inv.Quantity);
                     overallAmount += totalAmount;
                     ImGui.TableNextRow();
@@ -416,28 +416,28 @@ namespace Altoholic.Windows
                 RetainerTask? venture = Utils.GetRetainerTask(_currentLocale, selectedRetainer.VentureID);
                 if (venture != null)
                 {
-                    if (venture.RetainerLevel > 0)
+                    if (venture.Value.RetainerLevel > 0)
                     {
-                        ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 464)} {venture.RetainerLevel}");
+                        ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 464)} {venture.Value.RetainerLevel}");
                     }
-                    if (!venture.IsRandom)
+                    if (!venture.Value.IsRandom)
                     {
-                        RetainerTaskNormal? task = Utils.GetRetainerTaskNormal(_currentLocale, venture.Task);
+                        RetainerTaskNormal? task = Utils.GetRetainerTaskNormal(_currentLocale, venture.Value.Task.RowId);
                         if (task != null)
                         {
                             ImGui.SameLine();
-                            Item? item = task.Item.Value;
+                            Item? item = task.Value.Item.ValueNullable;
                             if (item != null)
-                                ImGui.TextUnformatted($"{item.Name}");
+                                ImGui.TextUnformatted($"{item.Value.Name}");
                         }
                     }
                     else
                     {
-                        RetainerTaskRandom? task = Utils.GetRetainerTaskRandom(_currentLocale, venture.Task);
+                        RetainerTaskRandom? task = Utils.GetRetainerTaskRandom(_currentLocale, venture.Value.Task.RowId);
                         if (task != null)
                         {
                             ImGui.SameLine();
-                            ImGui.TextUnformatted($"{task.Name}");
+                            ImGui.TextUnformatted($"{task.Value.Name}");
                         }
                     }
                 }
@@ -552,14 +552,14 @@ namespace Altoholic.Windows
                         continue;
                     }
 
-                    bool armoire = _globalCache.ItemStorage.CanBeInArmoire(itm.RowId);
-                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Icon, item.HQ), new Vector2(36, 36));
+                    bool armoire = _globalCache.ItemStorage.CanBeInArmoire(itm.Value.RowId);
+                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Value.Icon, item.HQ), new Vector2(36, 36));
                     if (ImGui.IsItemHovered())
                     {
                         Utils.DrawInventoryItemTooltip(_currentLocale, ref _globalCache, item, armoire);
                     }
 
-                    if (itm.StackSize > 1)
+                    if (itm.Value.StackSize > 1)
                     {
                         ImGui.SetCursorPos(new Vector2(p.X + 26, p.Y + 20));
                         ImGui.TextUnformatted($"{item.Quantity}");
@@ -705,14 +705,14 @@ namespace Altoholic.Windows
                         ImGui.TableSetColumnIndex(count % 2 == 0 ? 0 : 1);
                         Item? itm = _globalCache.ItemStorage.LoadItem(_currentLocale, item.ItemId);
                         if (itm == null) continue;
-                        Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Icon, item.HQ), new Vector2(24, 24));
+                        Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Value.Icon, item.HQ), new Vector2(24, 24));
                         if (ImGui.IsItemHovered())
                         {
                             Utils.DrawInventoryItemTooltip(_currentLocale, ref _globalCache, item);
                         }
                         count++;
                         ImGui.SameLine();
-                        ImGui.TextUnformatted($"{itm.Name}");
+                        ImGui.TextUnformatted($"{itm.Value.Name}");
                         if (item.Quantity <= 1)
                         {
                             continue;

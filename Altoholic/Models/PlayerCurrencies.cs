@@ -76,10 +76,11 @@ namespace Altoholic.Models
         public int Omicron_Omnitoken { get; set; }
         public int Orange_Crafters_Scrip { get; set; }
         public int Orange_Gatherers_Scrip { get; set; }
+        public int Pelu_Pelplume { get; set; }
         public int Purple_Crafters_Scrip { get; set; }
         public int Purple_Gatherers_Scrip { get; set; }
         public int Qitari_Compliment { get; set; }
-        public int Rainbowtide_Psashp { get; set; }
+        public int Rainbowtide_Psashp { get; set; } 
         public int Sack_of_Nuts { get; set; }
         public int Seafarers_Cowrie { get; set; }
         public int Serpent_Seal { get; set; }

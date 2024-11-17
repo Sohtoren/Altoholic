@@ -3,7 +3,7 @@ using Dalamud.Game;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
-using Item = Lumina.Excel.GeneratedSheets.Item;
+using Item = Lumina.Excel.Sheets.Item;
 
 namespace Altoholic.Cache
 {
@@ -21,25 +21,25 @@ namespace Altoholic.Cache
                 {
                     continue;
                 }
-                FramerKit fk = new() { Id = item.AdditionalData, ItemId = item.RowId };
+                FramerKit fk = new() { Id = item.Value.AdditionalData.RowId, ItemId = item.Value.RowId };
                 switch (currentLocale)
                 {
                     case ClientLanguage.German:
-                        fk.GermanName = item.Name;
+                        fk.GermanName = item.Value.Name.ExtractText();
                         break;
                     case ClientLanguage.English:
-                        fk.EnglishName = item.Name;
+                        fk.EnglishName = item.Value.Name.ExtractText();
                         break;
                     case ClientLanguage.French:
-                        fk.FrenchName = item.Name;
+                        fk.FrenchName = item.Value.Name.ExtractText();
                         break;
                     case ClientLanguage.Japanese:
-                        fk.JapaneseName = item.Name;
+                        fk.JapaneseName = item.Value.Name.ExtractText();
                         break;
                 }
-                fk.Icon = item.Icon;
+                fk.Icon = item.Value.Icon;
                 globalCache.IconStorage.LoadIcon(fk.Icon);
-                _framerKits.Add(item.AdditionalData, fk);
+                _framerKits.Add(item.Value.AdditionalData.RowId, fk);
             }
         }
 
@@ -50,23 +50,23 @@ namespace Altoholic.Cache
 
             Item? dbItem = Utils.GetItemFromId(currentLocale, id);
             if (dbItem == null) return null;
-            ret = new FramerKit { Id = dbItem.RowId };
+            ret = new FramerKit { Id = dbItem.Value.RowId };
             switch (currentLocale)
             {
                 case ClientLanguage.German:
-                    ret.GermanName = dbItem.Name;
+                    ret.GermanName = dbItem.Value.Name.ExtractText();
                     break;
                 case ClientLanguage.English:
-                    ret.EnglishName = dbItem.Name;
+                    ret.EnglishName = dbItem.Value.Name.ExtractText();
                     break;
                 case ClientLanguage.French:
-                    ret.FrenchName = dbItem.Name;
+                    ret.FrenchName = dbItem.Value.Name.ExtractText();
                     break;
                 case ClientLanguage.Japanese:
-                    ret.JapaneseName = dbItem.Name;
+                    ret.JapaneseName = dbItem.Value.Name.ExtractText();
                     break;
             }
-            ret.Icon = dbItem.Icon;
+            ret.Icon = dbItem.Value.Icon;
             _framerKits[id] = ret;
             return ret;
         }

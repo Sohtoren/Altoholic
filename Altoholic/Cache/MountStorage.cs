@@ -1,6 +1,6 @@
 ﻿using Altoholic.Models;
 using Dalamud.Game;
-using Lumina.Excel.GeneratedSheets;
+using Lumina.Excel.Sheets;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,44 +32,44 @@ namespace Altoholic.Cache
             if (_mounts.TryGetValue(id, out Mount? ret))
                 return ret;
 
-            Lumina.Excel.GeneratedSheets.Mount? mount = Utils.GetMount(lang, id);
+            Lumina.Excel.Sheets.Mount? mount = Utils.GetMount(lang, id);
             if (mount is null)
             {
                 return null;
             }
 
-            ret = new Mount { Id = mount.RowId, Transient = new Transient() };
+            ret = new Mount { Id = mount.Value.RowId, Transient = new Transient() };
             MountTransient? mt = Utils.GetMountTransient(lang, id);
             if (mt is null) return null;
             switch (lang)
             {
                 case ClientLanguage.German:
-                    ret.GermanName = mount.Singular;
-                    ret.Transient.GermanDescription = mt.Description;
-                    ret.Transient.GermanDescriptionEnhanced = mt.DescriptionEnhanced;
-                    ret.Transient.GermanTooltip = mt.Tooltip;
+                    ret.GermanName = mount.Value.Singular.ExtractText();
+                    ret.Transient.GermanDescription = mt.Value.Description.ExtractText();
+                    ret.Transient.GermanDescriptionEnhanced = mt.Value.DescriptionEnhanced.ExtractText();
+                    ret.Transient.GermanTooltip = mt.Value.Tooltip.ExtractText();
                     break;
                 case ClientLanguage.English:
-                    ret.EnglishName = mount.Singular;
-                    ret.Transient.EnglishDescription = mt.Description;
-                    ret.Transient.EnglishDescriptionEnhanced = mt.DescriptionEnhanced;
-                    ret.Transient.EnglishTooltip = mt.Tooltip;
+                    ret.EnglishName = mount.Value.Singular.ExtractText();
+                    ret.Transient.EnglishDescription = mt.Value.Description.ExtractText();
+                    ret.Transient.EnglishDescriptionEnhanced = mt.Value.DescriptionEnhanced.ExtractText();
+                    ret.Transient.EnglishTooltip = mt.Value.Tooltip.ExtractText();
                     break;
                 case ClientLanguage.French:
-                    ret.FrenchName = mount.Singular;
-                    ret.Transient.FrenchDescription = mt.Description;
-                    ret.Transient.FrenchDescriptionEnhanced = mt.DescriptionEnhanced;
-                    ret.Transient.FrenchTooltip = mt.Tooltip;
+                    ret.FrenchName = mount.Value.Singular.ExtractText();
+                    ret.Transient.FrenchDescription = mt.Value.Description.ExtractText();
+                    ret.Transient.FrenchDescriptionEnhanced = mt.Value.DescriptionEnhanced.ExtractText();
+                    ret.Transient.FrenchTooltip = mt.Value.Tooltip.ExtractText();
                     break;
                 case ClientLanguage.Japanese:
-                    ret.JapaneseName = mount.Singular;
-                    ret.Transient.JapaneseDescription = mt.Description;
-                    ret.Transient.JapaneseDescriptionEnhanced = mt.DescriptionEnhanced;
-                    ret.Transient.JapaneseTooltip = mt.Tooltip;
+                    ret.JapaneseName = mount.Value.Singular.ExtractText();
+                    ret.Transient.JapaneseDescription = mt.Value.Description.ExtractText();
+                    ret.Transient.JapaneseDescriptionEnhanced = mt.Value.DescriptionEnhanced.ExtractText();
+                    ret.Transient.JapaneseTooltip = mt.Value.Tooltip.ExtractText();
                     break;
             }
 
-            ret.Icon = mount.Icon;
+            ret.Icon = mount.Value.Icon;
 
             return ret;
         }

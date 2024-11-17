@@ -9,7 +9,7 @@ using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using ImGuiNET;
-using Lumina.Excel.GeneratedSheets;
+using Lumina.Excel.Sheets;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -227,7 +227,7 @@ namespace Altoholic.Windows
                 if (itemlistbox)
                 {
                     foreach (Item item in currentItemsList.Where(
-                                 item => ImGui.Selectable(item.Name, item.RowId == _currentItem)))
+                                 item => ImGui.Selectable(item.Name.ExtractText(), item.RowId == _currentItem)))
                     {
                         _currentItem = item.RowId;
                     }
@@ -253,10 +253,10 @@ namespace Altoholic.Windows
                     ImGuiTableColumnFlags.WidthFixed, 300);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Icon), new Vector2(36, 36));
+                Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Value.Icon), new Vector2(36, 36));
 
                 ImGui.TableSetColumnIndex(1);
-                ImGui.TextUnformatted($"{itm.Name}");
+                ImGui.TextUnformatted($"{itm.Value.Name}");
             }
 
             List<Character> characters = chars.FindAll(c => c.Inventory.FindAll(ci => ci.ItemId == _currentItem).Count > 0);
@@ -293,7 +293,7 @@ namespace Altoholic.Windows
                 foreach (Character character in characters)
                 {
                     uint totalAmount = character.Inventory.FindAll(i => i.ItemId == _currentItem)
-                        .Aggregate<Inventory, uint>(0, (current, inv) => current + inv.Quantity);
+                        .Aggregate<Inventory, uint>(0, (current, inv) => (uint)(current + inv.Quantity));
                     overallAmount += totalAmount;
                     ImGui.TableNextRow();
                     ImGui.TableSetColumnIndex(0);
@@ -517,14 +517,14 @@ namespace Altoholic.Windows
                         continue;
                     }
 
-                    bool armoire = _globalCache.ItemStorage.CanBeInArmoire(itm.RowId);
-                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Icon, item.HQ), new Vector2(36, 36));
+                    bool armoire = _globalCache.ItemStorage.CanBeInArmoire(itm.Value.RowId);
+                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Value.Icon, item.HQ), new Vector2(36, 36));
                     if (ImGui.IsItemHovered())
                     {
                         Utils.DrawInventoryItemTooltip(_currentLocale, ref _globalCache, item, armoire);
                     }
 
-                    if (itm.StackSize > 1)
+                    if (itm.Value.StackSize > 1)
                     {
                         ImGui.SetCursorPos(new Vector2(p.X + 26, p.Y + 20));
                         ImGui.TextUnformatted($"{item.Quantity}");
@@ -583,13 +583,13 @@ namespace Altoholic.Windows
                         continue;
                     }
 
-                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Icon, item.HQ), new Vector2(36, 36));
+                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Value.Icon, item.HQ), new Vector2(36, 36));
                     if (ImGui.IsItemHovered())
                     {
                         Utils.DrawEventItemTooltip(_currentLocale, _globalCache, item);
                     }
 
-                    if (itm.StackSize <= 1)
+                    if (itm.Value.StackSize <= 1)
                     {
                         continue;
                     }
@@ -890,13 +890,15 @@ namespace Altoholic.Windows
                             {
                                 Utils.DrawGearTooltip(gear);
                             }*/
-                            ItemItemLevel? itm = globalCache.ItemStorage.LoadItemWithItemLevel(_currentLocale, gear.ItemId);
+                            ItemItemLevel? itl = globalCache.ItemStorage.LoadItemWithItemLevel(_currentLocale, gear.ItemId);
+                            if (itl == null) return;
+                            Item? itm = itl.Item;
                             if (itm == null) return;
-                            IDalamudTextureWrap icon = globalCache.IconStorage.LoadIcon(itm.Item.Icon, gear.HQ);
+                            IDalamudTextureWrap icon = globalCache.IconStorage.LoadIcon(itm.Value.Icon, gear.HQ);
                             Utils.DrawIcon(icon, new Vector2(44, 44));
                             if (ImGui.IsItemHovered())
                             {
-                                Utils.DrawGearTooltip(_currentLocale, ref globalCache, gear, itm);
+                                Utils.DrawGearTooltip(_currentLocale, ref globalCache, gear, itl);
                             }
                         }
                     }

@@ -30,52 +30,52 @@ namespace Altoholic.Cache
             if (_emotes.TryGetValue(id, out Emote? ret))
                 return ret;
 
-            Lumina.Excel.GeneratedSheets.Emote? emote = Utils.GetEmote(lang, id);
+            Lumina.Excel.Sheets.Emote? emote = Utils.GetEmote(lang, id);
             if (emote is null)
             {
                 return null;
             }
 
-            ret = new Emote{Id = emote.RowId ,TextCommand = new TextCommand()};
-            Lumina.Excel.GeneratedSheets.TextCommand? tc = Utils.GetTextCommand(lang, emote.TextCommand.Row);
+            ret = new Emote{Id = emote.Value.RowId ,TextCommand = new TextCommand()};
+            Lumina.Excel.Sheets.TextCommand? tc = emote.Value.TextCommand.ValueNullable;
             if (tc is null) return null;
             switch (lang)
             {
                 case ClientLanguage.German:
-                    ret.GermanName = emote.Name;
-                    ret.TextCommand.GermanCommand = tc.Command;
-                    ret.TextCommand.GermanShortCommand = tc.ShortCommand;
-                    ret.TextCommand.GermanDescription = tc.Description;
-                    ret.TextCommand.GermanAlias = tc.Alias;
-                    ret.TextCommand.GermanShortAlias = tc.ShortAlias;
+                    ret.GermanName = emote.Value.Name.ExtractText();
+                    ret.TextCommand.GermanCommand = tc.Value.Command.ExtractText();
+                    ret.TextCommand.GermanShortCommand = tc.Value.ShortCommand.ExtractText();
+                    ret.TextCommand.GermanDescription = tc.Value.Description.ExtractText();
+                    ret.TextCommand.GermanAlias = tc.Value.Alias.ExtractText();
+                    ret.TextCommand.GermanShortAlias = tc.Value.ShortAlias.ExtractText();
                     break;
                 case ClientLanguage.English:
-                    ret.EnglishName = emote.Name;
-                    ret.TextCommand.EnglishCommand = tc.Command;
-                    ret.TextCommand.EnglishShortCommand = tc.ShortCommand;
-                    ret.TextCommand.EnglishDescription = tc.Description;
-                    ret.TextCommand.EnglishAlias = tc.Alias;
-                    ret.TextCommand.EnglishShortAlias = tc.ShortAlias;
+                    ret.EnglishName = emote.Value.Name.ExtractText();
+                    ret.TextCommand.EnglishCommand = tc.Value.Command.ExtractText();
+                    ret.TextCommand.EnglishShortCommand = tc.Value.ShortCommand.ExtractText();
+                    ret.TextCommand.EnglishDescription = tc.Value.Description.ExtractText();
+                    ret.TextCommand.EnglishAlias = tc.Value.Alias.ExtractText();
+                    ret.TextCommand.EnglishShortAlias = tc.Value.ShortAlias.ExtractText();
                     break;
                 case ClientLanguage.French:
-                    ret.FrenchName = emote.Name;
-                    ret.TextCommand.FrenchCommand = tc.Command;
-                    ret.TextCommand.FrenchShortCommand = tc.ShortCommand;
-                    ret.TextCommand.FrenchDescription = tc.Description;
-                    ret.TextCommand.FrenchAlias = tc.Alias;
-                    ret.TextCommand.FrenchShortAlias = tc.ShortAlias;
+                    ret.FrenchName = emote.Value.Name.ExtractText();
+                    ret.TextCommand.FrenchCommand = tc.Value.Command.ExtractText();
+                    ret.TextCommand.FrenchShortCommand = tc.Value.ShortCommand.ExtractText();
+                    ret.TextCommand.FrenchDescription = tc.Value.Description.ExtractText();
+                    ret.TextCommand.FrenchAlias = tc.Value.Alias.ExtractText();
+                    ret.TextCommand.FrenchShortAlias = tc.Value.ShortAlias.ExtractText();
                     break;
                 case ClientLanguage.Japanese:
-                    ret.JapaneseName = emote.Name;
-                    ret.TextCommand.JapaneseCommand = tc.Command;
-                    ret.TextCommand.JapaneseShortCommand = tc.ShortCommand;
-                    ret.TextCommand.JapaneseDescription = tc.Description;
-                    ret.TextCommand.JapaneseAlias = tc.Alias;
-                    ret.TextCommand.JapaneseShortAlias = tc.ShortAlias;
+                    ret.JapaneseName = emote.Value.Name.ExtractText();
+                    ret.TextCommand.JapaneseCommand = tc.Value.Command.ExtractText();
+                    ret.TextCommand.JapaneseShortCommand = tc.Value.ShortCommand.ExtractText();
+                    ret.TextCommand.JapaneseDescription = tc.Value.Description.ExtractText();
+                    ret.TextCommand.JapaneseAlias = tc.Value.Alias.ExtractText();
+                    ret.TextCommand.JapaneseShortAlias = tc.Value.ShortAlias.ExtractText();
                     break;
             }
 
-            ret.Icon = emote.Icon;
+            ret.Icon = emote.Value.Icon;
 
             return ret;
         }

@@ -1,6 +1,6 @@
 ﻿using Altoholic.Models;
 using Dalamud.Game;
-using Lumina.Excel.GeneratedSheets2;
+using Lumina.Excel.Sheets;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,36 +32,36 @@ namespace Altoholic.Cache
             if (_ornaments.TryGetValue(id, out Ornament? ret))
                 return ret;
 
-            Lumina.Excel.GeneratedSheets.Ornament? ornament = Utils.GetOrnament(lang, id);
+            Lumina.Excel.Sheets.Ornament? ornament = Utils.GetOrnament(lang, id);
             if (ornament is null)
             {
                 return null;
             }
 
-            ret = new Ornament { Id = ornament.RowId, Transient = new Transient() };
+            ret = new Ornament { Id = ornament.Value.RowId, Transient = new Transient() };
             OrnamentTransient? mt = Utils.GetOrnamentTransient(lang, id);
             if (mt is null) return null;
             switch (lang)
             {
                 case ClientLanguage.German:
-                    ret.GermanName = ornament.Singular;
-                    ret.Transient.GermanDescription = mt.Unknown0;
+                    ret.GermanName = ornament.Value.Singular.ExtractText();
+                    ret.Transient.GermanDescription = mt.Value.Unknown0.ExtractText();
                     break;
                 case ClientLanguage.English:
-                    ret.EnglishName = ornament.Singular;
-                    ret.Transient.EnglishDescription = mt.Unknown0;
+                    ret.EnglishName = ornament.Value.Singular.ExtractText();
+                    ret.Transient.EnglishDescription = mt.Value.Unknown0.ExtractText();
                     break;
                 case ClientLanguage.French:
-                    ret.FrenchName = ornament.Singular;
-                    ret.Transient.FrenchDescription = mt.Unknown0;
+                    ret.FrenchName = ornament.Value.Singular.ExtractText();
+                    ret.Transient.FrenchDescription = mt.Value.Unknown0.ExtractText();
                     break;
                 case ClientLanguage.Japanese:
-                    ret.JapaneseName = ornament.Singular;
-                    ret.Transient.JapaneseDescription = mt.Unknown0;
+                    ret.JapaneseName = ornament.Value.Singular.ExtractText();
+                    ret.Transient.JapaneseDescription = mt.Value.Unknown0.ExtractText();
                     break;
             }
 
-            ret.Icon = ornament.Icon;
+            ret.Icon = ornament.Value.Icon;
 
             return ret;
         }
