@@ -1389,6 +1389,14 @@ namespace Altoholic
                     ImGui.TextUnformatted($"{dye}");
                 }
             }
+            if (item.Stain2 > 0)
+            {
+                string dye2 = globalCache.StainStorage.LoadStain(currentLocale, item.Stain2);
+                if (!string.IsNullOrEmpty(dye2))
+                {
+                    ImGui.TextUnformatted($"{dye2}");
+                }
+            }
 
             ImGui.Separator();
             using (var drawItemTooltipItemBonuses = ImRaii.Table($"###DrawItemTooltip#Item_{item.ItemId}#Bonuses", 3))

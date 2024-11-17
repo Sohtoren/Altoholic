@@ -13,6 +13,7 @@ namespace Altoholic.Models
         public ushort Materia { get; set; }
         public byte MateriaGrade { get; set; }
         public byte Stain { get; set; }
+        public byte Stain2 { get; set; }
         public uint GlamourID { get; set; }
     }
 }

@@ -1092,7 +1092,8 @@ namespace Altoholic
                     CrafterContentID = ii.CrafterContentId,
                     Materia = ii.Materia.GetPinnableReference(),
                     MateriaGrade = ii.MateriaGrades.GetPinnableReference(),
-                    Stain = ii.Stains.GetPinnableReference(),
+                    Stain = ii.Stains[0],
+                    Stain2 = ii.Stains[1],
                     GlamourID = ii.GlamourId,
                 };
                 gearItems.Add(currGear);
@@ -1428,7 +1429,8 @@ namespace Altoholic
                     CrafterContentID = ii.CrafterContentId,
                     Materia = ii.Materia.GetPinnableReference(),
                     MateriaGrade = ii.MateriaGrades.GetPinnableReference(),
-                    Stain = ii.Stains.GetPinnableReference(),
+                    Stain = ii.Stains[0],
+                    Stain2 = ii.Stains[1],
                     GlamourID = ii.GlamourId,
                 };
                 gearItems.Add(currGear);
