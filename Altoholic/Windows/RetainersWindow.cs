@@ -273,7 +273,7 @@ namespace Altoholic.Windows
                 //Plugin.Log.Debug($"retainers_with_items: {retainers_with_items}");
                 foreach (Retainer retainer in retainersWithItems)
                 {
-                    long totalAmount = (itm.Value.RowId == 1) ? retainers.Select(r => (long)r.Gils).Sum() : retainer.Inventory.FindAll(i => i.ItemId == _currentItem)
+                    long totalAmount = (itm.Value.RowId == 1) ? retainer.Gils : retainer.Inventory.FindAll(i => i.ItemId == _currentItem)
                         .Aggregate<Inventory, uint>(0, (current, inv) => current + inv.Quantity);
                     overallAmount += totalAmount;
                     ImGui.TableNextRow();
