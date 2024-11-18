@@ -24,7 +24,6 @@ using FFXIVClientStructs.FFXIV.Client.System.String;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using LiteDB;
 using Lumina.Excel.Sheets;
-using Lumina.Text;
 using Microsoft.Data.Sqlite;
 using System;
 using System.Collections.Generic;
@@ -33,7 +32,6 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using static FFXIVClientStructs.FFXIV.Client.UI.RaptureAtkModule;
-using ImGuiNET;
 using Character = Altoholic.Models.Character;
 
 namespace Altoholic
@@ -1483,7 +1481,7 @@ namespace Altoholic
                     if (Utils.IsDutyUnlocked(i.Content))
                     {
                         Log.Debug($"Duty {i.Id}:{i.EnglishName} unlocked");
-                        _localPlayer.Duties.Add(i.Id);
+                        _localPlayer.DutiesUnlocked.Add(i.Id);
                     }
                     else
                     {

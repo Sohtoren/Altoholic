@@ -15,6 +15,7 @@ namespace Altoholic.Database
         private const string CharacterTableName = "characters";
         private const string CharactersCurrenciesHistoryTableName = "charactersCurrenciesHistories";
         private const string BlacklistTableName = "blacklist";
+        private const string VersionTableName = "db_version";
 
         public static bool IsSqLiteDatabase(string pathToFile)
         {
@@ -210,23 +211,40 @@ namespace Altoholic.Database
                 }
             }
 
-            if (DoesTableExist(db, BlacklistTableName))
+            if (!DoesTableExist(db, BlacklistTableName))
             {
-                return;
+                const string sql3 = $"""
+                                        CREATE TABLE IF NOT EXISTS {BlacklistTableName}(
+                                            CharacterId BIGINT PRIMARY KEY,
+                                            Datetime BIGINT
+                                       );
+                                     """;
+                int result3 = db.Execute(sql3);
+                Plugin.Log.Debug($"CREATE TABLE {BlacklistTableName} result: {result3}");
+                if (result3 == 0)
+                {
+                    int result32 =
+                        db.Execute(
+                            $"CREATE INDEX idx_{BlacklistTableName}_CharacterID ON {BlacklistTableName}(CharacterId)");
+                    Plugin.Log.Debug(
+                        $"CREATE INDEX idx_{BlacklistTableName}_CharacterID ON {BlacklistTableName}(CharacterId) result: {result32}");
+                }
             }
 
-            const string sql3 = $"""
-                                    CREATE TABLE IF NOT EXISTS {BlacklistTableName}(
-                                        CharacterId BIGINT PRIMARY KEY,
-                                        Datetime BIGINT
-                                   );
-                                 """;
-            int result3 = db.Execute(sql3);
-            Plugin.Log.Debug($"CREATE TABLE {BlacklistTableName} result: {result3}");
-            if (result3 == 0)
+            if (!DoesTableExist(db, VersionTableName))
             {
-                int result32 = db.Execute($"CREATE INDEX idx_{BlacklistTableName}_CharacterID ON {BlacklistTableName}(CharacterId)");
-                Plugin.Log.Debug($"CREATE INDEX idx_{BlacklistTableName}_CharacterID ON {BlacklistTableName}(CharacterId) result: {result32}");
+                const string sql4 = $"""
+                                        CREATE TABLE IF NOT EXISTS {VersionTableName}(
+                                            Version INTEGER DEFAULT 0
+                                       );
+                                     """;
+                int result4 = db.Execute(sql4);
+                Plugin.Log.Debug($"CREATE TABLE {VersionTableName} result: {result4}");
+
+                // This is needed because we only check uncompleted duties but a bug put unlocked data in previous versions
+                const string sql5 = $"UPDATE {CharacterTableName} SET Duties = '', DutiesUnlocked = '';";
+                int result5 = db.Execute(sql5);
+                Plugin.Log.Debug($"Reset characters (unlocked)duties. Result: {result5}");
             }
         }
 

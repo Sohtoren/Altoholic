@@ -336,6 +336,7 @@ namespace Altoholic.Windows
 
                     foreach (Duty expDuty in expDuties)
                     {
+                        if (expDuty.Id is 70 or 71) continue;
                         DrawAllDutyLine(chars, expDuty);
                     }
                     //FindByExp => FindByDutyType => OrderBySortKey
