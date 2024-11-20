@@ -40,8 +40,6 @@ namespace Altoholic.Cache
                 if (stainja == null) continue;
                 string ja = stainja.Value.Name.ExtractText();
 
-                Plugin.Log.Debug($"stain {en} color: {stainen.Value.Color}");
-
                 _stains.Add(i, new Stain
                 {
                     German = de,

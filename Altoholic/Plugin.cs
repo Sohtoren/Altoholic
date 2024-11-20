@@ -401,15 +401,7 @@ namespace Altoholic
 
                 _localPlayer = p;
                 //Plugin.Log.Debug($"localPlayerPlayTime : {localPlayerPlayTime}");
-                if (_localPlayer.PlayTime == 0) //still needed?
-                {
-                    Character? chara = Database.Database.GetCharacter(_db, _localPlayer.CharacterId);
-                    if (chara is not null)
-                    {
-                        _localPlayer.PlayTime = chara.PlayTime;
-                        _localPlayer.LastPlayTimeUpdate = chara.LastPlayTimeUpdate;
-                    }
-                }
+                GetCharacterPlaytime();
 
 #if DEBUG
                 Log.Debug($"Character localLastPlayTimeUpdate : {_localPlayer.LastPlayTimeUpdate}");
@@ -423,15 +415,7 @@ namespace Altoholic
 
             if (_localPlayer.CharacterId != 0)
             {
-                if (_localPlayer.PlayTime == 0) //still needed?
-                {
-                    Character? chara = Database.Database.GetCharacter(_db, _localPlayer.CharacterId);
-                    if (chara is not null)
-                    {
-                        _localPlayer.PlayTime = chara.PlayTime;
-                        _localPlayer.LastPlayTimeUpdate = chara.LastPlayTimeUpdate;
-                    }
-                }
+                GetCharacterPlaytime();
                 if (_localPlayer.LastPlayTimeUpdate > 0 && Utils.GetLastPlayTimeUpdateDiff(_localPlayer.LastPlayTimeUpdate) >= 7)
                 {
                     Utils.ChatMessage(Loc.Localize("LastPlaytimeOutdated", "More than 7 days since the last update, consider using the /playtime command"));
@@ -594,14 +578,6 @@ namespace Altoholic
                 Plugin.Log.Debug($"Reaper : {localPlayer.Jobs.Reaper.Level}");
                 Plugin.Log.Debug($"Sage : {localPlayer.Jobs.Sage.Level}");*/
 #endif
-                if (_localPlayer.PlayTime == 0)
-                {
-                    Character? p = GetCharacterFromGameOrDatabase();
-                    if (p is not null)
-                    {
-                        _localPlayer.PlayTime = p.PlayTime;
-                    }
-                }
             }
             MainWindow.IsOpen = true;
         }
@@ -610,6 +586,23 @@ namespace Altoholic
         public void DrawConfigUI()
         {
             ConfigWindow.IsOpen = true;
+        }
+
+        private void GetCharacterPlaytime()
+        {
+            if (_localPlayer.PlayTime != 0)
+            {
+                return;
+            }
+
+            Character? chara = Database.Database.GetCharacter(_db, _localPlayer.CharacterId);
+            if (chara is null || chara.PlayTime == 0)
+            {
+                return;
+            }
+
+            _localPlayer.PlayTime = chara.PlayTime;
+            _localPlayer.LastPlayTimeUpdate = chara.LastPlayTimeUpdate;
         }
 
         private void OnFrameworkUpdate(IFramework framework)
