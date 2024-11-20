@@ -953,8 +953,9 @@ namespace Altoholic
             UIColor? c = brr.Value.Color.ValueNullable;
             if (c is not null)
             {
-                ImGui.TextColored(ConvertColorToVector4(c.Value.UIForeground),
-                    isAllied ? $"{reputationLevel+1}. {brr.Value.Name}" : $"{reputationLevel}. {brr.Value.AlliedNames}");
+                ImGui.PushStyleColor(ImGuiCol.Text, ConvertColorToVector4(c.Value.UIForeground));
+                ImGui.TextUnformatted(isAllied ? $"{reputationLevel + 1}. {brr.Value.Name}" : $"{ reputationLevel}. { brr.Value.AlliedNames}");
+                ImGui.PopStyleColor();
             }
             else
             {
@@ -1399,7 +1400,9 @@ namespace Altoholic
                     ImGui.ColorButton($"##Gear_{item.ItemId}#Dye#1", dye.Item2,
                         ImGuiColorEditFlags.None, new Vector2(16, 16));
                     ImGui.SameLine();
-                    ImGui.TextColored(dye.Item2, dye.Item1);
+                    ImGui.PushStyleColor(ImGuiCol.Text, dye.Item2);
+                    ImGui.TextUnformatted(dye.Item1);
+                    ImGui.PopStyleColor();
                 }
             }
             if (item.Stain2 > 0)
@@ -1410,7 +1413,9 @@ namespace Altoholic
                     ImGui.ColorButton($"##Gear_{item.ItemId}#Dye#2", dye2.Item2,
                         ImGuiColorEditFlags.None, new Vector2(16, 16));
                     ImGui.SameLine();
-                    ImGui.TextColored(dye2.Item2, dye2.Item1);
+                    ImGui.PushStyleColor(ImGuiCol.Text, dye2.Item2);
+                    ImGui.TextUnformatted(dye2.Item1);
+                    ImGui.PopStyleColor();
                 }
             }
 
@@ -3164,7 +3169,7 @@ namespace Altoholic
             {
                 List<bool> completedQuests = [];
 
-                for (uint i = 1; i <= 17; i++)
+                for (uint i = 1; i <= 18; i++)
                 {
                     BeastTribeRank? rep = character.GetBeastReputation(i);
                     BeastTribes? beastTribe = globalCache.BeastTribesStorage.GetBeastTribe(currentLocale, i);
@@ -3174,7 +3179,7 @@ namespace Altoholic
                         continue;
                     }
 
-                    uint maxRank = (i is 12 or 13 or 14) ? beastTribe.MaxRank : 8;
+                    uint maxRank = (i is 12 or 13 or 14 or 18) ? beastTribe.MaxRank : 8;
                     bool done = maxRank == rep.Rank;
                     /*Plugin.Log.Debug(
                         $"{i}, cname: {character.FirstName}, name: {beastTribe?.EnglishName}, rep.Rank: {rep?.Rank}, maxrank: {beastTribe?.MaxRank}");*/
