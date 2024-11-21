@@ -4457,11 +4457,11 @@ namespace Altoholic.Windows
                                 ImGuiTableColumnFlags.WidthFixed, 36);
                             ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Orchestrion1",
                                 ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#FramerKit",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
                             ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Mount1",
                                 ImGuiTableColumnFlags.WidthFixed, 36);
-                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Emote",
-                                ImGuiTableColumnFlags.WidthFixed, 36);
-                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#FramerKit",
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Accessory",
                                 ImGuiTableColumnFlags.WidthFixed, 36);
                             ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Orchestrion",
                                 ImGuiTableColumnFlags.WidthFixed, 36);
@@ -4471,18 +4471,16 @@ namespace Altoholic.Windows
                             ImGui.TableSetColumnIndex(1);
                             DrawOrchestrion(708, currentCharacter.HasOrchestrionRoll(708));
 
-                            if (rank >= 6)
-                            {
-                                ImGui.TableSetColumnIndex(3);
-                                uint? fkId = _globalCache.FramerKitStorage.GetFramerKitIdFromItemId(44944);
-                                if (fkId == null) return;
-                                DrawFramerKit(fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
-                            }
-
                             if (rank >= 5)
                             {
                                 ImGui.TableSetColumnIndex(2);
                                 DrawMount(358, currentCharacter.HasMount(358));
+                            }
+
+                            if (rank >= 6)
+                            {
+                                ImGui.TableSetColumnIndex(3);
+                                DrawOrnament(44, currentCharacter.HasOrnament(44));
                             }
                         }
 
@@ -4718,6 +4716,46 @@ namespace Altoholic.Windows
                 if (ImGui.IsItemHovered())
                 {
                     Utils.DrawTTCTooltip(_currentLocale, ref _globalCache, t);
+                }
+
+                ImGui.SetCursorPos(new Vector2(p.X + 26, p.Y + 20));
+                ImGui.TextUnformatted("\u2713");
+                ImGui.SetCursorPos(p);
+            }
+        }
+
+
+        private void DrawOrnament(uint id, bool hasOrnament)
+        {
+            Vector2 p = ImGui.GetCursorPos();
+            Ornament? o = _globalCache.OrnamentStorage.GetOrnament(_currentLocale, id);
+            if (o == null)
+            {
+                return;
+            }
+
+            if (!hasOrnament)
+            {
+                if (_isSpoilerEnabled)
+                {
+                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(o.Icon), new Vector2(32, 32),
+                        new Vector4(1, 1, 1, 0.5f));
+                    if (ImGui.IsItemHovered())
+                    {
+                        Utils.DrawOrnamentTooltip(_currentLocale, ref _globalCache, o);
+                    }
+                }
+                else
+                {
+                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(000786), new Vector2(32, 32));
+                }
+            }
+            else
+            {
+                Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(o.Icon), new Vector2(32, 32));
+                if (ImGui.IsItemHovered())
+                {
+                    Utils.DrawOrnamentTooltip(_currentLocale, ref _globalCache, o);
                 }
 
                 ImGui.SetCursorPos(new Vector2(p.X + 26, p.Y + 20));
