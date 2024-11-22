@@ -282,6 +282,61 @@ namespace Altoholic.Windows
                         duties.FindAll(d => d.ContentTypeId == 5), chars); //Raids
                 }
             }
+
+            using (var deepDungeonsTab =
+                   ImRaii.TabItem(
+                       $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 2304)}###CharactersProgressTable#All#TabBar#Duty#TabBar#DeepDungeon"))
+            {
+                if (deepDungeonsTab)
+                {
+                    DrawDuty(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 2304),
+                        duties.FindAll(d => d.ContentTypeId == 21), chars); //Deep Dungeons
+                }
+            }
+
+            using (var guildhestsTab =
+                   ImRaii.TabItem(
+                       $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 3165)}###CharactersProgressTable#All#TabBar#Duty#TabBar#Guildhests"))
+            {
+                if (guildhestsTab)
+                {
+                    DrawSpecialDuty(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 3165),
+                        duties.FindAll(d => d.ContentTypeId == 3), chars); //Guildhests
+                }
+            }
+
+            using (var thTab =
+                   ImRaii.TabItem(
+                       $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 2276)}###CharactersProgressTable#All#TabBar#Duty#TabBar#TreasureHunts"))
+            {
+                if (thTab)
+                {
+                    DrawSpecialDuty(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 2276),
+                        duties.FindAll(d => d.ContentTypeId == 9), chars); //Treasure Hunts
+                }
+            }
+
+            using (var ultimateTab =
+                   ImRaii.TabItem(
+                       $"Ultimate###CharactersProgressTable#All#TabBar#Duty#TabBar#Ultimate"))
+            {
+                if (ultimateTab)
+                {
+                    DrawSpecialDuty("Ultimate",
+                        duties.FindAll(d => d.ContentTypeId == 28), chars); //Ultimate
+                }
+            }
+
+            using (var vcTab =
+                   ImRaii.TabItem(
+                       $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 15400)}###CharactersProgressTable#All#TabBar#Duty#TabBar#VC"))
+            {
+                if (vcTab)
+                {
+                    DrawSpecialDuty(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 15400),
+                        duties.FindAll(d => d.ContentTypeId == 30), chars); //V&C Dungeon Finder
+                }
+            }
         }
 
         private void DrawDuty(string duName, List<Duty> duties, List<Character> chars)
@@ -298,6 +353,7 @@ namespace Altoholic.Windows
             foreach (var ex in expNames.Select((value, i) => new {i, value}))
             {
                 List<Duty> expDuties = duties.FindAll(d => d.ExVersion == ex.i).OrderBy(d => d.SortKey).ToList();
+                if (expDuties.Count == 0) continue;
                 if (ImGui.CollapsingHeader($"{ex.value}###Exp{ex.i}"))
                 {
                     using var charactersEventTable = ImRaii.Table(
@@ -341,6 +397,63 @@ namespace Altoholic.Windows
 
             }
         }
+
+        private void DrawSpecialDuty(string duName, List<Duty> duties, List<Character> chars)
+        {
+            string[] expNames =
+            [
+                _globalCache.AddonStorage.LoadAddonString(_currentLocale, 5752),
+                _globalCache.AddonStorage.LoadAddonString(_currentLocale, 5753),
+                _globalCache.AddonStorage.LoadAddonString(_currentLocale, 5754),
+                _globalCache.AddonStorage.LoadAddonString(_currentLocale, 8156),
+                _globalCache.AddonStorage.LoadAddonString(_currentLocale, 8160),
+                _globalCache.AddonStorage.LoadAddonString(_currentLocale, 8175)
+            ];
+            foreach (var ex in expNames.Select((value, i) => new { i, value }))
+            {
+                List<Duty> expDuties = duties.OrderBy(d => d.SortKey).ToList();
+                if (expDuties.Count == 0) continue;
+
+                using var charactersEventTable = ImRaii.Table(
+                    $"###CharactersProgress#All#Duty#{duName}_{ex.i}#Table",
+                    chars.Count + 1,
+                    ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner |
+                    ImGuiTableFlags.ScrollX | ImGuiTableFlags.ScrollY);
+                if (!charactersEventTable) return;
+                ImGui.TableSetupColumn($"###CharactersProgress#All#Duty#{duName}_{ex.i}#Table#Name",
+                    ImGuiTableColumnFlags.WidthFixed, 260);
+                foreach (Character c in chars)
+                {
+                    ImGui.TableSetupColumn(
+                        $"###CharactersProgress#All#Duty#{duName}_{ex.i}#Table#{c.CharacterId}",
+                        ImGuiTableColumnFlags.WidthFixed, 15);
+                }
+
+                ImGui.TableNextRow();
+                ImGui.TableSetColumnIndex(0);
+                ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 2225));
+                foreach (Character currChar in chars)
+                {
+                    ImGui.TableNextColumn();
+                    ImGui.TextUnformatted($"{currChar.FirstName[0]}.{currChar.LastName[0]}");
+                    if (ImGui.IsItemHovered())
+                    {
+                        ImGui.BeginTooltip();
+                        ImGui.TextUnformatted(
+                            $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
+                        ImGui.EndTooltip();
+                    }
+                }
+
+                foreach (Duty expDuty in expDuties)
+                {
+                    if (expDuty.Id is 70 or 71) continue;
+                    DrawAllDutyLine(chars, expDuty);
+                }
+                //FindByExp => FindByDutyType => OrderBySortKey
+            }
+        }
+
         private void DrawAllDutyLine(List<Character> chars, Duty expDuty)
         {
             string name = _currentLocale switch
@@ -4481,6 +4594,14 @@ namespace Altoholic.Windows
                             {
                                 ImGui.TableSetColumnIndex(3);
                                 DrawOrnament(44, currentCharacter.HasOrnament(44));
+                            }
+
+                            if (rank >= 8)
+                            {
+                                ImGui.TableSetColumnIndex(4);
+                                uint? fkId = _globalCache.FramerKitStorage.GetFramerKitIdFromItemId(44944);
+                                if (fkId == null) return;
+                                DrawFramerKit(fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
                             }
                         }
 
