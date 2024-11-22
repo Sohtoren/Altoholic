@@ -110,7 +110,8 @@ namespace Altoholic
                 GlassesStorage = new GlassesStorage(),
                 BeastTribesStorage = new BeastTribesStorage(),
                 QuestStorage = new QuestStorage(),
-                DutyStorage = new DutyStorage()
+                DutyStorage = new DutyStorage(),
+                PlaceNameStorage = new PlaceNameStorage(),
             };
 
             nint playtimePtr = SigScanner.ScanText(PlaytimeSig);
@@ -185,6 +186,7 @@ namespace Altoholic
             _globalCache.BeastTribesStorage.Init(currentLocale, _globalCache);
             _globalCache.QuestStorage.Init(_globalCache);
             _globalCache.DutyStorage.Init(_globalCache);
+            _globalCache.PlaceNameStorage.Init(_globalCache);
 
             _altoholicService = new(
                 () => _localPlayer,
@@ -456,6 +458,18 @@ namespace Altoholic
                     }
                 }
 
+                Character? character = Database.Database.GetCharacter(_db, _localPlayer.CharacterId);
+                if(character != null)
+                {
+                    foreach (Housing housing in character.Houses)
+                    {
+                        if (!_localPlayer.Houses.Exists(h => h.Id == housing.Id))
+                        {
+                            _localPlayer.Houses.Add(housing);
+                        }
+                    }
+                }
+
 #if DEBUG
                 foreach (Gear i in _localPlayer.Gear)
                 {
@@ -490,6 +504,7 @@ namespace Altoholic
                     GetPlayerArmoryInventory();
                     GetPlayerGlamourInventory();
                     GetPlayerArmoireInventory();
+                    GetPlayerMail();
                     GetPlayerCompletedQuests();
                     GetPlayerRetainer();
                     GetPlayerBeastReputations();
@@ -661,6 +676,8 @@ namespace Altoholic
 
             GetPlayerAttributesProfileAndJobs();
             GetPlayerRetainer();
+
+            GetHousing();
         }
 
         private unsafe void GetPlayerAttributesProfileAndJobs()
@@ -848,7 +865,6 @@ namespace Altoholic
                     _localPlayer.Ornaments.Add(i);
             }
         }
-
         private void GetGlassesFromState(PlayerState player)
         {
             foreach (uint i in _globalCache.GlassesStorage.Get().Where(i => !_localPlayer.HasGlasses(i)).Where(i => player.IsGlassesUnlocked((ushort)i)))
@@ -1269,6 +1285,20 @@ namespace Altoholic
             
         }
 
+        private unsafe void GetPlayerMail()
+        {
+            if (
+                Condition[ConditionFlag.BoundByDuty] ||
+                Condition[ConditionFlag.BoundByDuty56] ||
+                Condition[ConditionFlag.BoundByDuty95]
+            )
+            {
+                return;
+            }
+
+
+        }
+
         private unsafe void GetPlayerRetainer()
         {
             if (
@@ -1427,6 +1457,79 @@ namespace Altoholic
                 gearItems.Add(currGear);
             }
             return gearItems;
+        }
+
+        private unsafe void GetHousing()
+        {
+            if (
+                Condition[ConditionFlag.BoundByDuty] ||
+                Condition[ConditionFlag.BoundByDuty56] ||
+                Condition[ConditionFlag.BoundByDuty95]
+            )
+            {
+                return;
+            }
+
+            if (_localPlayer.HomeWorld != _localPlayer.CurrentWorld)
+            {
+                return;
+            }
+
+            ref readonly HousingManager housingManager = ref *HousingManager.Instance();
+
+            if (!housingManager.IsInside())
+            {
+                return;
+            }
+
+            if (!housingManager.HasHousePermissions())
+            {
+                return;
+            }
+
+            sbyte ward = housingManager.GetCurrentWard();
+
+            // 1 for Main Division, 2 for Subdivision
+            byte division = housingManager.GetCurrentDivision();
+
+            // -128 for Apartments in Main Division, -127 for Apartments in Subdivision
+            sbyte plot = housingManager.GetCurrentPlot();
+            short room = housingManager.GetCurrentRoom();
+            long id = housingManager.GetCurrentHouseId();
+            /*HousingTerritoryType ct = housingManager.CurrentTerritory->GetTerritoryType();
+            HousingTerritoryType ot = (HousingTerritoryType)0;
+            if (housingManager.OutdoorTerritory != null)
+            {
+                ot = housingManager.OutdoorTerritory->GetTerritoryType();
+            }
+            HousingTerritoryType it = housingManager.IndoorTerritory->GetTerritoryType();*/
+            int p = plot is -127 or -128 ? 0 : plot;
+
+            ushort tt = ClientState.TerritoryType;
+            uint mId = GameMain.Instance()->CurrentMapId;
+
+            Housing? house = _localPlayer.Houses.Find(h => h.Id == id);
+            if (house != null)
+            {
+                if (house.Room == 0 && room != 0)
+                {
+                    house.Room = room;
+                }
+            }
+            else
+            {
+                _localPlayer.Houses.Add(new Housing()
+                {
+                    Id = id,
+                    Ward = ward,
+                    Division = division,
+                    Plot = plot,
+                    Room = room,
+                    MapId = mId,
+                    TerritoryId = tt
+                });
+            }
+            //Log.Debug($"Add house: tt:{tt}, mId:{mId}, w:{ward + 1}, d:{division}, plot: {p}, room: {room}, id: {id}");
         }
 
         private void CleanLastLocalCharacter()

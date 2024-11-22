@@ -150,10 +150,20 @@ namespace Altoholic.Windows
                 ImGui.TextUnformatted("");
                 ImGui.EndTabItem();
             }*/
-            using var profileTab = ImRaii.TabItem($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 759)}");
-            if (profileTab.Success)
+            using (var profileTab =
+                   ImRaii.TabItem(
+                       $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 759)}###{selectedCharacter.CharacterId}#Profile"))
             {
-                DrawProfile(selectedCharacter);
+                if (profileTab.Success)
+                {
+                    DrawProfile(selectedCharacter);
+                }
+            }
+
+            using var housingTab = ImRaii.TabItem($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 1999)}###{selectedCharacter.CharacterId}#Housing");
+            if (housingTab.Success)
+            {
+                DrawHousing(selectedCharacter);
             }
 
             ImGui.TableSetColumnIndex(1);
@@ -345,6 +355,86 @@ namespace Altoholic.Windows
                 new Vector2(36, 36));
             ImGui.TableSetColumnIndex(1);
             ImGui.TextUnformatted($"{Utils.GetGuardian(_currentLocale, selectedCharacter.Profile.Guardian)}");
+        }
+
+        private void DrawHousing(Character selectedCharacter)
+        {
+            using var charactersDetailsTableProfileTable = ImRaii.Table("###CharactersDetailsTable#Profile#HousingTable", 2);
+            if (!charactersDetailsTableProfileTable) return;
+            ImGui.TableSetupColumn("###CharactersDetailsTable#Profile#HousingTable#Icon", ImGuiTableColumnFlags.WidthFixed, 48);
+            ImGui.TableSetupColumn("###CharactersDetailsTable#Profile#HousingTable#Text", ImGuiTableColumnFlags.WidthStretch);
+            foreach (Housing house in selectedCharacter.Houses)
+            {
+                ImGui.TableNextRow();
+                ImGui.TableSetColumnIndex(0);
+                IDalamudTextureWrap icon = (house.Plot == -127 || house.Plot == -128 || house.Room != 0)
+                    ? _globalCache.IconStorage.LoadHighResIcon(066403)
+                    : _globalCache.IconStorage.LoadHighResIcon(066458);
+                Utils.DrawIcon(icon, new Vector2(48,48));
+                ImGui.TableSetColumnIndex(1);
+                ImGui.TextUnformatted(
+                    //$"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 8495)}: {GetHouseTerritoryString(house.TerritoryId)}" +
+                    $"{GetHouseTerritoryString(house.TerritoryId)}");
+                ImGui.TextUnformatted(
+                    $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 6369)} {_globalCache.AddonStorage.LoadAddonString(_currentLocale, 6351)}: {house.Ward + 1}");
+                if (house.Plot != -127 && house.Plot != -128)
+                {
+                    ImGui.SameLine();
+                    ImGui.TextUnformatted($"- {_globalCache.AddonStorage.LoadAddonString(_currentLocale, 14312)}: {house.Plot+1}");
+                }
+                if (house.Room != 0)
+                {
+                    ImGui.SameLine();
+                    string room = _currentLocale switch
+                    {
+                        ClientLanguage.German => "Zimmer",
+                        ClientLanguage.English => "Room",
+                        ClientLanguage.French => "Chambre",
+                        ClientLanguage.Japanese => "Room",
+                        _ => "Room"
+                    };
+                    ImGui.TextUnformatted($"- {room} {_globalCache.AddonStorage.LoadAddonString(_currentLocale, 6454)} {house.Room}");
+                }
+                ImGui.Separator();
+            }
+        }
+
+        private string GetHouseTerritoryString(uint territoryId)
+        {
+            return territoryId switch
+            {
+                282 => _globalCache.PlaceNameStorage.GetPlaceNameOnly(_currentLocale, 1100), //"Private Cottage - Mist",
+                283 => _globalCache.PlaceNameStorage.GetPlaceNameOnly(_currentLocale, 1101), //"Private House - Mist",
+                284 => _globalCache.PlaceNameStorage.GetPlaceNameOnly(_currentLocale, 1102), //"Private Mansion - Mist",
+                384 => _globalCache.PlaceNameStorage.GetPlaceNameOnly(_currentLocale, 1157), //"Private Chambers - Mist",
+                608 => _globalCache.PlaceNameStorage.GetPlaceNameOnly(_currentLocale, 1812), //"Topmast Apartment",
+                342 => _globalCache.PlaceNameStorage.GetPlaceNameOnly(_currentLocale, 1106), //"Private Cottage - The Lavender Beds",
+                343 => _globalCache.PlaceNameStorage.GetPlaceNameOnly(_currentLocale, 1107), //"Private House - The Lavender Beds",
+                344 => _globalCache.PlaceNameStorage.GetPlaceNameOnly(_currentLocale, 1108), //"Private Mansion - The Lavender Beds",
+                385 => _globalCache.PlaceNameStorage.GetPlaceNameOnly(_currentLocale, 1159), //"Private Chambers - The Lavender Beds",
+                609 => _globalCache.PlaceNameStorage.GetPlaceNameOnly(_currentLocale, 1814), //"Lily Hills Apartment",
+                345 => _globalCache.PlaceNameStorage.GetPlaceNameOnly(_currentLocale, 1103), //"Private Cottage - The Goblet",
+                346 => _globalCache.PlaceNameStorage.GetPlaceNameOnly(_currentLocale, 1104), //"Private House - The Goblet",
+                347 => _globalCache.PlaceNameStorage.GetPlaceNameOnly(_currentLocale, 1105), //"Private Mansion - The Goblet",
+                386 => _globalCache.PlaceNameStorage.GetPlaceNameOnly(_currentLocale, 1158), //"Private Chambers - The Goblet",
+                610 => _globalCache.PlaceNameStorage.GetPlaceNameOnly(_currentLocale, 1816), //"Sultana's Breath Apartment",
+                649 => _globalCache.PlaceNameStorage.GetPlaceNameOnly(_currentLocale, 1893), //"Private Cottage - Shirogane",
+                650 => _globalCache.PlaceNameStorage.GetPlaceNameOnly(_currentLocale, 1894), //"Private House - Shirogane",
+                651 => _globalCache.PlaceNameStorage.GetPlaceNameOnly(_currentLocale, 1895), //"Private Mansion - Shirogane",
+                652 => _globalCache.PlaceNameStorage.GetPlaceNameOnly(_currentLocale, 2270), //"Private Chambers - Shirogane",
+                655 => _globalCache.PlaceNameStorage.GetPlaceNameOnly(_currentLocale, 2273), //"Kobai Goten Apartment",
+                980 => _globalCache.PlaceNameStorage.GetPlaceNameOnly(_currentLocale, 3689), //"Private Cottage - Empyreum",
+                981 => _globalCache.PlaceNameStorage.GetPlaceNameOnly(_currentLocale, 3690), //"Private House - Empyreum",
+                982 => _globalCache.PlaceNameStorage.GetPlaceNameOnly(_currentLocale, 3694), //"Private Mansion - Empyreum",
+                983 => _globalCache.PlaceNameStorage.GetPlaceNameOnly(_currentLocale, 3692), //"Private Chambers - Empyreum",
+                999 => _globalCache.PlaceNameStorage.GetPlaceNameOnly(_currentLocale, 3695), //"Ingleside Apartment",
+                423 => _globalCache.PlaceNameStorage.GetPlaceNameOnly(_currentLocale, 1227), //"Company Workshop - Mist",
+                424 => _globalCache.PlaceNameStorage.GetPlaceNameOnly(_currentLocale, 1228), //"Company Workshop - The Goblet",
+                425 => _globalCache.PlaceNameStorage.GetPlaceNameOnly(_currentLocale, 1229), //"Company Workshop - The Lavender Beds",
+                653 => _globalCache.PlaceNameStorage.GetPlaceNameOnly(_currentLocale, 2271), //"Company Workshop - Shirogane",
+                984 => _globalCache.PlaceNameStorage.GetPlaceNameOnly(_currentLocale, 3693), //"Company Workshop - Empyreum",
+                _ => string.Empty
+            };
         }
     }
 }

@@ -26,6 +26,7 @@ using Glasses = Lumina.Excel.Sheets.Glasses;
 using Quest = Lumina.Excel.Sheets.Quest;
 using Cabinet = Lumina.Excel.Sheets.Cabinet;
 using System.Runtime.CompilerServices;
+using static Dalamud.Interface.Utility.Raii.ImRaii;
 
 
 namespace Altoholic
@@ -3312,6 +3313,58 @@ namespace Altoholic
             ExcelSheet<RetainerTaskRandom>? drtr = Plugin.DataManager.GetExcelSheet<RetainerTaskRandom>(currentLocale);
             RetainerTaskRandom? lumina = drtr?.GetRow(id);
             return lumina;
+        }
+
+        public static Lumina.Excel.Sheets.PlaceName? GetPlaceName(ClientLanguage currentLocale, uint id)
+        {
+            ExcelSheet<Lumina.Excel.Sheets.PlaceName>? dpn = Plugin.DataManager.GetExcelSheet<Lumina.Excel.Sheets.PlaceName>(currentLocale);
+            Lumina.Excel.Sheets.PlaceName? lumina = dpn?.GetRow(id);
+            return lumina;
+        }
+        public static List<Models.PlaceName>? GetAllPlaceName()
+        {
+            List<Models.PlaceName> returnedPlaceNamesIds = [];
+            ExcelSheet<Lumina.Excel.Sheets.PlaceName>? dpn = Plugin.DataManager.GetExcelSheet<Lumina.Excel.Sheets.PlaceName>(ClientLanguage.English);
+            using IEnumerator<Lumina.Excel.Sheets.PlaceName>? placeEnumerator = dpn?.GetEnumerator();
+            if (placeEnumerator is null) return null;
+            while (placeEnumerator.MoveNext())
+            {
+                Lumina.Excel.Sheets.PlaceName place = placeEnumerator.Current;
+                if (place.Name.IsEmpty) continue;
+                uint id = place.RowId;
+                Models.PlaceName pn = new(){Id = id};
+                List<ClientLanguage> langs =
+                    [ClientLanguage.German, ClientLanguage.English, ClientLanguage.French, ClientLanguage.Japanese];
+                foreach (ClientLanguage l in langs)
+                {
+                    if (l == ClientLanguage.English)
+                    {
+                        pn.EnglishName = place.Name.ExtractText();
+                        pn.EnglishNoParticle = place.NameNoArticle.ExtractText();
+                    }
+                    Lumina.Excel.Sheets.PlaceName? cpn = GetPlaceName(l, id);
+                    if (cpn == null) continue;
+                    switch (l)
+                    {
+                        case ClientLanguage.German:
+                            pn.GermanName = cpn.Value.Name.ExtractText();
+                            pn.GermanNoParticle = cpn.Value.NameNoArticle.ExtractText();
+                            break;
+                        case ClientLanguage.French:
+                            pn.FrenchName = cpn.Value.Name.ExtractText();
+                            pn.FrenchNoParticle = cpn.Value.NameNoArticle.ExtractText();
+                            break;
+                        case ClientLanguage.Japanese:
+                            pn.JapaneseName = cpn.Value.Name.ExtractText();
+                            pn.JapaneseNoParticle = cpn.Value.NameNoArticle.ExtractText();
+                            break;
+                    }
+                }
+
+                returnedPlaceNamesIds.Add(pn);
+            }
+
+            return returnedPlaceNamesIds;
         }
 
         public static void DrawIcon(IDalamudTextureWrap? icon, Vector2 iconSize)

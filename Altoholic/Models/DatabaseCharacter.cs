@@ -52,5 +52,6 @@ namespace Altoholic.Models
         public string BeastReputations { get; set; } = string.Empty;
         public string Duties { get; set; } = string.Empty;
         public string DutiesUnlocked { get; set; } = string.Empty;
+        public string Houses { get; set; } = string.Empty;
     }
 }

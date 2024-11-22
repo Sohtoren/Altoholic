@@ -54,6 +54,7 @@ namespace Altoholic.Models
         public List<BeastTribeRank> BeastReputations { get; set; } = [];
         public HashSet<uint> Duties { get; set; } = [];
         public HashSet<uint> DutiesUnlocked { get; set; } = [];
+        public List<Housing> Houses { get; set; } = [];
 
         public bool HasAnyLevelJob(int level)
         {

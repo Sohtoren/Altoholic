@@ -19,5 +19,6 @@
         public required BeastTribesStorage BeastTribesStorage { get; set; } = null!;
         public required QuestStorage QuestStorage { get; set; } = null!;
         public required DutyStorage DutyStorage { get; set; } = null!;
+        public required PlaceNameStorage PlaceNameStorage { get; set; } = null!;
     }
 }
