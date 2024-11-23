@@ -160,10 +160,15 @@ namespace Altoholic.Windows
                 }
             }
 
-            using var housingTab = ImRaii.TabItem($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 1999)}###{selectedCharacter.CharacterId}#Housing");
-            if (housingTab.Success)
+            if (selectedCharacter.Houses.Count > 0)
             {
-                DrawHousing(selectedCharacter);
+                using var housingTab =
+                    ImRaii.TabItem(
+                        $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 1999)}###{selectedCharacter.CharacterId}#Housing");
+                if (housingTab.Success)
+                {
+                    DrawHousing(selectedCharacter);
+                }
             }
 
             ImGui.TableSetColumnIndex(1);
