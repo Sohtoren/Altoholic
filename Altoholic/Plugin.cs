@@ -461,12 +461,9 @@ namespace Altoholic
                 Character? character = Database.Database.GetCharacter(_db, _localPlayer.CharacterId);
                 if(character != null)
                 {
-                    foreach (Housing housing in character.Houses)
+                    foreach (var housing in character.Houses.Where(housing => !_localPlayer.Houses.Exists(h => h.Id == housing.Id)))
                     {
-                        if (!_localPlayer.Houses.Exists(h => h.Id == housing.Id))
-                        {
-                            _localPlayer.Houses.Add(housing);
-                        }
+                        _localPlayer.Houses.Add(housing);
                     }
                 }
 
