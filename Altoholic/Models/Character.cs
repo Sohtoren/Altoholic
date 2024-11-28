@@ -31,6 +31,7 @@ namespace Altoholic.Models
         public short PlayerCommendations { get; set; } = 0;
         public ushort[] CurrentFacewear { get; set; } = [0,0];
         public ushort CurrentOrnament { get; set; } = 0;
+        public ushort UnreadLetters { get; set; } = 0;
         public Attributes? Attributes { get; set; }
         public PlayerCurrencies? Currencies { get; set; }
         public Jobs? Jobs { get; set; }

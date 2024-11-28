@@ -10,11 +10,13 @@ using Dalamud.Game.Inventory.InventoryEventArgTypes;
 using Dalamud.Game.Inventory;
 using Dalamud.Game.Text;
 using Dalamud.Hooking;
+using Dalamud.Interface;
 using Dalamud.Interface.ImGuiNotification;
 using Dalamud.Interface.Windowing;
 using Dalamud.IoC;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
+using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Application.Network.WorkDefinitions;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.Game.Character;
@@ -24,15 +26,18 @@ using FFXIVClientStructs.FFXIV.Client.System.String;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using LiteDB;
 using Lumina.Excel.Sheets;
+using Lumina.Text;
 using Microsoft.Data.Sqlite;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using static FFXIVClientStructs.FFXIV.Client.UI.RaptureAtkModule;
 using Character = Altoholic.Models.Character;
+using FFXIVClientStructs.FFXIV.Client.UI.Info;
 
 namespace Altoholic
 {
@@ -40,8 +45,6 @@ namespace Altoholic
     {
         public static string Name => "Altoholic Plugin";
         private const string CommandName = "/altoholic";
-        private const string SaveCommandName = "/altoholicsave";
-        private const string BlacklistCommandName = "/altoholicbl";
         private readonly Array _questIds = Enum.GetValues(typeof(QuestIds));
 
         [PluginService] public static IDalamudPluginInterface PluginInterface { get; set; } = null!;
@@ -263,15 +266,7 @@ namespace Altoholic
 
             CommandManager.AddHandler(CommandName, new CommandInfo(OnCommand)
             {
-                HelpMessage = "Show/hide Altoholic"
-            });
-            CommandManager.AddHandler(SaveCommandName, new CommandInfo(OnSaveCommand)
-            {
-                HelpMessage = "Manually save current char"
-            });
-            CommandManager.AddHandler(BlacklistCommandName, new CommandInfo(OnBlacklistCommand)
-            {
-                HelpMessage = "Remove current character from blacklist"
+                HelpMessage = "Show/hide Altoholic. use /altoholic help for more options"
             });
 
             PluginInterface.UiBuilder.Draw += DrawUI;
@@ -324,8 +319,6 @@ namespace Altoholic
             CleanLastLocalCharacter();
 
             CommandManager.RemoveHandler(CommandName);
-            CommandManager.RemoveHandler(SaveCommandName);
-            CommandManager.RemoveHandler(BlacklistCommandName);
 
             GameInventory.ItemAdded -= OnGameInventoryItemEvent;
             GameInventory.ItemChanged -= OnGameInventoryItemEvent;
@@ -340,7 +333,7 @@ namespace Altoholic
             SqliteConnection.ClearAllPools();
         }
 
-        private void OnBlacklistCommand(string command, string args)
+        private void OnUnblacklistCommand()
         {
             Log.Debug("OnBlacklistCommand called");
             Blacklist? blacklist = BlacklistedCharacters.Find(b => b.CharacterId == ClientState.LocalContentId);
@@ -353,21 +346,64 @@ namespace Altoholic
             BlacklistedCharacters.Remove(blacklist);
             ChatGui.Print("Character removed from blacklist");
         }
-        private void OnSaveCommand(string command, string args)
-        {
-            Log.Debug("OnSaveCommand called");
-            UpdateCharacter();
-        }
+
         private void OnCommand(string command, string args)
         {
-            Log.Debug("OnCommand called");
-            if (MainWindow.IsOpen)
+            Log.Debug($"OnCommand called {(args.Length > 0 ? args : "")}");
+
+            switch (args.Replace("<", "").Replace(">", ""))
             {
-                MainWindow.IsOpen = false;
-            }
-            else
-            {
-                DrawMainUI();
+                case "help":
+                    SeStringBuilder builder = new();
+                    builder.Append("[Altoholic] /altoholic ");
+                    builder.PushColorRgba(KnownColor.LimeGreen.Vector());
+                    builder.Append("option\n");
+                    builder.PopColor();
+                    builder.PushColorRgba(KnownColor.LimeGreen.Vector());
+                    builder.Append("No option");
+                    builder.PopColor();
+                    builder.Append(": Show/hide Altoholic main window\n");
+                    builder.Append("Options:\n");
+                    builder.PushColorRgba(KnownColor.LimeGreen.Vector());
+                    builder.Append("help");
+                    builder.PopColor();
+                    builder.Append(": Show this help\n");
+#if DEBUG
+                    builder.PushColorRgba(KnownColor.LimeGreen.Vector());
+                    builder.Append("save");
+                    builder.PopColor();
+                    builder.Append(": Manually save current character\n");
+#endif
+                    builder.PushColorRgba(KnownColor.LimeGreen.Vector());
+                    builder.Append("unbl");
+                    builder.PopColor();
+                    builder.Append("/");
+                    builder.PushColorRgba(KnownColor.LimeGreen.Vector());
+                    builder.Append("unblacklist");
+                    builder.PopColor();
+                    builder.Append(" : Remove current character from blacklist");
+
+                    XivChatEntry chatEntry = new() { Message = builder.ToSeString().ToDalamudString(), Type = XivChatType.Echo };
+
+                    ChatGui.Print(chatEntry);
+                    break;
+                case "save":
+                    UpdateCharacter();
+                    break;
+                case "unblacklist":
+                case "unbl":
+                    OnUnblacklistCommand();
+                    break;
+                default:
+                    if (MainWindow.IsOpen)
+                    {
+                        MainWindow.IsOpen = false;
+                    }
+                    else
+                    {
+                        DrawMainUI();
+                    }
+                    break;
             }
         }
 
@@ -461,7 +497,7 @@ namespace Altoholic
                 Character? character = Database.Database.GetCharacter(_db, _localPlayer.CharacterId);
                 if(character != null)
                 {
-                    foreach (var housing in character.Houses.Where(housing => !_localPlayer.Houses.Exists(h => h.Id == housing.Id)))
+                    foreach (Housing housing in character.Houses.Where(housing => !_localPlayer.Houses.Exists(h => h.Id == housing.Id)))
                     {
                         _localPlayer.Houses.Add(housing);
                     }
@@ -673,7 +709,7 @@ namespace Altoholic
 
             GetPlayerAttributesProfileAndJobs();
             GetPlayerRetainer();
-
+            GetPlayerMail();
             GetHousing();
         }
 
@@ -1282,6 +1318,11 @@ namespace Altoholic
             
         }
 
+        [StructLayout(LayoutKind.Explicit)]
+        private struct InfoProxyLetterCount
+        {
+            [FieldOffset(0x26)] public byte NumLetters;
+        }
         private unsafe void GetPlayerMail()
         {
             if (
@@ -1293,7 +1334,8 @@ namespace Altoholic
                 return;
             }
 
-
+            InfoProxyLetterCount* ipl = (InfoProxyLetterCount*)InfoModule.Instance()->GetInfoProxyById(InfoProxyId.Letter);
+            _localPlayer.UnreadLetters = ipl->NumLetters;
         }
 
         private unsafe void GetPlayerRetainer()
@@ -1526,6 +1568,7 @@ namespace Altoholic
                     TerritoryId = tt
                 });
             }
+
             //Log.Debug($"Add house: tt:{tt}, mId:{mId}, w:{ward + 1}, d:{division}, plot: {p}, room: {room}, id: {id}");
         }
 
@@ -1767,13 +1810,10 @@ namespace Altoholic
             Blacklist? b = Database.Database.GetBlacklist(_db, _localPlayer.CharacterId);
             if (b != null) return;
             Character? charExist = Database.Database.GetCharacter(_db, _localPlayer.CharacterId);
-            if (charExist == null)
+            int returnedRows = charExist == null ? Database.Database.AddCharacter(_db, _localPlayer) : Database.Database.UpdateCharacter(_db, _localPlayer);
+            if (returnedRows == 1)
             {
-                Database.Database.AddCharacter(_db, _localPlayer);
-            }
-            else
-            {
-                Database.Database.UpdateCharacter(_db, _localPlayer);
+                Utils.ChatMessage("Character has been saved");
             }
         }
 

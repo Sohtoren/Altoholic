@@ -4596,7 +4596,7 @@ namespace Altoholic.Windows
                                 DrawOrnament(44, currentCharacter.HasOrnament(44));
                             }
 
-                            if (rank >= 8)
+                            if (rank >= 7)
                             {
                                 ImGui.TableSetColumnIndex(4);
                                 uint? fkId = _globalCache.FramerKitStorage.GetFramerKitIdFromItemId(44944);

@@ -1,4 +1,4 @@
-using Altoholic.Cache;
+﻿using Altoholic.Cache;
 using Altoholic.Models;
 using CheapLoc;
 using Dalamud.Game;
@@ -179,6 +179,33 @@ namespace Altoholic.Windows
         {
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
+            if (character.UnreadLetters > 0)
+            {
+                ImGui.PushFont(UiBuilder.IconFont);
+                ImGui.TextUnformatted($"{FontAwesomeIcon.Envelope.ToIconString()}");
+                ImGui.PopFont();
+                if (ImGui.IsItemHovered())
+                {
+                    ImGui.BeginTooltip();
+                    switch (_currentLocale)
+                    {
+                        case ClientLanguage.German:
+                            ImGui.TextUnformatted($"{character.UnreadLetters} {(character.UnreadLetters > 1 ? "ungelesene Briefe" : "ungelesener Brief") }");
+                            break;
+                        case ClientLanguage.English:
+                            ImGui.TextUnformatted($"{character.UnreadLetters} unread letter{(character.UnreadLetters > 1 ? "s" : "")}");
+                            break;
+                        case ClientLanguage.French:
+                            ImGui.TextUnformatted($"{character.UnreadLetters} lettre{(character.UnreadLetters > 1 ? "s" : "")} non lue{(character.UnreadLetters > 1 ? "s" : "")}");
+                            break;
+                        case ClientLanguage.Japanese:
+                            ImGui.TextUnformatted($"未読の手紙 {character.UnreadLetters} 件");
+                            break;
+                    }
+                    ImGui.EndTooltip();
+                }
+                ImGui.SameLine();
+            }
             ImGui.TextUnformatted(
                 $"{(character.IsSprout ? (char)SeIconChar.BotanistSprout : "")}{character.FirstName}");
             ImGui.TableSetColumnIndex(1);
@@ -327,7 +354,7 @@ namespace Altoholic.Windows
                     //this.SetOthersCharactersList(oC);
                     Utils.ChatMessage(
                         $"{character.FirstName} {character.LastName}{(char)SeIconChar.CrossWorld}{character.HomeWorld} has been blacklisted.");
-                    Utils.ChatMessage("Use /altoholicbl on this character to remove it from the blacklist");
+                    Utils.ChatMessage("Use /altoholic unblacklist or unbl on this character to remove it from the blacklist");
                     Utils.ChatMessage("Close and re-open the window to refresh list");
                     ImGui.CloseCurrentPopup();
                 }

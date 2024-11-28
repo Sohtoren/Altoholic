@@ -11,6 +11,7 @@ using FFXIVClientStructs.FFXIV.Common.Math;
 using ImGuiNET;
 using Lumina.Excel;
 using Lumina.Excel.Sheets;
+using Lumina.Text;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -43,6 +44,10 @@ namespace Altoholic
         }
 
         public static void ChatMessage(string message)
+        {
+            Plugin.ChatGui.Print($"[Altoholic]: {message}");
+        }
+        public static void ChatMessage(SeString message)
         {
             Plugin.ChatGui.Print($"[Altoholic]: {message}");
         }
