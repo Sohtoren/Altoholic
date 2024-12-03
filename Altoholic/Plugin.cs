@@ -38,6 +38,7 @@ using System.Threading;
 using static FFXIVClientStructs.FFXIV.Client.UI.RaptureAtkModule;
 using Character = Altoholic.Models.Character;
 using FFXIVClientStructs.FFXIV.Client.UI.Info;
+using System.Numerics;
 
 namespace Altoholic
 {
@@ -375,6 +376,10 @@ namespace Altoholic
                     builder.Append(": Manually save current character\n");
 #endif
                     builder.PushColorRgba(KnownColor.LimeGreen.Vector());
+                    builder.Append("reset");
+                    builder.PopColor();
+                    builder.Append(" : Reset main window position");
+                    builder.PushColorRgba(KnownColor.LimeGreen.Vector());
                     builder.Append("unbl");
                     builder.PopColor();
                     builder.Append("/");
@@ -386,6 +391,11 @@ namespace Altoholic
                     XivChatEntry chatEntry = new() { Message = builder.ToSeString().ToDalamudString(), Type = XivChatType.Echo };
 
                     ChatGui.Print(chatEntry);
+                    break;
+                case "reset":
+                    Log.Debug($"Window position: {MainWindow.Position}");
+                    MainWindow.Position = new Vector2(100, 100);
+                    DrawMainUI();
                     break;
                 case "save":
                     UpdateCharacter();

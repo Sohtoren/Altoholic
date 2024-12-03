@@ -368,7 +368,7 @@ namespace Altoholic.Windows
                     {
                         ImGui.TableSetupColumn(
                             $"###CharactersProgress#All#Duty#{duName}_{ex.i}#Table#{c.CharacterId}",
-                            ImGuiTableColumnFlags.WidthFixed, 15);
+                            ImGuiTableColumnFlags.WidthFixed, 20);
                     }
 
                     ImGui.TableNextRow();
@@ -426,7 +426,7 @@ namespace Altoholic.Windows
                 {
                     ImGui.TableSetupColumn(
                         $"###CharactersProgress#All#Duty#{duName}_{ex.i}#Table#{c.CharacterId}",
-                        ImGuiTableColumnFlags.WidthFixed, 15);
+                        ImGuiTableColumnFlags.WidthFixed, 20);
                 }
 
                 ImGui.TableNextRow();
@@ -468,14 +468,39 @@ namespace Altoholic.Windows
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
             ImGui.TextUnformatted(Utils.Capitalize(name));
+
             foreach (Character character in chars)
             {
+                bool completed = character.IsDutyCompleted(expDuty.Id);
+                bool unlocked = character.IsDutyUnlocked(expDuty.Id);
+                string completedStr = _currentLocale switch
+                {
+                    ClientLanguage.German => "Vollendet",
+                    ClientLanguage.English => "Completed",
+                    ClientLanguage.French => "Complété",
+                    ClientLanguage.Japanese => "終了",
+                    _ => "Completed"
+                };
+                string unlockedStr = _currentLocale switch
+                {
+                    ClientLanguage.German => "Entsperrt",
+                    ClientLanguage.English => "Unlocked",
+                    ClientLanguage.French => "Débloqué",
+                    ClientLanguage.Japanese => "開放",
+                    _ => "Unlocked"
+                };
                 ImGui.TableNextColumn();
-                ImGui.TextUnformatted(character.IsDutyCompleted(expDuty.Id) ? "\u2713" : "");
+                ImGui.TextUnformatted(completed ? "\u2713" : (unlocked ? "\u25ef" : ""));
                 if (ImGui.IsItemHovered())
                 {
                     ImGui.BeginTooltip();
-                    ImGui.TextUnformatted(name);
+                    ImGui.TextUnformatted(Utils.Capitalize(name));
+                    if (completed || unlocked)
+                    {
+                        ImGui.TextUnformatted(completed ? completedStr :
+                            unlocked ? unlockedStr : "");
+                    }
+
                     ImGui.TextUnformatted(
                         $"{character.FirstName} {character.LastName}{(char)SeIconChar.CrossWorld}{character.HomeWorld}");
                     ImGui.EndTooltip();
@@ -494,7 +519,7 @@ namespace Altoholic.Windows
             foreach (Character c in chars)
             {
                 ImGui.TableSetupColumn($"###CharactersProgress#All#MSQ#{c.CharacterId}",
-                    ImGuiTableColumnFlags.WidthFixed, 15);
+                    ImGuiTableColumnFlags.WidthFixed, 20);
             }
 
             ImGui.TableNextRow();
@@ -683,7 +708,7 @@ namespace Altoholic.Windows
                         foreach (Character c in chars)
                         {
                             ImGui.TableSetupColumn($"###CharactersProgress#All#Event#2024#{c.CharacterId}",
-                                ImGuiTableColumnFlags.WidthFixed, 15);
+                                ImGuiTableColumnFlags.WidthFixed, 20);
                         }
 
                         ImGui.TableNextRow();
@@ -763,7 +788,7 @@ namespace Altoholic.Windows
                     foreach (Character c in chars)
                     {
                         ImGui.TableSetupColumn($"###CharactersProgress#All#Event#2023#{c.CharacterId}",
-                            ImGuiTableColumnFlags.WidthFixed, 15);
+                            ImGuiTableColumnFlags.WidthFixed, 20);
                     }
 
                     ImGui.TableNextRow();
@@ -832,7 +857,7 @@ namespace Altoholic.Windows
                     foreach (Character c in chars)
                     {
                         ImGui.TableSetupColumn($"###CharactersProgress#All#Event#2022#{c.CharacterId}",
-                            ImGuiTableColumnFlags.WidthFixed, 15);
+                            ImGuiTableColumnFlags.WidthFixed, 20);
                     }
 
                     ImGui.TableNextRow();
@@ -904,7 +929,7 @@ namespace Altoholic.Windows
                     foreach (Character c in chars)
                     {
                         ImGui.TableSetupColumn($"###CharactersProgress#All#Event#2021#{c.CharacterId}",
-                            ImGuiTableColumnFlags.WidthFixed, 15);
+                            ImGuiTableColumnFlags.WidthFixed, 20);
                     }
 
                     ImGui.TableNextRow();
@@ -970,7 +995,7 @@ namespace Altoholic.Windows
                     foreach (Character c in chars)
                     {
                         ImGui.TableSetupColumn($"###CharactersProgress#All#Event#2020#{c.CharacterId}",
-                            ImGuiTableColumnFlags.WidthFixed, 15);
+                            ImGuiTableColumnFlags.WidthFixed, 20);
                     }
 
                     ImGui.TableNextRow();
@@ -1040,7 +1065,7 @@ namespace Altoholic.Windows
                     foreach (Character c in chars)
                     {
                         ImGui.TableSetupColumn($"###CharactersProgress#All#Event#2019#{c.CharacterId}",
-                            ImGuiTableColumnFlags.WidthFixed, 15);
+                            ImGuiTableColumnFlags.WidthFixed, 20);
                     }
 
                     ImGui.TableNextRow();
@@ -1109,7 +1134,7 @@ namespace Altoholic.Windows
                     foreach (Character c in chars)
                     {
                         ImGui.TableSetupColumn($"###CharactersProgress#All#Event#2018#{c.CharacterId}",
-                            ImGuiTableColumnFlags.WidthFixed, 15);
+                            ImGuiTableColumnFlags.WidthFixed, 20);
                     }
 
                     ImGui.TableNextRow();
@@ -1179,7 +1204,7 @@ namespace Altoholic.Windows
                     foreach (Character c in chars)
                     {
                         ImGui.TableSetupColumn($"###CharactersProgress#All#Event#2017#{c.CharacterId}",
-                            ImGuiTableColumnFlags.WidthFixed, 15);
+                            ImGuiTableColumnFlags.WidthFixed, 20);
                     }
 
                     ImGui.TableNextRow();
@@ -1252,7 +1277,7 @@ namespace Altoholic.Windows
                     foreach (Character c in chars)
                     {
                         ImGui.TableSetupColumn($"###CharactersProgress#All#Event#2013141516#{c.CharacterId}",
-                            ImGuiTableColumnFlags.WidthFixed, 15);
+                            ImGuiTableColumnFlags.WidthFixed, 20);
                     }
 
                     ImGui.TableNextRow();
@@ -3049,7 +3074,7 @@ namespace Altoholic.Windows
             foreach (Character c in chars)
             {
                 ImGui.TableSetupColumn($"###CharactersProgress#All#Hildibrand#{c.CharacterId}",
-                    ImGuiTableColumnFlags.WidthFixed, 15);
+                    ImGuiTableColumnFlags.WidthFixed, 20);
             }
 
             ImGui.TableNextRow();
@@ -3108,7 +3133,7 @@ namespace Altoholic.Windows
             foreach (Character c in chars)
             {
                 ImGui.TableSetupColumn($"###CharactersProgress#All#RoleQuest#{c.CharacterId}",
-                    ImGuiTableColumnFlags.WidthFixed, 15);
+                    ImGuiTableColumnFlags.WidthFixed, 20);
             }
 
             ImGui.TableNextRow();
@@ -3208,7 +3233,7 @@ namespace Altoholic.Windows
             foreach (Character c in chars)
             {
                 ImGui.TableSetupColumn($"###CharactersProgress#All#Tribe#{c.CharacterId}",
-                    ImGuiTableColumnFlags.WidthFixed, 15);
+                    ImGuiTableColumnFlags.WidthFixed, 20);
             }
 
             ImGui.TableNextRow();
