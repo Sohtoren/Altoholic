@@ -45,11 +45,11 @@ namespace Altoholic
 
         public static void ChatMessage(string message)
         {
-            Plugin.ChatGui.Print($"[Altoholic]: {message}");
+            Plugin.ChatGui.Print($"[Altoholic] {message}");
         }
         public static void ChatMessage(SeString message)
         {
-            Plugin.ChatGui.Print($"[Altoholic]: {message}");
+            Plugin.ChatGui.Print($"[Altoholic] {message}");
         }
 
         public static string GetDatacenterFromWorld(string name)
@@ -3130,6 +3130,7 @@ namespace Altoholic
                     character.HasQuest((int)QuestIds.HILDIBRAND_EW_GENERATIONAL_BONDING),
                     character.HasQuest((int)QuestIds.HILDIBRAND_EW_NOT_FROM_AROUND_HERE),
                     character.HasQuest((int)QuestIds.HILDIBRAND_EW_GENTLEMEN_AT_HEART),
+                    character.HasQuest((int)QuestIds.HILDIBRAND_DT_THE_CASE_OF_THE_DISPLACED_INSPECTOR),
                 ];
                 result.Add(completedQuests);
             }

@@ -3101,25 +3101,42 @@ namespace Altoholic.Windows
             }
 
             List<List<bool>> charactersQuests = Utils.GetCharactersHildibrandQuests(chars);
+
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 5752)}");
             DrawAllLine(chars, charactersQuests, $"{_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.HILDIBRAND_ARR_THE_IMMACULATE_DECEPTION)}", 0);
             DrawAllLine(chars, charactersQuests, $"{_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.HILDIBRAND_ARR_THE_THREE_COLLECTORS)}", 1);
             DrawAllLine(chars, charactersQuests, $"{_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.HILDIBRAND_ARR_A_CASE_OF_INDECENCY)}", 2);
             DrawAllLine(chars, charactersQuests, $"{_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.HILDIBRAND_ARR_THE_COLISEUM_CONUNDRUM)}", 3);
             DrawAllLine(chars, charactersQuests, $"{_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.HILDIBRAND_ARR_HER_LAST_VOW)}", 4);
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 5753)}");
             DrawAllLine(chars, charactersQuests, $"{_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.HILDIBRAND_HW_DONT_CALL_IT_A_COMEBACK)}", 5);
             DrawAllLine(chars, charactersQuests, $"{_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.HILDIBRAND_HW_THE_MEASURE_OF_A_MAMMET)}", 6);
             DrawAllLine(chars, charactersQuests, $"{_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.HILDIBRAND_HW_DONT_TRUST_ANYONE_OVER_SIXTY)}", 7);
             DrawAllLine(chars, charactersQuests, $"{_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.HILDIBRAND_HW_IF_I_COULD_TURN_BACK_TIME)}", 8);
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 5754)}");
             DrawAllLine(chars, charactersQuests, $"{_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.HILDIBRAND_SB_A_HINGAN_TALE_NASHU_GOES_EAST)}", 9);
             DrawAllLine(chars, charactersQuests, $"{_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.HILDIBRAND_SB_OF_WOLVES_AND_GENTLEMEN)}", 10);
             DrawAllLine(chars, charactersQuests, $"{_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.HILDIBRAND_SB_THE_BLADE_MISLAID)}", 11);
             DrawAllLine(chars, charactersQuests, $"{_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.HILDIBRAND_SB_GOOD_SWORDS_GOOD_DOGS)}", 12);
             DrawAllLine(chars, charactersQuests, $"{_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.HILDIBRAND_SB_DONT_DO_THE_DEWPRISM)}", 13);
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 8160)}");
             DrawAllLine(chars, charactersQuests, $"{_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.HILDIBRAND_EW_A_SOULFUL_REUNION)}", 14);
             DrawAllLine(chars, charactersQuests, $"{_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.HILDIBRAND_EW_THE_IMPERFECT_GENTLEMAN)}", 15);
             DrawAllLine(chars, charactersQuests, $"{_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.HILDIBRAND_EW_GENERATIONAL_BONDING)}", 16);
             DrawAllLine(chars, charactersQuests, $"{_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.HILDIBRAND_EW_NOT_FROM_AROUND_HERE)}", 17);
             DrawAllLine(chars, charactersQuests, $"{_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.HILDIBRAND_EW_GENTLEMEN_AT_HEART)}", 18);
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 8175)}");
+            DrawAllLine(chars, charactersQuests, $"{_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.HILDIBRAND_DT_THE_CASE_OF_THE_DISPLACED_INSPECTOR)}", 19);
         }
 
         private void DrawRoleQuestQuest(List<Character> chars)
@@ -4751,6 +4768,7 @@ namespace Altoholic.Windows
                 ImGui.SetCursorPos(p);
             }
         }
+
         private void DrawOrchestrion(uint id, bool hasOrchestrion)
         {
             Vector2 p = ImGui.GetCursorPos();
@@ -4789,7 +4807,7 @@ namespace Altoholic.Windows
                 ImGui.SetCursorPos(p);
             }
         }
-        
+
         private void DrawFramerKit(uint id, bool hasFramerKit)
         {
             Vector2 p = ImGui.GetCursorPos();
@@ -4828,7 +4846,7 @@ namespace Altoholic.Windows
                 ImGui.SetCursorPos(p);
             }
         }
-        
+
         private void DrawTripleTriadCard(uint id, bool hasTripleTriadCard)
         {
             Vector2 p = ImGui.GetCursorPos();
@@ -4869,7 +4887,6 @@ namespace Altoholic.Windows
                 ImGui.SetCursorPos(p);
             }
         }
-
 
         private void DrawOrnament(uint id, bool hasOrnament)
         {

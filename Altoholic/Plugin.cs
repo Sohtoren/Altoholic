@@ -463,6 +463,25 @@ namespace Altoholic
 
             if (_localPlayer.CharacterId != 0)
             {
+                OtherCharacters = Database.Database.GetOthersCharacters(_db, _localPlayer.CharacterId);
+
+                //Plugin.Log.Debug($"otherCharacters count {otherCharacters.Count}");
+
+                if (_altoholicService.GetBlacklistedCharacters().Exists(b => b.CharacterId == _localPlayer.CharacterId))
+                {
+                    //_altoholicService.SetPlayer(new Character() { CharacterId = 0 });
+                    SeStringBuilder builder = new();
+                    XivChatEntry chatEntry = new() { Message = builder.ToSeString().ToDalamudString(), Type = XivChatType.Echo };
+                    builder.Append("This character is blacklisted, use ");
+                    builder.PushColorRgba(KnownColor.LimeGreen.Vector());
+                    builder.Append("/altoholic unbl");
+                    builder.PopColor();
+                    builder.Append("to remove it");
+
+                    ChatGui.Print(chatEntry);
+                    return;
+                }
+
                 GetCharacterPlaytime();
                 if (_localPlayer.LastPlayTimeUpdate > 0 && Utils.GetLastPlayTimeUpdateDiff(_localPlayer.LastPlayTimeUpdate) >= 7)
                 {
@@ -472,16 +491,6 @@ namespace Altoholic
                 if (_localPlayer.PlayTime == 0)
                 {
                     Utils.ChatMessage(Loc.Localize("NoPlaytimeFound", "No playtime found, use /playtime"));
-                }
-
-                OtherCharacters = Database.Database.GetOthersCharacters(_db, _localPlayer.CharacterId);
-
-                //Plugin.Log.Debug($"otherCharacters count {otherCharacters.Count}");
-
-                if (_altoholicService.GetBlacklistedCharacters().Exists(b => b.CharacterId == _localPlayer.CharacterId))
-                {
-                    //_altoholicService.SetPlayer(new Character() { CharacterId = 0 });
-                    return;
                 }
 
                 //Plugin.Log.Debug($"localPlayer.Quests.Count: {localPlayer.Quests.Count}");
@@ -1060,6 +1069,9 @@ namespace Altoholic
 
                 if (_localPlayer.HasQuest(id)/* && _localPlayer.IsQuestCompleted(id)*/)
                 {
+#if DEBUG
+                    Log.Debug($"Has quest {id}");
+#endif
                     continue;
                 }
 
@@ -1067,10 +1079,17 @@ namespace Altoholic
                 Log.Debug($"Quest not in store or not completed, checking if quest {id} is completed");
 #endif
                 bool complete = Utils.IsQuestCompleted(id);
-                if (complete)
+                if (!complete)
                 {
-                    _localPlayer.Quests.Add(id);
+#if DEBUG
+                    Log.Debug($"Quest {id} not completed");
+#endif
+                    continue;
                 }
+#if DEBUG
+                Log.Debug($"Quest {id} completed, adding");
+#endif
+                    _localPlayer.Quests.Add(id);
             }
         }
 
@@ -1544,7 +1563,7 @@ namespace Altoholic
             // -128 for Apartments in Main Division, -127 for Apartments in Subdivision
             sbyte plot = housingManager.GetCurrentPlot();
             short room = housingManager.GetCurrentRoom();
-            long id = housingManager.GetCurrentHouseId();
+            long id = housingManager.GetCurrentIndoorHouseId();
             /*HousingTerritoryType ct = housingManager.CurrentTerritory->GetTerritoryType();
             HousingTerritoryType ot = (HousingTerritoryType)0;
             if (housingManager.OutdoorTerritory != null)
