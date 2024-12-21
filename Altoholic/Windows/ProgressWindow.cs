@@ -3,6 +3,7 @@ using Altoholic.Models;
 using CheapLoc;
 using Dalamud.Game;
 using Dalamud.Game.Text;
+using Dalamud.Interface;
 using Dalamud.Interface.Textures.TextureWraps;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
@@ -490,7 +491,11 @@ namespace Altoholic.Windows
                     _ => "Unlocked"
                 };
                 ImGui.TableNextColumn();
-                ImGui.TextUnformatted(completed ? "\u2713" : (unlocked ? "\u25ef" : ""));
+                //ImGui.TextUnformatted(completed ? "\u2713" : unlocked ? "\u25ef" : "");
+                // Todo: Use line below on weird non default font
+                ImGui.PushFont(UiBuilder.IconFont);
+                ImGui.TextUnformatted(completed ? FontAwesomeIcon.Check.ToIconString() : unlocked ? FontAwesomeIcon.Circle.ToIconString() : "");
+                ImGui.PopFont();
                 if (ImGui.IsItemHovered())
                 {
                     ImGui.BeginTooltip();
@@ -2714,7 +2719,10 @@ namespace Altoholic.Windows
                 foreach (Character currChar in chars)
                 {
                     ImGui.TableNextColumn();
-                    ImGui.TextUnformatted(currChar.HasEmote(id) ? "\u2713" : "");
+                    //ImGui.TextUnformatted(currChar.HasEmote(id) ? "\u2713" : "");
+                    ImGui.PushFont(UiBuilder.IconFont);
+                    ImGui.TextUnformatted(currChar.HasEmote(id) ? FontAwesomeIcon.Check.ToIconString() : "");
+                    ImGui.PopFont();
                     if (ImGui.IsItemHovered())
                     {
                         ImGui.BeginTooltip();
@@ -2755,7 +2763,10 @@ namespace Altoholic.Windows
                 foreach (Character currChar in chars)
                 {
                     ImGui.TableNextColumn();
-                    ImGui.TextUnformatted(currChar.HasMount(id) ? "\u2713" : "");
+                    //ImGui.TextUnformatted(currChar.HasMount(id) ? "\u2713" : "");
+                    ImGui.PushFont(UiBuilder.IconFont);
+                    ImGui.TextUnformatted(currChar.HasMount(id) ? FontAwesomeIcon.Check.ToIconString() : "");
+                    ImGui.PopFont();
                     if (ImGui.IsItemHovered())
                     {
                         ImGui.BeginTooltip();
@@ -2796,7 +2807,10 @@ namespace Altoholic.Windows
                 foreach (Character currChar in chars)
                 {
                     ImGui.TableNextColumn();
-                    ImGui.TextUnformatted(currChar.HasMinion(id) ? "\u2713" : "");
+                    //ImGui.TextUnformatted(currChar.HasMinion(id) ? "\u2713" : "");
+                    ImGui.PushFont(UiBuilder.IconFont);
+                    ImGui.TextUnformatted(currChar.HasMinion(id) ? FontAwesomeIcon.Check.ToIconString() : "");
+                    ImGui.PopFont();
                     if (ImGui.IsItemHovered())
                     {
                         ImGui.BeginTooltip();
@@ -2836,7 +2850,10 @@ namespace Altoholic.Windows
                 foreach (Character currChar in chars)
                 {
                     ImGui.TableNextColumn();
-                    ImGui.TextUnformatted(currChar.HasOrchestrionRoll(id) ? "\u2713" : "");
+                    //ImGui.TextUnformatted(currChar.HasOrchestrionRoll(id) ? "\u2713" : "");
+                    ImGui.PushFont(UiBuilder.IconFont);
+                    ImGui.TextUnformatted(currChar.HasOrchestrionRoll(id) ? FontAwesomeIcon.Check.ToIconString() : "");
+                    ImGui.PopFont();
                     if (ImGui.IsItemHovered())
                     {
                         ImGui.BeginTooltip();
@@ -2880,7 +2897,10 @@ namespace Altoholic.Windows
                     foreach (Character currChar in chars)
                     {
                         ImGui.TableNextColumn();
-                        ImGui.TextUnformatted(currChar.HasFramerKit(fkId.Value) ? "\u2713" : "");
+                        //ImGui.TextUnformatted(currChar.HasFramerKit(fkId.Value) ? "\u2713" : "");
+                        ImGui.PushFont(UiBuilder.IconFont);
+                        ImGui.TextUnformatted(currChar.HasFramerKit(id) ? FontAwesomeIcon.Check.ToIconString() : "");
+                        ImGui.PopFont();
                         if (ImGui.IsItemHovered())
                         {
                             ImGui.BeginTooltip();
@@ -2922,7 +2942,10 @@ namespace Altoholic.Windows
                 foreach (Character currChar in chars)
                 {
                     ImGui.TableNextColumn();
-                    ImGui.TextUnformatted(currChar.HasBarding(id) ? "\u2713" : "");
+                    //ImGui.TextUnformatted(currChar.HasBarding(id) ? "\u2713" : "");
+                    ImGui.PushFont(UiBuilder.IconFont);
+                    ImGui.TextUnformatted(currChar.HasBarding(id) ? FontAwesomeIcon.Check.ToIconString() : "");
+                    ImGui.PopFont();
                     if (ImGui.IsItemHovered())
                     {
                         ImGui.BeginTooltip();
@@ -2963,7 +2986,10 @@ namespace Altoholic.Windows
                 foreach (Character currChar in chars)
                 {
                     ImGui.TableNextColumn();
-                    ImGui.TextUnformatted(currChar.HasTTC(id) ? "\u2713" : "");
+                    //ImGui.TextUnformatted(currChar.HasTTC(id) ? "\u2713" : "");
+                    ImGui.PushFont(UiBuilder.IconFont);
+                    ImGui.TextUnformatted(currChar.HasTTC(id) ? FontAwesomeIcon.Check.ToIconString() : "");
+                    ImGui.PopFont();
                     if (ImGui.IsItemHovered())
                     {
                         ImGui.BeginTooltip();
@@ -3005,7 +3031,10 @@ namespace Altoholic.Windows
                 foreach (Character currChar in chars)
                 {
                     ImGui.TableNextColumn();
-                    ImGui.TextUnformatted(currChar.HasOrnament(id) ? "\u2713" : "");
+                    //ImGui.TextUnformatted(currChar.HasOrnament(id) ? "\u2713" : "");
+                    ImGui.PushFont(UiBuilder.IconFont);
+                    ImGui.TextUnformatted(currChar.HasOrnament(id) ? FontAwesomeIcon.Check.ToIconString() : "");
+                    ImGui.PopFont();
                     if (ImGui.IsItemHovered())
                     {
                         ImGui.BeginTooltip();
@@ -3340,7 +3369,10 @@ namespace Altoholic.Windows
             foreach ((List<bool> cq, int index) charactersQuest in charactersQuests.Select((cq, index) => (cq, index)))
             {
                 ImGui.TableNextColumn();
-                ImGui.TextUnformatted(charactersQuest.cq[msqIndex] ? "\u2713" : "");
+                //ImGui.TextUnformatted(charactersQuest.cq[msqIndex] ? "\u2713" : "");
+                ImGui.PushFont(UiBuilder.IconFont);
+                ImGui.TextUnformatted(charactersQuest.cq[msqIndex] ? FontAwesomeIcon.Check.ToIconString() : "");
+                ImGui.PopFont();
                 if (ImGui.IsItemHovered())
                 {
                     ImGui.BeginTooltip();
@@ -3377,7 +3409,10 @@ namespace Altoholic.Windows
             foreach ((List<bool> cq, int index) charactersQuest in charactersQuests.Select((cq, index) => (cq, index)))
             {
                 ImGui.TableNextColumn();
-                ImGui.TextUnformatted(charactersQuest.cq[tribeIndex-1] ? "\u2713" : "");
+                //ImGui.TextUnformatted(charactersQuest.cq[tribeIndex-1] ? "\u2713" : "");
+                ImGui.PushFont(UiBuilder.IconFont);
+                ImGui.TextUnformatted(charactersQuest.cq[tribeIndex - 1] ? FontAwesomeIcon.Check.ToIconString() : "");
+                ImGui.PopFont();
                 if (ImGui.IsItemHovered())
                 {
                     ImGui.BeginTooltip();
@@ -3400,7 +3435,10 @@ namespace Altoholic.Windows
             foreach ((List<bool> cq, int index) charactersQuest in charactersQuests.Select((cq, index) => (cq, index)))
             {
                 ImGui.TableNextColumn();
-                ImGui.TextUnformatted(charactersQuest.cq[msqIndex] ? "\u2713" : "");
+                //ImGui.TextUnformatted(charactersQuest.cq[msqIndex] ? "\u2713" : "");
+                ImGui.PushFont(UiBuilder.IconFont);
+                ImGui.TextUnformatted(charactersQuest.cq[msqIndex] ? FontAwesomeIcon.Check.ToIconString() : "");
+                ImGui.PopFont();
                 if (ImGui.IsItemHovered())
                 {
                     ImGui.BeginTooltip();
@@ -4686,7 +4724,10 @@ namespace Altoholic.Windows
                 }
 
                 ImGui.SetCursorPos(new Vector2(p.X + 26, p.Y + 20));
-                ImGui.TextUnformatted("\u2713");
+                //ImGui.TextUnformatted("\u2713");
+                ImGui.PushFont(UiBuilder.IconFont);
+                ImGui.TextUnformatted(FontAwesomeIcon.Check.ToIconString());
+                ImGui.PopFont();
                 ImGui.SetCursorPos(p);
             }
         }
@@ -4725,7 +4766,10 @@ namespace Altoholic.Windows
                 }
 
                 ImGui.SetCursorPos(new Vector2(p.X + 26, p.Y + 20));
-                ImGui.TextUnformatted("\u2713");
+                //ImGui.TextUnformatted("\u2713");
+                ImGui.PushFont(UiBuilder.IconFont);
+                ImGui.TextUnformatted(FontAwesomeIcon.Check.ToIconString());
+                ImGui.PopFont();
                 ImGui.SetCursorPos(p);
             }
         }
@@ -4764,7 +4808,10 @@ namespace Altoholic.Windows
                 }
 
                 ImGui.SetCursorPos(new Vector2(p.X + 26, p.Y + 20));
-                ImGui.TextUnformatted("\u2713");
+                //ImGui.TextUnformatted("\u2713");
+                ImGui.PushFont(UiBuilder.IconFont);
+                ImGui.TextUnformatted(FontAwesomeIcon.Check.ToIconString());
+                ImGui.PopFont();
                 ImGui.SetCursorPos(p);
             }
         }
@@ -4803,7 +4850,10 @@ namespace Altoholic.Windows
                 }
 
                 ImGui.SetCursorPos(new Vector2(p.X + 26, p.Y + 20));
-                ImGui.TextUnformatted("\u2713");
+                //ImGui.TextUnformatted("\u2713");
+                ImGui.PushFont(UiBuilder.IconFont);
+                ImGui.TextUnformatted(FontAwesomeIcon.Check.ToIconString());
+                ImGui.PopFont();
                 ImGui.SetCursorPos(p);
             }
         }
@@ -4842,7 +4892,10 @@ namespace Altoholic.Windows
                 }
 
                 ImGui.SetCursorPos(new Vector2(p.X + 26, p.Y + 20));
-                ImGui.TextUnformatted("\u2713");
+                //ImGui.TextUnformatted("\u2713");
+                ImGui.PushFont(UiBuilder.IconFont);
+                ImGui.TextUnformatted(FontAwesomeIcon.Check.ToIconString());
+                ImGui.PopFont();
                 ImGui.SetCursorPos(p);
             }
         }
@@ -4883,7 +4936,10 @@ namespace Altoholic.Windows
                 }
 
                 ImGui.SetCursorPos(new Vector2(p.X + 26, p.Y + 20));
-                ImGui.TextUnformatted("\u2713");
+                //ImGui.TextUnformatted("\u2713");
+                ImGui.PushFont(UiBuilder.IconFont);
+                ImGui.TextUnformatted(FontAwesomeIcon.Check.ToIconString());
+                ImGui.PopFont();
                 ImGui.SetCursorPos(p);
             }
         }
@@ -4922,7 +4978,10 @@ namespace Altoholic.Windows
                 }
 
                 ImGui.SetCursorPos(new Vector2(p.X + 26, p.Y + 20));
-                ImGui.TextUnformatted("\u2713");
+                //ImGui.TextUnformatted("\u2713");
+                ImGui.PushFont(UiBuilder.IconFont);
+                ImGui.TextUnformatted(FontAwesomeIcon.Check.ToIconString());
+                ImGui.PopFont();
                 ImGui.SetCursorPos(p);
             }
         }
