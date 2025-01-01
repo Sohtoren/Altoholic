@@ -3097,6 +3097,7 @@ namespace Altoholic
                     character.HasQuest((int)QuestIds.EVENT_ALL_SAINTS_WAKE_2024),
                     character.HasQuest((int)QuestIds.EVENT_BLUNDERVILLE_2024_2),
                     character.HasQuest((int)QuestIds.EVENT_STARLIGHT_CELEBRATION_2024),
+                    character.HasQuest((int)QuestIds.EVENT_HEAVENSTURN_2025),
                 ];
                 result.Add(completedQuests);
             }
