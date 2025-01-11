@@ -11,18 +11,22 @@ using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
 using ImGuiNET;
 using System.Linq;
+using Microsoft.Data.Sqlite;
 
 namespace Altoholic.Windows
 {
     public class DetailsWindow : Window, IDisposable
     {
         private readonly Plugin _plugin;
+
+        private readonly SqliteConnection _db;
         private ClientLanguage _currentLocale;
         private GlobalCache _globalCache;
 
         public DetailsWindow(
             Plugin plugin,
             string name,
+            SqliteConnection db,
             GlobalCache globalCache
         ) 
             : base(
@@ -34,6 +38,7 @@ namespace Altoholic.Windows
                 MaximumSize = new Vector2(float.MaxValue, float.MaxValue)
             };
             _plugin = plugin;
+            _db = db;
             _globalCache = globalCache;
 
             _characterIcons = Plugin.PluginInterface.UiBuilder.LoadUld("ui/uld/Character.uld");
@@ -364,11 +369,12 @@ namespace Altoholic.Windows
 
         private void DrawHousing(Character selectedCharacter)
         {
-            using var charactersDetailsTableProfileTable = ImRaii.Table("###CharactersDetailsTable#Profile#HousingTable", 2);
+            using var charactersDetailsTableProfileTable = ImRaii.Table("###CharactersDetailsTable#Profile#HousingTable", 3);
             if (!charactersDetailsTableProfileTable) return;
             ImGui.TableSetupColumn("###CharactersDetailsTable#Profile#HousingTable#Icon", ImGuiTableColumnFlags.WidthFixed, 48);
             ImGui.TableSetupColumn("###CharactersDetailsTable#Profile#HousingTable#Text", ImGuiTableColumnFlags.WidthStretch);
-            foreach (Housing house in selectedCharacter.Houses)
+            ImGui.TableSetupColumn("###CharactersDetailsTable#Profile#HousingTable#Delete", ImGuiTableColumnFlags.WidthFixed, 40);
+            foreach (Housing house in selectedCharacter.Houses.ToList())
             {
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
@@ -401,6 +407,50 @@ namespace Altoholic.Windows
                     ImGui.TextUnformatted($"- {room} {_globalCache.AddonStorage.LoadAddonString(_currentLocale, 6454)} {house.Room}");
                 }
                 ImGui.Separator();
+
+                ImGui.TableSetColumnIndex(2);
+                ImGui.PushFont(UiBuilder.IconFont);
+                ImGui.TextUnformatted(FontAwesomeIcon.Ban.ToIconString());
+                if (ImGui.IsItemClicked())
+                {
+                    ImGui.OpenPopup(
+                        $"Remove###DHModal_{house.Id}");
+                    Plugin.Log.Debug(
+                        $"Remove {_globalCache.AddonStorage.LoadAddonString(_currentLocale, 14312)}: {house.Plot + 1} hit");
+                }
+                ImGui.PopFont();
+                if (ImGui.IsItemHovered())
+                {
+                    ImGui.BeginTooltip();
+                    ImGui.TextUnformatted(
+                        $"Remove");
+                    ImGui.EndTooltip();
+                }
+
+                using ImRaii.IEndObject removeHousing = ImRaii.PopupModal($"###DHModal_{house.Id}");
+                if (!removeHousing)
+                {
+                    continue;
+                }
+
+                ImGui.TextUnformatted("Are you sure you want to remove this housing?");
+                ImGui.TextUnformatted(
+                    "This will not prevent this housing to be added in the future if you own it");
+                ImGui.Separator();
+
+                if (ImGui.Button("OK", new Vector2(120, 0)))
+                {
+                    bool r = selectedCharacter.Houses.Remove(house);
+                    int result = Database.Database.UpdateCharacter(_db, selectedCharacter);
+                    //SetBlacklistedCharacter(character.CharacterId);
+                    //this.SetOthersCharactersList(oC);
+                    Utils.ChatMessage("Housing removed");
+                    ImGui.CloseCurrentPopup();
+                }
+
+                ImGui.SetItemDefaultFocus();
+                ImGui.SameLine();
+                if (ImGui.Button("Cancel", new Vector2(120, 0))) { ImGui.CloseCurrentPopup(); }
             }
         }
 

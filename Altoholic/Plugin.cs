@@ -205,7 +205,7 @@ namespace Altoholic
                 GetOthersCharactersList = () => _altoholicService.GetOthersCharacters(),
             };
 
-            DetailsWindow = new DetailsWindow(this, $"{Name} characters details", _globalCache)
+            DetailsWindow = new DetailsWindow(this, $"{Name} characters details", _db, _globalCache)
             {
                 GetPlayer = () => _altoholicService.GetPlayer(),
                 GetOthersCharactersList = () => _altoholicService.GetOthersCharacters(),

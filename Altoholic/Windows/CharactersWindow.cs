@@ -35,8 +35,8 @@ namespace Altoholic.Windows
                 MinimumSize = new Vector2(1000, 450),
                 MaximumSize = new Vector2(float.MaxValue, float.MaxValue)
             };
-            _db = db;
             _plugin = plugin;
+            _db = db;
             _globalCache = globalCache;
 
             GilIcon = _globalCache.IconStorage.LoadIcon(065002);
