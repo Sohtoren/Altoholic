@@ -39,6 +39,7 @@ using static FFXIVClientStructs.FFXIV.Client.UI.RaptureAtkModule;
 using Character = Altoholic.Models.Character;
 using FFXIVClientStructs.FFXIV.Client.UI.Info;
 using System.Numerics;
+using System.Diagnostics;
 
 namespace Altoholic
 {
@@ -87,7 +88,7 @@ namespace Altoholic
         private Character _localPlayer = new();
         private Utf8String? _localPlayerFreeCompanyTest;
 
-        private readonly PeriodicTimer? _periodicTimer = null;
+        private readonly Stopwatch _autoSaveWatch = new();
         private readonly Service _altoholicService;
         public List<Character> OtherCharacters = [];
         public List<Blacklist> BlacklistedCharacters;
@@ -282,6 +283,9 @@ namespace Altoholic
             ClientState.Login += OnCharacterLogin;
             ClientState.Logout += OnCharacterLogout;
             Framework.Update += OnFrameworkUpdate;
+
+            _autoSaveWatch.Start();
+            Log.Info("Starting altoholic autosave timer");
         }
 
         public void Dispose()
@@ -332,6 +336,7 @@ namespace Altoholic
             _db.Close();
             _db.Dispose();
             SqliteConnection.ClearAllPools();
+            _autoSaveWatch.Stop();
         }
 
         private void OnUnblacklistCommand()
@@ -730,6 +735,14 @@ namespace Altoholic
             GetPlayerRetainer();
             GetPlayerMail();
             GetHousing();
+
+            if (_autoSaveWatch.Elapsed.Minutes < 5)
+            {
+                return;
+            }
+
+            UpdateCharacter();
+            _autoSaveWatch.Restart();
         }
 
         private unsafe void GetPlayerAttributesProfileAndJobs()
@@ -1624,14 +1637,10 @@ namespace Altoholic
 
             //Log.Info("Altoholic : Found {0} others players", otherCharacters.Count);
             //Todo: start timer after /playtime command
-            /*_ = new XivChatEntry
-            {
-                Message = $"Starting altoholic timer",
-                Type = XivChatType.Echo,
-            };*/
 
-            //RunInBackground(TimeSpan.FromMinutes(5));
-            //RunInBackground(TimeSpan.FromSeconds(20));
+            _autoSaveWatch.Reset();
+            _autoSaveWatch.Start();
+            Utils.ChatMessage("Starting altoholic autosave timer");
             GetPlayerBeastReputations();
             GetCollectionFromState();
             GetDuties();
@@ -1671,23 +1680,6 @@ namespace Altoholic
             }
         }
 
-        /*private async void RunInBackground(TimeSpan timeSpan)
-        {
-            periodicTimer = new PeriodicTimer(timeSpan);
-            while (await periodicTimer.WaitForNextTickAsync())
-            {
-                Database.Database.UpdateCharacter(db, character);
-                _ = new XivChatEntry
-                {
-                    Message = $"Tick from the time loop",
-                    Type = XivChatType.Echo,
-                }
-                Plugin.Log.Debug("Altoholic : Tick from the time loop");
-            }
-
-            Plugin.Log.Debug($"{periodicTimer}");
-        }*/
-
         private void OnCharacterLogout(int type, int code)
         {
             Log.Debug("Altoholic : OnCharacterLogout called");
@@ -1713,7 +1705,7 @@ namespace Altoholic
             CharactersWindow.IsOpen = false;
             MainWindow.IsOpen = false;
             MainWindow.Clear();
-            _periodicTimer?.Dispose();
+            _autoSaveWatch.Stop();
         }
 
         private void OnDutyCompleted(object? sender, ushort e)

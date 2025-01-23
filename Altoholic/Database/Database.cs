@@ -477,7 +477,8 @@ namespace Altoholic.Database
             catch (Exception ex)
             {
                 Plugin.Log.Error(ex.ToString());
-                return 0; }
+                return 0;
+            }
         }
 
         public static Character FormatDatabaseCharacterFromDatabase(DatabaseCharacter databaseCharacter)
