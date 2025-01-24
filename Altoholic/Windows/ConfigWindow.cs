@@ -40,32 +40,44 @@ namespace Altoholic.Windows
         {
             _selectedLanguage = _plugin.Configuration.Language;
             //ImGui.TextUnformatted("Settings is not implemented at the moment");
-            using var langCombo = ImRaii.Combo($"{_globalCache.AddonStorage.LoadAddonString(_selectedLanguage, 338)}###LangCombo", _selectedLanguage.ToString());
+            ImGui.PushItemWidth(200);
+            using var langCombo =
+                ImRaii.Combo($"{_globalCache.AddonStorage.LoadAddonString(_selectedLanguage, 338)}###LangCombo",
+                    _selectedLanguage.ToString());
+            ImGui.PopItemWidth();
             if (langCombo.Success)
             {
-                if (ImGui.Selectable(ClientLanguage.German.ToString(), ClientLanguage.German.ToString() == _selectedLanguage.ToString()))
+                if (ImGui.Selectable(ClientLanguage.German.ToString(),
+                        ClientLanguage.German.ToString() == _selectedLanguage.ToString()))
                 {
                     _selectedLanguage = ClientLanguage.German;
                 }
-                if (ImGui.Selectable(ClientLanguage.English.ToString(), ClientLanguage.English.ToString() == _selectedLanguage.ToString()))
+
+                if (ImGui.Selectable(ClientLanguage.English.ToString(),
+                        ClientLanguage.English.ToString() == _selectedLanguage.ToString()))
                 {
                     _selectedLanguage = ClientLanguage.English;
                 }
-                if (ImGui.Selectable(ClientLanguage.French.ToString(), ClientLanguage.French.ToString() == _selectedLanguage.ToString()))
+
+                if (ImGui.Selectable(ClientLanguage.French.ToString(),
+                        ClientLanguage.French.ToString() == _selectedLanguage.ToString()))
                 {
                     _selectedLanguage = ClientLanguage.French;
                 }
+
                 if (ImGui.Selectable("日本語", ClientLanguage.Japanese.ToString() == _selectedLanguage.ToString()))
                 {
                     _selectedLanguage = ClientLanguage.Japanese;
                 }
+
                 _configuration.Language = _selectedLanguage;
                 _plugin.ChangeLanguage(_selectedLanguage);
                 try
                 {
                     _configuration.Save();
                 }
-                catch (Exception e) {
+                catch (Exception e)
+                {
                     Plugin.Log.Debug($"Config save error: {e}");
                 }
             }
@@ -76,11 +88,13 @@ namespace Altoholic.Windows
                 _configuration.ObtainedOnly = isObtainedOnlyEnabled;
                 _configuration.Save();
             }
+
             if (ImGui.IsItemHovered())
             {
                 using var tooltip = ImRaii.Tooltip();
                 if (!tooltip) return;
-                ImGui.TextUnformatted($"{Loc.Localize("ObtainedOnly", "Display unobtained items, mounts, minions, etc with a non spoiler icon")}");
+                ImGui.TextUnformatted(
+                    $"{Loc.Localize("ObtainedOnly", "Display unobtained items, mounts, minions, etc with a non spoiler icon")}");
             }
 
             bool isEnabled = _configuration.IsSpoilersEnabled;
@@ -89,12 +103,47 @@ namespace Altoholic.Windows
                 _configuration.IsSpoilersEnabled = isEnabled;
                 _configuration.Save();
             }
+
             if (ImGui.IsItemHovered())
             {
                 using var tooltip = ImRaii.Tooltip();
                 if (!tooltip) return;
                 ImGui.TextUnformatted($"{Loc.Localize("Spoilers", "Display unobtained icons instead of placeholder")}");
             }
+
+            bool isAutoSaveChatMessageEnabled = _configuration.IsAutoSaveChatMessageEnabled;
+            if (ImGui.Checkbox("Enable autosave chat message####EnableAutoSaveChatMessage",
+                    ref isAutoSaveChatMessageEnabled))
+            {
+                _configuration.IsAutoSaveChatMessageEnabled = isAutoSaveChatMessageEnabled;
+                _configuration.Save();
+            }
+
+            if (ImGui.IsItemHovered())
+            {
+                using var tooltip = ImRaii.Tooltip();
+                if (!tooltip) return;
+                ImGui.TextUnformatted(
+                    $"{Loc.Localize("AutoSave Chat Message", "Display a chat message when the character is (auto) saved")}");
+            }
+
+            int autoSaveTimer = _configuration.AutoSaveTimer;
+            ImGui.PushItemWidth(200);
+            ImGui.InputInt("Auto save Timer (max 60 mins)####AutoSaveTimer", ref autoSaveTimer);
+            ImGui.PopItemWidth();
+            if (autoSaveTimer > 60)
+            {
+                autoSaveTimer = 60;
+            }
+
+            if (autoSaveTimer < 1)
+            {
+                autoSaveTimer = 1;
+            }
+
+            _configuration.AutoSaveTimer = autoSaveTimer;
+            _configuration.Save();
+
         }
     }
 }

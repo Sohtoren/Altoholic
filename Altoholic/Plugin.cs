@@ -736,7 +736,7 @@ namespace Altoholic
             GetPlayerMail();
             GetHousing();
 
-            if (_autoSaveWatch.Elapsed.Minutes < 5)
+            if (_autoSaveWatch.Elapsed.Minutes < Configuration.AutoSaveTimer)
             {
                 return;
             }
@@ -1834,7 +1834,10 @@ namespace Altoholic
             int returnedRows = charExist == null ? Database.Database.AddCharacter(_db, _localPlayer) : Database.Database.UpdateCharacter(_db, _localPlayer);
             if (returnedRows == 1)
             {
-                Utils.ChatMessage("Character has been saved");
+                if (Configuration.IsAutoSaveChatMessageEnabled)
+                {
+                    Utils.ChatMessage("Character has been saved");
+                }
             }
         }
 
