@@ -39,46 +39,46 @@ namespace Altoholic.Windows
         public override void Draw()
         {
             _selectedLanguage = _plugin.Configuration.Language;
-            //ImGui.TextUnformatted("Settings is not implemented at the moment");
-            ImGui.PushItemWidth(200);
-            using var langCombo =
-                ImRaii.Combo($"{_globalCache.AddonStorage.LoadAddonString(_selectedLanguage, 338)}###LangCombo",
-                    _selectedLanguage.ToString());
-            ImGui.PopItemWidth();
-            if (langCombo.Success)
+            ImGui.SetNextItemWidth(200);
+            using (var langCombo =
+                   ImRaii.Combo($"{_globalCache.AddonStorage.LoadAddonString(_selectedLanguage, 338)}###LangCombo",
+                       _selectedLanguage.ToString()))
             {
-                if (ImGui.Selectable(ClientLanguage.German.ToString(),
-                        ClientLanguage.German.ToString() == _selectedLanguage.ToString()))
+                if (langCombo.Success)
                 {
-                    _selectedLanguage = ClientLanguage.German;
-                }
+                    if (ImGui.Selectable(ClientLanguage.German.ToString(),
+                            ClientLanguage.German.ToString() == _selectedLanguage.ToString()))
+                    {
+                        _selectedLanguage = ClientLanguage.German;
+                    }
 
-                if (ImGui.Selectable(ClientLanguage.English.ToString(),
-                        ClientLanguage.English.ToString() == _selectedLanguage.ToString()))
-                {
-                    _selectedLanguage = ClientLanguage.English;
-                }
+                    if (ImGui.Selectable(ClientLanguage.English.ToString(),
+                            ClientLanguage.English.ToString() == _selectedLanguage.ToString()))
+                    {
+                        _selectedLanguage = ClientLanguage.English;
+                    }
 
-                if (ImGui.Selectable(ClientLanguage.French.ToString(),
-                        ClientLanguage.French.ToString() == _selectedLanguage.ToString()))
-                {
-                    _selectedLanguage = ClientLanguage.French;
-                }
+                    if (ImGui.Selectable(ClientLanguage.French.ToString(),
+                            ClientLanguage.French.ToString() == _selectedLanguage.ToString()))
+                    {
+                        _selectedLanguage = ClientLanguage.French;
+                    }
 
-                if (ImGui.Selectable("日本語", ClientLanguage.Japanese.ToString() == _selectedLanguage.ToString()))
-                {
-                    _selectedLanguage = ClientLanguage.Japanese;
-                }
+                    if (ImGui.Selectable("日本語", ClientLanguage.Japanese.ToString() == _selectedLanguage.ToString()))
+                    {
+                        _selectedLanguage = ClientLanguage.Japanese;
+                    }
 
-                _configuration.Language = _selectedLanguage;
-                _plugin.ChangeLanguage(_selectedLanguage);
-                try
-                {
-                    _configuration.Save();
-                }
-                catch (Exception e)
-                {
-                    Plugin.Log.Debug($"Config save error: {e}");
+                    _configuration.Language = _selectedLanguage;
+                    _plugin.ChangeLanguage(_selectedLanguage);
+                    try
+                    {
+                        _configuration.Save();
+                    }
+                    catch (Exception e)
+                    {
+                        Plugin.Log.Debug($"Config save error: {e}");
+                    }
                 }
             }
 
