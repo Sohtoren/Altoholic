@@ -3314,6 +3314,9 @@ namespace Altoholic.Windows
             DrawAllRoleQuestLine(RoleIcon.Heal, chars, charactersQuests,
                 $"{_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.ROLEQUEST_DT_HEALER_AN_ANTIDOTE_FOR_ANARCHY)}",
                 15);
+            DrawAllRoleQuestLine(null, chars, charactersQuests,
+                $"{_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.ROLEQUEST_DT_MASTER_BAR_THE_PASSAGE)}",
+                16);
         }
 
         private void DrawTribes(List<Character> chars)

@@ -3162,7 +3162,7 @@ namespace Altoholic
                     character.HasQuest((int)QuestIds.ROLEQUEST_DT_PRDPS_THE_MIGHTIEST_SHIELD),
                     character.HasQuest((int)QuestIds.ROLEQUEST_DT_MRDPS_HEROES_AND_PRETENDERS),
                     character.HasQuest((int)QuestIds.ROLEQUEST_DT_HEALER_AN_ANTIDOTE_FOR_ANARCHY),
-
+                    character.HasQuest((int)QuestIds.ROLEQUEST_DT_MASTER_BAR_THE_PASSAGE)
                 ];
                 result.Add(completedQuests);
             }
