@@ -338,6 +338,25 @@ namespace Altoholic.Windows
                         duties.FindAll(d => d.ContentTypeId == 30), chars); //V&C Dungeon Finder
                 }
             }
+
+            string chaotic = _currentLocale switch
+            {
+                ClientLanguage.German => "Chaotisch",
+                ClientLanguage.English => "Chaotic",
+                ClientLanguage.French => "Chaotique",
+                ClientLanguage.Japanese => "滅",
+                _ => "Chaotic"
+            };
+            using (var chaoticTab =
+                   ImRaii.TabItem(
+                       $"{chaotic}###CharactersProgressTable#All#TabBar#Duty#TabBar#Chaotic"))
+            {
+                if (chaoticTab)
+                {
+                    DrawSpecialDuty(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 15400),
+                        duties.FindAll(d => d.ContentTypeId == 37), chars); //Chaotic
+                }
+            }
         }
 
         private void DrawDuty(string duName, List<Duty> duties, List<Character> chars)
