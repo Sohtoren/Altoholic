@@ -45,7 +45,7 @@ namespace Altoholic
 {
     public sealed class Plugin : IDalamudPlugin
     {
-        public static string Name => "Altoholic Plugin";
+        public static string Name => "Altoholic";
         private const string CommandName = "/altoholic";
         private readonly Array _questIds = Enum.GetValues(typeof(QuestIds));
 
@@ -1640,7 +1640,11 @@ namespace Altoholic
 
             _autoSaveWatch.Reset();
             _autoSaveWatch.Start();
-            Utils.ChatMessage("Starting altoholic autosave timer");
+            if (Configuration.IsAutoSaveChatMessageEnabled)
+            {
+                Utils.ChatMessage("Starting altoholic autosave timer");
+            }
+
             GetPlayerBeastReputations();
             GetCollectionFromState();
             GetDuties();
