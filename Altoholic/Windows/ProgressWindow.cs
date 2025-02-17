@@ -2969,7 +2969,7 @@ namespace Altoholic.Windows
                         ImGui.TableNextColumn();
                         //ImGui.TextUnformatted(currChar.HasFramerKit(fkId.Value) ? "\u2713" : "");
                         ImGui.PushFont(UiBuilder.IconFont);
-                        ImGui.TextUnformatted(currChar.HasFramerKit(id) ? FontAwesomeIcon.Check.ToIconString() : "");
+                        ImGui.TextUnformatted(currChar.HasFramerKit(fk.Id) ? FontAwesomeIcon.Check.ToIconString() : "");
                         ImGui.PopFont();
                         if (ImGui.IsItemHovered())
                         {
