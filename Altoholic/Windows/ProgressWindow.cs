@@ -1632,7 +1632,7 @@ namespace Altoholic.Windows
                 ClientLanguage.Japanese => "～黄金の魔典～",
                 _ => "The Hunt for Goetia"
             };
-            mooglesNames[2024_3] = $"$2024 - {goetiaName}";
+            mooglesNames[2024_3] = $"2024 - {goetiaName}";
             string genesis2Name = _currentLocale switch
             {
                 ClientLanguage.German => "Dimensionale Ursprünge - Teil 2",
