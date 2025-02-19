@@ -1555,7 +1555,7 @@ namespace Altoholic.Windows
                 ClientLanguage.Japanese => "\uff5e幻想との邂逅\uff5e",
                 _ => "The Hunt for Phantasmagoria"
             };
-            if (ImGui.CollapsingHeader($"2025: {phantasmagoriaName}"))
+            if (ImGui.CollapsingHeader($"2025 - {phantasmagoriaName}"))
             {
                 using var charactersEventTable = ImRaii.Table(
                     $"###CharactersProgress#All#Event#MogRewards#Table#Event2025_1",
@@ -1641,7 +1641,7 @@ namespace Altoholic.Windows
                 ClientLanguage.Japanese => "～新次元の創世 Part2～",
                 _ => "The Second Hunt for Genesis"
             };
-            mooglesNames[2024_2] = genesis2Name;
+            mooglesNames[2024_2] = $"2024 - {genesis2Name}";
             string genesis1Name = _currentLocale switch
             {
                 ClientLanguage.German => "Dimensionale Ursprünge - Teil 1",
@@ -1650,7 +1650,7 @@ namespace Altoholic.Windows
                 ClientLanguage.Japanese => "～新次元の創世 Part1～",
                 _ => "The First Hunt for Genesis"
             };
-            mooglesNames[2024_1] = genesis1Name;
+            mooglesNames[2024_1] = $"2024 - {genesis1Name}";
             string tenthAnniversaryName = _currentLocale switch
             {
                 ClientLanguage.German => "10. Jubiläum",
@@ -1659,7 +1659,7 @@ namespace Altoholic.Windows
                 ClientLanguage.Japanese => "\uff5e新生10周年スペシャル\uff5e",
                 _ => "The 10th Anniversary Hunt"
             };
-            mooglesNames[2023_2] = tenthAnniversaryName;
+            mooglesNames[2023_2] = $"2023 - {tenthAnniversaryName}";
             string mendacityName = _currentLocale switch
             {
                 ClientLanguage.German => "Tratsch aus Quatsch",
@@ -1668,7 +1668,7 @@ namespace Altoholic.Windows
                 ClientLanguage.Japanese => "\uff5e虚構の刻\uff5e",
                 _ => "The Hunt for Mendacity"
             };
-            mooglesNames[2023_1] = mendacityName;
+            mooglesNames[2023_1] = $"2023 - {mendacityName}";
             string theHuntForCreationName = _currentLocale switch
             {
                 ClientLanguage.German => "Allerlei Erinnerungen",
@@ -1677,7 +1677,7 @@ namespace Altoholic.Windows
                 ClientLanguage.Japanese => "\uff5e万物の記憶\uff5e",
                 _ => "The Hunt for Creation"
             };
-            mooglesNames[2022_3] = theHuntForCreationName;
+            mooglesNames[2022_3] = $"2022 - {theHuntForCreationName}";
 
             string theHuntForVerityName = _currentLocale switch
             {
@@ -1687,7 +1687,7 @@ namespace Altoholic.Windows
                 ClientLanguage.Japanese => "\uff5e帰ってきた真理\uff5e",
                 _ => "The Hunt for Verity"
             };
-            mooglesNames[2022_2] = theHuntForVerityName;
+            mooglesNames[2022_2] = $"2022 - {theHuntForVerityName}";
 
             string theHuntForScriptureName = _currentLocale switch
             {
@@ -1697,7 +1697,7 @@ namespace Altoholic.Windows
                 ClientLanguage.Japanese => "～聖典を継ぐ者～",
                 _ => "The Hunt for Scripture"
             };
-            mooglesNames[2022_1] = theHuntForScriptureName;
+            mooglesNames[2022_1] = $"2022 - {theHuntForScriptureName}";
 
             string theHuntForLoreName = _currentLocale switch
             {
@@ -1707,7 +1707,7 @@ namespace Altoholic.Windows
                 ClientLanguage.Japanese => "\uff5e炎獄の伝承\uff5e",
                 _ => "The Hunt for Lore"
             };
-            mooglesNames[2021_3] = theHuntForLoreName;
+            mooglesNames[2021_3] = $"2021 - {theHuntForLoreName}";
 
             string theHuntForPageantryName = _currentLocale switch
             {
@@ -1717,7 +1717,7 @@ namespace Altoholic.Windows
                 ClientLanguage.Japanese => "\uff5eファンフェススペシャル2021\uff5e",
                 _ => "The Hunt for Pageantry"
             };
-            mooglesNames[2021_2] = theHuntForPageantryName;
+            mooglesNames[2021_2] = $"2021 - {theHuntForPageantryName}";
 
             string theHuntForEsotericsName = _currentLocale switch
             {
@@ -1727,7 +1727,7 @@ namespace Altoholic.Windows
                 ClientLanguage.Japanese => "\uff5eもうひとつの禁書\uff5e",
                 _ => "The Hunt for Esoterics"
             };
-            mooglesNames[2021_1] = theHuntForEsotericsName;
+            mooglesNames[2021_1] = $"2021 - {theHuntForEsotericsName}";
 
             string theHuntForLawName = _currentLocale switch
             {
@@ -1737,7 +1737,7 @@ namespace Altoholic.Windows
                 ClientLanguage.Japanese => "\uff5e追憶の法典\uff5e",
                 _ => "The Hunt for Law"
             };
-            mooglesNames[2020_2] = theHuntForLawName;
+            mooglesNames[2020_2] = $"2020 - {theHuntForLawName}";
 
             string theHuntForSoldieryName = _currentLocale switch
             {
@@ -1747,7 +1747,7 @@ namespace Altoholic.Windows
                 ClientLanguage.Japanese => "\uff5e戦記ューフォーエバー\uff5e",
                 _ => "The Hunt for Soldiery"
             };
-            mooglesNames[2020_1] = theHuntForSoldieryName;
+            mooglesNames[2020_1] = $"2020 - {theHuntForSoldieryName}";
 
             string theHuntForMythologyName = _currentLocale switch
             {
@@ -1757,7 +1757,7 @@ namespace Altoholic.Windows
                 ClientLanguage.Japanese => "\uff5eそして神話へ…\uff5e",
                 _ => "The Hunt for Mythology"
             };
-            mooglesNames[2019_2] = theHuntForMythologyName;
+            mooglesNames[2019_2] = $"2019 - {theHuntForMythologyName}";
 
             string theHuntForPhilosophyName = _currentLocale switch
             {
@@ -1767,7 +1767,7 @@ namespace Altoholic.Windows
                 ClientLanguage.Japanese => "\uff5e哲学ふたたび\uff5e",
                 _ => "The Hunt for Philosophy"
             };
-            mooglesNames[2019_1] = theHuntForPhilosophyName;
+            mooglesNames[2019_1] = $"2019 - {theHuntForPhilosophyName}";
 
             string n = (_currentOldMoogleReward == 0) ? mooglesNames[0] : mooglesNames[_currentOldMoogleReward];
             using (var combo = ImRaii.Combo("###CharactersProgress#Reputations#Combo", n))
