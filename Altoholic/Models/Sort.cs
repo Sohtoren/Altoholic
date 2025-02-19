@@ -1,12 +1,13 @@
-namespace Altoholic.Models;
-
-public enum Sort
+namespace Altoholic.Models
 {
-    Auto,
-    Firstname,
-    Lastname,
-    World,
-    Datacenter,
-    Gils,
-    Playtime,
+    public enum Sort
+    {
+        Auto,
+        Firstname,
+        Lastname,
+        World,
+        Datacenter,
+        Gils,
+        Playtime,
+    }
 }
