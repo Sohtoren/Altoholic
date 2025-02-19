@@ -58,6 +58,7 @@ namespace Altoholic.Models
         public int Irregular_Tomestone_Of_Mendacity { get; set; }
         public int Irregular_Tomestone_Of_Mythology { get; set; }
         public int Irregular_Tomestone_Of_Pageantry { get; set; }
+        public int Irregular_Tomestone_Of_Phantasmagoria { get; set; }
         public int Irregular_Tomestone_Of_Philosophy { get; set; }
         public int Irregular_Tomestone_Of_Scripture { get; set; }
         public int Irregular_Tomestone_Of_Soldiery { get; set; }
