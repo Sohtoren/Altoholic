@@ -280,7 +280,7 @@ namespace Altoholic.Windows
                     ImGui.TableSetColumnIndex(0);
                     ImGui.TextUnformatted($"{retainer.Name}");
                     ImGui.TableSetColumnIndex(1);
-                    ImGui.TextUnformatted($"{totalAmount}");
+                    ImGui.TextUnformatted($"{totalAmount:N0}");
                 }
             }
 
@@ -296,7 +296,7 @@ namespace Altoholic.Windows
             ImGui.TableSetColumnIndex(0);
             ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 3501)}");
             ImGui.TableSetColumnIndex(1);
-            ImGui.TextUnformatted($"{overallAmount}");
+            ImGui.TextUnformatted($"{overallAmount:N0}");
         }
 
         public void DrawRetainers(Character currentCharacter)

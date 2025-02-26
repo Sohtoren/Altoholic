@@ -244,7 +244,7 @@ namespace Altoholic.Windows
             if (!overallAmountTable) return;
             ImGui.TableSetupColumn(
                 "###CharactersCurrencies#All#SearchCurrenciesTable#CharacterCurrencies#OverallAmountTable#Text",
-                ImGuiTableColumnFlags.WidthFixed, 300);
+                ImGuiTableColumnFlags.WidthFixed, 305);
             ImGui.TableSetupColumn(
                 "###CharactersCurrencies#All#SearchCurrenciesTable#CharacterCurrencies#OverallAmountTable#Amount",
                 ImGuiTableColumnFlags.WidthStretch);
@@ -252,7 +252,7 @@ namespace Altoholic.Windows
             ImGui.TableSetColumnIndex(0);
             ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 3501)}");
             ImGui.TableSetColumnIndex(1);
-            ImGui.TextUnformatted($"{overallAmount}");
+            ImGui.TextUnformatted($"{overallAmount:N0}");
         }
 
         private void DrawPc(Character selectedCharacter)
