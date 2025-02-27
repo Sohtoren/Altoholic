@@ -416,6 +416,7 @@ namespace Altoholic
                     }
                     else
                     {
+                        Log.Debug("No argument, opening window");
                         DrawMainUI();
                     }
                     break;
@@ -445,12 +446,20 @@ namespace Altoholic
                 });
                 return;
             }
-
-            //Plugin.Log.Debug($"localPlayerName : {localPlayer.FirstName} {localPlayer.LastName}");
+            Plugin.Log.Debug($"localPlayerName : {_localPlayer.CharacterId} {_localPlayer.FirstName} {_localPlayer.LastName}");
             if (_localPlayer.CharacterId == 0 || string.IsNullOrEmpty(_localPlayer.FirstName))
             {
                 Character? p = GetCharacterFromGameOrDatabase();
-                if (p is null) return;
+                if (p is null)
+                {
+                    if (_altoholicService.GetBlacklistedCharacters()
+                        .Exists(b => b.CharacterId == _localPlayer.CharacterId))
+                    {
+                        PrintBlacklistedMessage();
+                    }
+
+                    return;
+                };
 
                 _localPlayer = p;
                 //Plugin.Log.Debug($"localPlayerPlayTime : {localPlayerPlayTime}");
@@ -471,19 +480,10 @@ namespace Altoholic
                 OtherCharacters = Database.Database.GetOthersCharacters(_db, _localPlayer.CharacterId);
 
                 //Plugin.Log.Debug($"otherCharacters count {otherCharacters.Count}");
-
-                if (_altoholicService.GetBlacklistedCharacters().Exists(b => b.CharacterId == _localPlayer.CharacterId))
+                if (_altoholicService.GetBlacklistedCharacters()
+                    .Exists(b => b.CharacterId == _localPlayer.CharacterId))
                 {
-                    //_altoholicService.SetPlayer(new Character() { CharacterId = 0 });
-                    SeStringBuilder builder = new();
-                    XivChatEntry chatEntry = new() { Message = builder.ToSeString().ToDalamudString(), Type = XivChatType.Echo };
-                    builder.Append("This character is blacklisted, use ");
-                    builder.PushColorRgba(KnownColor.LimeGreen.Vector());
-                    builder.Append("/altoholic unbl");
-                    builder.PopColor();
-                    builder.Append("to remove it");
-
-                    ChatGui.Print(chatEntry);
+                    PrintBlacklistedMessage();
                     return;
                 }
 
@@ -1844,6 +1844,20 @@ namespace Altoholic
                     Utils.ChatMessage("Character has been saved");
                 }
             }
+        }
+
+        public void PrintBlacklistedMessage()
+        {
+            SeStringBuilder builder = new();
+            builder.Append("This character is blacklisted, use ");
+            builder.PushColorRgba(KnownColor.LimeGreen.Vector());
+            builder.Append("/altoholic unbl");
+            builder.PopColor();
+            builder.Append(" to remove it from the list");
+
+            XivChatEntry chatEntry = new() { Message = builder.ToSeString().ToDalamudString(), Type = XivChatType.Echo };
+            Log.Debug("Character is blacklisted");
+            ChatGui.Print(chatEntry);
         }
 
         public Character? GetCharacterFromGameOrDatabase()
