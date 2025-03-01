@@ -1611,7 +1611,7 @@ namespace Altoholic.Windows
                 DrawAllCharsEmote(chars, 203, 30);
                 DrawAllCharsMount(chars, 26, 30);
                 DrawAllCharsMount(chars, 27, 30);
-                DrawAllCharsMount(chars, 113, 30);
+                DrawAllCharsMount(chars, 133, 30);
                 DrawAllCharsMount(chars, 182, 30);
                 DrawAllCharsMinion(chars, 50, 15);
                 DrawAllCharsTripleTriadCard(chars, 107, 10);
