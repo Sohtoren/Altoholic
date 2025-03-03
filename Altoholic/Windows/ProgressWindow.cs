@@ -763,6 +763,9 @@ namespace Altoholic.Windows
                     DrawAllLine(chars, charactersQuests,
                         $"{Loc.Localize("Event_ValentioneDay", "Valentione's Day")} (2025)",
                         123);
+                    DrawAllLine(chars, charactersQuests,
+                        $"{Loc.Localize("Event_LittleLadiesDay", "Little Ladies' Day")} (2025)",
+                        124);
                 }
             }
 

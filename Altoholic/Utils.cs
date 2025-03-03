@@ -3099,6 +3099,7 @@ namespace Altoholic
                     character.HasQuest((int)QuestIds.EVENT_STARLIGHT_CELEBRATION_2024),
                     character.HasQuest((int)QuestIds.EVENT_HEAVENSTURN_2025),
                     character.HasQuest((int)QuestIds.EVENT_VALENTIONE_S_DAY_2025),
+                    character.HasQuest((int)QuestIds.EVENT_LITTLE_LADIES_DAY_2025),
                 ];
                 result.Add(completedQuests);
             }
