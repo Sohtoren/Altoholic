@@ -45,6 +45,7 @@ namespace Altoholic.Windows
         public Func<Character> GetPlayer { get; init; } = null!;
         public Func<List<Character>> GetOthersCharactersList { get; set; } = null!;
         private long TotalGils { get; set; }
+        private long TotalRetainersGils { get; set; }
         private long TotalPlayed { get; set; }
         private int TotalCharacters { get; set; }
         private int TotalWorlds { get; set; }
@@ -149,12 +150,28 @@ namespace Altoholic.Windows
                     ImGui.TableSetColumnIndex(0);
                     Utils.DrawIcon(GilIcon, new Vector2(18, 18));
                     ImGui.TableSetColumnIndex(1);
-                    string gilText = $"{TotalGils:N0}";
+                    string gilText = $"{TotalGils+TotalRetainersGils:N0}";
                     float posX = ImGui.GetCursorPosX() + ImGui.GetColumnWidth() - ImGui.CalcTextSize(gilText).X -
                                  ImGui.GetScrollX() - (2 * ImGui.GetStyle().ItemSpacing.X);
                     if (posX > ImGui.GetCursorPosX())
                         ImGui.SetCursorPosX(posX);
                     ImGui.TextUnformatted($"{gilText}");
+                    if (ImGui.IsItemHovered())
+                    {
+                        ImGui.BeginTooltip();
+                        ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 9874)}");
+                        ImGui.SameLine();
+                        Utils.DrawIcon(GilIcon, new Vector2(16, 16));
+                        ImGui.SameLine();
+                        ImGui.TextUnformatted($"{TotalGils:N0}");
+                        ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 532)}");
+                        ImGui.SameLine();
+                        Utils.DrawIcon(GilIcon, new Vector2(16, 16));
+                        ImGui.SameLine();
+                        ImGui.TextUnformatted($"{TotalRetainersGils:N0}");
+                        ImGui.EndTooltip();
+                    }
+
                 } // Ending Gils Table
 
                 ImGui.TableSetColumnIndex(2);
@@ -247,12 +264,29 @@ namespace Altoholic.Windows
                 ImGui.TableSetColumnIndex(1);
                 if (character.Currencies is not null)
                 {
-                    string gilText = $"{character.Currencies.Gil:N0}";
+                    long characterGils = character.Currencies.Gil;
+                    long retainersGils = character.Retainers.Select(r => r.Gils).ToArray().Sum(g => g);
+                    string gilText = $"{characterGils+retainersGils:N0}";
                     float posX = ImGui.GetCursorPosX() + ImGui.GetColumnWidth() - ImGui.CalcTextSize(gilText).X -
                                  ImGui.GetScrollX() - (2 * ImGui.GetStyle().ItemSpacing.X);
                     if (posX > ImGui.GetCursorPosX())
                         ImGui.SetCursorPosX(posX);
                     ImGui.TextUnformatted($"{gilText}");
+                    if (ImGui.IsItemHovered())
+                    {
+                        ImGui.BeginTooltip();
+                        ImGui.TextUnformatted($"{character.FirstName}");
+                        ImGui.SameLine();
+                        Utils.DrawIcon(GilIcon, new Vector2(16, 16));
+                        ImGui.SameLine();
+                        ImGui.TextUnformatted($"{characterGils:N0}");
+                        ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 532)}");
+                        ImGui.SameLine();
+                        Utils.DrawIcon(GilIcon, new Vector2(16, 16));
+                        ImGui.SameLine();
+                        ImGui.TextUnformatted($"{retainersGils:N0}");
+                        ImGui.EndTooltip();
+                    }
                 }
             } // Ending Gils Table
 
@@ -407,6 +441,11 @@ namespace Altoholic.Windows
         {
             if (characters.Count == 0) return;
             TotalGils = characters.Select(c => c.Currencies?.Gil ?? 0).ToArray().Sum(g => (long)g);
+            TotalRetainersGils = 0;
+            characters.ForEach(c =>
+            {
+                TotalRetainersGils += c.Retainers.Select(r => r.Gils).ToArray().Sum(g => g);
+            });
             TotalCharacters = characters.Count;
             TotalWorlds = characters.Select(c => c.HomeWorld).Distinct().Count();
             TotalPlayed = characters.Sum(c => c.PlayTime);
