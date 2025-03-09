@@ -2,6 +2,7 @@
 using Lumina.Excel.Sheets;
 using System.Collections.Generic;
 using System.Linq;
+using static Dalamud.Interface.Utility.Raii.ImRaii;
 using Item = Lumina.Excel.Sheets.Item;
 
 namespace Altoholic.Cache
@@ -98,7 +99,13 @@ namespace Altoholic.Cache
         {
             return _armoireItems.Contains(id);
         }
-        
+
+        public Item? GetItemForUnlockLink(uint unlockLink)
+        {
+            return _items.FirstOrNull(i => i.Value.Item?.ItemAction.Value.Data[0] == unlockLink)?.Value.Item;
+        }
+
+
         public void Dispose()
         {
             _items.Clear();

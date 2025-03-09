@@ -20,5 +20,6 @@
         public required QuestStorage QuestStorage { get; set; } = null!;
         public required DutyStorage DutyStorage { get; set; } = null!;
         public required PlaceNameStorage PlaceNameStorage { get; set; } = null!;
+        public required HairstyleStorage HairstyleStorage { get; set; } = null!;
     }
 }

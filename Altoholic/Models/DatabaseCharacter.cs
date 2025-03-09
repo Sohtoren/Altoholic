@@ -54,5 +54,6 @@ namespace Altoholic.Models
         public string Duties { get; set; } = string.Empty;
         public string DutiesUnlocked { get; set; } = string.Empty;
         public string Houses { get; set; } = string.Empty;
+        public string Hairstyles { get; set; } = string.Empty;
     }
 }

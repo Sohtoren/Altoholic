@@ -27,7 +27,6 @@ using Glasses = Lumina.Excel.Sheets.Glasses;
 using Quest = Lumina.Excel.Sheets.Quest;
 using Cabinet = Lumina.Excel.Sheets.Cabinet;
 using System.Runtime.CompilerServices;
-using static Dalamud.Interface.Utility.Raii.ImRaii;
 
 
 namespace Altoholic
@@ -3330,6 +3329,15 @@ namespace Altoholic
             Lumina.Excel.Sheets.PlaceName? lumina = dpn?.GetRow(id);
             return lumina;
         }
+
+        public static CharaMakeCustomize? GetHairstlyle(ClientLanguage currentLocale, uint id)
+        {
+            ExcelSheet<CharaMakeCustomize>? dh =
+                Plugin.DataManager.GetExcelSheet<CharaMakeCustomize>(currentLocale);
+            CharaMakeCustomize? lumina = dh?.GetRow(id);
+            return lumina;
+        }
+
         public static List<Models.PlaceName>? GetAllPlaceName()
         {
             List<Models.PlaceName> returnedPlaceNamesIds = [];
@@ -3374,6 +3382,75 @@ namespace Altoholic
             }
 
             return returnedPlaceNamesIds;
+        }
+
+        public static List<Hairstyle>? GetAllHairstlyles()
+        {
+            List<Hairstyle> hairstyles = [];
+            ExcelSheet<CharaMakeCustomize>? dh =
+                Plugin.DataManager.GetExcelSheet<CharaMakeCustomize>(ClientLanguage.English);
+            using IEnumerator<CharaMakeCustomize>? hairstylesEnumerator = dh?.GetEnumerator();
+            if (hairstylesEnumerator is null) return null;
+            while (hairstylesEnumerator.MoveNext())
+            {
+                CharaMakeCustomize hairstyle = hairstylesEnumerator.Current;
+                if (hairstyle.HintItem.Value.Name.IsEmpty) continue;
+
+                Hairstyle h = new()
+                {
+                    Id = hairstyle.RowId,
+                    Icon = hairstyle.Icon,
+                    IsPurchasable = hairstyle.IsPurchasable,
+                    SortKey = hairstyle.Data,
+                    UnlockLink = hairstyle.Data
+                };
+                List<ClientLanguage> langs =
+                    [ClientLanguage.German, ClientLanguage.English, ClientLanguage.French, ClientLanguage.Japanese];
+                foreach (ClientLanguage l in langs)
+                {
+                    if (hairstyle.Data == 228)
+                    {
+                        switch (l)
+                        {
+                            case ClientLanguage.German:
+                                h.GermanName = "Ewigen Bundes";
+                                break;
+                            case ClientLanguage.English:
+                                h.EnglishName = "Eternal Bonding";
+                                break;
+                            case ClientLanguage.French:
+                                h.FrenchName = "Lien Éternel";
+                                break;
+                            case ClientLanguage.Japanese:
+                                h.JapaneseName = "エターナルバンド";
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        Item? i = GetItemFromId(l, hairstyle.HintItem.Value.RowId);
+                        if (i == null) continue;
+                        switch (l)
+                        {
+                            case ClientLanguage.German:
+                                h.GermanName = i.Value.Name.ExtractText();
+                                break;
+                            case ClientLanguage.English:
+                                h.EnglishName = i.Value.Name.ExtractText();
+                                break;
+                            case ClientLanguage.French:
+                                h.FrenchName = i.Value.Name.ExtractText();
+                                break;
+                            case ClientLanguage.Japanese:
+                                h.JapaneseName = i.Value.Name.ExtractText();
+                                break;
+                        }
+                    }
+                }
+                hairstyles.Add(h);
+            }
+
+            return hairstyles;
         }
 
         public static void DrawIcon(IDalamudTextureWrap? icon, Vector2 iconSize)

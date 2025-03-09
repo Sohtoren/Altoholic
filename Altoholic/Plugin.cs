@@ -117,6 +117,7 @@ namespace Altoholic
                 QuestStorage = new QuestStorage(),
                 DutyStorage = new DutyStorage(),
                 PlaceNameStorage = new PlaceNameStorage(),
+                HairstyleStorage = new HairstyleStorage()
             };
 
             nint playtimePtr = SigScanner.ScanText(PlaytimeSig);
@@ -192,6 +193,7 @@ namespace Altoholic
             _globalCache.QuestStorage.Init(_globalCache);
             _globalCache.DutyStorage.Init(_globalCache);
             _globalCache.PlaceNameStorage.Init(_globalCache);
+            _globalCache.HairstyleStorage.Init(_globalCache);
 
             _altoholicService = new(
                 () => _localPlayer,
@@ -651,6 +653,14 @@ namespace Altoholic
                 Plugin.Log.Debug($"Sage : {localPlayer.Jobs.Sage.Level}");*/
 #endif
             }
+
+            /*Log.Debug($"Hairstyles: {_globalCache.HairstyleStorage.Count()}");
+            foreach (var hairstyles in _globalCache.HairstyleStorage.GetAll())
+            {
+                Hairstyle h = hairstyles.Value;
+                Log.Debug($"{h.Id} {h.EnglishName} {(_localPlayer.HasHairstyle(h.Id))}");
+            }*/
+
             MainWindow.IsOpen = true;
         }
 
@@ -891,6 +901,13 @@ namespace Altoholic
                 if (uistate.Buddy.CompanionInfo.IsBuddyEquipUnlocked(i))
                 {
                     _localPlayer.Bardings.Add(i);
+                }
+            }
+            foreach (KeyValuePair<uint, Hairstyle> i in _globalCache.HairstyleStorage.GetAll().Where(i => !_localPlayer.HasHairstyle(i.Key)))
+            {
+                if (uistate.IsUnlockLinkUnlocked(i.Value.UnlockLink))
+                {
+                    _localPlayer.Hairstyles.Add(i.Key);
                 }
             }
 

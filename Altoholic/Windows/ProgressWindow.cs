@@ -3199,35 +3199,43 @@ namespace Altoholic.Windows
             }
         }
 
-        private void DrawAllCharsHairstyle(List<Character> chars, uint id, int cost)
+        private void DrawAllCharsHairstyle(List<Character> chars, uint itemId, int cost)
         {
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
-            Item? itm = _globalCache.ItemStorage.LoadItem(_currentLocale, id);
-            if (itm != null)
+            Item? itm = _globalCache.ItemStorage.LoadItem(_currentLocale, itemId);
+            if (itm == null)
             {
-                Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Value.Icon), new Vector2(32, 32));
+                return;
+            }
+            Item i = itm.Value;
+            ushort unlockLink = i.ItemAction.Value.Data[0];
+            List<uint> ids = _globalCache.HairstyleStorage.GetIdsFromUnlockLink(unlockLink);
+            Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(i.Icon), new Vector2(32, 32));
+            if (ImGui.IsItemHovered())
+            {
+                Utils.DrawItemTooltip(_currentLocale, ref _globalCache, i);
+            }
+
+            ImGui.SameLine();
+            ImGui.TextUnformatted(i.Name.ExtractText());
+
+            ImGui.TableNextColumn();
+            ImGui.TextUnformatted($"{cost}");
+
+            foreach (Character currChar in chars)
+            {
+                ImGui.TableNextColumn();
+                ImGui.PushFont(UiBuilder.IconFont);
+                ImGui.TextUnformatted(currChar.HasHairstyleFromIds(ids) ? FontAwesomeIcon.Check.ToIconString() : "");
+                ImGui.PopFont();
                 if (ImGui.IsItemHovered())
                 {
-                    Utils.DrawItemTooltip(_currentLocale, ref _globalCache, itm.Value);
-                }
-
-                ImGui.SameLine();
-                ImGui.TextUnformatted(itm.Value.Name.ExtractText());
-
-                ImGui.TableNextColumn();
-                ImGui.TextUnformatted($"{cost}");
-
-                foreach (Character currChar in chars)
-                {
-                    ImGui.TableNextColumn();
-                    ImGui.TextUnformatted("/");
-                    if (ImGui.IsItemHovered())
-                    {
-                        ImGui.BeginTooltip();
-                        ImGui.TextUnformatted("Hairstyles are currently not tracked");
-                        ImGui.EndTooltip();
-                    }
+                    ImGui.BeginTooltip();
+                    ImGui.TextUnformatted(i.Name.ExtractText());
+                    ImGui.TextUnformatted(
+                        $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
+                    ImGui.EndTooltip();
                 }
             }
         }
