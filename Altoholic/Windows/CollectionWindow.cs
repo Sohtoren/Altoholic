@@ -115,6 +115,7 @@ namespace Altoholic.Windows
             _obtainedBardingsOnly = _plugin.Configuration.ObtainedOnly;
             _obtainedEmotesOnly = _plugin.Configuration.ObtainedOnly;
             _obtainedOrnamentsOnly = _plugin.Configuration.ObtainedOnly;
+            _obtainedFacepaintsOnly = _plugin.Configuration.ObtainedOnly;
             _obtainedFramerKitsOnly = _plugin.Configuration.ObtainedOnly;
             _obtainedGlassesOnly = _plugin.Configuration.ObtainedOnly;
             _obtainedHairstylesOnly = _plugin.Configuration.ObtainedOnly;
