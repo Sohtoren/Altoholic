@@ -2180,6 +2180,37 @@ namespace Altoholic
             }
         }
 
+        public static void DrawHairstyleFacepaintTooltip(ClientLanguage currentLocale, ref GlobalCache globalCache, Models.Hairstyle hairstyle)
+        {
+            using var drawhairstyleTooltip = ImRaii.Tooltip();
+            if (!drawhairstyleTooltip) return;
+            using var drawhairstyleDescriptionItem = ImRaii.Table($"###DrawhairstyleDescriptionItem#hairstyle_{hairstyle.Id}", 2);
+            if (!drawhairstyleDescriptionItem) return;
+            ImGui.TableSetupColumn($"###DrawhairstyleDescriptionItem#hairstyle_{hairstyle.Id}#Icon",
+                ImGuiTableColumnFlags.WidthFixed, 55);
+            ImGui.TableSetupColumn($"###DrawhairstyleDescriptionItem#hairstyle_{hairstyle.Id}#Name",
+                ImGuiTableColumnFlags.WidthFixed, 305);
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            DrawIcon(globalCache.IconStorage.LoadIcon(hairstyle.Icon), new Vector2(40, 40));
+            ImGui.TableSetColumnIndex(1);
+            switch (currentLocale)
+            {
+                case ClientLanguage.German:
+                    ImGui.TextUnformatted($"{Capitalize(hairstyle.GermanName)}");
+                    break;
+                case ClientLanguage.English:
+                    ImGui.TextUnformatted($"{Capitalize(hairstyle.EnglishName)}");
+                    break;
+                case ClientLanguage.French:
+                    ImGui.TextUnformatted($"{Capitalize(hairstyle.FrenchName)}");
+                    break;
+                case ClientLanguage.Japanese:
+                    ImGui.TextUnformatted($"{Capitalize(hairstyle.JapaneseName)}");
+                    break;
+            }
+        }
+
         private static string GetExtractableString(ClientLanguage currentLocale, GlobalCache globalCache, Item item)
         {
             string str = globalCache.AddonStorage.LoadAddonString(currentLocale, 1361);
@@ -3402,7 +3433,9 @@ namespace Altoholic
                     Icon = hairstyle.Icon,
                     IsPurchasable = hairstyle.IsPurchasable,
                     SortKey = hairstyle.Data,
-                    UnlockLink = hairstyle.Data
+                    UnlockLink = hairstyle.Data,
+                    ItemId = hairstyle.HintItem.Value.RowId,
+                    FeatureId = hairstyle.FeatureID
                 };
                 List<ClientLanguage> langs =
                     [ClientLanguage.German, ClientLanguage.English, ClientLanguage.French, ClientLanguage.Japanese];
@@ -3451,6 +3484,22 @@ namespace Altoholic
             }
 
             return hairstyles;
+        }
+
+        public static int GetHairstyleIndexStart(Character character)
+        {
+            if (character.Profile == null) return 0;
+            byte tribeId = character.Profile.Tribe;
+            bool isMale = character.Profile.Gender == 0;
+
+            const int numHair = 130;
+            return tribeId switch
+            {
+                1 => isMale ? 0 : 1 * numHair, // Midlander
+                2 => isMale ? 2 * numHair : 3 * numHair, // Highlander
+                _ => (tribeId + 2) * numHair
+            };
+
         }
 
         public static void DrawIcon(IDalamudTextureWrap? icon, Vector2 iconSize)

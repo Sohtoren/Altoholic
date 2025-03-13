@@ -288,6 +288,7 @@ namespace Altoholic
 
             _autoSaveWatch.Start();
             Log.Info("Starting altoholic autosave timer");
+            Log.Info($"Database version: {Database.Database.GetDbVersion(_db)}");
         }
 
         public void Dispose()
@@ -903,11 +904,31 @@ namespace Altoholic
                     _localPlayer.Bardings.Add(i);
                 }
             }
-            foreach (KeyValuePair<uint, Hairstyle> i in _globalCache.HairstyleStorage.GetAll().Where(i => !_localPlayer.HasHairstyle(i.Key)))
+
+            //Cleaning hairstyle is needed in case a fantasia was used has ids are differents from subraces and genders
+            //foreach (KeyValuePair<uint, Hairstyle> i in _globalCache.HairstyleStorage.GetAll().Where(i => !_localPlayer.HasHairstyle(i.Key)))
+            _localPlayer.Hairstyles = [];
+            foreach (KeyValuePair<uint, Hairstyle> i in _globalCache.HairstyleStorage.GetAll())
             {
-                if (uistate.IsUnlockLinkUnlocked(i.Value.UnlockLink))
+                if (_localPlayer.Profile == null)
+                {
+                    continue;
+                }
+
+                if (!uistate.IsUnlockLinkUnlocked(i.Value.UnlockLink))
+                {
+                    continue;
+                }
+
+                if (_globalCache.HairstyleStorage.IsHairstyleAvailableForRaceGender(_localPlayer.Profile.Tribe,
+                        _localPlayer.Profile.Gender, i.Key))
                 {
                     _localPlayer.Hairstyles.Add(i.Key);
+                }
+                if (_globalCache.HairstyleStorage.IsFacepaintAvailableForRaceGender(_localPlayer.Profile.Tribe,
+                        _localPlayer.Profile.Gender, i.Key))
+                {
+                    _localPlayer.Facepaints.Add(i.Key);
                 }
             }
 

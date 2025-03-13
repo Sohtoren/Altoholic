@@ -10,8 +10,11 @@ using Dalamud.Game.Text;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
 using ImGuiNET;
+using Lumina.Excel.Sheets;
 using Emote = Altoholic.Models.Emote;
+using Glasses = Altoholic.Models.Glasses;
 using Mount = Altoholic.Models.Mount;
+using Ornament = Altoholic.Models.Ornament;
 using TripleTriadCard = Altoholic.Models.TripleTriadCard;
 
 namespace Altoholic.Windows
@@ -47,9 +50,10 @@ namespace Altoholic.Windows
         private bool _obtainedBardingsOnly;
         private bool _obtainedEmotesOnly;
         private bool _obtainedOrnamentsOnly;
+        private bool _obtainedFacepaintsOnly;
         private bool _obtainedFramerKitsOnly;
         private bool _obtainedGlassesOnly;
-        //Hairstyle
+        private bool _obtainedHairstylesOnly;
         private bool _obtainedMinionsOnly;
         private bool _obtainedMountsOnly;
         private bool _obtainedOrchestrionRollsOnly;
@@ -75,9 +79,10 @@ namespace Altoholic.Windows
             _obtainedBardingsOnly = false;
             _obtainedEmotesOnly = false;
             _obtainedOrnamentsOnly = false;
+            _obtainedFacepaintsOnly = false;
             _obtainedFramerKitsOnly = false;
             _obtainedGlassesOnly = false;
-            // Hairstyle
+            _obtainedHairstylesOnly = false;
             _obtainedMinionsOnly = false;
             _obtainedMountsOnly = false;
             _obtainedOrchestrionRollsOnly = false;
@@ -92,9 +97,10 @@ namespace Altoholic.Windows
             _obtainedBardingsOnly = false;
             _obtainedEmotesOnly = false;
             _obtainedOrnamentsOnly = false;
+            _obtainedFacepaintsOnly = false;
             _obtainedFramerKitsOnly = false;
             _obtainedGlassesOnly = false;
-            // Hairstyle
+            _obtainedHairstylesOnly = false;
             _obtainedMinionsOnly = false;
             _obtainedMountsOnly = false;
             _obtainedOrchestrionRollsOnly = false;
@@ -111,7 +117,7 @@ namespace Altoholic.Windows
             _obtainedOrnamentsOnly = _plugin.Configuration.ObtainedOnly;
             _obtainedFramerKitsOnly = _plugin.Configuration.ObtainedOnly;
             _obtainedGlassesOnly = _plugin.Configuration.ObtainedOnly;
-
+            _obtainedHairstylesOnly = _plugin.Configuration.ObtainedOnly;
             _obtainedMinionsOnly = _plugin.Configuration.ObtainedOnly;
             _obtainedMountsOnly = _plugin.Configuration.ObtainedOnly;
             _obtainedOrchestrionRollsOnly = _plugin.Configuration.ObtainedOnly;
@@ -209,6 +215,14 @@ namespace Altoholic.Windows
                     DrawOrnaments(currentCharacter);
                 }
             }
+            using (var facepaintTab =
+                   ImRaii.TabItem($"{Loc.Localize("Facepaint", "Facepaint")}"))
+            {
+                if (facepaintTab.Success)
+                {
+                    DrawFacepaints(currentCharacter);
+                }
+            }
             using (var framerKitTab =
                    ImRaii.TabItem($"{Loc.Localize("FramerKit", "Framer's kit")}")) // Portraitmaterial[p] / Framer's kit / Portrait / ポートレート
             {
@@ -226,14 +240,14 @@ namespace Altoholic.Windows
                 }
             }
             
-            /*using (var hairsTab =
+            using (var hairsTab =
                    ImRaii.TabItem($"{Loc.Localize("Hairstyle", "Hairstyle")}")) // Frisur Hairstyle Coupe de cheveux 髪型
             {
                 if (hairsTab.Success)
                 {
-
+                    DrawHairstyles(currentCharacter);
                 }
-            }*/
+            }
 
             using (var minionsTab =
                    ImRaii.TabItem($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 8303)}"))//Minions // 7595 for Katakana
@@ -1008,7 +1022,7 @@ namespace Altoholic.Windows
         }
 
         /**************************************************/
-        /*********************OrchestrionRoll**********************/
+        /*****************OrchestrionRoll******************/
         /**************************************************/
         private void DrawOrchestrionRolls(Character currentCharacter)
         {
@@ -1370,6 +1384,311 @@ namespace Altoholic.Windows
                 if (ImGui.IsItemHovered())
                 {
                     Utils.DrawGlassesTooltip(_currentLocale, ref _globalCache, g);
+                }
+
+                i++;
+            }
+        }
+
+        /**************************************************/
+        /********************Hairstyles********************/
+        /**************************************************/
+        private void DrawHairstyles(Character currentCharacter)
+        {
+            if (currentCharacter.Profile == null)
+            {
+                return;
+            }
+
+            List<uint> availableHairstyles =
+                _globalCache.HairstyleStorage.GetAllHairstylesForTribeGender(currentCharacter.Profile.Tribe,
+                    currentCharacter.Profile.Gender);
+
+            using var hairstylesTabTable = ImRaii.Table("###HairstylesTabTable", 1, ImGuiTableFlags.ScrollY);
+            if (!hairstylesTabTable) return;
+            ImGui.TableSetupColumn($"###HairstylesTabTable#{currentCharacter.CharacterId}#Col1",
+                ImGuiTableColumnFlags.WidthStretch);
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            if (ImGui.Checkbox($"{Loc.Localize("ObtainedOnly", "Obtained only")}", ref _obtainedHairstylesOnly))
+            {
+                _plugin.Configuration.ObtainedOnly = _obtainedHairstylesOnly;
+                _plugin.Configuration.Save();
+            }
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            if (currentCharacter.Hairstyles.Count == 0 && !_isSpoilerEnabled)
+            {
+                ImGui.TextUnformatted($"{Loc.Localize("NoPurchasableHairstylesUnlocked", "No purchasable hairstyle unlocked")}");
+            }
+            else
+            {
+                    DrawHairstylesCollection(currentCharacter, availableHairstyles);
+            }
+
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            using var hairstylesTableAmount = ImRaii.Table("###HairstylesTableAmount", 2);
+            if (!hairstylesTableAmount) return;
+            int widthCol1 = 455;
+            int widthCol2 = 145;
+            if (_isSpoilerEnabled)
+            {
+                widthCol1 = 480;
+                widthCol2 = 120;
+            }
+            ImGui.TableSetupColumn($"###HairstylesTableAmount#{currentCharacter.CharacterId}#Amount#Col1",
+                ImGuiTableColumnFlags.WidthFixed, widthCol1);
+            ImGui.TableSetupColumn($"###HairstylesTableAmount#{currentCharacter.CharacterId}#Amount#Col2",
+                ImGuiTableColumnFlags.WidthFixed, widthCol2);
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            ImGui.Text("");
+            ImGui.TableSetColumnIndex(1);
+            string endStr = string.Empty;
+            if (!_isSpoilerEnabled)
+            {
+                endStr += $"{Loc.Localize("ObtainedLowercase", " obtained")}";
+            }
+            else
+            {
+                endStr += $"/{availableHairstyles.Count()}";
+            }
+            ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 3501)}: {currentCharacter.Hairstyles.Count}{endStr}");
+        }
+
+        private void DrawHairstylesCollection(Character currentCharacter, List<uint> availableHairstyles)
+        {
+            //int startIndex = Utils.GetHairstyleIndexStart(currentCharacter);
+            //List<uint> hairstyles = (_obtainedHairstylesOnly) ? [.. currentCharacter.Hairstyles.Where(i => i >= startIndex)] : _globalCache.HairstyleStorage.GetIdsFromStartIndex(startIndex);
+            //List<uint> hairstyles = (_obtainedHairstylesOnly) ? [.. currentCharacter.Hairstyles] : _globalCache.HairstyleStorage.Get();
+            if (currentCharacter.Profile == null)
+            {
+                return;
+            }
+
+            List<uint> hairstyles = (_obtainedHairstylesOnly) ? [.. currentCharacter.Hairstyles] : availableHairstyles;
+            int hairstylesCount = hairstyles.Count;
+            if (hairstylesCount == 0) return;
+            int rows = (int)Math.Ceiling(hairstylesCount / (double)10);
+            int height = rows * 48 + 0;
+
+            using var table = ImRaii.Table("###HairstylesTable", 10,
+                ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner, new Vector2(575, height));
+            if (!table) return;
+
+            ImGui.TableSetupColumn("###HairstylesTable#Col1",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+            ImGui.TableSetupColumn("###HairstylesTable#Col2",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+            ImGui.TableSetupColumn("###HairstylesTable#Col3",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+            ImGui.TableSetupColumn("###HairstylesTable#Col4",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+            ImGui.TableSetupColumn("###HairstylesTable#Col5",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+            ImGui.TableSetupColumn("###HairstylesTable#Col6",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+            ImGui.TableSetupColumn("###HairstylesTable#Col7",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+            ImGui.TableSetupColumn("###HairstylesTable#Col8",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+            ImGui.TableSetupColumn("###HairstylesTable#Col9",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+            ImGui.TableSetupColumn("###HairstylesTable#Col10",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+
+            int i = 0;
+            foreach (uint hairstyleId in hairstyles)
+            {
+                if (i % 10 == 0)
+                {
+                    ImGui.TableNextRow();
+                }
+
+                ImGui.TableNextColumn();
+                Hairstyle? h = _globalCache.HairstyleStorage.GetHairstyle(_currentLocale, hairstyleId);
+                if (h is not { IsPurchasable: true })
+                {
+                    continue;
+                }
+
+                Item? itm = _globalCache.ItemStorage.LoadItem(_currentLocale, h.ItemId);
+                if (itm == null)
+                {
+                    continue;
+                }
+
+                if (currentCharacter.HasHairstyle(hairstyleId))
+                {
+                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(h.Icon), new Vector2(48, 48));
+                }
+                else
+                {
+                    if (_isSpoilerEnabled)
+                    {
+                        Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(h.Icon), new Vector2(48, 48),
+                            new Vector4(1, 1, 1, 0.5f));
+                    }
+                    else
+                    {
+                        Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(026178), new Vector2(48, 48));
+                    }
+                }
+                if (ImGui.IsItemHovered())
+                {
+                    Utils.DrawHairstyleFacepaintTooltip(_currentLocale, ref _globalCache, h);
+                }
+
+                i++;
+            }
+        }
+
+        /**************************************************/
+        /********************Facepaints********************/
+        /**************************************************/
+        private void DrawFacepaints(Character currentCharacter)
+        {
+            if (currentCharacter.Profile == null)
+            {
+                return;
+            }
+
+            List<uint> availableFacepaints =
+                _globalCache.HairstyleStorage.GetAllFacepaintsForTribeGender(currentCharacter.Profile.Tribe,
+                    currentCharacter.Profile.Gender);
+
+            using var facepaintsTabTable = ImRaii.Table("###facepaintsTabTable", 1, ImGuiTableFlags.ScrollY);
+            if (!facepaintsTabTable) return;
+            ImGui.TableSetupColumn($"###facepaintsTabTable#{currentCharacter.CharacterId}#Col1",
+                ImGuiTableColumnFlags.WidthStretch);
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            if (ImGui.Checkbox($"{Loc.Localize("ObtainedOnly", "Obtained only")}", ref _obtainedFacepaintsOnly))
+            {
+                _plugin.Configuration.ObtainedOnly = _obtainedFacepaintsOnly;
+                _plugin.Configuration.Save();
+            }
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            if (currentCharacter.Facepaints.Count == 0 && !_isSpoilerEnabled)
+            {
+                ImGui.TextUnformatted($"{Loc.Localize("NoPurchasableFacepaintsUnlocked", "No purchasable facepaint unlocked")}");
+            }
+            else
+            {
+                DrawFacepaintsCollection(currentCharacter, availableFacepaints);
+            }
+
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            using var facepaintsTableAmount = ImRaii.Table("###FacepaintsTableAmount", 2);
+            if (!facepaintsTableAmount) return;
+            int widthCol1 = 455;
+            int widthCol2 = 145;
+            if (_isSpoilerEnabled)
+            {
+                widthCol1 = 480;
+                widthCol2 = 120;
+            }
+            ImGui.TableSetupColumn($"###FacepaintsTableAmount#{currentCharacter.CharacterId}#Amount#Col1",
+                ImGuiTableColumnFlags.WidthFixed, widthCol1);
+            ImGui.TableSetupColumn($"###FacepaintsTableAmount#{currentCharacter.CharacterId}#Amount#Col2",
+                ImGuiTableColumnFlags.WidthFixed, widthCol2);
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            ImGui.Text("");
+            ImGui.TableSetColumnIndex(1);
+            string endStr = string.Empty;
+            if (!_isSpoilerEnabled)
+            {
+                endStr += $"{Loc.Localize("ObtainedLowercase", " obtained")}";
+            }
+            else
+            {
+                endStr += $"/{availableFacepaints.Count()}";
+            }
+            ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 3501)}: {currentCharacter.Facepaints.Count}{endStr}");
+        }
+
+        private void DrawFacepaintsCollection(Character currentCharacter, List<uint> availableFacepaints)
+        {
+            if (currentCharacter.Profile == null)
+            {
+                return;
+            }
+
+            List<uint> facepaints = (_obtainedFacepaintsOnly) ? [.. currentCharacter.Facepaints] : availableFacepaints;
+            int facepaintsCount = facepaints.Count;
+            if (facepaintsCount == 0) return;
+            int rows = (int)Math.Ceiling(facepaintsCount / (double)10);
+            int height = rows * 48 + 0;
+
+            using var table = ImRaii.Table("###FacepaintsTable", 10,
+                ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner, new Vector2(575, height));
+            if (!table) return;
+
+            ImGui.TableSetupColumn("###FacepaintsTable#Col1",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+            ImGui.TableSetupColumn("###FacepaintsTable#Col2",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+            ImGui.TableSetupColumn("###FacepaintsTable#Col3",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+            ImGui.TableSetupColumn("###FacepaintsTable#Col4",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+            ImGui.TableSetupColumn("###FacepaintsTable#Col5",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+            ImGui.TableSetupColumn("###FacepaintsTable#Col6",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+            ImGui.TableSetupColumn("###FacepaintsTable#Col7",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+            ImGui.TableSetupColumn("###FacepaintsTable#Col8",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+            ImGui.TableSetupColumn("###FacepaintsTable#Col9",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+            ImGui.TableSetupColumn("###FacepaintsTable#Col10",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+
+            int i = 0;
+            foreach (uint facepaintId in facepaints)
+            {
+                if (i % 10 == 0)
+                {
+                    ImGui.TableNextRow();
+                }
+
+                ImGui.TableNextColumn();
+                Hairstyle? h = _globalCache.HairstyleStorage.GetHairstyle(_currentLocale, facepaintId);
+                if (h is not { IsPurchasable: true })
+                {
+                    continue;
+                }
+
+                Item? itm = _globalCache.ItemStorage.LoadItem(_currentLocale, h.ItemId);
+                if (itm == null)
+                {
+                    continue;
+                }
+
+                if (currentCharacter.HasFacepaint(facepaintId))
+                {
+                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(h.Icon), new Vector2(48, 48));
+                }
+                else
+                {
+                    if (_isSpoilerEnabled)
+                    {
+                        Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(h.Icon), new Vector2(48, 48),
+                            new Vector4(1, 1, 1, 0.5f));
+                    }
+                    else
+                    {
+                        Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(026178), new Vector2(48, 48));
+                    }
+                }
+                if (ImGui.IsItemHovered())
+                {
+                    Utils.DrawHairstyleFacepaintTooltip(_currentLocale, ref _globalCache, h);
                 }
 
                 i++;

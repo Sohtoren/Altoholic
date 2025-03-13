@@ -14,5 +14,7 @@ namespace Altoholic.Models
         public uint SortKey { get; set; }
         public uint Icon { get; set; }
         public uint UnlockLink { get; set; }
+        public uint ItemId { get; set; }
+        public uint FeatureId { get; set; }
     }
 }

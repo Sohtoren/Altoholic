@@ -1,5 +1,6 @@
 ﻿using Altoholic.Models;
 using Dalamud.Game;
+using Lumina.Excel;
 using Lumina.Excel.Sheets;
 using System;
 using System.Collections.Generic;
@@ -9,7 +10,10 @@ namespace Altoholic.Cache
 {
     public class HairstyleStorage(int size = 120) : IDisposable
     {
-        private readonly Dictionary<uint, Hairstyle> _hairstyles = new(size);
+        private readonly Dictionary<uint, Hairstyle> _hairstylesAndFaces = new(size);
+        private readonly Dictionary<int, List<uint>> _hairstylesPerSubRacesAndGender = new();
+        private readonly Dictionary<int, List<uint>> _facesPerSubRacesAndGender = new();
+        private readonly ExcelSheet<RawRow> _hairMakeType = Plugin.DataManager.GetExcelSheet<RawRow>(ClientLanguage.English, "HairMakeType");
 
         public void Init(GlobalCache globalCache)
         {
@@ -22,13 +26,67 @@ namespace Altoholic.Cache
             foreach (Hairstyle h in hairstyles)
             {
                 globalCache.IconStorage.LoadIcon(h.Icon);
-                _hairstyles.Add(h.Id, h);
+                _hairstylesAndFaces.Add(h.Id, h);
             }
+
+            for (int i = 0; i <= 31; i++)
+            {
+                LoadHairstylesPerRaces(i);
+                LoadFacepaintsPerRaces(i);
+            }
+        }
+
+        //private void LoadHairstylesPerRaces(uint subRace, uint gender)
+        private void LoadHairstylesPerRaces(int subRace)
+        {
+            //RawRow row = hairMakeType.GetRow((subRace - 1) * 2 - 1 + gender);
+            RawRow row = _hairMakeType.GetRow((uint)subRace);
+            // Unknown30 is the number of available hairstyles.
+            byte numHairs = row.ReadUInt8Column(30);
+            List<uint> hairList = new(numHairs);
+            // Hairstyles can be found starting at Unknown66.
+            for (int i = 0; i < numHairs; ++i)
+            {
+                // Hairs start at Unknown66.
+                uint index = row.ReadUInt32Column(66 + i * 9);
+                if (index == uint.MaxValue)
+                    continue;
+
+                Hairstyle? h = GetHairstyle(ClientLanguage.English, index);
+                if(h is not { IsPurchasable: true })
+                    continue;
+
+                hairList.Add(index);
+            }
+            _hairstylesPerSubRacesAndGender.Add(subRace, hairList);
+        }
+        private void LoadFacepaintsPerRaces(int subRace)
+        {
+            //RawRow row = hairMakeType.GetRow((subRace - 1) * 2 - 1 + gender);
+            RawRow row = _hairMakeType.GetRow((uint)subRace);
+            // Unknown30 is the number of available hairstyles.
+            byte numPaints = row.ReadUInt8Column(37);
+            List<uint> facepaintList = new(numPaints);
+            // Hairstyles can be found starting at Unknown66.
+            for (int i = 0; i < numPaints; ++i)
+            {
+                // Hairs start at Unknown66.
+                uint index = row.ReadUInt32Column(73 + i * 9);
+                if (index == uint.MaxValue)
+                    continue;
+
+                Hairstyle? h = GetHairstyle(ClientLanguage.English, index);
+                if(h is not { IsPurchasable: true })
+                    continue;
+
+                facepaintList.Add(index);
+            }
+            _facesPerSubRacesAndGender.Add(subRace, facepaintList);
         }
 
         public Hairstyle? GetHairstyle(ClientLanguage lang, uint id)
         {
-            if (_hairstyles.TryGetValue(id, out Hairstyle? ret))
+            if (_hairstylesAndFaces.TryGetValue(id, out Hairstyle? ret))
                 return ret;
 
             CharaMakeCustomize? hairstyle = Utils.GetHairstlyle(lang, id);
@@ -90,29 +148,82 @@ namespace Altoholic.Cache
 
         public void Add(uint id, Hairstyle h)
         {
-            _hairstyles.Add(id, h);
+            _hairstylesAndFaces.Add(id, h);
         }
 
         public int Count()
         {
-            return _hairstyles.Count;
+            return _hairstylesAndFaces.Count;
         }
         public List<uint> Get()
         {
-            return _hairstyles.Keys.ToList();
+            return _hairstylesAndFaces.Keys.ToList();
         }
         public Dictionary<uint, Hairstyle> GetAll()
         {
-            return _hairstyles;
+            return _hairstylesAndFaces;
         }
 
+        public List<uint> GetIdsFromStartIndex(int startIndex)
+        {
+            return _hairstylesAndFaces.Where(h => h.Value.Id >= startIndex).Select(x => x.Key).ToList();
+        }
         public List<uint> GetIdsFromUnlockLink(ushort unlockLink)
         {
-            return _hairstyles.Where(h => h.Value.UnlockLink == unlockLink).Select(x => x.Key).ToList();
+            return _hairstylesAndFaces.Where(h => h.Value.UnlockLink == unlockLink).Select(x => x.Key).ToList();
         }
         public void Dispose()
         {
-            _hairstyles.Clear();
+            _hairstylesAndFaces.Clear();
+            _hairstylesPerSubRacesAndGender.Clear();
+            _facesPerSubRacesAndGender.Clear();
         }
+
+        public bool IsHairstyleAvailableForRaceGender(byte tribe, int gender, uint hairstyleId)
+        {
+            int row = GetRowFromTribeGender(tribe, gender);
+            List<uint> hlist = _hairstylesPerSubRacesAndGender.Where(h => h.Key == row).Select(h => h.Value).ToList().First();
+            return hlist.Contains(hairstyleId);
+        }
+
+        public List<uint> GetAllHairstylesForTribeGender(byte tribe, int gender)
+        {
+            return _hairstylesPerSubRacesAndGender.Where(h => h.Key == GetRowFromTribeGender(tribe, gender)).Select(h => h.Value).ToList().First();
+        }
+        public bool IsFacepaintAvailableForRaceGender(byte tribe, int gender, uint hairstyleId)
+        {
+            int row = GetRowFromTribeGender(tribe, gender);
+            List<uint> hlist = _facesPerSubRacesAndGender.Where(h => h.Key == row).Select(h => h.Value).ToList().First();
+            return hlist.Contains(hairstyleId);
+        }
+
+        public List<uint> GetAllFacepaintsForTribeGender(byte tribe, int gender)
+        {
+            return _facesPerSubRacesAndGender.Where(h => h.Key == GetRowFromTribeGender(tribe, gender)).Select(h => h.Value).ToList().First();
+        }
+
+        private static int GetRowFromTribeGender(byte tribe, int gender)
+        {
+            return tribe switch
+            {
+                1 => (gender == 0) ? 0 : 1,
+                2 => (gender == 0) ? 2 : 3,
+                3 => (gender == 0) ? 4 : 5,
+                4 => (gender == 0) ? 6 : 7,
+                5 => (gender == 0) ? 8 : 9,
+                6 => (gender == 0) ? 10 : 11,
+                7 => (gender == 0) ? 12 : 13,
+                8 => (gender == 0) ? 14 : 15,
+                9 => (gender == 0) ? 16 : 17,
+                10 => (gender == 0) ? 18 : 19,
+                11 => (gender == 0) ? 20 : 21,
+                12 => (gender == 0) ? 22 : 23,
+                13 => (gender == 0) ? 24 : 25,
+                14 => (gender == 0) ? 26 : 27,
+                15 => (gender == 0) ? 28 : 29,
+                16 => (gender == 0) ? 30 : 31,
+                _ => 0
+            };
+    }
     }
 }

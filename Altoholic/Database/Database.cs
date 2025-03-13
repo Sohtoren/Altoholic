@@ -94,64 +94,68 @@ namespace Altoholic.Database
             if (!DoesTableExist(db, CharacterTableName))
             {
                 const string sql = $"""
-                                   CREATE TABLE IF NOT EXISTS {CharacterTableName} (
-                                                   CharacterId BIGINT PRIMARY KEY,
-                                                   FirstName NVARCHAR(255),
-                                                   LastName NVARCHAR(255),
-                                                   HomeWorld NVARCHAR(255),
-                                                   CurrentWorld NVARCHAR(255),
-                                                   Datacenter NVARCHAR(255),
-                                                   CurrentDatacenter NVARCHAR(255),
-                                                   Region NVARCHAR(255),
-                                                   CurrentRegion NVARCHAR(255),
-                                                   IsSprout BIT,
-                                                   IsBattleMentor BIT,
-                                                   IsTradeMentor BIT,
-                                                   IsReturner BIT,
-                                                   LastJob INT,
-                                                   LastJobLevel INT,
-                                                   FCTag NVARCHAR(255),
-                                                   FreeCompany NVARCHAR(255),
-                                                   LastOnline BIGINT,
-                                                   PlayTime INT,
-                                                   LastPlayTimeUpdate BIGINT,
-                                                   HasPremiumSaddlebag BIT,
-                                                   PlayerCommendations SMALLINT,
-                                                   CurrentFacewear TEXT,
-                                                   CurrentOrnament SMALLINT,
-                                                   UnreadLetters SMALLINT,
-                                                   Attributes TEXT,
-                                                   Currencies TEXT,
-                                                   Jobs TEXT,
-                                                   Profile TEXT,
-                                                   Quests TEXT,
-                                                   Inventory TEXT,
-                                                   ArmoryInventory TEXT,
-                                                   Saddle TEXT,
-                                                   Gear TEXT,
-                                                   Retainers TEXT,
-                                                   Minions TEXT,
-                                                   Mounts TEXT,
-                                                   TripleTriadCards TEXT,
-                                                   Emotes TEXT,
-                                                   Bardings TEXT,
-                                                   FramerKits TEXT,
-                                                   OrchestrionRolls TEXT,
-                                                   Ornaments TEXT,
-                                                   Glasses TEXT,
-                                                   BeastReputations TEXT,
-                                                   Duties TEXT,
-                                                   DutiesUnlocked TEXT,
-                                                   Houses TEXT,
-                                                   Hairstyles TEXT
-                                               );
-                                   """;
+                                    CREATE TABLE IF NOT EXISTS {CharacterTableName} (
+                                                    CharacterId BIGINT PRIMARY KEY,
+                                                    FirstName NVARCHAR(255),
+                                                    LastName NVARCHAR(255),
+                                                    HomeWorld NVARCHAR(255),
+                                                    CurrentWorld NVARCHAR(255),
+                                                    Datacenter NVARCHAR(255),
+                                                    CurrentDatacenter NVARCHAR(255),
+                                                    Region NVARCHAR(255),
+                                                    CurrentRegion NVARCHAR(255),
+                                                    IsSprout BIT,
+                                                    IsBattleMentor BIT,
+                                                    IsTradeMentor BIT,
+                                                    IsReturner BIT,
+                                                    LastJob INT,
+                                                    LastJobLevel INT,
+                                                    FCTag NVARCHAR(255),
+                                                    FreeCompany NVARCHAR(255),
+                                                    LastOnline BIGINT,
+                                                    PlayTime INT,
+                                                    LastPlayTimeUpdate BIGINT,
+                                                    HasPremiumSaddlebag BIT,
+                                                    PlayerCommendations SMALLINT,
+                                                    CurrentFacewear TEXT,
+                                                    CurrentOrnament SMALLINT,
+                                                    UnreadLetters SMALLINT,
+                                                    Attributes TEXT,
+                                                    Currencies TEXT,
+                                                    Jobs TEXT,
+                                                    Profile TEXT,
+                                                    Quests TEXT,
+                                                    Inventory TEXT,
+                                                    ArmoryInventory TEXT,
+                                                    Saddle TEXT,
+                                                    Gear TEXT,
+                                                    Retainers TEXT,
+                                                    Minions TEXT,
+                                                    Mounts TEXT,
+                                                    TripleTriadCards TEXT,
+                                                    Emotes TEXT,
+                                                    Bardings TEXT,
+                                                    FramerKits TEXT,
+                                                    OrchestrionRolls TEXT,
+                                                    Ornaments TEXT,
+                                                    Glasses TEXT,
+                                                    BeastReputations TEXT,
+                                                    Duties TEXT,
+                                                    DutiesUnlocked TEXT,
+                                                    Houses TEXT,
+                                                    Hairstyles TEXT,
+                                                    Facepaints TEXT
+                                                );
+                                    """;
                 int result = db.Execute(sql);
                 Plugin.Log.Debug($"CREATE TABLE {CharacterTableName} result: {result}");
                 if (result == 0)
                 {
-                    int result2 = db.Execute($"CREATE INDEX idx_{CharacterTableName}_CharacterID ON {CharacterTableName}(CharacterId)");
-                    Plugin.Log.Debug($"CREATE INDEX idx_{CharacterTableName}_CharacterID ON {CharacterTableName}(CharacterId) result: {result2}");
+                    int result2 =
+                        db.Execute(
+                            $"CREATE INDEX idx_{CharacterTableName}_CharacterID ON {CharacterTableName}(CharacterId)");
+                    Plugin.Log.Debug(
+                        $"CREATE INDEX idx_{CharacterTableName}_CharacterID ON {CharacterTableName}(CharacterId) result: {result2}");
                 }
             }
             else
@@ -163,19 +167,30 @@ namespace Altoholic.Database
                     int result11 = db.Execute(sql11);
                     Plugin.Log.Debug($"ALTER TABLE {CharacterTableName} ADD COLUMN Duties TEXT result: {result11}");
                 }
+
                 if (!DoesColumnExist(db, CharacterTableName, "DutiesUnlocked"))
                 {
                     Plugin.Log.Debug($"Column {CharacterTableName}.DutiesUnlocked does not exist");
                     const string sql12 = $"ALTER TABLE {CharacterTableName} ADD COLUMN DutiesUnlocked TEXT";
                     int result12 = db.Execute(sql12);
-                    Plugin.Log.Debug($"ALTER TABLE {CharacterTableName} ADD COLUMN DutiesUnlocked TEXT result: {result12}");
+                    Plugin.Log.Debug(
+                        $"ALTER TABLE {CharacterTableName} ADD COLUMN DutiesUnlocked TEXT result: {result12}");
                 }
+
                 if (!DoesColumnExist(db, CharacterTableName, "Hairstyles"))
                 {
                     Plugin.Log.Debug($"Column {CharacterTableName}.Hairstyles does not exist");
                     const string sql17 = $"ALTER TABLE {CharacterTableName} ADD COLUMN Hairstyles TEXT";
                     int result17 = db.Execute(sql17);
                     Plugin.Log.Debug($"ALTER TABLE {CharacterTableName} ADD COLUMN Hairstyles TEXT result: {result17}");
+                }
+                
+                if (!DoesColumnExist(db, CharacterTableName, "Facepaints"))
+                {
+                    Plugin.Log.Debug($"Column {CharacterTableName}.Facepaints does not exist");
+                    const string sql18 = $"ALTER TABLE {CharacterTableName} ADD COLUMN Facepaints TEXT";
+                    int result18 = db.Execute(sql18);
+                    Plugin.Log.Debug($"ALTER TABLE {CharacterTableName} ADD COLUMN Facepaints TEXT result: {result18}");
                 }
 
                 //Prevent old typo to mess up
@@ -186,27 +201,34 @@ namespace Altoholic.Database
                     int result131 = db.Execute(sql131);
                     Plugin.Log.Debug($"ALTER TABLE {CharacterTableName} DROP COLUMN CurrentFawear result: {result131}");
                 }
+
                 if (!DoesColumnExist(db, CharacterTableName, "CurrentFacewear"))
                 {
                     Plugin.Log.Debug($"Column {CharacterTableName}.CurrentFacewear does not exist");
                     const string sql13 = $"ALTER TABLE {CharacterTableName} ADD COLUMN CurrentFacewear TEXT";
                     int result13 = db.Execute(sql13);
-                    Plugin.Log.Debug($"ALTER TABLE {CharacterTableName} ADD COLUMN CurrentFacewear TEXT result: {result13}");
+                    Plugin.Log.Debug(
+                        $"ALTER TABLE {CharacterTableName} ADD COLUMN CurrentFacewear TEXT result: {result13}");
                 }
+
                 if (!DoesColumnExist(db, CharacterTableName, "CurrentOrnament"))
                 {
                     Plugin.Log.Debug($"Column {CharacterTableName}.CurrentOrnament does not exist");
                     const string sql14 = $"ALTER TABLE {CharacterTableName} ADD COLUMN CurrentOrnament SMALLINT";
                     int result14 = db.Execute(sql14);
-                    Plugin.Log.Debug($"ALTER TABLE {CharacterTableName} ADD COLUMN CurrentOrnament SMALLINT result: {result14}");
+                    Plugin.Log.Debug(
+                        $"ALTER TABLE {CharacterTableName} ADD COLUMN CurrentOrnament SMALLINT result: {result14}");
                 }
+
                 if (!DoesColumnExist(db, CharacterTableName, "UnreadLetters"))
                 {
                     Plugin.Log.Debug($"Column {CharacterTableName}.UnreadLetters does not exist");
                     const string sql16 = $"ALTER TABLE {CharacterTableName} ADD COLUMN UnreadLetters SMALLINT";
                     int result16 = db.Execute(sql16);
-                    Plugin.Log.Debug($"ALTER TABLE {CharacterTableName} ADD COLUMN UnreadLetters SMALLINT result: {result16}");
+                    Plugin.Log.Debug(
+                        $"ALTER TABLE {CharacterTableName} ADD COLUMN UnreadLetters SMALLINT result: {result16}");
                 }
+
                 if (!DoesColumnExist(db, CharacterTableName, "Houses"))
                 {
                     Plugin.Log.Debug($"Column {CharacterTableName}.Houses does not exist");
@@ -216,7 +238,7 @@ namespace Altoholic.Database
                 }
             }
 
-            if(!DoesTableExist(db, CharactersCurrenciesHistoryTableName))
+            if (!DoesTableExist(db, CharactersCurrenciesHistoryTableName))
             {
                 const string sql2 = $"""
                                         CREATE TABLE IF NOT EXISTS {CharactersCurrenciesHistoryTableName}(
@@ -231,8 +253,11 @@ namespace Altoholic.Database
 
                 if (result2 == 0)
                 {
-                    int result22 = db.Execute($"CREATE INDEX idx_{CharactersCurrenciesHistoryTableName}_CharacterID ON {CharactersCurrenciesHistoryTableName}(CharacterId)");
-                    Plugin.Log.Debug($"CREATE INDEX idx_{CharactersCurrenciesHistoryTableName}_CharacterID ON {CharactersCurrenciesHistoryTableName}(CharacterId) result: {result22}");
+                    int result22 =
+                        db.Execute(
+                            $"CREATE INDEX idx_{CharactersCurrenciesHistoryTableName}_CharacterID ON {CharactersCurrenciesHistoryTableName}(CharacterId)");
+                    Plugin.Log.Debug(
+                        $"CREATE INDEX idx_{CharactersCurrenciesHistoryTableName}_CharacterID ON {CharactersCurrenciesHistoryTableName}(CharacterId) result: {result22}");
                 }
             }
 
@@ -256,6 +281,7 @@ namespace Altoholic.Database
                 }
             }
 
+            /********************************/
             if (!DoesTableExist(db, VersionTableName))
             {
                 const string sql4 = $"""
@@ -270,6 +296,39 @@ namespace Altoholic.Database
                 const string sql5 = $"UPDATE {CharacterTableName} SET Duties = '', DutiesUnlocked = '';";
                 int result5 = db.Execute(sql5);
                 Plugin.Log.Debug($"Reset characters (unlocked)duties. Result: {result5}");
+            }
+
+            if (DoesTableExist(db, VersionTableName))
+            {
+                int? version = GetDbVersion(db);
+                if (version != null)
+                {
+                    return;
+                }
+
+                // This is needed because the previous versions didn't check for subrace and gender
+                const string sql6 = $"UPDATE {CharacterTableName} SET Hairstyles = ''";
+                int result6 = db.Execute(sql6);
+                Plugin.Log.Debug($"Reset characters hairstyles. Result: {result6}");
+
+                const string sql7 = $"INSERT INTO {VersionTableName} (Version) VALUES(1)";
+                int result7 = db.Execute(sql7);
+                Plugin.Log.Debug($"Set db version to 1. Result: {result7}");
+            }
+        }
+
+        public static int? GetDbVersion(SqliteConnection db)
+        {
+            Plugin.Log.Debug($"Database/GetDbVersion entered");
+            try
+            {
+                const string sql = $"SELECT Version FROM {VersionTableName}";
+                return db.QueryFirstOrDefault<int?>(sql);
+            }
+            catch (Exception ex)
+            {
+                Plugin.Log.Error(ex.ToString());
+                return null;
             }
         }
 
@@ -455,7 +514,7 @@ namespace Altoholic.Database
 
             try
             {
-                const string updateSql = $"UPDATE {CharacterTableName} SET [FirstName] = @FirstName, [LastName] = @LastName, [HomeWorld] = @HomeWorld, [Datacenter] = @Datacenter, [Region] = @Region, [IsSprout] = @IsSprout, [IsBattleMentor] = @IsBattleMentor, [IsTradeMentor] = @IsTradeMentor, [IsReturner] = @IsReturner, [LastJob] = @LastJob, [LastJobLevel] = @LastJobLevel, [FCTag] = @FCTag, [FreeCompany] = @FreeCompany, [LastOnline] = @LastOnline, [PlayTime] = @PlayTime, [LastPlayTimeUpdate] = @LastPlayTimeUpdate, [HasPremiumSaddlebag] = @HasPremiumSaddlebag, [PlayerCommendations] = @PlayerCommendations, [CurrentFacewear] = @CurrentFacewear, [CurrentOrnament] = @CurrentOrnament, [UnreadLetters] = @UnreadLetters, [Attributes] = @Attributes, [Currencies] = @Currencies, [Jobs] = @Jobs, [Profile] = @Profile, [Quests] = @Quests, [Inventory] = @Inventory, [ArmoryInventory] = @ArmoryInventory, [Saddle] = @Saddle, [Gear] = @Gear, [Retainers] = @Retainers, [Minions] = @Minions, [Mounts] = @Mounts, [TripleTriadCards] = @TripleTriadCards, [Emotes] = @Emotes, [Bardings] = @Bardings, [FramerKits] = @FramerKits, [OrchestrionRolls] = @OrchestrionRolls, [Ornaments] = @Ornaments, [Glasses] = @Glasses, [BeastReputations] = @BeastReputations, [Duties] = @Duties, [DutiesUnlocked] = @DutiesUnlocked, [Houses] = @Houses, [Hairstyles] = @Hairstyles WHERE [CharacterId] = @CharacterId";
+                const string updateSql = $"UPDATE {CharacterTableName} SET [FirstName] = @FirstName, [LastName] = @LastName, [HomeWorld] = @HomeWorld, [Datacenter] = @Datacenter, [Region] = @Region, [IsSprout] = @IsSprout, [IsBattleMentor] = @IsBattleMentor, [IsTradeMentor] = @IsTradeMentor, [IsReturner] = @IsReturner, [LastJob] = @LastJob, [LastJobLevel] = @LastJobLevel, [FCTag] = @FCTag, [FreeCompany] = @FreeCompany, [LastOnline] = @LastOnline, [PlayTime] = @PlayTime, [LastPlayTimeUpdate] = @LastPlayTimeUpdate, [HasPremiumSaddlebag] = @HasPremiumSaddlebag, [PlayerCommendations] = @PlayerCommendations, [CurrentFacewear] = @CurrentFacewear, [CurrentOrnament] = @CurrentOrnament, [UnreadLetters] = @UnreadLetters, [Attributes] = @Attributes, [Currencies] = @Currencies, [Jobs] = @Jobs, [Profile] = @Profile, [Quests] = @Quests, [Inventory] = @Inventory, [ArmoryInventory] = @ArmoryInventory, [Saddle] = @Saddle, [Gear] = @Gear, [Retainers] = @Retainers, [Minions] = @Minions, [Mounts] = @Mounts, [TripleTriadCards] = @TripleTriadCards, [Emotes] = @Emotes, [Bardings] = @Bardings, [FramerKits] = @FramerKits, [OrchestrionRolls] = @OrchestrionRolls, [Ornaments] = @Ornaments, [Glasses] = @Glasses, [BeastReputations] = @BeastReputations, [Duties] = @Duties, [DutiesUnlocked] = @DutiesUnlocked, [Houses] = @Houses, [Hairstyles] = @Hairstyles, [Facepaints] = @Facepaints WHERE [CharacterId] = @CharacterId";
                 int result = db.Execute(updateSql, FormatCharacterForDatabase(character));
                 return result;
             }
@@ -594,6 +653,11 @@ namespace Altoholic.Database
                 : System.Text.Json.JsonSerializer.Deserialize<List<uint>>(databaseCharacter
                     .Hairstyles) ?? [];
             Plugin.Log.Debug("Hairstyles deserialized");
+            List<uint> facepaints = string.IsNullOrEmpty(databaseCharacter.Facepaints)
+                ? []
+                : System.Text.Json.JsonSerializer.Deserialize<List<uint>>(databaseCharacter
+                    .Facepaints) ?? [];
+            Plugin.Log.Debug("Facepaints deserialized");
 
             return new Character()
             {
@@ -646,6 +710,7 @@ namespace Altoholic.Database
                 DutiesUnlocked = [.. dutiesUnlocked],
                 Houses = [.. houses],
                 Hairstyles = [.. hairstyles],
+                Facepaints = [.. facepaints]
             };
         }
 
@@ -676,6 +741,7 @@ namespace Altoholic.Database
             string dutiesUnlocked = System.Text.Json.JsonSerializer.Serialize(character.DutiesUnlocked);
             string houses = System.Text.Json.JsonSerializer.Serialize(character.Houses);
             string hairstyles = System.Text.Json.JsonSerializer.Serialize(character.Hairstyles);
+            string facepaints = System.Text.Json.JsonSerializer.Serialize(character.Facepaints);
 
             return new DatabaseCharacter()
             {
@@ -727,15 +793,16 @@ namespace Altoholic.Database
                 Duties = duties,
                 DutiesUnlocked = dutiesUnlocked,
                 Houses = houses,
-                Hairstyles = hairstyles
+                Hairstyles = hairstyles,
+                Facepaints = facepaints
             };
         }
 
         public static int AddCharacter(SqliteConnection db, Character character)
         {
             Plugin.Log.Debug("Entering AddCharacter()");
-            const string insertQuery = $"INSERT INTO {CharacterTableName}([CharacterId], [FirstName], [LastName], [HomeWorld], [Datacenter], [Region], [IsSprout], [IsBattleMentor], [IsTradeMentor], [IsReturner], [LastJob], [LastJobLevel], [FCTag], [FreeCompany], [LastOnline], [PlayTime], [LastPlayTimeUpdate], [HasPremiumSaddlebag], [PlayerCommendations], [CurrentFacewear], [CurrentOrnament], [UnreadLetters], [Attributes], [Currencies], [Jobs], [Profile], [Quests], [Inventory], [ArmoryInventory], [Saddle], [Gear], [Retainers], [Minions], [Mounts], [TripleTriadCards], [Emotes], [Bardings], [FramerKits], [OrchestrionRolls], [Ornaments], [Glasses], [BeastReputations], [Duties], [DutiesUnlocked], [Houses], [Hairstyles]) " +
-                                       "VALUES (@CharacterId, @FirstName, @LastName, @HomeWorld, @Datacenter, @Region, @IsSprout, @IsBattleMentor, @IsTradeMentor, @IsReturner, @LastJob, @LastJobLevel, @FCTag, @FreeCompany, @LastOnline, @PlayTime, @LastPlayTimeUpdate, @HasPremiumSaddlebag, @PlayerCommendations, @CurrentFacewear, @CurrentOrnament, @UnreadLetters, @Attributes, @Currencies, @Jobs, @Profile, @Quests, @Inventory, @ArmoryInventory, @Saddle, @Gear, @Retainers, @Minions, @Mounts, @TripleTriadCards, @Emotes, @Bardings, @FramerKits, @OrchestrionRolls, @Ornaments, @Glasses, @BeastReputations, @Duties, @DutiesUnlocked, @Houses, @Hairstyles)";
+            const string insertQuery = $"INSERT INTO {CharacterTableName}([CharacterId], [FirstName], [LastName], [HomeWorld], [Datacenter], [Region], [IsSprout], [IsBattleMentor], [IsTradeMentor], [IsReturner], [LastJob], [LastJobLevel], [FCTag], [FreeCompany], [LastOnline], [PlayTime], [LastPlayTimeUpdate], [HasPremiumSaddlebag], [PlayerCommendations], [CurrentFacewear], [CurrentOrnament], [UnreadLetters], [Attributes], [Currencies], [Jobs], [Profile], [Quests], [Inventory], [ArmoryInventory], [Saddle], [Gear], [Retainers], [Minions], [Mounts], [TripleTriadCards], [Emotes], [Bardings], [FramerKits], [OrchestrionRolls], [Ornaments], [Glasses], [BeastReputations], [Duties], [DutiesUnlocked], [Houses], [Hairstyles], [Facepaints]) " +
+                                       "VALUES (@CharacterId, @FirstName, @LastName, @HomeWorld, @Datacenter, @Region, @IsSprout, @IsBattleMentor, @IsTradeMentor, @IsReturner, @LastJob, @LastJobLevel, @FCTag, @FreeCompany, @LastOnline, @PlayTime, @LastPlayTimeUpdate, @HasPremiumSaddlebag, @PlayerCommendations, @CurrentFacewear, @CurrentOrnament, @UnreadLetters, @Attributes, @Currencies, @Jobs, @Profile, @Quests, @Inventory, @ArmoryInventory, @Saddle, @Gear, @Retainers, @Minions, @Mounts, @TripleTriadCards, @Emotes, @Bardings, @FramerKits, @OrchestrionRolls, @Ornaments, @Glasses, @BeastReputations, @Duties, @DutiesUnlocked, @Houses, @Hairstyles, @Facepaints)";
 
             int result = db.Execute(insertQuery, FormatCharacterForDatabase(character));
 
