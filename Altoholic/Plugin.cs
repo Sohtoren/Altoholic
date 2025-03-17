@@ -34,7 +34,6 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Threading;
 using static FFXIVClientStructs.FFXIV.Client.UI.RaptureAtkModule;
 using Character = Altoholic.Models.Character;
 using FFXIVClientStructs.FFXIV.Client.UI.Info;
@@ -117,7 +116,8 @@ namespace Altoholic
                 QuestStorage = new QuestStorage(),
                 DutyStorage = new DutyStorage(),
                 PlaceNameStorage = new PlaceNameStorage(),
-                HairstyleStorage = new HairstyleStorage()
+                HairstyleStorage = new HairstyleStorage(),
+                SecretRecipeBookStorage = new SecretRecipeBookStorage(),
             };
 
             nint playtimePtr = SigScanner.ScanText(PlaytimeSig);
@@ -194,6 +194,7 @@ namespace Altoholic
             _globalCache.DutyStorage.Init(_globalCache);
             _globalCache.PlaceNameStorage.Init(_globalCache);
             _globalCache.HairstyleStorage.Init(_globalCache);
+            _globalCache.SecretRecipeBookStorage.Init(currentLocale, _globalCache);
 
             _altoholicService = new(
                 () => _localPlayer,
@@ -312,7 +313,16 @@ namespace Altoholic
             _globalCache.EmoteStorage.Dispose();
             _globalCache.BardingStorage.Dispose();
             _globalCache.FramerKitStorage.Dispose();
+            _globalCache.OrchestrionRollStorage.Dispose();
             _globalCache.OrnamentStorage.Dispose();
+            _globalCache.GlassesStorage.Dispose();
+            _globalCache.BeastTribesStorage.Dispose();
+            _globalCache.QuestStorage.Dispose();
+            _globalCache.DutyStorage.Dispose();
+            _globalCache.PlaceNameStorage.Dispose();
+            _globalCache.HairstyleStorage.Dispose();
+            _globalCache.SecretRecipeBookStorage.Dispose();
+
 
             CollectionWindow.Dispose();
             RetainersWindow.Dispose();
@@ -937,6 +947,7 @@ namespace Altoholic
             GetOrchestrionRollFromState(player);
             GetOrnamentFromState(player);
             GetGlassesFromState(player);
+            GetSecretRecipeBookFromState(player);
         }
 
         private void GetMountFromState(PlayerState player)
@@ -973,6 +984,16 @@ namespace Altoholic
             foreach (uint i in _globalCache.GlassesStorage.Get().Where(i => !_localPlayer.HasGlasses(i)).Where(i => player.IsGlassesUnlocked((ushort)i)))
             {
                 _localPlayer.Glasses.Add(i);
+            }
+        }
+        private void GetSecretRecipeBookFromState(PlayerState player)
+        {
+            foreach (uint i in _globalCache.SecretRecipeBookStorage.Get().Where(i => !_localPlayer.HasSecretRecipeBook(i)))
+            {
+                if (player.IsSecretRecipeBookUnlocked(i))
+                {
+                    _localPlayer.SecretRecipeBooks.Add(i);
+                }
             }
         }
 

@@ -2211,6 +2211,38 @@ namespace Altoholic
             }
         }
 
+        public static void DrawSecretRecipeBookTooltip(ClientLanguage currentLocale, ref GlobalCache globalCache, Models.SecretRecipeBook secretRecipeBook)
+        {
+            using var drawSecretRecipeBookTooltip = ImRaii.Tooltip();
+            if (!drawSecretRecipeBookTooltip) return;
+            using var drawsecretRecipeBookDescriptionItem = ImRaii.Table($"###DrawsecretRecipeBookDescriptionItem#secretRecipeBook_{secretRecipeBook.Id}", 2);
+            if (!drawsecretRecipeBookDescriptionItem) return;
+            ImGui.TableSetupColumn($"###DrawsecretRecipeBookDescriptionItem#secretRecipeBook_{secretRecipeBook.Id}#Icon",
+                ImGuiTableColumnFlags.WidthFixed, 55);
+            ImGui.TableSetupColumn($"###DrawsecretRecipeBookDescriptionItem#secretRecipeBook_{secretRecipeBook.Id}#Name",
+                ImGuiTableColumnFlags.WidthFixed, 305);
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            DrawIcon(globalCache.IconStorage.LoadIcon(secretRecipeBook.Icon), new Vector2(40, 40));
+            ImGui.TableSetColumnIndex(1);
+            switch (currentLocale)
+            {
+                case ClientLanguage.German:
+                    ImGui.TextUnformatted($"{Capitalize(secretRecipeBook.GermanName)}");
+                    break;
+                case ClientLanguage.English:
+                    ImGui.TextUnformatted($"{Capitalize(secretRecipeBook.EnglishName)}");
+                    break;
+                case ClientLanguage.French:
+                    ImGui.TextUnformatted($"{Capitalize(secretRecipeBook.FrenchName)}");
+                    break;
+                case ClientLanguage.Japanese:
+                    ImGui.TextUnformatted($"{Capitalize(secretRecipeBook.JapaneseName)}");
+                    break;
+            }
+        }
+
+
         private static string GetExtractableString(ClientLanguage currentLocale, GlobalCache globalCache, Item item)
         {
             string str = globalCache.AddonStorage.LoadAddonString(currentLocale, 1361);
@@ -2689,6 +2721,45 @@ namespace Altoholic
             return returnedGlassessIds;
         }
 
+        public static Lumina.Excel.Sheets.SecretRecipeBook? GetSecretRecipeBook(ClientLanguage currentLocale, uint id)
+        {
+            ExcelSheet<Lumina.Excel.Sheets.SecretRecipeBook>? dsbr = Plugin.DataManager.GetExcelSheet<Lumina.Excel.Sheets.SecretRecipeBook>(currentLocale);
+            Lumina.Excel.Sheets.SecretRecipeBook? lumina = dsbr?.GetRow(id);
+            return lumina;
+        }
+        public static List<Models.SecretRecipeBook>? GetAllSecretRecipeBook(ClientLanguage currentLocale)
+        {
+            List<Models.SecretRecipeBook> returnedSecretRecipeBookIds = [];
+            ExcelSheet<Lumina.Excel.Sheets.SecretRecipeBook>? dor = Plugin.DataManager.GetExcelSheet<Lumina.Excel.Sheets.SecretRecipeBook>(currentLocale);
+            using IEnumerator<Lumina.Excel.Sheets.SecretRecipeBook>? secretRecipeBookEnumerator = dor?.GetEnumerator();
+            if (secretRecipeBookEnumerator is null) return null;
+            while (secretRecipeBookEnumerator.MoveNext())
+            {
+                Lumina.Excel.Sheets.SecretRecipeBook secretRecipeBook = secretRecipeBookEnumerator.Current;
+                if (secretRecipeBook.Name.IsEmpty || secretRecipeBook.RowId == 0 || secretRecipeBook.RowId == 16) continue;
+                Models.SecretRecipeBook srb = new() { Id = secretRecipeBook.RowId, ItemId = secretRecipeBook.Item.RowId, Icon = secretRecipeBook.Item.Value.Icon };
+                switch (currentLocale)
+                {
+                    case ClientLanguage.German:
+                        srb.GermanName = secretRecipeBook.Name.ExtractText();
+                        break;
+                    case ClientLanguage.English:
+                        srb.EnglishName = secretRecipeBook.Name.ExtractText();
+                        break;
+                    case ClientLanguage.French:
+                        srb.FrenchName = secretRecipeBook.Name.ExtractText();
+                        break;
+                    case ClientLanguage.Japanese:
+                        srb.JapaneseName = secretRecipeBook.Name.ExtractText();
+                        break;
+                }
+
+                returnedSecretRecipeBookIds.Add(srb);
+            }
+
+            return returnedSecretRecipeBookIds;
+        }
+
         public static List<uint> GetArmoireIds()
         {
             List<uint> returnedCabinetsIds = [];
@@ -2720,6 +2791,7 @@ namespace Altoholic
             BeastTribe? lumina = dbt?.GetRow(id);
             return lumina != null ? lumina.Value.Name.ExtractText() : string.Empty;
         }
+
         public static string Capitalize(string str)
         {
             if(str.Length == 0) return str;

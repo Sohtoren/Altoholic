@@ -57,7 +57,7 @@ namespace Altoholic.Windows
         private bool _obtainedMinionsOnly;
         private bool _obtainedMountsOnly;
         private bool _obtainedOrchestrionRollsOnly;
-        
+        private bool _obtainedSecretRecipeBookOnly;
         private bool _obtainedTripleTriadCardsOnly;
 
         /*public override void OnClose()
@@ -86,7 +86,7 @@ namespace Altoholic.Windows
             _obtainedMinionsOnly = false;
             _obtainedMountsOnly = false;
             _obtainedOrchestrionRollsOnly = false;
-            // Tomes
+            _obtainedSecretRecipeBookOnly = false;
             _obtainedTripleTriadCardsOnly = false;
         }
 
@@ -104,7 +104,7 @@ namespace Altoholic.Windows
             _obtainedMinionsOnly = false;
             _obtainedMountsOnly = false;
             _obtainedOrchestrionRollsOnly = false;
-            // Tomes
+            _obtainedSecretRecipeBookOnly = false;
             _obtainedTripleTriadCardsOnly = false;
         }
 
@@ -122,6 +122,7 @@ namespace Altoholic.Windows
             _obtainedMinionsOnly = _plugin.Configuration.ObtainedOnly;
             _obtainedMountsOnly = _plugin.Configuration.ObtainedOnly;
             _obtainedOrchestrionRollsOnly = _plugin.Configuration.ObtainedOnly;
+            _obtainedSecretRecipeBookOnly = _plugin.Configuration.ObtainedOnly;
             _obtainedTripleTriadCardsOnly = _plugin.Configuration.ObtainedOnly;
             
             List<Character> chars = [];
@@ -276,13 +277,13 @@ namespace Altoholic.Windows
                 }
             }
             
-            /*using (var tomesTab = ImRaii.TabItem("Tomes")) 
+            using (var tomesTab = ImRaii.TabItem("Tomes")) 
             {
                 if (tomesTab.Success)
                 {
-
+                    DrawSecretRecipeBooks(currentCharacter);
                 }
-            }*/
+            }
 
             using (var tripleTriadTab =
                    ImRaii.TabItem($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 9529)}")) //9991 for katakana
@@ -1690,6 +1691,129 @@ namespace Altoholic.Windows
                 if (ImGui.IsItemHovered())
                 {
                     Utils.DrawHairstyleFacepaintTooltip(_currentLocale, ref _globalCache, h);
+                }
+
+                i++;
+            }
+        }
+
+        /**************************************************/
+        /*****************SecretRecipeBook******************/
+        /**************************************************/
+        private void DrawSecretRecipeBooks(Character currentCharacter)
+        {
+            using var SecretRecipeBooksTabTable = ImRaii.Table("###SecretRecipeBooksTabTable", 1, ImGuiTableFlags.ScrollY);
+            if (!SecretRecipeBooksTabTable) return;
+            ImGui.TableSetupColumn($"###SecretRecipeBooksTabTable#{currentCharacter.CharacterId}#Col1",
+                ImGuiTableColumnFlags.WidthStretch);
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            if (ImGui.Checkbox($"{Loc.Localize("ObtainedOnly", "Obtained only")}", ref _obtainedSecretRecipeBookOnly))
+            {
+                _plugin.Configuration.ObtainedOnly = _obtainedSecretRecipeBookOnly;
+                _plugin.Configuration.Save();
+            }
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            DrawSecretRecipeBooksCollection(currentCharacter);
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            using var secretRecipeBooksTableAmount = ImRaii.Table("###SecretRecipeBooksTableAmount", 2);
+            if (!secretRecipeBooksTableAmount) return;
+            int widthCol1 = 455;
+            int widthCol2 = 145;
+            if (_isSpoilerEnabled)
+            {
+                widthCol1 = 480;
+                widthCol2 = 120;
+            }
+            ImGui.TableSetupColumn($"###SecretRecipeBooksTableAmount#{currentCharacter.CharacterId}#Amount#Col1",
+                ImGuiTableColumnFlags.WidthFixed, widthCol1);
+            ImGui.TableSetupColumn($"###SecretRecipeBooksTableAmount#{currentCharacter.CharacterId}#Amount#Col2",
+                ImGuiTableColumnFlags.WidthFixed, widthCol2);
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            ImGui.Text("");
+            ImGui.TableSetColumnIndex(1);
+            string endStr = string.Empty;
+            if (!_isSpoilerEnabled)
+            {
+                endStr += $"{Loc.Localize("ObtainedLowercase", " obtained")}";
+            }
+            else
+            {
+                endStr += $"/{_globalCache.SecretRecipeBookStorage.Count()}";
+            }
+            ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 3501)}: {currentCharacter.SecretRecipeBooks.Count}{endStr}");
+        }
+
+        private void DrawSecretRecipeBooksCollection(Character currentCharacter)
+        {
+            List<uint> secretRecipeBooks = (_obtainedSecretRecipeBookOnly) ? [.. currentCharacter.SecretRecipeBooks] : _globalCache.SecretRecipeBookStorage.Get();
+            int secretRecipeBooksCount = secretRecipeBooks.Count;
+            if (secretRecipeBooksCount == 0) return;
+            int rows = (int)Math.Ceiling(secretRecipeBooksCount / (double)10);
+            int height = rows * 48 + 0;
+
+            using var table = ImRaii.Table("###SecretRecipeBooksTable", 10,
+                ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner, new Vector2(572, height));
+            if (!table) return;
+
+            ImGui.TableSetupColumn("###SecretRecipeBooksTable#Col1",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+            ImGui.TableSetupColumn("###SecretRecipeBooksTable#Col2",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+            ImGui.TableSetupColumn("###SecretRecipeBooksTable#Col3",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+            ImGui.TableSetupColumn("###SecretRecipeBooksTable#Col4",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+            ImGui.TableSetupColumn("###SecretRecipeBooksTable#Col5",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+            ImGui.TableSetupColumn("###SecretRecipeBooksTable#Col6",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+            ImGui.TableSetupColumn("###SecretRecipeBooksTable#Col7",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+            ImGui.TableSetupColumn("###SecretRecipeBooksTable#Col8",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+            ImGui.TableSetupColumn("###SecretRecipeBooksTable#Col9",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+            ImGui.TableSetupColumn("###SecretRecipeBooksTable#Col10",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+
+            int i = 0;
+            foreach (uint fkId in secretRecipeBooks)
+            {
+                if (i % 10 == 0)
+                {
+                    ImGui.TableNextRow();
+                }
+
+                ImGui.TableNextColumn();
+                Models.SecretRecipeBook? srb = _globalCache.SecretRecipeBookStorage.GetSecretRecipeBook(_currentLocale, fkId);
+                if (srb == null)
+                {
+                    continue;
+                }
+
+                if (currentCharacter.HasSecretRecipeBook(fkId))
+                {
+                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(srb.Icon), new Vector2(48, 48));
+                }
+                else
+                {
+                    if (_isSpoilerEnabled)
+                    {
+                        Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(srb.Icon), new Vector2(48, 48),
+                            new Vector4(1, 1, 1, 0.5f));
+                    }
+                    else
+                    {
+                        Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(000786), new Vector2(48, 48));
+                    }
+                }
+                if (ImGui.IsItemHovered())
+                {
+                    Utils.DrawSecretRecipeBookTooltip(_currentLocale, ref _globalCache, srb);
                 }
 
                 i++;

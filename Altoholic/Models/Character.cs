@@ -58,6 +58,7 @@ namespace Altoholic.Models
         public List<Housing> Houses { get; set; } = [];
         public HashSet<uint> Hairstyles { get; set; } = [];
         public HashSet<uint> Facepaints { get; set; } = [];
+        public HashSet<uint> SecretRecipeBooks { get; set; } = [];
 
         public bool HasAnyLevelJob(int level)
         {
@@ -162,6 +163,11 @@ namespace Altoholic.Models
         public bool HasFacepaintFromIds(List<uint> ids)
         {
             return Facepaints.Count != 0 && ids.Any(id => Facepaints.Contains(id));
+        }
+        
+        public bool HasSecretRecipeBook(uint id)
+        {
+            return SecretRecipeBooks.Count > 0 && SecretRecipeBooks.Contains(id);
         }
     }
 }
