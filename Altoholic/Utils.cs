@@ -2242,6 +2242,111 @@ namespace Altoholic
             }
         }
 
+        public static void DrawVistaTooltip(ClientLanguage currentLocale, ref GlobalCache globalCache, Vista vista, bool hasVista, bool isSpoilerEnabled)
+        {
+            using var drawVistaTooltip = ImRaii.Tooltip();
+            if (!drawVistaTooltip) return;
+            using (var drawVistaDescriptionItem = ImRaii.Table($"###DrawVistaDescriptionItem#Vista_{vista.Id}", 2))
+            {
+                if (!drawVistaDescriptionItem) return;
+                ImGui.TableSetupColumn($"###DrawVistaDescriptionItem#Vista_{vista.Id}#Icon",
+                    ImGuiTableColumnFlags.WidthFixed, 55);
+                ImGui.TableSetupColumn($"###DrawVistaDescriptionItem#Vista_{vista.Id}#Name",
+                    ImGuiTableColumnFlags.WidthFixed, 305);
+                ImGui.TableNextRow();
+                ImGui.TableSetColumnIndex(0);
+                if (hasVista)
+                {
+                    DrawIcon(globalCache.IconStorage.LoadIcon((uint)vista.IconDiscovered), new Vector2(40, 40));
+                }
+                else
+                {
+                    if (isSpoilerEnabled)
+                    {
+                        DrawIcon(globalCache.IconStorage.LoadIcon((uint)vista.IconList), new Vector2(40, 40),
+                            new Vector4(1, 1, 1, 0.5f));
+                    }
+                    else
+                    {
+                        DrawIcon(globalCache.IconStorage.LoadIcon((uint)vista.IconUndiscovered), new Vector2(40, 40));
+                    }
+                }
+                ImGui.TableSetColumnIndex(1);
+                switch (currentLocale)
+                {
+                    case ClientLanguage.German:
+                        ImGui.TextUnformatted($"{Capitalize(vista.GermanName)}");
+                        break;
+                    case ClientLanguage.English:
+                        ImGui.TextUnformatted($"{Capitalize(vista.EnglishName)}");
+                        break;
+                    case ClientLanguage.French:
+                        ImGui.TextUnformatted($"{Capitalize(vista.FrenchName)}");
+                        break;
+                    case ClientLanguage.Japanese:
+                        ImGui.TextUnformatted($"{Capitalize(vista.JapaneseName)}");
+                        break;
+                }
+            }
+
+            Models.PlaceName? pn = globalCache.PlaceNameStorage.GetPlaceName(currentLocale, vista.PlaceNameId);
+            string locationName = currentLocale switch
+            {
+                ClientLanguage.German => pn?.GermanName,
+                ClientLanguage.English => pn?.EnglishName,
+                ClientLanguage.French => pn?.FrenchName,
+                ClientLanguage.Japanese => pn?.JapaneseName,
+                _ => pn?.EnglishName
+            } ?? string.Empty;
+            ImGui.TextUnformatted($"{globalCache.AddonStorage.LoadAddonString(currentLocale, 296)}: {locationName}");
+            Models.Emote? e = globalCache.EmoteStorage.GetEmote(currentLocale, vista.Emote);
+            string emoteName = currentLocale switch
+            {
+                ClientLanguage.German => e?.GermanName,
+                ClientLanguage.English => e?.EnglishName,
+                ClientLanguage.French => e?.FrenchName,
+                ClientLanguage.Japanese => e?.JapaneseName,
+                _ => e?.EnglishName
+            } ?? string.Empty;
+            ImGui.TextUnformatted($"{globalCache.AddonStorage.LoadAddonString(currentLocale, 635)}: {emoteName}");
+            ImGui.Separator();
+            if (hasVista || isSpoilerEnabled)
+            {
+                switch (currentLocale)
+                {
+                    case ClientLanguage.German:
+                        ImGui.TextUnformatted($"{Capitalize(vista.GermanDescription)}");
+                        break;
+                    case ClientLanguage.English:
+                        ImGui.TextUnformatted($"{Capitalize(vista.EnglishDescription)}");
+                        break;
+                    case ClientLanguage.French:
+                        ImGui.TextUnformatted($"{Capitalize(vista.FrenchDescription)}");
+                        break;
+                    case ClientLanguage.Japanese:
+                        ImGui.TextUnformatted($"{Capitalize(vista.JapaneseDescription)}");
+                        break;
+                }
+            }
+            else
+            {
+                switch (currentLocale)
+                {
+                    case ClientLanguage.German:
+                        ImGui.TextUnformatted($"{Capitalize(vista.GermanImpression)}");
+                        break;
+                    case ClientLanguage.English:
+                        ImGui.TextUnformatted($"{Capitalize(vista.EnglishImpression)}");
+                        break;
+                    case ClientLanguage.French:
+                        ImGui.TextUnformatted($"{Capitalize(vista.FrenchImpression)}");
+                        break;
+                    case ClientLanguage.Japanese:
+                        ImGui.TextUnformatted($"{Capitalize(vista.JapaneseImpression)}");
+                        break;
+                }
+            }
+        }
 
         private static string GetExtractableString(ClientLanguage currentLocale, GlobalCache globalCache, Item item)
         {
@@ -2758,6 +2863,65 @@ namespace Altoholic
             }
 
             return returnedSecretRecipeBookIds;
+        }
+
+        public static Adventure? GetVista(ClientLanguage currentLocale, uint id)
+        {
+            ExcelSheet<Adventure>? dv = Plugin.DataManager.GetExcelSheet<Adventure>(currentLocale);
+            Adventure? lumina = dv?.GetRow(id);
+            return lumina;
+        }
+        public static List<Vista>? GetAllVista(ClientLanguage currentLocale)
+        {
+            List<Vista> returnedVistasIds = [];
+            ExcelSheet<Adventure>? dv = Plugin.DataManager.GetExcelSheet<Adventure>(currentLocale);
+            using IEnumerator<Adventure>? vistaEnumerator = dv?.GetEnumerator();
+            if (vistaEnumerator is null) return null;
+            while (vistaEnumerator.MoveNext())
+            {
+                Adventure vista = vistaEnumerator.Current;
+                if (vista.Name.IsEmpty || vista.RowId == 0) continue;
+                Vista v = new()
+                {
+                    Id = vista.RowId,
+                    LevelId = vista.Level.RowId,
+                    MinLevel = vista.MinLevel,
+                    MaxLevel = vista.MaxLevel,
+                    Emote = vista.Emote.RowId,
+                    PlaceNameId = vista.PlaceName.RowId,
+                    IconList = vista.IconList,
+                    IconDiscovered = vista.IconDiscovered,
+                    IconUndiscovered = vista.IconUndiscovered,
+                    IsInitial = vista.IsInitial,
+                };
+                switch (currentLocale)
+                {
+                    case ClientLanguage.German:
+                        v.GermanName = vista.Name.ExtractText();
+                        v.GermanImpression = vista.Impression.ExtractText();
+                        v.GermanDescription = vista.Description.ExtractText();
+                        break;
+                    case ClientLanguage.English:
+                        v.EnglishName = vista.Name.ExtractText();
+                        v.EnglishImpression = vista.Impression.ExtractText();
+                        v.EnglishDescription = vista.Description.ExtractText();
+                        break;
+                    case ClientLanguage.French:
+                        v.FrenchName = vista.Name.ExtractText();
+                        v.FrenchImpression = vista.Impression.ExtractText();
+                        v.FrenchDescription = vista.Description.ExtractText();
+                        break;
+                    case ClientLanguage.Japanese:
+                        v.JapaneseName = vista.Name.ExtractText();
+                        v.JapaneseImpression = vista.Impression.ExtractText();
+                        v.JapaneseDescription = vista.Description.ExtractText();
+                        break;
+                }
+
+                returnedVistasIds.Add(v);
+            }
+
+            return returnedVistasIds;
         }
 
         public static List<uint> GetArmoireIds()

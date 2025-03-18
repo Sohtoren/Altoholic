@@ -22,5 +22,6 @@
         public required PlaceNameStorage PlaceNameStorage { get; set; } = null!;
         public required HairstyleStorage HairstyleStorage { get; set; } = null!;
         public required SecretRecipeBookStorage SecretRecipeBookStorage { get; set; } = null!;
+        public required VistaStorage VistaStorage{ get; set; } = null!;
     }
 }

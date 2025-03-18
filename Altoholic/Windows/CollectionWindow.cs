@@ -59,6 +59,7 @@ namespace Altoholic.Windows
         private bool _obtainedOrchestrionRollsOnly;
         private bool _obtainedSecretRecipeBookOnly;
         private bool _obtainedTripleTriadCardsOnly;
+        private bool _obtainedVistaOnly;
 
         /*public override void OnClose()
         {
@@ -88,6 +89,7 @@ namespace Altoholic.Windows
             _obtainedOrchestrionRollsOnly = false;
             _obtainedSecretRecipeBookOnly = false;
             _obtainedTripleTriadCardsOnly = false;
+            _obtainedVistaOnly = false;
         }
 
         public void Clear()
@@ -106,6 +108,7 @@ namespace Altoholic.Windows
             _obtainedOrchestrionRollsOnly = false;
             _obtainedSecretRecipeBookOnly = false;
             _obtainedTripleTriadCardsOnly = false;
+            _obtainedVistaOnly = false;
         }
 
         public override void Draw()
@@ -124,6 +127,7 @@ namespace Altoholic.Windows
             _obtainedOrchestrionRollsOnly = _plugin.Configuration.ObtainedOnly;
             _obtainedSecretRecipeBookOnly = _plugin.Configuration.ObtainedOnly;
             _obtainedTripleTriadCardsOnly = _plugin.Configuration.ObtainedOnly;
+            _obtainedVistaOnly = _plugin.Configuration.ObtainedOnly;
             
             List<Character> chars = [];
             chars.Insert(0, GetPlayer.Invoke());
@@ -292,6 +296,19 @@ namespace Altoholic.Windows
                 {
                     DrawTripleTriadCards(currentCharacter);
                 }
+            }
+
+            using (var vistaTab =
+                   ImRaii.TabItem("Vista"))
+            {
+                if (vistaTab.Success)
+                {
+                    DrawVistas(currentCharacter);
+                }
+            }
+            if (ImGui.IsItemHovered())
+            {
+                ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 8616)}");
             }
         }
 
@@ -1814,6 +1831,140 @@ namespace Altoholic.Windows
                 if (ImGui.IsItemHovered())
                 {
                     Utils.DrawSecretRecipeBookTooltip(_currentLocale, ref _globalCache, srb);
+                }
+
+                i++;
+            }
+        }
+
+        /**************************************************/
+        /**********************Vista***********************/
+        /**************************************************/
+        private void DrawVistas(Character currentCharacter)
+        {
+            switch (currentCharacter.SightseeingLogUnlockState)
+            {
+                case null:
+                    ImGui.TextUnformatted($"{Loc.Localize("CharacterNotScannedYet", "This character was not scanned yet")}");
+                    return;
+                case 0:
+                    ImGui.TextUnformatted($"{Loc.Localize("VistaNotUnlocked", "Sightseeing Log not unlocked")}");
+                    return;
+            }
+
+            using var vistasTabTable = ImRaii.Table("###VistasTabTable", 1, ImGuiTableFlags.ScrollY);
+            if (!vistasTabTable) return;
+            ImGui.TableSetupColumn($"###VistasTabTable#{currentCharacter.CharacterId}#Col1",
+                ImGuiTableColumnFlags.WidthStretch);
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            if (ImGui.Checkbox($"{Loc.Localize("ObtainedOnly", "Obtained only")}", ref _obtainedVistaOnly))
+            {
+                _plugin.Configuration.ObtainedOnly = _obtainedVistaOnly;
+                _plugin.Configuration.Save();
+            }
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            DrawVistasCollection(currentCharacter);
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            using var vistasTableAmount = ImRaii.Table("###VistasTableAmount", 2);
+            if (!vistasTableAmount) return;
+            int widthCol1 = 455;
+            int widthCol2 = 145;
+            if (_isSpoilerEnabled)
+            {
+                widthCol1 = 480;
+                widthCol2 = 120;
+            }
+            ImGui.TableSetupColumn($"###VistasTableAmount#{currentCharacter.CharacterId}#Amount#Col1",
+                ImGuiTableColumnFlags.WidthFixed, widthCol1);
+            ImGui.TableSetupColumn($"###VistasTableAmount#{currentCharacter.CharacterId}#Amount#Col2",
+                ImGuiTableColumnFlags.WidthFixed, widthCol2);
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            ImGui.Text("");
+            ImGui.TableSetColumnIndex(1);
+            string endStr = string.Empty;
+            if (!_isSpoilerEnabled)
+            {
+                endStr += $"{Loc.Localize("ObtainedLowercase", " obtained")}";
+            }
+            else
+            {
+                endStr += $"/{_globalCache.VistaStorage.Count()}";
+            }
+            ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 3501)}: {currentCharacter.Vistas.Count}{endStr}");
+        }
+
+        private void DrawVistasCollection(Character currentCharacter)
+        {
+            List<uint> vistas = (_obtainedVistaOnly) ? [.. currentCharacter.Vistas] : _globalCache.VistaStorage.Get();
+            int vistasCount = vistas.Count;
+            if (vistasCount == 0) return;
+            int rows = (int)Math.Ceiling(vistasCount / (double)10);
+            int height = rows * 48 + 0;
+
+            using var table = ImRaii.Table("###VistasTable", 10,
+                ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner, new Vector2(572, height));
+            if (!table) return;
+
+            ImGui.TableSetupColumn("###VistasTable#Col1",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+            ImGui.TableSetupColumn("###VistasTable#Col2",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+            ImGui.TableSetupColumn("###VistasTable#Col3",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+            ImGui.TableSetupColumn("###VistasTable#Col4",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+            ImGui.TableSetupColumn("###VistasTable#Col5",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+            ImGui.TableSetupColumn("###VistasTable#Col6",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+            ImGui.TableSetupColumn("###VistasTable#Col7",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+            ImGui.TableSetupColumn("###VistasTable#Col8",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+            ImGui.TableSetupColumn("###VistasTable#Col9",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+            ImGui.TableSetupColumn("###VistasTable#Col10",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+
+            int i = 0;
+            foreach (uint fkId in vistas)
+            {
+                if (i % 10 == 0)
+                {
+                    ImGui.TableNextRow();
+                }
+
+                ImGui.TableNextColumn();
+                Vista? v = _globalCache.VistaStorage.GetVista(_currentLocale, fkId);
+                if (v == null)
+                {
+                    continue;
+                }
+
+                bool hasVista = currentCharacter.HasVista(fkId);
+                if (hasVista)
+                {
+                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon((uint)v.IconDiscovered), new Vector2(48, 48));
+                }
+                else
+                {
+                    if (_isSpoilerEnabled)
+                    {
+                        Utils.DrawIcon(_globalCache.IconStorage.LoadIcon((uint)v.IconList), new Vector2(48, 48),
+                            new Vector4(1, 1, 1, 0.5f));
+                    }
+                    else
+                    {
+                        Utils.DrawIcon(_globalCache.IconStorage.LoadIcon((uint)v.IconUndiscovered), new Vector2(48, 48));
+                    }
+                }
+                if (ImGui.IsItemHovered())
+                {
+                    Utils.DrawVistaTooltip(_currentLocale, ref _globalCache, v, hasVista, _isSpoilerEnabled);
                 }
 
                 i++;

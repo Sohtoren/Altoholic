@@ -57,5 +57,8 @@ namespace Altoholic.Models
         public string Hairstyles { get; set; } = string.Empty;
         public string Facepaints { get; set; } = string.Empty;
         public string SecretRecipeBooks { get; set; } = string.Empty;
+        public string Vistas { get; set; } = string.Empty;
+        public int? SightseeingLogUnlockState { get; set; }
+        public int? SightseeingLogUnlockStateEx { get; set; }
     }
 }

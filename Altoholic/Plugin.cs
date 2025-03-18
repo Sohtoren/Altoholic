@@ -118,6 +118,7 @@ namespace Altoholic
                 PlaceNameStorage = new PlaceNameStorage(),
                 HairstyleStorage = new HairstyleStorage(),
                 SecretRecipeBookStorage = new SecretRecipeBookStorage(),
+                VistaStorage = new VistaStorage(),
             };
 
             nint playtimePtr = SigScanner.ScanText(PlaytimeSig);
@@ -195,6 +196,7 @@ namespace Altoholic
             _globalCache.PlaceNameStorage.Init(_globalCache);
             _globalCache.HairstyleStorage.Init(_globalCache);
             _globalCache.SecretRecipeBookStorage.Init(currentLocale, _globalCache);
+            _globalCache.VistaStorage.Init(currentLocale, _globalCache);
 
             _altoholicService = new(
                 () => _localPlayer,
@@ -322,7 +324,7 @@ namespace Altoholic
             _globalCache.PlaceNameStorage.Dispose();
             _globalCache.HairstyleStorage.Dispose();
             _globalCache.SecretRecipeBookStorage.Dispose();
-
+            _globalCache.VistaStorage.Dispose();
 
             CollectionWindow.Dispose();
             RetainersWindow.Dispose();
@@ -948,6 +950,11 @@ namespace Altoholic
             GetOrnamentFromState(player);
             GetGlassesFromState(player);
             GetSecretRecipeBookFromState(player);
+            GetVistaFromState(player);
+            _localPlayer.SightseeingLogUnlockState = player.SightseeingLogUnlockState;
+            _localPlayer.SightseeingLogUnlockStateEx = player.SightseeingLogUnlockStateEx;
+            //Log.Debug($"sightseeing: {player.SightseeingLogUnlockState}");// 0 = Not Unlocked, 1 = ARR Part 1, 2 = ARR Part 2
+            //Log.Debug($"sightseeing ex: {player.SightseeingLogUnlockStateEx}");// 3 = Quest "Sights of the North" completed (= AdventureExPhase unlocked?)
         }
 
         private void GetMountFromState(PlayerState player)
@@ -988,12 +995,17 @@ namespace Altoholic
         }
         private void GetSecretRecipeBookFromState(PlayerState player)
         {
-            foreach (uint i in _globalCache.SecretRecipeBookStorage.Get().Where(i => !_localPlayer.HasSecretRecipeBook(i)))
+            foreach (uint i in _globalCache.SecretRecipeBookStorage.Get().Where(i => !_localPlayer.HasSecretRecipeBook(i)).Where(i => player.IsSecretRecipeBookUnlocked(i)))
             {
-                if (player.IsSecretRecipeBookUnlocked(i))
-                {
-                    _localPlayer.SecretRecipeBooks.Add(i);
-                }
+                _localPlayer.SecretRecipeBooks.Add(i);
+            }
+        }
+        
+        private void GetVistaFromState(PlayerState player)
+        {
+            foreach (uint i in _globalCache.VistaStorage.Get().Where(i => !_localPlayer.HasVista(i)).Where(i => player.IsAdventureComplete(i - 2162688)))
+            {
+                _localPlayer.Vistas.Add(i);
             }
         }
 

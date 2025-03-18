@@ -145,7 +145,10 @@ namespace Altoholic.Database
                                                     Houses TEXT,
                                                     Hairstyles TEXT,
                                                     Facepaints TEXT,
-                                                    SecretRecipeBooks TEXT
+                                                    SecretRecipeBooks TEXT,
+                                                    Vistas TEXT,
+                                                    SightseeingLogUnlockState SMALLINT,
+                                                    SightseeingLogUnlockStateEx SMALLINT
                                                 );
                                     """;
                 int result = db.Execute(sql);
@@ -197,9 +200,32 @@ namespace Altoholic.Database
                 if (!DoesColumnExist(db, CharacterTableName, "SecretRecipeBooks"))
                 {
                     Plugin.Log.Debug($"Column {CharacterTableName}.SecretRecipeBooks does not exist");
-                    const string sql18 = $"ALTER TABLE {CharacterTableName} ADD COLUMN SecretRecipeBooks TEXT";
-                    int result18 = db.Execute(sql18);
-                    Plugin.Log.Debug($"ALTER TABLE {CharacterTableName} ADD COLUMN SecretRecipeBooks TEXT result: {result18}");
+                    const string sql19 = $"ALTER TABLE {CharacterTableName} ADD COLUMN SecretRecipeBooks TEXT";
+                    int result19 = db.Execute(sql19);
+                    Plugin.Log.Debug($"ALTER TABLE {CharacterTableName} ADD COLUMN SecretRecipeBooks TEXT result: {result19}");
+                }
+                
+                if (!DoesColumnExist(db, CharacterTableName, "Vistas"))
+                {
+                    Plugin.Log.Debug($"Column {CharacterTableName}.Vistas does not exist");
+                    const string sql20 = $"ALTER TABLE {CharacterTableName} ADD COLUMN Vistas TEXT";
+                    int result20 = db.Execute(sql20);
+                    Plugin.Log.Debug($"ALTER TABLE {CharacterTableName} ADD COLUMN Vistas TEXT result: {result20}");
+                }
+                
+                if (!DoesColumnExist(db, CharacterTableName, "SightseeingLogUnlockState"))
+                {
+                    Plugin.Log.Debug($"Column {CharacterTableName}.SightseeingLogUnlockState does not exist");
+                    const string sql21 = $"ALTER TABLE {CharacterTableName} ADD COLUMN SightseeingLogUnlockState SMALLINT";
+                    int result21 = db.Execute(sql21);
+                    Plugin.Log.Debug($"ALTER TABLE {CharacterTableName} ADD COLUMN SightseeingLogUnlockState SMALLINT result: {result21}");
+                }
+                if (!DoesColumnExist(db, CharacterTableName, "SightseeingLogUnlockStateEx"))
+                {
+                    Plugin.Log.Debug($"Column {CharacterTableName}.SightseeingLogUnlockStateEx does not exist");
+                    const string sql22 = $"ALTER TABLE {CharacterTableName} ADD COLUMN SightseeingLogUnlockStateEx SMALLINT";
+                    int result22 = db.Execute(sql22);
+                    Plugin.Log.Debug($"ALTER TABLE {CharacterTableName} ADD COLUMN SightseeingLogUnlockStateEx SMALLINT result: {result22}");
                 }
 
                 //Prevent old typo to mess up
@@ -523,7 +549,7 @@ namespace Altoholic.Database
 
             try
             {
-                const string updateSql = $"UPDATE {CharacterTableName} SET [FirstName] = @FirstName, [LastName] = @LastName, [HomeWorld] = @HomeWorld, [Datacenter] = @Datacenter, [Region] = @Region, [IsSprout] = @IsSprout, [IsBattleMentor] = @IsBattleMentor, [IsTradeMentor] = @IsTradeMentor, [IsReturner] = @IsReturner, [LastJob] = @LastJob, [LastJobLevel] = @LastJobLevel, [FCTag] = @FCTag, [FreeCompany] = @FreeCompany, [LastOnline] = @LastOnline, [PlayTime] = @PlayTime, [LastPlayTimeUpdate] = @LastPlayTimeUpdate, [HasPremiumSaddlebag] = @HasPremiumSaddlebag, [PlayerCommendations] = @PlayerCommendations, [CurrentFacewear] = @CurrentFacewear, [CurrentOrnament] = @CurrentOrnament, [UnreadLetters] = @UnreadLetters, [Attributes] = @Attributes, [Currencies] = @Currencies, [Jobs] = @Jobs, [Profile] = @Profile, [Quests] = @Quests, [Inventory] = @Inventory, [ArmoryInventory] = @ArmoryInventory, [Saddle] = @Saddle, [Gear] = @Gear, [Retainers] = @Retainers, [Minions] = @Minions, [Mounts] = @Mounts, [TripleTriadCards] = @TripleTriadCards, [Emotes] = @Emotes, [Bardings] = @Bardings, [FramerKits] = @FramerKits, [OrchestrionRolls] = @OrchestrionRolls, [Ornaments] = @Ornaments, [Glasses] = @Glasses, [BeastReputations] = @BeastReputations, [Duties] = @Duties, [DutiesUnlocked] = @DutiesUnlocked, [Houses] = @Houses, [Hairstyles] = @Hairstyles, [Facepaints] = @Facepaints, [SecretRecipeBooks] = @SecretRecipeBooks WHERE [CharacterId] = @CharacterId";
+                const string updateSql = $"UPDATE {CharacterTableName} SET [FirstName] = @FirstName, [LastName] = @LastName, [HomeWorld] = @HomeWorld, [Datacenter] = @Datacenter, [Region] = @Region, [IsSprout] = @IsSprout, [IsBattleMentor] = @IsBattleMentor, [IsTradeMentor] = @IsTradeMentor, [IsReturner] = @IsReturner, [LastJob] = @LastJob, [LastJobLevel] = @LastJobLevel, [FCTag] = @FCTag, [FreeCompany] = @FreeCompany, [LastOnline] = @LastOnline, [PlayTime] = @PlayTime, [LastPlayTimeUpdate] = @LastPlayTimeUpdate, [HasPremiumSaddlebag] = @HasPremiumSaddlebag, [PlayerCommendations] = @PlayerCommendations, [CurrentFacewear] = @CurrentFacewear, [CurrentOrnament] = @CurrentOrnament, [UnreadLetters] = @UnreadLetters, [Attributes] = @Attributes, [Currencies] = @Currencies, [Jobs] = @Jobs, [Profile] = @Profile, [Quests] = @Quests, [Inventory] = @Inventory, [ArmoryInventory] = @ArmoryInventory, [Saddle] = @Saddle, [Gear] = @Gear, [Retainers] = @Retainers, [Minions] = @Minions, [Mounts] = @Mounts, [TripleTriadCards] = @TripleTriadCards, [Emotes] = @Emotes, [Bardings] = @Bardings, [FramerKits] = @FramerKits, [OrchestrionRolls] = @OrchestrionRolls, [Ornaments] = @Ornaments, [Glasses] = @Glasses, [BeastReputations] = @BeastReputations, [Duties] = @Duties, [DutiesUnlocked] = @DutiesUnlocked, [Houses] = @Houses, [Hairstyles] = @Hairstyles, [Facepaints] = @Facepaints, [SecretRecipeBooks] = @SecretRecipeBooks, [Vistas] = @Vistas, [SightseeingLogUnlockState] = @SightseeingLogUnlockState, [SightseeingLogUnlockStateEx] = @SightseeingLogUnlockStateEx WHERE [CharacterId] = @CharacterId";
                 int result = db.Execute(updateSql, FormatCharacterForDatabase(character));
                 return result;
             }
@@ -672,6 +698,11 @@ namespace Altoholic.Database
                 : System.Text.Json.JsonSerializer.Deserialize<List<uint>>(databaseCharacter
                     .SecretRecipeBooks) ?? [];
             Plugin.Log.Debug("SecretRecipeBooks deserialized");
+            List<uint> vistas = string.IsNullOrEmpty(databaseCharacter.Vistas)
+                ? []
+                : System.Text.Json.JsonSerializer.Deserialize<List<uint>>(databaseCharacter
+                    .Vistas) ?? [];
+            Plugin.Log.Debug("Vistas deserialized");
 
             return new Character()
             {
@@ -726,6 +757,9 @@ namespace Altoholic.Database
                 Hairstyles = [.. hairstyles],
                 Facepaints = [.. facepaints],
                 SecretRecipeBooks = [.. secretRecipeBooks],
+                Vistas = [.. vistas],
+                SightseeingLogUnlockState = databaseCharacter.SightseeingLogUnlockState,
+                SightseeingLogUnlockStateEx = databaseCharacter.SightseeingLogUnlockStateEx,
             };
         }
 
@@ -758,6 +792,7 @@ namespace Altoholic.Database
             string hairstyles = System.Text.Json.JsonSerializer.Serialize(character.Hairstyles);
             string facepaints = System.Text.Json.JsonSerializer.Serialize(character.Facepaints);
             string secretRecipeBooks = System.Text.Json.JsonSerializer.Serialize(character.SecretRecipeBooks);
+            string vistas = System.Text.Json.JsonSerializer.Serialize(character.Vistas);
 
             return new DatabaseCharacter()
             {
@@ -812,14 +847,17 @@ namespace Altoholic.Database
                 Hairstyles = hairstyles,
                 Facepaints = facepaints,
                 SecretRecipeBooks = secretRecipeBooks,
+                Vistas = vistas,
+                SightseeingLogUnlockState = character.SightseeingLogUnlockState,
+                SightseeingLogUnlockStateEx = character.SightseeingLogUnlockStateEx,
             };
         }
 
         public static int AddCharacter(SqliteConnection db, Character character)
         {
             Plugin.Log.Debug("Entering AddCharacter()");
-            const string insertQuery = $"INSERT INTO {CharacterTableName}([CharacterId], [FirstName], [LastName], [HomeWorld], [Datacenter], [Region], [IsSprout], [IsBattleMentor], [IsTradeMentor], [IsReturner], [LastJob], [LastJobLevel], [FCTag], [FreeCompany], [LastOnline], [PlayTime], [LastPlayTimeUpdate], [HasPremiumSaddlebag], [PlayerCommendations], [CurrentFacewear], [CurrentOrnament], [UnreadLetters], [Attributes], [Currencies], [Jobs], [Profile], [Quests], [Inventory], [ArmoryInventory], [Saddle], [Gear], [Retainers], [Minions], [Mounts], [TripleTriadCards], [Emotes], [Bardings], [FramerKits], [OrchestrionRolls], [Ornaments], [Glasses], [BeastReputations], [Duties], [DutiesUnlocked], [Houses], [Hairstyles], [Facepaints], [SecretRecipeBooks]) " +
-                                       "VALUES (@CharacterId, @FirstName, @LastName, @HomeWorld, @Datacenter, @Region, @IsSprout, @IsBattleMentor, @IsTradeMentor, @IsReturner, @LastJob, @LastJobLevel, @FCTag, @FreeCompany, @LastOnline, @PlayTime, @LastPlayTimeUpdate, @HasPremiumSaddlebag, @PlayerCommendations, @CurrentFacewear, @CurrentOrnament, @UnreadLetters, @Attributes, @Currencies, @Jobs, @Profile, @Quests, @Inventory, @ArmoryInventory, @Saddle, @Gear, @Retainers, @Minions, @Mounts, @TripleTriadCards, @Emotes, @Bardings, @FramerKits, @OrchestrionRolls, @Ornaments, @Glasses, @BeastReputations, @Duties, @DutiesUnlocked, @Houses, @Hairstyles, @Facepaints, @SecretRecipeBooks)";
+            const string insertQuery = $"INSERT INTO {CharacterTableName}([CharacterId], [FirstName], [LastName], [HomeWorld], [Datacenter], [Region], [IsSprout], [IsBattleMentor], [IsTradeMentor], [IsReturner], [LastJob], [LastJobLevel], [FCTag], [FreeCompany], [LastOnline], [PlayTime], [LastPlayTimeUpdate], [HasPremiumSaddlebag], [PlayerCommendations], [CurrentFacewear], [CurrentOrnament], [UnreadLetters], [Attributes], [Currencies], [Jobs], [Profile], [Quests], [Inventory], [ArmoryInventory], [Saddle], [Gear], [Retainers], [Minions], [Mounts], [TripleTriadCards], [Emotes], [Bardings], [FramerKits], [OrchestrionRolls], [Ornaments], [Glasses], [BeastReputations], [Duties], [DutiesUnlocked], [Houses], [Hairstyles], [Facepaints], [SecretRecipeBooks], [Vistas], [SightseeingLogUnlockState], [SightseeingLogUnlockStateEx]) " +
+                                       "VALUES (@CharacterId, @FirstName, @LastName, @HomeWorld, @Datacenter, @Region, @IsSprout, @IsBattleMentor, @IsTradeMentor, @IsReturner, @LastJob, @LastJobLevel, @FCTag, @FreeCompany, @LastOnline, @PlayTime, @LastPlayTimeUpdate, @HasPremiumSaddlebag, @PlayerCommendations, @CurrentFacewear, @CurrentOrnament, @UnreadLetters, @Attributes, @Currencies, @Jobs, @Profile, @Quests, @Inventory, @ArmoryInventory, @Saddle, @Gear, @Retainers, @Minions, @Mounts, @TripleTriadCards, @Emotes, @Bardings, @FramerKits, @OrchestrionRolls, @Ornaments, @Glasses, @BeastReputations, @Duties, @DutiesUnlocked, @Houses, @Hairstyles, @Facepaints, @SecretRecipeBooks, @Vistas, @SightseeingLogUnlockState, @SightseeingLogUnlockStateEx)";
 
             int result = db.Execute(insertQuery, FormatCharacterForDatabase(character));
 
