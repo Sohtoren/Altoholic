@@ -197,57 +197,69 @@ namespace Altoholic.Windows
         {
             using var tabBar = ImRaii.TabBar("###CollectionWindow#Tabs");
             if (!tabBar.Success) return;
+
             using (var bardingsTab =
-                   ImRaii.TabItem($"{Loc.Localize("Barding", "Barding")}")) // Harnisch Barding Barde バード
+                   ImRaii.TabItem(
+                       $"{Loc.Localize("Barding", "Barding")}###CollectionWindow#Tabs#Bardings")) // Harnisch Barding Barde バード
             {
                 if (bardingsTab.Success)
                 {
                     DrawBardings(currentCharacter);
                 }
             }
+
             using (var emotesTab =
-                   ImRaii.TabItem($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 780)}"))
+                   ImRaii.TabItem(
+                       $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 780)}###CollectionWindow#Tabs#Emotes"))
             {
                 if (emotesTab.Success)
                 {
                     DrawEmotes(currentCharacter);
                 }
             }
+
             using (var fashionAccessoriesTab =
-                   ImRaii.TabItem($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 13671)}"))
+                   ImRaii.TabItem(
+                       $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 13671)}###CollectionWindow#Tabs#Fashion"))
             {
                 if (fashionAccessoriesTab.Success)
                 {
                     DrawOrnaments(currentCharacter);
                 }
             }
+
             using (var facepaintTab =
-                   ImRaii.TabItem($"{Loc.Localize("Facepaint", "Facepaint")}"))
+                   ImRaii.TabItem($"{Loc.Localize("Facepaint", "Facepaint")}###CollectionWindow#Tabs#Facepaints"))
             {
                 if (facepaintTab.Success)
                 {
                     DrawFacepaints(currentCharacter);
                 }
             }
+
             using (var framerKitTab =
-                   ImRaii.TabItem($"{Loc.Localize("FramerKit", "Framer's kit")}")) // Portraitmaterial[p] / Framer's kit / Portrait / ポートレート
+                   ImRaii.TabItem(
+                       $"{Loc.Localize("FramerKit", "Framer's kit")}###CollectionWindow#Tabs#Framerkits")) // Portraitmaterial[p] / Framer's kit / Portrait / ポートレート
             {
                 if (framerKitTab.Success)
                 {
                     DrawFramerKits(currentCharacter);
                 }
             }
+
             using (var glassesTab =
-                   ImRaii.TabItem($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 16051)}"))
+                   ImRaii.TabItem(
+                       $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 16051)}###CollectionWindow#Tabs#Glasses"))
             {
                 if (glassesTab.Success)
                 {
                     DrawGlasses(currentCharacter);
                 }
             }
-            
+
             using (var hairsTab =
-                   ImRaii.TabItem($"{Loc.Localize("Hairstyle", "Hairstyle")}")) // Frisur Hairstyle Coupe de cheveux 髪型
+                   ImRaii.TabItem(
+                       $"{Loc.Localize("Hairstyle", "Hairstyle")}###CollectionWindow#Tabs#Hairstyles")) // Frisur Hairstyle Coupe de cheveux 髪型
             {
                 if (hairsTab.Success)
                 {
@@ -256,7 +268,8 @@ namespace Altoholic.Windows
             }
 
             using (var minionsTab =
-                   ImRaii.TabItem($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 8303)}"))//Minions // 7595 for Katakana
+                   ImRaii.TabItem(
+                       $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 8303)}###CollectionWindow#Tabs#Minions")) //Minions // 7595 for Katakana
             {
                 if (minionsTab.Success)
                 {
@@ -265,7 +278,8 @@ namespace Altoholic.Windows
             }
 
             using (var mountsTab =
-                   ImRaii.TabItem($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 8302)}")) // Mounts // 13971 for Katakana
+                   ImRaii.TabItem(
+                       $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 8302)}###CollectionWindow#Tabs#Mounts")) // Mounts // 13971 for Katakana
             {
                 if (mountsTab.Success)
                 {
@@ -273,15 +287,16 @@ namespace Altoholic.Windows
                 }
             }
 
-            using (var orchestrionsTab = ImRaii.TabItem("Orchestrions")) // same name in all languages
+            using (var orchestrionsTab =
+                   ImRaii.TabItem("Orchestrions###CollectionWindow#Tabs#Orchestrion")) // same name in all languages
             {
                 if (orchestrionsTab.Success)
                 {
                     DrawOrchestrionRolls(currentCharacter);
                 }
             }
-            
-            using (var tomesTab = ImRaii.TabItem("Tomes")) 
+
+            using (var tomesTab = ImRaii.TabItem("Tomes###CollectionWindow#Tabs#Tomes"))
             {
                 if (tomesTab.Success)
                 {
@@ -290,7 +305,8 @@ namespace Altoholic.Windows
             }
 
             using (var tripleTriadTab =
-                   ImRaii.TabItem($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 9529)}")) //9991 for katakana
+                   ImRaii.TabItem(
+                       $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 9529)}###CollectionWindow#Tabs#TTC")) //9991 for katakana
             {
                 if (tripleTriadTab.Success)
                 {
@@ -299,13 +315,14 @@ namespace Altoholic.Windows
             }
 
             using (var vistaTab =
-                   ImRaii.TabItem("Vista"))
+                   ImRaii.TabItem("Vista###CollectionWindow#Tabs#Vista"))
             {
                 if (vistaTab.Success)
                 {
                     DrawVistas(currentCharacter);
                 }
             }
+
             if (ImGui.IsItemHovered())
             {
                 ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 8616)}");
