@@ -67,6 +67,8 @@ namespace Altoholic.Windows
         private readonly Dictionary<InventoryType, IDalamudTextureWrap?> _armoryTabTextures = [];
         private InventoryType? _selectedTab;
 
+        private bool _isSpoilerEnabled;
+        private bool _obtainedArmoireOnly;
         /*public override void OnClose()
         {
             Plugin.Log.Debug("InventoryWindow, OnClose() called");
@@ -89,6 +91,8 @@ namespace Altoholic.Windows
             _lastSearchedItem = string.Empty;
             _selectedArmory = null;
             _selectedTab = null;
+            _isSpoilerEnabled = false;
+            _obtainedArmoireOnly = false;
 
             foreach (var loadedTexture in _armoryTabTextures) loadedTexture.Value?.Dispose();
             _armouryBoard.Dispose();
@@ -104,11 +108,15 @@ namespace Altoholic.Windows
             _lastSearchedItem = string.Empty;
             _selectedArmory = null;
             _selectedTab = null;
+            _isSpoilerEnabled = false;
+            _obtainedArmoireOnly = false;
         }
 
         public override void Draw()
         {
             _currentLocale = _plugin.Configuration.Language;
+            _obtainedArmoireOnly = _plugin.Configuration.ObtainedOnly;
+            _isSpoilerEnabled = _plugin.Configuration.IsSpoilersEnabled;
             List<Character> chars = [];
             chars.Insert(0, GetPlayer.Invoke());
             chars.AddRange(GetOthersCharactersList.Invoke());
@@ -361,15 +369,15 @@ namespace Altoholic.Windows
                 {
                     // Todo: implement
                 }
-            }
+            }*/
 
             using (var armoireTab = ImRaii.TabItem($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 3734)}###CharactersInventoryTable#Inventories#{selectedCharacter.CharacterId}#TabBar#ArmoireInventoryTab"))
             {
                 if (armoireTab)
                 {
-                    // Todo: implement
+                    DrawArmoire(selectedCharacter);
                 }
-            }*/
+            }
         }
 
         private void DrawMainInventories(Character selectedCharacter)
@@ -517,7 +525,7 @@ namespace Altoholic.Windows
                         continue;
                     }
 
-                    bool armoire = _globalCache.ItemStorage.CanBeInArmoire(itm.Value.RowId);
+                    bool armoire = _globalCache.ArmoireStorage.CanBeInArmoire(itm.Value.RowId);
                     Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Value.Icon, item.HQ), new Vector2(36, 36));
                     if (ImGui.IsItemHovered())
                     {
@@ -919,6 +927,133 @@ namespace Altoholic.Windows
                 ImGui.Text("");
                 ImGui.TableSetColumnIndex(1);
                 ImGui.TextUnformatted($"{inventory.FindAll(i => i.ItemId != 0).Count}/{inventory.Count}");
+            }
+        }
+
+        private void DrawArmoire(Character currentCharacter)
+        {
+            using var armoireTable = ImRaii.Table("###armoireTable", 1, ImGuiTableFlags.ScrollY);
+            if (!armoireTable) return;
+            ImGui.TableSetupColumn($"###armoireTable#{currentCharacter.CharacterId}#Col1",
+                ImGuiTableColumnFlags.WidthStretch);
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            if (ImGui.Checkbox($"{Loc.Localize("ObtainedOnly", "Obtained only")}", ref _obtainedArmoireOnly))
+            {
+                _plugin.Configuration.ObtainedOnly = _obtainedArmoireOnly;
+                _plugin.Configuration.Save();
+            }
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            DrawArmoireCollection(currentCharacter);
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            using var armoireTableAmount = ImRaii.Table("###ArmoireTableAmount", 2);
+            if (!armoireTableAmount) return;
+            int widthCol1 = 455;
+            int widthCol2 = 145;
+            if (_isSpoilerEnabled)
+            {
+                widthCol1 = 480;
+                widthCol2 = 120;
+            }
+            ImGui.TableSetupColumn($"###ArmoireTableAmount#{currentCharacter.CharacterId}#Amount#Col1",
+                ImGuiTableColumnFlags.WidthFixed, widthCol1);
+            ImGui.TableSetupColumn($"###ArmoireTableAmount#{currentCharacter.CharacterId}#Amount#Col2",
+                ImGuiTableColumnFlags.WidthFixed, widthCol2);
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            ImGui.Text("");
+            ImGui.TableSetColumnIndex(1);
+            string endStr = string.Empty;
+            if (!_isSpoilerEnabled)
+            {
+                endStr += $"{Loc.Localize("ObtainedLowercase", " obtained")}";
+            }
+            else
+            {
+                endStr += $"/{_globalCache.ArmoireStorage.Count()}";
+            }
+            ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 3501)}: {currentCharacter.Armoire.Count}{endStr}");
+        }
+
+        private void DrawArmoireCollection(Character currentCharacter)
+        {
+            List<uint> armoireItems = (_obtainedArmoireOnly) ? [.. currentCharacter.Armoire] : _globalCache.ArmoireStorage.Get();
+            int armoireCount = armoireItems.Count;
+            if (armoireCount == 0) return;
+            int rows = (int)Math.Ceiling(armoireCount / (double)10);
+            int height = rows * 48 + 0;
+
+            using var table = ImRaii.Table("###ArmoireItemsTable", 10,
+                ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner, new Vector2(572, height));
+            if (!table) return;
+
+            ImGui.TableSetupColumn("###ArmoireItemsTable#Col1",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+            ImGui.TableSetupColumn("###ArmoireItemsTable#Col2",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+            ImGui.TableSetupColumn("###ArmoireItemsTable#Col3",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+            ImGui.TableSetupColumn("###ArmoireItemsTable#Col4",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+            ImGui.TableSetupColumn("###ArmoireItemsTable#Col5",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+            ImGui.TableSetupColumn("###ArmoireItemsTable#Col6",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+            ImGui.TableSetupColumn("###ArmoireItemsTable#Col7",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+            ImGui.TableSetupColumn("###ArmoireItemsTable#Col8",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+            ImGui.TableSetupColumn("###ArmoireItemsTable#Col9",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+            ImGui.TableSetupColumn("###ArmoireItemsTable#Col10",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+
+            int i = 0;
+            foreach (uint fkId in armoireItems)
+            {
+                if (i % 10 == 0)
+                {
+                    ImGui.TableNextRow();
+                }
+
+                ImGui.TableNextColumn();
+                Armoire? a = _globalCache.ArmoireStorage.GetArmoire(fkId);
+                if (a == null)
+                {
+                    continue;
+                }
+                Item? itm = _globalCache.ItemStorage.LoadItem(_currentLocale, a.ItemId);
+                if (itm == null)
+                {
+                    continue;
+                }
+
+                Item item = itm.Value;
+
+                if (currentCharacter.HasArmoire(fkId))
+                {
+                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(item.Icon), new Vector2(48, 48));
+                }
+                else
+                {
+                    if (_isSpoilerEnabled)
+                    {
+                        Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(item.Icon), new Vector2(48, 48),
+                            new Vector4(1, 1, 1, 0.5f));
+                    }
+                    else
+                    {
+                        Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(000786), new Vector2(48, 48));
+                    }
+                }
+                if (ImGui.IsItemHovered())
+                {
+                    Utils.DrawItemTooltip(_currentLocale, ref _globalCache, item);
+                }
+
+                i++;
             }
         }
     }

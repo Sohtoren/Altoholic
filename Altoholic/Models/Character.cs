@@ -62,6 +62,7 @@ namespace Altoholic.Models
         public HashSet<uint> Vistas { get; set; } = [];
         public int? SightseeingLogUnlockState { get; set; }
         public int? SightseeingLogUnlockStateEx { get; set; }
+        public HashSet<uint> Armoire { get; set; } = [];
 
         public bool HasAnyLevelJob(int level)
         {
@@ -176,6 +177,10 @@ namespace Altoholic.Models
         public bool HasVista(uint id)
         {
             return Vistas.Count > 0 && Vistas.Contains(id);
+        }
+        public bool HasArmoire(uint id)
+        {
+            return Armoire.Count > 0 && Armoire.Contains(id);
         }
     }
 }

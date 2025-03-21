@@ -60,5 +60,6 @@ namespace Altoholic.Models
         public string Vistas { get; set; } = string.Empty;
         public int? SightseeingLogUnlockState { get; set; }
         public int? SightseeingLogUnlockStateEx { get; set; }
+        public string Armoire { get; set; } = string.Empty;
     }
 }

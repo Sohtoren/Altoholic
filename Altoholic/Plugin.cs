@@ -119,6 +119,7 @@ namespace Altoholic
                 HairstyleStorage = new HairstyleStorage(),
                 SecretRecipeBookStorage = new SecretRecipeBookStorage(),
                 VistaStorage = new VistaStorage(),
+                ArmoireStorage = new ArmoireStorage(),
             };
 
             nint playtimePtr = SigScanner.ScanText(PlaytimeSig);
@@ -180,7 +181,6 @@ namespace Altoholic
             _localization.SetupWithLangCode(PluginInterface.UiLanguage);
 
             _globalCache.IconStorage.Init();
-            _globalCache.ItemStorage.Init();
             _globalCache.BardingStorage.Init(currentLocale, _globalCache);
             _globalCache.EmoteStorage.Init(currentLocale, _globalCache);
             _globalCache.OrnamentStorage.Init(currentLocale, _globalCache);
@@ -197,6 +197,7 @@ namespace Altoholic
             _globalCache.HairstyleStorage.Init(_globalCache);
             _globalCache.SecretRecipeBookStorage.Init(currentLocale, _globalCache);
             _globalCache.VistaStorage.Init(currentLocale, _globalCache);
+            _globalCache.ArmoireStorage.Init(currentLocale, _globalCache);
 
             _altoholicService = new(
                 () => _localPlayer,
@@ -325,6 +326,7 @@ namespace Altoholic
             _globalCache.HairstyleStorage.Dispose();
             _globalCache.SecretRecipeBookStorage.Dispose();
             _globalCache.VistaStorage.Dispose();
+            _globalCache.ArmoireStorage.Dispose();
 
             CollectionWindow.Dispose();
             RetainersWindow.Dispose();
@@ -914,6 +916,20 @@ namespace Altoholic
                 if (uistate.Buddy.CompanionInfo.IsBuddyEquipUnlocked(i))
                 {
                     _localPlayer.Bardings.Add(i);
+                }
+            }
+
+
+            if (uistate.Cabinet.IsCabinetLoaded())
+            {
+                _localPlayer.Armoire = [];
+                foreach (uint i in _globalCache.ArmoireStorage.Get())
+                {
+
+                    if (uistate.Cabinet.IsItemInCabinet((int)i))
+                    {
+                        _localPlayer.Armoire.Add(i);
+                    }
                 }
             }
 

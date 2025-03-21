@@ -920,6 +920,20 @@ namespace Altoholic
             return returnedbtsIds;
         }
 
+        public static string GetTribalNameFromId(ClientLanguage currentLocale, uint id)
+        {
+            ExcelSheet<BeastTribe>? dbt = Plugin.DataManager.GetExcelSheet<BeastTribe>(currentLocale);
+            BeastTribe? lumina = dbt?.GetRow(id);
+            return lumina != null ? lumina.Value.Name.ExtractText() : string.Empty;
+        }
+        public static string GetTribalCurrencyFromId(ClientLanguage currentLocale, uint id)
+        {
+            //Plugin.Log.Debug($"GetItemNameFromId : {id}");
+            ExcelSheet<BeastTribe>? dbt = Plugin.DataManager.GetExcelSheet<BeastTribe>(currentLocale);
+            BeastTribe? lumina = dbt?.GetRow(id);
+            return lumina != null ? lumina.Value.Name.ExtractText() : string.Empty;
+        }
+
         public static uint ConvertColorToAbgr(uint rgbColor)
         {
             var red = (byte)((rgbColor >> 16) & 0xFF);
@@ -2924,7 +2938,7 @@ namespace Altoholic
             return returnedVistasIds;
         }
 
-        public static List<uint> GetArmoireIds()
+        /*public static List<uint> GetArmoireIds()
         {
             List<uint> returnedCabinetsIds = [];
             ExcelSheet<Cabinet>? dor = Plugin.DataManager.GetExcelSheet<Cabinet>(ClientLanguage.English);
@@ -2940,21 +2954,7 @@ namespace Altoholic
             }
 
             return returnedCabinetsIds;
-        }
-
-        public static string GetTribalNameFromId(ClientLanguage currentLocale, uint id)
-        {
-            ExcelSheet<BeastTribe>? dbt = Plugin.DataManager.GetExcelSheet<BeastTribe>(currentLocale);
-            BeastTribe? lumina = dbt?.GetRow(id);
-            return lumina != null ? lumina.Value.Name.ExtractText() : string.Empty;
-        }
-        public static string GetTribalCurrencyFromId(ClientLanguage currentLocale, uint id)
-        {
-            //Plugin.Log.Debug($"GetItemNameFromId : {id}");
-            ExcelSheet<BeastTribe>? dbt = Plugin.DataManager.GetExcelSheet<BeastTribe>(currentLocale);
-            BeastTribe? lumina = dbt?.GetRow(id);
-            return lumina != null ? lumina.Value.Name.ExtractText() : string.Empty;
-        }
+        }*/
 
         public static string Capitalize(string str)
         {
@@ -3737,6 +3737,77 @@ namespace Altoholic
             };
 
         }
+
+        public static List<Armoire>? GetAllArmoire(ClientLanguage currentLocale)
+        {
+            List<Armoire> returnedIds = [];
+            ExcelSheet<Cabinet>? cm = Plugin.DataManager.GetExcelSheet<Cabinet>(currentLocale);
+            using IEnumerator<Cabinet>? cEnumerator = cm?.GetEnumerator();
+            if (cEnumerator is null) return null;
+            while (cEnumerator.MoveNext())
+            {
+                Cabinet c = cEnumerator.Current;
+                if (c.Item.Value.Name.IsEmpty) continue;
+                Armoire a = new()
+                {
+                    Id = c.RowId,
+                    ItemId = c.Item.RowId,
+                    Order = c.Order,
+                    ArmoireCategory = c.Category.RowId,
+                    ArmoireSubcategory = c.SubCategory.RowId
+                };
+
+                returnedIds.Add(a);
+            }
+
+            return returnedIds;
+        }
+        /*public static List<ArmoireSubCategory>? GetAllArmoireSubCategories(ClientLanguage currentLocale)
+        {
+            List<ArmoireSubCategory> returnedIds = [];
+            ExcelSheet<CabinetSubCategory>? cm = Plugin.DataManager.GetExcelSheet<CabinetSubCategory>(currentLocale);
+            using IEnumerator<CabinetSubCategory>? cEnumerator = cm?.GetEnumerator();
+            if (cEnumerator is null) return null;
+            while (cEnumerator.MoveNext())
+            {
+                CabinetSubCategory csc = cEnumerator.Current;
+                if (csc.RowId == 0) continue;
+                ArmoireSubCategory asc = new()
+                {
+                    Id = csc.RowId,
+                    MenuOrder= csc.MenuOrder,
+                };
+
+                switch (currentLocale)
+                {
+                    case ClientLanguage.German:
+                        {
+                            asc.GermanName = csc.Name.ExtractText();
+                            break;
+                        }
+                    case ClientLanguage.English:
+                        {
+                            asc.EnglishName = csc.Name.ExtractText();
+                            break;
+                        }
+                    case ClientLanguage.French:
+                        {
+                            asc.FrenchName = csc.Name.ExtractText();
+                            break;
+                        }
+                    case ClientLanguage.Japanese:
+                        {
+                            asc.JapaneseName = csc.Name.ExtractText();
+                            break;
+                        }
+                }
+
+                returnedIds.Add(asc);
+            }
+
+            return returnedIds;
+        }
+        */
 
         public static void DrawIcon(IDalamudTextureWrap? icon, Vector2 iconSize)
         {

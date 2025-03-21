@@ -16,12 +16,6 @@ namespace Altoholic.Cache
     {
         private readonly Dictionary<uint, ItemItemLevel> _items = new(size);
         private readonly Dictionary<uint, EventItem> _eventItems = new(size);
-        private List<uint> _armoireItems = [];
-
-        public void Init()
-        {
-            _armoireItems = Utils.GetArmoireIds();
-        }
 
         public Item? LoadItem(ClientLanguage currentLocale, uint id)
         {
@@ -95,11 +89,6 @@ namespace Altoholic.Cache
             return item;
         }
 
-        public bool CanBeInArmoire(uint id)
-        {
-            return _armoireItems.Contains(id);
-        }
-
         public Item? GetItemForUnlockLink(uint unlockLink)
         {
             return _items.FirstOrNull(i => i.Value.Item?.ItemAction.Value.Data[0] == unlockLink)?.Value.Item;
@@ -110,7 +99,6 @@ namespace Altoholic.Cache
         {
             _items.Clear();
             _eventItems.Clear();
-            _armoireItems.Clear();
         }
     }
 }
