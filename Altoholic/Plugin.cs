@@ -39,6 +39,8 @@ using Character = Altoholic.Models.Character;
 using FFXIVClientStructs.FFXIV.Client.UI.Info;
 using System.Numerics;
 using System.Diagnostics;
+using FFXIVClientStructs.FFXIV.Client.UI.Agent;
+using static FFXIVClientStructs.FFXIV.Client.UI.AddonJobHudMNK1.ChakraGauge;
 
 namespace Altoholic
 {
@@ -120,6 +122,7 @@ namespace Altoholic
                 SecretRecipeBookStorage = new SecretRecipeBookStorage(),
                 VistaStorage = new VistaStorage(),
                 ArmoireStorage = new ArmoireStorage(),
+                MirageSetStorage = new MirageSetStorage(),
             };
 
             nint playtimePtr = SigScanner.ScanText(PlaytimeSig);
@@ -198,6 +201,7 @@ namespace Altoholic
             _globalCache.SecretRecipeBookStorage.Init(currentLocale, _globalCache);
             _globalCache.VistaStorage.Init(currentLocale, _globalCache);
             _globalCache.ArmoireStorage.Init(currentLocale, _globalCache);
+            _globalCache.MirageSetStorage.Init(_globalCache);
 
             _altoholicService = new(
                 () => _localPlayer,
@@ -576,14 +580,11 @@ namespace Altoholic
                     GetPlayerInventory();
                     GetPlayerSaddleInventory();
                     GetPlayerArmoryInventory();
-                    GetPlayerGlamourInventory();
-                    GetPlayerArmoireInventory();
                     GetPlayerMail();
                     GetPlayerCompletedQuests();
                     GetPlayerRetainer();
                     GetPlayerBeastReputations();
                     GetDuties();
-
                     GetCollectionFromState();
                     /*
                     Log.Debug($"localPlayer.Inventory.Count : {localPlayer.Inventory.Count}");
@@ -669,11 +670,12 @@ namespace Altoholic
 #endif
             }
 
-            /*Log.Debug($"Hairstyles: {_globalCache.HairstyleStorage.Count()}");
-            foreach (var hairstyles in _globalCache.HairstyleStorage.GetAll())
+            /*Log.Debug("Checking glamour dresser item cache");
+            Log.Debug($"Cache size: {_localPlayer.GlamourDresser.Length}");
+            foreach (GlamourItem glamourItem in _localPlayer.GlamourDresser)
             {
-                Hairstyle h = hairstyles.Value;
-                Log.Debug($"{h.Id} {h.EnglishName} {(_localPlayer.HasHairstyle(h.Id))}");
+                if (glamourItem.ItemId == 0) continue;
+                Log.Debug($"Glam dresser item {glamourItem.ItemId}, {glamourItem.Slot}");
             }*/
 
             MainWindow.IsOpen = true;
@@ -712,7 +714,8 @@ namespace Altoholic
 
             if (_localPlayer.CharacterId == 0)
             {
-                _localPlayer = new Character { CharacterId = ClientState.LocalContentId };
+                Character? p = GetCharacterFromGameOrDatabase();
+                _localPlayer = p ?? new Character { CharacterId = ClientState.LocalContentId };
             }
 
             if (BlacklistedCharacters.Exists(b => b.CharacterId == _localPlayer.CharacterId)) return;
@@ -760,6 +763,7 @@ namespace Altoholic
             GetPlayerRetainer();
             GetPlayerMail();
             GetHousing();
+            GetPlayerGlamourInventory();
 
             if (_autoSaveWatch.Elapsed.Minutes < Configuration.AutoSaveTimer)
             {
@@ -1439,13 +1443,88 @@ namespace Altoholic
                 SoulCrystal = soulCrystal,
             };
         }
-        private void GetPlayerGlamourInventory()
+
+        private bool _glamourAgentActive;
+        private readonly TimeSpan _glamourAgentWait = TimeSpan.FromMilliseconds(500);
+        private DateTime? _glamourAgentOpened;
+        private unsafe void GetPlayerGlamourInventory()
         {
-            
-        }
-        private void GetPlayerArmoireInventory()
-        {
-            
+            AgentModule* agents = FFXIVClientStructs.FFXIV.Client.System.Framework.Framework.Instance()->GetUIModule()->GetAgentModule();
+            AgentMiragePrismPrismBox* dresserAgent = (AgentMiragePrismPrismBox*)agents->GetAgentByInternalId(AgentId.MiragePrismPrismBox);
+
+            if (agents == null || dresserAgent == null || !dresserAgent->IsAgentActive())
+            {
+                _glamourAgentActive = false;
+                return;
+            }
+            if (!_glamourAgentActive && _glamourAgentOpened == null)
+            {
+                _glamourAgentOpened = DateTime.Now + _glamourAgentWait;
+            }
+
+            if (_glamourAgentOpened >= DateTime.Now)
+            {
+                return;
+            }
+            _glamourAgentActive = true;
+            _glamourAgentOpened = null;
+
+            HashSet<uint> currentSets = [];
+            short index = 0;
+            foreach (PrismBoxItem chestItem in dresserAgent->Data->PrismBoxItems)
+            {
+                uint itemId = chestItem.ItemId;
+                if (itemId >= 1_000_000)
+                {
+                    itemId -= 1_000_000;
+                }
+
+                if (_globalCache.MirageSetStorage.MirageSetLookup(itemId))
+                {
+                    currentSets.Add(itemId);
+                }
+            }
+            foreach (PrismBoxItem chestItem in dresserAgent->Data->PrismBoxItems)
+            {
+                InventoryItem.ItemFlags flags = InventoryItem.ItemFlags.None;
+
+                uint itemId = chestItem.ItemId;
+                if (itemId >= 1_000_000)
+                {
+                    itemId -= 1_000_000;
+                    flags = InventoryItem.ItemFlags.HighQuality;
+                }
+
+                GlamourItem glamourItem = new()
+                {
+                    Slot = (short)chestItem.Slot,
+                    ItemId = itemId,
+                    Flags = flags,
+                    Stain0 = chestItem.Stains[0],
+                    Stain1 = chestItem.Stains[1],
+                };
+                HashSet<uint>? potentialSets = _globalCache.MirageSetStorage.GetMirageSetItemLookup(itemId);
+                if (potentialSets is not null)
+                {
+                    foreach (uint potentialSet in potentialSets.Where(potentialSet => currentSets.Contains(potentialSet)))
+                    {
+                        glamourItem.GlamourId = potentialSet;
+                    }
+                }
+
+                if (index >= 0 && index < _localPlayer.GlamourDresser.Length)
+                {
+                    if (!glamourItem.IsSame(_localPlayer.GlamourDresser[index]))
+                    {
+                        _localPlayer.GlamourDresser[index] = glamourItem;
+                    }
+                }
+                else
+                { 
+                    Log.Debug($"Glamour chest appears to be longer than {_localPlayer.GlamourDresser.Length}, hit {index}.");
+                }
+                index++;
+            }
         }
 
         [StructLayout(LayoutKind.Explicit)]
@@ -1820,7 +1899,7 @@ namespace Altoholic
             if (Condition[ConditionFlag.LoggingOut]) return;
             Log.Debug($"OnGameInventoryItemEvent entered, item {type}: {data.Item.ItemId}");
             GameInventoryItem i = data.Item;
-            if (i.ItemId == 0 || i.ItemId == 1) return;
+            if (i.ItemId is 0 or 1) return;
             switch (i.ContainerType)
             {
                 case GameInventoryType.Inventory1:
@@ -1862,9 +1941,6 @@ namespace Altoholic
                     GetPlayerArmoryInventory();
                     break;
             }
-            
-            /*GetPlayerGlamourInventory();
-            GetPlayerArmoireInventory();*/
         }
 
         public void ReloadConfig()
@@ -1992,12 +2068,16 @@ namespace Altoholic
                 LastPlayTimeUpdate = _localPlayer.LastPlayTimeUpdate,
                 HasPremiumSaddlebag = _localPlayer.HasPremiumSaddlebag,
                 PlayerCommendations = _localPlayer.PlayerCommendations,
+                CurrentFacewear = _localPlayer.CurrentFacewear,
+                CurrentOrnament = _localPlayer.CurrentOrnament,
+                UnreadLetters = _localPlayer.UnreadLetters,
                 Attributes = _localPlayer.Attributes,
                 Currencies = _localPlayer.Currencies,
                 Jobs = _localPlayer.Jobs,
                 Profile = _localPlayer.Profile,
                 Quests = _localPlayer.Quests,
                 Inventory = _localPlayer.Inventory,
+                ArmoryInventory = _localPlayer.ArmoryInventory,
                 Saddle = _localPlayer.Saddle,
                 Gear = _localPlayer.Gear,
                 Retainers = _localPlayer.Retainers,
@@ -2012,6 +2092,17 @@ namespace Altoholic
                 Glasses = _localPlayer.Glasses,
                 CurrenciesHistory = _localPlayer.CurrenciesHistory,
                 BeastReputations = _localPlayer.BeastReputations,
+                Duties = _localPlayer.Duties,
+                DutiesUnlocked = _localPlayer.DutiesUnlocked,
+                Houses = _localPlayer.Houses,
+                Hairstyles = _localPlayer.Hairstyles,
+                Facepaints = _localPlayer.Facepaints,
+                SecretRecipeBooks = _localPlayer.SecretRecipeBooks,
+                Vistas = _localPlayer.Vistas,
+                SightseeingLogUnlockState = _localPlayer.SightseeingLogUnlockState,
+                SightseeingLogUnlockStateEx = _localPlayer.SightseeingLogUnlockStateEx,
+                Armoire = _localPlayer.Armoire,
+                GlamourDresser = _localPlayer.GlamourDresser
             };
 
         }

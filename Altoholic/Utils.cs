@@ -338,9 +338,9 @@ namespace Altoholic
             }
 
             return nameday;
-    }
+        }
 
-    public static string GetGrandCompany(ClientLanguage currentLocale, int id)
+        public static string GetGrandCompany(ClientLanguage currentLocale, int id)
         {
             ExcelSheet<GrandCompany>? dgc = Plugin.DataManager.GetExcelSheet<GrandCompany>(currentLocale);
             GrandCompany? lumina = dgc?.GetRow((uint)id);
@@ -1501,7 +1501,6 @@ namespace Altoholic
             ImGui.EndTooltip();
         }
 
-
         public static void DrawItemTooltip(ClientLanguage currentLocale, ref GlobalCache globalCache, Item item)
         {
             ImGui.BeginTooltip();
@@ -1560,6 +1559,7 @@ namespace Altoholic
 
             ImGui.EndTooltip();
         }
+
         public static void DrawInventoryItemTooltip(ClientLanguage currentLocale, ref GlobalCache globalCache, Inventory item, bool armoire = false)
         {
             ItemItemLevel? itm = globalCache.ItemStorage.LoadItemWithItemLevel(currentLocale, item.ItemId);
@@ -1786,6 +1786,116 @@ namespace Altoholic
             ImGui.TextUnformatted(
                 $"{globalCache.AddonStorage.LoadAddonString(currentLocale, 497)}"); // Crafting & Repairs
 
+            ImGui.EndTooltip();
+        }
+
+        public static void DrawGlamourDresserTooltip(ClientLanguage currentLocale, ref GlobalCache globalCache, GlamourItem item,
+            ItemItemLevel itm, bool isInASet, IDalamudTextureWrap? miragePrismIcon, Vector2 miragePrismBoxSetIconUv0, Vector2 miragePrismBoxSetIconUv1)
+        {
+            Item? dbItem = itm.Item;
+            if (dbItem == null) return;
+            ItemLevel? ilvl = itm.ItemLevel;
+            if (ilvl == null) return;
+
+            bool hq = item.Flags.HasFlag(InventoryItem.ItemFlags.HighQuality);
+
+            ImGui.BeginTooltip();
+
+            using (var drawItemTooltipItem = ImRaii.Table($"##DrawItemTooltip#Item_{item.ItemId}", 3))
+            {
+                if (!drawItemTooltipItem) return;
+                ImGui.TableSetupColumn($"###DrawItemTooltip#Item_{item.ItemId}#Icon", ImGuiTableColumnFlags.WidthFixed,
+                    55);
+                ImGui.TableSetupColumn($"###DrawItemTooltip#Item_{item.ItemId}#Name", ImGuiTableColumnFlags.WidthFixed,
+                    305);
+                ImGui.TableNextRow();
+                ImGui.TableSetColumnIndex(0);
+                Vector2 p = ImGui.GetCursorPos();
+                DrawIcon(globalCache.IconStorage.LoadIcon(dbItem.Value.Icon, hq), new Vector2(40, 40));
+                if (isInASet && miragePrismIcon is not null)
+                {
+                    ImGui.SetCursorPos(p with { X = p.X + 25 });
+                    ImGui.Image(miragePrismIcon.ImGuiHandle, new Vector2(16, 16), miragePrismBoxSetIconUv0, miragePrismBoxSetIconUv1);
+                    ImGui.SetCursorPos(p);
+                }
+                ImGui.TableSetColumnIndex(1);
+                ImGui.TextUnformatted($"{dbItem.Value.Name} {(hq ? (char)SeIconChar.HighQuality : "")}");
+                ImGui.TableNextRow();
+                ImGui.TableSetColumnIndex(0);
+                ImGui.TextUnformatted(isInASet
+                    ? $"{globalCache.AddonStorage.LoadAddonString(currentLocale, 15624)}"
+                    : $"{GetSlotName(currentLocale, globalCache, item.Slot)}");
+            }
+
+            if (!isInASet)
+            {
+                ImGui.Separator();
+                ImGui.TextUnformatted(
+                    $"{globalCache.AddonStorage.LoadAddonString(currentLocale, 13775)} {ilvl.Value.RowId}"); // Item Level
+                ImGui.Separator();
+                ImGui.TextUnformatted(
+                    $"{GetClassJobCategoryFromId(currentLocale, dbItem.Value.ClassJobCategory.ValueNullable?.RowId)}");
+                ImGui.TextUnformatted(
+                    $"{globalCache.AddonStorage.LoadAddonString(currentLocale, 1034)} {dbItem.Value.LevelEquip}");
+                ImGui.Separator();
+
+                if (item.Stain0 > 0)
+                {
+                    ImGui.Separator();
+                    (string, Vector4) dye = globalCache.StainStorage.LoadStainWithColor(currentLocale, item.Stain0);
+                    if (!string.IsNullOrEmpty(dye.Item1))
+                    {
+                        ImGui.ColorButton($"##Gear_{item.ItemId}#Dye#1", dye.Item2,
+                            ImGuiColorEditFlags.None, new Vector2(16, 16));
+                        ImGui.SameLine();
+                        ImGui.PushStyleColor(ImGuiCol.Text, dye.Item2);
+                        ImGui.TextUnformatted(dye.Item1);
+                        ImGui.PopStyleColor();
+                    }
+                }
+
+                if (item.Stain1 > 0)
+                {
+                    (string, Vector4) dye2 = globalCache.StainStorage.LoadStainWithColor(currentLocale, item.Stain1);
+                    if (!string.IsNullOrEmpty(dye2.Item1))
+                    {
+                        ImGui.ColorButton($"##Gear_{item.ItemId}#Dye#2", dye2.Item2,
+                            ImGuiColorEditFlags.None, new Vector2(16, 16));
+                        ImGui.SameLine();
+                        ImGui.PushStyleColor(ImGuiCol.Text, dye2.Item2);
+                        ImGui.TextUnformatted(dye2.Item1);
+                        ImGui.PopStyleColor();
+                    }
+                }
+
+                ImGui.Separator();
+                if (isInASet)
+                {
+                    if (miragePrismIcon is not null)
+                    {
+                        ImGui.Image(miragePrismIcon.ImGuiHandle, new Vector2(16, 16), miragePrismBoxSetIconUv0,
+                            miragePrismBoxSetIconUv1);
+                    }
+                    ImGui.SameLine();
+                    ImGui.TextUnformatted($"{globalCache.AddonStorage.LoadAddonString(currentLocale, 15643)}");
+                }
+
+                ImGui.TextUnformatted($"{dbItem.Value.Description}");
+            }
+            else
+            {
+                ImGui.Separator();
+                HashSet<uint>? sets = globalCache.MirageSetStorage.GetMirageSetLookup(item.ItemId);
+                if (sets is not null)
+                {
+                    foreach (uint u in sets)
+                    {
+                        Item? i = globalCache.ItemStorage.LoadItem(currentLocale, u);
+                        if (i == null) continue;
+                        ImGui.TextUnformatted(i.Value.Name.ExtractText());
+                    }
+                }
+            }
             ImGui.EndTooltip();
         }
 
@@ -2938,23 +3048,11 @@ namespace Altoholic
             return returnedVistasIds;
         }
 
-        /*public static List<uint> GetArmoireIds()
+        public static ExcelSheet<MirageStoreSetItem> GetMirageStoreSetItems()
         {
-            List<uint> returnedCabinetsIds = [];
-            ExcelSheet<Cabinet>? dor = Plugin.DataManager.GetExcelSheet<Cabinet>(ClientLanguage.English);
-            using IEnumerator<Cabinet>? cabinetEnumerator = dor?.GetEnumerator();
-            if (cabinetEnumerator is null) return returnedCabinetsIds;
-            while (cabinetEnumerator.MoveNext())
-            {
-                Cabinet cabinet = cabinetEnumerator.Current;
-                Item? item = cabinet.Item.ValueNullable;
-                if (item == null) continue;
-
-                returnedCabinetsIds.Add(item.Value.RowId);
-            }
-
-            return returnedCabinetsIds;
-        }*/
+            ExcelSheet<MirageStoreSetItem> dor = Plugin.DataManager.GetExcelSheet<MirageStoreSetItem>(ClientLanguage.English);
+            return dor;
+        }
 
         public static string Capitalize(string str)
         {

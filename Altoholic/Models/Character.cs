@@ -63,6 +63,7 @@ namespace Altoholic.Models
         public int? SightseeingLogUnlockState { get; set; }
         public int? SightseeingLogUnlockStateEx { get; set; }
         public HashSet<uint> Armoire { get; set; } = [];
+        public GlamourItem[] GlamourDresser { get; set; } = new GlamourItem[8000];
 
         public bool HasAnyLevelJob(int level)
         {
