@@ -40,7 +40,6 @@ using FFXIVClientStructs.FFXIV.Client.UI.Info;
 using System.Numerics;
 using System.Diagnostics;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
-using static FFXIVClientStructs.FFXIV.Client.UI.AddonJobHudMNK1.ChakraGauge;
 
 namespace Altoholic
 {

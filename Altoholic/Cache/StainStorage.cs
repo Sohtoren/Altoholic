@@ -1,6 +1,4 @@
-﻿using Altoholic.Models;
-using Dalamud.Game;
-using Lumina.Excel.Sheets;
+﻿using Dalamud.Game;
 using System;
 using System.Collections.Generic;
 using System.Numerics;

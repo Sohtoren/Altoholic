@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace Altoholic.Models
 {
     public class DatabaseCharacter

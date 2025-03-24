@@ -1,7 +1,4 @@
-﻿using Microsoft.VisualBasic;
-using System.Diagnostics;
-
-namespace Altoholic.Models
+﻿namespace Altoholic.Models
 {
     public class Hairstyle
     {

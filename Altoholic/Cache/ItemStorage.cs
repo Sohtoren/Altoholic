@@ -2,7 +2,6 @@
 using Lumina.Excel.Sheets;
 using System.Collections.Generic;
 using System.Linq;
-using static Dalamud.Interface.Utility.Raii.ImRaii;
 using Item = Lumina.Excel.Sheets.Item;
 
 namespace Altoholic.Cache
