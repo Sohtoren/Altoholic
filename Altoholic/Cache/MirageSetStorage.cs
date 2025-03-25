@@ -15,7 +15,7 @@ namespace Altoholic.Cache
             {
                 c.Unknown0, c.Unknown1, c.Unknown2, c.Unknown3, c.Unknown4, c.Unknown5, c.Unknown6, c.Unknown7,
                 c.Unknown8, c.Unknown9, c.Unknown10
-            }.Where(c => c != 0).Distinct().ToHashSet());
+            }.Where(u => u != 0).Distinct().ToHashSet());
 
             _mirageSetItemLookup = new Dictionary<uint, HashSet<uint>>();
 

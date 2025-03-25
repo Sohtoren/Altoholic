@@ -4,15 +4,15 @@
     "net8.0-windows7.0": {
       "DalamudPackager": {
         "type": "Direct",
-        "requested": "[11.0.0, )",
-        "resolved": "11.0.0",
-        "contentHash": "bjT7XUlhIJSmsE/O76b7weUX+evvGQctbQB8aKXt94o+oPWxHpCepxAGMs7Thow3AzCyqWs7cOpp9/2wcgRRQA=="
+        "requested": "[12.0.0, )",
+        "resolved": "12.0.0",
+        "contentHash": "J5TJLV3f16T/E2H2P17ClWjtfEBPpq3yxvqW46eN36JCm6wR+EaoaYkqG9Rm5sHqs3/nK/vKjWWyvEs/jhKoXw=="
       },
       "Dapper": {
         "type": "Direct",
-        "requested": "[2.1.35, )",
-        "resolved": "2.1.35",
-        "contentHash": "YKRwjVfrG7GYOovlGyQoMvr1/IJdn+7QzNXJxyMh0YfFF5yvDmTYaJOVYWsckreNjGsGSEtrMTpnzxTUq/tZQw=="
+        "requested": "[2.1.66, )",
+        "resolved": "2.1.66",
+        "contentHash": "/q77jUgDOS+bzkmk3Vy9SiWMaetTw+NOoPAV0xPBsGVAyljd5S6P+4RUW7R3ZUGGr9lDRyPKgAMj2UAOwvqZYw=="
       },
       "LiteDB": {
         "type": "Direct",
@@ -25,19 +25,19 @@
       },
       "Microsoft.Data.Sqlite": {
         "type": "Direct",
-        "requested": "[9.0.1, )",
-        "resolved": "9.0.1",
-        "contentHash": "9QC3t5ye9eA4y2oX1HR7Dq/dyAIGfQkNWnjy6+IBRCtHibh7zIq2etv8jvYHXMJRy+pbwtD3EVtvnpxfuiYVRA==",
+        "requested": "[9.0.3, )",
+        "resolved": "9.0.3",
+        "contentHash": "rqw1EZ30C6bRTQ2P9/UVWNpiJhw+n4YtmBqoXXlxpdZuACvGDIZcOsOv2WPjL8HHdOJvTIh8yOufJI0HLWfAoA==",
         "dependencies": {
-          "Microsoft.Data.Sqlite.Core": "9.0.1",
+          "Microsoft.Data.Sqlite.Core": "9.0.3",
           "SQLitePCLRaw.bundle_e_sqlite3": "2.1.10",
           "SQLitePCLRaw.core": "2.1.10"
         }
       },
       "Microsoft.Data.Sqlite.Core": {
         "type": "Transitive",
-        "resolved": "9.0.1",
-        "contentHash": "useMNbAupB8gpEp/SjanW3LvvyFG9DWPMUcXFwVNjNuFWIxNcrs5zOu9BTmNJEyfDpLlrsSBmcBv7keYVG8UhA==",
+        "resolved": "9.0.3",
+        "contentHash": "rhNmI4KqeL6bOtZ7KwLVZLjrj0Bnf0PFq5Nlv2uOj9n1UuPYTbJaa816EJH5Hp5FM04H2iUcFtmmvqrl3xRCmA==",
         "dependencies": {
           "SQLitePCLRaw.core": "2.1.10"
         }

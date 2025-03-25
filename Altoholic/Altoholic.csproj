@@ -24,9 +24,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Dapper" Version="2.1.35" />
+    <PackageReference Include="Dapper" Version="2.1.66" />
     <PackageReference Include="LiteDB" Version="5.0.21" />
-    <PackageReference Include="Microsoft.Data.Sqlite" Version="9.0.1" />
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="9.0.3" />
   </ItemGroup>
   <ItemGroup>
   <Reference Include="CheapLoc">
@@ -41,6 +41,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Update="DalamudPackager" Version="11.0.0" />
+    <PackageReference Update="DalamudPackager" Version="12.0.0" />
   </ItemGroup>
 </Project>
