@@ -538,11 +538,11 @@ namespace Altoholic.Windows
                     true);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                DrawBattleCurrency(pc.Allagan_Tomestone_Of_Aesthetics, Currencies.ALLAGAN_TOMESTONE_OF_AESTHETICS, 2000,
+                DrawBattleCurrency(pc.Allagan_Tomestone_Of_Heliometry, Currencies.ALLAGAN_TOMESTONE_OF_HELIOMETRY, 2000,
                     true);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                DrawBattleCurrency(pc.Allagan_Tomestone_Of_Heliometry, Currencies.ALLAGAN_TOMESTONE_OF_HELIOMETRY, 2000, true);
+                DrawBattleCurrency(pc.Allagan_Tomestone_Of_Mathematics, Currencies.ALLAGAN_TOMESTONE_OF_MATHEMATICS, 2000, true);
                 ImGui.TableSetColumnIndex(1);
                 ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 3502));
                 ImGui.TextUnformatted($"{pc.Weekly_Acquired_Tomestone}/{pc.Weekly_Limit_Tomestone}");
@@ -551,11 +551,9 @@ namespace Altoholic.Windows
                 ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 5756));
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                DrawBattleCurrency(pc.Allagan_Tomestone_Of_Causality, Currencies.ALLAGAN_TOMESTONE_OF_CAUSALITY, 2000,
+                DrawBattleCurrency(pc.Allagan_Tomestone_Of_Aesthetics, Currencies.ALLAGAN_TOMESTONE_OF_AESTHETICS, 2000,
                     true, true);
                 ImGui.TableSetColumnIndex(1);
-                DrawBattleCurrency(pc.Allagan_Tomestone_Of_Comedy, Currencies.ALLAGAN_TOMESTONE_OF_COMEDY, 2000,
-                    true, true);
             }
 
             if (
