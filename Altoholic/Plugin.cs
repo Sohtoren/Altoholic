@@ -64,12 +64,10 @@ namespace Altoholic
         [PluginService] public static IDutyState DutyState { get; set; } = null!;
         [PluginService] public static IGameInventory GameInventory { get; set; } = null!;
 
-        private const string PlaytimeSig = "E8 ?? ?? ?? ?? B9 ?? ?? ?? ?? 48 8B D3";
-        private delegate long PlaytimeDelegate(uint param1, long param2, uint param3);
-        private readonly Hook<PlaytimeDelegate> _playtimeHook;
+        private readonly Hook<UIModule.Delegates.HandlePacket> _playtimeHook;
 
-        public Configuration Configuration { get; set; }
-        public WindowSystem WindowSystem = new("Altoholic");
+        public Configuration Configuration { get; private set; }
+        private readonly WindowSystem _windowSystem = new("Altoholic");
 
         private ConfigWindow ConfigWindow { get; }
         private MainWindow MainWindow { get; }
@@ -90,12 +88,12 @@ namespace Altoholic
 
         private readonly Stopwatch _autoSaveWatch = new();
         private readonly Service _altoholicService;
-        public List<Character> OtherCharacters = [];
-        public List<Blacklist> BlacklistedCharacters;
+        private List<Character> _otherCharacters = [];
+        private readonly List<Blacklist> _blacklistedCharacters;
         private readonly Localization _localization = new();
         private readonly GlobalCache _globalCache;
 
-        public Plugin()
+        public unsafe Plugin()
         {
             _globalCache = new GlobalCache
             {
@@ -124,8 +122,7 @@ namespace Altoholic
                 MirageSetStorage = new MirageSetStorage(),
             };
 
-            nint playtimePtr = SigScanner.ScanText(PlaytimeSig);
-            _playtimeHook = Hook.HookFromAddress<PlaytimeDelegate>(playtimePtr, PlaytimePacket);
+            _playtimeHook = Hook.HookFromAddress<UIModule.Delegates.HandlePacket>(UIModule.StaticVirtualTablePointer->HandlePacket, PlaytimePacket);
             _playtimeHook.Enable();
 
 #if DEBUG
@@ -163,7 +160,7 @@ namespace Altoholic
                 Database.Database.CheckOrCreateDatabases(_db);
             }
 
-            BlacklistedCharacters = Database.Database.GetBlacklists(_db);
+            _blacklistedCharacters = Database.Database.GetBlacklists(_db);
 #if DEBUG
             Log.Debug("BlacklistedCharacters.Count: ", BlacklistedCharacters.Count);
             foreach (Blacklist blacklistedCharacter in BlacklistedCharacters)
@@ -204,8 +201,8 @@ namespace Altoholic
 
             _altoholicService = new(
                 () => _localPlayer,
-                () => OtherCharacters,
-                () => BlacklistedCharacters
+                () => _otherCharacters,
+                () => _blacklistedCharacters
             );
 
             ConfigWindow = new ConfigWindow(this, $"{Name} configuration", _globalCache);
@@ -272,8 +269,8 @@ namespace Altoholic
                 ProgressWindow,
                 ConfigWindow);
 
-            WindowSystem.AddWindow(ConfigWindow);
-            WindowSystem.AddWindow(MainWindow);
+            _windowSystem.AddWindow(ConfigWindow);
+            _windowSystem.AddWindow(MainWindow);
 
             CommandManager.AddHandler(CommandName, new CommandInfo(OnCommand)
             {
@@ -301,7 +298,7 @@ namespace Altoholic
         public void Dispose()
         {
             _playtimeHook.Dispose();
-            WindowSystem.RemoveAllWindows();
+            _windowSystem.RemoveAllWindows();
 
             PluginInterface.UiBuilder.Draw -= DrawUI;
             PluginInterface.UiBuilder.OpenConfigUi -= DrawConfigUI;
@@ -362,14 +359,14 @@ namespace Altoholic
         private void OnUnblacklistCommand()
         {
             Log.Debug("OnBlacklistCommand called");
-            Blacklist? blacklist = BlacklistedCharacters.Find(b => b.CharacterId == ClientState.LocalContentId);
+            Blacklist? blacklist = _blacklistedCharacters.Find(b => b.CharacterId == ClientState.LocalContentId);
             if (blacklist is null)
             {
                 Utils.ChatMessage("Character not found in the blacklist");
                 return;
             }
             Database.Database.DeleteBlacklist(_db, blacklist.CharacterId);
-            BlacklistedCharacters.Remove(blacklist);
+            _blacklistedCharacters.Remove(blacklist);
             ChatGui.Print("Character removed from blacklist");
         }
 
@@ -446,7 +443,7 @@ namespace Altoholic
         // ReSharper disable once InconsistentNaming
         private void DrawUI()
         {
-            WindowSystem.Draw();
+            _windowSystem.Draw();
         }
 
         // ReSharper disable once InconsistentNaming
@@ -497,7 +494,7 @@ namespace Altoholic
 
             if (_localPlayer.CharacterId != 0)
             {
-                OtherCharacters = Database.Database.GetOthersCharacters(_db, _localPlayer.CharacterId);
+                _otherCharacters = Database.Database.GetOthersCharacters(_db, _localPlayer.CharacterId);
 
                 //Plugin.Log.Debug($"otherCharacters count {otherCharacters.Count}");
                 if (_altoholicService.GetBlacklistedCharacters()
@@ -717,7 +714,7 @@ namespace Altoholic
                 _localPlayer = p ?? new Character { CharacterId = ClientState.LocalContentId };
             }
 
-            if (BlacklistedCharacters.Exists(b => b.CharacterId == _localPlayer.CharacterId)) return;
+            if (_blacklistedCharacters.Exists(b => b.CharacterId == _localPlayer.CharacterId)) return;
 
             string name = lPlayer.Name.TextValue;
             if (string.IsNullOrEmpty(name)) return;
@@ -782,7 +779,7 @@ namespace Altoholic
             if (raptureAtkModule != null)
             {
                 Span<NamePlateInfo> npi = raptureAtkModule->NamePlateInfoEntries;
-                if (npi != null)
+                if (!npi.IsEmpty)
                 {
                     for (int i = 0; i < 50 && i < raptureAtkModule->NameplateInfoCount; i++)
                     {
@@ -1261,7 +1258,7 @@ namespace Altoholic
                     HQ = flags.HasFlag(InventoryItem.ItemFlags.HighQuality),
                     CompanyCrestApplied = flags.HasFlag(InventoryItem.ItemFlags.CompanyCrestApplied),
                     Slot = ii.Slot,
-                    Spiritbond = ii.Spiritbond,
+                    Spiritbond = ii.SpiritbondOrCollectability,
                     Condition = ii.Condition,
                     CrafterContentID = ii.CrafterContentId,
                     Materia = ii.Materia.GetPinnableReference(),
@@ -1400,7 +1397,7 @@ namespace Altoholic
                         HQ = flags.HasFlag(InventoryItem.ItemFlags.HighQuality),
                         CompanyCrestApplied = flags.HasFlag(InventoryItem.ItemFlags.CompanyCrestApplied),
                         Slot = ii.Slot,
-                        Spiritbond = ii.Spiritbond,
+                        Spiritbond = ii.SpiritbondOrCollectability,
                         Condition = ii.Condition,
                         CrafterContentID = ii.CrafterContentId,
                         Materia = ii.Materia.GetPinnableReference(),
@@ -1693,7 +1690,7 @@ namespace Altoholic
                     HQ = flags.HasFlag(InventoryItem.ItemFlags.HighQuality),
                     CompanyCrestApplied = flags.HasFlag(InventoryItem.ItemFlags.CompanyCrestApplied),
                     Slot = ii.Slot,
-                    Spiritbond = ii.Spiritbond,
+                    Spiritbond = ii.SpiritbondOrCollectability,
                     Condition = ii.Condition,
                     CrafterContentID = ii.CrafterContentId,
                     Materia = ii.Materia.GetPinnableReference(),
@@ -1785,13 +1782,13 @@ namespace Altoholic
         {
             _localPlayer = new Character();
             _localPlayerFreeCompanyTest = null;
-            OtherCharacters = [];
+            _otherCharacters = [];
         }
 
         private void OnCharacterLogin()
         {
             Log.Info("Altoholic : OnCharacterLogin called");
-            OtherCharacters = Database.Database.GetOthersCharacters(_db, _localPlayer.CharacterId);
+            _otherCharacters = Database.Database.GetOthersCharacters(_db, _localPlayer.CharacterId);
 
             Character? p = GetCharacterFromGameOrDatabase();
             if (p is null)
@@ -1897,7 +1894,9 @@ namespace Altoholic
         {
             //Log.Debug($"Condition[ConditionFlag.LoggingOut]: {Condition[ConditionFlag.LoggingOut]}");
             if (Condition[ConditionFlag.LoggingOut]) return;
+#if DEBUG
             Log.Debug($"OnGameInventoryItemEvent entered, item {type}: {data.Item.ItemId}");
+#endif
             GameInventoryItem i = data.Item;
             if (i.ItemId is 0 or 1) return;
             switch (i.ContainerType)
@@ -1949,26 +1948,32 @@ namespace Altoholic
             Configuration.Initialize(PluginInterface);
         }
 
-        private long PlaytimePacket(uint param1, long param2, uint param3)
+        /*private long PlaytimePacket(uint param1, long param2, uint param3)
         {
             long result = _playtimeHook.Original(param1, param2, param3);
             if (param1 != 11)
-                return result;
+                return result;*/
+        private unsafe void PlaytimePacket(UIModule* thisPtr, UIModulePacketType type, uint uintParam, void* packet)
+        {
+            _playtimeHook.Original(thisPtr, type, uintParam, packet);
+            if (type != UIModulePacketType.PrintPlayTime)
+                return;
 
             (string, string, string) player = GetLocalPlayerNameWorldRegion();
             if (player.Item1.Length == 0)
-                return result;
+                return;
 
             Log.Debug($"Extracted Player Name: {player.Item1}{(char)SeIconChar.CrossWorld}{player.Item2}");
 
-            uint totalPlaytime = (uint)Marshal.ReadInt32((nint)param2 + 0x10);
+            //uint totalPlaytime = (uint)Marshal.ReadInt32((nint)param2 + 0x10);
+            uint totalPlaytime = (uint)Marshal.ReadInt32((nint)packet + 0x10);
             Log.Debug($"Value from address {totalPlaytime}");
             TimeSpan playtime = TimeSpan.FromMinutes(totalPlaytime);
             Log.Debug($"Value from timespan {playtime}");
 
             string[] names = player.Item1.Split(' ');
             if (names.Length == 0)
-                return result;
+                return;
 
             _localPlayer.PlayTime = totalPlaytime;
 
@@ -1978,10 +1983,10 @@ namespace Altoholic
             _localPlayer.LastPlayTimeUpdate = newPlayTimeUpdate;
             Log.Debug($"Updating playtime with {player.Item1}, {player.Item2}, {totalPlaytime}, {newPlayTimeUpdate}.");
             Database.Database.UpdatePlaytime(_db, id, totalPlaytime, newPlayTimeUpdate);
-            return result;
+            return;
         }
 
-        public (string, string, string) GetLocalPlayerNameWorldRegion()
+        private (string, string, string) GetLocalPlayerNameWorldRegion()
         {
             IPlayerCharacter? local = ClientState.LocalPlayer;
             if (local == null || local.HomeWorld.ValueNullable == null)
@@ -1991,7 +1996,7 @@ namespace Altoholic
             return ($"{local.Name}", $"{homeworld}", $"{Utils.GetRegionFromWorld(homeworld)}");
         }
 
-        public void UpdateCharacter()
+        private void UpdateCharacter()
         {
             if (_localPlayer.CharacterId == 0 || _localPlayer.FirstName.Length == 0) return;
 
@@ -2009,7 +2014,7 @@ namespace Altoholic
             }
         }
 
-        public void PrintBlacklistedMessage()
+        private void PrintBlacklistedMessage()
         {
             SeStringBuilder builder = new();
             builder.Append("This character is blacklisted, use ");
@@ -2023,9 +2028,9 @@ namespace Altoholic
             ChatGui.Print(chatEntry);
         }
 
-        public Character? GetCharacterFromGameOrDatabase()
+        private Character? GetCharacterFromGameOrDatabase()
         {
-            if (BlacklistedCharacters.Exists(b => b.CharacterId == ClientState.LocalContentId)) return null;
+            if (_blacklistedCharacters.Exists(b => b.CharacterId == ClientState.LocalContentId)) return null;
             (string, string, string) player = GetLocalPlayerNameWorldRegion();
             if (string.IsNullOrEmpty(player.Item1) || string.IsNullOrEmpty(player.Item2) || string.IsNullOrEmpty(player.Item3)) return null;
 

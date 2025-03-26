@@ -69,8 +69,8 @@ namespace Altoholic.Windows
 
         }
 
-        public Func<Character> GetPlayer { get; set; } = null!;
-        public Func<List<Character>> GetOthersCharactersList { get; set; } = null!;
+        public Func<Character> GetPlayer { get; init; } = null!;
+        public Func<List<Character>> GetOthersCharactersList { get; init; } = null!;
         private Character? _currentCharacter;
         private IEnumerable<Item>? _currentItems;
         private uint? _currentItem;
@@ -1278,6 +1278,7 @@ namespace Altoholic.Windows
                 {
                     ImGui.TableNextRow();
                     setPassed = true;
+                    maxIndex = 0;
                 }
 
                 ImGui.TableNextColumn();

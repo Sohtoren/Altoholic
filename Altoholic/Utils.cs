@@ -972,7 +972,7 @@ namespace Altoholic
             UIColor? c = brr.Value.Color.ValueNullable;
             if (c is not null)
             {
-                ImGui.PushStyleColor(ImGuiCol.Text, ConvertColorToVector4(c.Value.UIForeground));
+                ImGui.PushStyleColor(ImGuiCol.Text, ConvertColorToVector4(c.Value.Dark));
                 ImGui.TextUnformatted(isAllied ? $"{reputationLevel + 1}. {brr.Value.Name}" : $"{ reputationLevel}. { brr.Value.AlliedNames}");
                 ImGui.PopStyleColor();
             }
@@ -2884,19 +2884,19 @@ namespace Altoholic
                 {
                     case ClientLanguage.German:
                         m.GermanName = ornament.Singular.ExtractText();
-                        m.Transient.GermanDescription = ct.Value.Unknown0.ExtractText();
+                        m.Transient.GermanDescription = ct.Value.Text.ExtractText();
                         break;
                     case ClientLanguage.English:
                         m.EnglishName = ornament.Singular.ExtractText();
-                        m.Transient.EnglishDescription = ct.Value.Unknown0.ExtractText();
+                        m.Transient.EnglishDescription = ct.Value.Text.ExtractText();
                         break;
                     case ClientLanguage.French:
                         m.FrenchName = ornament.Singular.ExtractText();
-                        m.Transient.FrenchDescription = ct.Value.Unknown0.ExtractText();
+                        m.Transient.FrenchDescription = ct.Value.Text.ExtractText();
                         break;
                     case ClientLanguage.Japanese:
                         m.JapaneseName = ornament.Singular.ExtractText();
-                        m.Transient.JapaneseDescription = ct.Value.Unknown0.ExtractText();
+                        m.Transient.JapaneseDescription = ct.Value.Text.ExtractText();
                         break;
                 }
 
@@ -3766,8 +3766,8 @@ namespace Altoholic
                     Id = hairstyle.RowId,
                     Icon = hairstyle.Icon,
                     IsPurchasable = hairstyle.IsPurchasable,
-                    SortKey = hairstyle.Data,
-                    UnlockLink = hairstyle.Data,
+                    SortKey = hairstyle.UnlockLink,
+                    UnlockLink = hairstyle.UnlockLink,
                     ItemId = hairstyle.HintItem.Value.RowId,
                     FeatureId = hairstyle.FeatureID
                 };
@@ -3775,7 +3775,7 @@ namespace Altoholic
                     [ClientLanguage.German, ClientLanguage.English, ClientLanguage.French, ClientLanguage.Japanese];
                 foreach (ClientLanguage l in langs)
                 {
-                    if (hairstyle.Data == 228)
+                    if (hairstyle.UnlockLink == 228)
                     {
                         switch (l)
                         {

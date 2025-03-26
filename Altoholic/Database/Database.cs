@@ -602,7 +602,7 @@ namespace Altoholic.Database
             }
         }
 
-        public static Character FormatDatabaseCharacterFromDatabase(DatabaseCharacter databaseCharacter)
+        private static Character FormatDatabaseCharacterFromDatabase(DatabaseCharacter databaseCharacter)
         {
             ushort[] currentFacewear = string.IsNullOrEmpty(databaseCharacter.CurrentFacewear)
                 ? [0, 0]
@@ -789,11 +789,11 @@ namespace Altoholic.Database
                 SightseeingLogUnlockState = databaseCharacter.SightseeingLogUnlockState,
                 SightseeingLogUnlockStateEx = databaseCharacter.SightseeingLogUnlockStateEx,
                 Armoire = [.. armoire],
-                GlamourDresser = glamourDresser
+                GlamourDresser = (glamourDresser.Length == 8000) ? glamourDresser: new GlamourItem[8000]
             };
         }
 
-        public static DatabaseCharacter FormatCharacterForDatabase(Character character)
+        private static DatabaseCharacter FormatCharacterForDatabase(Character character)
         {
             string currentFacewear = System.Text.Json.JsonSerializer.Serialize(character.CurrentFacewear);
             string attributes = System.Text.Json.JsonSerializer.Serialize(character.Attributes);

@@ -101,10 +101,10 @@ namespace Altoholic.Cache
                 Id = hairstyle.Value.RowId,
                 Icon = hairstyle.Value.Icon,
                 IsPurchasable = hairstyle.Value.IsPurchasable,
-                SortKey = hairstyle.Value.Data,
-                UnlockLink = hairstyle.Value.Data
+                SortKey = hairstyle.Value.UnlockLink,
+                UnlockLink = hairstyle.Value.UnlockLink
             };
-            if (hairstyle.Value.Data == 228)
+            if (hairstyle.Value.UnlockLink == 228)
             {
                 switch (lang)
                 {

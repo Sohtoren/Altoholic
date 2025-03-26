@@ -45,19 +45,19 @@ namespace Altoholic.Cache
             {
                 case ClientLanguage.German:
                     ret.GermanName = ornament.Value.Singular.ExtractText();
-                    ret.Transient.GermanDescription = mt.Value.Unknown0.ExtractText();
+                    ret.Transient.GermanDescription = mt.Value.Text.ExtractText();
                     break;
                 case ClientLanguage.English:
                     ret.EnglishName = ornament.Value.Singular.ExtractText();
-                    ret.Transient.EnglishDescription = mt.Value.Unknown0.ExtractText();
+                    ret.Transient.EnglishDescription = mt.Value.Text.ExtractText();
                     break;
                 case ClientLanguage.French:
                     ret.FrenchName = ornament.Value.Singular.ExtractText();
-                    ret.Transient.FrenchDescription = mt.Value.Unknown0.ExtractText();
+                    ret.Transient.FrenchDescription = mt.Value.Text.ExtractText();
                     break;
                 case ClientLanguage.Japanese:
                     ret.JapaneseName = ornament.Value.Singular.ExtractText();
-                    ret.Transient.JapaneseDescription = mt.Value.Unknown0.ExtractText();
+                    ret.Transient.JapaneseDescription = mt.Value.Text.ExtractText();
                     break;
             }
 
