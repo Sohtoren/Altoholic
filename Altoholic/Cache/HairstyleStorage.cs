@@ -62,15 +62,11 @@ namespace Altoholic.Cache
         }
         private void LoadFacepaintsPerRaces(int subRace)
         {
-            //RawRow row = hairMakeType.GetRow((subRace - 1) * 2 - 1 + gender);
             RawRow row = _hairMakeType.GetRow((uint)subRace);
-            // Unknown30 is the number of available hairstyles.
             byte numPaints = row.ReadUInt8Column(37);
             List<uint> facepaintList = new(numPaints);
-            // Hairstyles can be found starting at Unknown66.
             for (int i = 0; i < numPaints; ++i)
             {
-                // Hairs start at Unknown66.
                 uint index = row.ReadUInt32Column(73 + i * 9);
                 if (index == uint.MaxValue)
                     continue;

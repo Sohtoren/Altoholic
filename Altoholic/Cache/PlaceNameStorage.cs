@@ -18,9 +18,9 @@ namespace Altoholic.Cache
                 return;
             }
 
-            foreach (PlaceName glass in placeName)
+            foreach (PlaceName place in placeName)
             {
-                _places.Add(glass.Id, glass);
+                _places.Add(place.Id, place);
             }
         }
 

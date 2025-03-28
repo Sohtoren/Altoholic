@@ -25,5 +25,6 @@
         public required VistaStorage VistaStorage{ get; set; } = null!;
         public required ArmoireStorage ArmoireStorage { get; set; } = null!;
         public required MirageSetStorage MirageSetStorage { get; set; } = null!;
+        public required PvPStorage PvPStorage { get; set; } = null!;
     }
 }

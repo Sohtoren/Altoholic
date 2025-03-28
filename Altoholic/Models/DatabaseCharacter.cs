@@ -60,5 +60,6 @@ namespace Altoholic.Models
         public int? SightseeingLogUnlockStateEx { get; set; }
         public string Armoire { get; set; } = string.Empty;
         public string GlamourDresser { get; set; } = string.Empty;
+        public string PvPProfile { get; set; } = string.Empty;
     }
 }

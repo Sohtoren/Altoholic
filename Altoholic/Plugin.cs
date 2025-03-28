@@ -40,6 +40,7 @@ using FFXIVClientStructs.FFXIV.Client.UI.Info;
 using System.Numerics;
 using System.Diagnostics;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
+using PvPProfile = Altoholic.Models.PvPProfile;
 
 namespace Altoholic
 {
@@ -79,6 +80,7 @@ namespace Altoholic
         private RetainersWindow RetainersWindow { get; }
         private CollectionWindow CollectionWindow { get; }
         private ProgressWindow ProgressWindow { get; }
+        private PvPWindow PvPWindow { get; }
 
         //private readonly LiteDatabase _db;
         private readonly SqliteConnection _db;
@@ -120,6 +122,7 @@ namespace Altoholic
                 VistaStorage = new VistaStorage(),
                 ArmoireStorage = new ArmoireStorage(),
                 MirageSetStorage = new MirageSetStorage(),
+                PvPStorage = new PvPStorage()
             };
 
             _playtimeHook = Hook.HookFromAddress<UIModule.Delegates.HandlePacket>(UIModule.StaticVirtualTablePointer->HandlePacket, PlaytimePacket);
@@ -198,6 +201,7 @@ namespace Altoholic
             _globalCache.VistaStorage.Init(currentLocale, _globalCache);
             _globalCache.ArmoireStorage.Init(currentLocale, _globalCache);
             _globalCache.MirageSetStorage.Init(_globalCache);
+            _globalCache.PvPStorage.Init(currentLocale);
 
             _altoholicService = new(
                 () => _localPlayer,
@@ -254,6 +258,12 @@ namespace Altoholic
                 GetOthersCharactersList = () => _altoholicService.GetOthersCharacters(),
             };
 
+            PvPWindow = new PvPWindow(this, $"{Name} characters PvP", _globalCache)
+            {
+                GetPlayer = () => _altoholicService.GetPlayer(),
+                GetOthersCharactersList = () => _altoholicService.GetOthersCharacters(),
+            };
+
 
             MainWindow = new MainWindow(
                 this,
@@ -267,6 +277,7 @@ namespace Altoholic
                 RetainersWindow,
                 CollectionWindow,
                 ProgressWindow,
+                PvPWindow,
                 ConfigWindow);
 
             _windowSystem.AddWindow(ConfigWindow);
@@ -876,6 +887,63 @@ namespace Altoholic
             _localPlayer.CurrentFacewear[1] = lp.DrawData.GlassesIds[1];
             _localPlayer.CurrentOrnament = lp.OrnamentData.OrnamentId;
 
+
+            if (uistate.PvPProfile.IsLoaded != 1)
+            {
+                return;
+            }
+
+            FFXIVClientStructs.FFXIV.Client.Game.UI.PvPProfile pvpprofile = uistate.PvPProfile;
+            _localPlayer.PvPProfile = new PvPProfile
+            {
+                CrystallineConflictCasualMatches = pvpprofile.CrystallineConflictCasualMatches,
+                CrystallineConflictCasualMatchesWon = pvpprofile.CrystallineConflictCasualMatchesWon,
+                CrystallineConflictCurrentCrystalCredit = pvpprofile.CrystallineConflictCurrentCrystalCredit,
+                CrystallineConflictCurrentRank = pvpprofile.CrystallineConflictCurrentRank,
+                CrystallineConflictCurrentRiser = pvpprofile.CrystallineConflictCurrentRiser,
+                CrystallineConflictCurrentRisingStars = pvpprofile.CrystallineConflictCurrentRisingStars,
+                CrystallineConflictHighestCrystalCredit = pvpprofile.CrystallineConflictHighestCrystalCredit,
+                CrystallineConflictHighestRank = pvpprofile.CrystallineConflictHighestRank,
+                CrystallineConflictHighestRiser = pvpprofile.CrystallineConflictHighestRiser,
+                CrystallineConflictHighestRisingStars = pvpprofile.CrystallineConflictHighestRisingStars,
+                CrystallineConflictRankedMatches = pvpprofile.CrystallineConflictRankedMatches,
+                CrystallineConflictRankedMatchesWon = pvpprofile.CrystallineConflictRankedMatchesWon,
+                CrystallineConflictSeason = pvpprofile.CrystallineConflictSeason,
+                ExperienceImmortalFlames = pvpprofile.ExperienceImmortalFlames,
+                ExperienceMaelstrom = pvpprofile.ExperienceMaelstrom,
+                ExperienceTwinAdder = pvpprofile.ExperienceTwinAdder,
+                FrontlineTotalFirstPlace = pvpprofile.FrontlineTotalFirstPlace,
+                FrontlineTotalMatches = pvpprofile.FrontlineTotalMatches,
+                FrontlineTotalSecondPlace = pvpprofile.FrontlineTotalSecondPlace,
+                FrontlineTotalThirdPlace = pvpprofile.FrontlineTotalThirdPlace,
+                FrontlineWeeklyFirstPlace = pvpprofile.FrontlineWeeklyFirstPlace,
+                FrontlineWeeklyMatches = pvpprofile.FrontlineWeeklyMatches,
+                FrontlineWeeklySecondPlace = pvpprofile.FrontlineWeeklySecondPlace,
+                FrontlineWeeklyThirdPlace = pvpprofile.FrontlineWeeklyThirdPlace,
+                PreviousSeriesClaimedRank = pvpprofile.PreviousSeriesClaimedRank,
+                PreviousSeriesRank = pvpprofile.PreviousSeriesRank,
+                RankImmortalFlames = pvpprofile.RankImmortalFlames,
+                RankMaelstrom = pvpprofile.RankMaelstrom,
+                RankTwinAdder = pvpprofile.RankTwinAdder,
+                RivalWingsTotalMatches = pvpprofile.RivalWingsTotalMatches,
+                RivalWingsTotalMatchesWon = pvpprofile.RivalWingsTotalMatchesWon,
+                RivalWingsWeeklyMatches = pvpprofile.RivalWingsWeeklyMatches,
+                RivalWingsWeeklyMatchesWon = pvpprofile.RivalWingsWeeklyMatchesWon,
+                Series = pvpprofile.Series,
+                SeriesClaimedRank = pvpprofile.SeriesClaimedRank,
+                SeriesCurrentRank = pvpprofile.SeriesCurrentRank,
+                SeriesExperience = pvpprofile.SeriesExperience,
+            };
+            uint lastId = _globalCache.PvPStorage.GetLastSeriesId();
+            _localPlayer.PvPProfile.SeriesPersonalRanks[lastId] =
+                pvpprofile.SeriesCurrentRank;
+            _localPlayer.PvPProfile.SeriesPersonalRanks[lastId-1] =
+                pvpprofile.PreviousSeriesRank;
+            _localPlayer.PvPProfile.SeriesPersonalRanksClaimed[lastId] =
+                pvpprofile.SeriesClaimedRank;
+            _localPlayer.PvPProfile.SeriesPersonalRanksClaimed[lastId-1] =
+                pvpprofile.PreviousSeriesClaimedRank;
+
             /*foreach (uint i in Enumerable.Range(1001,79))
             {
                 Log.Debug($"uistate.IsUnlockLinkUnlocked(i): {uistate.IsUnlockLinkUnlocked(i)}");
@@ -1197,7 +1265,7 @@ namespace Altoholic
 
         private unsafe void GetPlayerBeastReputations()
         {
-            Log.Debug("GetPlayerBeastReputations entered");
+            //Log.Debug("GetPlayerBeastReputations entered");
             int btCount = _globalCache.BeastTribesStorage.Count();
             if (_localPlayer.BeastReputations.Count > btCount) _localPlayer.BeastReputations.Clear();
 

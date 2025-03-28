@@ -7,7 +7,6 @@ using Dalamud.Interface.Textures.TextureWraps;
 using Dalamud.Interface.Utility.Raii;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
-using FFXIVClientStructs.FFXIV.Common.Math;
 using ImGuiNET;
 using Lumina.Excel;
 using Lumina.Excel.Sheets;
@@ -27,6 +26,11 @@ using Glasses = Lumina.Excel.Sheets.Glasses;
 using Quest = Lumina.Excel.Sheets.Quest;
 using Cabinet = Lumina.Excel.Sheets.Cabinet;
 using System.Runtime.CompilerServices;
+using PvPRankTransient = Altoholic.Models.PvPRankTransient;
+using System.Drawing;
+using System.Numerics;
+using Vector2 = FFXIVClientStructs.FFXIV.Common.Math.Vector2;
+using Vector4 = FFXIVClientStructs.FFXIV.Common.Math.Vector4;
 
 
 namespace Altoholic
@@ -856,6 +860,107 @@ namespace Altoholic
                 if (active && !isMax)
                     ImGui.TextUnformatted($"{exp}/{nextExp}");
             }
+        }
+
+        public static (Dictionary<uint,PvPSeries>, uint) GetPvPSeries(ClientLanguage currentLocale)
+        {
+            Dictionary<uint, PvPSeries>? series = new();
+            uint lastId = 0;
+            ExcelSheet<PvPSeries>? dct = Plugin.DataManager.GetExcelSheet<PvPSeries>(currentLocale);
+            using IEnumerator<PvPSeries>? seriesEnumerator = dct?.GetEnumerator();
+            if (seriesEnumerator is null) return (series, 0);
+            while (seriesEnumerator.MoveNext())
+            {
+                PvPSeries s = seriesEnumerator.Current;
+                series.Add(s.RowId, s);
+                lastId = s.RowId;
+            }
+
+            return (series, lastId);
+        }
+        public static Dictionary<uint,PvPSeriesLevel> GetPvPSeriesLevel(ClientLanguage currentLocale)
+        {
+            Dictionary<uint, PvPSeriesLevel>? seriesLevel = new();
+            ExcelSheet<PvPSeriesLevel>? dct = Plugin.DataManager.GetExcelSheet<PvPSeriesLevel>(currentLocale);
+            using IEnumerator<PvPSeriesLevel>? seriesLevelEnumerator = dct?.GetEnumerator();
+            if (seriesLevelEnumerator is null) return seriesLevel;
+            while (seriesLevelEnumerator.MoveNext())
+            {
+                PvPSeriesLevel s = seriesLevelEnumerator.Current;
+                seriesLevel.Add(s.RowId, s);
+            }
+
+            return seriesLevel;
+        }
+        private static Lumina.Excel.Sheets.PvPRankTransient? GetPvPRankTransient(ClientLanguage currentLocale, uint id)
+        {
+            ExcelSheet<Lumina.Excel.Sheets.PvPRankTransient>? dct = Plugin.DataManager.GetExcelSheet<Lumina.Excel.Sheets.PvPRankTransient>(currentLocale);
+            Lumina.Excel.Sheets.PvPRankTransient? lumina = dct?.GetRow(id);
+            return lumina;
+        }
+        public static List<Models.PvPRank>? GetPvPRanks(ClientLanguage currentLocale)
+        {
+            List<Models.PvPRank> returnedModelsPvPRanks = [];
+            ExcelSheet<Lumina.Excel.Sheets.PvPRank>? dm = Plugin.DataManager.GetExcelSheet<Lumina.Excel.Sheets.PvPRank>(currentLocale);
+            using IEnumerator<Lumina.Excel.Sheets.PvPRank>? pvPRankEnumerator = dm?.GetEnumerator();
+            if (pvPRankEnumerator is null) return null;
+            while (pvPRankEnumerator.MoveNext())
+            {
+                Lumina.Excel.Sheets.PvPRank rank = pvPRankEnumerator.Current;
+                Models.PvPRank p = new() { Id = rank.RowId, ExpRequired = rank.ExpRequired, Transients = new PvPRankTransient() };
+                Lumina.Excel.Sheets.PvPRankTransient? pt = GetPvPRankTransient(currentLocale, rank.RowId);
+                if (pt is null) continue;
+                switch (currentLocale)
+                {
+                    case ClientLanguage.German:
+                        p.Transients.GermanTransients.Add(0,pt.Value.Unknown0.ExtractText());
+                        p.Transients.GermanTransients.Add(1,pt.Value.Unknown1.ExtractText());
+                        p.Transients.GermanTransients.Add(2,pt.Value.Unknown2.ExtractText());
+                        p.Transients.GermanTransients.Add(3,pt.Value.Unknown3.ExtractText());
+                        p.Transients.GermanTransients.Add(4,pt.Value.Unknown4.ExtractText());
+                        p.Transients.GermanTransients.Add(5,pt.Value.Unknown5.ExtractText());
+                        break;
+                    case ClientLanguage.English:
+                        p.Transients.Id = pt.Value.RowId;
+                        p.Transients.EnglishTransients.Add(0, pt.Value.Unknown0.ExtractText());
+                        p.Transients.EnglishTransients.Add(1, pt.Value.Unknown1.ExtractText());
+                        p.Transients.EnglishTransients.Add(2, pt.Value.Unknown2.ExtractText());
+                        p.Transients.EnglishTransients.Add(3, pt.Value.Unknown3.ExtractText());
+                        p.Transients.EnglishTransients.Add(4, pt.Value.Unknown4.ExtractText());
+                        p.Transients.EnglishTransients.Add(5, pt.Value.Unknown5.ExtractText());
+                        break;
+                    case ClientLanguage.French:
+                        p.Transients.FrenchTransients.Add(0, pt.Value.Unknown0.ExtractText());
+                        p.Transients.FrenchTransients.Add(1, pt.Value.Unknown1.ExtractText());
+                        p.Transients.FrenchTransients.Add(2, pt.Value.Unknown2.ExtractText());
+                        p.Transients.FrenchTransients.Add(3, pt.Value.Unknown3.ExtractText());
+                        p.Transients.FrenchTransients.Add(4, pt.Value.Unknown4.ExtractText());
+                        p.Transients.FrenchTransients.Add(5, pt.Value.Unknown5.ExtractText());
+                        break;
+                    case ClientLanguage.Japanese:
+                        p.Transients.JapaneseTransients.Add(0, pt.Value.Unknown0.ExtractText());
+                        p.Transients.JapaneseTransients.Add(1, pt.Value.Unknown1.ExtractText());
+                        p.Transients.JapaneseTransients.Add(2, pt.Value.Unknown2.ExtractText());
+                        p.Transients.JapaneseTransients.Add(3, pt.Value.Unknown3.ExtractText());
+                        p.Transients.JapaneseTransients.Add(4, pt.Value.Unknown4.ExtractText());
+                        p.Transients.JapaneseTransients.Add(5, pt.Value.Unknown5.ExtractText());
+                        break;
+                }
+                returnedModelsPvPRanks.Add(p);
+            }
+
+            return returnedModelsPvPRanks;
+        }
+
+        public static void DrawPvPRankBar(uint left, uint right, int width, Vector4 fgColor, Vector4 bgColor)
+        {
+            float progress = (float)left /right;
+
+            ImGui.PushStyleColor(ImGuiCol.FrameBg, bgColor);
+            ImGui.PushStyleColor(ImGuiCol.PlotHistogram, fgColor);
+            ImGui.ProgressBar(progress, new Vector2(width, 10), "");
+            ImGui.PopStyleColor();
+            ImGui.PopStyleColor();
         }
 
         public static BeastReputationRank? GetBeastReputationRank(ClientLanguage currentLocale, uint id)

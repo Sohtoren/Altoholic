@@ -19,6 +19,7 @@ namespace Altoholic.Windows
         private RetainersWindow RetainersWindow { get; }
         private CollectionWindow CollectionWindow { get; }
         private ProgressWindow ProgressWindow { get; }
+        private PvPWindow PvPWindow { get; }
         private ConfigWindow ConfigWindow { get; }
 
         private ClientLanguage _currentLocale;
@@ -37,6 +38,7 @@ namespace Altoholic.Windows
             RetainersWindow retainersWindow,
             CollectionWindow collectionWindow,
             ProgressWindow progressWindow,
+            PvPWindow pvPWindow,
             ConfigWindow configWindow
         )
             : base(name, ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse)
@@ -55,6 +57,7 @@ namespace Altoholic.Windows
             RetainersWindow = retainersWindow;
             CollectionWindow = collectionWindow;
             ProgressWindow = progressWindow;
+            PvPWindow = pvPWindow;
             ConfigWindow = configWindow;
         }
 
@@ -88,6 +91,7 @@ namespace Altoholic.Windows
             RetainersWindow.IsOpen = false;
             CollectionWindow.IsOpen = false;
             ProgressWindow.IsOpen = false;
+            PvPWindow.IsOpen = false;
             ConfigWindow.IsOpen = false;
         }
 
@@ -101,6 +105,7 @@ namespace Altoholic.Windows
             RetainersWindow.IsOpen = false;
             CollectionWindow.IsOpen = false;
             ProgressWindow.IsOpen = false;
+            PvPWindow.IsOpen = false;
             ConfigWindow.IsOpen = false;
         }
 
@@ -113,7 +118,6 @@ namespace Altoholic.Windows
             {
                 if (charactersTab.Success)
                 {
-                    //if(charactersWindow.DrawConditions())
                     CharactersWindow.Draw();
                 }
             }
@@ -171,8 +175,15 @@ namespace Altoholic.Windows
             {
                 if (progressTab.Success)
                 {
-                    //Double list like retainers, second list is the progress list (msq, event, yokai, trials,etc)
                     ProgressWindow.Draw();
+                }
+            }
+
+            using (var pvpTab = ImRaii.TabItem($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 102450)}"))
+            {
+                if (pvpTab.Success)
+                {
+                    PvPWindow.Draw();
                 }
             }
 

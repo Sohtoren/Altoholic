@@ -53,17 +53,18 @@ namespace Altoholic.Models
         public HashSet<uint> Glasses { get; set; } = [];
         public List<CurrenciesHistory> CurrenciesHistory { get; set; } = [];
         public List<BeastTribeRank> BeastReputations { get; set; } = [];
-        public HashSet<uint> Duties { get; set; } = [];
-        public HashSet<uint> DutiesUnlocked { get; set; } = [];
-        public List<Housing> Houses { get; set; } = [];
+        public HashSet<uint> Duties { get; init; } = [];
+        public HashSet<uint> DutiesUnlocked { get; init; } = [];
+        public List<Housing> Houses { get; init; } = [];
         public HashSet<uint> Hairstyles { get; set; } = [];
-        public HashSet<uint> Facepaints { get; set; } = [];
-        public HashSet<uint> SecretRecipeBooks { get; set; } = [];
-        public HashSet<uint> Vistas { get; set; } = [];
+        public HashSet<uint> Facepaints { get; init; } = [];
+        public HashSet<uint> SecretRecipeBooks { get; init; } = [];
+        public HashSet<uint> Vistas { get; init; } = [];
         public int? SightseeingLogUnlockState { get; set; }
         public int? SightseeingLogUnlockStateEx { get; set; }
         public HashSet<uint> Armoire { get; set; } = [];
-        public GlamourItem[] GlamourDresser { get; set; } = new GlamourItem[8000];
+        public GlamourItem[] GlamourDresser { get; init; } = new GlamourItem[8000];
+        public PvPProfile? PvPProfile { get; set; }
 
         public bool HasAnyLevelJob(int level)
         {
@@ -87,7 +88,6 @@ namespace Altoholic.Models
 
         public bool HasQuest(int id)
         {
-            //return Quests.Exists(q => q.Id == id);
             return Quests.Count > 0 && Quests.Contains(id);
         }
         /*public bool IsQuestCompleted(int id)
