@@ -146,7 +146,12 @@ namespace Altoholic.Windows
         private void DrawPvP(Character currentCharacter)
         {
             if (currentCharacter.Profile is null) return;
-            if (currentCharacter.PvPProfile is null)
+            if (currentCharacter.Profile.GrandCompany == 0)
+            {
+                ImGui.TextUnformatted(Loc.Localize("PvPProfileNotUnlocked", "This character doesn't have PvP unlocked"));
+                return;
+            }
+            if (currentCharacter.PvPProfile == null)
             {
                 ImGui.TextUnformatted(Loc.Localize("PvPProfileNotLoaded", "This character PvP profile wasn't loaded"));
                 return;
