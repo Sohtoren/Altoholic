@@ -3970,7 +3970,7 @@ namespace Altoholic.Windows
                     {
                         //bool dtAllied = selectedCharacter.HasQuest((int)QuestIds.TRIBE_DT_ALLIED);
                         bool dtAllied = false;
-                        for (uint i = 18; i <= 118; i++)
+                        for (uint i = 18; i <= 18; i++)
                         {
                             if (
                                 i == 18 && !selectedCharacter.HasQuest((int)QuestIds.TRIBE_DT_PELUPELU) /*||
