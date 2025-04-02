@@ -681,6 +681,9 @@ namespace Altoholic.Windows
             DrawAllLine(chars, charactersQuests,
                 $"7.1 - {_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.MSQ_CROSSROADS)}",
                 36);
+            DrawAllLine(chars, charactersQuests,
+                $"7.2 - {_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.MSQ_SEEKERS_OF_ETERNITY)}",
+                37);
         }
 
         private void DrawEventQuest(List<Character> chars)
@@ -766,6 +769,12 @@ namespace Altoholic.Windows
                     DrawAllLine(chars, charactersQuests,
                         $"{Loc.Localize("Event_LittleLadiesDay", "Little Ladies' Day")} (2025)",
                         124);
+                    DrawAllLine(chars, charactersQuests,
+                        $"{Loc.Localize("Event_HatchingTide", "Hatching-tide")} (2025)",
+                        125);
+                    /*DrawAllLine(chars, charactersQuests,
+                        $"{Loc.Localize("Event_TheMakeItRainCampaign", "The Make It Rain Campaign")} (2025)",
+                        126);*/
                 }
             }
 

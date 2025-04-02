@@ -3393,7 +3393,8 @@ namespace Altoholic
                     character.HasQuest((int)QuestIds.MSQ_GROWING_LIGHT_PART_1),
                     character.HasQuest((int)QuestIds.MSQ_GROWING_LIGHT_PART_2),
                     character.HasQuest((int)QuestIds.MSQ_DAWNTRAIL),
-                    character.HasQuest((int)QuestIds.MSQ_CROSSROADS)
+                    character.HasQuest((int)QuestIds.MSQ_CROSSROADS),
+                    character.HasQuest((int)QuestIds.MSQ_SEEKERS_OF_ETERNITY)
                 ];
                 result.Add(completedQuests);
             }
@@ -3569,6 +3570,8 @@ namespace Altoholic
                     character.HasQuest((int)QuestIds.EVENT_HEAVENSTURN_2025),
                     character.HasQuest((int)QuestIds.EVENT_VALENTIONE_S_DAY_2025),
                     character.HasQuest((int)QuestIds.EVENT_LITTLE_LADIES_DAY_2025),
+                    character.HasQuest((int)QuestIds.EVENT_HATCHING_TIDE_2025),
+                    character.HasQuest((int)QuestIds.EVENT_THE_MAKE_IT_RAIN_CAMPAIGN_2025),
                 ];
                 result.Add(completedQuests);
             }
