@@ -36,6 +36,7 @@
 
   <ItemGroup>
     <Folder Include="Assets\" />
+    <Folder Include="Database\Migrations\" />
     <Folder Include="Windows\Progress\" />
   </ItemGroup>
 </Project>
