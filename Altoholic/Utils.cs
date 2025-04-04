@@ -26,9 +26,9 @@ using Glasses = Lumina.Excel.Sheets.Glasses;
 using Quest = Lumina.Excel.Sheets.Quest;
 using Cabinet = Lumina.Excel.Sheets.Cabinet;
 using System.Runtime.CompilerServices;
+using BaseParam = Lumina.Excel.Sheets.BaseParam;
+using Materia = Lumina.Excel.Sheets.Materia;
 using PvPRankTransient = Altoholic.Models.PvPRankTransient;
-using System.Drawing;
-using System.Numerics;
 using Vector2 = FFXIVClientStructs.FFXIV.Common.Math.Vector2;
 using Vector4 = FFXIVClientStructs.FFXIV.Common.Math.Vector4;
 
@@ -1039,6 +1039,36 @@ namespace Altoholic
             return lumina != null ? lumina.Value.Name.ExtractText() : string.Empty;
         }
 
+        public static Materia? GetMateria(uint id)
+        {
+            ExcelSheet<Materia>? dc = Plugin.DataManager.GetExcelSheet<Materia>(ClientLanguage.English);
+            Materia? lumina = dc?.GetRow(id);
+            return lumina;
+        }
+
+        public static List<Models.Materia>? GetAllMaterias()
+        {
+            List<Models.Materia> returnedMaterias = [];
+            ExcelSheet<Materia>? dm = Plugin.DataManager.GetExcelSheet<Materia>(ClientLanguage.English);
+            using IEnumerator<Materia>? mEnumerator = dm?.GetEnumerator();
+            if (mEnumerator is null) return null;
+            while (mEnumerator.MoveNext())
+            {
+                Materia m = mEnumerator.Current;
+                if (!m.Item[0].IsValid) continue;
+                Models.Materia materia = new() { Id = m.RowId, BaseParamId = m.BaseParam.RowId, Grades = new uint[16], Values = new short[16] };
+                for (int i = 0; i < 16;i++)
+                {
+                    materia.Grades[i] = m.Item[i].RowId;
+                    materia.Values[i] = m.Value[i];
+                }
+
+                returnedMaterias.Add(materia);
+            }
+
+            return returnedMaterias;
+        }
+
         public static uint ConvertColorToAbgr(uint rgbColor)
         {
             var red = (byte)((rgbColor >> 16) & 0xFF);
@@ -1347,7 +1377,7 @@ namespace Altoholic
             ImGui.Image(texture.ImGuiHandle, size, uv0, uv1);
         }
 
-        public static void DrawGearPiece(ClientLanguage currentLocale, ref GlobalCache globalCache, List<Gear> gear,
+        private static void DrawGearPiece(ClientLanguage currentLocale, ref GlobalCache globalCache, List<Gear> gear,
             GearSlot slot, string tooltip, Vector2 iconSize,
             IDalamudTextureWrap? fallbackTexture, IDalamudTextureWrap? emptySlot)
         {
@@ -1379,7 +1409,8 @@ namespace Altoholic
                 }
             }
         }
-        public static void DrawFacewearPiece(ClientLanguage currentLocale, ref GlobalCache globalCache, ushort id, string tooltip, Vector2 iconSize,
+
+        private static void DrawFacewearPiece(ClientLanguage currentLocale, ref GlobalCache globalCache, ushort id, string tooltip, Vector2 iconSize,
             IDalamudTextureWrap? fallbackTexture, IDalamudTextureWrap? emptySlot)
         {
             if (fallbackTexture is null || emptySlot is null) return;
@@ -1549,7 +1580,7 @@ namespace Altoholic
                 if (!drawItemTooltipItemBonuses) return;
                 //Todo: Conditional attributes since not every item will have the same
                 ImGui.TableSetupColumn($"###DrawItemTooltip#Item_{item.ItemId}#Bonuses#StrengthCrit",
-                    ImGuiTableColumnFlags.WidthFixed, 40);
+                    ImGuiTableColumnFlags.WidthFixed, 150);
                 ImGui.TableSetupColumn($"###DrawItemTooltip#Item_{item.ItemId}#Bonuses#Empty",
                     ImGuiTableColumnFlags.WidthStretch);
                 ImGui.TableSetupColumn($"###DrawItemTooltip#Item_{item.ItemId}#Bonuses#VitSkS",
@@ -1576,15 +1607,50 @@ namespace Altoholic
             {
                 ImGui.Separator();
                 ImGui.TextUnformatted($"{globalCache.AddonStorage.LoadAddonString(currentLocale, 491)}"); // Materia
-                for (int i = 0; i < dbItem.Value.MateriaSlotCount; i++)
+
+                for (int i = 0; i < 5; i++)
                 {
-                    ImGui.ColorButton($"##Item_{item.ItemId}#Materia#{i}", new Vector4(34, 169, 34, 1),
-                        ImGuiColorEditFlags.None, new Vector2(16, 16));
+                    bool isOver = i+1 > dbItem.Value.MateriaSlotCount;
+                    if (item.Materia[i] == 0)
+                    {
+                        if (isOver) continue;
+                        DrawMateriaEmptyIcon(globalCache);
+                    }
+                    else
+                    {
+                        Models.Materia? materia = globalCache.MateriaStorage.GetMateria(item.Materia[i]);
+                        if (materia is null) continue;
+                        uint? materiaItemId = materia.Grades[item.MateriaGrade[i]];
+                        if (materiaItemId is 0) continue;
+                        Item? mItem = globalCache.ItemStorage.LoadItem(currentLocale, materiaItemId.Value);
+                        if (mItem is null) continue;
+                        short value = materia.Values[item.MateriaGrade[i]];
+                        if (value is 0) continue;
+                        Models.BaseParam? param =
+                            globalCache.BaseParamStorage.GetBaseParam(currentLocale, materia.BaseParamId);
+                        if (param is null) continue;
+                        string paramName = currentLocale switch
+                        {
+                            ClientLanguage.German => param?.GermanName,
+                            ClientLanguage.English => param?.EnglishName,
+                            ClientLanguage.French => param?.FrenchName,
+                            ClientLanguage.Japanese => param?.JapaneseName,
+                            _ => param?.EnglishName
+                        } ?? string.Empty;
+                        DrawMateriaIcon(globalCache, item.MateriaGrade[i], isOver);
+                        ImGui.SameLine();
+                        ImGui.TextUnformatted($"{mItem.Value.Name}");
+                        ImGui.SameLine();
+                        ImGui.TextUnformatted($"{paramName} {value}");
+                    }
                 }
-                //Plugin.Log.Debug($"Item materia: {item.Materia}");
+
             }
 
             ImGui.Separator();
+            uint jobId = dbItem.Value.ClassJobRepair.RowId;
+            DrawIcon(globalCache.IconStorage.LoadIcon(GetJobIconWithCornerSmall(jobId)), new Vector2(24,24));
+            ImGui.SameLine();
             ImGui.TextUnformatted(
                 $"{globalCache.AddonStorage.LoadAddonString(currentLocale, 497)}"); // Crafting & Repairs
             ImGui.TextUnformatted(
@@ -1592,7 +1658,7 @@ namespace Altoholic
             ImGui.TextUnformatted(
                 $"{globalCache.AddonStorage.LoadAddonString(currentLocale, 499)} : {(item.Spiritbond / 100f).ToString(false ? "F2" : "0.##").Truncate(2) + "%"}");
             ImGui.TextUnformatted(
-                $"{globalCache.AddonStorage.LoadAddonString(currentLocale, 500)} : {globalCache.JobStorage.GetName(currentLocale, dbItem.Value.ClassJobRepair.RowId)}"); //Repair Level
+                $"{globalCache.AddonStorage.LoadAddonString(currentLocale, 500)} : {globalCache.JobStorage.GetName(currentLocale, jobId)}"); //Repair Level
             ImGui.TextUnformatted(
                 $"{globalCache.AddonStorage.LoadAddonString(currentLocale, 518)} : {GetItemRepairResource(currentLocale, dbItem.Value.ItemRepair.RowId)}"); //Materials
             ImGui.TextUnformatted($"{globalCache.AddonStorage.LoadAddonString(currentLocale, 995)} : "); //Quick Repairs
@@ -1604,6 +1670,63 @@ namespace Altoholic
                 ImGui.TextUnformatted("Crafted");
 
             ImGui.EndTooltip();
+        }
+
+        private static void DrawMateriaEmptyIcon(GlobalCache globalCache)
+        {
+            IDalamudTextureWrap? itemDetailsTexture = globalCache.IconStorage.LoadItemDetailsTexture(2);
+            if (itemDetailsTexture == null)
+            {
+                Plugin.Log.Debug("itemDetailsTexture is null");
+                return;
+            }
+
+            DrawIcon(itemDetailsTexture, new Vector2(20, 20));
+        }
+        private static void DrawMateriaIcon(GlobalCache globalCache, byte grade, bool isOver = false)
+        {
+            int index;
+            if (!isOver)
+            {
+                index = grade switch
+                {
+                    1 or 2 or 3 or 4 => 3,
+                    5 => 21,
+                    6 => 23,
+                    7 => 25,
+                    8 => 27,
+                    9 => 29,
+                    10 => 31,
+                    11 => 33,
+                    12 => 35,
+                    _ => 2
+                };
+            }
+            else
+            {
+                index = grade switch
+                {
+                    1 or 2 or 3 or 4 => 17,
+                    5 => 22,
+                    6 => 24,
+                    7 => 26,
+                    8 => 28,
+                    9 => 30,
+                    10 => 32,
+                    11 => 34,
+                    12 => 36,
+                    _ => 2
+                };
+            }
+
+            IDalamudTextureWrap? itemDetailsTexture = globalCache.IconStorage.LoadItemDetailsTexture(index);
+            if (itemDetailsTexture == null)
+            {
+                Plugin.Log.Debug("itemDetailsTexture is null");
+                return;
+            }
+
+            DrawIcon(itemDetailsTexture, new Vector2(30, 30));
         }
 
         public static void DrawItemTooltip(ClientLanguage currentLocale, ref GlobalCache globalCache, Item item)
@@ -2701,6 +2824,78 @@ namespace Altoholic
             }
 
             return returnedMinionsIds;
+        }
+
+        public static BaseParam? GetBaseParam(ClientLanguage currentLocale, uint id)
+        {
+            ExcelSheet<BaseParam>? dct = Plugin.DataManager.GetExcelSheet<BaseParam>(currentLocale);
+            BaseParam? lumina = dct?.GetRow(id);
+            return lumina;
+        }
+        public static List<Models.BaseParam>? GetAllBaseParams(ClientLanguage currentLocale)
+        {
+            List<Models.BaseParam> returnedBaseParamsIds = [];
+            ExcelSheet<BaseParam>? dm = Plugin.DataManager.GetExcelSheet<BaseParam>(currentLocale);
+            using IEnumerator<BaseParam>? baseParamEnumerator = dm?.GetEnumerator();
+            if (baseParamEnumerator is null) return null;
+            while (baseParamEnumerator.MoveNext())
+            {
+                BaseParam baseParam = baseParamEnumerator.Current;
+                if (baseParam.Name.IsEmpty) continue;
+                Models.BaseParam m = new()
+                {
+                    Id = baseParam.RowId,
+                    OneHandWeaponPercent = baseParam.OneHandWeaponPercent,
+                    OffHandPercent = baseParam.OffHandPercent,
+                    HeadPercent = baseParam.HeadPercent,
+                    ChestPercent = baseParam.ChestPercent,
+                    HandsPercent = baseParam.HandsPercent,
+                    WaistPercent = baseParam.WaistPercent,
+                    LegsPercent = baseParam.LegsPercent,
+                    FeetPercent = baseParam.FeetPercent,
+                    EarringPercent = baseParam.EarringPercent,
+                    NecklacePercent = baseParam.NecklacePercent,
+                    BraceletPercent = baseParam.BraceletPercent,
+                    RingPercent = baseParam.RingPercent,
+                    TwoHandWeaponPercent = baseParam.TwoHandWeaponPercent,
+                    UnderArmorPercent = baseParam.UnderArmorPercent,
+                    ChestHeadPercent = baseParam.ChestHeadPercent,
+                    ChestHeadLegsFeetPercent = baseParam.ChestHeadLegsFeetPercent,
+                    Unknown0 = baseParam.Unknown0,
+                    LegsFeetPercent = baseParam.LegsFeetPercent,
+                    HeadChestHandsLegsFeetPercent = baseParam.HeadChestHandsLegsFeetPercent,
+                    ChestLegsGlovesPercent = baseParam.ChestLegsGlovesPercent,
+                    ChestLegsFeetPercent = baseParam.ChestLegsFeetPercent,
+                    Unknown1 = baseParam.Unknown1,
+                    OrderPriority = baseParam.OrderPriority,
+                    MeldParam = [..baseParam.MeldParam],
+                    PacketIndex = baseParam.PacketIndex,
+                    Unknown2 = baseParam.Unknown2
+                };
+                switch (currentLocale)
+                {
+                    case ClientLanguage.German:
+                        m.GermanName = baseParam.Name.ExtractText();
+                        m.GermanDescription = baseParam.Description.ExtractText();
+                        break;
+                    case ClientLanguage.English:
+                        m.EnglishName = baseParam.Name.ExtractText();
+                        m.EnglishDescription = baseParam.Description.ExtractText();
+                        break;
+                    case ClientLanguage.French:
+                        m.FrenchName = baseParam.Name.ExtractText();
+                        m.FrenchDescription = baseParam.Description.ExtractText();
+                        break;
+                    case ClientLanguage.Japanese:
+                        m.JapaneseName = baseParam.Name.ExtractText();
+                        m.JapaneseDescription = baseParam.Description.ExtractText();
+                        break;
+                }
+
+                returnedBaseParamsIds.Add(m);
+            }
+
+            return returnedBaseParamsIds;
         }
 
         public static Mount? GetMount(ClientLanguage currentLocale, uint id)

@@ -67,7 +67,7 @@ namespace Altoholic.Database
         /// <param name="columnName">The column in the given table to look for.</param>
         /// <param name="connection">The SQLiteConnection for this database.</param>
         /// <returns>True if the given table contains a column with the given name.</returns>
-        public static bool DoesColumnExist(SqliteConnection connection, string tableName, string columnName)
+        private static bool DoesColumnExist(SqliteConnection connection, string tableName, string columnName)
         {
             Plugin.Log.Debug($"Entering DoesColumnExist: {tableName}, {columnName}");
             IDataReader dr = connection.ExecuteReader("PRAGMA table_info(" + tableName + ")");
@@ -363,25 +363,42 @@ namespace Altoholic.Database
             if (DoesTableExist(db, VersionTableName))
             {
                 int? version = GetDbVersion(db);
-                if (version != null)
+                if (version is (null or 0))
+                {
+                    // This is needed because the previous versions didn't check for subrace and gender
+                    const string sql6 = $"UPDATE {CharacterTableName} SET Hairstyles = ''";
+                    int result6 = db.Execute(sql6);
+                    Plugin.Log.Debug($"Reset characters hairstyles. Result: {result6}");
+
+                    const string sql7 = $"INSERT INTO {VersionTableName} (Version) VALUES(1)";
+                    int result7 = db.Execute(sql7);
+                    Plugin.Log.Debug($"Set db version to 1. Result: {result7}");
+                }
+            }
+
+            if (DoesTableExist(db, VersionTableName))
+            {
+                int? version = GetDbVersion(db);
+                Plugin.Log.Debug($"DB version is:{version}");
+                if (version is not 1)
                 {
                     return;
                 }
 
-                // This is needed because the previous versions didn't check for subrace and gender
-                const string sql6 = $"UPDATE {CharacterTableName} SET Hairstyles = ''";
-                int result6 = db.Execute(sql6);
-                Plugin.Log.Debug($"Reset characters hairstyles. Result: {result6}");
-
-                const string sql7 = $"INSERT INTO {VersionTableName} (Version) VALUES(1)";
-                int result7 = db.Execute(sql7);
-                Plugin.Log.Debug($"Set db version to 1. Result: {result7}");
+                bool result = Migrations.MigrateFromVersionOneToVersionTwo.Do(db, CharacterTableName);
+                if (!result)
+                {
+                    return;
+                }
+                const string sql9 = $"UPDATE {VersionTableName} SET Version = 2";
+                int result9 = db.Execute(sql9);
+                Plugin.Log.Debug($"Set db version to 2. Result: {result9}");
             }
         }
 
         public static int? GetDbVersion(SqliteConnection db)
         {
-            Plugin.Log.Debug($"Database/GetDbVersion entered");
+            Plugin.Log.Debug("Database/GetDbVersion entered");
             try
             {
                 const string sql = $"SELECT Version FROM {VersionTableName}";
@@ -560,7 +577,7 @@ namespace Altoholic.Database
             }
         }
 
-        public static int DeleteCharacterCurrenciesHistories(SqliteConnection db, ulong id)
+        private static int DeleteCharacterCurrenciesHistories(SqliteConnection db, ulong id)
         {
             Plugin.Log.Debug($"Entering DeleteCharacterCurrenciesHistories with character id = {id}");
             const string sql = $"DELETE FROM {CharactersCurrenciesHistoryTableName} WHERE characterId = @id";
@@ -569,7 +586,7 @@ namespace Altoholic.Database
             return result;
         }
 
-        public static int UpdateCharacter(SqliteConnection db, Character character)
+        public static int UpdateCharacter(SqliteConnection db, Character character, bool updateLastOnline = true)
         {
             Plugin.Log.Debug($"Entering UpdateCharacter with character : id = {character.CharacterId}, FirstName = {character.FirstName}, LastName = {character.LastName}, HomeWorld = {character.HomeWorld}, DataCenter = {character.Datacenter}, LastJob = {character.LastJob}, LastJobLevel = {character.LastJobLevel}, FCTag = {character.FCTag}, FreeCompany = {character.FreeCompany}, LastOnline = {character.LastOnline}, PlayTime = {character.PlayTime}, LastPlayTimeUpdate = {character.LastPlayTimeUpdate}");
             if (character.CharacterId == 0) return 0;
@@ -808,7 +825,7 @@ namespace Altoholic.Database
             };
         }
 
-        private static DatabaseCharacter FormatCharacterForDatabase(Character character)
+        private static DatabaseCharacter FormatCharacterForDatabase(Character character, bool updateLastOnline = true)
         {
             string currentFacewear = System.Text.Json.JsonSerializer.Serialize(character.CurrentFacewear);
             string attributes = System.Text.Json.JsonSerializer.Serialize(character.Attributes);
@@ -861,7 +878,7 @@ namespace Altoholic.Database
                 LastJobLevel = character.LastJobLevel,
                 FCTag = character.FCTag,
                 FreeCompany = character.FreeCompany,
-                LastOnline = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
+                LastOnline = (updateLastOnline) ? DateTimeOffset.UtcNow.ToUnixTimeSeconds() : character.LastOnline,
                 PlayTime = character.PlayTime,
                 LastPlayTimeUpdate = character.LastPlayTimeUpdate,
                 HasPremiumSaddlebag = character.HasPremiumSaddlebag,

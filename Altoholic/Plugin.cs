@@ -122,7 +122,9 @@ namespace Altoholic
                 VistaStorage = new VistaStorage(),
                 ArmoireStorage = new ArmoireStorage(),
                 MirageSetStorage = new MirageSetStorage(),
-                PvPStorage = new PvPStorage()
+                PvPStorage = new PvPStorage(),
+                MateriaStorage = new MateriaStorage(),
+                BaseParamStorage = new BaseParamStorage()
             };
 
             _playtimeHook = Hook.HookFromAddress<UIModule.Delegates.HandlePacket>(UIModule.StaticVirtualTablePointer->HandlePacket, PlaytimePacket);
@@ -202,6 +204,8 @@ namespace Altoholic
             _globalCache.ArmoireStorage.Init(currentLocale, _globalCache);
             _globalCache.MirageSetStorage.Init(_globalCache);
             _globalCache.PvPStorage.Init(currentLocale);
+            _globalCache.MateriaStorage.Init();
+            _globalCache.BaseParamStorage.Init(currentLocale);
 
             _altoholicService = new(
                 () => _localPlayer,
@@ -1329,12 +1333,19 @@ namespace Altoholic
                     Spiritbond = ii.SpiritbondOrCollectability,
                     Condition = ii.Condition,
                     CrafterContentID = ii.CrafterContentId,
-                    Materia = ii.Materia.GetPinnableReference(),
-                    MateriaGrade = ii.MateriaGrades.GetPinnableReference(),
+                    Materia = new ushort[5],
+                    MateriaGrade = new byte[5],
                     Stain = ii.Stains[0],
                     Stain2 = ii.Stains[1],
-                    GlamourID = ii.GlamourId,
+                    GlamourID = ii.GlamourId
                 };
+                for (byte j = 0; j < 5; j++)
+                {
+                    ushort materiaId = ii.Materia[j];
+                    if (materiaId == 0) continue;
+                    currGear.Materia[j] = materiaId;
+                    currGear.MateriaGrade[j] = ii.MateriaGrades[j];
+                }
                 gearItems.Add(currGear);
             }
             _localPlayer.Gear = gearItems;
@@ -1468,13 +1479,21 @@ namespace Altoholic
                         Spiritbond = ii.SpiritbondOrCollectability,
                         Condition = ii.Condition,
                         CrafterContentID = ii.CrafterContentId,
-                        Materia = ii.Materia.GetPinnableReference(),
-                        MateriaGrade = ii.MateriaGrades.GetPinnableReference(),
-                        Stain = ii.Stains.GetPinnableReference(),
+                        Materia = new ushort[5],
+                        MateriaGrade = new byte[5],
+                        Stain = ii.Stains[0],
+                        Stain2 = ii.Stains[1],
                         GlamourID = ii.GlamourId,
                     };
+                    for (byte j = 0; j < 5; j++)
+                    {
+                        ushort materiaId = ii.Materia[j];
+                        if (materiaId == 0) continue;
+                        currGear.Materia[j] = materiaId;
+                        currGear.MateriaGrade[j] = ii.MateriaGrades[j];
+                    }
 
-                    switch(kind)
+                    switch (kind)
                     {
                         case InventoryType.ArmoryMainHand: mainHand.Add(currGear);break;
                         case InventoryType.ArmoryHead: head.Add(currGear); break;
@@ -1761,12 +1780,19 @@ namespace Altoholic
                     Spiritbond = ii.SpiritbondOrCollectability,
                     Condition = ii.Condition,
                     CrafterContentID = ii.CrafterContentId,
-                    Materia = ii.Materia.GetPinnableReference(),
-                    MateriaGrade = ii.MateriaGrades.GetPinnableReference(),
+                    Materia = new ushort[5],
+                    MateriaGrade = new byte[5],
                     Stain = ii.Stains[0],
                     Stain2 = ii.Stains[1],
                     GlamourID = ii.GlamourId,
                 };
+                for (int j = 0; j < ii.Materia.Length; j++)
+                {
+                    ushort materiaId = ii.Materia[j];
+                    if (materiaId == 0) continue;
+                    currGear.Materia[j] = materiaId;
+                    currGear.MateriaGrade[j] = ii.MateriaGrades[j];
+                }
                 gearItems.Add(currGear);
             }
             return gearItems;

@@ -782,81 +782,79 @@ namespace Altoholic.Windows
             {
                 if (progressEvent2024Tab.Success)
                 {
-                    using (var charactersEventTable = ImRaii.Table(
-                               $"###CharactersProgress#All#Event#2024#Table",
-                               chars.Count + 1,
-                               ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner |
-                               ImGuiTableFlags.ScrollX, new Vector2(-1, 335)))
+                    using var charactersEventTable = ImRaii.Table(
+                        $"###CharactersProgress#All#Event#2024#Table",
+                        chars.Count + 1,
+                        ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner |
+                        ImGuiTableFlags.ScrollX, new Vector2(-1, 335));
+                    if (!charactersEventTable) return;
+
+                    ImGui.TableSetupColumn($"###CharactersProgress#All#Event#2024#Name",
+                        ImGuiTableColumnFlags.WidthFixed, 260);
+                    foreach (Character c in chars)
                     {
-                        if (!charactersEventTable) return;
+                        ImGui.TableSetupColumn($"###CharactersProgress#All#Event#2024#{c.CharacterId}",
+                            ImGuiTableColumnFlags.WidthFixed, 20);
+                    }
 
-                        ImGui.TableSetupColumn($"###CharactersProgress#All#Event#2024#Name",
-                            ImGuiTableColumnFlags.WidthFixed, 260);
-                        foreach (Character c in chars)
-                        {
-                            ImGui.TableSetupColumn($"###CharactersProgress#All#Event#2024#{c.CharacterId}",
-                                ImGuiTableColumnFlags.WidthFixed, 20);
-                        }
+                    ImGui.TableNextRow();
+                    ImGui.TableSetColumnIndex(0);
+                    ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 1898));
+                    if (ImGui.IsItemHovered())
+                    {
+                        ImGui.BeginTooltip();
+                        ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 14055));
+                        ImGui.EndTooltip();
+                    }
 
-                        ImGui.TableNextRow();
-                        ImGui.TableSetColumnIndex(0);
-                        ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 1898));
+                    foreach (Character currChar in chars)
+                    {
+                        ImGui.TableNextColumn();
+                        ImGui.TextUnformatted($"{currChar.FirstName[0]}.{currChar.LastName[0]}");
                         if (ImGui.IsItemHovered())
                         {
                             ImGui.BeginTooltip();
-                            ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 14055));
+                            ImGui.TextUnformatted(
+                                $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
                             ImGui.EndTooltip();
                         }
-
-                        foreach (Character currChar in chars)
-                        {
-                            ImGui.TableNextColumn();
-                            ImGui.TextUnformatted($"{currChar.FirstName[0]}.{currChar.LastName[0]}");
-                            if (ImGui.IsItemHovered())
-                            {
-                                ImGui.BeginTooltip();
-                                ImGui.TextUnformatted(
-                                    $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
-                                ImGui.EndTooltip();
-                            }
-                        }
-
-                        DrawAllLine(chars, charactersQuests,
-                            $"{Loc.Localize("Event_Heavensturn", "Heavensturn")} (2024)", 107);
-                        DrawAllLine(chars, charactersQuests,
-                            $"{Loc.Localize("Event_MaidensRhapsody", "The Maiden's Rhapsody")} (2024)", 108);
-                        DrawAllLine(chars, charactersQuests,
-                            $"{Loc.Localize("Event_ValentioneDay", "Valentione's Day")} (2024)",
-                            109);
-                        DrawAllLine(chars, charactersQuests,
-                            $"{Loc.Localize("Event_ANocturneforHeroes", "A Nocturne for Heroes")} (2024) *", 110);
-                        DrawAllLine(chars, charactersQuests,
-                            $"{Loc.Localize("Event_LittleLadiesAndHatchingTideDay", "Little Ladies' Day & Hatching-tide")} (2024)",
-                            111);
-                        DrawAllLine(chars, charactersQuests,
-                            $"{Loc.Localize("Event_ThePathInterfal", "The Path Infernal")} (2024)",
-                            112);
-                        DrawAllLine(chars, charactersQuests,
-                            $"{Loc.Localize("Event_YoKai", "Yo-kai Watch: Gather One, Gather All!")} (2024) *", 113);
-                        DrawAllLine(chars, charactersQuests,
-                            $"{Loc.Localize("Event_TheMakeItRainCampaign", "The Make It Rain Campaign")} 2024", 114);
-                        DrawAllLine(chars, charactersQuests,
-                            $"{Loc.Localize("Event_BreakingBrickMountains", "Breaking Brick Mountains")} (2024)", 115);
-                        DrawAllLine(chars, charactersQuests, $"{Loc.Localize("Event_Blunderville", "Blunderville")} **",
-                            116);
-                        DrawAllLine(chars, charactersQuests,
-                            $"{Loc.Localize("Event_MoonfireFaire", "Moonfire Faire")} (2024)",
-                            117);
-                        DrawAllLine(chars, charactersQuests, $"{Loc.Localize("Event_TheRising", "The Rising")} (2024)",
-                            118);
-                        DrawAllLine(chars, charactersQuests,
-                            $"{Loc.Localize("Event_AllSaintsWake", "All Saints' Wake")} (2024)",
-                            119);
-                        DrawAllLine(chars, charactersQuests, $"{Loc.Localize("Event_Blunderville", "Blunderville")} **",
-                            120);
-                        DrawAllLine(chars, charactersQuests, $"{Loc.Localize("Event_Starlight", "Starlight Celebration")} (2024)",
-                            121);
                     }
+
+                    DrawAllLine(chars, charactersQuests,
+                        $"{Loc.Localize("Event_Heavensturn", "Heavensturn")} (2024)", 107);
+                    DrawAllLine(chars, charactersQuests,
+                        $"{Loc.Localize("Event_MaidensRhapsody", "The Maiden's Rhapsody")} (2024)", 108);
+                    DrawAllLine(chars, charactersQuests,
+                        $"{Loc.Localize("Event_ValentioneDay", "Valentione's Day")} (2024)",
+                        109);
+                    DrawAllLine(chars, charactersQuests,
+                        $"{Loc.Localize("Event_ANocturneforHeroes", "A Nocturne for Heroes")} (2024) *", 110);
+                    DrawAllLine(chars, charactersQuests,
+                        $"{Loc.Localize("Event_LittleLadiesAndHatchingTideDay", "Little Ladies' Day & Hatching-tide")} (2024)",
+                        111);
+                    DrawAllLine(chars, charactersQuests,
+                        $"{Loc.Localize("Event_ThePathInterfal", "The Path Infernal")} (2024)",
+                        112);
+                    DrawAllLine(chars, charactersQuests,
+                        $"{Loc.Localize("Event_YoKai", "Yo-kai Watch: Gather One, Gather All!")} (2024) *", 113);
+                    DrawAllLine(chars, charactersQuests,
+                        $"{Loc.Localize("Event_TheMakeItRainCampaign", "The Make It Rain Campaign")} 2024", 114);
+                    DrawAllLine(chars, charactersQuests,
+                        $"{Loc.Localize("Event_BreakingBrickMountains", "Breaking Brick Mountains")} (2024)", 115);
+                    DrawAllLine(chars, charactersQuests, $"{Loc.Localize("Event_Blunderville", "Blunderville")} **",
+                        116);
+                    DrawAllLine(chars, charactersQuests,
+                        $"{Loc.Localize("Event_MoonfireFaire", "Moonfire Faire")} (2024)",
+                        117);
+                    DrawAllLine(chars, charactersQuests, $"{Loc.Localize("Event_TheRising", "The Rising")} (2024)",
+                        118);
+                    DrawAllLine(chars, charactersQuests,
+                        $"{Loc.Localize("Event_AllSaintsWake", "All Saints' Wake")} (2024)",
+                        119);
+                    DrawAllLine(chars, charactersQuests, $"{Loc.Localize("Event_Blunderville", "Blunderville")} **",
+                        120);
+                    DrawAllLine(chars, charactersQuests, $"{Loc.Localize("Event_Starlight", "Starlight Celebration")} (2024)",
+                        121);
                 }
             }
 
