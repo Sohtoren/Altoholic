@@ -160,6 +160,15 @@ namespace Altoholic.Windows
             using var tab = ImRaii.TabBar("###CharactersProgressTable#All#TabBar");
             if (!tab) return;
 
+            using (var cosmicExplorationTab =
+                   ImRaii.TabItem(
+                       $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 3849)}###CharactersProgressTable#All#TabBar#CosmicExploration"))
+            {
+                if (cosmicExplorationTab)
+                {
+                    DrawCosmicExploration(chars);
+                }
+            }
             using (var dutyTab =
                    ImRaii.TabItem(
                        $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 2225)}###CharactersProgressTable#All#TabBar#Duty"))
@@ -224,6 +233,132 @@ namespace Altoholic.Windows
                     DrawRoleQuestQuest(chars);
                 }
             }
+        }
+
+        private void DrawCosmicExploration(List<Character> chars)
+        {
+            using var tab = ImRaii.TabBar("###CharactersProgressTable#All#TabBar#CosmicExploration");
+            if (!tab) return;
+
+            using (var cosmicExplorationTab =
+                   ImRaii.TabItem(
+                       $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 3460)}###CharactersProgressTable#All#TabBar#CosmicExploration#Vendor"))
+            {
+                if (cosmicExplorationTab)
+                {
+                    DrawCosmicExplorationVendor(chars);
+                }
+            }
+            using (var cosmicExplorationShuffleTab =
+                   ImRaii.TabItem(
+                       $"Cosmic Fortunes###CharactersProgressTable#All#TabBar#CosmicExploration#Shuffle"))
+            {
+                if (cosmicExplorationShuffleTab)
+                {
+                    DrawCosmicExplorationShuffle(chars);
+                }
+            }
+
+        }
+        private void DrawCosmicExplorationVendor(List<Character> chars)
+        {
+                using var charactersEventTable = ImRaii.Table(
+                    $"###CharactersProgress#All#Event#CosmicExplorationRewards#Table",
+                    chars.Count + 2,
+                    ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner |
+                    ImGuiTableFlags.ScrollX | ImGuiTableFlags.ScrollY);
+                if (!charactersEventTable) return;
+                ImGui.TableSetupColumn($"###CharactersProgress#All#Event#CosmicExplorationRewards#Name",
+                    ImGuiTableColumnFlags.WidthFixed, 260);
+                ImGui.TableSetupColumn($"###CharactersProgress#All#Event#CosmicExplorationRewards#Currency",
+                    ImGuiTableColumnFlags.WidthFixed, 25);
+                foreach (Character c in chars)
+                {
+                    ImGui.TableSetupColumn($"###CharactersProgress#All#Event#CosmicExplorationRewards#{c.CharacterId}",
+                        ImGuiTableColumnFlags.WidthFixed, 20);
+                }
+
+                ImGui.TableNextRow();
+                ImGui.TableSetColumnIndex(0);
+                ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 1885));
+
+                ImGui.TableSetColumnIndex(1);
+                Item? itm = _globalCache.ItemStorage.LoadItem(_currentLocale, (uint)Currencies.COSMOCREDIT);
+                if (itm == null) return;
+                Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Value.Icon), new Vector2(16, 16));
+                if (ImGui.IsItemHovered())
+                {
+                    Utils.DrawItemTooltip(_currentLocale, ref _globalCache, itm.Value);
+                }
+
+                foreach (Character currChar in chars)
+                {
+                    ImGui.TableNextColumn();
+                    ImGui.TextUnformatted($"{currChar.FirstName[0]}.{currChar.LastName[0]}");
+                    if (ImGui.IsItemHovered())
+                    {
+                        ImGui.BeginTooltip();
+                        ImGui.TextUnformatted(
+                            $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
+                        ImGui.EndTooltip();
+                    }
+                }
+
+                DrawAllCharsFacewear(chars, 289, 6000);
+                DrawAllCharsEmote(chars, 294, 9600);
+                DrawAllCharsFramerKit(chars, 48091, 6000);
+                DrawAllCharsOrchestrion(chars, 737, 6000);
+                DrawAllCharsOrchestrion(chars, 738, 6000);
+        }
+        private void DrawCosmicExplorationShuffle(List<Character> chars)
+        {
+                using var charactersEventTable = ImRaii.Table(
+                    $"###CharactersProgress#All#Event#CosmicExplorationRewards#Table",
+                    chars.Count + 2,
+                    ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner |
+                    ImGuiTableFlags.ScrollX | ImGuiTableFlags.ScrollY);
+                if (!charactersEventTable) return;
+                ImGui.TableSetupColumn($"###CharactersProgress#All#Event#CosmicExplorationRewards#Name",
+                    ImGuiTableColumnFlags.WidthFixed, 260);
+                ImGui.TableSetupColumn($"###CharactersProgress#All#Event#CosmicExplorationRewards#Currency",
+                    ImGuiTableColumnFlags.WidthFixed, 25);
+                foreach (Character c in chars)
+                {
+                    ImGui.TableSetupColumn($"###CharactersProgress#All#Event#CosmicExplorationRewards#{c.CharacterId}",
+                        ImGuiTableColumnFlags.WidthFixed, 20);
+                }
+
+                ImGui.TableNextRow();
+                ImGui.TableSetColumnIndex(0);
+                ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 1885));
+
+                /*ImGui.TableSetColumnIndex(1);
+                Item? itm = _globalCache.ItemStorage.LoadItem(_currentLocale, (uint)Currencies.COSMOCREDIT);
+                if (itm == null) return;
+                Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Value.Icon), new Vector2(16, 16));
+                if (ImGui.IsItemHovered())
+                {
+                    Utils.DrawItemTooltip(_currentLocale, ref _globalCache, itm.Value);
+                }*/
+
+                foreach (Character currChar in chars)
+                {
+                    ImGui.TableNextColumn();
+                    ImGui.TextUnformatted($"{currChar.FirstName[0]}.{currChar.LastName[0]}");
+                    if (ImGui.IsItemHovered())
+                    {
+                        ImGui.BeginTooltip();
+                        ImGui.TextUnformatted(
+                            $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
+                        ImGui.EndTooltip();
+                    }
+                }
+
+                DrawAllCharsFacewear(chars, 301, 0);
+                DrawAllCharsOrnament(chars, 47, 0);
+                DrawAllCharsMount(chars, 364, 0);
+                DrawAllCharsMinion(chars, 547, 0);
+                DrawAllCharsEmote(chars, 286, 0);
         }
 
         private void DrawDuties(List<Character> chars)
@@ -2873,7 +3008,11 @@ namespace Altoholic.Windows
                 };
                 ImGui.TextUnformatted(name);
 
-                ImGui.TableNextColumn();ImGui.TextUnformatted($"{cost}");
+                if (cost > 0)
+                {
+                    ImGui.TableNextColumn();
+                    ImGui.TextUnformatted($"{cost}");
+                }
 
                 foreach (Character currChar in chars)
                 {
@@ -2917,7 +3056,11 @@ namespace Altoholic.Windows
                 };
                 ImGui.TextUnformatted(name);
 
-                ImGui.TableNextColumn();ImGui.TextUnformatted($"{cost}");
+                if (cost > 0)
+                {
+                    ImGui.TableNextColumn();
+                    ImGui.TextUnformatted($"{cost}");
+                }
 
                 foreach (Character currChar in chars)
                 {
@@ -2961,7 +3104,11 @@ namespace Altoholic.Windows
                 };
                 ImGui.TextUnformatted(name);
 
-                ImGui.TableNextColumn();ImGui.TextUnformatted($"{cost}");
+                if (cost > 0)
+                {
+                    ImGui.TableNextColumn();
+                    ImGui.TextUnformatted($"{cost}");
+                }
 
                 foreach (Character currChar in chars)
                 {
@@ -3004,7 +3151,11 @@ namespace Altoholic.Windows
                 };
                 ImGui.TextUnformatted(name);
 
-                ImGui.TableNextColumn();ImGui.TextUnformatted($"{cost}");
+                if (cost > 0)
+                {
+                    ImGui.TableNextColumn();
+                    ImGui.TextUnformatted($"{cost}");
+                }
 
                 foreach (Character currChar in chars)
                 {
@@ -3051,7 +3202,11 @@ namespace Altoholic.Windows
                     };
                     ImGui.TextUnformatted(name);
 
-                    ImGui.TableNextColumn();ImGui.TextUnformatted($"{cost}");
+                    if (cost > 0)
+                    {
+                        ImGui.TableNextColumn();
+                        ImGui.TextUnformatted($"{cost}");
+                    }
 
                     foreach (Character currChar in chars)
                     {
@@ -3096,7 +3251,11 @@ namespace Altoholic.Windows
                 };
                 ImGui.TextUnformatted(name);
 
-                ImGui.TableNextColumn();ImGui.TextUnformatted($"{cost}");
+                if (cost > 0)
+                {
+                    ImGui.TableNextColumn();
+                    ImGui.TextUnformatted($"{cost}");
+                }
 
                 foreach (Character currChar in chars)
                 {
@@ -3140,7 +3299,11 @@ namespace Altoholic.Windows
                 };
                 ImGui.TextUnformatted(name);
 
-                ImGui.TableNextColumn();ImGui.TextUnformatted($"{cost}");
+                if (cost > 0)
+                {
+                    ImGui.TableNextColumn();
+                    ImGui.TextUnformatted($"{cost}");
+                }
 
                 foreach (Character currChar in chars)
                 {
@@ -3185,7 +3348,11 @@ namespace Altoholic.Windows
                 };
                 ImGui.TextUnformatted(name);
 
-                ImGui.TableNextColumn();ImGui.TextUnformatted($"{cost}");
+                if (cost > 0)
+                {
+                    ImGui.TableNextColumn();
+                    ImGui.TextUnformatted($"{cost}");
+                }
 
                 foreach (Character currChar in chars)
                 {
@@ -3227,8 +3394,11 @@ namespace Altoholic.Windows
             ImGui.SameLine();
             ImGui.TextUnformatted(i.Name.ExtractText());
 
-            ImGui.TableNextColumn();
-            ImGui.TextUnformatted($"{cost}");
+            if (cost > 0)
+            {
+                ImGui.TableNextColumn();
+                ImGui.TextUnformatted($"{cost}");
+            }
 
             foreach (Character currChar in chars)
             {
@@ -3240,6 +3410,53 @@ namespace Altoholic.Windows
                 {
                     ImGui.BeginTooltip();
                     ImGui.TextUnformatted(i.Name.ExtractText());
+                    ImGui.TextUnformatted(
+                        $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
+                    ImGui.EndTooltip();
+                }
+            }
+        }
+        private void DrawAllCharsFacewear(List<Character> chars, uint id, int cost)
+        {
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            Models.Glasses? g = _globalCache.GlassesStorage.GetGlasses(_currentLocale, id);
+            if (g == null)
+            {
+                return;
+            }
+
+            Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(g.Icon), new Vector2(32, 32));
+            if (ImGui.IsItemHovered())
+            {
+                Utils.DrawGlassesTooltip(_currentLocale, ref _globalCache, g);
+            }
+            ImGui.SameLine();
+            string name = _currentLocale switch
+            {
+                ClientLanguage.German => g.GermanName,
+                ClientLanguage.English => g.EnglishName,
+                ClientLanguage.French => g.FrenchName,
+                ClientLanguage.Japanese => g.JapaneseName,
+                _ => g.EnglishName
+            };
+            ImGui.TextUnformatted(Utils.CapitalizeSentence(name));
+
+            if (cost > 0)
+            {
+                ImGui.TableNextColumn(); ImGui.TextUnformatted($"{cost}");
+            }
+
+            foreach (Character currChar in chars)
+            {
+                ImGui.TableNextColumn();
+                ImGui.PushFont(UiBuilder.IconFont);
+                ImGui.TextUnformatted(currChar.HasGlasses(id) ? FontAwesomeIcon.Check.ToIconString() : "");
+                ImGui.PopFont();
+                if (ImGui.IsItemHovered())
+                {
+                    ImGui.BeginTooltip();
+                    ImGui.TextUnformatted(name);
                     ImGui.TextUnformatted(
                         $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
                     ImGui.EndTooltip();

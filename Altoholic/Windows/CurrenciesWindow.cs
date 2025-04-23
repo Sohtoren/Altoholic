@@ -163,11 +163,11 @@ namespace Altoholic.Windows
                         if (ImGui.Selectable(n, n == _selectedCurrency))
                         {
                             _selectedCurrency = n;
-                            Plugin.Log.Debug($"n:{n}");
+                            /*Plugin.Log.Debug($"n:{n}");
                             Plugin.Log.Debug($"selected_currency:{_selectedCurrency}");
                             Plugin.Log.Debug(
                                 $"Currency selected : {Enum.Parse(typeof(Currencies), name)} {(uint)Enum.Parse(typeof(Currencies), name)}");
-                            Plugin.Log.Debug($"name : {Utils.CapitalizeCurrency(name)}");
+                            Plugin.Log.Debug($"name : {Utils.CapitalizeCurrency(name)}");*/
                             _currentCurrency = Utils.CapitalizeCurrency(name);
                         }
                     }

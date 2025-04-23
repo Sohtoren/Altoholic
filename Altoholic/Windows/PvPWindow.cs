@@ -967,7 +967,8 @@ namespace Altoholic.Windows
             if (previousSerie is null) return;
             PvPSeriesLevel? serie = _globalCache.PvPStorage.GetSeriesExperience(pvPProfile.SeriesCurrentRank);
             if (serie is null) return;
-            uint left = (uint)pvPProfile.SeriesExperience - previousSerie.Value.ExpToNext;
+            //uint left = (uint)pvPProfile.SeriesExperience/* - previousSerie.Value.ExpToNext*/;
+            uint left = pvPProfile.SeriesExperience;
             uint right = serie.Value.ExpToNext;
             Utils.DrawPvPRankBar(left, right, 250, ImGuiColors.ParsedPurple, ImGuiColors.DalamudGrey3);
             using ImRaii.IEndObject pvpRankTable =
