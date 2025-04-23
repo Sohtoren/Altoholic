@@ -359,6 +359,7 @@ namespace Altoholic.Windows
                 DrawAllCharsMount(chars, 364, 0);
                 DrawAllCharsMinion(chars, 547, 0);
                 DrawAllCharsEmote(chars, 286, 0);
+                DrawAllCharsOrchestrion(chars, 745, 0);
         }
 
         private void DrawDuties(List<Character> chars)
