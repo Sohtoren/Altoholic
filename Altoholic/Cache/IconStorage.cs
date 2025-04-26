@@ -24,7 +24,7 @@ namespace Altoholic.Cache
             _itemDetailsUld = Plugin.PluginInterface.UiBuilder.LoadUld("ui/uld/ItemDetail.uld");
             if (_itemDetailsUld is null) return;
 
-            for (int i = 0; i <= 37; i++)
+            for (int i = 0; i <= 36; i++)
             {
                 _itemDetailsTextures.Add(i,
                     _itemDetailsUld.LoadTexturePart("ui/uld/ItemDetail_hr1.tex", i));
