@@ -41,7 +41,7 @@ namespace Altoholic.Windows
             PvPWindow pvPWindow,
             ConfigWindow configWindow
         )
-            : base(name, ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse)
+            : base(name,/* ImGuiWindowFlags.NoResize |*/ ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse) // I'm commendint out the NoResize flag because it is causing issues with the window size when scaling above 100%; if you scale up to 300%, the window resizes to be much larger and you can't resize back down
         {
             SizeConstraints = new WindowSizeConstraints
             {
@@ -121,7 +121,7 @@ namespace Altoholic.Windows
                     CharactersWindow.Draw();
                 }
             }
-        
+
             using (var detailsTab = ImRaii.TabItem($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 6361)}"))
             {
                 if (detailsTab.Success)
@@ -138,7 +138,7 @@ namespace Altoholic.Windows
                     JobsWindow.Draw();
                 }
             }
-        
+
             using (var currenciesTab = ImRaii.TabItem($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 761)}"))
             {
                 if (currenciesTab.Success)
@@ -146,7 +146,7 @@ namespace Altoholic.Windows
                     CurrenciesWindow.Draw();
                 }
             }
-        
+
             using (var inventoryTab = ImRaii.TabItem($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 520)}"))// Inventory
             {
                 if (inventoryTab.Success)
@@ -154,7 +154,7 @@ namespace Altoholic.Windows
                     InventoriesWindow.Draw();
                 }
             }
-        
+
             using (var retainersTab = ImRaii.TabItem($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 532)}"))
             {
                 if (retainersTab.Success)

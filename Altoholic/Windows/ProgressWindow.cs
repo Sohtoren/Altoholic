@@ -271,11 +271,11 @@ namespace Altoholic.Windows
                 ImGui.TableSetupColumn($"###CharactersProgress#All#Event#CosmicExplorationRewards#Name",
                     ImGuiTableColumnFlags.WidthFixed, 260);
                 ImGui.TableSetupColumn($"###CharactersProgress#All#Event#CosmicExplorationRewards#Currency",
-                    ImGuiTableColumnFlags.WidthFixed, 25);
+                    ImGuiTableColumnFlags.WidthFixed, Utils.GetColumnWidthScaled(25));
                 foreach (Character c in chars)
                 {
                     ImGui.TableSetupColumn($"###CharactersProgress#All#Event#CosmicExplorationRewards#{c.CharacterId}",
-                        ImGuiTableColumnFlags.WidthFixed, 20);
+                        ImGuiTableColumnFlags.WidthFixed, Utils.GetColumnWidthScaled(20));
                 }
 
                 ImGui.TableNextRow();
@@ -321,11 +321,11 @@ namespace Altoholic.Windows
                 ImGui.TableSetupColumn($"###CharactersProgress#All#Event#CosmicExplorationRewards#Name",
                     ImGuiTableColumnFlags.WidthFixed, 260);
                 ImGui.TableSetupColumn($"###CharactersProgress#All#Event#CosmicExplorationRewards#Currency",
-                    ImGuiTableColumnFlags.WidthFixed, 25);
+                    ImGuiTableColumnFlags.WidthFixed, Utils.GetColumnWidthScaled(25));
                 foreach (Character c in chars)
                 {
                     ImGui.TableSetupColumn($"###CharactersProgress#All#Event#CosmicExplorationRewards#{c.CharacterId}",
-                        ImGuiTableColumnFlags.WidthFixed, 20);
+                        ImGuiTableColumnFlags.WidthFixed, Utils.GetColumnWidthScaled(20));
                 }
 
                 ImGui.TableNextRow();
@@ -524,7 +524,7 @@ namespace Altoholic.Windows
                     {
                         ImGui.TableSetupColumn(
                             $"###CharactersProgress#All#Duty#{duName}_{ex.i}#Table#{c.CharacterId}",
-                            ImGuiTableColumnFlags.WidthFixed, 20);
+                            ImGuiTableColumnFlags.WidthFixed, Utils.GetColumnWidthScaled(20));
                     }
 
                     ImGui.TableNextRow();
@@ -582,7 +582,7 @@ namespace Altoholic.Windows
                 {
                     ImGui.TableSetupColumn(
                         $"###CharactersProgress#All#Duty#{duName}_{ex.i}#Table#{c.CharacterId}",
-                        ImGuiTableColumnFlags.WidthFixed, 20);
+                        ImGuiTableColumnFlags.WidthFixed, Utils.GetColumnWidthScaled(20));
                 }
 
                 ImGui.TableNextRow();
@@ -649,7 +649,8 @@ namespace Altoholic.Windows
                 //ImGui.TextUnformatted(completed ? "\u2713" : unlocked ? "\u25ef" : "");
                 // Todo: Use line below on weird non default font
                 ImGui.PushFont(UiBuilder.IconFont);
-                ImGui.TextUnformatted(completed ? FontAwesomeIcon.Check.ToIconString() : unlocked ? FontAwesomeIcon.Circle.ToIconString() : "");
+
+                Utils.CentreText(completed ? FontAwesomeIcon.Check.ToIconString() : unlocked ? FontAwesomeIcon.Circle.ToIconString() : "");
                 ImGui.PopFont();
                 if (ImGui.IsItemHovered())
                 {
@@ -679,7 +680,7 @@ namespace Altoholic.Windows
             foreach (Character c in chars)
             {
                 ImGui.TableSetupColumn($"###CharactersProgress#All#MSQ#{c.CharacterId}",
-                    ImGuiTableColumnFlags.WidthFixed, 20);
+                    ImGuiTableColumnFlags.WidthFixed, Utils.GetColumnWidthScaled(20));
             }
 
             ImGui.TableNextRow();
@@ -870,7 +871,7 @@ namespace Altoholic.Windows
                     foreach (Character c in chars)
                     {
                         ImGui.TableSetupColumn($"###CharactersProgress#All#Event#2025#{c.CharacterId}",
-                            ImGuiTableColumnFlags.WidthFixed, 20);
+                            ImGuiTableColumnFlags.WidthFixed, Utils.GetColumnWidthScaled(20));
                     }
 
                     ImGui.TableNextRow();
@@ -930,7 +931,7 @@ namespace Altoholic.Windows
                     foreach (Character c in chars)
                     {
                         ImGui.TableSetupColumn($"###CharactersProgress#All#Event#2024#{c.CharacterId}",
-                            ImGuiTableColumnFlags.WidthFixed, 20);
+                            ImGuiTableColumnFlags.WidthFixed, Utils.GetColumnWidthScaled(20));
                     }
 
                     ImGui.TableNextRow();
@@ -1009,7 +1010,7 @@ namespace Altoholic.Windows
                     foreach (Character c in chars)
                     {
                         ImGui.TableSetupColumn($"###CharactersProgress#All#Event#2023#{c.CharacterId}",
-                            ImGuiTableColumnFlags.WidthFixed, 20);
+                            ImGuiTableColumnFlags.WidthFixed, Utils.GetColumnWidthScaled(20));
                     }
 
                     ImGui.TableNextRow();
@@ -1078,7 +1079,7 @@ namespace Altoholic.Windows
                     foreach (Character c in chars)
                     {
                         ImGui.TableSetupColumn($"###CharactersProgress#All#Event#2022#{c.CharacterId}",
-                            ImGuiTableColumnFlags.WidthFixed, 20);
+                            ImGuiTableColumnFlags.WidthFixed, Utils.GetColumnWidthScaled(20));
                     }
 
                     ImGui.TableNextRow();
@@ -1150,7 +1151,7 @@ namespace Altoholic.Windows
                     foreach (Character c in chars)
                     {
                         ImGui.TableSetupColumn($"###CharactersProgress#All#Event#2021#{c.CharacterId}",
-                            ImGuiTableColumnFlags.WidthFixed, 20);
+                            ImGuiTableColumnFlags.WidthFixed, Utils.GetColumnWidthScaled(20));
                     }
 
                     ImGui.TableNextRow();
@@ -1216,7 +1217,7 @@ namespace Altoholic.Windows
                     foreach (Character c in chars)
                     {
                         ImGui.TableSetupColumn($"###CharactersProgress#All#Event#2020#{c.CharacterId}",
-                            ImGuiTableColumnFlags.WidthFixed, 20);
+                            ImGuiTableColumnFlags.WidthFixed, Utils.GetColumnWidthScaled(20));
                     }
 
                     ImGui.TableNextRow();
@@ -1286,7 +1287,7 @@ namespace Altoholic.Windows
                     foreach (Character c in chars)
                     {
                         ImGui.TableSetupColumn($"###CharactersProgress#All#Event#2019#{c.CharacterId}",
-                            ImGuiTableColumnFlags.WidthFixed, 20);
+                            ImGuiTableColumnFlags.WidthFixed, Utils.GetColumnWidthScaled(20));
                     }
 
                     ImGui.TableNextRow();
@@ -1355,7 +1356,7 @@ namespace Altoholic.Windows
                     foreach (Character c in chars)
                     {
                         ImGui.TableSetupColumn($"###CharactersProgress#All#Event#2018#{c.CharacterId}",
-                            ImGuiTableColumnFlags.WidthFixed, 20);
+                            ImGuiTableColumnFlags.WidthFixed, Utils.GetColumnWidthScaled(20));
                     }
 
                     ImGui.TableNextRow();
@@ -1425,7 +1426,7 @@ namespace Altoholic.Windows
                     foreach (Character c in chars)
                     {
                         ImGui.TableSetupColumn($"###CharactersProgress#All#Event#2017#{c.CharacterId}",
-                            ImGuiTableColumnFlags.WidthFixed, 20);
+                            ImGuiTableColumnFlags.WidthFixed, Utils.GetColumnWidthScaled(20));
                     }
 
                     ImGui.TableNextRow();
@@ -1498,7 +1499,7 @@ namespace Altoholic.Windows
                     foreach (Character c in chars)
                     {
                         ImGui.TableSetupColumn($"###CharactersProgress#All#Event#2013141516#{c.CharacterId}",
-                            ImGuiTableColumnFlags.WidthFixed, 20);
+                            ImGuiTableColumnFlags.WidthFixed, Utils.GetColumnWidthScaled(20));
                     }
 
                     ImGui.TableNextRow();
@@ -1634,11 +1635,11 @@ namespace Altoholic.Windows
                     ImGui.TableSetupColumn($"###CharactersProgress#All#Event#blundervilleRewards#Name",
                         ImGuiTableColumnFlags.WidthFixed, 260);
                     ImGui.TableSetupColumn($"###CharactersProgress#All#Event#blundervilleRewards#Currency",
-                        ImGuiTableColumnFlags.WidthFixed, 25);
+                        ImGuiTableColumnFlags.WidthFixed, Utils.GetColumnWidthScaled(25));
                     foreach (Character c in chars)
                     {
                         ImGui.TableSetupColumn($"###CharactersProgress#All#Event#blundervilleRewards#{c.CharacterId}",
-                            ImGuiTableColumnFlags.WidthFixed, 20);
+                            ImGuiTableColumnFlags.WidthFixed, Utils.GetColumnWidthScaled(20));
                     }
 
                     ImGui.TableNextRow();
@@ -1712,11 +1713,11 @@ namespace Altoholic.Windows
                 ImGui.TableSetupColumn($"###CharactersProgress#All#Event#MogRewards#Event2025_1#Name",
                     ImGuiTableColumnFlags.WidthFixed, 270);
                 ImGui.TableSetupColumn($"###CharactersProgress#All#Event#MogRewards#Event2025_1#Currency",
-                    ImGuiTableColumnFlags.WidthFixed, 20);
+                    ImGuiTableColumnFlags.WidthFixed, Utils.GetColumnWidthScaled(20));
                 foreach (Character c in chars)
                 {
                     ImGui.TableSetupColumn($"###CharactersProgress#All#Event#MogRewards#Event2025_1#{c.CharacterId}",
-                        ImGuiTableColumnFlags.WidthFixed, 20);
+                        ImGuiTableColumnFlags.WidthFixed, Utils.GetColumnWidthScaled(20));
                 }
 
                 ImGui.TableNextRow();
@@ -1941,11 +1942,11 @@ namespace Altoholic.Windows
                         ImGui.TableSetupColumn($"###CharactersProgress#All#Event#MogRewards#Event2024_3#Name",
                             ImGuiTableColumnFlags.WidthFixed, 270);
                         ImGui.TableSetupColumn($"###CharactersProgress#All#Event#MogRewards#Event2024_3#Currency",
-                            ImGuiTableColumnFlags.WidthFixed, 20);
+                            ImGuiTableColumnFlags.WidthFixed, Utils.GetColumnWidthScaled(20));
                         foreach (Character c in chars)
                         {
                             ImGui.TableSetupColumn($"###CharactersProgress#All#Event#MogRewards#Event2024_3#{c.CharacterId}",
-                                ImGuiTableColumnFlags.WidthFixed, 20);
+                                ImGuiTableColumnFlags.WidthFixed, Utils.GetColumnWidthScaled(20));
                         }
 
                         ImGui.TableNextRow();
@@ -2009,12 +2010,12 @@ namespace Altoholic.Windows
                         ImGui.TableSetupColumn($"###CharactersProgress#All#Event#MogRewards#Event2024_2#Name",
                             ImGuiTableColumnFlags.WidthFixed, 270);
                         ImGui.TableSetupColumn($"###CharactersProgress#All#Event#MogRewards#Event2024_2#Currency",
-                            ImGuiTableColumnFlags.WidthFixed, 25);
+                            ImGuiTableColumnFlags.WidthFixed, Utils.GetColumnWidthScaled(25));
                         foreach (Character c in chars)
                         {
                             ImGui.TableSetupColumn(
                                 $"###CharactersProgress#All#Event#MogRewards#Event2024_2#{c.CharacterId}",
-                                ImGuiTableColumnFlags.WidthFixed, 20);
+                                ImGuiTableColumnFlags.WidthFixed, Utils.GetColumnWidthScaled(20));
                         }
 
                         ImGui.TableNextRow();
@@ -2077,12 +2078,12 @@ namespace Altoholic.Windows
                         ImGui.TableSetupColumn($"###CharactersProgress#All#Event#MogRewards#Event2024_1#Name",
                             ImGuiTableColumnFlags.WidthFixed, 270);
                         ImGui.TableSetupColumn($"###CharactersProgress#All#Event#MogRewards#Event2024_1#Currency",
-                            ImGuiTableColumnFlags.WidthFixed, 25);
+                            ImGuiTableColumnFlags.WidthFixed, Utils.GetColumnWidthScaled(25));
                         foreach (Character c in chars)
                         {
                             ImGui.TableSetupColumn(
                                 $"###CharactersProgress#All#Event#MogRewards#Event2024_1#{c.CharacterId}",
-                                ImGuiTableColumnFlags.WidthFixed, 20);
+                                ImGuiTableColumnFlags.WidthFixed, Utils.GetColumnWidthScaled(20));
                         }
 
                         ImGui.TableNextRow();
@@ -2145,12 +2146,12 @@ namespace Altoholic.Windows
                         ImGui.TableSetupColumn($"###CharactersProgress#All#Event#MogRewards#Event2023_2#Name",
                             ImGuiTableColumnFlags.WidthFixed, 270);
                         ImGui.TableSetupColumn($"###CharactersProgress#All#Event#MogRewards#Event2023_2#Currency",
-                            ImGuiTableColumnFlags.WidthFixed, 25);
+                            ImGuiTableColumnFlags.WidthFixed, Utils.GetColumnWidthScaled(25));
                         foreach (Character c in chars)
                         {
                             ImGui.TableSetupColumn(
                                 $"###CharactersProgress#All#Event#MogRewards#Event2023_2#{c.CharacterId}",
-                                ImGuiTableColumnFlags.WidthFixed, 20);
+                                ImGuiTableColumnFlags.WidthFixed, Utils.GetColumnWidthScaled(20));
                         }
 
                         ImGui.TableNextRow();
@@ -2241,7 +2242,7 @@ namespace Altoholic.Windows
                         {
                             ImGui.TableSetupColumn(
                                 $"###CharactersProgress#All#Event#MogRewards#Event2023_1#{c.CharacterId}",
-                                ImGuiTableColumnFlags.WidthFixed, 20);
+                                ImGuiTableColumnFlags.WidthFixed, Utils.GetColumnWidthScaled(20));
                         }
 
                         ImGui.TableNextRow();
@@ -2313,7 +2314,7 @@ namespace Altoholic.Windows
                         {
                             ImGui.TableSetupColumn(
                                 $"###CharactersProgress#All#Event#MogRewards#Event2022_3#{c.CharacterId}",
-                                ImGuiTableColumnFlags.WidthFixed, 20);
+                                ImGuiTableColumnFlags.WidthFixed, Utils.GetColumnWidthScaled(20));
                         }
 
                         ImGui.TableNextRow();
@@ -2384,7 +2385,7 @@ namespace Altoholic.Windows
                         {
                             ImGui.TableSetupColumn(
                                 $"###CharactersProgress#All#Event#MogRewards#Event2022_2#{c.CharacterId}",
-                                ImGuiTableColumnFlags.WidthFixed, 20);
+                                ImGuiTableColumnFlags.WidthFixed, Utils.GetColumnWidthScaled(20));
                         }
 
                         ImGui.TableNextRow();
@@ -2452,7 +2453,7 @@ namespace Altoholic.Windows
                         {
                             ImGui.TableSetupColumn(
                                 $"###CharactersProgress#All#Event#MogRewards#Event2022_1#{c.CharacterId}",
-                                ImGuiTableColumnFlags.WidthFixed, 20);
+                                ImGuiTableColumnFlags.WidthFixed, Utils.GetColumnWidthScaled(20));
                         }
 
                         ImGui.TableNextRow();
@@ -2517,7 +2518,7 @@ namespace Altoholic.Windows
                         {
                             ImGui.TableSetupColumn(
                                 $"###CharactersProgress#All#Event#MogRewards#Event2021_3#{c.CharacterId}",
-                                ImGuiTableColumnFlags.WidthFixed, 20);
+                                ImGuiTableColumnFlags.WidthFixed, Utils.GetColumnWidthScaled(20));
                         }
 
                         ImGui.TableNextRow();
@@ -2585,7 +2586,7 @@ namespace Altoholic.Windows
                         {
                             ImGui.TableSetupColumn(
                                 $"###CharactersProgress#All#Event#MogRewards#Event2021_2#{c.CharacterId}",
-                                ImGuiTableColumnFlags.WidthFixed, 20);
+                                ImGuiTableColumnFlags.WidthFixed, Utils.GetColumnWidthScaled(20));
                         }
 
                         ImGui.TableNextRow();
@@ -2652,7 +2653,7 @@ namespace Altoholic.Windows
                         {
                             ImGui.TableSetupColumn(
                                 $"###CharactersProgress#All#Event#MogRewards#Event2021_1#{c.CharacterId}",
-                                ImGuiTableColumnFlags.WidthFixed, 20);
+                                ImGuiTableColumnFlags.WidthFixed, Utils.GetColumnWidthScaled(20));
                         }
 
                         ImGui.TableNextRow();
@@ -2721,7 +2722,7 @@ namespace Altoholic.Windows
                         {
                             ImGui.TableSetupColumn(
                                 $"###CharactersProgress#All#Event#MogRewards#Event2020_2#{c.CharacterId}",
-                                ImGuiTableColumnFlags.WidthFixed, 20);
+                                ImGuiTableColumnFlags.WidthFixed, Utils.GetColumnWidthScaled(20));
                         }
 
                         ImGui.TableNextRow();
@@ -2789,7 +2790,7 @@ namespace Altoholic.Windows
                         {
                             ImGui.TableSetupColumn(
                                 $"###CharactersProgress#All#Event#MogRewards#Event2020_1#{c.CharacterId}",
-                                ImGuiTableColumnFlags.WidthFixed, 20);
+                                ImGuiTableColumnFlags.WidthFixed, Utils.GetColumnWidthScaled(20));
                         }
 
                         ImGui.TableNextRow();
@@ -2859,7 +2860,7 @@ namespace Altoholic.Windows
                         {
                             ImGui.TableSetupColumn(
                                 $"###CharactersProgress#All#Event#MogRewards#Event2019_2#{c.CharacterId}",
-                                ImGuiTableColumnFlags.WidthFixed, 20);
+                                ImGuiTableColumnFlags.WidthFixed, Utils.GetColumnWidthScaled(20));
                         }
 
                         ImGui.TableNextRow();
@@ -2929,7 +2930,7 @@ namespace Altoholic.Windows
                         {
                             ImGui.TableSetupColumn(
                                 $"###CharactersProgress#All#Event#MogRewards#Event2019_1#{c.CharacterId}",
-                                ImGuiTableColumnFlags.WidthFixed, 20);
+                                ImGuiTableColumnFlags.WidthFixed, Utils.GetColumnWidthScaled(20));
                         }
 
                         ImGui.TableNextRow();
@@ -3488,7 +3489,7 @@ namespace Altoholic.Windows
             foreach (Character c in chars)
             {
                 ImGui.TableSetupColumn($"###CharactersProgress#All#Hildibrand#{c.CharacterId}",
-                    ImGuiTableColumnFlags.WidthFixed, 20);
+                    ImGuiTableColumnFlags.WidthFixed, Utils.GetColumnWidthScaled(20));
             }
 
             ImGui.TableNextRow();
@@ -3564,7 +3565,7 @@ namespace Altoholic.Windows
             foreach (Character c in chars)
             {
                 ImGui.TableSetupColumn($"###CharactersProgress#All#RoleQuest#{c.CharacterId}",
-                    ImGuiTableColumnFlags.WidthFixed, 20);
+                    ImGuiTableColumnFlags.WidthFixed, Utils.GetColumnWidthScaled(20));
             }
 
             ImGui.TableNextRow();
@@ -3667,7 +3668,7 @@ namespace Altoholic.Windows
             foreach (Character c in chars)
             {
                 ImGui.TableSetupColumn($"###CharactersProgress#All#Tribe#{c.CharacterId}",
-                    ImGuiTableColumnFlags.WidthFixed, 20);
+                    ImGuiTableColumnFlags.WidthFixed, Utils.GetColumnWidthScaled(20));
             }
 
             ImGui.TableNextRow();
