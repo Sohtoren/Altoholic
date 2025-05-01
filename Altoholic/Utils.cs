@@ -46,6 +46,44 @@ namespace Altoholic
             return "DC";
         }
 
+        /// <summary>
+        /// Scales the column width based on the global scale and optional padding.
+        /// </summary>
+        /// <param name="width"> The base width of the column.</param>
+        /// <param name="padding"> The padding to be applied to the column width.</param>"
+        /// <remarks>
+        /// Calculates the scaled width by multiplying the base width with the global scale and optional padding.
+        /// </remarks>
+        public static float GetColumnWidthScaled(float width, float padding = 1.0f)
+        {
+            float globalScale = Dalamud.Interface.Utility.ImGuiHelpers.GlobalScaleSafe;
+            float fontSize = (width * padding) * globalScale;
+            Plugin.Log.Debug($"Global Scale: {globalScale}");
+
+            // Base width + some padding based on font size
+            return Math.Max(width * padding, fontSize * padding);
+        }
+
+        /// <summary>
+        /// Centers text horizontally within the current ImGui column.
+        /// </summary>
+        /// <param name="text">The text to be centered and displayed</param>
+        /// <remarks>
+        /// Calculates the required offset by finding the difference between column width and text width,
+        /// then positions the cursor and renders the text at the calculated position.
+        /// 
+        /// May want to move this to Utils if it's desired in other classes, but so far Checks and Circles
+        /// seem most relevant for this, and it's only really be a small amount.
+        /// </remarks>
+        public static void CentreText(string text)
+        {
+            float columnWidth = ImGui.GetColumnWidth();
+            float iconWidth = ImGui.CalcTextSize(text).X;
+            float offset = (columnWidth - iconWidth) / 2.0f;
+            ImGui.SetCursorPosX(ImGui.GetCursorPosX() + offset);
+            ImGui.TextUnformatted(text);
+        }
+
         public static void ChatMessage(string message)
         {
             Plugin.ChatGui.Print($"[Altoholic] {message}");
@@ -1775,7 +1813,7 @@ namespace Altoholic
                     ImGuiTableColumnFlags.WidthFixed, 55);
                 ImGui.TableSetupColumn($"###DrawItemTooltip#Item_{item.RowId}#NameIcon#Name",
                     ImGuiTableColumnFlags.WidthFixed, 305);
-  
+
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
                 DrawIcon(globalCache.IconStorage.LoadIcon(item.Icon), new Vector2(40, 40));
@@ -2765,7 +2803,7 @@ namespace Altoholic
             Addon? lumina = da.GetRow((uint)id);
             return lumina != null ? lumina.Value.Text.ExtractText() : string.Empty;
         }
-        
+
         public static Companion? GetMinion(ClientLanguage currentLocale, uint id)
         {
             ExcelSheet<Companion>? dc = Plugin.DataManager.GetExcelSheet<Companion>(currentLocale);
@@ -3378,7 +3416,7 @@ namespace Altoholic
             items.AddRange(str.Split("_").Select(Capitalize));
             return string.Join("_", items);
         }
-        
+
         public static string CapitalizeCurrency(string str)
         {
             if (str is "MGP" or "MGF")
@@ -3887,7 +3925,7 @@ namespace Altoholic
             ClassJobCategory? lumina = djc.GetRow(id.Value);
             return lumina != null ? lumina.Value.Name.ExtractText() : string.Empty;
         }
-        
+
         public static ClassJob? GetClassJobFromId(uint? id, ClientLanguage clientLanguage)
         {
             //Plugin.Log.Debug($"GetItemNameFromId : {id}");
@@ -4233,12 +4271,12 @@ namespace Altoholic
         }
 
         public static long GetLastPlayTimeUpdateDiff(long lastOnline)
-           {
-               long now = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-               long diff = now - lastOnline;
-               long diffDays = Math.Abs(diff / 86400);
-               return diffDays;
-           }
+        {
+            long now = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+            long diff = now - lastOnline;
+            long diffDays = Math.Abs(diff / 86400);
+            return diffDays;
+        }
 
         public static string GetLastOnlineFormatted(long lastOnline /*, string firstname*/)
         {

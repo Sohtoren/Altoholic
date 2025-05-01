@@ -61,6 +61,20 @@ namespace Altoholic.Windows
         private bool _obtainedTripleTriadCardsOnly;
         private bool _obtainedVistaOnly;
 
+        private string _searchMinions = string.Empty;
+        private string _searchMounts = string.Empty;
+        private string _searchOrchestrionRolls = string.Empty;
+        private string _searchTripleTriadCards = string.Empty;
+        private string _searchEmotes = string.Empty;
+        private string _searchBardings = string.Empty;
+        private string _searchFramerKits = string.Empty;
+        private string _searchOrnaments = string.Empty;
+        private string _searchGlasses = string.Empty;
+        private string _searchHairstyles = string.Empty;
+        private string _searchFacepaints = string.Empty;
+        private string _searchSecretRecipeBooks = string.Empty;
+        private string _searchVistas = string.Empty;
+
         /*public override void OnClose()
         {
             Plugin.Log.Debug("CollectionWindow, OnClose() called");
@@ -109,6 +123,36 @@ namespace Altoholic.Windows
             _obtainedSecretRecipeBookOnly = false;
             _obtainedTripleTriadCardsOnly = false;
             _obtainedVistaOnly = false;
+
+            _searchMinions = string.Empty;
+            _searchMounts = string.Empty;
+            _searchOrchestrionRolls = string.Empty;
+            _searchTripleTriadCards = string.Empty;
+            _searchEmotes = string.Empty;
+            _searchBardings = string.Empty;
+            _searchFramerKits = string.Empty;
+            _searchOrnaments = string.Empty;
+            _searchGlasses = string.Empty;
+            _searchHairstyles = string.Empty;
+            _searchFacepaints = string.Empty;
+            _searchSecretRecipeBooks = string.Empty;
+            _searchVistas = string.Empty;
+        }
+
+        private List<uint> FilterBySearch<T>(List<uint> items, string searchText, Func<ClientLanguage, uint, T?> getItemFunc, Func<T, string> getNameFunc) where T : class
+        {
+            if (string.IsNullOrWhiteSpace(searchText))
+                return items;
+
+            string search = searchText.ToLowerInvariant();
+            return items.Where(id => {
+                T? item = getItemFunc(_currentLocale, id);
+                if (item == null)
+                    return false;
+
+                string name = getNameFunc(item).ToLowerInvariant();
+                return name.Contains(search);
+            }).ToList();
         }
 
         public override void Draw()
@@ -340,11 +384,19 @@ namespace Altoholic.Windows
                 ImGuiTableColumnFlags.WidthStretch);
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
+
+            // Add filter controls in a row
+            ImGui.BeginGroup();
+            ImGui.SetNextItemWidth(300);
+            ImGui.InputTextWithHint("###MinionsSearch", Loc.Localize("SearchMinions", "Search minions..."), ref _searchMinions, 100);
+            ImGui.SameLine();
             if (ImGui.Checkbox($"{Loc.Localize("ObtainedOnly", "Obtained only")}", ref _obtainedMinionsOnly))
             {
                 _plugin.Configuration.ObtainedOnly = _obtainedMinionsOnly;
                 _plugin.Configuration.Save();
             }
+            ImGui.EndGroup();
+
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
             DrawMinionsCollection(currentCharacter);
@@ -381,9 +433,31 @@ namespace Altoholic.Windows
 
         private void DrawMinionsCollection(Character currentCharacter)
         {
-            List<uint> minions = (_obtainedMinionsOnly) ? [..currentCharacter.Minions] : _globalCache.MinionStorage.Get();
+            List<uint> minions = (_obtainedMinionsOnly) ? [.. currentCharacter.Minions] : _globalCache.MinionStorage.Get();
+
+            // Apply search filter
+            if (!string.IsNullOrWhiteSpace(_searchMinions))
+            {
+                minions = FilterBySearch(minions,
+                    _searchMinions,
+                    _globalCache.MinionStorage.GetMinion,
+                    m => {
+                        switch (_currentLocale)
+                        {
+                            case ClientLanguage.German: return m.GermanName;
+                            case ClientLanguage.French: return m.FrenchName;
+                            case ClientLanguage.Japanese: return m.JapaneseName;
+                            default: return m.EnglishName;
+                        }
+                    });
+            }
+
             int minionsCount = minions.Count;
-            if (minionsCount == 0) return;
+            if (minionsCount == 0)
+            {
+                ImGui.TextUnformatted(Loc.Localize("NoMatchingResults", "No matching results found"));
+                return;
+            }
             int rows = (int)Math.Ceiling(minionsCount / (double)10);
             int height = rows * 48 + 0;
 
@@ -463,11 +537,19 @@ namespace Altoholic.Windows
                 ImGuiTableColumnFlags.WidthStretch);
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
+
+            // Add search input and checkbox on the same line
+            ImGui.BeginGroup();
+            ImGui.SetNextItemWidth(300);
+            ImGui.InputTextWithHint("###MountsSearch", Loc.Localize("SearchMounts", "Search mounts..."), ref _searchMounts, 100);
+            ImGui.SameLine();
             if (ImGui.Checkbox($"{Loc.Localize("ObtainedOnly", "Obtained only")}", ref _obtainedMountsOnly))
             {
                 _plugin.Configuration.ObtainedOnly = _obtainedMountsOnly;
                 _plugin.Configuration.Save();
             }
+            ImGui.EndGroup();
+
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
             DrawMountsCollection(currentCharacter);
@@ -504,11 +586,36 @@ namespace Altoholic.Windows
 
         private void DrawMountsCollection(Character currentCharacter)
         {
-            List<uint> mounts = (_obtainedMountsOnly) ? [..currentCharacter.Mounts] : _globalCache.MountStorage.Get();
+            List<uint> mounts = (_obtainedMountsOnly) ? [.. currentCharacter.Mounts] : _globalCache.MountStorage.Get();
+
+            // Apply search filter
+            if (!string.IsNullOrWhiteSpace(_searchMounts))
+            {
+                mounts = FilterBySearch(mounts,
+                    _searchMounts,
+                    _globalCache.MountStorage.GetMount,
+                    m => {
+                        switch (_currentLocale)
+                        {
+                            case ClientLanguage.German: return m.GermanName;
+                            case ClientLanguage.French: return m.FrenchName;
+                            case ClientLanguage.Japanese: return m.JapaneseName;
+                            default: return m.EnglishName;
+                        }
+                    });
+            }
+
             int mountsCount = mounts.Count;
-            int rows =  (int)Math.Ceiling(mountsCount / (double)10);
+            if (mountsCount == 0)
+            {
+                ImGui.TextUnformatted(Loc.Localize("NoMatchingResults", "No matching results found"));
+                return;
+            }
+
+            int rows = (int)Math.Ceiling(mountsCount / (double)10);
             int height = rows * 48 + rows;
 
+            // Rest of the method remains unchanged
             using var mountTable = ImRaii.Table("###MountsTable", 10,
                 ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner, new Vector2(573, height));
             if (!mountTable) return;
@@ -585,11 +692,19 @@ namespace Altoholic.Windows
                 ImGuiTableColumnFlags.WidthStretch);
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
+
+            // Add search input and checkbox on the same line
+            ImGui.BeginGroup();
+            ImGui.SetNextItemWidth(300);
+            ImGui.InputTextWithHint("###TripleTriadCardsSearch", Loc.Localize("SearchTripleTriadCards", "Search Triple Triad cards..."), ref _searchTripleTriadCards, 100);
+            ImGui.SameLine();
             if (ImGui.Checkbox($"{Loc.Localize("ObtainedOnly", "Obtained only")}", ref _obtainedTripleTriadCardsOnly))
             {
                 _plugin.Configuration.ObtainedOnly = _obtainedTripleTriadCardsOnly;
                 _plugin.Configuration.Save();
             }
+            ImGui.EndGroup();
+
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
             DrawTripleTriadCardsCollection(currentCharacter);
@@ -610,9 +725,31 @@ namespace Altoholic.Windows
 
         private void DrawTripleTriadCardsCollection(Character currentCharacter)
         {
-            List<uint> tripleTriadCards = (_obtainedTripleTriadCardsOnly) ? [..currentCharacter.TripleTriadCards] : _globalCache.TripleTriadCardStorage.Get();
+            List<uint> tripleTriadCards = (_obtainedTripleTriadCardsOnly) ? [.. currentCharacter.TripleTriadCards] : _globalCache.TripleTriadCardStorage.Get();
+
+            // Apply search filter
+            if (!string.IsNullOrWhiteSpace(_searchTripleTriadCards))
+            {
+                tripleTriadCards = FilterBySearch(tripleTriadCards,
+                    _searchTripleTriadCards,
+                    _globalCache.TripleTriadCardStorage.GetTripleTriadCard,
+                    ttc => {
+                        switch (_currentLocale)
+                        {
+                            case ClientLanguage.German: return ttc.GermanName;
+                            case ClientLanguage.French: return ttc.FrenchName;
+                            case ClientLanguage.Japanese: return ttc.JapaneseName;
+                            default: return ttc.EnglishName;
+                        }
+                    });
+            }
+
             int tripleTriadCardsCount = tripleTriadCards.Count;
-            if (tripleTriadCardsCount == 0) return;
+            if (tripleTriadCardsCount == 0)
+            {
+                ImGui.TextUnformatted(Loc.Localize("NoMatchingResults", "No matching results found"));
+                return;
+            }
             int rows = (int)Math.Ceiling(tripleTriadCardsCount / (double)10);
             int height = rows * 48 + 0;
 
@@ -693,15 +830,22 @@ namespace Altoholic.Windows
                 ImGuiTableColumnFlags.WidthStretch);
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
+
+            // Add search input and checkbox on the same line
+            ImGui.BeginGroup();
+            ImGui.SetNextItemWidth(300);
+            ImGui.InputTextWithHint("###EmotesSearch", Loc.Localize("SearchEmotes", "Search emotes..."), ref _searchEmotes, 100);
+            ImGui.SameLine();
             if (ImGui.Checkbox($"{Loc.Localize("ObtainedOnly", "Obtained only")}", ref _obtainedEmotesOnly))
             {
                 _plugin.Configuration.ObtainedOnly = _obtainedEmotesOnly;
                 _plugin.Configuration.Save();
             }
+            ImGui.EndGroup();
+
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
-            DrawEmotesCollection(currentCharacter);
-            ImGui.TableNextRow();
+            DrawEmotesCollection(currentCharacter); ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
             using var emoteTableAmount = ImRaii.Table("###EmotesTableAmount", 2);
             if (!emoteTableAmount) return;
@@ -718,7 +862,7 @@ namespace Altoholic.Windows
 
         private void DrawEmotesCollection(Character currentCharacter)
         {
-            List<uint> emotes = (_obtainedEmotesOnly) ? [..currentCharacter.Emotes] : _globalCache.EmoteStorage.Get();
+            List<uint> emotes = (_obtainedEmotesOnly) ? [.. currentCharacter.Emotes] : _globalCache.EmoteStorage.Get();
 
             switch (currentCharacter.Profile?.GrandCompany)
             {
@@ -742,8 +886,29 @@ namespace Altoholic.Windows
                     }
             }
 
+            // Apply search filter
+            if (!string.IsNullOrWhiteSpace(_searchEmotes))
+            {
+                emotes = FilterBySearch(emotes,
+                    _searchEmotes,
+                    _globalCache.EmoteStorage.GetEmote,
+                    e => {
+                        switch (_currentLocale)
+                        {
+                            case ClientLanguage.German: return e.GermanName;
+                            case ClientLanguage.French: return e.FrenchName;
+                            case ClientLanguage.Japanese: return e.JapaneseName;
+                            default: return e.EnglishName;
+                        }
+                    });
+            }
+
             int emoteCount = emotes.Count;
-            if (emoteCount == 0) return;
+            if (emoteCount == 0)
+            {
+                ImGui.TextUnformatted(Loc.Localize("NoMatchingResults", "No matching results found"));
+                return;
+            }
             int rows = (int)Math.Ceiling(emoteCount / (double)10);
             int height = rows * 48 + 0;
 
@@ -823,15 +988,22 @@ namespace Altoholic.Windows
                 ImGuiTableColumnFlags.WidthStretch);
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
+
+            // Add search input and checkbox on the same line
+            ImGui.BeginGroup();
+            ImGui.SetNextItemWidth(300);
+            ImGui.InputTextWithHint("###BardingsSearch", Loc.Localize("SearchBardings", "Search bardings..."), ref _searchBardings, 100);
+            ImGui.SameLine();
             if (ImGui.Checkbox($"{Loc.Localize("ObtainedOnly", "Obtained only")}", ref _obtainedBardingsOnly))
             {
                 _plugin.Configuration.ObtainedOnly = _obtainedBardingsOnly;
                 _plugin.Configuration.Save();
             }
+            ImGui.EndGroup();
+
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
-            DrawBardingsCollection(currentCharacter);
-            ImGui.TableNextRow();
+            DrawBardingsCollection(currentCharacter); ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
             using var bardingsTableAmount = ImRaii.Table("###BardingsTableAmount", 2);
             if (!bardingsTableAmount) return;
@@ -864,9 +1036,31 @@ namespace Altoholic.Windows
 
         private void DrawBardingsCollection(Character currentCharacter)
         {
-            List<uint> bardings = (_obtainedBardingsOnly) ? [..currentCharacter.Bardings] : _globalCache.BardingStorage.Get();
+            List<uint> bardings = (_obtainedBardingsOnly) ? [.. currentCharacter.Bardings] : _globalCache.BardingStorage.Get();
+
+            // Apply search filter
+            if (!string.IsNullOrWhiteSpace(_searchBardings))
+            {
+                bardings = FilterBySearch(bardings,
+                    _searchBardings,
+                    _globalCache.BardingStorage.GetBarding,
+                    b => {
+                        switch (_currentLocale)
+                        {
+                            case ClientLanguage.German: return b.GermanName;
+                            case ClientLanguage.French: return b.FrenchName;
+                            case ClientLanguage.Japanese: return b.JapaneseName;
+                            default: return b.EnglishName;
+                        }
+                    });
+            }
+
             int bardingsCount = bardings.Count;
-            if (bardingsCount == 0) return;
+            if (bardingsCount == 0)
+            {
+                ImGui.TextUnformatted(Loc.Localize("NoMatchingResults", "No matching results found"));
+                return;
+            }
             int rows = (int)Math.Ceiling(bardingsCount / (double)10);
             int height = rows * 48 + 0;
 
@@ -945,15 +1139,22 @@ namespace Altoholic.Windows
                 ImGuiTableColumnFlags.WidthStretch);
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
+
+            // Add search input and checkbox on the same line
+            ImGui.BeginGroup();
+            ImGui.SetNextItemWidth(300);
+            ImGui.InputTextWithHint("###FramerKitsSearch", Loc.Localize("SearchFramerKits", "Search framer's kits..."), ref _searchFramerKits, 100);
+            ImGui.SameLine();
             if (ImGui.Checkbox($"{Loc.Localize("ObtainedOnly", "Obtained only")}", ref _obtainedFramerKitsOnly))
             {
                 _plugin.Configuration.ObtainedOnly = _obtainedFramerKitsOnly;
                 _plugin.Configuration.Save();
             }
+            ImGui.EndGroup();
+
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
-            DrawFramerKitsCollection(currentCharacter);
-            ImGui.TableNextRow();
+            DrawFramerKitsCollection(currentCharacter); ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
             using var framerKitsTableAmount = ImRaii.Table("###FramerKitsTableAmount", 2);
             if (!framerKitsTableAmount) return;
@@ -986,9 +1187,31 @@ namespace Altoholic.Windows
 
         private void DrawFramerKitsCollection(Character currentCharacter)
         {
-            List<uint> framerKits = (_obtainedFramerKitsOnly) ? [..currentCharacter.FramerKits] : _globalCache.FramerKitStorage.Get();
+            List<uint> framerKits = (_obtainedFramerKitsOnly) ? [.. currentCharacter.FramerKits] : _globalCache.FramerKitStorage.Get();
+
+            // Apply search filter
+            if (!string.IsNullOrWhiteSpace(_searchFramerKits))
+            {
+                framerKits = FilterBySearch(framerKits,
+                    _searchFramerKits,
+                    _globalCache.FramerKitStorage.LoadItem,
+                    f => {
+                        switch (_currentLocale)
+                        {
+                            case ClientLanguage.German: return f.GermanName;
+                            case ClientLanguage.French: return f.FrenchName;
+                            case ClientLanguage.Japanese: return f.JapaneseName;
+                            default: return f.EnglishName;
+                        }
+                    });
+            }
+
             int framerKitsCount = framerKits.Count;
-            if (framerKitsCount == 0) return;
+            if (framerKitsCount == 0)
+            {
+                ImGui.TextUnformatted(Loc.Localize("NoMatchingResults", "No matching results found"));
+                return;
+            }
             int rows = (int)Math.Ceiling(framerKitsCount / (double)10);
             int height = rows * 48 + 0;
 
@@ -1068,11 +1291,19 @@ namespace Altoholic.Windows
                 ImGuiTableColumnFlags.WidthStretch);
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
+
+            // Add search input and checkbox on the same line
+            ImGui.BeginGroup();
+            ImGui.SetNextItemWidth(300);
+            ImGui.InputTextWithHint("###OrchestrionSearch", Loc.Localize("SearchOrchestrion", "Search orchestrion rolls..."), ref _searchOrchestrionRolls, 100);
+            ImGui.SameLine();
             if (ImGui.Checkbox($"{Loc.Localize("ObtainedOnly", "Obtained only")}", ref _obtainedOrchestrionRollsOnly))
             {
                 _plugin.Configuration.ObtainedOnly = _obtainedOrchestrionRollsOnly;
                 _plugin.Configuration.Save();
             }
+            ImGui.EndGroup();
+
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
             DrawOrchestrionRollsCollection(currentCharacter);
@@ -1109,9 +1340,31 @@ namespace Altoholic.Windows
 
         private void DrawOrchestrionRollsCollection(Character currentCharacter)
         {
-            List<uint> orchestrionRolls = (_obtainedOrchestrionRollsOnly) ? [..currentCharacter.OrchestrionRolls] : _globalCache.OrchestrionRollStorage.Get();
+            List<uint> orchestrionRolls = (_obtainedOrchestrionRollsOnly) ? [.. currentCharacter.OrchestrionRolls] : _globalCache.OrchestrionRollStorage.Get();
+
+            // Apply search filter
+            if (!string.IsNullOrWhiteSpace(_searchOrchestrionRolls))
+            {
+                orchestrionRolls = FilterBySearch(orchestrionRolls,
+                    _searchOrchestrionRolls,
+                    _globalCache.OrchestrionRollStorage.GetOrchestrionRoll,
+                    or => {
+                        switch (_currentLocale)
+                        {
+                            case ClientLanguage.German: return or.GermanName;
+                            case ClientLanguage.French: return or.FrenchName;
+                            case ClientLanguage.Japanese: return or.JapaneseName;
+                            default: return or.EnglishName;
+                        }
+                    });
+            }
+
             int orchestrionRollsCount = orchestrionRolls.Count;
-            if (orchestrionRollsCount == 0) return;
+            if (orchestrionRollsCount == 0)
+            {
+                ImGui.TextUnformatted(Loc.Localize("NoMatchingResults", "No matching results found"));
+                return;
+            }
             int rows = (int)Math.Ceiling(orchestrionRollsCount / (double)10);
             int height = rows * 48 + 0;
 
@@ -1191,15 +1444,22 @@ namespace Altoholic.Windows
                 ImGuiTableColumnFlags.WidthStretch);
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
+
+            // Add search input and checkbox on the same line
+            ImGui.BeginGroup();
+            ImGui.SetNextItemWidth(300);
+            ImGui.InputTextWithHint("###OrnamentsSearch", Loc.Localize("SearchOrnaments", "Search ornaments..."), ref _searchOrnaments, 100);
+            ImGui.SameLine();
             if (ImGui.Checkbox($"{Loc.Localize("ObtainedOnly", "Obtained only")}", ref _obtainedOrnamentsOnly))
             {
                 _plugin.Configuration.ObtainedOnly = _obtainedOrnamentsOnly;
                 _plugin.Configuration.Save();
             }
+            ImGui.EndGroup();
+
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
-            DrawOrnamentsCollection(currentCharacter);
-            ImGui.TableNextRow();
+            DrawOrnamentsCollection(currentCharacter); ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
             using var ornamentsTableOrnament = ImRaii.Table("###OrnamentsTableOrnament", 2);
             if (!ornamentsTableOrnament) return;
@@ -1232,8 +1492,31 @@ namespace Altoholic.Windows
 
         private void DrawOrnamentsCollection(Character currentCharacter)
         {
-            List<uint> ornaments = (_obtainedOrnamentsOnly) ? [..currentCharacter.Ornaments] : _globalCache.OrnamentStorage.Get();
+            List<uint> ornaments = (_obtainedOrnamentsOnly) ? [.. currentCharacter.Ornaments] : _globalCache.OrnamentStorage.Get();
+
+            // Apply search filter
+            if (!string.IsNullOrWhiteSpace(_searchOrnaments))
+            {
+                ornaments = FilterBySearch(ornaments,
+                    _searchOrnaments,
+                    _globalCache.OrnamentStorage.GetOrnament,
+                    o => {
+                        switch (_currentLocale)
+                        {
+                            case ClientLanguage.German: return o.GermanName;
+                            case ClientLanguage.French: return o.FrenchName;
+                            case ClientLanguage.Japanese: return o.JapaneseName;
+                            default: return o.EnglishName;
+                        }
+                    });
+            }
+
             int ornamentsCount = ornaments.Count;
+            if (ornamentsCount == 0)
+            {
+                ImGui.TextUnformatted(Loc.Localize("NoMatchingResults", "No matching results found"));
+                return;
+            }
             int rows = (int)Math.Ceiling(ornamentsCount / (double)10);
             int height = rows * 48 + rows;
 
@@ -1314,11 +1597,19 @@ namespace Altoholic.Windows
                 ImGuiTableColumnFlags.WidthStretch);
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
+
+            // Add search input and checkbox on the same line
+            ImGui.BeginGroup();
+            ImGui.SetNextItemWidth(300);
+            ImGui.InputTextWithHint("###GlassesSearch", Loc.Localize("SearchGlasses", "Search glasses..."), ref _searchGlasses, 100);
+            ImGui.SameLine();
             if (ImGui.Checkbox($"{Loc.Localize("ObtainedOnly", "Obtained only")}", ref _obtainedGlassesOnly))
             {
                 _plugin.Configuration.ObtainedOnly = _obtainedGlassesOnly;
                 _plugin.Configuration.Save();
             }
+            ImGui.EndGroup();
+
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
             DrawGlassesCollection(currentCharacter);
@@ -1355,8 +1646,31 @@ namespace Altoholic.Windows
 
         private void DrawGlassesCollection(Character currentCharacter)
         {
-            List<uint> glasses = (_obtainedGlassesOnly) ? [..currentCharacter.Glasses] : _globalCache.GlassesStorage.Get();
+            List<uint> glasses = (_obtainedGlassesOnly) ? [.. currentCharacter.Glasses] : _globalCache.GlassesStorage.Get();
+
+            // Apply search filter
+            if (!string.IsNullOrWhiteSpace(_searchGlasses))
+            {
+                glasses = FilterBySearch(glasses,
+                    _searchGlasses,
+                    _globalCache.GlassesStorage.GetGlasses,
+                    g => {
+                        switch (_currentLocale)
+                        {
+                            case ClientLanguage.German: return g.GermanName;
+                            case ClientLanguage.French: return g.FrenchName;
+                            case ClientLanguage.Japanese: return g.JapaneseName;
+                            default: return g.EnglishName;
+                        }
+                    });
+            }
+
             int glassesCount = glasses.Count;
+            if (glassesCount == 0)
+            {
+                ImGui.TextUnformatted(Loc.Localize("NoMatchingResults", "No matching results found"));
+                return;
+            }
             int rows = (int)Math.Ceiling(glassesCount / (double)10);
             int height = rows * 48 + rows;
 
@@ -1446,11 +1760,19 @@ namespace Altoholic.Windows
                 ImGuiTableColumnFlags.WidthStretch);
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
+
+            // Add search input and checkbox on the same line
+            ImGui.BeginGroup();
+            ImGui.SetNextItemWidth(300);
+            ImGui.InputTextWithHint("###HairstylesSearch", Loc.Localize("SearchHairstyles", "Search hairstyles..."), ref _searchHairstyles, 100);
+            ImGui.SameLine();
             if (ImGui.Checkbox($"{Loc.Localize("ObtainedOnly", "Obtained only")}", ref _obtainedHairstylesOnly))
             {
                 _plugin.Configuration.ObtainedOnly = _obtainedHairstylesOnly;
                 _plugin.Configuration.Save();
             }
+            ImGui.EndGroup();
+
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
             if (currentCharacter.Hairstyles.Count == 0 && !_isSpoilerEnabled)
@@ -1459,7 +1781,7 @@ namespace Altoholic.Windows
             }
             else
             {
-                    DrawHairstylesCollection(currentCharacter, availableHairstyles);
+                DrawHairstylesCollection(currentCharacter, availableHairstyles);
             }
 
             ImGui.TableNextRow();
@@ -1504,8 +1826,31 @@ namespace Altoholic.Windows
             }
 
             List<uint> hairstyles = (_obtainedHairstylesOnly) ? [.. currentCharacter.Hairstyles] : availableHairstyles;
+
+            // Apply search filter
+            if (!string.IsNullOrWhiteSpace(_searchHairstyles))
+            {
+                hairstyles = FilterBySearch(hairstyles,
+                    _searchHairstyles,
+                    _globalCache.HairstyleStorage.GetHairstyle,
+                    h => {
+                        switch (_currentLocale)
+                        {
+                            case ClientLanguage.German: return h.GermanName;
+                            case ClientLanguage.French: return h.FrenchName;
+                            case ClientLanguage.Japanese: return h.JapaneseName;
+                            default: return h.EnglishName;
+                        }
+                    });
+            }
+
             int hairstylesCount = hairstyles.Count;
-            if (hairstylesCount == 0) return;
+            if (hairstylesCount == 0)
+            {
+                ImGui.TextUnformatted(Loc.Localize("NoMatchingResults", "No matching results found"));
+                return;
+            }
+
             int rows = (int)Math.Ceiling(hairstylesCount / (double)10);
             int height = rows * 48 + 0;
 
@@ -1600,11 +1945,19 @@ namespace Altoholic.Windows
                 ImGuiTableColumnFlags.WidthStretch);
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
+
+            // Add search input and checkbox on the same line
+            ImGui.BeginGroup();
+            ImGui.SetNextItemWidth(300);
+            ImGui.InputTextWithHint("###FacepaintsSearch", Loc.Localize("SearchFacepaints", "Search facepaints..."), ref _searchFacepaints, 100);
+            ImGui.SameLine();
             if (ImGui.Checkbox($"{Loc.Localize("ObtainedOnly", "Obtained only")}", ref _obtainedFacepaintsOnly))
             {
                 _plugin.Configuration.ObtainedOnly = _obtainedFacepaintsOnly;
                 _plugin.Configuration.Save();
             }
+            ImGui.EndGroup();
+
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
             if (currentCharacter.Facepaints.Count == 0 && !_isSpoilerEnabled)
@@ -1655,8 +2008,30 @@ namespace Altoholic.Windows
             }
 
             List<uint> facepaints = (_obtainedFacepaintsOnly) ? [.. currentCharacter.Facepaints] : availableFacepaints;
+
+            // Apply search filter
+            if (!string.IsNullOrWhiteSpace(_searchFacepaints))
+            {
+                facepaints = FilterBySearch(facepaints,
+                    _searchFacepaints,
+                    _globalCache.HairstyleStorage.GetHairstyle,
+                    h => {
+                        switch (_currentLocale)
+                        {
+                            case ClientLanguage.German: return h.GermanName;
+                            case ClientLanguage.French: return h.FrenchName;
+                            case ClientLanguage.Japanese: return h.JapaneseName;
+                            default: return h.EnglishName;
+                        }
+                    });
+            }
+
             int facepaintsCount = facepaints.Count;
-            if (facepaintsCount == 0) return;
+            if (facepaintsCount == 0)
+            {
+                ImGui.TextUnformatted(Loc.Localize("NoMatchingResults", "No matching results found"));
+                return;
+            }
             int rows = (int)Math.Ceiling(facepaintsCount / (double)10);
             int height = rows * 48 + 0;
 
@@ -1742,15 +2117,22 @@ namespace Altoholic.Windows
                 ImGuiTableColumnFlags.WidthStretch);
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
+
+            // Add search input and checkbox on the same line
+            ImGui.BeginGroup();
+            ImGui.SetNextItemWidth(300);
+            ImGui.InputTextWithHint("###SecretRecipeBooksSearch", Loc.Localize("SearchSecretRecipeBooks", "Search tomes..."), ref _searchSecretRecipeBooks, 100);
+            ImGui.SameLine();
             if (ImGui.Checkbox($"{Loc.Localize("ObtainedOnly", "Obtained only")}", ref _obtainedSecretRecipeBookOnly))
             {
                 _plugin.Configuration.ObtainedOnly = _obtainedSecretRecipeBookOnly;
                 _plugin.Configuration.Save();
             }
+            ImGui.EndGroup();
+
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
-            DrawSecretRecipeBooksCollection(currentCharacter);
-            ImGui.TableNextRow();
+            DrawSecretRecipeBooksCollection(currentCharacter); ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
             using var secretRecipeBooksTableAmount = ImRaii.Table("###SecretRecipeBooksTableAmount", 2);
             if (!secretRecipeBooksTableAmount) return;
@@ -1784,8 +2166,30 @@ namespace Altoholic.Windows
         private void DrawSecretRecipeBooksCollection(Character currentCharacter)
         {
             List<uint> secretRecipeBooks = (_obtainedSecretRecipeBookOnly) ? [.. currentCharacter.SecretRecipeBooks] : _globalCache.SecretRecipeBookStorage.Get();
+
+            // Apply search filter
+            if (!string.IsNullOrWhiteSpace(_searchSecretRecipeBooks))
+            {
+                secretRecipeBooks = FilterBySearch(secretRecipeBooks,
+                    _searchSecretRecipeBooks,
+                    _globalCache.SecretRecipeBookStorage.GetSecretRecipeBook,
+                    srb => {
+                        switch (_currentLocale)
+                        {
+                            case ClientLanguage.German: return srb.GermanName;
+                            case ClientLanguage.French: return srb.FrenchName;
+                            case ClientLanguage.Japanese: return srb.JapaneseName;
+                            default: return srb.EnglishName;
+                        }
+                    });
+            }
+
             int secretRecipeBooksCount = secretRecipeBooks.Count;
-            if (secretRecipeBooksCount == 0) return;
+            if (secretRecipeBooksCount == 0)
+            {
+                ImGui.TextUnformatted(Loc.Localize("NoMatchingResults", "No matching results found"));
+                return;
+            }
             int rows = (int)Math.Ceiling(secretRecipeBooksCount / (double)10);
             int height = rows * 48 + 0;
 
@@ -1875,11 +2279,19 @@ namespace Altoholic.Windows
                 ImGuiTableColumnFlags.WidthStretch);
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
+
+            // Add search input and checkbox on the same line
+            ImGui.BeginGroup();
+            ImGui.SetNextItemWidth(300);
+            ImGui.InputTextWithHint("###VistasSearch", Loc.Localize("SearchVistas", "Search vistas..."), ref _searchVistas, 100);
+            ImGui.SameLine();
             if (ImGui.Checkbox($"{Loc.Localize("ObtainedOnly", "Obtained only")}", ref _obtainedVistaOnly))
             {
                 _plugin.Configuration.ObtainedOnly = _obtainedVistaOnly;
                 _plugin.Configuration.Save();
             }
+            ImGui.EndGroup();
+
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
             DrawVistasCollection(currentCharacter);
@@ -1917,8 +2329,30 @@ namespace Altoholic.Windows
         private void DrawVistasCollection(Character currentCharacter)
         {
             List<uint> vistas = (_obtainedVistaOnly) ? [.. currentCharacter.Vistas] : _globalCache.VistaStorage.Get();
+
+            // Apply search filter
+            if (!string.IsNullOrWhiteSpace(_searchVistas))
+            {
+                vistas = FilterBySearch(vistas,
+                    _searchVistas,
+                    _globalCache.VistaStorage.GetVista,
+                    v => {
+                        switch (_currentLocale)
+                        {
+                            case ClientLanguage.German: return v.GermanName;
+                            case ClientLanguage.French: return v.FrenchName;
+                            case ClientLanguage.Japanese: return v.JapaneseName;
+                            default: return v.EnglishName;
+                        }
+                    });
+            }
+
             int vistasCount = vistas.Count;
-            if (vistasCount == 0) return;
+            if (vistasCount == 0)
+            {
+                ImGui.TextUnformatted(Loc.Localize("NoMatchingResults", "No matching results found"));
+                return;
+            }
             int rows = (int)Math.Ceiling(vistasCount / (double)10);
             int height = rows * 48 + 0;
 
