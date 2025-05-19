@@ -908,9 +908,9 @@ namespace Altoholic.Windows
                     DrawAllLine(chars, charactersQuests,
                         $"{Loc.Localize("Event_HatchingTide", "Hatching-tide")} (2025)",
                         125);
-                    /*DrawAllLine(chars, charactersQuests,
+                    DrawAllLine(chars, charactersQuests,
                         $"{Loc.Localize("Event_TheMakeItRainCampaign", "The Make It Rain Campaign")} (2025)",
-                        126);*/
+                        126);
                 }
             }
 
