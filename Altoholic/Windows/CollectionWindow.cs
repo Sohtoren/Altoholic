@@ -422,7 +422,14 @@ namespace Altoholic.Windows
                 );
             }
             int minionsCount = minions.Count;
-            if (minionsCount == 0) return;
+            if (minionsCount == 0)
+            {
+                if (!string.IsNullOrWhiteSpace(_searchMinions))
+                {
+                    ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 5494));
+                }
+                return;
+            }
             int rows = (int)Math.Ceiling(minionsCount / (double)10);
             int height = rows * 48 + 0;
 
@@ -570,6 +577,14 @@ namespace Altoholic.Windows
                 );
             }
             int mountsCount = mounts.Count;
+            if (mountsCount == 0)
+            {
+                if (!string.IsNullOrWhiteSpace(_searchMounts))
+                {
+                    ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 5494));
+                }
+                return;
+            }
             int rows =  (int)Math.Ceiling(mountsCount / (double)10);
             int height = rows * 48 + rows;
 
@@ -701,7 +716,14 @@ namespace Altoholic.Windows
                 );
             }
             int tripleTriadCardsCount = tripleTriadCards.Count;
-            if (tripleTriadCardsCount == 0) return;
+            if (tripleTriadCardsCount == 0)
+            {
+                if (!string.IsNullOrWhiteSpace(_searchTripleTriadCards))
+                {
+                    ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 5494));
+                }
+                return;
+            }
             int rows = (int)Math.Ceiling(tripleTriadCardsCount / (double)10);
             int height = rows * 48 + 0;
 
@@ -858,7 +880,14 @@ namespace Altoholic.Windows
             }
 
             int emoteCount = emotes.Count;
-            if (emoteCount == 0) return;
+            if (emoteCount == 0)
+            {
+                if (!string.IsNullOrWhiteSpace(_searchEmotes))
+                {
+                    ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 5494));
+                }
+                return;
+            }
             int rows = (int)Math.Ceiling(emoteCount / (double)10);
             int height = rows * 48 + 0;
 
@@ -1005,7 +1034,14 @@ namespace Altoholic.Windows
                 );
             }
             int bardingsCount = bardings.Count;
-            if (bardingsCount == 0) return;
+            if (bardingsCount == 0)
+            {
+                if (!string.IsNullOrWhiteSpace(_searchBardings))
+                {
+                    ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 5494));
+                }
+                return;
+            }
             int rows = (int)Math.Ceiling(bardingsCount / (double)10);
             int height = rows * 48 + 0;
 
@@ -1152,7 +1188,14 @@ namespace Altoholic.Windows
                 );
             }
             int framerKitsCount = framerKits.Count;
-            if (framerKitsCount == 0) return;
+            if (framerKitsCount == 0)
+            {
+                if (!string.IsNullOrWhiteSpace(_searchFramerKits))
+                {
+                    ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 5494));
+                }
+                return;
+            }
             int rows = (int)Math.Ceiling(framerKitsCount / (double)10);
             int height = rows * 48 + 0;
 
@@ -1301,7 +1344,14 @@ namespace Altoholic.Windows
             }
             
             int orchestrionRollsCount = orchestrionRolls.Count;
-            if (orchestrionRollsCount == 0) return;
+            if (orchestrionRollsCount == 0)
+            {
+                if (!string.IsNullOrWhiteSpace(_searchOrchestrionRolls))
+                {
+                    ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 5494));
+                }
+                return;
+            }
             int rows = (int)Math.Ceiling(orchestrionRollsCount / (double)10);
             int height = rows * 48 + 0;
 
@@ -1449,6 +1499,14 @@ namespace Altoholic.Windows
                 );
             }
             int ornamentsCount = ornaments.Count;
+            if (ornamentsCount == 0)
+            {
+                if (!string.IsNullOrWhiteSpace(_searchOrnaments))
+                {
+                    ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 5494));
+                }
+                return;
+            }
             int rows = (int)Math.Ceiling(ornamentsCount / (double)10);
             int height = rows * 48 + rows;
 
@@ -1597,6 +1655,14 @@ namespace Altoholic.Windows
                 );
             }
             int glassesCount = glasses.Count;
+            if (glassesCount == 0)
+            {
+                if (!string.IsNullOrWhiteSpace(_searchGlasses))
+                {
+                    ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 5494));
+                }
+                return;
+            }
             int rows = (int)Math.Ceiling(glassesCount / (double)10);
             int height = rows * 48 + rows;
 
@@ -1770,7 +1836,14 @@ namespace Altoholic.Windows
                 );
             }
             int hairstylesCount = hairstyles.Count;
-            if (hairstylesCount == 0) return;
+            if (hairstylesCount == 0)
+            {
+                if (!string.IsNullOrWhiteSpace(_searchHairstyles))
+                {
+                    ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 5494));
+                }
+                return;
+            }
             int rows = (int)Math.Ceiling(hairstylesCount / (double)10);
             int height = rows * 48 + 0;
 
@@ -1946,7 +2019,14 @@ namespace Altoholic.Windows
                 );
             }
             int facepaintsCount = facepaints.Count;
-            if (facepaintsCount == 0) return;
+            if (facepaintsCount == 0)
+            {
+                if (!string.IsNullOrWhiteSpace(_searchFacepaints))
+                {
+                    ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 5494));
+                }
+                return;
+            }
             int rows = (int)Math.Ceiling(facepaintsCount / (double)10);
             int height = rows * 48 + 0;
 
@@ -2100,7 +2180,14 @@ namespace Altoholic.Windows
                 );
             }
             int secretRecipeBooksCount = secretRecipeBooks.Count;
-            if (secretRecipeBooksCount == 0) return;
+            if (secretRecipeBooksCount == 0)
+            {
+                if (!string.IsNullOrWhiteSpace(_searchSecretRecipeBooks))
+                {
+                    ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 5494));
+                }
+                return;
+            }
             int rows = (int)Math.Ceiling(secretRecipeBooksCount / (double)10);
             int height = rows * 48 + 0;
 
@@ -2258,7 +2345,14 @@ namespace Altoholic.Windows
                 );
             }
             int vistasCount = vistas.Count;
-            if (vistasCount == 0) return;
+            if (vistasCount == 0)
+            {
+                if (!string.IsNullOrWhiteSpace(_searchVistas))
+                {
+                    ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 5494));
+                }
+                return;
+            }
             int rows = (int)Math.Ceiling(vistasCount / (double)10);
             int height = rows * 48 + 0;
 
