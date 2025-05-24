@@ -4210,6 +4210,26 @@ namespace Altoholic
         }
         */
 
+
+        public static List<TKey> FilterBySearch<TKey, TItem>(List<TKey> items, string searchText, ClientLanguage lang, Func<ClientLanguage, TKey, TItem?> getItemFunc, Func<TItem, string> getNameFunc)
+            where TItem : class
+        {
+            if (string.IsNullOrWhiteSpace(searchText))
+                return items;
+
+            string search = searchText.ToLowerInvariant();
+            return items.Where(id => {
+                TItem? item = getItemFunc(lang, id);
+                if (item == null)
+                    return false;
+
+                string name = getNameFunc(item).ToLowerInvariant();
+                return name.Contains(search);
+            }).ToList();
+
+            // This could eventually be made to also filter descriptions if we wanted the expand on this functionality
+        }
+
         public static void DrawIcon(IDalamudTextureWrap? icon, Vector2 iconSize)
         {
             if (icon != null)
