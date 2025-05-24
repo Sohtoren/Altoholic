@@ -1994,7 +1994,7 @@ namespace Altoholic
             Log.Debug($"OnGameInventoryItemEvent entered, item {type}: {data.Item.ItemId}");
 #endif
             GameInventoryItem i = data.Item;
-            if (i.ItemId is 0 or 1) return;
+            if (i.ItemId is 0) return;
             switch (i.ContainerType)
             {
                 case GameInventoryType.Inventory1:
@@ -2003,6 +2003,11 @@ namespace Altoholic
                 case GameInventoryType.Inventory4:
                 case GameInventoryType.KeyItems:
                 case GameInventoryType.Crystals:
+                case GameInventoryType.HandIn:
+                case GameInventoryType.Currency:
+                case GameInventoryType.Mail:
+                case GameInventoryType.MailEdit:
+                case GameInventoryType.Reclaim:
                     /*Inventory item = new()
                     {
                         ItemId = i.ItemId,
