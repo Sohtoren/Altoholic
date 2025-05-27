@@ -281,5 +281,6 @@
         TRIBE_EW_LOPORRITS = 70217,
         TRIBE_EW_ALLIED = 70324,
         TRIBE_DT_PELUPELU = 70729,
+        TRIBE_DT_MAMOOL_JA = 70791,
     }
 }

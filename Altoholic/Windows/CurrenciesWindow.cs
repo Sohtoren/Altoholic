@@ -329,13 +329,15 @@ namespace Altoholic.Windows
                 }
             }
 
-            if (!selectedCharacter.HasQuest((int)QuestIds.TRIBE_DT_PELUPELU))
+            if (!selectedCharacter.HasQuest((int)QuestIds.TRIBE_DT_PELUPELU) &&
+                !selectedCharacter.HasQuest((int)QuestIds.TRIBE_DT_MAMOOL_JA))
             {
                 return;
             }
 
             using var currentExpansionTribalTab =
-                ImRaii.TabItem($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 5777)}###CharactersCurrencies#CurrencyTabs#{selectedCharacter.CharacterId}#5");
+                ImRaii.TabItem(
+                    $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 5777)}###CharactersCurrencies#CurrencyTabs#{selectedCharacter.CharacterId}#5");
             {
                 if (currentExpansionTribalTab)
                 {
@@ -1021,6 +1023,20 @@ namespace Altoholic.Windows
                     //ImGui.TableSetColumnIndex(0);
                     ImGui.TableNextColumn();
                     DrawTribalCurrency(pc.Pelu_Pelplume, Currencies.PELU_PELPLUME, Tribal.PELUPELU);
+                }
+            }
+            if (selectedCharacter.HasQuest((int)QuestIds.TRIBE_DT_MAMOOL_JA)
+               )
+            {
+                ImGui.TableNextRow();
+                ImGui.TableSetColumnIndex(0);
+                ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 8175));
+                ImGui.TableNextRow();
+                if (selectedCharacter.HasQuest((int)QuestIds.TRIBE_DT_MAMOOL_JA))
+                {
+                    //ImGui.TableSetColumnIndex(0);
+                    ImGui.TableNextColumn();
+                    DrawTribalCurrency(pc.Mamool_Ja_Nanook, Currencies.MAMOOL_JA_NANOOK, Tribal.MAMOOL_JA);
                 }
             }
         }

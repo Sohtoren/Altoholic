@@ -3928,7 +3928,8 @@ namespace Altoholic.Windows
                 !selectedCharacter.HasQuest((int)QuestIds.TRIBE_EW_ARKASODARA) &&
                 !selectedCharacter.HasQuest((int)QuestIds.TRIBE_EW_OMICRONS) &&
                 !selectedCharacter.HasQuest((int)QuestIds.TRIBE_EW_LOPORRITS) &&
-                !selectedCharacter.HasQuest((int)QuestIds.TRIBE_DT_PELUPELU))
+                !selectedCharacter.HasQuest((int)QuestIds.TRIBE_DT_PELUPELU) &&
+                !selectedCharacter.HasQuest((int)QuestIds.TRIBE_DT_MAMOOL_JA))
             {
                 return;
             }
@@ -4195,11 +4196,11 @@ namespace Altoholic.Windows
                     {
                         //bool dtAllied = selectedCharacter.HasQuest((int)QuestIds.TRIBE_DT_ALLIED);
                         bool dtAllied = false;
-                        for (uint i = 18; i <= 18; i++)
+                        for (uint i = 18; i <= 19; i++)
                         {
                             if (
-                                i == 18 && !selectedCharacter.HasQuest((int)QuestIds.TRIBE_DT_PELUPELU) /*||
-                                i == 19 && !selectedCharacter.HasQuest((int)QuestIds.TRIBE_DT_) ||
+                                i == 18 && !selectedCharacter.HasQuest((int)QuestIds.TRIBE_DT_PELUPELU) ||
+                                i == 19 && !selectedCharacter.HasQuest((int)QuestIds.TRIBE_DT_MAMOOL_JA) /*||
                                 i == 20 && !selectedCharacter.HasQuest((int)QuestIds.TRIBE_DT_)*/
                             )
                             {
@@ -4249,9 +4250,6 @@ namespace Altoholic.Windows
             }
 
             Utils.DrawReputationProgressBar(_currentLocale, _globalCache, currentExp, beastTribe.MaxRank == rank, rank, isAllied);
-
-            // Todo: if spoiler enabled, add a unique reward list (orchestrions, pets, framerkits) here and check it if brought/unlocked.
-            // If spoiler is disabled, unveil each reward by reputation rank
         }
 
         private void DrawReward(Character currentCharacter, uint id, uint rank, bool isAllied)
@@ -5068,6 +5066,55 @@ namespace Altoholic.Windows
                             {
                                 ImGui.TableSetColumnIndex(4);
                                 uint? fkId = _globalCache.FramerKitStorage.GetFramerKitIdFromItemId(44944);
+                                if (fkId == null) return;
+                                DrawFramerKit(fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
+                            }
+                        }
+
+                        break;
+                    }
+                case 19: //Mamool Ja
+                    {
+                        if (rank < 4) return;
+                        if (ImGui.CollapsingHeader(
+                                $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 11429)}###Progress#BeastReputations#{id}#Reward"))
+                        {
+                            using var t = ImRaii.Table($"###Progress#BeastReputations#{id}#Reward#Table", 6);
+                            if (!t) break;
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Minion1",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Orchestrion1",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#FramerKit",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Mount1",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Accessory",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Orchestrion",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableNextRow();
+                            ImGui.TableSetColumnIndex(0);
+                            //DrawMinion(534, currentCharacter.HasMinion(534));
+                            ImGui.TableSetColumnIndex(1);
+                            //DrawOrchestrion(708, currentCharacter.HasOrchestrionRoll(708));
+
+                            if (rank >= 5)
+                            {
+                                ImGui.TableSetColumnIndex(2);
+                                //DrawMount(358, currentCharacter.HasMount(358));
+                            }
+
+                            if (rank >= 6)
+                            {
+                                ImGui.TableSetColumnIndex(3);
+                                //DrawOrnament(44, currentCharacter.HasOrnament(44));
+                            }
+
+                            if (rank >= 7)
+                            {
+                                ImGui.TableSetColumnIndex(4);
+                                uint? fkId = _globalCache.FramerKitStorage.GetFramerKitIdFromItemId(48085);
                                 if (fkId == null) return;
                                 DrawFramerKit(fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
                             }

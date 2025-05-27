@@ -1179,6 +1179,7 @@ namespace Altoholic
                 Lightning_Shard = inventoryManager.GetInventoryItemCount((uint)Currencies.LIGHTNING_SHARD, false, false, false),
                 Loporrit_Carat = inventoryManager.GetInventoryItemCount((uint)Currencies.LOPORRIT_CARAT, false, false, false),
                 Lunar_Credit = inventoryManager.GetInventoryItemCount((uint)Currencies.LUNAR_CREDIT, false, false, false),
+                Mamool_Ja_Nanook = inventoryManager.GetInventoryItemCount((uint)Currencies.MAMOOL_JA_NANOOK, false, false, false),
                 MGF = inventoryManager.GetInventoryItemCount((uint)Currencies.MGF, false, false, false),
                 MGP = inventoryManager.GetInventoryItemCount((uint)Currencies.MGP, false, false, false),
                 Namazu_Koban = inventoryManager.GetInventoryItemCount((uint)Currencies.NAMAZU_KOBAN, false, false, false),

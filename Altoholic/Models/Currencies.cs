@@ -74,6 +74,7 @@ namespace Altoholic.Models
         LIGHTNING_SHARD = 6,
         LOPORRIT_CARAT = 38952,
         LUNAR_CREDIT = 45691,
+        MAMOOL_JA_NANOOK = 48084,
         MGF = 41629,
         MGP = 29,
         NAMAZU_KOBAN = 22525,

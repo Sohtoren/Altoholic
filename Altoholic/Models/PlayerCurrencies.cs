@@ -74,6 +74,7 @@ namespace Altoholic.Models
         public int Lightning_Shard { get; set; }
         public int Loporrit_Carat {  get; set; }
         public int Lunar_Credit {  get; set; }
+        public int Mamool_Ja_Nanook { get; set; }
         public int MGF { get; set; }
         public int MGP { get; set; }
         public int Namazu_Koban { get; set; }

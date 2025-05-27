@@ -38,6 +38,20 @@ namespace Altoholic.Windows
 
         public override void Draw()
         {
+            using var table = ImRaii.Table("###ConfigTable", 2);
+            if (!table) return;
+
+            ImGui.TableSetupColumn("###ConfigTable#Config", ImGuiTableColumnFlags.WidthStretch);
+            ImGui.TableSetupColumn("###ConfigTable#Credits", ImGuiTableColumnFlags.WidthStretch);
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            DrawConfig();
+            ImGui.TableSetColumnIndex(1);
+            DrawCredits();
+        }
+
+        private void DrawConfig()
+        {
             _selectedLanguage = _plugin.Configuration.Language;
             ImGui.SetNextItemWidth(200);
             using (var langCombo =
@@ -143,7 +157,14 @@ namespace Altoholic.Windows
 
             _configuration.AutoSaveTimer = autoSaveTimer;
             _configuration.Save();
+        }
 
+        private void DrawCredits()
+        {
+            ImGui.TextUnformatted("Special Thanks:");
+            ImGui.Separator();
+            ImGui.TextUnformatted("NebulousByte (https://github.com/NebulousByte)");
+            ImGui.TextUnformatted("Dalamud discord server");
         }
     }
 }
