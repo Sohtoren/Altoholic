@@ -362,7 +362,9 @@ namespace Altoholic.Database
 
             if (DoesTableExist(db, VersionTableName))
             {
+                Plugin.Log.Debug("Check version migration 0 to 1");
                 int? version = GetDbVersion(db);
+                Plugin.Log.Debug($"Current DB version is:{version}");
                 if (version is (null or 0))
                 {
                     // This is needed because the previous versions didn't check for subrace and gender
@@ -374,25 +376,53 @@ namespace Altoholic.Database
                     int result7 = db.Execute(sql7);
                     Plugin.Log.Debug($"Set db version to 1. Result: {result7}");
                 }
+                else
+                {
+                    Plugin.Log.Info("Skipping migration");
+                }
             }
 
             if (DoesTableExist(db, VersionTableName))
             {
+                Plugin.Log.Debug("Check version migration 1 to 2");
                 int? version = GetDbVersion(db);
-                Plugin.Log.Debug($"DB version is:{version}");
-                if (version is not 1)
+                Plugin.Log.Debug($"Current DB version is:{version}");
+                if (version is 1)
                 {
-                    return;
+                    bool result = Migrations.MigrateFromVersionOneToVersionTwo.Do(db, CharacterTableName);
+                    if (result)
+                    {
+                        const string sql9 = $"UPDATE {VersionTableName} SET Version = 2";
+                        int result9 = db.Execute(sql9);
+                        Plugin.Log.Debug($"Set db version to 2. Result: {result9}");
+                    }
                 }
+                else
+                {
+                    Plugin.Log.Info("Skipping migration");
+                }
+            }
 
-                bool result = Migrations.MigrateFromVersionOneToVersionTwo.Do(db, CharacterTableName);
-                if (!result)
+            if (DoesTableExist(db, VersionTableName))
+            {
+                Plugin.Log.Debug("Check version migration 2 to 3");
+                int? version = GetDbVersion(db);
+                Plugin.Log.Debug($"Current DB version is:{version}");
+                if (version is 2)
                 {
-                    return;
+                    // This is needed because the previous versions didn't check for subrace and gender
+                    const string sql = $"UPDATE {CharacterTableName} SET BeastReputations = ''";
+                    int result = db.Execute(sql);
+                    Plugin.Log.Debug($"Reset characters BeastReputations. Result: {result}");
+
+                    const string sql2 = $"INSERT INTO {VersionTableName} (Version) VALUES(2)";
+                    int result2 = db.Execute(sql2);
+                    Plugin.Log.Debug($"Set db version to 3. Result: {result2}");
                 }
-                const string sql9 = $"UPDATE {VersionTableName} SET Version = 2";
-                int result9 = db.Execute(sql9);
-                Plugin.Log.Debug($"Set db version to 2. Result: {result9}");
+                else
+                {
+                    Plugin.Log.Info("Skipping migration");
+                }
             }
         }
 

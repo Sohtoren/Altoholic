@@ -17,7 +17,6 @@ using Dalamud.IoC;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
 using Dalamud.Utility;
-using FFXIVClientStructs.FFXIV.Application.Network.WorkDefinitions;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.Game.Character;
 using FFXIVClientStructs.FFXIV.Client.Game.Control;
@@ -271,7 +270,7 @@ namespace Altoholic
 
             MainWindow = new MainWindow(
                 this,
-                $"{Name} characters",
+                $"{Name} v{PluginInterface.Manifest.AssemblyVersion}",
                 _globalCache,
                 CharactersWindow,
                 DetailsWindow,
@@ -289,7 +288,7 @@ namespace Altoholic
 
             CommandManager.AddHandler(CommandName, new CommandInfo(OnCommand)
             {
-                HelpMessage = "Show/hide Altoholic. use /altoholic help for more options"
+                HelpMessage = $"Show/hide {Name}. Use {CommandName} help for more options"
             });
 
             PluginInterface.UiBuilder.Draw += DrawUI;
@@ -393,14 +392,14 @@ namespace Altoholic
             {
                 case "help":
                     SeStringBuilder builder = new();
-                    builder.Append("[Altoholic] /altoholic ");
+                    builder.Append($"[{Name}] {CommandName} ");
                     builder.PushColorRgba(KnownColor.LimeGreen.Vector());
                     builder.Append("option\n");
                     builder.PopColor();
                     builder.PushColorRgba(KnownColor.LimeGreen.Vector());
                     builder.Append("No option");
                     builder.PopColor();
-                    builder.Append(": Show/hide Altoholic main window\n");
+                    builder.Append($": Show/hide {Name} main window\n");
                     builder.Append("Options:\n");
                     builder.PushColorRgba(KnownColor.LimeGreen.Vector());
                     builder.Append("help");
@@ -594,7 +593,6 @@ namespace Altoholic
                     GetPlayerMail();
                     GetPlayerCompletedQuests();
                     GetPlayerRetainer();
-                    GetPlayerBeastReputations();
                     GetDuties();
                     GetCollectionFromState();
                     /*
@@ -1039,6 +1037,7 @@ namespace Altoholic
             GetGlassesFromState(player);
             GetSecretRecipeBookFromState(player);
             GetVistaFromState(player);
+            GetBeastTribeReputationFromState(player);
             _localPlayer.SightseeingLogUnlockState = player.SightseeingLogUnlockState;
             _localPlayer.SightseeingLogUnlockStateEx = player.SightseeingLogUnlockStateEx;
             //Log.Debug($"sightseeing: {player.SightseeingLogUnlockState}");// 0 = Not Unlocked, 1 = ARR Part 1, 2 = ARR Part 2
@@ -1088,7 +1087,6 @@ namespace Altoholic
                 _localPlayer.SecretRecipeBooks.Add(i);
             }
         }
-        
         private void GetVistaFromState(PlayerState player)
         {
             foreach (uint i in _globalCache.VistaStorage.Get().Where(i => !_localPlayer.HasVista(i)).Where(i => player.IsAdventureComplete(i - 2162688)))
@@ -1097,10 +1095,42 @@ namespace Altoholic
             }
         }
 
-        /*private void GetBeastTribeRepFromState(PlayerState player)
+        private void GetBeastTribeReputationFromState(PlayerState player)
         {
-            player.GetBeastTribeRank(i);
-        }*/
+            //Log.Debug("GetBeastTribeReputationFromState entered");
+            int btCount = _globalCache.BeastTribesStorage.Count();
+            if (_localPlayer.BeastReputations.Count > btCount) _localPlayer.BeastReputations.Clear();
+
+            for (uint i = 1; i <= btCount; i++)
+            {
+                BeastTribeRank? btr = _localPlayer.GetBeastReputation(i);
+                if (btr != null && btr.Rank ==
+                    _globalCache.BeastTribesStorage.GetBeastTribe(ClientLanguage.English, i)?.MaxRank)
+                {
+                    continue;
+                }
+
+                byte rank = player.GetBeastTribeRank((byte)i);
+                ushort val = player.GetBeastTribeCurrentReputation((byte)i);
+
+                BeastTribeRank? b = _localPlayer.BeastReputations.Find(br => br.Id == i);
+                if (b == null)
+                {
+                    _localPlayer.BeastReputations.Add(new BeastTribeRank
+                    {
+                        Id = i,
+                        Value = val,
+                        Rank = rank
+                    });
+                }
+                else
+                {
+                    if (rank != 0 && (val == 0 && b.Value != 0)) continue;
+                    b.Value = val;
+                    b.Rank = rank;
+                }
+            }
+        }
 
         private unsafe PlayerCurrencies GetPlayerCurrencies()
         {
@@ -1269,51 +1299,6 @@ namespace Altoholic
                     _localPlayer.Quests.Add(id);
             }
         }
-
-        private unsafe void GetPlayerBeastReputations()
-        {
-            //Log.Debug("GetPlayerBeastReputations entered");
-            int btCount = _globalCache.BeastTribesStorage.Count();
-            if (_localPlayer.BeastReputations.Count > btCount) _localPlayer.BeastReputations.Clear();
-
-            ref readonly QuestManager qm = ref *QuestManager.Instance();
-            //QuestManager qm = new QuestManager();
-            for (uint i = 1; i <= btCount; i++)
-            {
-                BeastTribeRank? btr = _localPlayer.GetBeastReputation(i);
-                if (btr != null && btr.Rank ==
-                    _globalCache.BeastTribesStorage.GetBeastTribe(ClientLanguage.English, i)?.MaxRank)
-                {
-                    continue;
-                }
-
-                //BeastReputationWork t = *QuestManager.Instance()->GetBeastReputationById((ushort)i);
-                BeastReputationWork t = *qm.GetBeastReputationById((ushort)i);
-                //BeastReputationWork t = *qm.GetBeastReputationById(1);
-                ushort val = t.Value;
-                //byte rank = t.Rank;
-                byte rank = (byte)(t.Rank & 0x7F);
-#if DEBUG
-                //Log.Debug($"GetPlayerBeastReputations: id: {i}, val: {val}, rank: {rank}, t.rank: {t.Rank}");
-#endif
-                BeastTribeRank? b = _localPlayer.BeastReputations.Find(br => br.Id == i);
-                if (b == null)
-                {
-                    _localPlayer.BeastReputations.Add(new BeastTribeRank
-                    {
-                        Id = i,
-                        Value = val,
-                        Rank = rank
-                    });
-                }
-                else
-                {
-                    if (rank != 0 && (val == 0 && b.Value != 0)) continue;
-                    b.Value = val;
-                    b.Rank = rank;
-                }
-            }
-        }//Todo: Replace this with the playerstate function once rep has been merge to CS
 
         private unsafe void GetPlayerEquippedGear()
         {
@@ -1906,7 +1891,6 @@ namespace Altoholic
                 Utils.ChatMessage("Starting altoholic autosave timer");
             }
 
-            GetPlayerBeastReputations();
             GetCollectionFromState();
             GetDuties();
         }
