@@ -3551,6 +3551,7 @@ namespace Altoholic.Windows
             ImGui.TableSetColumnIndex(0);
             ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 8175)}");
             DrawAllLine(chars, charactersQuests, $"{_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.HILDIBRAND_DT_THE_CASE_OF_THE_DISPLACED_INSPECTOR)}", 19);
+            DrawAllLine(chars, charactersQuests, $"{_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.HILDIBRAND_DT_THE_CASE_OF_THE_FIENDISH_FUGITIVES)}", 20);
         }
 
         private void DrawRoleQuestQuest(List<Character> chars)
@@ -5095,14 +5096,12 @@ namespace Altoholic.Windows
                                 ImGuiTableColumnFlags.WidthFixed, 36);
                             ImGui.TableNextRow();
                             ImGui.TableSetColumnIndex(0);
-                            //DrawMinion(534, currentCharacter.HasMinion(534));
-                            ImGui.TableSetColumnIndex(1);
-                            //DrawOrchestrion(708, currentCharacter.HasOrchestrionRoll(708));
+                            DrawMount(381, currentCharacter.HasMount(381));
 
                             if (rank >= 5)
                             {
-                                ImGui.TableSetColumnIndex(2);
-                                //DrawMount(358, currentCharacter.HasMount(358));
+                                ImGui.TableSetColumnIndex(1);
+                                DrawOrchestrion(728, currentCharacter.HasOrchestrionRoll(708));
                             }
 
                             if (rank >= 6)
