@@ -5106,16 +5106,16 @@ namespace Altoholic.Windows
 
                             if (rank >= 6)
                             {
-                                ImGui.TableSetColumnIndex(3);
-                                //DrawOrnament(44, currentCharacter.HasOrnament(44));
+                                ImGui.TableSetColumnIndex(2);
+                                DrawMinion(545, currentCharacter.HasMinion(545));
                             }
 
                             if (rank >= 7)
                             {
-                                ImGui.TableSetColumnIndex(4);
-                                uint? fkId = _globalCache.FramerKitStorage.GetFramerKitIdFromItemId(48085);
+                                ImGui.TableSetColumnIndex(3);
+                                /*uint? fkId = _globalCache.FramerKitStorage.GetFramerKitIdFromItemId(48085);
                                 if (fkId == null) return;
-                                DrawFramerKit(fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
+                                DrawFramerKit(fkId.Value, currentCharacter.HasFramerKit(fkId.Value));*/
                             }
                         }
 

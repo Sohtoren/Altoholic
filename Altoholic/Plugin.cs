@@ -774,6 +774,10 @@ namespace Altoholic
             GetHousing();
             GetPlayerGlamourInventory();
 
+            if (_autoSaveWatch.Elapsed is { Minutes: 1 or 2 or 3 or 4, Seconds: 0 })
+            {
+                GetCollectionFromState();
+            }
             if (_autoSaveWatch.Elapsed.Minutes < Configuration.AutoSaveTimer)
             {
                 return;
@@ -1112,8 +1116,8 @@ namespace Altoholic
 
                 byte rank = player.GetBeastTribeRank((byte)i);
                 ushort val = player.GetBeastTribeCurrentReputation((byte)i);
-
                 BeastTribeRank? b = _localPlayer.BeastReputations.Find(br => br.Id == i);
+
                 if (b == null)
                 {
                     _localPlayer.BeastReputations.Add(new BeastTribeRank
