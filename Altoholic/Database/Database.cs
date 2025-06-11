@@ -415,9 +415,13 @@ namespace Altoholic.Database
                     int result = db.Execute(sql);
                     Plugin.Log.Debug($"Reset characters BeastReputations. Result: {result}");
 
-                    const string sql2 = $"INSERT INTO {VersionTableName} (Version) VALUES(2)";
+                    const string sql2 = $"DELETE from {VersionTableName}";
                     int result2 = db.Execute(sql2);
-                    Plugin.Log.Debug($"Set db version to 3. Result: {result2}");
+                    Plugin.Log.Debug($"Reset {VersionTableName}. Result: {result2}");
+
+                    const string sql3 = $"INSERT INTO {VersionTableName} (Version) VALUES(3)"; 
+                    int result3 = db.Execute(sql3);
+                    Plugin.Log.Debug($"Set db version to 3. Result: {result3}");
                 }
                 else
                 {
