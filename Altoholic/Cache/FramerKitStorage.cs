@@ -10,7 +10,7 @@ namespace Altoholic.Cache
     {
         private readonly Dictionary<uint, FramerKit> _framerKits = new(size);
 
-        public void Init(ClientLanguage currentLocale, GlobalCache globalCache)
+        public void Init(GlobalCache globalCache)
         {
             IEnumerable<Item>? items = Utils.GetItemsFromItemAction(ClientLanguage.English, 2234);
             using IEnumerator<Item>? itms = items?.GetEnumerator();
@@ -26,7 +26,7 @@ namespace Altoholic.Cache
                 {
                     Item? item = Utils.GetItemFromId(l, itm.RowId);
                     if (item == null) continue;
-                    switch (currentLocale)
+                    switch (l)
                     {
                         case ClientLanguage.German:
                             fk.GermanName = item.Value.Name.ExtractText();
