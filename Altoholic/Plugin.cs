@@ -774,7 +774,7 @@ namespace Altoholic
             GetHousing();
             GetPlayerGlamourInventory();
 
-            if (_autoSaveWatch.Elapsed is { Minutes: 1 or 2 or 3 or 4, Seconds: 0 })
+            if (_autoSaveWatch.Elapsed.Minutes >= 1 && _autoSaveWatch.Elapsed.Minutes <= Configuration.AutoSaveTimer && _autoSaveWatch.Elapsed.Seconds == 0)
             {
                 GetCollectionFromState();
             }
