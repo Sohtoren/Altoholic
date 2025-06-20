@@ -5113,9 +5113,9 @@ namespace Altoholic.Windows
                             if (rank >= 7)
                             {
                                 ImGui.TableSetColumnIndex(3);
-                                /*uint? fkId = _globalCache.FramerKitStorage.GetFramerKitIdFromItemId(48085);
+                                uint? fkId = _globalCache.FramerKitStorage.GetFramerKitIdFromItemId(48085);
                                 if (fkId == null) return;
-                                DrawFramerKit(fkId.Value, currentCharacter.HasFramerKit(fkId.Value));*/
+                                DrawFramerKit(fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
                             }
                         }
 

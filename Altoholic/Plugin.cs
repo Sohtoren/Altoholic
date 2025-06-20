@@ -187,7 +187,7 @@ namespace Altoholic
             _globalCache.BardingStorage.Init(currentLocale, _globalCache);
             _globalCache.EmoteStorage.Init(currentLocale, _globalCache);
             _globalCache.OrnamentStorage.Init(currentLocale, _globalCache);
-            _globalCache.FramerKitStorage.Init(currentLocale, _globalCache);
+            _globalCache.FramerKitStorage.Init(_globalCache);
             _globalCache.GlassesStorage.Init(currentLocale, _globalCache);
             _globalCache.MinionStorage.Init(currentLocale, _globalCache);
             _globalCache.MountStorage.Init(currentLocale, _globalCache);
