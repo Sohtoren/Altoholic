@@ -611,6 +611,13 @@ namespace Altoholic
             return items;
         }
 
+        public static IEnumerable<Item>? GetItemsFromItemAction(ClientLanguage currentLocale, uint id)
+        {
+            ExcelSheet<Item>? ditm = Plugin.DataManager.GetExcelSheet<Item>(currentLocale);
+            IEnumerable<Item>? items = ditm?.Where(i =>
+                i.ItemAction.RowId == id);
+            return items;
+        }
 
         public static Item? GetItemFromName(ClientLanguage currentLocale, string name)
         {
