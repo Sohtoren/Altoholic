@@ -691,7 +691,7 @@ namespace Altoholic
         }
 
         // ReSharper disable once InconsistentNaming
-        public void DrawConfigUI()
+        private void DrawConfigUI()
         {
             ConfigWindow.IsOpen = true;
         }
@@ -1117,7 +1117,6 @@ namespace Altoholic
                 byte rank = player.GetBeastTribeRank((byte)i);
                 ushort val = player.GetBeastTribeCurrentReputation((byte)i);
                 BeastTribeRank? b = _localPlayer.BeastReputations.Find(br => br.Id == i);
-
                 if (b == null)
                 {
                     _localPlayer.BeastReputations.Add(new BeastTribeRank
@@ -1129,7 +1128,7 @@ namespace Altoholic
                 }
                 else
                 {
-                    if (rank != 0 && (val == 0 && b.Value != 0)) continue;
+                    //if (rank != 0 && (val == 0 && b.Value != 0)) continue;
                     b.Value = val;
                     b.Rank = rank;
                 }

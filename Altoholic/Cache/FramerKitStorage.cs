@@ -44,7 +44,6 @@ namespace Altoholic.Cache
                 }
                 fk.Icon = itm.Icon;
                 globalCache.IconStorage.LoadIcon(fk.Icon);
-                Plugin.Log.Debug($"itemId: {itm.RowId}, AdditionalData: {itm.AdditionalData.RowId}");
                 _framerKits.Add(fkId, fk);
             }
         }

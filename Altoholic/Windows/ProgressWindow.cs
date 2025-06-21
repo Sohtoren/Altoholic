@@ -3283,7 +3283,7 @@ namespace Altoholic.Windows
             TripleTriadCard? ttc = _globalCache.TripleTriadCardStorage.GetTripleTriadCard(_currentLocale, id);
             if (ttc != null)
             {
-                Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(027662), new Vector2(32, 32));
+                Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(027672), new Vector2(32, 32));
                 if (ImGui.IsItemHovered())
                 {
                     Utils.DrawTTCTooltip(_currentLocale, ref _globalCache, ttc);
@@ -5110,12 +5110,14 @@ namespace Altoholic.Windows
                                 DrawMinion(545, currentCharacter.HasMinion(545));
                             }
 
-                            if (rank >= 7)
+                            if (rank >= 8)
                             {
                                 ImGui.TableSetColumnIndex(3);
                                 uint? fkId = _globalCache.FramerKitStorage.GetFramerKitIdFromItemId(48085);
                                 if (fkId == null) return;
                                 DrawFramerKit(fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
+                                ImGui.TableSetColumnIndex(4);
+                                DrawTripleTriadCard(441, currentCharacter.HasTTC(441));
                             }
                         }
 
@@ -5348,7 +5350,7 @@ namespace Altoholic.Windows
                 if (_isSpoilerEnabled)
                 {
                     //Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(t.Icon), new Vector2(32, 32),
-                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(027662), new Vector2(32, 32),
+                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(027672), new Vector2(32, 32),
                         new Vector4(1, 1, 1, 0.5f));
                     if (ImGui.IsItemHovered())
                     {
@@ -5363,7 +5365,7 @@ namespace Altoholic.Windows
             else
             {
                 //Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(t.Icon), new Vector2(32, 32));
-                Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(027662), new Vector2(32, 32));
+                Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(027672), new Vector2(32, 32));
                 if (ImGui.IsItemHovered())
                 {
                     Utils.DrawTTCTooltip(_currentLocale, ref _globalCache, t);

@@ -1280,7 +1280,7 @@ namespace Altoholic.Windows
                 if (_isSpoilerEnabled)
                 {
                     //Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(t.Icon), new Vector2(32, 32),
-                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(027662), new Vector2(32, 32),
+                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(027672), new Vector2(32, 32),
                         new Vector4(1, 1, 1, 0.5f));
                     if (ImGui.IsItemHovered())
                     {
@@ -1295,7 +1295,7 @@ namespace Altoholic.Windows
             else
             {
                 //Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(t.Icon), new Vector2(32, 32));
-                Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(027662), new Vector2(32, 32));
+                Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(027672), new Vector2(32, 32));
                 if (ImGui.IsItemHovered())
                 {
                     Utils.DrawTTCTooltip(_currentLocale, ref _globalCache, t);
