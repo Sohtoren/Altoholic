@@ -5101,7 +5101,7 @@ namespace Altoholic.Windows
                             if (rank >= 5)
                             {
                                 ImGui.TableSetColumnIndex(1);
-                                DrawOrchestrion(728, currentCharacter.HasOrchestrionRoll(708));
+                                DrawOrchestrion(728, currentCharacter.HasOrchestrionRoll(728));
                             }
 
                             if (rank >= 6)
