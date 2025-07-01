@@ -50,6 +50,7 @@ namespace Altoholic.Models
         public int Ice_Cluster { get; set; }
         public int Ice_Crystal { get; set; }
         public int Ice_Shard { get; set; }
+        public int Irregular_Tomestone_Of_Allegory { get; set; }
         public int Irregular_Tomestone_Of_Creation { get; set; }
         public int Irregular_Tomestone_Of_Esoterics { get; set; }
         public int Irregular_Tomestone_Of_Genesis_i { get; set; }

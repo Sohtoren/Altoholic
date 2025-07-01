@@ -1693,29 +1693,29 @@ namespace Altoholic.Windows
         {
             Dictionary<int, string> mooglesNames = [];
             mooglesNames[0] = Loc.Localize("OldMoogleEvent", "Old Events");
-            string phantasmagoriaName = _currentLocale switch
+            string allegoryName = _currentLocale switch
             {
-                ClientLanguage.German => "Phantasmagorische Freundschaften",
-                ClientLanguage.English => "The Hunt for Phantasmagoria",
-                ClientLanguage.French => "Fantasmagorie Kupo",
-                ClientLanguage.Japanese => "\uff5e幻想との邂逅\uff5e",
-                _ => "The Hunt for Phantasmagoria"
+                ClientLanguage.German => "Fantastische Fachsimpeleien",
+                ClientLanguage.English => "The Hunt for Allegory",
+                ClientLanguage.French => "L'allégorie perdue",
+                ClientLanguage.Japanese => "\uff5e奇譚の探求者\uff5e",
+                _ => "The Hunt for Allegory"
             };
-            if (ImGui.CollapsingHeader($"2025 - {phantasmagoriaName}"))
+            if (ImGui.CollapsingHeader($"2025 - {allegoryName}"))
             {
                 using var charactersEventTable = ImRaii.Table(
-                    $"###CharactersProgress#All#Event#MogRewards#Table#Event2025_1",
+                    $"###CharactersProgress#All#Event#MogRewards#Table#Event2025_2",
                     chars.Count + 2,
                     ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner |
                     ImGuiTableFlags.ScrollX | ImGuiTableFlags.ScrollY);
                 if (!charactersEventTable) return;
-                ImGui.TableSetupColumn($"###CharactersProgress#All#Event#MogRewards#Event2025_1#Name",
+                ImGui.TableSetupColumn($"###CharactersProgress#All#Event#MogRewards#Event2025_2#Name",
                     ImGuiTableColumnFlags.WidthFixed, 270);
-                ImGui.TableSetupColumn($"###CharactersProgress#All#Event#MogRewards#Event2025_1#Currency",
+                ImGui.TableSetupColumn($"###CharactersProgress#All#Event#MogRewards#Event2025_2#Currency",
                     ImGuiTableColumnFlags.WidthFixed, 20);
                 foreach (Character c in chars)
                 {
-                    ImGui.TableSetupColumn($"###CharactersProgress#All#Event#MogRewards#Event2025_1#{c.CharacterId}",
+                    ImGui.TableSetupColumn($"###CharactersProgress#All#Event#MogRewards#Event2025_2#{c.CharacterId}",
                         ImGuiTableColumnFlags.WidthFixed, 20);
                 }
 
@@ -1725,7 +1725,7 @@ namespace Altoholic.Windows
 
                 ImGui.TableSetColumnIndex(1);
                 Item? itm = _globalCache.ItemStorage.LoadItem(_currentLocale,
-                    (uint)Currencies.IRREGULAR_TOMESTONE_OF_PHANTASMAGORIA);
+                    (uint)Currencies.IRREGULAR_TOMESTONE_OF_ALLEGORY);
                 if (itm == null) return;
                 Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Value.Icon), new Vector2(16, 16));
                 if (ImGui.IsItemHovered())
@@ -1746,30 +1746,38 @@ namespace Altoholic.Windows
                     }
                 }
 
-                DrawAllCharsMount(chars, 205, 50);
-                DrawAllCharsMount(chars, 112, 50);
-                DrawAllCharsMount(chars, 193, 50);
-                DrawAllCharsBarding(chars, 79, 50);
-                DrawAllCharsMinion(chars, 374, 50);
-                DrawAllCharsOrchestrion(chars, 364, 50);
-                DrawAllCharsHairstyle(chars, 24233, 30);
-                DrawAllCharsOrnament(chars, 11, 30);
-                DrawAllCharsEmote(chars, 203, 30);
-                DrawAllCharsMount(chars, 26, 30);
-                DrawAllCharsMount(chars, 27, 30);
-                DrawAllCharsMount(chars, 133, 30);
-                DrawAllCharsMount(chars, 182, 30);
-                DrawAllCharsMinion(chars, 50, 15);
-                DrawAllCharsTripleTriadCard(chars, 107, 10);
-                DrawAllCharsTripleTriadCard(chars, 121, 10);
-                DrawAllCharsTripleTriadCard(chars, 279, 7);
-                DrawAllCharsTripleTriadCard(chars, 304, 7);
-                DrawAllCharsTripleTriadCard(chars, 315, 7);
-                DrawAllCharsMinion(chars, 340, 7);
-                DrawAllCharsMinion(chars, 353, 7);
-                DrawAllCharsOrchestrion(chars, 345, 7);
+                DrawAllCharsOrchestrion(chars, 365, 100);
+                DrawAllCharsMount(chars, 217, 50);
+                DrawAllCharsMount(chars, 191, 50);
+                DrawAllCharsHairstyle(chars, 23369, 50);
+                DrawAllCharsMinion(chars, 385, 50);
+                DrawAllCharsBarding(chars, 76, 30);
+                DrawAllCharsEmote(chars, 195, 30);
+                DrawAllCharsOrnament(chars, 13, 30);
+                DrawAllCharsMount(chars, 19, 30);
+                DrawAllCharsMount(chars, 35, 30);
+                DrawAllCharsMount(chars, 116, 30);
+                DrawAllCharsMount(chars, 115, 30);
+                DrawAllCharsMinion(chars, 60, 15);
+                DrawAllCharsTripleTriadCard(chars, 141, 10);
+                DrawAllCharsTripleTriadCard(chars, 142, 10);
+                DrawAllCharsTripleTriadCard(chars, 290, 7);
+                DrawAllCharsTripleTriadCard(chars, 293, 7);
+                DrawAllCharsTripleTriadCard(chars, 326, 7);
+                DrawAllCharsMinion(chars, 243, 7);
+                DrawAllCharsOrchestrion(chars, 15, 7);
+                DrawAllCharsMinion(chars, 199, 1);
             }
 
+            string phantasmagoriaName = _currentLocale switch
+            {
+                ClientLanguage.German => "Phantasmagorische Freundschaften",
+                ClientLanguage.English => "The Hunt for Phantasmagoria",
+                ClientLanguage.French => "Fantasmagorie Kupo",
+                ClientLanguage.Japanese => "\uff5e幻想との邂逅\uff5e",
+                _ => "The Hunt for Phantasmagoria"
+            };
+            mooglesNames[2025_1] = $"2025 {phantasmagoriaName}";
             string goetiaName = _currentLocale switch
             {
                 ClientLanguage.German => "Goëtische Goldschätze",
@@ -1930,6 +1938,76 @@ namespace Altoholic.Windows
 
             switch (_currentOldMoogleReward)
             {
+                case 2025_1:
+                    {
+                        using var charactersEventTable = ImRaii.Table(
+                            $"###CharactersProgress#All#Event#MogRewards#Table#Event2025_1",
+                            chars.Count + 2,
+                            ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner |
+                            ImGuiTableFlags.ScrollX | ImGuiTableFlags.ScrollY);
+                        if (!charactersEventTable) return;
+                        ImGui.TableSetupColumn($"###CharactersProgress#All#Event#MogRewards#Event2025_1#Name",
+                            ImGuiTableColumnFlags.WidthFixed, 270);
+                        ImGui.TableSetupColumn($"###CharactersProgress#All#Event#MogRewards#Event2025_1#Currency",
+                            ImGuiTableColumnFlags.WidthFixed, 20);
+                        foreach (Character c in chars)
+                        {
+                            ImGui.TableSetupColumn(
+                                $"###CharactersProgress#All#Event#MogRewards#Event2025_1#{c.CharacterId}",
+                                ImGuiTableColumnFlags.WidthFixed, 20);
+                        }
+
+                        ImGui.TableNextRow();
+                        ImGui.TableSetColumnIndex(0);
+                        ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 1885));
+
+                        ImGui.TableSetColumnIndex(1);
+                        Item? itm = _globalCache.ItemStorage.LoadItem(_currentLocale,
+                            (uint)Currencies.IRREGULAR_TOMESTONE_OF_PHANTASMAGORIA);
+                        if (itm == null) return;
+                        Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Value.Icon), new Vector2(16, 16));
+                        if (ImGui.IsItemHovered())
+                        {
+                            Utils.DrawItemTooltip(_currentLocale, ref _globalCache, itm.Value);
+                        }
+
+                        foreach (Character currChar in chars)
+                        {
+                            ImGui.TableNextColumn();
+                            ImGui.TextUnformatted($"{currChar.FirstName[0]}.{currChar.LastName[0]}");
+                            if (ImGui.IsItemHovered())
+                            {
+                                ImGui.BeginTooltip();
+                                ImGui.TextUnformatted(
+                                    $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
+                                ImGui.EndTooltip();
+                            }
+                        }
+
+                        DrawAllCharsMount(chars, 205, 50);
+                        DrawAllCharsMount(chars, 112, 50);
+                        DrawAllCharsMount(chars, 193, 50);
+                        DrawAllCharsBarding(chars, 79, 50);
+                        DrawAllCharsMinion(chars, 374, 50);
+                        DrawAllCharsOrchestrion(chars, 364, 50);
+                        DrawAllCharsHairstyle(chars, 24233, 30);
+                        DrawAllCharsOrnament(chars, 11, 30);
+                        DrawAllCharsEmote(chars, 203, 30);
+                        DrawAllCharsMount(chars, 26, 30);
+                        DrawAllCharsMount(chars, 27, 30);
+                        DrawAllCharsMount(chars, 133, 30);
+                        DrawAllCharsMount(chars, 182, 30);
+                        DrawAllCharsMinion(chars, 50, 15);
+                        DrawAllCharsTripleTriadCard(chars, 107, 10);
+                        DrawAllCharsTripleTriadCard(chars, 121, 10);
+                        DrawAllCharsTripleTriadCard(chars, 279, 7);
+                        DrawAllCharsTripleTriadCard(chars, 304, 7);
+                        DrawAllCharsTripleTriadCard(chars, 315, 7);
+                        DrawAllCharsMinion(chars, 340, 7);
+                        DrawAllCharsMinion(chars, 353, 7);
+                        DrawAllCharsOrchestrion(chars, 345, 7);
+                        break;
+                    }
                 case 2024_3:
                     {
                         using var charactersEventTable = ImRaii.Table(
