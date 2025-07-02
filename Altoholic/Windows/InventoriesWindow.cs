@@ -296,9 +296,120 @@ namespace Altoholic.Windows
                 ImGui.TextUnformatted($"{itm.Value.Name}");
             }
 
-            List<Character> characters =
-                chars.FindAll(c => c.Inventory.FindAll(ci => ci.ItemId == _currentItem).Count > 0);
-            if (characters.Count == 0)
+            /*List<Character> characters =
+                chars.FindAll(c => c.Inventory.FindAll(ci => ci.ItemId == _currentItem).Count > 0);*/
+            //Todo: add retainer, glam dresser and armoire inventories
+            //Same presentation as characterWindow gils: total displayed and detail on mousehover
+            /*List<Character> r = chars.FindAll(c =>
+                c.Retainers.ForEach(retainer => retainer.Inventory.FindAll(ri => ri.ItemId == _currentItem).Count > 0));*/
+            List<CharacterInventories> inventories = [];
+            foreach (Character character in chars)
+            {
+                Plugin.Log.Debug($"{character.FirstName} {character.LastName}{(char)SeIconChar.CrossWorld}{character.HomeWorld}");
+                bool dresser = false;
+                CharacterInventories ci = new();
+                uint inventoryCount = character.Inventory.FindAll(i => i.ItemId == _currentItem).Aggregate<Inventory, uint>(0, (current, inv) => current + inv.Quantity);
+                //Plugin.Log.Debug($"inventory count: {inventoryCount}");
+                if (inventoryCount > 0)
+                {
+                    ci.Inventory = new Tuple<bool, uint>(true, inventoryCount);
+                }
+
+                if (character.ArmoryInventory != null)
+                {
+                    uint armoryCount = 0;
+                    uint armoryMainHandCount = character.ArmoryInventory.MainHand.FindAll(i => i.ItemId == _currentItem)
+                        .Aggregate<Gear, uint>(0, (current, inv) => current + 1);
+                    //Plugin.Log.Debug($"armory main hand count: {armoryMainHandCount}");
+                    armoryCount += armoryMainHandCount;
+                    uint armoryHeadCount = character.ArmoryInventory.Head.FindAll(i => i.ItemId == _currentItem)
+                        .Aggregate<Gear, uint>(0, (current, inv) => current + 1);
+                    //Plugin.Log.Debug($"armory head count: {armoryHeadCount}");
+                    armoryCount += armoryHeadCount;
+                    uint armoryBodyCount = character.ArmoryInventory.Body.FindAll(i => i.ItemId == _currentItem)
+                        .Aggregate<Gear, uint>(0, (current, inv) => current + 1);
+                    //Plugin.Log.Debug($"armory count: {armoryBodyCount}");
+                    armoryCount += armoryBodyCount;
+                    uint armoryHandsCount = character.ArmoryInventory.Hands.FindAll(i => i.ItemId == _currentItem)
+                        .Aggregate<Gear, uint>(0, (current, inv) => current + 1);
+                    //Plugin.Log.Debug($"armory hands count: {armoryHandsCount}");
+                    armoryCount += armoryHandsCount;
+                    uint armoryLegsCount = character.ArmoryInventory.Legs.FindAll(i => i.ItemId == _currentItem)
+                        .Aggregate<Gear, uint>(0, (current, inv) => current + 1);
+                    //Plugin.Log.Debug($"armory Legs count: {armoryLegsCount}");
+                    armoryCount += armoryLegsCount;
+                    uint armoryFeetsCount = character.ArmoryInventory.Feets.FindAll(i => i.ItemId == _currentItem)
+                        .Aggregate<Gear, uint>(0, (current, inv) => current + 1);
+                    //Plugin.Log.Debug($"armory Feets count: {armoryFeetsCount}");
+                    armoryCount += armoryFeetsCount;
+                    uint armoryOffHandCount = character.ArmoryInventory.OffHand.FindAll(i => i.ItemId == _currentItem)
+                        .Aggregate<Gear, uint>(0, (current, inv) => current + 1);
+                    //Plugin.Log.Debug($"armory OffHand count: {armoryOffHandCount}");
+                    armoryCount += armoryOffHandCount;
+                    uint armoryEarCount = character.ArmoryInventory.Ear.FindAll(i => i.ItemId == _currentItem)
+                        .Aggregate<Gear, uint>(0, (current, inv) => current + 1);
+                    //Plugin.Log.Debug($"armory Earrings count: {armoryEarCount}");
+                    armoryCount += armoryEarCount;
+                    uint armoryNeckCount = character.ArmoryInventory.Neck.FindAll(i => i.ItemId == _currentItem)
+                        .Aggregate<Gear, uint>(0, (current, inv) => current + 1);
+                    //Plugin.Log.Debug($"armory Neck count: {armoryNeckCount}");
+                    armoryCount += armoryNeckCount;
+                    uint armoryWristCount = character.ArmoryInventory.Wrist.FindAll(i => i.ItemId == _currentItem)
+                        .Aggregate<Gear, uint>(0, (current, inv) => current + 1);
+                    //Plugin.Log.Debug($"armory Wrist count: {armoryWristCount}");
+                    armoryCount += armoryWristCount;
+                    uint armoryRingsCount = character.ArmoryInventory.Rings.FindAll(i => i.ItemId == _currentItem)
+                        .Aggregate<Gear, uint>(0, (current, inv) => current + 1);
+                    //Plugin.Log.Debug($"armory Rings count: {armoryRingsCount}");
+                    armoryCount += armoryRingsCount;
+
+                    if (armoryCount > 0)
+                    {
+                        ci.Armory = new Tuple<bool, uint>(true, armoryCount);
+                    }
+                }
+
+                uint retainerCount = 0;
+                foreach (Retainer characterRetainer in character.Retainers)
+                {
+                    uint currentRetainerCount = characterRetainer.Inventory.FindAll(ri => ri.ItemId == _currentItem).Aggregate<Inventory, uint>(0, (current, inv) => current + inv.Quantity);
+                    if (currentRetainerCount <= 0)
+                    {
+                        continue;
+                    }
+
+                    retainerCount += currentRetainerCount;
+                    ci.Retainers.Add(new Tuple<string, uint>($"{characterRetainer.Name}", currentRetainerCount));
+                }
+                //Plugin.Log.Debug($"retainer count: {retainerCount}");
+
+                foreach (GlamourItem glamourItem in character.GlamourDresser)
+                {
+                    if (glamourItem.ItemId != _currentItem)
+                    {
+                        continue;
+                    }
+
+                    dresser = true;
+                    ci.Dresser = true;
+                }
+                //Plugin.Log.Debug($"Dresser count: {(dresser ? 1 : 0)}");
+                uint? armoireId = _globalCache.ArmoireStorage.GetArmoireIdFromItemId((uint)_currentItem);
+                bool armoire = (armoireId != null) && character.HasArmoire((uint)armoireId);
+                ci.Armoire = armoire;
+                Plugin.Log.Debug($"{_currentItem} Armoire count: {(armoire ? 1 : 0)}");
+                if (inventoryCount <= 0 && retainerCount <= 0 && !dresser && !armoire)
+                {
+                    continue;
+                }
+
+                ci.FirstName = character.FirstName;
+                ci.LastName = character.LastName;
+                ci.World = character.HomeWorld;
+
+                inventories.Add(ci);
+            }
+            if (inventories.Count == 0)
             {
                 ImGui.TextUnformatted(
                     $"{Loc.Localize("NoItemOnAnyCharacter", "Item not found on any characters.\r\nCheck if inventories are available and updated.")}");
@@ -329,17 +440,93 @@ namespace Altoholic.Windows
                 }
 #endif
 
-                foreach (Character character in characters)
+                //foreach (Character character in characters)
+                foreach (CharacterInventories characterInventories in inventories)
                 {
-                    uint totalAmount = character.Inventory.FindAll(i => i.ItemId == _currentItem)
-                        .Aggregate<Inventory, uint>(0, (current, inv) => (uint)(current + inv.Quantity));
+                    uint totalAmount = 0;
+                    if (characterInventories.Inventory.Item1)
+                    {
+                        totalAmount += characterInventories.Inventory.Item2;
+                    }
+                    if (characterInventories.Armory.Item1)
+                    {
+                        totalAmount += characterInventories.Inventory.Item2;
+                    }
+
+                    long retainerAmount = characterInventories.Retainers.Sum(c => c.Item2);
+                    if (retainerAmount > 0)
+                    {
+                        totalAmount += (uint)retainerAmount;
+                    }
+
+                    totalAmount += characterInventories.Dresser ? 1 : (uint)0;
+                    totalAmount += characterInventories.Armoire ? 1 : (uint)0;
+                    /*uint totalAmount = character.Inventory.FindAll(i => i.ItemId == _currentItem)
+                        .Aggregate<Inventory, uint>(0, (current, inv) => (uint)(current + inv.Quantity));*/
                     overallAmount += totalAmount;
                     ImGui.TableNextRow();
                     ImGui.TableSetColumnIndex(0);
                     ImGui.TextUnformatted(
-                        $"{character.FirstName} {character.LastName}{(char)SeIconChar.CrossWorld}{character.HomeWorld}");
+                        $"{characterInventories.FirstName} {characterInventories.LastName}{(char)SeIconChar.CrossWorld}{characterInventories.World}");
                     ImGui.TableSetColumnIndex(1);
                     ImGui.TextUnformatted($"{totalAmount}");
+                    if (totalAmount <= 0)
+                    {
+                        continue;
+                    }
+
+                    if (ImGui.IsItemHovered())
+                    {
+                        ImGui.BeginTooltip();
+                        if (characterInventories.Inventory.Item1)
+                        {
+                            ImGui.TextUnformatted(
+                                $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 520)}");
+                            ImGui.SameLine();
+                            ImGui.TextUnformatted($"{characterInventories.Inventory.Item2:N0}");
+                        }
+
+                        if (characterInventories.Armory.Item1)
+                        {
+                            ImGui.TextUnformatted(
+                                $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 1370)}");
+                            ImGui.SameLine();
+                            ImGui.TextUnformatted($"{characterInventories.Armory.Item2:N0}");
+                        }
+
+                        if (retainerAmount > 0)
+                        {
+                            ImGui.TextUnformatted(
+                                $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 532)}");
+                            ImGui.SameLine();
+                            ImGui.TextUnformatted($"{retainerAmount:N0}");
+
+                            foreach (Tuple<string, uint> characterInventoriesRetainer in characterInventories
+                                         .Retainers)
+                            {
+                                ImGui.TextUnformatted(
+                                    $"----- {characterInventoriesRetainer.Item1}: {characterInventoriesRetainer.Item2:N0}");
+                            }
+                        }
+
+                        if (characterInventories.Dresser)
+                        {
+                            ImGui.TextUnformatted(
+                                $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 3735)}");
+                            ImGui.SameLine();
+                            ImGui.TextUnformatted($"{(characterInventories.Dresser ? 1 : 0)}");
+                        }
+
+                        if (characterInventories.Armoire)
+                        {
+                            ImGui.TextUnformatted(
+                                $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 3734)}");
+                            ImGui.SameLine();
+                            ImGui.TextUnformatted($"{(characterInventories.Armoire ? 1 : 0)}");
+                        }
+
+                        ImGui.EndTooltip();
+                    }
                 }
             }
 
@@ -601,7 +788,7 @@ namespace Altoholic.Windows
                         continue;
                     }
 
-                    bool armoire = _globalCache.ArmoireStorage.CanBeInArmoire(itm.Value.RowId);
+                    bool armoire = _globalCache.ArmoireStorage.CanBeInArmoireFromItemId(itm.Value.RowId);
                     Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Value.Icon, item.HQ), new Vector2(36, 36));
                     if (ImGui.IsItemHovered())
                     {
@@ -1315,6 +1502,18 @@ namespace Altoholic.Windows
 
                 maxIndex++;
             }
+        }
+
+        private class CharacterInventories
+        {
+            public string FirstName = string.Empty;
+            public string LastName = string.Empty;
+            public string World = string.Empty;
+            public Tuple<bool, uint> Inventory = new(false, 0);
+            public Tuple<bool, uint> Armory = new(false, 0);
+            public List<Tuple<string, uint>> Retainers = [];
+            public bool Dresser = false;
+            public bool Armoire = false;
         }
     }
 }

@@ -552,7 +552,7 @@ namespace Altoholic.Windows
                         continue;
                     }
 
-                    bool armoire = _globalCache.ArmoireStorage.CanBeInArmoire(itm.Value.RowId);
+                    bool armoire = _globalCache.ArmoireStorage.CanBeInArmoireFromItemId(itm.Value.RowId);
                     Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Value.Icon, item.HQ), new Vector2(36, 36));
                     if (ImGui.IsItemHovered())
                     {

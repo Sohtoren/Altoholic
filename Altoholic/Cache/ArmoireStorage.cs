@@ -44,6 +44,11 @@ namespace Altoholic.Cache
         {
             return _armoire.ContainsKey(id);
         }
+        public bool CanBeInArmoireFromItemId(uint id)
+        {
+            uint? armoireId = GetArmoireIdFromItemId(id);
+            return armoireId != null && _armoire.ContainsKey((uint)armoireId);
+        }
         public int Count()
         {
             return _armoire.Count;
@@ -51,6 +56,11 @@ namespace Altoholic.Cache
         public List<uint> Get()
         {
             return _armoire.Keys.ToList();
+        }
+
+        public uint? GetArmoireIdFromItemId(uint itemId)
+        {
+            return _armoire.Values.FirstOrDefault(a => a.ItemId == itemId)?.Id;
         }
 
         public Armoire? GetArmoire(uint id)
