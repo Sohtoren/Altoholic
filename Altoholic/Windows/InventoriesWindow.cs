@@ -305,7 +305,7 @@ namespace Altoholic.Windows
             List<CharacterInventories> inventories = [];
             foreach (Character character in chars)
             {
-                Plugin.Log.Debug($"{character.FirstName} {character.LastName}{(char)SeIconChar.CrossWorld}{character.HomeWorld}");
+                //Plugin.Log.Debug($"{character.FirstName} {character.LastName}{(char)SeIconChar.CrossWorld}{character.HomeWorld}");
                 bool dresser = false;
                 CharacterInventories ci = new();
                 uint inventoryCount = character.Inventory.FindAll(i => i.ItemId == _currentItem).Aggregate<Inventory, uint>(0, (current, inv) => current + inv.Quantity);
@@ -385,6 +385,10 @@ namespace Altoholic.Windows
 
                 foreach (GlamourItem glamourItem in character.GlamourDresser)
                 {
+                    if (glamourItem == null)
+                    {
+                        continue;
+                    }
                     if (glamourItem.ItemId != _currentItem)
                     {
                         continue;
@@ -397,12 +401,12 @@ namespace Altoholic.Windows
                 uint? armoireId = _globalCache.ArmoireStorage.GetArmoireIdFromItemId((uint)_currentItem);
                 bool armoire = (armoireId != null) && character.HasArmoire((uint)armoireId);
                 ci.Armoire = armoire;
-                Plugin.Log.Debug($"{_currentItem} Armoire count: {(armoire ? 1 : 0)}");
+                //Plugin.Log.Debug($"{_currentItem} Armoire count: {(armoire ? 1 : 0)}");
+
                 if (inventoryCount <= 0 && retainerCount <= 0 && !dresser && !armoire)
                 {
                     continue;
                 }
-
                 ci.FirstName = character.FirstName;
                 ci.LastName = character.LastName;
                 ci.World = character.HomeWorld;
