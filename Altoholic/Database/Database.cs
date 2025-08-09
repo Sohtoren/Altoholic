@@ -1,11 +1,11 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
 using Altoholic.Models;
 using Dapper;
 using LiteDB;
 using Microsoft.Data.Sqlite;
+using System;
+using System.Collections.Generic;
 using System.Data;
+using System.IO;
 using System.Linq;
 
 namespace Altoholic.Database
@@ -422,6 +422,29 @@ namespace Altoholic.Database
                     const string sql3 = $"INSERT INTO {VersionTableName} (Version) VALUES(3)"; 
                     int result3 = db.Execute(sql3);
                     Plugin.Log.Debug($"Set db version to 3. Result: {result3}");
+                }
+                else
+                {
+                    Plugin.Log.Info("Skipping migration");
+                }
+            }
+
+            BackupAndUpgradeDbVersion(db, 3, 4);
+        }
+
+        private static void BackupAndUpgradeDbVersion(SqliteConnection db, int oldVer, int newVer)
+        {
+            if (DoesTableExist(db, VersionTableName))
+            {
+                Plugin.Log.Info($"Check version migration {oldVer} to {newVer}");
+                int? version = GetDbVersion(db);
+                Plugin.Log.Info($"Current DB version is:{version}");
+                if (version == oldVer)
+                {
+                    BackupDatabase();
+                    string sql = $"UPDATE {VersionTableName} SET Version = {newVer}";
+                    int result = db.Execute(sql);
+                    Plugin.Log.Info($"Set db version to {newVer}. Result: {result}");
                 }
                 else
                 {
@@ -1099,5 +1122,15 @@ namespace Altoholic.Database
             db.Execute(sql2, new { id });
             return true;
         }
+
+        public static void BackupDatabase()
+        {
+            DateTime date = DateTime.Now;
+            string dbpath = Path.Combine(Plugin.PluginInterface.GetPluginConfigDirectory(), "altoholic.db");
+            string backupdbpath = Path.Combine(Plugin.PluginInterface.GetPluginConfigDirectory(), "backups", $"altoholic.db.{date:yyyyMMdd}");
+            Directory.CreateDirectory(Path.Combine(Plugin.PluginInterface.GetPluginConfigDirectory(), "backups"));
+            File.Copy(dbpath, backupdbpath);
+        }
+
     }
 }

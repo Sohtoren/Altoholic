@@ -8,7 +8,7 @@ using Dalamud.Interface.Textures.TextureWraps;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
 using FFXIVClientStructs.FFXIV.Client.Game;
-using ImGuiNET;
+using Dalamud.Bindings.ImGui;
 using Lumina.Excel.Sheets;
 using System;
 using System.Collections.Generic;
@@ -1113,7 +1113,7 @@ namespace Altoholic.Windows
             Vector4 inactiveColor = Vector4.One with { W = 0.33f };
             Vector4 activeColor = Vector4.One;
             if (texture is null) return;
-            ImGui.Image(texture.ImGuiHandle, size, Vector2.Zero, Vector2.One,
+            ImGui.Image(texture.Handle, size, Vector2.Zero, Vector2.One,
                 (_selectedTab == type) ? activeColor : inactiveColor);
             if (ImGui.IsItemHovered())
             {
@@ -1500,7 +1500,7 @@ namespace Altoholic.Windows
                 if (isInASet && _miragePrismBoxSetIcon is not null)
                 {
                     ImGui.SetCursorPos(p with { X = p.X + 25 });
-                    ImGui.Image(_miragePrismBoxSetIcon.ImGuiHandle, new Vector2(16, 16), _miragePrismBoxSetIconUv0, _miragePrismBoxSetIconUv1);
+                    ImGui.Image(_miragePrismBoxSetIcon.Handle, new Vector2(16, 16), _miragePrismBoxSetIconUv0, _miragePrismBoxSetIconUv1);
                     ImGui.SetCursorPos(p);
                 }
 

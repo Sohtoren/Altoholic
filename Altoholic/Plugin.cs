@@ -392,14 +392,22 @@ namespace Altoholic
             {
                 case "help":
                     SeStringBuilder builder = new();
-                    builder.Append($"[{Name}] {CommandName} ");
+                    //builder.Append($"[{Name}] {CommandName} ");
+                    builder.Append($"[");
+                    builder.Append(Name);
+                    builder.Append("]");
+                    builder.Append(CommandName);
+                    builder.Append(" ");//remove this for oneliner after iresettable is fixed
                     builder.PushColorRgba(KnownColor.LimeGreen.Vector());
                     builder.Append("option\n");
                     builder.PopColor();
                     builder.PushColorRgba(KnownColor.LimeGreen.Vector());
                     builder.Append("No option");
                     builder.PopColor();
-                    builder.Append($": Show/hide {Name} main window\n");
+                    //builder.Append($": Show/hide {Name} main window\n");
+                    builder.Append($": Show/hide ");
+                    builder.Append(Name);
+                    builder.Append(" main window\n");//remove this for oneliner after iresettable is fixed
                     builder.Append("Options:\n");
                     builder.PushColorRgba(KnownColor.LimeGreen.Vector());
                     builder.Append("help");
@@ -414,7 +422,7 @@ namespace Altoholic
                     builder.PushColorRgba(KnownColor.LimeGreen.Vector());
                     builder.Append("reset");
                     builder.PopColor();
-                    builder.Append(" : Reset main window position");
+                    builder.Append(" : Reset main window position\n");
                     builder.PushColorRgba(KnownColor.LimeGreen.Vector());
                     builder.Append("unbl");
                     builder.PopColor();
@@ -424,7 +432,7 @@ namespace Altoholic
                     builder.PopColor();
                     builder.Append(" : Remove current character from blacklist");
 
-                    XivChatEntry chatEntry = new() { Message = builder.ToSeString().ToDalamudString(), Type = XivChatType.Echo };
+                    XivChatEntry chatEntry = new() { Message = builder.ToReadOnlySeString().ToDalamudString(), Type = XivChatType.Echo };
 
                     ChatGui.Print(chatEntry);
                     break;
@@ -894,7 +902,7 @@ namespace Altoholic
             _localPlayer.CurrentOrnament = lp.OrnamentData.OrnamentId;
 
 
-            if (uistate.PvPProfile.IsLoaded != 1)
+            if (!uistate.PvPProfile.IsLoaded)
             {
                 return;
             }
@@ -1826,7 +1834,7 @@ namespace Altoholic
             // -128 for Apartments in Main Division, -127 for Apartments in Subdivision
             sbyte plot = housingManager.GetCurrentPlot();
             short room = housingManager.GetCurrentRoom();
-            long id = housingManager.GetCurrentIndoorHouseId();
+            ulong id = housingManager.GetCurrentIndoorHouseId().Id;
             /*HousingTerritoryType ct = housingManager.CurrentTerritory->GetTerritoryType();
             HousingTerritoryType ot = (HousingTerritoryType)0;
             if (housingManager.OutdoorTerritory != null)
@@ -2113,7 +2121,7 @@ namespace Altoholic
             builder.PopColor();
             builder.Append(" to remove it from the list");
 
-            XivChatEntry chatEntry = new() { Message = builder.ToSeString().ToDalamudString(), Type = XivChatType.Echo };
+            XivChatEntry chatEntry = new() { Message = builder.ToReadOnlySeString().ToDalamudString(), Type = XivChatType.Echo };
             Log.Debug("Character is blacklisted");
             ChatGui.Print(chatEntry);
         }

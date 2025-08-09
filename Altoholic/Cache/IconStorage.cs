@@ -20,7 +20,7 @@ namespace Altoholic.Cache
         {
             Plugin.Log.Debug("IconStorage Init() called");
             _retainerIconsTextureWrap = Plugin.TextureProvider.GetFromGame("ui/uld/Retainer_hr1.tex").RentAsync().Result;
-            _rolesTextureWrap = Plugin.TextureProvider.GetFromGame("ui/uld/fourth/ToggleButton_hr1.tex").RentAsync().Result;
+            _rolesTextureWrap = Plugin.TextureProvider.GetFromGame("ui/uld/img03/ToggleButton_hr1.tex").RentAsync().Result;
             _itemDetailsUld = Plugin.PluginInterface.UiBuilder.LoadUld("ui/uld/ItemDetail.uld");
             if (_itemDetailsUld is null) return;
 

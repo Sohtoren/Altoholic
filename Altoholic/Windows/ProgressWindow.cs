@@ -7,7 +7,7 @@ using Dalamud.Interface;
 using Dalamud.Interface.Textures.TextureWraps;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
-using ImGuiNET;
+using Dalamud.Bindings.ImGui;
 using Lumina.Excel.Sheets;
 using System;
 using System.Collections.Generic;
@@ -44,7 +44,7 @@ namespace Altoholic.Windows
             _globalCache = globalCache;
 
             _commendationIcon = Plugin.TextureProvider.GetFromGame("ui/uld/Character_hr1.tex").RentAsync().Result;
-            _chevronTexture = Plugin.TextureProvider.GetFromGame("ui/uld/fourth/ListItemB_hr1.tex").RentAsync().Result;
+            _chevronTexture = Plugin.TextureProvider.GetFromGame("ui/uld/img03/ListItemB_hr1.tex").RentAsync().Result;
 
             _currentLocale = _plugin.Configuration.Language;
             _selectedExpansion = _globalCache.AddonStorage.LoadAddonString(_currentLocale, 5752);
@@ -821,6 +821,9 @@ namespace Altoholic.Windows
             DrawAllLine(chars, charactersQuests,
                 $"7.2 - {_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.MSQ_SEEKERS_OF_ETERNITY)}",
                 37);
+            DrawAllLine(chars, charactersQuests,
+                $"7.3 - {_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.MSQ_THE_PROMISE_OF_TOMORROW)}",
+                38);
         }
 
         private void DrawEventQuest(List<Character> chars)
@@ -3999,7 +4002,7 @@ namespace Altoholic.Windows
             if (_commendationIcon != null)
             {
                 (Vector2 uv0, Vector2 uv1) = Utils.GetTextureCoordinate(_commendationIcon.Size, 320, 208, 64, 64);
-                ImGui.Image(_commendationIcon.ImGuiHandle, new Vector2(32, 32), uv0, uv1);
+                ImGui.Image(_commendationIcon.Handle, new Vector2(32, 32), uv0, uv1);
             }
 
             if (ImGui.IsItemHovered())
@@ -4043,14 +4046,14 @@ namespace Altoholic.Windows
                 {
                     _downChevron = false;
                     (Vector2 uv0, Vector2 uv1) = Utils.GetTextureCoordinate(_chevronTexture.Size, 0, 0, 48, 48);
-                    ImGui.Image(_chevronTexture.ImGuiHandle, new Vector2(24, 24), uv0, uv1);
+                    ImGui.Image(_chevronTexture.Handle, new Vector2(24, 24), uv0, uv1);
                 }
 
                 if (_downChevron)
                 {
                     _rightChevron = false;
                     (Vector2 uv0, Vector2 uv1) = Utils.GetTextureCoordinate(_chevronTexture.Size, 48, 0, 48, 48);
-                    ImGui.Image(_chevronTexture.ImGuiHandle, new Vector2(24, 24), uv0, uv1);
+                    ImGui.Image(_chevronTexture.Handle, new Vector2(24, 24), uv0, uv1);
                 }
             }
 

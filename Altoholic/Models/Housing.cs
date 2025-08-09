@@ -2,7 +2,7 @@
 {
     public class Housing
     {
-        public long Id { get; set; }
+        public ulong Id { get; set; }
         public uint MapId { get; set; }
         public uint TerritoryId { get; set; }
         public sbyte Ward { get; set; }

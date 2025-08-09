@@ -7,10 +7,9 @@ using Dalamud.Interface.Textures.TextureWraps;
 using Dalamud.Interface.Utility.Raii;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
-using ImGuiNET;
+using Dalamud.Bindings.ImGui;
 using Lumina.Excel;
 using Lumina.Excel.Sheets;
-using Lumina.Text;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -31,6 +30,7 @@ using Materia = Lumina.Excel.Sheets.Materia;
 using PvPRankTransient = Altoholic.Models.PvPRankTransient;
 using Vector2 = FFXIVClientStructs.FFXIV.Common.Math.Vector2;
 using Vector4 = FFXIVClientStructs.FFXIV.Common.Math.Vector4;
+using Lumina.Text.ReadOnly;
 
 
 namespace Altoholic
@@ -50,7 +50,7 @@ namespace Altoholic
         {
             Plugin.ChatGui.Print($"[Altoholic] {message}");
         }
-        public static void ChatMessage(SeString message)
+        public static void ChatMessage(ReadOnlySeString message)
         {
             Plugin.ChatGui.Print($"[Altoholic] {message}");
         }
@@ -1349,7 +1349,7 @@ namespace Altoholic
                 RoleIcon.DoHDoL => GetTextureCoordinate(texture.Size, 208, 80, 36, 36),
                 _ => GetTextureCoordinate(texture.Size, 0, 0, 0, 0)
             };
-            ImGui.Image(texture.ImGuiHandle, size, uv0, uv1);
+            ImGui.Image(texture.Handle, size, uv0, uv1);
         }
 
         public static void DrawRetainerJobIconFromTexture(ref IDalamudTextureWrap texture, Models.ClassJob job,
@@ -1381,7 +1381,7 @@ namespace Altoholic
                 Models.ClassJob.PCT => GetTextureCoordinate(texture.Size, 0, 752, 86, 86),
                 _ => GetTextureCoordinate(texture.Size, 0, 0, 0, 0)
             };
-            ImGui.Image(texture.ImGuiHandle, size, uv0, uv1);
+            ImGui.Image(texture.Handle, size, uv0, uv1);
         }
 
         private static void DrawGearPiece(ClientLanguage currentLocale, ref GlobalCache globalCache, List<Gear> gear,
@@ -1393,9 +1393,9 @@ namespace Altoholic
             if (foundGear == null || foundGear.ItemId == 0)
             {
                 System.Numerics.Vector2 p = ImGui.GetCursorPos();
-                ImGui.Image(emptySlot.ImGuiHandle, new Vector2(42, 42));
+                ImGui.Image(emptySlot.Handle, new Vector2(42, 42));
                 ImGui.SetCursorPos(new Vector2(p.X + 1, p.Y + 1));
-                ImGui.Image(fallbackTexture.ImGuiHandle, new Vector2(40, 40));
+                ImGui.Image(fallbackTexture.Handle, new Vector2(40, 40));
                 if (ImGui.IsItemHovered())
                 {
                     ImGui.BeginTooltip();
@@ -1424,9 +1424,9 @@ namespace Altoholic
             if (id == 0)
             {
                 System.Numerics.Vector2 p = ImGui.GetCursorPos();
-                ImGui.Image(emptySlot.ImGuiHandle, new Vector2(42, 42));
+                ImGui.Image(emptySlot.Handle, new Vector2(42, 42));
                 ImGui.SetCursorPos(new Vector2(p.X + 1, p.Y + 1));
-                ImGui.Image(fallbackTexture.ImGuiHandle, new Vector2(40, 40));
+                ImGui.Image(fallbackTexture.Handle, new Vector2(40, 40));
                 if (ImGui.IsItemHovered())
                 {
                     ImGui.BeginTooltip();
@@ -2050,7 +2050,7 @@ namespace Altoholic
                 if (isInASet && miragePrismIcon is not null)
                 {
                     ImGui.SetCursorPos(p with { X = p.X + 25 });
-                    ImGui.Image(miragePrismIcon.ImGuiHandle, new Vector2(16, 16), miragePrismBoxSetIconUv0, miragePrismBoxSetIconUv1);
+                    ImGui.Image(miragePrismIcon.Handle, new Vector2(16, 16), miragePrismBoxSetIconUv0, miragePrismBoxSetIconUv1);
                     ImGui.SetCursorPos(p);
                 }
                 ImGui.TableSetColumnIndex(1);
@@ -2108,7 +2108,7 @@ namespace Altoholic
                 {
                     if (miragePrismIcon is not null)
                     {
-                        ImGui.Image(miragePrismIcon.ImGuiHandle, new Vector2(16, 16), miragePrismBoxSetIconUv0,
+                        ImGui.Image(miragePrismIcon.Handle, new Vector2(16, 16), miragePrismBoxSetIconUv0,
                             miragePrismBoxSetIconUv1);
                     }
                     ImGui.SameLine();
@@ -3596,7 +3596,8 @@ namespace Altoholic
                     character.HasQuest((int)QuestIds.MSQ_GROWING_LIGHT_PART_2),
                     character.HasQuest((int)QuestIds.MSQ_DAWNTRAIL),
                     character.HasQuest((int)QuestIds.MSQ_CROSSROADS),
-                    character.HasQuest((int)QuestIds.MSQ_SEEKERS_OF_ETERNITY)
+                    character.HasQuest((int)QuestIds.MSQ_SEEKERS_OF_ETERNITY),
+                    character.HasQuest((int)QuestIds.MSQ_THE_PROMISE_OF_TOMORROW)
                 ];
                 result.Add(completedQuests);
             }
@@ -4242,14 +4243,14 @@ namespace Altoholic
         {
             if (icon != null)
             {
-                ImGui.Image(icon.ImGuiHandle, iconSize);
+                ImGui.Image(icon.Handle, iconSize);
             }
         }
         public static void DrawIcon(IDalamudTextureWrap? icon, Vector2 iconSize, Vector4 alpha)
         {
             if (icon != null)
             {
-                ImGui.Image(icon.ImGuiHandle, iconSize, Vector2.Zero, Vector2.One, alpha);
+                ImGui.Image(icon.Handle, iconSize, Vector2.Zero, Vector2.One, alpha);
             }
         }
 
