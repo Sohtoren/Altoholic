@@ -370,7 +370,7 @@ namespace Altoholic.Windows
             {
                 ImGui.BeginTooltip();
                 ImGui.TextUnformatted(
-                    $"Blacklist {character.FirstName} {character.LastName}{(char)SeIconChar.CrossWorld}{character.HomeWorld}");
+                    $"Blacklist {character.FirstName} {character.LastName}{(char)SeIconChar.CrossWorld}{character.HomeWorld}, preventing their tracking");
                 ImGui.EndTooltip();
             }
 
