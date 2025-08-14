@@ -914,6 +914,9 @@ namespace Altoholic.Windows
                     DrawAllLine(chars, charactersQuests,
                         $"{Loc.Localize("Event_TheMakeItRainCampaign", "The Make It Rain Campaign")} (2025)",
                         126);
+                    DrawAllLine(chars, charactersQuests,
+                        $"{Loc.Localize("Event_MoonfireFaire", "Moonfire Faire")} (2025)",
+                        127);
                 }
             }
 

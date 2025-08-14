@@ -3775,6 +3775,7 @@ namespace Altoholic
                     character.HasQuest((int)QuestIds.EVENT_LITTLE_LADIES_DAY_2025),
                     character.HasQuest((int)QuestIds.EVENT_HATCHING_TIDE_2025),
                     character.HasQuest((int)QuestIds.EVENT_THE_MAKE_IT_RAIN_CAMPAIGN_2025),
+                    character.HasQuest((int)QuestIds.EVENT_MOONFIRE_FAIRE_2025),
                 ];
                 result.Add(completedQuests);
             }
