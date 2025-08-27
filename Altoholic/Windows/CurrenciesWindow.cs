@@ -430,7 +430,6 @@ namespace Altoholic.Windows
             DrawCommonCurrency(pc.MGP, Currencies.MGP, 0);
         }
 
-        //private void DrawCommonCurrency(int currency, Currencies id, uint max)
         private void DrawCommonCurrency(long currency, Currencies id, uint max)
         {
             using var charactersCurrenciesCommonCurrencyTableCurrencyTable =

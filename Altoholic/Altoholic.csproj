@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Authors>Sohtoren</Authors>
     <Company></Company>
-    <Version>0.0.0.60</Version>
+    <Version>0.0.0.61</Version>
     <Description>Altoholic plugin</Description>
     <Copyright></Copyright>
     <PackageProjectUrl>https://github.com/sohtoren/Altoholic</PackageProjectUrl>
@@ -38,5 +38,9 @@
     <Folder Include="Assets\" />
     <Folder Include="Database\Migrations\" />
     <Folder Include="Windows\Progress\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Update="DalamudPackager" Version="13.1.0" />
   </ItemGroup>
 </Project>

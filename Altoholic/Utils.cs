@@ -1384,7 +1384,7 @@ namespace Altoholic
             ImGui.Image(texture.Handle, size, uv0, uv1);
         }
 
-        private static void DrawGearPiece(ClientLanguage currentLocale, ref GlobalCache globalCache, List<Gear> gear,
+         private static void DrawGearPiece(ClientLanguage currentLocale, ref GlobalCache globalCache, List<Gear> gear,
             GearSlot slot, string tooltip, Vector2 iconSize,
             IDalamudTextureWrap? fallbackTexture, IDalamudTextureWrap? emptySlot)
         {
@@ -3776,6 +3776,7 @@ namespace Altoholic
                     character.HasQuest((int)QuestIds.EVENT_HATCHING_TIDE_2025),
                     character.HasQuest((int)QuestIds.EVENT_THE_MAKE_IT_RAIN_CAMPAIGN_2025),
                     character.HasQuest((int)QuestIds.EVENT_MOONFIRE_FAIRE_2025),
+                    character.HasQuest((int)QuestIds.EVENT_RISING_2025),
                 ];
                 result.Add(completedQuests);
             }
