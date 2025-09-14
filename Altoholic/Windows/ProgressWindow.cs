@@ -257,7 +257,7 @@ namespace Altoholic.Windows
             ImGui.TableSetupColumn($"###CharactersProgress#All#Event#IslandSanctuaryRewards#Name",
                 ImGuiTableColumnFlags.WidthFixed, 260);
             ImGui.TableSetupColumn($"###CharactersProgress#All#Event#IslandSanctuaryRewards#Currency",
-                ImGuiTableColumnFlags.WidthFixed, 25);
+                ImGuiTableColumnFlags.WidthFixed, 40);
             foreach (Character c in chars)
             {
                 ImGui.TableSetupColumn($"###CharactersProgress#All#Event#IslandSanctuaryRewards#{c.CharacterId}",
