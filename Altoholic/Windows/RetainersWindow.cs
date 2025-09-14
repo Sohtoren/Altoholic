@@ -323,7 +323,7 @@ namespace Altoholic.Windows
                                     _currentRetainer = null;
                                 }
 
-                                foreach (Retainer currRetainer in currentCharacter.Retainers.Where(currRetainer => currRetainer.Name != "RETAINER").Where(currRetainer => ImGui.Selectable($"{currRetainer.Name}", currRetainer == _currentRetainer)))
+                                foreach (Retainer currRetainer in currentCharacter.Retainers.Where(currRetainer => currRetainer.Name != "RETAINER" && !string.IsNullOrEmpty(currRetainer.Name)).Where(currRetainer => ImGui.Selectable($"{currRetainer.Name}", currRetainer == _currentRetainer)))
                                 {
                                     _currentRetainer = currRetainer;
                                     _currentItem = null;
