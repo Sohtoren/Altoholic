@@ -199,6 +199,16 @@ namespace Altoholic.Windows
                 }
             }
 
+            using (var islandSanctuaryTab =
+                   ImRaii.TabItem(
+                       $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 15101)}###CharactersProgressTable#All#TabBar#IslandSanctuary"))
+            {
+                if (islandSanctuaryTab)
+                {
+                    DrawIslandSanctuaryRewards(chars);
+                }
+            }
+
             using (var msqTab = ImRaii.TabItem("MSQ###CharactersProgressTable#All#TabBar#MSQ"))
             {
                 if (msqTab)
@@ -234,6 +244,81 @@ namespace Altoholic.Windows
                     DrawRoleQuestQuest(chars);
                 }
             }
+        }
+
+        private void DrawIslandSanctuaryRewards(List<Character> chars)
+        {
+            using var charactersEventTable = ImRaii.Table(
+                $"###CharactersProgress#All#Event#IslandSanctuaryRewards#Table",
+                chars.Count + 2,
+                ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner |
+                ImGuiTableFlags.ScrollX | ImGuiTableFlags.ScrollY);
+            if (!charactersEventTable) return;
+            ImGui.TableSetupColumn($"###CharactersProgress#All#Event#IslandSanctuaryRewards#Name",
+                ImGuiTableColumnFlags.WidthFixed, 260);
+            ImGui.TableSetupColumn($"###CharactersProgress#All#Event#IslandSanctuaryRewards#Currency",
+                ImGuiTableColumnFlags.WidthFixed, 25);
+            foreach (Character c in chars)
+            {
+                ImGui.TableSetupColumn($"###CharactersProgress#All#Event#IslandSanctuaryRewards#{c.CharacterId}",
+                    ImGuiTableColumnFlags.WidthFixed, 20);
+            }
+
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 1885));
+
+            ImGui.TableSetColumnIndex(1);
+            Item? itm = _globalCache.ItemStorage.LoadItem(_currentLocale, (uint)Currencies.SEAFARERS_COWRIE);
+            if (itm == null) return;
+            Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Value.Icon), new Vector2(16, 16));
+            if (ImGui.IsItemHovered())
+            {
+                Utils.DrawItemTooltip(_currentLocale, ref _globalCache, itm.Value);
+            }
+
+            foreach (Character currChar in chars)
+            {
+                ImGui.TableNextColumn();
+                ImGui.TextUnformatted($"{currChar.FirstName[0]}.{currChar.LastName[0]}");
+                if (ImGui.IsItemHovered())
+                {
+                    ImGui.BeginTooltip();
+                    ImGui.TextUnformatted(
+                        $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
+                    ImGui.EndTooltip();
+                }
+            }
+
+            DrawAllCharsMount(chars, 277, 24000);
+            DrawAllCharsMount(chars, 286, 35000);
+            DrawAllCharsMount(chars, 282, 50000);
+            DrawAllCharsMount(chars, 335, 100000);
+            DrawAllCharsMount(chars, 255, 12000);
+            DrawAllCharsMount(chars, 256, 12000);
+            DrawAllCharsMount(chars, 257, 12000);
+            DrawAllCharsMount(chars, 258, 18000);
+            DrawAllCharsMount(chars, 259, 18000);
+            DrawAllCharsMount(chars, 260, 18000);
+            DrawAllCharsMinion(chars, 456, 4000);
+            DrawAllCharsMinion(chars, 468, 4000);
+            DrawAllCharsMinion(chars, 481, 4000);
+            DrawAllCharsMinion(chars, 496, 4000);
+            DrawAllCharsOrnament(chars, 30, 6000);
+            DrawAllCharsOrnament(chars, 34, 6000);
+            DrawAllCharsOrnament(chars, 38, 6000);
+            DrawAllCharsOrnament(chars, 28, 6000);
+            DrawAllCharsHairstyle(chars, 38442, 6000);
+            DrawAllCharsHairstyle(chars, 38443, 6000);
+            DrawAllCharsOrchestrion(chars, 544, 4000);
+            DrawAllCharsOrchestrion(chars, 545, 4000);
+            DrawAllCharsOrchestrion(chars, 593, 4000);
+            DrawAllCharsTripleTriadCard(chars, 370, 1000);
+            DrawAllCharsBarding(chars, 89, 4000);
+            DrawAllCharsBarding(chars, 93, 4000);
+            DrawAllCharsFramerKit(chars, 39578, 3000);
+            DrawAllCharsFramerKit(chars, 39579, 3000);
+            DrawAllCharsFramerKit(chars, 46822, 3000);
         }
 
         private void DrawCosmicExploration(List<Character> chars)
