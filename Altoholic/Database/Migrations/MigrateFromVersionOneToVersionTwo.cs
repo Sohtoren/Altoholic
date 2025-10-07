@@ -28,24 +28,24 @@ namespace Altoholic.Database.Migrations
         }
         private class ArmoryGear
         {
-            public required List<Gear> MainHand { get; set; }
-            public required List<Gear> Head { get; set; }
-            public required List<Gear> Body { get; set; }
-            public required List<Gear> Hands { get; set; }
-            public required List<Gear> Legs { get; set; }
-            public required List<Gear> Feets { get; set; }
-            public required List<Gear> OffHand { get; set; }
-            public required List<Gear> Ear { get; set; }
-            public required List<Gear> Neck { get; set; }
-            public required List<Gear> Wrist { get; set; }
-            public required List<Gear> Rings { get; set; }
-            public required List<Gear> SoulCrystal { get; set; }
+            public required List<Gear> MainHand { get; init; }
+            public required List<Gear> Head { get; init; }
+            public required List<Gear> Body { get; init; }
+            public required List<Gear> Hands { get; init; }
+            public required List<Gear> Legs { get; init; }
+            public required List<Gear> Feets { get; init; }
+            public required List<Gear> OffHand { get; init; }
+            public required List<Gear> Ear { get; init; }
+            public required List<Gear> Neck { get; init; }
+            public required List<Gear> Wrist { get; init; }
+            public required List<Gear> Rings { get; init; }
+            public required List<Gear> SoulCrystal { get; init; }
         }
         // ReSharper disable once ClassNeverInstantiated.Local
         private class Retainer
         {
             public ulong Id { get; init; }
-            public bool Available { get; set; } = false;
+            public bool Available { get; init; } = false;
             public string Name { get; set; } = string.Empty;
             public byte ClassJob { get; set; }
             public int Level { get; set; } = 0;

@@ -1228,6 +1228,7 @@ namespace Altoholic
                 Omicron_Omnitoken = inventoryManager.GetInventoryItemCount((uint)Currencies.OMICRON_OMNITOKEN, false, false, false),
                 Orange_Crafters_Scrip = inventoryManager.GetInventoryItemCount((uint)Currencies.ORANGE_CRAFTERS_SCRIP, false, false, false),
                 Orange_Gatherers_Scrip = inventoryManager.GetInventoryItemCount((uint)Currencies.ORANGE_GATHERERS_SCRIP, false, false, false),
+                Phaenna_Credit = inventoryManager.GetInventoryItemCount((uint)Currencies.PHAENNA_CREDIT, false, false, false),
                 Pelu_Pelplume = inventoryManager.GetInventoryItemCount((uint)Currencies.PELU_PELPLUME, false, false, false),
                 Purple_Crafters_Scrip = inventoryManager.GetInventoryItemCount((uint)Currencies.PURPLE_CRAFTERS_SCRIP, false, false, false),
                 Purple_Gatherers_Scrip = inventoryManager.GetInventoryItemCount((uint)Currencies.PURPLE_GATHERERS_SCRIP, false, false, false),

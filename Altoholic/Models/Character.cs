@@ -6,7 +6,7 @@ namespace Altoholic.Models
 {
     public class Character
     {
-        public ulong CharacterId { get; init; } = 0;
+        public ulong CharacterId { get; init; }
         public string FirstName { get; set; } = string.Empty;
         public string LastName { get; set; } = string.Empty;
         public string HomeWorld { get; set; } = string.Empty;
@@ -15,44 +15,44 @@ namespace Altoholic.Models
         public string CurrentDatacenter {  get; set; } = string.Empty;
         public string Region {  get; set; } = string.Empty;
         public string CurrentRegion {  get; set; } = string.Empty;
-        public bool IsSprout { get; set; } = false;
-        public bool IsBattleMentor { get; set; } = false;
-        public bool IsTradeMentor { get; set; } = false;
-        public bool IsReturner { get; set; } = false;
-        public uint LastJob { get; set; } = 0;
-        public int LastJobLevel { get; set; } = 0;
+        public bool IsSprout { get; set; }
+        public bool IsBattleMentor { get; set; }
+        public bool IsTradeMentor { get; set; }
+        public bool IsReturner { get; set; }
+        public uint LastJob { get; set; }
+        public int LastJobLevel { get; set; }
         // ReSharper disable once InconsistentNaming
         public string FCTag { get; set; } = string.Empty;
-        public string FreeCompany { get; set; } = string.Empty;
-        public long LastOnline { get; set; } = 0;
-        public uint PlayTime { get; set; } = 0;
-        public long LastPlayTimeUpdate {  get; set; } = 0;
-        public bool HasPremiumSaddlebag { get; set; } = false;
-        public short PlayerCommendations { get; set; } = 0;
-        public ushort[] CurrentFacewear { get; set; } = [0,0];
-        public ushort CurrentOrnament { get; set; } = 0;
-        public ushort UnreadLetters { get; set; } = 0;
+        public string FreeCompany { get; init; } = string.Empty;
+        public long LastOnline { get; set; }
+        public uint PlayTime { get; set; }
+        public long LastPlayTimeUpdate {  get; set; }
+        public bool HasPremiumSaddlebag { get; set; }
+        public short PlayerCommendations { get; set; }
+        public ushort[] CurrentFacewear { get; init; } = [0,0];
+        public ushort CurrentOrnament { get; set; }
+        public ushort UnreadLetters { get; set; }
         public Attributes? Attributes { get; set; }
         public PlayerCurrencies? Currencies { get; set; }
         public Jobs? Jobs { get; set; }
         public Profile? Profile { get; set; }
         public HashSet<int> Quests { get; set; } = [];
         public List<Inventory> Inventory { get; set; } = [];
-        public ArmoryGear? ArmoryInventory { get; set; } = null;
+        public ArmoryGear? ArmoryInventory { get; set; }
         public List<Inventory> Saddle { get; set; } = [];
         public List<Gear> Gear { get; set; } = [];
         public List<Retainer> Retainers { get; set; } = [];
-        public HashSet<uint> Minions { get; set; } = [];
-        public HashSet<uint> Mounts { get; set; } = [];
-        public HashSet<uint> TripleTriadCards { get; set; } = [];
-        public HashSet<uint> Emotes { get; set; } = [];
-        public HashSet<uint> Bardings { get; set; } = [];
-        public HashSet<uint> FramerKits { get; set; } = [];
-        public HashSet<uint> OrchestrionRolls { get; set; } = [];
-        public HashSet<uint> Ornaments { get; set; } = [];
-        public HashSet<uint> Glasses { get; set; } = [];
+        public HashSet<uint> Minions { get; init; } = [];
+        public HashSet<uint> Mounts { get; init; } = [];
+        public HashSet<uint> TripleTriadCards { get; init; } = [];
+        public HashSet<uint> Emotes { get; init; } = [];
+        public HashSet<uint> Bardings { get; init; } = [];
+        public HashSet<uint> FramerKits { get; init; } = [];
+        public HashSet<uint> OrchestrionRolls { get; init; } = [];
+        public HashSet<uint> Ornaments { get; init; } = [];
+        public HashSet<uint> Glasses { get; init; } = [];
         public List<CurrenciesHistory> CurrenciesHistory { get; set; } = [];
-        public List<BeastTribeRank> BeastReputations { get; set; } = [];
+        public List<BeastTribeRank> BeastReputations { get; init; } = [];
         public HashSet<uint> Duties { get; init; } = [];
         public HashSet<uint> DutiesUnlocked { get; init; } = [];
         public List<Housing> Houses { get; init; } = [];

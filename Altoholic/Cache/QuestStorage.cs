@@ -27,7 +27,7 @@ namespace Altoholic.Cache
             }
         }
 
-        public Quest? LoadQuest(uint id)
+        private Quest? LoadQuest(uint id)
         {
             if (_quests.TryGetValue(id, out Quest? ret))
                 return ret;

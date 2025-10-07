@@ -7,11 +7,11 @@ namespace Altoholic.Cache
 {
     internal class Stain
     {
-        public string German { get; set; } = string.Empty;
-        public string English { get; set; } = string.Empty;
-        public string French { get; set; } = string.Empty;
-        public string Japanese { get; set; } = string.Empty;
-        public Vector4 Color { get; set; }
+        public string German { get; init; } = string.Empty;
+        public string English { get; init; } = string.Empty;
+        public string French { get; init; } = string.Empty;
+        public string Japanese { get; init; } = string.Empty;
+        public Vector4 Color { get; init; }
     }
     public class StainStorage : IDisposable
     {

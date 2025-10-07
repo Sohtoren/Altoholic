@@ -8,8 +8,8 @@ namespace Altoholic.Cache
 {
     public class ItemItemLevel
     {
-        public Item? Item { get; set; }
-        public ItemLevel? ItemLevel { get; set; }
+        public Item? Item { get; init; }
+        public ItemLevel? ItemLevel { get; init; }
     }
     public class ItemStorage(int size = 0)
     {

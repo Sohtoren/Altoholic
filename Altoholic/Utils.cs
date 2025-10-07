@@ -641,7 +641,7 @@ namespace Altoholic
             return lumina;
         }
 
-        public static uint GetJobIcon(uint jobId)
+        private static uint GetJobIcon(uint jobId)
         {
             return jobId switch
             {
@@ -1142,7 +1142,7 @@ namespace Altoholic
             };
         }
 
-        public static string GetSlotName(ClientLanguage currentLocale, GlobalCache globalCache, short id)
+        private static string GetSlotName(ClientLanguage currentLocale, GlobalCache globalCache, short id)
         {
             return id switch
             {
@@ -1308,7 +1308,7 @@ namespace Altoholic
             }
         }
 
-        public static void DrawRetainerJob(ClientLanguage currentLocale, ref GlobalCache globalCache, uint job)
+        private static void DrawRetainerJob(ClientLanguage currentLocale, ref GlobalCache globalCache, uint job)
         {
             IDalamudTextureWrap? iconTexture = globalCache.IconStorage.LoadRetainerJobIconTexture();
             if (iconTexture == null)
@@ -1352,7 +1352,7 @@ namespace Altoholic
             ImGui.Image(texture.Handle, size, uv0, uv1);
         }
 
-        public static void DrawRetainerJobIconFromTexture(ref IDalamudTextureWrap texture, Models.ClassJob job,
+        private static void DrawRetainerJobIconFromTexture(ref IDalamudTextureWrap texture, Models.ClassJob job,
             Vector2 size)
         {
             (Vector2 uv0, Vector2 uv1) = job switch
@@ -3881,7 +3881,7 @@ namespace Altoholic
             return result;
         }
 
-        public static string GetClassJobCategoryFromId(ClientLanguage currentLocale, uint? id)
+        private static string GetClassJobCategoryFromId(ClientLanguage currentLocale, uint? id)
         {
             //Plugin.Log.Debug($"GetItemNameFromId : {id}");
             ExcelSheet<ClassJobCategory>? djc = Plugin.DataManager.GetExcelSheet<ClassJobCategory>(currentLocale);
@@ -3913,7 +3913,7 @@ namespace Altoholic
             return lumina;
         }
 
-        public static string GetItemRepairResource(ClientLanguage currentLocale, uint id)
+        private static string GetItemRepairResource(ClientLanguage currentLocale, uint id)
         {
             ExcelSheet<ItemRepairResource>? dirr = Plugin.DataManager.GetExcelSheet<ItemRepairResource>(currentLocale);
             if (dirr == null)
@@ -4341,7 +4341,8 @@ namespace Altoholic
             Hours = 4,
             Days = 8,
         }
-        public static TimeOptions TimeOption { get; set; } = TimeOptions.Normal;
+
+        private static TimeOptions TimeOption { get; set; } = TimeOptions.Normal;
         public static string GeneratePlaytime(TimeSpan time, bool withSeconds = false)
         {
             return TimeOption switch
@@ -4355,7 +4356,7 @@ namespace Altoholic
             };
         }
 
-        public static string GeneratePlaytimeString(TimeSpan time, bool withSeconds = false)
+        private static string GeneratePlaytimeString(TimeSpan time, bool withSeconds = false)
         {
             if (time == TimeSpan.Zero)
             {
