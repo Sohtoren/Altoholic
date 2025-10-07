@@ -20,6 +20,7 @@
         OMICRONS = 16,
         LOPORRITS = 17,
         PELUPELU = 18,
-        MAMOOL_JA = 19
+        MAMOOL_JA = 19,
+        YOK_HUY = 20
     }
 }

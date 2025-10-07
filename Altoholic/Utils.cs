@@ -3857,7 +3857,7 @@ namespace Altoholic
             {
                 List<bool> completedQuests = [];
 
-                for (uint i = 1; i <= 18; i++)
+                for (uint i = 1; i <= 20; i++)
                 {
                     BeastTribeRank? rep = character.GetBeastReputation(i);
                     BeastTribes? beastTribe = globalCache.BeastTribesStorage.GetBeastTribe(currentLocale, i);

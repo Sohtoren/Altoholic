@@ -1273,6 +1273,7 @@ namespace Altoholic
                 Yo_Kai_Legendary_Lord_enma_Medal = inventoryManager.GetInventoryItemCount((uint)Currencies.YO_KAI_LEGENDARY_LORD_ENMA_MEDAL, false, false, false),
                 Yo_Kai_Legendary_Damona_Medal = inventoryManager.GetInventoryItemCount((uint)Currencies.YO_KAI_LEGENDARY_DAMONA_MEDAL, false, false, false),
                 Yo_Kai_Medal = inventoryManager.GetInventoryItemCount((uint)Currencies.YO_KAI_MEDAL, false, false, false),
+                Yok_Huy_Ward = inventoryManager.GetInventoryItemCount((uint)Currencies.YOK_HUY_WARD, false, false, false),
                 Weekly_Acquired_Tomestone = inventoryManager.GetWeeklyAcquiredTomestoneCount(),
                 Weekly_Limit_Tomestone = InventoryManager.GetLimitedTomestoneWeeklyLimit(),
             };

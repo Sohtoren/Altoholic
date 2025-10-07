@@ -285,5 +285,6 @@
         TRIBE_EW_ALLIED = 70324,
         TRIBE_DT_PELUPELU = 70729,
         TRIBE_DT_MAMOOL_JA = 70791,
+        TRIBE_DT_YOK_HUY = 70866,
     }
 }

@@ -3939,6 +3939,8 @@ namespace Altoholic.Windows
             ImGui.TableSetColumnIndex(0);
             ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 8175)}");
             DrawAllTribes(chars, charactersQuests, 18);
+            DrawAllTribes(chars, charactersQuests, 19);
+            DrawAllTribes(chars, charactersQuests, 20);
         }
 
         private static void DrawAllLine(List<Character> chars, List<List<bool>> charactersQuests, string name,
@@ -3968,7 +3970,7 @@ namespace Altoholic.Windows
 
         private void DrawAllTribes(List<Character> chars, List<List<bool>> charactersQuests, int tribeIndex)
         {
-            //Plugin.Log.Debug($"DrawAllLine: {chars.Count}, name: {name}, msqIndex: {msqIndex}");
+            //Plugin.Log.Debug($"DrawAlDrawAllTribeslLine: {chars.Count}, msqIndex: {tribeIndex}");
             BeastTribes? beastTribe = _globalCache.BeastTribesStorage.GetBeastTribe(_currentLocale, (uint)tribeIndex);
             if (beastTribe == null) return;
             string name = _currentLocale switch
@@ -4123,7 +4125,8 @@ namespace Altoholic.Windows
                 !selectedCharacter.HasQuest((int)QuestIds.TRIBE_EW_OMICRONS) &&
                 !selectedCharacter.HasQuest((int)QuestIds.TRIBE_EW_LOPORRITS) &&
                 !selectedCharacter.HasQuest((int)QuestIds.TRIBE_DT_PELUPELU) &&
-                !selectedCharacter.HasQuest((int)QuestIds.TRIBE_DT_MAMOOL_JA))
+                !selectedCharacter.HasQuest((int)QuestIds.TRIBE_DT_MAMOOL_JA) &&
+                !selectedCharacter.HasQuest((int)QuestIds.TRIBE_DT_YOK_HUY))
             {
                 return;
             }
@@ -4211,7 +4214,9 @@ namespace Altoholic.Windows
                 if (!_hasValueBeenSelected && !shbUnlocked)
                     _selectedExpansion = _globalCache.AddonStorage.LoadAddonString(_currentLocale, 8160);
             }
-            if (selectedCharacter.HasQuest((int)QuestIds.TRIBE_DT_PELUPELU)
+            if (selectedCharacter.HasQuest((int)QuestIds.TRIBE_DT_PELUPELU) ||
+                selectedCharacter.HasQuest((int)QuestIds.TRIBE_DT_MAMOOL_JA) ||
+                selectedCharacter.HasQuest((int)QuestIds.TRIBE_DT_YOK_HUY)
                   )
             {
                 expansionNames.Add(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 8175));
@@ -4390,12 +4395,12 @@ namespace Altoholic.Windows
                     {
                         //bool dtAllied = selectedCharacter.HasQuest((int)QuestIds.TRIBE_DT_ALLIED);
                         bool dtAllied = false;
-                        for (uint i = 18; i <= 19; i++)
+                        for (uint i = 18; i <= 20; i++)
                         {
                             if (
                                 i == 18 && !selectedCharacter.HasQuest((int)QuestIds.TRIBE_DT_PELUPELU) ||
-                                i == 19 && !selectedCharacter.HasQuest((int)QuestIds.TRIBE_DT_MAMOOL_JA) /*||
-                                i == 20 && !selectedCharacter.HasQuest((int)QuestIds.TRIBE_DT_)*/
+                                i == 19 && !selectedCharacter.HasQuest((int)QuestIds.TRIBE_DT_MAMOOL_JA) ||
+                                i == 20 && !selectedCharacter.HasQuest((int)QuestIds.TRIBE_DT_YOK_HUY)
                             )
                             {
                                 continue;
@@ -5311,6 +5316,55 @@ namespace Altoholic.Windows
                                 DrawFramerKit(fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
                                 ImGui.TableSetColumnIndex(4);
                                 DrawTripleTriadCard(441, currentCharacter.HasTTC(441));
+                            }
+                        }
+
+                        break;
+                    }
+                case 20: //Yok Huy
+                    {
+                        if (rank < 4) return;
+                        if (ImGui.CollapsingHeader(
+                                $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 11429)}###Progress#BeastReputations#{id}#Reward"))
+                        {
+                            using var t = ImRaii.Table($"###Progress#BeastReputations#{id}#Reward#Table", 6);
+                            if (!t) break;
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Minion1",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Orchestrion1",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#FramerKit",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Mount1",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Accessory",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableSetupColumn($"###Progress#BeastReputations#{id}#Reward#Orchestrion",
+                                ImGuiTableColumnFlags.WidthFixed, 36);
+                            ImGui.TableNextRow();
+                            ImGui.TableSetColumnIndex(0);
+                            DrawOrchestrion(770, currentCharacter.HasOrchestrionRoll(770));
+
+                            if (rank >= 5)
+                            {
+                                ImGui.TableSetColumnIndex(1);
+                                DrawMinion(554, currentCharacter.HasMinion(554));
+                            }
+
+                            if (rank >= 7)
+                            {
+                                ImGui.TableSetColumnIndex(2);
+                                DrawMount(393, currentCharacter.HasMount(393));
+                            }
+
+                            if (rank >= 8)
+                            {
+                                ImGui.TableSetColumnIndex(3);
+                                uint? fkId = _globalCache.FramerKitStorage.GetFramerKitIdFromItemId(46767);
+                                if (fkId == null) return;
+                                DrawFramerKit(fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
+                                ImGui.TableSetColumnIndex(4);
+                                DrawTripleTriadCard(453, currentCharacter.HasTTC(453));
                             }
                         }
 

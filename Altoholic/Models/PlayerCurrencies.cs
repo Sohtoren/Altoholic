@@ -127,6 +127,7 @@ namespace Altoholic.Models
         public int Yo_Kai_Legendary_Lord_enma_Medal { get; set; }
         public int Yo_Kai_Legendary_Damona_Medal { get; set; }
         public int Yo_Kai_Medal { get; set; }
+        public int Yok_Huy_Ward { get; set; }
         public int Weekly_Acquired_Tomestone { get; set; }
         public int Weekly_Limit_Tomestone { get; set; }
 

@@ -127,5 +127,6 @@ namespace Altoholic.Models
         YO_KAI_LEGENDARY_LORD_ENMA_MEDAL = 30805,
         YO_KAI_LEGENDARY_DAMONA_MEDAL = 30806,
         YO_KAI_MEDAL = 15167,
+        YOK_HUY_WARD = 46178,
     }
 }

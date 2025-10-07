@@ -330,7 +330,8 @@ namespace Altoholic.Windows
             }
 
             if (!selectedCharacter.HasQuest((int)QuestIds.TRIBE_DT_PELUPELU) &&
-                !selectedCharacter.HasQuest((int)QuestIds.TRIBE_DT_MAMOOL_JA))
+                !selectedCharacter.HasQuest((int)QuestIds.TRIBE_DT_MAMOOL_JA) &&
+                !selectedCharacter.HasQuest((int)QuestIds.TRIBE_DT_YOK_HUY))
             {
                 return;
             }
@@ -1036,6 +1037,20 @@ namespace Altoholic.Windows
                     //ImGui.TableSetColumnIndex(0);
                     ImGui.TableNextColumn();
                     DrawTribalCurrency(pc.Mamool_Ja_Nanook, Currencies.MAMOOL_JA_NANOOK, Tribal.MAMOOL_JA);
+                }
+            }
+            if (selectedCharacter.HasQuest((int)QuestIds.TRIBE_DT_YOK_HUY)
+               )
+            {
+                ImGui.TableNextRow();
+                ImGui.TableSetColumnIndex(0);
+                ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 8175));
+                ImGui.TableNextRow();
+                if (selectedCharacter.HasQuest((int)QuestIds.TRIBE_DT_YOK_HUY))
+                {
+                    //ImGui.TableSetColumnIndex(0);
+                    ImGui.TableNextColumn();
+                    DrawTribalCurrency(pc.Yok_Huy_Ward, Currencies.YOK_HUY_WARD, Tribal.YOK_HUY);
                 }
             }
         }
