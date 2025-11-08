@@ -243,7 +243,7 @@ namespace Altoholic
                 GetOthersCharactersList = () => _altoholicService.GetOthersCharacters(),
             };
 
-            RetainersWindow = new RetainersWindow(this, $"{Name} characters retainers", _globalCache)
+            RetainersWindow = new RetainersWindow(this, $"{Name} characters retainers", _db, _globalCache)
             {
                 GetPlayer = () => _altoholicService.GetPlayer(),
                 GetOthersCharactersList = () => _altoholicService.GetOthersCharacters(),
@@ -1657,6 +1657,7 @@ namespace Altoholic
 
                 //Log.Debug($"current_retainer name: {name} id: {retainerId}");
                 if (name == "RETAINER") continue;
+                if (_localPlayer.BlacklistedRetainers.ContainsKey(retainerId)) continue;
 
                 Retainer? r = _localPlayer.Retainers.Find(r => r.Id == retainerId);
                 r ??= new Retainer
@@ -2096,7 +2097,7 @@ namespace Altoholic
             return ($"{local.Name}", $"{homeworld}", $"{Utils.GetRegionFromWorld(homeworld)}");
         }
 
-        private void UpdateCharacter()
+        public void UpdateCharacter()
         {
             if (_localPlayer.CharacterId == 0 || _localPlayer.FirstName.Length == 0) return;
 

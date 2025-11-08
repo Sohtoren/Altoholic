@@ -1,14 +1,15 @@
 ﻿using Altoholic.Cache;
 using Altoholic.Models;
 using CheapLoc;
+using Dalamud.Bindings.ImGui;
 using Dalamud.Game;
 using Dalamud.Game.Text;
 using Dalamud.Interface;
 using Dalamud.Interface.Textures.TextureWraps;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
-using Dalamud.Bindings.ImGui;
 using Lumina.Excel.Sheets;
+using Microsoft.Data.Sqlite;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,14 +20,15 @@ namespace Altoholic.Windows
     public class RetainersWindow : Window, IDisposable
     {
         private readonly Plugin _plugin;
+        private readonly SqliteConnection _db;
         private ClientLanguage _currentLocale;
         private GlobalCache _globalCache;
 
         public RetainersWindow(
             Plugin plugin,
             string name,
-            GlobalCache globalCache
-        )
+            SqliteConnection db,
+            GlobalCache globalCache)
             : base(
                 name, ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse)
         {
@@ -36,6 +38,7 @@ namespace Altoholic.Windows
                 MaximumSize = new Vector2(float.MaxValue, float.MaxValue)
             };
             _plugin = plugin;
+            _db = db;
             _globalCache = globalCache;
 
             _characterIcons = Plugin.PluginInterface.UiBuilder.LoadUld("ui/uld/Character.uld");
@@ -65,6 +68,7 @@ namespace Altoholic.Windows
         private uint? _currentItem;
         private string _searchedItem = string.Empty;
         private string _lastSearchedItem = string.Empty;
+        private ulong? _selectedRetainerId;
 
         private readonly UldWrapper _characterIcons;
         private Dictionary<GearSlot, IDalamudTextureWrap?> _characterTextures = [];
@@ -172,7 +176,6 @@ namespace Altoholic.Windows
             {
                 switch (_searchedItem.Length)
                 {
-                    //case >= 3 when _searchedItem is "Gil" or "MGP" or "MGF" || _lastSearchedItem == _searchedItem:
                     case >= 3 when _searchedItem is "MGP" or "MGF" || _lastSearchedItem == _searchedItem:
                         return;
                     case >= 3:
@@ -194,6 +197,11 @@ namespace Altoholic.Windows
                         _currentItems = null;
                         break;
                 }
+            }
+
+            if (_currentCharacter is { BlacklistedRetainers.Count: > 0 })
+            {
+                DrawRetainerBlacklist();
             }
 
             if (_currentItems == null)
@@ -298,7 +306,79 @@ namespace Altoholic.Windows
             ImGui.TextUnformatted($"{overallAmount:N0}");
         }
 
-        public void DrawRetainers(Character currentCharacter)
+        private void DrawRetainerBlacklist()
+        {
+            ImGui.SameLine();
+            switch (_currentLocale)
+            {
+                case ClientLanguage.German:
+                    ImGui.Dummy(new Vector2(50, 0));
+                    break;
+                case ClientLanguage.English:
+                    ImGui.Dummy(new Vector2(105, 0));
+                    break;
+                case ClientLanguage.French:
+                    ImGui.Dummy(new Vector2(70, 0));
+                    break;
+                case ClientLanguage.Japanese:
+                    ImGui.Dummy(new Vector2(90, 0));
+                    break;
+                default:
+                    ImGui.Dummy(new Vector2(105, 0));
+                    break;
+            }
+
+            ImGui.SameLine();
+            if (ImGui.Button($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 300)}"))
+            {
+                if (_currentCharacter != null)
+                {
+                    ImGui.OpenPopup(
+                        $"Blacklist {_currentCharacter.FirstName} {_currentCharacter.LastName}{(char)SeIconChar.CrossWorld}{_currentCharacter.HomeWorld}###BLRModal_{_currentCharacter.CharacterId}");
+                }
+            }
+
+            if (_currentCharacter == null)
+            {
+                return;
+            }
+
+            using ImRaii.IEndObject blacklist = ImRaii.PopupModal($"###BLRModal_{_currentCharacter.CharacterId}", ImGuiWindowFlags.AlwaysAutoResize);
+            if (!blacklist) return;
+            ImGui.TextUnformatted("Click on the retainer you want to unblacklist");
+            ImGui.Separator();
+
+            int blacklistedRetainerHeight = 15 + (15 * _currentCharacter.BlacklistedRetainers.Count);
+            using (ImRaii.IEndObject listBox =
+                ImRaii.ListBox("###CharactersRetainerTable#BlacklistedRetainerListBox", new Vector2(200, blacklistedRetainerHeight)))
+            {
+                if (listBox)
+                {
+                    if (_currentCharacter.BlacklistedRetainers.Count > 0)
+                    {
+                        foreach (KeyValuePair<ulong, string> retDictionary in _currentCharacter.BlacklistedRetainers
+                                     .Where(retDictionary => ImGui.Selectable(
+                                         $"{retDictionary.Value}", retDictionary.Key == _selectedRetainerId)))
+                        {
+                            Utils.ChatMessage(
+                                $"{retDictionary.Value} has been removed from the blacklist.");
+                            _currentCharacter.BlacklistedRetainers.Remove(retDictionary.Key);
+                            Database.Database.UpdateCharacter(_db, _currentCharacter);
+                            _selectedRetainerId = null;
+                        }
+                    }
+                }
+            }
+
+            if (ImGui.Button(
+                    $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 1219)}###BLRModal_{_currentCharacter.CharacterId}_Close",
+                    new Vector2(120, 0)))
+            {
+                ImGui.CloseCurrentPopup();
+            }
+        }
+
+        private void DrawRetainers(Character currentCharacter)
         {
             try
             {
@@ -323,13 +403,47 @@ namespace Altoholic.Windows
                                     _currentRetainer = null;
                                 }
 
-                                foreach (Retainer currRetainer in currentCharacter.Retainers.Where(currRetainer => currRetainer.Name != "RETAINER" && !string.IsNullOrEmpty(currRetainer.Name)).Where(currRetainer => ImGui.Selectable($"{currRetainer.Name}", currRetainer == _currentRetainer)))
+                                foreach (Retainer currRetainer in currentCharacter.Retainers.Where(currRetainer => currRetainer.Name != "RETAINER" && !string.IsNullOrEmpty(currRetainer.Name) && !currentCharacter.BlacklistedRetainers.ContainsKey(currRetainer.Id)).Where(currRetainer => ImGui.Selectable($"{currRetainer.Name}", currRetainer == _currentRetainer,ImGuiSelectableFlags.AllowDoubleClick)))
                                 {
                                     _currentRetainer = currRetainer;
                                     _currentItem = null;
                                     _currentItems = null;
                                     _searchedItem = string.Empty;
                                     _lastSearchedItem = string.Empty;
+                                }
+
+                                if (ImGui.IsMouseDoubleClicked(0))
+                                {
+                                    Plugin.Log.Debug("Double clicked");
+                                    if (_currentRetainer == null) return;
+                                    ImGui.OpenPopup($"Blacklist {_currentRetainer}###BLModal_{_currentRetainer.Id}");
+                                }
+
+                                if (_currentRetainer != null)
+                                {
+                                    using ImRaii.IEndObject blacklist =
+                                        ImRaii.PopupModal($"###BLModal_{_currentRetainer.Id}");
+                                    if (blacklist)
+                                    {
+                                        ImGui.TextUnformatted("Are you sure you want to blacklist retainer?");
+                                        ImGui.TextUnformatted(
+                                            "This will prevent this retainer to be added in the future");
+                                        ImGui.Separator();
+
+                                        if (ImGui.Button("OK", new Vector2(120, 0)))
+                                        {
+                                            Utils.ChatMessage(
+                                                $"{_currentRetainer.Name} has been blacklisted.");
+                                            currentCharacter.BlacklistedRetainers.Add(_currentRetainer.Id, _currentRetainer.Name);
+                                            currentCharacter.Retainers.Remove(_currentRetainer);
+                                            Database.Database.UpdateCharacter(_db, currentCharacter);
+                                            ImGui.CloseCurrentPopup();
+                                        }
+
+                                        ImGui.SetItemDefaultFocus();
+                                        ImGui.SameLine();
+                                        if (ImGui.Button("Cancel", new Vector2(120, 0))) { ImGui.CloseCurrentPopup(); }
+                                    }
                                 }
                             }
                         }
@@ -342,7 +456,9 @@ namespace Altoholic.Windows
                     else
                     {
                         if (_currentCharacter is not null)
+                        {
                             DrawAll(currentCharacter.Retainers);
+                        }
                     }
                 }
                 else

@@ -1321,7 +1321,6 @@ namespace Altoholic
             {
                 ImGui.BeginTooltip();
                 string str = globalCache.AddonStorage.LoadAddonString(currentLocale, 379).Split(':')[0];
-                Plugin.Log.Debug($"job:{job}");
                 ImGui.TextUnformatted($"{str}: {globalCache.JobStorage.GetName(currentLocale, job)}");
                 ImGui.EndTooltip();
             }

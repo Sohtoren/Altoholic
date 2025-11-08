@@ -55,6 +55,7 @@ namespace Altoholic.Database
             Plugin.Log.Debug($"DoesTableExist? : {(name != null && name == tableName)}");
             return (name != null && name == tableName);
         }
+
         /*private static bool DoesColumnExist(SqliteConnection db, string tableName, string columnName)
         {
             Plugin.Log.Debug($"DoesColumnExist: {tableName}, {columnName}");
@@ -71,9 +72,9 @@ namespace Altoholic.Database
         {
             Plugin.Log.Debug($"Entering DoesColumnExist: {tableName}, {columnName}");
             IDataReader dr = connection.ExecuteReader("PRAGMA table_info(" + tableName + ")");
-            while (dr.Read())//loop through the various columns and their info
+            while (dr.Read()) //loop through the various columns and their info
             {
-                object value = dr.GetValue(1);//column 1 from the result contains the column names
+                object value = dr.GetValue(1); //column 1 from the result contains the column names
                 if (!columnName.Equals(value))
                 {
                     continue;
@@ -130,6 +131,7 @@ namespace Altoholic.Database
                                                     Saddle TEXT,
                                                     Gear TEXT,
                                                     Retainers TEXT,
+                                                    BlacklistedRetainers TEXT,
                                                     Minions TEXT,
                                                     Mounts TEXT,
                                                     TripleTriadCards TEXT,
@@ -191,7 +193,7 @@ namespace Altoholic.Database
                     int result17 = db.Execute(sql17);
                     Plugin.Log.Debug($"ALTER TABLE {CharacterTableName} ADD COLUMN Hairstyles TEXT result: {result17}");
                 }
-                
+
                 if (!DoesColumnExist(db, CharacterTableName, "Facepaints"))
                 {
                     Plugin.Log.Debug($"Column {CharacterTableName}.Facepaints does not exist");
@@ -199,15 +201,16 @@ namespace Altoholic.Database
                     int result18 = db.Execute(sql18);
                     Plugin.Log.Debug($"ALTER TABLE {CharacterTableName} ADD COLUMN Facepaints TEXT result: {result18}");
                 }
-                
+
                 if (!DoesColumnExist(db, CharacterTableName, "SecretRecipeBooks"))
                 {
                     Plugin.Log.Debug($"Column {CharacterTableName}.SecretRecipeBooks does not exist");
                     const string sql19 = $"ALTER TABLE {CharacterTableName} ADD COLUMN SecretRecipeBooks TEXT";
                     int result19 = db.Execute(sql19);
-                    Plugin.Log.Debug($"ALTER TABLE {CharacterTableName} ADD COLUMN SecretRecipeBooks TEXT result: {result19}");
+                    Plugin.Log.Debug(
+                        $"ALTER TABLE {CharacterTableName} ADD COLUMN SecretRecipeBooks TEXT result: {result19}");
                 }
-                
+
                 if (!DoesColumnExist(db, CharacterTableName, "Vistas"))
                 {
                     Plugin.Log.Debug($"Column {CharacterTableName}.Vistas does not exist");
@@ -215,20 +218,25 @@ namespace Altoholic.Database
                     int result20 = db.Execute(sql20);
                     Plugin.Log.Debug($"ALTER TABLE {CharacterTableName} ADD COLUMN Vistas TEXT result: {result20}");
                 }
-                
+
                 if (!DoesColumnExist(db, CharacterTableName, "SightseeingLogUnlockState"))
                 {
                     Plugin.Log.Debug($"Column {CharacterTableName}.SightseeingLogUnlockState does not exist");
-                    const string sql21 = $"ALTER TABLE {CharacterTableName} ADD COLUMN SightseeingLogUnlockState SMALLINT";
+                    const string sql21 =
+                        $"ALTER TABLE {CharacterTableName} ADD COLUMN SightseeingLogUnlockState SMALLINT";
                     int result21 = db.Execute(sql21);
-                    Plugin.Log.Debug($"ALTER TABLE {CharacterTableName} ADD COLUMN SightseeingLogUnlockState SMALLINT result: {result21}");
+                    Plugin.Log.Debug(
+                        $"ALTER TABLE {CharacterTableName} ADD COLUMN SightseeingLogUnlockState SMALLINT result: {result21}");
                 }
+
                 if (!DoesColumnExist(db, CharacterTableName, "SightseeingLogUnlockStateEx"))
                 {
                     Plugin.Log.Debug($"Column {CharacterTableName}.SightseeingLogUnlockStateEx does not exist");
-                    const string sql22 = $"ALTER TABLE {CharacterTableName} ADD COLUMN SightseeingLogUnlockStateEx SMALLINT";
+                    const string sql22 =
+                        $"ALTER TABLE {CharacterTableName} ADD COLUMN SightseeingLogUnlockStateEx SMALLINT";
                     int result22 = db.Execute(sql22);
-                    Plugin.Log.Debug($"ALTER TABLE {CharacterTableName} ADD COLUMN SightseeingLogUnlockStateEx SMALLINT result: {result22}");
+                    Plugin.Log.Debug(
+                        $"ALTER TABLE {CharacterTableName} ADD COLUMN SightseeingLogUnlockStateEx SMALLINT result: {result22}");
                 }
 
                 if (!DoesColumnExist(db, CharacterTableName, "Armoire"))
@@ -244,7 +252,8 @@ namespace Altoholic.Database
                     Plugin.Log.Debug($"Column {CharacterTableName}.GlamourDresser does not exist");
                     const string sql24 = $"ALTER TABLE {CharacterTableName} ADD COLUMN GlamourDresser TEXT";
                     int result24 = db.Execute(sql24);
-                    Plugin.Log.Debug($"ALTER TABLE {CharacterTableName} ADD COLUMN GlamourDresser TEXT result: {result24}");
+                    Plugin.Log.Debug(
+                        $"ALTER TABLE {CharacterTableName} ADD COLUMN GlamourDresser TEXT result: {result24}");
                 }
 
                 if (!DoesColumnExist(db, CharacterTableName, "PvPProfile"))
@@ -297,6 +306,15 @@ namespace Altoholic.Database
                     const string sql15 = $"ALTER TABLE {CharacterTableName} ADD COLUMN Houses TEXT";
                     int result15 = db.Execute(sql15);
                     Plugin.Log.Debug($"ALTER TABLE {CharacterTableName} ADD COLUMN Houses TEXT result: {result15}");
+                }
+
+                if (!DoesColumnExist(db, CharacterTableName, "BlacklistedRetainers"))
+                {
+                    Plugin.Log.Debug($"Column {CharacterTableName}.BlacklistedRetainers does not exist");
+                    const string sql16 = $"ALTER TABLE {CharacterTableName} ADD COLUMN BlacklistedRetainers TEXT";
+                    int result16 = db.Execute(sql16);
+                    Plugin.Log.Debug(
+                        $"ALTER TABLE {CharacterTableName} ADD COLUMN BlacklistedRetainers TEXT result: {result16}");
                 }
             }
 
@@ -419,7 +437,7 @@ namespace Altoholic.Database
                     int result2 = db.Execute(sql2);
                     Plugin.Log.Debug($"Reset {VersionTableName}. Result: {result2}");
 
-                    const string sql3 = $"INSERT INTO {VersionTableName} (Version) VALUES(3)"; 
+                    const string sql3 = $"INSERT INTO {VersionTableName} (Version) VALUES(3)";
                     int result3 = db.Execute(sql3);
                     Plugin.Log.Debug($"Set db version to 3. Result: {result3}");
                 }
@@ -477,6 +495,7 @@ namespace Altoholic.Database
                 Plugin.Log.Debug("GetDataFromLite col is null");
                 return [];
             }
+
             Plugin.Log.Debug("GetDataFromLite col is not null");
 
             using IEnumerator<LiteDBCharacter> liteDbCharactersEnumerator = col.FindAll().GetEnumerator();
@@ -529,10 +548,12 @@ namespace Altoholic.Database
                     Ornaments = [..ldbc.Ornaments],
                     Glasses = [..ldbc.Glasses],
                     BeastReputations = ldbc.BeastReputations,
-                    CurrenciesHistory = db.GetCollection<CurrenciesHistory>().Find(c => c.CharacterId == ldbc.Id).AsList()
+                    CurrenciesHistory = db.GetCollection<CurrenciesHistory>().Find(c => c.CharacterId == ldbc.Id)
+                        .AsList()
                 };
                 characters.Add(character);
             }
+
             Plugin.Log.Debug($"LiteDB has found {count} characters");
             return characters;
         }
@@ -572,19 +593,20 @@ namespace Altoholic.Database
         {
             List<CurrenciesHistory> currenciesHistories = [];
             const string sql2 = $"SELECT * FROM {CharactersCurrenciesHistoryTableName} WHERE CharacterId = @id";
-            using IEnumerator<DatabaseCurrenciesHistory> currenciesHistoryEnumerator = db.Query<DatabaseCurrenciesHistory>(sql2, new { id }).GetEnumerator();
+            using IEnumerator<DatabaseCurrenciesHistory> currenciesHistoryEnumerator =
+                db.Query<DatabaseCurrenciesHistory>(sql2, new { id }).GetEnumerator();
             while (currenciesHistoryEnumerator.MoveNext())
             {
                 DatabaseCurrenciesHistory dch = currenciesHistoryEnumerator.Current;
-                PlayerCurrencies? currencies = System.Text.Json.JsonSerializer.Deserialize<PlayerCurrencies>(dch.Currencies);
+                PlayerCurrencies? currencies =
+                    System.Text.Json.JsonSerializer.Deserialize<PlayerCurrencies>(dch.Currencies);
                 if (currencies == null) continue;
                 currenciesHistories.Add(new CurrenciesHistory()
                 {
-                    CharacterId = dch.CharacterId,
-                    Datetime = dch.Datetime,
-                    Currencies = currencies
+                    CharacterId = dch.CharacterId, Datetime = dch.Datetime, Currencies = currencies
                 });
             }
+
             return currenciesHistories;
         }
 
@@ -592,7 +614,8 @@ namespace Altoholic.Database
         {
             try
             {
-                const string sql = $"SELECT * FROM {CharacterTableName} WHERE CharacterId != @id AND CharacterId NOT IN (SELECT CharacterId FROM {BlacklistTableName})";
+                const string sql =
+                    $"SELECT * FROM {CharacterTableName} WHERE CharacterId != @id AND CharacterId NOT IN (SELECT CharacterId FROM {BlacklistTableName})";
                 IEnumerable<DatabaseCharacter> dbCharacters = db.Query<DatabaseCharacter>(sql, new { id });
                 List<Character> cList = [];
                 foreach (DatabaseCharacter dbCharacter in dbCharacters)
@@ -612,7 +635,7 @@ namespace Altoholic.Database
             }
         }
 
-        public static int DeleteCharacter(SqliteConnection db, ulong id)
+        private static int DeleteCharacter(SqliteConnection db, ulong id)
         {
             Plugin.Log.Debug($"Database/DeleteCharacter entered with params: db = {db}, id = {id}");
             try
@@ -645,12 +668,14 @@ namespace Altoholic.Database
 
         public static int UpdateCharacter(SqliteConnection db, Character character, bool updateLastOnline = true)
         {
-            Plugin.Log.Debug($"Entering UpdateCharacter with character : id = {character.CharacterId}, FirstName = {character.FirstName}, LastName = {character.LastName}, HomeWorld = {character.HomeWorld}, DataCenter = {character.Datacenter}, LastJob = {character.LastJob}, LastJobLevel = {character.LastJobLevel}, FCTag = {character.FCTag}, FreeCompany = {character.FreeCompany}, LastOnline = {character.LastOnline}, PlayTime = {character.PlayTime}, LastPlayTimeUpdate = {character.LastPlayTimeUpdate}");
+            Plugin.Log.Debug(
+                $"Entering UpdateCharacter with character : id = {character.CharacterId}, FirstName = {character.FirstName}, LastName = {character.LastName}, HomeWorld = {character.HomeWorld}, DataCenter = {character.Datacenter}, LastJob = {character.LastJob}, LastJobLevel = {character.LastJobLevel}, FCTag = {character.FCTag}, FreeCompany = {character.FreeCompany}, LastOnline = {character.LastOnline}, PlayTime = {character.PlayTime}, LastPlayTimeUpdate = {character.LastPlayTimeUpdate}");
             if (character.CharacterId == 0) return 0;
 
             try
             {
-                const string updateSql = $"UPDATE {CharacterTableName} SET [FirstName] = @FirstName, [LastName] = @LastName, [HomeWorld] = @HomeWorld, [Datacenter] = @Datacenter, [Region] = @Region, [IsSprout] = @IsSprout, [IsBattleMentor] = @IsBattleMentor, [IsTradeMentor] = @IsTradeMentor, [IsReturner] = @IsReturner, [LastJob] = @LastJob, [LastJobLevel] = @LastJobLevel, [FCTag] = @FCTag, [FreeCompany] = @FreeCompany, [LastOnline] = @LastOnline, [PlayTime] = @PlayTime, [LastPlayTimeUpdate] = @LastPlayTimeUpdate, [HasPremiumSaddlebag] = @HasPremiumSaddlebag, [PlayerCommendations] = @PlayerCommendations, [CurrentFacewear] = @CurrentFacewear, [CurrentOrnament] = @CurrentOrnament, [UnreadLetters] = @UnreadLetters, [Attributes] = @Attributes, [Currencies] = @Currencies, [Jobs] = @Jobs, [Profile] = @Profile, [Quests] = @Quests, [Inventory] = @Inventory, [ArmoryInventory] = @ArmoryInventory, [Saddle] = @Saddle, [Gear] = @Gear, [Retainers] = @Retainers, [Minions] = @Minions, [Mounts] = @Mounts, [TripleTriadCards] = @TripleTriadCards, [Emotes] = @Emotes, [Bardings] = @Bardings, [FramerKits] = @FramerKits, [OrchestrionRolls] = @OrchestrionRolls, [Ornaments] = @Ornaments, [Glasses] = @Glasses, [BeastReputations] = @BeastReputations, [Duties] = @Duties, [DutiesUnlocked] = @DutiesUnlocked, [Houses] = @Houses, [Hairstyles] = @Hairstyles, [Facepaints] = @Facepaints, [SecretRecipeBooks] = @SecretRecipeBooks, [Vistas] = @Vistas, [SightseeingLogUnlockState] = @SightseeingLogUnlockState, [SightseeingLogUnlockStateEx] = @SightseeingLogUnlockStateEx, [Armoire] = @Armoire, [GlamourDresser] = @GlamourDresser, [PvPProfile] = @PvPProfile WHERE [CharacterId] = @CharacterId";
+                const string updateSql =
+                    $"UPDATE {CharacterTableName} SET [FirstName] = @FirstName, [LastName] = @LastName, [HomeWorld] = @HomeWorld, [Datacenter] = @Datacenter, [Region] = @Region, [IsSprout] = @IsSprout, [IsBattleMentor] = @IsBattleMentor, [IsTradeMentor] = @IsTradeMentor, [IsReturner] = @IsReturner, [LastJob] = @LastJob, [LastJobLevel] = @LastJobLevel, [FCTag] = @FCTag, [FreeCompany] = @FreeCompany, [LastOnline] = @LastOnline, [PlayTime] = @PlayTime, [LastPlayTimeUpdate] = @LastPlayTimeUpdate, [HasPremiumSaddlebag] = @HasPremiumSaddlebag, [PlayerCommendations] = @PlayerCommendations, [CurrentFacewear] = @CurrentFacewear, [CurrentOrnament] = @CurrentOrnament, [UnreadLetters] = @UnreadLetters, [Attributes] = @Attributes, [Currencies] = @Currencies, [Jobs] = @Jobs, [Profile] = @Profile, [Quests] = @Quests, [Inventory] = @Inventory, [ArmoryInventory] = @ArmoryInventory, [Saddle] = @Saddle, [Gear] = @Gear, [Retainers] = @Retainers, [BlacklistedRetainers] = @BlacklistedRetainers, [Minions] = @Minions, [Mounts] = @Mounts, [TripleTriadCards] = @TripleTriadCards, [Emotes] = @Emotes, [Bardings] = @Bardings, [FramerKits] = @FramerKits, [OrchestrionRolls] = @OrchestrionRolls, [Ornaments] = @Ornaments, [Glasses] = @Glasses, [BeastReputations] = @BeastReputations, [Duties] = @Duties, [DutiesUnlocked] = @DutiesUnlocked, [Houses] = @Houses, [Hairstyles] = @Hairstyles, [Facepaints] = @Facepaints, [SecretRecipeBooks] = @SecretRecipeBooks, [Vistas] = @Vistas, [SightseeingLogUnlockState] = @SightseeingLogUnlockState, [SightseeingLogUnlockStateEx] = @SightseeingLogUnlockStateEx, [Armoire] = @Armoire, [GlamourDresser] = @GlamourDresser, [PvPProfile] = @PvPProfile WHERE [CharacterId] = @CharacterId";
                 int result = db.Execute(updateSql, FormatCharacterForDatabase(character));
                 return result;
             }
@@ -660,6 +685,7 @@ namespace Altoholic.Database
                 return 0;
             }
         }
+
         public static int UpdatePlaytime(SqliteConnection db, ulong id, uint playTime, long playTimeUpdate)
         {
             if (playTime == 0) return 0;
@@ -669,13 +695,10 @@ namespace Altoholic.Database
                 Character? c = GetCharacter(db, id);
                 if (c == null) return 0;
 
-                const string updateSql = $"UPDATE {CharacterTableName} SET [PlayTime] = @PlayTime, [LastPlayTimeUpdate] = @LastPlayTimeUpdate WHERE [CharacterId] = @CharacterId";
-                int result = db.Execute(updateSql, new
-                {
-                    PlayTime = playTime,
-                    LastPlayTimeUpdate = playTimeUpdate,
-                    CharacterId = id
-                });
+                const string updateSql =
+                    $"UPDATE {CharacterTableName} SET [PlayTime] = @PlayTime, [LastPlayTimeUpdate] = @LastPlayTimeUpdate WHERE [CharacterId] = @CharacterId";
+                int result = db.Execute(updateSql,
+                    new { PlayTime = playTime, LastPlayTimeUpdate = playTimeUpdate, CharacterId = id });
                 return result;
             }
             catch (Exception ex)
@@ -689,7 +712,7 @@ namespace Altoholic.Database
         {
             ushort[] currentFacewear = string.IsNullOrEmpty(databaseCharacter.CurrentFacewear)
                 ? [0, 0]
-                : System.Text.Json.JsonSerializer.Deserialize<ushort[]>(databaseCharacter.CurrentFacewear) ?? [0,0];
+                : System.Text.Json.JsonSerializer.Deserialize<ushort[]>(databaseCharacter.CurrentFacewear) ?? [0, 0];
             Attributes? attributes = string.IsNullOrEmpty(databaseCharacter.Attributes)
                 ? null
                 : System.Text.Json.JsonSerializer.Deserialize<Attributes>(databaseCharacter.Attributes);
@@ -730,6 +753,10 @@ namespace Altoholic.Database
                 ? []
                 : System.Text.Json.JsonSerializer.Deserialize<List<Retainer>>(databaseCharacter.Retainers) ?? [];
             Plugin.Log.Debug("Retainers deserialized");
+            Dictionary<ulong, string> blacklistedRetainers = string.IsNullOrEmpty(databaseCharacter.BlacklistedRetainers)
+                ? []
+                : System.Text.Json.JsonSerializer.Deserialize<Dictionary<ulong, string>>(databaseCharacter.BlacklistedRetainers) ?? [];
+            Plugin.Log.Debug("BlacklistedRetainers deserialized");
             List<uint> minions = string.IsNullOrEmpty(databaseCharacter.Minions)
                 ? []
                 : System.Text.Json.JsonSerializer.Deserialize<List<uint>>(databaseCharacter.Minions) ?? [];
@@ -857,6 +884,7 @@ namespace Altoholic.Database
                 Saddle = saddle,
                 Gear = gear,
                 Retainers = retainers,
+                BlacklistedRetainers = blacklistedRetainers,
                 Minions = [..minions],
                 Mounts = [.. mounts],
                 TripleTriadCards = [.. tripleTriadCards],
@@ -877,7 +905,7 @@ namespace Altoholic.Database
                 SightseeingLogUnlockState = databaseCharacter.SightseeingLogUnlockState,
                 SightseeingLogUnlockStateEx = databaseCharacter.SightseeingLogUnlockStateEx,
                 Armoire = [.. armoire],
-                GlamourDresser = (glamourDresser.Length == 8000) ? glamourDresser: new GlamourItem[8000],
+                GlamourDresser = (glamourDresser.Length == 8000) ? glamourDresser : new GlamourItem[8000],
                 PvPProfile = pvPProfile
             };
         }
@@ -895,6 +923,7 @@ namespace Altoholic.Database
             string saddle = System.Text.Json.JsonSerializer.Serialize(character.Saddle);
             string gear = System.Text.Json.JsonSerializer.Serialize(character.Gear);
             string retainers = System.Text.Json.JsonSerializer.Serialize(character.Retainers);
+            string blacklistedRetainers = System.Text.Json.JsonSerializer.Serialize(character.BlacklistedRetainers);
             string minions = System.Text.Json.JsonSerializer.Serialize(character.Minions);
             string mounts = System.Text.Json.JsonSerializer.Serialize(character.Mounts);
             string tripleTriadCards = System.Text.Json.JsonSerializer.Serialize(character.TripleTriadCards);
@@ -953,6 +982,7 @@ namespace Altoholic.Database
                 Saddle = saddle,
                 Gear = gear,
                 Retainers = retainers,
+                BlacklistedRetainers = blacklistedRetainers,
                 Minions = minions,
                 Mounts = mounts,
                 TripleTriadCards = tripleTriadCards,
@@ -981,8 +1011,9 @@ namespace Altoholic.Database
         public static int AddCharacter(SqliteConnection db, Character character)
         {
             Plugin.Log.Debug("Entering AddCharacter()");
-            const string insertQuery = $"INSERT INTO {CharacterTableName}([CharacterId], [FirstName], [LastName], [HomeWorld], [Datacenter], [Region], [IsSprout], [IsBattleMentor], [IsTradeMentor], [IsReturner], [LastJob], [LastJobLevel], [FCTag], [FreeCompany], [LastOnline], [PlayTime], [LastPlayTimeUpdate], [HasPremiumSaddlebag], [PlayerCommendations], [CurrentFacewear], [CurrentOrnament], [UnreadLetters], [Attributes], [Currencies], [Jobs], [Profile], [Quests], [Inventory], [ArmoryInventory], [Saddle], [Gear], [Retainers], [Minions], [Mounts], [TripleTriadCards], [Emotes], [Bardings], [FramerKits], [OrchestrionRolls], [Ornaments], [Glasses], [BeastReputations], [Duties], [DutiesUnlocked], [Houses], [Hairstyles], [Facepaints], [SecretRecipeBooks], [Vistas], [SightseeingLogUnlockState], [SightseeingLogUnlockStateEx], [Armoire], [GlamourDresser], [PvPProfile]) " +
-                                       "VALUES (@CharacterId, @FirstName, @LastName, @HomeWorld, @Datacenter, @Region, @IsSprout, @IsBattleMentor, @IsTradeMentor, @IsReturner, @LastJob, @LastJobLevel, @FCTag, @FreeCompany, @LastOnline, @PlayTime, @LastPlayTimeUpdate, @HasPremiumSaddlebag, @PlayerCommendations, @CurrentFacewear, @CurrentOrnament, @UnreadLetters, @Attributes, @Currencies, @Jobs, @Profile, @Quests, @Inventory, @ArmoryInventory, @Saddle, @Gear, @Retainers, @Minions, @Mounts, @TripleTriadCards, @Emotes, @Bardings, @FramerKits, @OrchestrionRolls, @Ornaments, @Glasses, @BeastReputations, @Duties, @DutiesUnlocked, @Houses, @Hairstyles, @Facepaints, @SecretRecipeBooks, @Vistas, @SightseeingLogUnlockState, @SightseeingLogUnlockStateEx, @Armoire, @GlamourDresser, @PvPProfile)";
+            const string insertQuery =
+                $"INSERT INTO {CharacterTableName}([CharacterId], [FirstName], [LastName], [HomeWorld], [Datacenter], [Region], [IsSprout], [IsBattleMentor], [IsTradeMentor], [IsReturner], [LastJob], [LastJobLevel], [FCTag], [FreeCompany], [LastOnline], [PlayTime], [LastPlayTimeUpdate], [HasPremiumSaddlebag], [PlayerCommendations], [CurrentFacewear], [CurrentOrnament], [UnreadLetters], [Attributes], [Currencies], [Jobs], [Profile], [Quests], [Inventory], [ArmoryInventory], [Saddle], [Gear], [Retainers], [BlacklistedRetainers], [Minions], [Mounts], [TripleTriadCards], [Emotes], [Bardings], [FramerKits], [OrchestrionRolls], [Ornaments], [Glasses], [BeastReputations], [Duties], [DutiesUnlocked], [Houses], [Hairstyles], [Facepaints], [SecretRecipeBooks], [Vistas], [SightseeingLogUnlockState], [SightseeingLogUnlockStateEx], [Armoire], [GlamourDresser], [PvPProfile]) " +
+                "VALUES (@CharacterId, @FirstName, @LastName, @HomeWorld, @Datacenter, @Region, @IsSprout, @IsBattleMentor, @IsTradeMentor, @IsReturner, @LastJob, @LastJobLevel, @FCTag, @FreeCompany, @LastOnline, @PlayTime, @LastPlayTimeUpdate, @HasPremiumSaddlebag, @PlayerCommendations, @CurrentFacewear, @CurrentOrnament, @UnreadLetters, @Attributes, @Currencies, @Jobs, @Profile, @Quests, @Inventory, @ArmoryInventory, @Saddle, @Gear, @Retainers, @BlacklistedRetainers, @Minions, @Mounts, @TripleTriadCards, @Emotes, @Bardings, @FramerKits, @OrchestrionRolls, @Ornaments, @Glasses, @BeastReputations, @Duties, @DutiesUnlocked, @Houses, @Hairstyles, @Facepaints, @SecretRecipeBooks, @Vistas, @SightseeingLogUnlockState, @SightseeingLogUnlockStateEx, @Armoire, @GlamourDresser, @PvPProfile)";
 
             int result = db.Execute(insertQuery, FormatCharacterForDatabase(character));
 
@@ -1017,9 +1048,11 @@ namespace Altoholic.Database
                 return result;
             }
 
-            foreach (int result2 in character.CurrenciesHistory.Select(currenciesHistory => AddCharacterCurrencyHistory(db, currenciesHistory)))
+            foreach (int result2 in character.CurrenciesHistory.Select(currenciesHistory =>
+                         AddCharacterCurrencyHistory(db, currenciesHistory)))
             {
-                Plugin.Log.Debug($"AddCharacterWithCurrenciesHistories => AddCharacterCurrencyHistory result: {result2}");
+                Plugin.Log.Debug(
+                    $"AddCharacterWithCurrenciesHistories => AddCharacterCurrencyHistory result: {result2}");
             }
 
             return result;
@@ -1039,38 +1072,34 @@ namespace Altoholic.Database
                     AddCharacterWithCurrenciesHistories(db, character);
                 }
             }
+
             transaction.Commit();
         }
 
         public static int AddCharacterCurrencyHistory(SqliteConnection db, CurrenciesHistory ch)
         {
-            Plugin.Log.Debug($"AddCharacterCurrencyHistory with params: {ch.CharacterId}, {ch.Currencies}, {ch.Datetime}");
+            Plugin.Log.Debug(
+                $"AddCharacterCurrencyHistory with params: {ch.CharacterId}, {ch.Currencies}, {ch.Datetime}");
             string currencies = System.Text.Json.JsonSerializer.Serialize(ch.Currencies);
-            const string insertHistoryQuery = $"INSERT INTO {CharactersCurrenciesHistoryTableName}([CharacterId], [DateTime], [Currencies]) VALUES (@CharacterId, @Datetime, @Currencies)";
-            int result = db.Execute(insertHistoryQuery, new
-            {
-                ch.CharacterId,
-                ch.Datetime,
-                Currencies = currencies
-            });
+            const string insertHistoryQuery =
+                $"INSERT INTO {CharactersCurrenciesHistoryTableName}([CharacterId], [DateTime], [Currencies]) VALUES (@CharacterId, @Datetime, @Currencies)";
+            int result = db.Execute(insertHistoryQuery, new { ch.CharacterId, ch.Datetime, Currencies = currencies });
             return result;
         }
+
         public static int AddCharacterCurrencyHistory(SqliteConnection db, ulong id, PlayerCurrencies pc)
         {
             Plugin.Log.Debug("Entering AddCharacterCurrencyHistory()");
             long datetime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
             string currencies = System.Text.Json.JsonSerializer.Serialize(pc);
-            const string insertHistoryQuery = $"INSERT INTO {CharactersCurrenciesHistoryTableName}([CharacterId], [DateTime], [Currencies]) VALUES (@CharacterId, @Datetime, @Currencies)";
+            const string insertHistoryQuery =
+                $"INSERT INTO {CharactersCurrenciesHistoryTableName}([CharacterId], [DateTime], [Currencies]) VALUES (@CharacterId, @Datetime, @Currencies)";
 #if DEBUG
             Plugin.Log.Debug($"AddCharacter => AddCharacterCurrencyHistory: values: {id}, {datetime}, {currencies}");
 #endif
 
-            int result = db.Execute(insertHistoryQuery, new
-            {
-                CharacterId = id,
-                Datetime = datetime,
-                Currencies = currencies
-            });
+            int result = db.Execute(insertHistoryQuery,
+                new { CharacterId = id, Datetime = datetime, Currencies = currencies });
             return result;
         }
 
@@ -1102,6 +1131,7 @@ namespace Altoholic.Database
             const string sql = $"SELECT * FROM {BlacklistTableName} WHERE CharacterId = @id";
             return db.QueryFirstOrDefault<Blacklist>(sql, new { id });
         }
+
         public static List<Blacklist> GetBlacklists(SqliteConnection db)
         {
             const string sql = $"SELECT * FROM {BlacklistTableName}";
@@ -1123,14 +1153,14 @@ namespace Altoholic.Database
             return true;
         }
 
-        public static void BackupDatabase()
+        private static void BackupDatabase()
         {
             DateTime date = DateTime.Now;
             string dbpath = Path.Combine(Plugin.PluginInterface.GetPluginConfigDirectory(), "altoholic.db");
-            string backupdbpath = Path.Combine(Plugin.PluginInterface.GetPluginConfigDirectory(), "backups", $"altoholic.db.{date:yyyyMMdd}");
+            string backupdbpath = Path.Combine(Plugin.PluginInterface.GetPluginConfigDirectory(), "backups",
+                $"altoholic.db.{date:yyyyMMdd}");
             Directory.CreateDirectory(Path.Combine(Plugin.PluginInterface.GetPluginConfigDirectory(), "backups"));
             File.Copy(dbpath, backupdbpath);
         }
-
     }
 }

@@ -42,6 +42,7 @@ namespace Altoholic.Models
         public List<Inventory> Saddle { get; set; } = [];
         public List<Gear> Gear { get; set; } = [];
         public List<Retainer> Retainers { get; set; } = [];
+        public Dictionary<ulong, string> BlacklistedRetainers { get; set; } = [];
         public HashSet<uint> Minions { get; init; } = [];
         public HashSet<uint> Mounts { get; init; } = [];
         public HashSet<uint> TripleTriadCards { get; init; } = [];
