@@ -167,10 +167,12 @@ namespace Altoholic.Windows
                         if (item == null) continue;
                         string n = item.Value.Name.ExtractText();
                         if (n.Contains("Legendary")) n = $"Yo-Kai {n}";
-                        if (!string.IsNullOrEmpty(_searchCurrency) && !n.Contains(_searchCurrency, StringComparison.OrdinalIgnoreCase))
+                        if (!string.IsNullOrEmpty(_searchCurrency) &&
+                            !n.Contains(_searchCurrency, StringComparison.OrdinalIgnoreCase))
+                        {
                             continue;
+                        }
 
-                        // I swapped these two lines to below the string so they don't mess up the icons when doing a search
                         Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(item.Value.Icon), new Vector2(24, 24));
                         ImGui.SameLine();
                         if (ImGui.Selectable(n, n == _selectedCurrency))
