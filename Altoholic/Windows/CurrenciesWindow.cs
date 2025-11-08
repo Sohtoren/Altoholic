@@ -44,6 +44,7 @@ namespace Altoholic.Windows
         private Character? _currentCharacter;
         private string _currentCurrency = string.Empty;
         private string _selectedCurrency;
+        private string _searchCurrency = string.Empty;
 
         /*public override void OnClose()
         {
@@ -59,6 +60,7 @@ namespace Altoholic.Windows
             _currentCharacter = null;
             _currentCurrency = string.Empty;
             _selectedCurrency = string.Empty;
+            _searchCurrency = string.Empty;
         }
 
         public void Clear()
@@ -67,12 +69,13 @@ namespace Altoholic.Windows
             _currentCharacter = null;
             _currentCurrency = string.Empty;
             _selectedCurrency = string.Empty;
+            _searchCurrency = string.Empty;
         }
 
         public override void Draw()
         {
             _currentLocale = _plugin.Configuration.Language;
-            if(_selectedCurrency == "Currency" && _currentLocale != ClientLanguage.English) 
+            if(_selectedCurrency == "Currency" && _currentLocale != ClientLanguage.English)
                 _selectedCurrency = _globalCache.AddonStorage.LoadAddonString(_currentLocale, 761);
             List<Character> chars = [];
             chars.Insert(0, GetPlayer.Invoke());
@@ -147,6 +150,12 @@ namespace Altoholic.Windows
             {
                 if (combo)
                 {
+                    ImGui.SetNextItemWidth(-1);
+                    if (ImGui.InputTextWithHint("###CharactersCurrencies#All#ComboSearch", _globalCache.AddonStorage.LoadAddonString(_currentLocale, 3386), ref _searchCurrency, 256))
+                        ImGui.SetKeyboardFocusHere(-1);
+
+                    ImGui.Separator();
+
                     //Plugin.Log.Debug("BeginCombo");
                     List<string> names = [.. Enum.GetNames(typeof(Currencies))];
                     names.Sort();
@@ -156,10 +165,14 @@ namespace Altoholic.Windows
                             _globalCache.ItemStorage.LoadItem(_currentLocale,
                                 (uint)Enum.Parse(typeof(Currencies), name));
                         if (item == null) continue;
-                        Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(item.Value.Icon), new Vector2(24, 24));
-                        ImGui.SameLine();
                         string n = item.Value.Name.ExtractText();
                         if (n.Contains("Legendary")) n = $"Yo-Kai {n}";
+                        if (!string.IsNullOrEmpty(_searchCurrency) && !n.Contains(_searchCurrency, StringComparison.OrdinalIgnoreCase))
+                            continue;
+
+                        // I swapped these two lines to below the string so they don't mess up the icons when doing a search
+                        Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(item.Value.Icon), new Vector2(24, 24));
+                        ImGui.SameLine();
                         if (ImGui.Selectable(n, n == _selectedCurrency))
                         {
                             _selectedCurrency = n;
@@ -169,6 +182,7 @@ namespace Altoholic.Windows
                                 $"Currency selected : {Enum.Parse(typeof(Currencies), name)} {(uint)Enum.Parse(typeof(Currencies), name)}");
                             Plugin.Log.Debug($"name : {Utils.CapitalizeCurrency(name)}");*/
                             _currentCurrency = Utils.CapitalizeCurrency(name);
+                            _searchCurrency = string.Empty;
                         }
                     }
                 }
@@ -993,7 +1007,7 @@ namespace Altoholic.Windows
             ImGui.TableNextColumn();
             DrawTribalCurrency(pc.Loporrit_Carat, Currencies.LOPORRIT_CARAT, Tribal.LOPORRITS);
         }
-        
+
         private void DrawCurrentExpansionTribal(Character selectedCharacter)
         {
             if (selectedCharacter.Currencies == null) return;
