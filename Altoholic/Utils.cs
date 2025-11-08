@@ -1320,7 +1320,9 @@ namespace Altoholic
             if (ImGui.IsItemHovered())
             {
                 ImGui.BeginTooltip();
-                ImGui.TextUnformatted(globalCache.AddonStorage.LoadAddonString(currentLocale, 379).Replace("ClassJob", globalCache.JobStorage.GetName(currentLocale, job)));
+                string str = globalCache.AddonStorage.LoadAddonString(currentLocale, 379).Split(':')[0];
+                Plugin.Log.Debug($"job:{job}");
+                ImGui.TextUnformatted($"{str}: {globalCache.JobStorage.GetName(currentLocale, job)}");
                 ImGui.EndTooltip();
             }
         }
