@@ -1933,8 +1933,8 @@ namespace Altoholic.Windows
                 DrawAllCharsTripleTriadCard(chars, 306, 7);
                 DrawAllCharsTripleTriadCard(chars, 291, 7);
                 DrawAllCharsMinion(chars, 144, 7);
-                DrawAllCharsMinion(chars, 362, 7);
-                DrawAllCharsOrchestrion(chars, 289, 7);
+                DrawAllCharsMinion(chars, 362, 5);
+                DrawAllCharsOrchestrion(chars, 289, 3);
                 DrawAllCharsTotal(chars, 487);
             }
 
