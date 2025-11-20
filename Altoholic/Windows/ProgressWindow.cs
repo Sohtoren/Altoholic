@@ -1935,7 +1935,7 @@ namespace Altoholic.Windows
                 DrawAllCharsMinion(chars, 144, 7);
                 DrawAllCharsMinion(chars, 362, 5);
                 DrawAllCharsOrchestrion(chars, 289, 3);
-                DrawAllCharsTotal(chars, 487);
+                DrawAllCharsTotal(chars, 481);
             }
 
             string allegoryName = _currentLocale switch
