@@ -63,6 +63,9 @@ namespace Altoholic
         [PluginService] public static IChatGui ChatGui { get; set; } = null!;
         [PluginService] public static IDutyState DutyState { get; set; } = null!;
         [PluginService] public static IGameInventory GameInventory { get; set; } = null!;
+        [PluginService] public static IPlayerState PlayerState { get; set; } = null!;
+        [PluginService] public static IObjectTable ObjectTable { get; set; } = null!;
+
 
         private readonly Hook<UIModule.Delegates.HandlePacket> _playtimeHook;
 
@@ -373,7 +376,7 @@ namespace Altoholic
         private void OnUnblacklistCommand()
         {
             Log.Debug("OnBlacklistCommand called");
-            Blacklist? blacklist = _blacklistedCharacters.Find(b => b.CharacterId == ClientState.LocalContentId);
+            Blacklist? blacklist = _blacklistedCharacters.Find(b => b.CharacterId == PlayerState.ContentId);
             if (blacklist is null)
             {
                 Utils.ChatMessage("Character not found in the blacklist");
@@ -584,7 +587,7 @@ namespace Altoholic
                 Plugin.Log.Debug($"Nameday_Month {localPlayer.Profile.Nameday_Month}");
                 Plugin.Log.Debug($"Guardian {Utils.GetGuardian(localPlayer.Profile.Guardian)}");*/
 #endif
-                IPlayerCharacter? lPlayer = ClientState.LocalPlayer;
+                IPlayerCharacter? lPlayer = ObjectTable.LocalPlayer;
                 if (lPlayer != null)
                 {
                     _localPlayer.Attributes = new Attributes
@@ -723,7 +726,7 @@ namespace Altoholic
 
         private void OnFrameworkUpdate(IFramework framework)
         {
-            IPlayerCharacter? lPlayer = ClientState.LocalPlayer;
+            IPlayerCharacter? lPlayer = ObjectTable.LocalPlayer;
             if (lPlayer == null)
             {
                 return;
@@ -732,7 +735,7 @@ namespace Altoholic
             if (_localPlayer.CharacterId == 0)
             {
                 Character? p = GetCharacterFromGameOrDatabase();
-                _localPlayer = p ?? new Character { CharacterId = ClientState.LocalContentId };
+                _localPlayer = p ?? new Character { CharacterId = PlayerState.ContentId };
             }
 
             if (_blacklistedCharacters.Exists(b => b.CharacterId == _localPlayer.CharacterId)) return;
@@ -809,8 +812,8 @@ namespace Altoholic
                     for (int i = 0; i < 50 && i < raptureAtkModule->NameplateInfoCount; i++)
                     {
                         ref NamePlateInfo namePlateInfo = ref npi[i];
-                        if (ClientState.LocalPlayer == null) continue;
-                        if (namePlateInfo.ObjectId.ObjectId != ClientState.LocalPlayer.EntityId)
+                        if (ObjectTable.LocalPlayer == null) continue;
+                        if (namePlateInfo.ObjectId.ObjectId != ObjectTable.LocalPlayer.EntityId)
                         {
                             continue;
                         }
@@ -2079,7 +2082,7 @@ namespace Altoholic
 
             _localPlayer.PlayTime = totalPlaytime;
 
-            ulong id = ClientState.LocalContentId;
+            ulong id = PlayerState.ContentId;
 
             long newPlayTimeUpdate = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
             _localPlayer.LastPlayTimeUpdate = newPlayTimeUpdate;
@@ -2090,7 +2093,7 @@ namespace Altoholic
 
         private (string, string, string) GetLocalPlayerNameWorldRegion()
         {
-            IPlayerCharacter? local = ClientState.LocalPlayer;
+            IPlayerCharacter? local = ObjectTable.LocalPlayer;
             if (local == null || local.HomeWorld.ValueNullable == null)
                 return (string.Empty, string.Empty, string.Empty);
             string homeworld = local.HomeWorld.Value.Name.ExtractText();
@@ -2132,7 +2135,7 @@ namespace Altoholic
 
         private Character? GetCharacterFromGameOrDatabase()
         {
-            if (_blacklistedCharacters.Exists(b => b.CharacterId == ClientState.LocalContentId)) return null;
+            if (_blacklistedCharacters.Exists(b => b.CharacterId == PlayerState.ContentId)) return null;
             (string, string, string) player = GetLocalPlayerNameWorldRegion();
             if (string.IsNullOrEmpty(player.Item1) || string.IsNullOrEmpty(player.Item2) || string.IsNullOrEmpty(player.Item3)) return null;
 
@@ -2144,7 +2147,7 @@ namespace Altoholic
             }
 
             //Plugin.Log.Debug("Altoholic : Character names : 0 : {0}, 1: {1}, 2: {2}, 3: {3}", names[0], names[1], player.Item2, player.Item3);
-            Character? chara = Database.Database.GetCharacter(_db, ClientState.LocalContentId);
+            Character? chara = Database.Database.GetCharacter(_db, PlayerState.ContentId);
             if (chara != null)
             {
                 //Plugin.Log.Debug($"GetCharacterFromDB : id = {chara.Id}, FirstName = {chara.FirstName}, LastName = {chara.LastName}, HomeWorld = {chara.HomeWorld}, DataCenter = {chara.Datacenter}, LastJob = {chara.LastJob}, LastJobLevel = {chara.LastJobLevel}, FCTag = {chara.FCTag}, FreeCompany = {chara.FreeCompany}, LastOnline = {chara.LastOnline}, PlayTime = {chara.PlayTime}, LastPlayTimeUpdate = {chara.LastPlayTimeUpdate}");
@@ -2153,7 +2156,7 @@ namespace Altoholic
 
             return new Character
             {
-                CharacterId = ClientState.LocalContentId,
+                CharacterId = PlayerState.ContentId,
                 FirstName = names[0],
                 LastName = names[1],
                 HomeWorld = player.Item2,
