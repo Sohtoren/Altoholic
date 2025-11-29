@@ -1076,16 +1076,17 @@ namespace Altoholic
             return returnedMaterias;
         }
 
-        public static uint ConvertColorToAbgr(uint rgbColor)
+        private static uint ConvertColorToAbgr(uint rgbColor)
         {
-            var red = (byte)((rgbColor >> 16) & 0xFF);
-            var green = (byte)((rgbColor >> 8) & 0xFF);
-            var blue = (byte)(rgbColor & 0xFF);
+            byte red = (byte)((rgbColor >> 16) & 0xFF);
+            byte green = (byte)((rgbColor >> 8) & 0xFF);
+            byte blue = (byte)(rgbColor & 0xFF);
 
             // Adding alpha channel (fully opaque)
             return (uint)((0xFF << 24) | (blue << 16) | (green << 8) | red);
         }
-        public static Vector4 ConvertColorToVector4(uint color)
+
+        private static Vector4 ConvertColorToVector4(uint color)
         {
             byte r = (byte)(color >> 24);
             byte g = (byte)(color >> 16);
@@ -1094,6 +1095,20 @@ namespace Altoholic
 
             return new Vector4(r / 255.0f, g / 255.0f, b / 255.0f, a / 255.0f);
         }
+
+        private static Vector4 StainToVector4(uint stainColor)
+        {
+            const float s = 1.0f / 255.0f;
+
+            return new Vector4()
+            {
+                X = ((stainColor >> 16) & 0xFF) * s,
+                Y = ((stainColor >> 8) & 0xFF) * s,
+                Z = ((stainColor >> 0) & 0xFF) * s,
+                W = ((stainColor >> 24) & 0xFF) * s
+            };
+        }
+
         public static void DrawReputationProgressBar(ClientLanguage currentLocale, GlobalCache globalCache, uint exp, bool isMax, uint reputationLevel, bool isAllied)
         {
             BeastReputationRank? brr = globalCache.BeastTribesStorage.GetRank(currentLocale, reputationLevel);
@@ -1557,28 +1572,30 @@ namespace Altoholic
             if (item.Stain > 0)
             {
                 ImGui.Separator();
-                (string, Vector4) dye = globalCache.StainStorage.LoadStainWithColor(currentLocale, item.Stain);
+                (string, uint) dye = globalCache.StainStorage.LoadStainWithColor(currentLocale, item.Stain);
                 if (!string.IsNullOrEmpty(dye.Item1))
                 {
-                    ImGui.ColorButton($"##Gear_{item.ItemId}#Dye#1", dye.Item2,
+                    ImGui.ColorButton($"##Gear_{item.ItemId}#Dye#1", StainToVector4(dye.Item2),
                         ImGuiColorEditFlags.None, new Vector2(16, 16));
                     ImGui.SameLine();
-                    ImGui.PushStyleColor(ImGuiCol.Text, dye.Item2);
+                    /*Vector4 color = item.Stain == 102 ? new Vector4(1,1,1,1) : ConvertColorToVector4(ConvertColorToAbgr(dye.Item2));
+                    ImGui.PushStyleColor(ImGuiCol.Text, color);*/
                     ImGui.TextUnformatted(dye.Item1);
-                    ImGui.PopStyleColor();
+                    //ImGui.PopStyleColor();
                 }
             }
             if (item.Stain2 > 0)
             {
-                (string, Vector4) dye2 = globalCache.StainStorage.LoadStainWithColor(currentLocale, item.Stain2);
+                (string, uint) dye2 = globalCache.StainStorage.LoadStainWithColor(currentLocale, item.Stain2);
                 if (!string.IsNullOrEmpty(dye2.Item1))
                 {
-                    ImGui.ColorButton($"##Gear_{item.ItemId}#Dye#2", dye2.Item2,
+                    ImGui.ColorButton($"##Gear_{item.ItemId}#Dye#2", StainToVector4(dye2.Item2),
                         ImGuiColorEditFlags.None, new Vector2(16, 16));
                     ImGui.SameLine();
-                    ImGui.PushStyleColor(ImGuiCol.Text, dye2.Item2);
+                    /*Vector4 color = item.Stain == 102 ? new Vector4(1, 1, 1, 1) : ConvertColorToVector4(ConvertColorToAbgr(dye2.Item2));
+                    ImGui.PushStyleColor(ImGuiCol.Text, color);*/
                     ImGui.TextUnformatted(dye2.Item1);
-                    ImGui.PopStyleColor();
+                    //ImGui.PopStyleColor();
                 }
             }
 
@@ -2078,13 +2095,13 @@ namespace Altoholic
                 if (item.Stain0 > 0)
                 {
                     ImGui.Separator();
-                    (string, Vector4) dye = globalCache.StainStorage.LoadStainWithColor(currentLocale, item.Stain0);
+                    (string, uint) dye = globalCache.StainStorage.LoadStainWithColor(currentLocale, item.Stain0);
                     if (!string.IsNullOrEmpty(dye.Item1))
                     {
-                        ImGui.ColorButton($"##Gear_{item.ItemId}#Dye#1", dye.Item2,
+                        ImGui.ColorButton($"##Gear_{item.ItemId}#Dye#1", StainToVector4(dye.Item2),
                             ImGuiColorEditFlags.None, new Vector2(16, 16));
                         ImGui.SameLine();
-                        ImGui.PushStyleColor(ImGuiCol.Text, dye.Item2);
+                        ImGui.PushStyleColor(ImGuiCol.Text, ConvertColorToVector4(ConvertColorToAbgr(dye.Item2)));
                         ImGui.TextUnformatted(dye.Item1);
                         ImGui.PopStyleColor();
                     }
@@ -2092,13 +2109,13 @@ namespace Altoholic
 
                 if (item.Stain1 > 0)
                 {
-                    (string, Vector4) dye2 = globalCache.StainStorage.LoadStainWithColor(currentLocale, item.Stain1);
+                    (string, uint) dye2 = globalCache.StainStorage.LoadStainWithColor(currentLocale, item.Stain1);
                     if (!string.IsNullOrEmpty(dye2.Item1))
                     {
-                        ImGui.ColorButton($"##Gear_{item.ItemId}#Dye#2", dye2.Item2,
+                        ImGui.ColorButton($"##Gear_{item.ItemId}#Dye#2", StainToVector4(dye2.Item2),
                             ImGuiColorEditFlags.None, new Vector2(16, 16));
                         ImGui.SameLine();
-                        ImGui.PushStyleColor(ImGuiCol.Text, dye2.Item2);
+                        ImGui.PushStyleColor(ImGuiCol.Text, ConvertColorToVector4(ConvertColorToAbgr(dye2.Item2)));
                         ImGui.TextUnformatted(dye2.Item1);
                         ImGui.PopStyleColor();
                     }

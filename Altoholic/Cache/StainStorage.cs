@@ -11,16 +11,16 @@ namespace Altoholic.Cache
         public string English { get; init; } = string.Empty;
         public string French { get; init; } = string.Empty;
         public string Japanese { get; init; } = string.Empty;
-        public Vector4 Color { get; init; }
+        public uint Color { get; init; }
     }
     public class StainStorage : IDisposable
     {
         private readonly Dictionary<uint, Stain> _stains;
 
-        public StainStorage(int size = 120)
+        public StainStorage(int size = 125)
         {
             _stains = new Dictionary<uint, Stain>(size);
-            for (uint i = 0; i <= 120; i++)
+            for (uint i = 0; i <= size; i++)
             {
                 Lumina.Excel.Sheets.Stain? stainde = Utils.GetStainFromId(i, ClientLanguage.German);
                 if (stainde == null) continue;
@@ -44,7 +44,7 @@ namespace Altoholic.Cache
                     English = en,
                     French = fr,
                     Japanese = ja,
-                    Color = Utils.ConvertColorToVector4(Utils.ConvertColorToAbgr(stainen.Value.Color))
+                    Color = stainen.Value.Color
                 });
             }
         }
@@ -62,7 +62,7 @@ namespace Altoholic.Cache
             };
         }
 
-        public (string, Vector4) LoadStainWithColor(ClientLanguage currentLocale, uint id)
+        public (string, uint) LoadStainWithColor(ClientLanguage currentLocale, uint id)
         {
             Stain s = _stains[id];
             string name = currentLocale switch
