@@ -23,7 +23,6 @@ using FFXIVClientStructs.FFXIV.Client.Game.Control;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using FFXIVClientStructs.FFXIV.Client.System.String;
 using FFXIVClientStructs.FFXIV.Client.UI;
-using LiteDB;
 using Lumina.Excel.Sheets;
 using Lumina.Text;
 using Microsoft.Data.Sqlite;
@@ -144,10 +143,7 @@ namespace Altoholic
                 bool isSQliteDb = Database.Database.IsSqLiteDatabase(dbpath);
                 if (!isSQliteDb)
                 {
-                    Log.Info("Database is not SQLite, starting migration");
-                    LiteDatabase db = new(dbpath);
-                    characters = Database.Database.GetDataFromLite(db);
-                    db.Dispose();
+                    Log.Info("Database is not SQLite, potential old version (litedb) found. Deleting...");
                     File.Delete(dbpath);
                 }
 

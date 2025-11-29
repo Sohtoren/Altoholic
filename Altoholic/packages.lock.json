@@ -20,15 +20,6 @@
         "resolved": "1.2.25",
         "contentHash": "xCXiw7BCxHJ8pF6wPepRUddlh2dlQlbr81gXA72hdk4FLHkKXas7EH/n+fk5UCA/YfMqG1Z6XaPiUjDbUNBUzg=="
       },
-      "LiteDB": {
-        "type": "Direct",
-        "requested": "[5.0.21, )",
-        "resolved": "5.0.21",
-        "contentHash": "ykJ7ffFl7P9YQKR/PLci6zupiLrsSCNkOTiw6OtzntH7d2kCYp5L1+3a/pksKgTEHcJBoPXFtg7VZSGVBseN9w==",
-        "dependencies": {
-          "System.Buffers": "4.5.1"
-        }
-      },
       "Microsoft.Data.Sqlite": {
         "type": "Direct",
         "requested": "[9.0.8, )",
@@ -77,11 +68,6 @@
         "dependencies": {
           "SQLitePCLRaw.core": "2.1.10"
         }
-      },
-      "System.Buffers": {
-        "type": "Transitive",
-        "resolved": "4.5.1",
-        "contentHash": "Rw7ijyl1qqRS0YQD/WycNst8hUUMgrMH4FCn1nNm27M4VxchZ1js3fVjQaANHO5f3sN4isvP4a+Met9Y4YomAg=="
       },
       "System.Memory": {
         "type": "Transitive",

@@ -1,6 +1,5 @@
 using Altoholic.Models;
 using Dapper;
-using LiteDB;
 using Microsoft.Data.Sqlite;
 using System;
 using System.Collections.Generic;
@@ -56,11 +55,6 @@ namespace Altoholic.Database
             return (name != null && name == tableName);
         }
 
-        /*private static bool DoesColumnExist(SqliteConnection db, string tableName, string columnName)
-        {
-            Plugin.Log.Debug($"DoesColumnExist: {tableName}, {columnName}");
-            return db.GetSchema("Columns").Select($"COLUMN_NAME='{columnName}' AND TABLE_NAME='{tableName}'").Length != 0;
-        }*/
         /// <summary>
         /// Checks if the given table contains a column with the given name.
         /// </summary>
@@ -484,78 +478,6 @@ namespace Altoholic.Database
                 Plugin.Log.Error(ex.ToString());
                 return null;
             }
-        }
-
-        public static List<Character> GetDataFromLite(LiteDatabase db)
-        {
-            List<Character> characters = [];
-            ILiteCollection<LiteDBCharacter>? col = db.GetCollection<LiteDBCharacter>("Character");
-            if (col == null)
-            {
-                Plugin.Log.Debug("GetDataFromLite col is null");
-                return [];
-            }
-
-            Plugin.Log.Debug("GetDataFromLite col is not null");
-
-            using IEnumerator<LiteDBCharacter> liteDbCharactersEnumerator = col.FindAll().GetEnumerator();
-            int count = 0;
-            while (liteDbCharactersEnumerator.MoveNext())
-            {
-                count++;
-                LiteDBCharacter ldbc = liteDbCharactersEnumerator.Current;
-                Character character = new()
-                {
-                    CharacterId = ldbc.Id,
-                    FirstName = ldbc.FirstName,
-                    LastName = ldbc.LastName,
-                    HomeWorld = ldbc.HomeWorld,
-                    CurrentWorld = ldbc.CurrentWorld,
-                    Datacenter = ldbc.Datacenter,
-                    CurrentDatacenter = ldbc.CurrentDatacenter,
-                    Region = ldbc.Region,
-                    CurrentRegion = ldbc.CurrentRegion,
-                    IsSprout = ldbc.IsSprout,
-                    IsBattleMentor = ldbc.IsBattleMentor,
-                    IsTradeMentor = ldbc.IsTradeMentor,
-                    IsReturner = ldbc.IsReturner,
-                    LastJob = ldbc.LastJob,
-                    LastJobLevel = ldbc.LastJobLevel,
-                    FCTag = ldbc.FCTag,
-                    FreeCompany = ldbc.FreeCompany,
-                    LastOnline = ldbc.LastOnline,
-                    PlayTime = ldbc.PlayTime,
-                    LastPlayTimeUpdate = ldbc.LastPlayTimeUpdate,
-                    HasPremiumSaddlebag = ldbc.HasPremiumSaddlebag,
-                    PlayerCommendations = ldbc.PlayerCommendations,
-                    Attributes = ldbc.Attributes,
-                    Currencies = ldbc.Currencies,
-                    Jobs = ldbc.Jobs,
-                    Profile = ldbc.Profile,
-                    Quests = [..ldbc.Quests.Select(q => q.Id)],
-                    Inventory = ldbc.Inventory,
-                    ArmoryInventory = ldbc.ArmoryInventory,
-                    Saddle = ldbc.Saddle,
-                    Gear = ldbc.Gear,
-                    Retainers = ldbc.Retainers,
-                    Minions = [..ldbc.Minions],
-                    Mounts = [..ldbc.Mounts],
-                    TripleTriadCards = [..ldbc.TripleTriadCards],
-                    Emotes = [..ldbc.Emotes],
-                    Bardings = [..ldbc.Bardings],
-                    FramerKits = [..ldbc.FramerKits],
-                    OrchestrionRolls = [..ldbc.OrchestrionRolls],
-                    Ornaments = [..ldbc.Ornaments],
-                    Glasses = [..ldbc.Glasses],
-                    BeastReputations = ldbc.BeastReputations,
-                    CurrenciesHistory = db.GetCollection<CurrenciesHistory>().Find(c => c.CharacterId == ldbc.Id)
-                        .AsList()
-                };
-                characters.Add(character);
-            }
-
-            Plugin.Log.Debug($"LiteDB has found {count} characters");
-            return characters;
         }
 
         public static Character? GetCharacter(SqliteConnection db, ulong id)
