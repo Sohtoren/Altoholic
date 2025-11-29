@@ -2101,9 +2101,9 @@ namespace Altoholic
                         ImGui.ColorButton($"##Gear_{item.ItemId}#Dye#1", StainToVector4(dye.Item2),
                             ImGuiColorEditFlags.None, new Vector2(16, 16));
                         ImGui.SameLine();
-                        ImGui.PushStyleColor(ImGuiCol.Text, ConvertColorToVector4(ConvertColorToAbgr(dye.Item2)));
+                        //ImGui.PushStyleColor(ImGuiCol.Text, ConvertColorToVector4(ConvertColorToAbgr(dye.Item2)));
                         ImGui.TextUnformatted(dye.Item1);
-                        ImGui.PopStyleColor();
+                        //ImGui.PopStyleColor();
                     }
                 }
 
@@ -2115,9 +2115,9 @@ namespace Altoholic
                         ImGui.ColorButton($"##Gear_{item.ItemId}#Dye#2", StainToVector4(dye2.Item2),
                             ImGuiColorEditFlags.None, new Vector2(16, 16));
                         ImGui.SameLine();
-                        ImGui.PushStyleColor(ImGuiCol.Text, ConvertColorToVector4(ConvertColorToAbgr(dye2.Item2)));
+                        //ImGui.PushStyleColor(ImGuiCol.Text, ConvertColorToVector4(ConvertColorToAbgr(dye2.Item2)));
                         ImGui.TextUnformatted(dye2.Item1);
-                        ImGui.PopStyleColor();
+                        //ImGui.PopStyleColor();
                     }
                 }
 
