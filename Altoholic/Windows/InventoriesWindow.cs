@@ -296,12 +296,6 @@ namespace Altoholic.Windows
                 ImGui.TextUnformatted($"{itm.Value.Name}");
             }
 
-            /*List<Character> characters =
-                chars.FindAll(c => c.Inventory.FindAll(ci => ci.ItemId == _currentItem).Count > 0);*/
-            //Todo: add retainer, glam dresser and armoire inventories
-            //Same presentation as characterWindow gils: total displayed and detail on mousehover
-            /*List<Character> r = chars.FindAll(c =>
-                c.Retainers.ForEach(retainer => retainer.Inventory.FindAll(ri => ri.ItemId == _currentItem).Count > 0));*/
             List<CharacterInventories> inventories = [];
             foreach (Character character in chars)
             {
@@ -1254,6 +1248,12 @@ namespace Altoholic.Windows
 
         private void DrawArmoire(Character currentCharacter)
         {
+            if (currentCharacter.Armoire.Count == 0)
+            {
+                ImGui.TextUnformatted($"{Loc.Localize("ArmoireNotLoaded", "No item found. You might need open the armoire to update")}");
+                return;
+            }
+
             using var armoireTable = ImRaii.Table("###armoireTable", 1, ImGuiTableFlags.ScrollY);
             if (!armoireTable) return;
             ImGui.TableSetupColumn($"###armoireTable#{currentCharacter.CharacterId}#Col1",

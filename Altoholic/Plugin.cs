@@ -44,26 +44,26 @@ namespace Altoholic
 {
     public sealed class Plugin : IDalamudPlugin
     {
-        public static string Name => "Altoholic";
+        private static string Name => "Altoholic";
         private const string CommandName = "/altoholic";
         private readonly Array _questIds = Enum.GetValues(typeof(QuestIds));
 
         [PluginService] public static IDalamudPluginInterface PluginInterface { get; set; } = null!;
-        [PluginService] public static IClientState ClientState { get; set; } = null!;
-        [PluginService] public static ICommandManager CommandManager { get; set; } = null!;
-        [PluginService] public static IFramework Framework { get; set; } = null!;
+        [PluginService] private static IClientState ClientState { get; set; } = null!;
+        [PluginService] private static ICommandManager CommandManager { get; set; } = null!;
+        [PluginService] private static IFramework Framework { get; set; } = null!;
         [PluginService] public static IPluginLog Log { get; set; } = null!;
         [PluginService] public static IDataManager DataManager { get; set; } = null!;
         [PluginService] public static ITextureProvider TextureProvider { get; set; } = null!;
-        [PluginService] public static INotificationManager NotificationManager { get; set; } = null!;
-        [PluginService] public static ICondition Condition { get; set; } = null!;
+        [PluginService] private static INotificationManager NotificationManager { get; set; } = null!;
+        [PluginService] private static ICondition Condition { get; set; } = null!;
         [PluginService] public static ISigScanner SigScanner { get; set; } = null!;
-        [PluginService] public static IGameInteropProvider Hook { get; set; } = null!;
+        [PluginService] private static IGameInteropProvider Hook { get; set; } = null!;
         [PluginService] public static IChatGui ChatGui { get; set; } = null!;
-        [PluginService] public static IDutyState DutyState { get; set; } = null!;
-        [PluginService] public static IGameInventory GameInventory { get; set; } = null!;
-        [PluginService] public static IPlayerState PlayerState { get; set; } = null!;
-        [PluginService] public static IObjectTable ObjectTable { get; set; } = null!;
+        [PluginService] private static IDutyState DutyState { get; set; } = null!;
+        [PluginService] private static IGameInventory GameInventory { get; set; } = null!;
+        [PluginService] private static IPlayerState PlayerState { get; set; } = null!;
+        [PluginService] private static IObjectTable ObjectTable { get; set; } = null!;
 
 
         private readonly Hook<UIModule.Delegates.HandlePacket> _playtimeHook;
