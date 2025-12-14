@@ -3796,6 +3796,7 @@ namespace Altoholic
                     character.HasQuest((int)QuestIds.EVENT_MOONFIRE_FAIRE_2025),
                     character.HasQuest((int)QuestIds.EVENT_RISING_2025),
                     character.HasQuest((int)QuestIds.EVENT_ALL_SAINTS_WAKE_2025),
+                    character.HasQuest((int)QuestIds.EVENT_STARLIGHT_2025),
                 ];
                 result.Add(completedQuests);
             }
