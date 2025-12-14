@@ -599,7 +599,19 @@ namespace Altoholic.Database
                 const string updateSql =
                     $"UPDATE {CharacterTableName} SET [FirstName] = @FirstName, [LastName] = @LastName, [HomeWorld] = @HomeWorld, [Datacenter] = @Datacenter, [Region] = @Region, [IsSprout] = @IsSprout, [IsBattleMentor] = @IsBattleMentor, [IsTradeMentor] = @IsTradeMentor, [IsReturner] = @IsReturner, [LastJob] = @LastJob, [LastJobLevel] = @LastJobLevel, [FCTag] = @FCTag, [FreeCompany] = @FreeCompany, [LastOnline] = @LastOnline, [PlayTime] = @PlayTime, [LastPlayTimeUpdate] = @LastPlayTimeUpdate, [HasPremiumSaddlebag] = @HasPremiumSaddlebag, [PlayerCommendations] = @PlayerCommendations, [CurrentFacewear] = @CurrentFacewear, [CurrentOrnament] = @CurrentOrnament, [UnreadLetters] = @UnreadLetters, [Attributes] = @Attributes, [Currencies] = @Currencies, [Jobs] = @Jobs, [Profile] = @Profile, [Quests] = @Quests, [Inventory] = @Inventory, [ArmoryInventory] = @ArmoryInventory, [Saddle] = @Saddle, [Gear] = @Gear, [Retainers] = @Retainers, [BlacklistedRetainers] = @BlacklistedRetainers, [Minions] = @Minions, [Mounts] = @Mounts, [TripleTriadCards] = @TripleTriadCards, [Emotes] = @Emotes, [Bardings] = @Bardings, [FramerKits] = @FramerKits, [OrchestrionRolls] = @OrchestrionRolls, [Ornaments] = @Ornaments, [Glasses] = @Glasses, [BeastReputations] = @BeastReputations, [Duties] = @Duties, [DutiesUnlocked] = @DutiesUnlocked, [Houses] = @Houses, [Hairstyles] = @Hairstyles, [Facepaints] = @Facepaints, [SecretRecipeBooks] = @SecretRecipeBooks, [Vistas] = @Vistas, [SightseeingLogUnlockState] = @SightseeingLogUnlockState, [SightseeingLogUnlockStateEx] = @SightseeingLogUnlockStateEx, [Armoire] = @Armoire, [GlamourDresser] = @GlamourDresser, [PvPProfile] = @PvPProfile WHERE [CharacterId] = @CharacterId";
                 int result = db.Execute(updateSql, FormatCharacterForDatabase(character));
-                return result;
+                if (result != 1)
+                {
+                    return result;
+                }
+
+                if (character.Currencies == null)
+                {
+                    return result;
+                }
+
+                int result2 = AddCharacterCurrencyHistory(db, character.CharacterId, character.Currencies);
+                Plugin.Log.Debug($"UpdateCharacter => AddCharacterCurrencyHistory result: {result2}");
+                return result2;
             }
             catch (Exception ex)
             {
@@ -955,7 +967,7 @@ namespace Altoholic.Database
             return result;
         }
 
-        public static int AddCharacterWithCurrenciesHistories(SqliteConnection db, Character character)
+        private static int AddCharacterWithCurrenciesHistories(SqliteConnection db, Character character)
         {
             Plugin.Log.Debug("Entering AddCharacterWithCurrenciesHistories()");
             /*const string insertQuery = $"INSERT INTO {CharacterTableName}([CharacterId], [FirstName], [LastName], [HomeWorld], [Datacenter], [Region], [IsSprout], [IsBattleMentor], [IsTradeMentor], [IsReturner], [LastJob], [LastJobLevel], [FCTag], [FreeCompany], [LastOnline], [PlayTime], [LastPlayTimeUpdate], [HasPremiumSaddlebag], [PlayerCommendations], [Attributes], [Currencies], [Jobs], [Profile], [Quests], [Inventory], [ArmoryInventory], [Saddle], [Gear], [Retainers], [Minions], [Mounts], [TripleTriadCards], [Emotes], [Bardings], [FramerKits], [OrchestrionRolls], [Ornaments], [Glasses], [BeastReputations], [Duties]) " +
@@ -998,7 +1010,7 @@ namespace Altoholic.Database
             transaction.Commit();
         }
 
-        public static int AddCharacterCurrencyHistory(SqliteConnection db, CurrenciesHistory ch)
+        private static int AddCharacterCurrencyHistory(SqliteConnection db, CurrenciesHistory ch)
         {
             Plugin.Log.Debug(
                 $"AddCharacterCurrencyHistory with params: {ch.CharacterId}, {ch.Currencies}, {ch.Datetime}");
@@ -1009,7 +1021,7 @@ namespace Altoholic.Database
             return result;
         }
 
-        public static int AddCharacterCurrencyHistory(SqliteConnection db, ulong id, PlayerCurrencies pc)
+        private static int AddCharacterCurrencyHistory(SqliteConnection db, ulong id, PlayerCurrencies pc)
         {
             Plugin.Log.Debug("Entering AddCharacterCurrencyHistory()");
             long datetime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
