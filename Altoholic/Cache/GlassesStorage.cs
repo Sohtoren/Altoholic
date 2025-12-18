@@ -21,7 +21,7 @@ namespace Altoholic.Cache
             foreach (Glasses glass in glasses.Where(g =>
                          g.Id is 1 or 13 or 25 or 37 or 49 or 61 or 73 or 85 or 97 or 109 or 121 or 133 or 145 or 157
                              or 169 or 181 or 193 or 205 or 217 or 229 or 241 or 253 or 265 or 277 or 289 or 301 or 313
-                             or 325 or 337 or 349 or 361 or 373 or 385 or 397 or 421 or 433 or 445 or 457 or 469))
+                             or 325 or 337 or 349 or 361 or 373 or 385 or 397 or 421 or 433 or 445 or 457 or 469 or 481 or 493 or 505 or 517 or 529 or 541 or 577 or 589))
             {
                 globalCache.IconStorage.LoadIcon(glass.Icon);
                 _glasses.Add(glass.Id, glass);

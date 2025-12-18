@@ -29,6 +29,7 @@ namespace Altoholic.Cache
                 _itemDetailsTextures.Add(i,
                     _itemDetailsUld.LoadTexturePart("ui/uld/ItemDetail_hr1.tex", i));
             }
+            Plugin.Log.Debug("IconStorage Init() done");
         }
 
         public IDalamudTextureWrap this[uint id]

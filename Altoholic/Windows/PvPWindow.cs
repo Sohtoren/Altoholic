@@ -513,7 +513,7 @@ namespace Altoholic.Windows
                         ImGui.TableNextRow();
                         ImGui.TableSetColumnIndex(0);
                         ImGui.TextUnformatted(
-                            $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 14900).ToUpper()} 9");
+                            $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 14900).ToUpper()} 10");
                         using (var pvpProfileSeriesCurrentExperienceTabTable =
                                ImRaii.Table("###pvpProfileSeriesCurrentExperienceTabTable ", 2,
                                    ImGuiTableFlags.None, new Vector2(400, 40)))
@@ -537,35 +537,35 @@ namespace Altoholic.Windows
 
                         ImGui.TextUnformatted(
                             $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 16432)}");
-                        using (ImRaii.IEndObject t = ImRaii.Table("###Series#Rewards#9#Table", 5))
+                        using (ImRaii.IEndObject t = ImRaii.Table("###Series#Rewards#10#Table", 5))
                         {
                             if (t)
                             {
-                                ImGui.TableSetupColumn("###Series#Rewards#8#Table#Reward#Emote",
+                                ImGui.TableSetupColumn("###Series#Rewards#10#Table#Reward#Emote",
                                     ImGuiTableColumnFlags.WidthFixed, 36);
-                                ImGui.TableSetupColumn("###Series#Rewards#8#Table#Reward#FramerKit",
+                                ImGui.TableSetupColumn("###Series#Rewards#10#Table#Reward#FramerKit",
                                     ImGuiTableColumnFlags.WidthFixed, 36);
-                                ImGui.TableSetupColumn($"###Series#Rewards#8#Table#Reward#Minion",
+                                ImGui.TableSetupColumn($"###Series#Rewards#10#Table#Reward#Minion",
                                     ImGuiTableColumnFlags.WidthFixed, 36);
-                                ImGui.TableSetupColumn($"###Series#Rewards#8#Table#Reward#Minion2",
+                                ImGui.TableSetupColumn($"###Series#Rewards#10#Table#Reward#Minion2",
                                     ImGuiTableColumnFlags.WidthFixed, 36);
-                                ImGui.TableSetupColumn($"###Series#Rewards#8#Table#Reward#Framerkit2",
+                                ImGui.TableSetupColumn($"###Series#Rewards#01#Table#Reward#Framerkit2",
                                     ImGuiTableColumnFlags.WidthFixed, 36);
                                 ImGui.TableNextRow();
                                 ImGui.TableSetColumnIndex(0);
-                                DrawEmote(307, currentCharacter.HasEmote(307));
-                                uint? fkId = _globalCache.FramerKitStorage.GetFramerKitIdFromItemId(46736);
+                                DrawEmote(317, currentCharacter.HasEmote(317));
+                                uint? fkId = _globalCache.FramerKitStorage.GetFramerKitIdFromItemId(49172);
                                 if (fkId == null) return;
                                 ImGui.TableSetColumnIndex(1);
                                 DrawFramerKit(fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
                                 ImGui.TableSetColumnIndex(2);
                                 DrawMinion(556, currentCharacter.HasMinion(556));
                                 ImGui.TableSetColumnIndex(3);
-                                DrawMinion(555, currentCharacter.HasMinion(555));
-                                ImGui.TableSetColumnIndex(4);
-                                uint? fkId2 = _globalCache.FramerKitStorage.GetFramerKitIdFromItemId(46737);
+                                uint? fkId2 = _globalCache.FramerKitStorage.GetFramerKitIdFromItemId(49173);
                                 if (fkId2 == null) return;
                                 DrawFramerKit(fkId2.Value, currentCharacter.HasFramerKit(fkId2.Value));
+                                ImGui.TableSetColumnIndex(4);
+                                DrawMount(394, currentCharacter.HasMount(394));
                             }
                         }
 
@@ -582,6 +582,57 @@ namespace Altoholic.Windows
                             ImGui.TableSetupColumn(
                                 $"###pvpProfileSeriesCurrentExperienceTabTable #{currentCharacter.CharacterId}#Col1",
                                 ImGuiTableColumnFlags.WidthStretch);
+
+                            ImGui.TableNextRow();
+                            ImGui.TableSetColumnIndex(0);
+                            if (ImGui.CollapsingHeader(
+                                $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 14900)} 9###Series#Rewards#9"))
+                            {
+                                uint? series9Rank =
+                                    currentCharacter.PvPProfile.SeriesPersonalRanks.GetValueOrDefault((uint)9);
+                                uint? series9Claimed =
+                                    currentCharacter.PvPProfile.SeriesPersonalRanksClaimed.GetValueOrDefault(
+                                        (uint)7);
+                                if (series9Rank is not null)
+                                {
+                                    ImGui.TextUnformatted(
+                                        $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 14860).ToUpper()} {series9Rank.Value}");
+                                }
+
+                                ImGui.TextUnformatted(
+                                $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 16432)}");
+                                using (ImRaii.IEndObject t = ImRaii.Table("###Series#Rewards#9#Table", 5))
+                                {
+                                    if (t)
+                                    {
+                                        ImGui.TableSetupColumn("###Series#Rewards#9#Table#Reward#Emote",
+                                            ImGuiTableColumnFlags.WidthFixed, 36);
+                                        ImGui.TableSetupColumn("###Series#Rewards#9#Table#Reward#FramerKit",
+                                            ImGuiTableColumnFlags.WidthFixed, 36);
+                                        ImGui.TableSetupColumn($"###Series#Rewards#9#Table#Reward#Minion",
+                                            ImGuiTableColumnFlags.WidthFixed, 36);
+                                        ImGui.TableSetupColumn($"###Series#Rewards#9#Table#Reward#Minion2",
+                                            ImGuiTableColumnFlags.WidthFixed, 36);
+                                        ImGui.TableSetupColumn($"###Series#Rewards#9#Table#Reward#Framerkit2",
+                                            ImGuiTableColumnFlags.WidthFixed, 36);
+                                        ImGui.TableNextRow();
+                                        ImGui.TableSetColumnIndex(0);
+                                        DrawEmote(307, currentCharacter.HasEmote(307));
+                                        uint? fkId = _globalCache.FramerKitStorage.GetFramerKitIdFromItemId(46736);
+                                        if (fkId == null) return;
+                                        ImGui.TableSetColumnIndex(1);
+                                        DrawFramerKit(fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
+                                        ImGui.TableSetColumnIndex(2);
+                                        DrawMinion(556, currentCharacter.HasMinion(556));
+                                        ImGui.TableSetColumnIndex(3);
+                                        DrawMinion(555, currentCharacter.HasMinion(555));
+                                        ImGui.TableSetColumnIndex(4);
+                                        uint? fkId2 = _globalCache.FramerKitStorage.GetFramerKitIdFromItemId(46737);
+                                        if (fkId2 == null) return;
+                                        DrawFramerKit(fkId2.Value, currentCharacter.HasFramerKit(fkId2.Value));
+                                    }
+                                }
+                            }
 
                             ImGui.TableNextRow();
                             ImGui.TableSetColumnIndex(0);

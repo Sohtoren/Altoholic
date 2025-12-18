@@ -20,6 +20,7 @@ namespace Altoholic.Cache
 
             foreach (Emote e in emotes)
             {
+                if (e.Id is 88) continue;//Sleep emote is missing icon
                 globalCache.IconStorage.LoadIcon(e.Icon);
                 _emotes.Add(e.Id, e);
             }

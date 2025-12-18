@@ -18,6 +18,7 @@ namespace Altoholic.Models
         public int Allagan_Tomestone_Of_Lore { get; init; }
         public int Allagan_Tomestone_Of_Mathematics { get; init; }
         public int Allagan_Tomestone_Of_Mendacity { get; init; }
+        public int Allagan_Tomestone_Of_Mnemonics { get; init; }
         public int Allagan_Tomestone_Of_Mythology { get; init; }
         public int Allagan_Tomestone_Of_Phantasmagoria { get; init; }
         public int Allagan_Tomestone_Of_Philosophy { get; init; }

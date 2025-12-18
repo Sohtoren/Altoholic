@@ -5,6 +5,7 @@
   "Description": "Get informations (gils, currencies,  items, inventory, retainers, etc) and progress from all your characters",
   "ApplicableVersion": "any",
   "InternalName": "Altoholic",
+  "TestingDalamudApiLevel": "any",
   "Tags": [
     "alts",
     "altoholic",

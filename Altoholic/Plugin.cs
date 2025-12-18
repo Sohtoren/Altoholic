@@ -57,7 +57,7 @@ namespace Altoholic
         [PluginService] public static ITextureProvider TextureProvider { get; set; } = null!;
         [PluginService] private static INotificationManager NotificationManager { get; set; } = null!;
         [PluginService] private static ICondition Condition { get; set; } = null!;
-        [PluginService] public static ISigScanner SigScanner { get; set; } = null!;
+        [PluginService] public static Dalamud.Plugin.Services.ISigScanner SigScanner { get; set; } = null!;
         [PluginService] private static IGameInteropProvider Hook { get; set; } = null!;
         [PluginService] public static IChatGui ChatGui { get; set; } = null!;
         [PluginService] private static IDutyState DutyState { get; set; } = null!;
@@ -736,7 +736,7 @@ namespace Altoholic
 
             if (_blacklistedCharacters.Exists(b => b.CharacterId == _localPlayer.CharacterId)) return;
 
-            string name = lPlayer.Name.TextValue;
+            string name = PlayerState.CharacterName;
             if (string.IsNullOrEmpty(name)) return;
             string[] names = name.Split(" ");
             if (names.Length == 2)
@@ -1163,6 +1163,7 @@ namespace Altoholic
                 Allagan_Tomestone_Of_Lore = inventoryManager.GetInventoryItemCount((uint)Currencies.ALLAGAN_TOMESTONE_OF_LORE, false, false, false),
                 Allagan_Tomestone_Of_Mathematics = inventoryManager.GetInventoryItemCount((uint)Currencies.ALLAGAN_TOMESTONE_OF_MATHEMATICS, false, false, false),
                 Allagan_Tomestone_Of_Mendacity = inventoryManager.GetInventoryItemCount((uint)Currencies.ALLAGAN_TOMESTONE_OF_MENDACITY, false, false, false),
+                Allagan_Tomestone_Of_Mnemonics = inventoryManager.GetInventoryItemCount((uint)Currencies.ALLAGAN_TOMESTONE_OF_MNEMONICS, false, false, false),
                 Allagan_Tomestone_Of_Mythology = inventoryManager.GetInventoryItemCount((uint)Currencies.ALLAGAN_TOMESTONE_OF_MYTHOLOGY, false, false, false),
                 Allagan_Tomestone_Of_Phantasmagoria = inventoryManager.GetInventoryItemCount((uint)Currencies.ALLAGAN_TOMESTONE_OF_PHANTASMAGORIA, false, false, false),
                 Allagan_Tomestone_Of_Philosophy = inventoryManager.GetInventoryItemCount((uint)Currencies.ALLAGAN_TOMESTONE_OF_PHILOSOPHY, false, false, false),
