@@ -3833,6 +3833,7 @@ namespace Altoholic
                     character.HasQuest((int)QuestIds.HILDIBRAND_EW_GENTLEMEN_AT_HEART),
                     character.HasQuest((int)QuestIds.HILDIBRAND_DT_THE_CASE_OF_THE_DISPLACED_INSPECTOR),
                     character.HasQuest((int)QuestIds.HILDIBRAND_DT_THE_CASE_OF_THE_FIENDISH_FUGITIVES),
+                    character.HasQuest((int)QuestIds.HILDIBRAND_DT_ON_THE_TRAIL_OF_DESTRUCTION),
                 ];
                 result.Add(completedQuests);
             }

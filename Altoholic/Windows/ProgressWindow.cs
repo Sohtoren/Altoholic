@@ -3902,6 +3902,7 @@ namespace Altoholic.Windows
             ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 8175)}");
             DrawAllLine(chars, charactersQuests, $"{_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.HILDIBRAND_DT_THE_CASE_OF_THE_DISPLACED_INSPECTOR)}", 19);
             DrawAllLine(chars, charactersQuests, $"{_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.HILDIBRAND_DT_THE_CASE_OF_THE_FIENDISH_FUGITIVES)}", 20);
+            DrawAllLine(chars, charactersQuests, $"{_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.HILDIBRAND_DT_ON_THE_TRAIL_OF_DESTRUCTION)}", 21);
         }
 
         private void DrawRoleQuestQuest(List<Character> chars)
