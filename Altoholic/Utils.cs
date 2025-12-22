@@ -1813,7 +1813,7 @@ namespace Altoholic
             ImGui.EndTooltip();
         }
 
-        public static void DrawInventoryItemTooltip(ClientLanguage currentLocale, ref GlobalCache globalCache, Inventory item, bool armoire = false)
+        public static void DrawInventoryItemTooltip(ClientLanguage currentLocale, ref GlobalCache globalCache, Inventory item, bool armoire = false, bool canBeInASet = false)
         {
             ItemItemLevel? itm = globalCache.ItemStorage.LoadItemWithItemLevel(currentLocale, item.ItemId);
             Item? dbItem = itm?.Item;
@@ -1910,6 +1910,12 @@ namespace Altoholic
             ImGui.Separator();
             ImGui.TextUnformatted(
                 $"{globalCache.AddonStorage.LoadAddonString(currentLocale, 497)}"); // Crafting & Repairs
+
+            if (canBeInASet)
+            {
+                ImGui.Separator();
+                ImGui.TextUnformatted($"{globalCache.AddonStorage.LoadAddonString(currentLocale, 15636)}");
+            }
 
             ImGui.EndTooltip();
         }
@@ -2043,7 +2049,7 @@ namespace Altoholic
         }
 
         public static void DrawGlamourDresserTooltip(ClientLanguage currentLocale, ref GlobalCache globalCache, GlamourItem item,
-            ItemItemLevel itm, bool isInASet, IDalamudTextureWrap? miragePrismIcon, Vector2 miragePrismBoxSetIconUv0, Vector2 miragePrismBoxSetIconUv1)
+            ItemItemLevel itm, bool isInASet, IDalamudTextureWrap? miragePrismIcon, Vector2 miragePrismBoxSetIconUv0, Vector2 miragePrismBoxSetIconUv1, bool isGlamourDresser = false, bool canBeInASet = false)
         {
             Item? dbItem = itm.Item;
             if (dbItem == null) return;
@@ -2092,35 +2098,37 @@ namespace Altoholic
                     $"{globalCache.AddonStorage.LoadAddonString(currentLocale, 1034)} {dbItem.Value.LevelEquip}");
                 ImGui.Separator();
 
-                if (item.Stain0 > 0)
+                if (!isGlamourDresser)
                 {
-                    ImGui.Separator();
-                    (string, uint) dye = globalCache.StainStorage.LoadStainWithColor(currentLocale, item.Stain0);
-                    if (!string.IsNullOrEmpty(dye.Item1))
+                    if (item.Stain0 > 0)
                     {
-                        ImGui.ColorButton($"##Gear_{item.ItemId}#Dye#1", StainToVector4(dye.Item2),
-                            ImGuiColorEditFlags.None, new Vector2(16, 16));
-                        ImGui.SameLine();
-                        //ImGui.PushStyleColor(ImGuiCol.Text, ConvertColorToVector4(ConvertColorToAbgr(dye.Item2)));
-                        ImGui.TextUnformatted(dye.Item1);
-                        //ImGui.PopStyleColor();
+                        ImGui.Separator();
+                        (string, uint) dye = globalCache.StainStorage.LoadStainWithColor(currentLocale, item.Stain0);
+                        if (!string.IsNullOrEmpty(dye.Item1))
+                        {
+                            ImGui.ColorButton($"##Gear_{item.ItemId}#Dye#1", StainToVector4(dye.Item2),
+                                ImGuiColorEditFlags.None, new Vector2(16, 16));
+                            ImGui.SameLine();
+                            //ImGui.PushStyleColor(ImGuiCol.Text, ConvertColorToVector4(ConvertColorToAbgr(dye.Item2)));
+                            ImGui.TextUnformatted(dye.Item1);
+                            //ImGui.PopStyleColor();
+                        }
+                    }
+
+                    if (item.Stain1 > 0)
+                    {
+                        (string, uint) dye2 = globalCache.StainStorage.LoadStainWithColor(currentLocale, item.Stain1);
+                        if (!string.IsNullOrEmpty(dye2.Item1))
+                        {
+                            ImGui.ColorButton($"##Gear_{item.ItemId}#Dye#2", StainToVector4(dye2.Item2),
+                                ImGuiColorEditFlags.None, new Vector2(16, 16));
+                            ImGui.SameLine();
+                            //ImGui.PushStyleColor(ImGuiCol.Text, ConvertColorToVector4(ConvertColorToAbgr(dye2.Item2)));
+                            ImGui.TextUnformatted(dye2.Item1);
+                            //ImGui.PopStyleColor();
+                        }
                     }
                 }
-
-                if (item.Stain1 > 0)
-                {
-                    (string, uint) dye2 = globalCache.StainStorage.LoadStainWithColor(currentLocale, item.Stain1);
-                    if (!string.IsNullOrEmpty(dye2.Item1))
-                    {
-                        ImGui.ColorButton($"##Gear_{item.ItemId}#Dye#2", StainToVector4(dye2.Item2),
-                            ImGuiColorEditFlags.None, new Vector2(16, 16));
-                        ImGui.SameLine();
-                        //ImGui.PushStyleColor(ImGuiCol.Text, ConvertColorToVector4(ConvertColorToAbgr(dye2.Item2)));
-                        ImGui.TextUnformatted(dye2.Item1);
-                        //ImGui.PopStyleColor();
-                    }
-                }
-
                 ImGui.Separator();
                 if (isInASet)
                 {
@@ -2131,6 +2139,10 @@ namespace Altoholic
                     }
                     ImGui.SameLine();
                     ImGui.TextUnformatted($"{globalCache.AddonStorage.LoadAddonString(currentLocale, 15643)}");
+                }
+                if (canBeInASet)
+                {
+                    ImGui.TextUnformatted($"{globalCache.AddonStorage.LoadAddonString(currentLocale, 15636)}");
                 }
 
                 ImGui.TextUnformatted($"{dbItem.Value.Description}");

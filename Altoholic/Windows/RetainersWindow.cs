@@ -676,7 +676,18 @@ namespace Altoholic.Windows
 
                     if (itm.Value.StackSize > 1)
                     {
-                        ImGui.SetCursorPos(new Vector2(p.X + 26, p.Y + 20));
+                        if (item.Quantity >= 100)
+                        {
+                            ImGui.SetCursorPos(new Vector2(p.X + 20, p.Y + 20));
+                        }
+                        else if (item.Quantity > 9 && item.Quantity <= 100)
+                        {
+                            ImGui.SetCursorPos(new Vector2(p.X + 26, p.Y + 20));
+                        }
+                        else
+                        {
+                            ImGui.SetCursorPos(new Vector2(p.X + 30, p.Y + 20));
+                        }
                         ImGui.TextUnformatted($"{item.Quantity}");
                         ImGui.SetCursorPos(p);
                     }

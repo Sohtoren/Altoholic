@@ -64,6 +64,7 @@ namespace Altoholic.Cache
 
         public (string, uint) LoadStainWithColor(ClientLanguage currentLocale, uint id)
         {
+            if (id > _stains.Count) return (string.Empty, 0);
             Stain s = _stains[id];
             string name = currentLocale switch
             {

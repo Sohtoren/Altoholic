@@ -3,10 +3,8 @@
 
   <PropertyGroup>
     <Authors>Sohtoren</Authors>
-    <Company></Company>
-    <Version>1.1.1</Version>
+    <Version>1.1.2</Version>
     <Description>Altoholic plugin</Description>
-    <Copyright></Copyright>
     <PackageProjectUrl>https://github.com/sohtoren/Altoholic</PackageProjectUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <IsPackable>false</IsPackable>
@@ -33,14 +31,8 @@
   </Reference>
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Assets\" />
+  <ItemGroup>    
     <Folder Include="Database\Migrations\" />
     <Folder Include="Windows\Progress\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Update="DalamudPackager" Version="14.0.1" />
-    <PackageReference Update="DotNet.ReproducibleBuilds" Version="1.2.39" />
   </ItemGroup>
 </Project>

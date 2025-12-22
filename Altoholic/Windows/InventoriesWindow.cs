@@ -66,6 +66,7 @@ namespace Altoholic.Windows
 
             _miragePrismBoxSetIcon = Plugin.TextureProvider.GetFromGame("ui/uld/MiragePrismBoxIcon_hr1.tex").RentAsync().Result;
             (_miragePrismBoxSetIconUv0, _miragePrismBoxSetIconUv1) = Utils.GetTextureCoordinate(_miragePrismBoxSetIcon.Size, 96, 96, 36, 36);
+            (_miragePrismBoxSetIconUv2, _miragePrismBoxSetIconUv3) = Utils.GetTextureCoordinate(_miragePrismBoxSetIcon.Size, 96, 132, 36, 36);
 
         }
 
@@ -83,6 +84,8 @@ namespace Altoholic.Windows
         private readonly IDalamudTextureWrap? _miragePrismBoxSetIcon;
         private readonly Vector2 _miragePrismBoxSetIconUv0;
         private readonly Vector2 _miragePrismBoxSetIconUv1;
+        private readonly Vector2 _miragePrismBoxSetIconUv2;
+        private readonly Vector2 _miragePrismBoxSetIconUv3;
 
         private InventoryType? _selectedTab;
 
@@ -787,17 +790,36 @@ namespace Altoholic.Windows
                     }
 
                     bool armoire = _globalCache.ArmoireStorage.CanBeInArmoireFromItemId(itm.Value.RowId);
+                    var sets = _globalCache.MirageSetStorage.GetMirageSetItemLookup(item.ItemId);
+                    bool canBeInASet = sets != null && sets.Count != 0;
+
                     Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Value.Icon, item.HQ), new Vector2(36, 36));
                     if (ImGui.IsItemHovered())
                     {
-                        Utils.DrawInventoryItemTooltip(_currentLocale, ref _globalCache, item, armoire);
+                        Utils.DrawInventoryItemTooltip(_currentLocale, ref _globalCache, item, armoire, canBeInASet);
                     }
 
                     if (itm.Value.StackSize > 1)
                     {
-                        ImGui.SetCursorPos(new Vector2(p.X + 26, p.Y + 20));
+                        if (item.Quantity >= 100)
+                        {
+                            ImGui.SetCursorPos(new Vector2(p.X + 20, p.Y + 20));
+                        }
+                        else if(item.Quantity > 9 && item.Quantity <= 100)
+                        {
+                            ImGui.SetCursorPos(new Vector2(p.X + 26, p.Y + 20));
+                        }
+                        else
+                        {
+                            ImGui.SetCursorPos(new Vector2(p.X + 30, p.Y + 20));
+                        }
                         ImGui.TextUnformatted($"{item.Quantity}");
                         ImGui.SetCursorPos(p);
+                    }
+
+                    if (canBeInASet)
+                    {
+                        DrawCanBeInASetIcon(p);
                     }
 
                     if (!armoire)
@@ -1486,6 +1508,9 @@ namespace Altoholic.Windows
                     continue;
                 }
 
+                var sets = _globalCache.MirageSetStorage.GetMirageSetItemLookup(item.ItemId);
+                bool canBeInASet = sets != null && sets.Count != 0;
+
                 bool hq = item.Flags.HasFlag(InventoryItem.ItemFlags.HighQuality);
                 Utils.DrawIcon(
                     _globalCache.IconStorage.LoadIcon(itm.Value.Icon,
@@ -1493,7 +1518,7 @@ namespace Altoholic.Windows
                 if (ImGui.IsItemHovered())
                 {
                     Utils.DrawGlamourDresserTooltip(_currentLocale, ref _globalCache,
-                        item, itl, isInASet, _miragePrismBoxSetIcon, _miragePrismBoxSetIconUv0, _miragePrismBoxSetIconUv1
+                        item, itl, isInASet, _miragePrismBoxSetIcon, _miragePrismBoxSetIconUv0, _miragePrismBoxSetIconUv1, true, canBeInASet
                         );
                 }
 
@@ -1504,7 +1529,22 @@ namespace Altoholic.Windows
                     ImGui.SetCursorPos(p);
                 }
 
+                if (!isInASet && canBeInASet)
+                {
+                    DrawCanBeInASetIcon(p);
+                }
+
                 maxIndex++;
+            }
+        }
+
+        private void DrawCanBeInASetIcon(Vector2 p)
+        {
+            if (_miragePrismBoxSetIcon is not null)
+            {
+                ImGui.SetCursorPos(p with { X = p.X + 20 });
+                ImGui.Image(_miragePrismBoxSetIcon.Handle, new Vector2(20, 20), _miragePrismBoxSetIconUv2, _miragePrismBoxSetIconUv3);
+                ImGui.SetCursorPos(p);
             }
         }
 
