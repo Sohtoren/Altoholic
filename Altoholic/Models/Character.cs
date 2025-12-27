@@ -32,6 +32,8 @@ namespace Altoholic.Models
         public ushort[] CurrentFacewear { get; init; } = [0,0];
         public ushort CurrentOrnament { get; set; }
         public ushort UnreadLetters { get; set; }
+        public bool IslandSanctuaryUnlocked { get; set; } = false;
+        public byte IslandSanctuaryLevel { get; set; }
         public Attributes? Attributes { get; set; }
         public PlayerCurrencies? Currencies { get; set; }
         public Jobs? Jobs { get; set; }

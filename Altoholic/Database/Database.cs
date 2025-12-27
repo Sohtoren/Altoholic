@@ -115,6 +115,8 @@ namespace Altoholic.Database
                                                     CurrentFacewear TEXT,
                                                     CurrentOrnament SMALLINT,
                                                     UnreadLetters SMALLINT,
+                                                    IslandSanctuaryUnlocked BIT,
+                                                    IslandSanctuaryLevel INT,
                                                     Attributes TEXT,
                                                     Currencies TEXT,
                                                     Jobs TEXT,
@@ -294,6 +296,23 @@ namespace Altoholic.Database
                         $"ALTER TABLE {CharacterTableName} ADD COLUMN UnreadLetters SMALLINT result: {result16}");
                 }
 
+                if (!DoesColumnExist(db, CharacterTableName, "IslandSanctuaryUnlocked"))
+                {
+                    Plugin.Log.Debug($"Column {CharacterTableName}.IslandSanctuaryUnlocked does not exist");
+                    const string sql27 = $"ALTER TABLE {CharacterTableName} ADD COLUMN IslandSanctuaryUnlocked BIT";
+                    int result27 = db.Execute(sql27);
+                    Plugin.Log.Debug(
+                        $"ALTER TABLE {CharacterTableName} ADD COLUMN IslandSanctuaryUnlocked BIT result: {result27}");
+                }
+                if (!DoesColumnExist(db, CharacterTableName, "IslandSanctuaryLevel"))
+                {
+                    Plugin.Log.Debug($"Column {CharacterTableName}.IslandSanctuaryUnlocked does not exist");
+                    const string sql27 = $"ALTER TABLE {CharacterTableName} ADD COLUMN IslandSanctuaryLevel INT";
+                    int result27 = db.Execute(sql27);
+                    Plugin.Log.Debug(
+                        $"ALTER TABLE {CharacterTableName} ADD COLUMN IslandSanctuaryLevel INT result: {result27}");
+                }
+
                 if (!DoesColumnExist(db, CharacterTableName, "Houses"))
                 {
                     Plugin.Log.Debug($"Column {CharacterTableName}.Houses does not exist");
@@ -305,10 +324,10 @@ namespace Altoholic.Database
                 if (!DoesColumnExist(db, CharacterTableName, "BlacklistedRetainers"))
                 {
                     Plugin.Log.Debug($"Column {CharacterTableName}.BlacklistedRetainers does not exist");
-                    const string sql16 = $"ALTER TABLE {CharacterTableName} ADD COLUMN BlacklistedRetainers TEXT";
-                    int result16 = db.Execute(sql16);
+                    const string sql26 = $"ALTER TABLE {CharacterTableName} ADD COLUMN BlacklistedRetainers TEXT";
+                    int result26 = db.Execute(sql26);
                     Plugin.Log.Debug(
-                        $"ALTER TABLE {CharacterTableName} ADD COLUMN BlacklistedRetainers TEXT result: {result16}");
+                        $"ALTER TABLE {CharacterTableName} ADD COLUMN BlacklistedRetainers TEXT result: {result26}");
                 }
             }
 
@@ -597,21 +616,32 @@ namespace Altoholic.Database
             try
             {
                 const string updateSql =
-                    $"UPDATE {CharacterTableName} SET [FirstName] = @FirstName, [LastName] = @LastName, [HomeWorld] = @HomeWorld, [Datacenter] = @Datacenter, [Region] = @Region, [IsSprout] = @IsSprout, [IsBattleMentor] = @IsBattleMentor, [IsTradeMentor] = @IsTradeMentor, [IsReturner] = @IsReturner, [LastJob] = @LastJob, [LastJobLevel] = @LastJobLevel, [FCTag] = @FCTag, [FreeCompany] = @FreeCompany, [LastOnline] = @LastOnline, [PlayTime] = @PlayTime, [LastPlayTimeUpdate] = @LastPlayTimeUpdate, [HasPremiumSaddlebag] = @HasPremiumSaddlebag, [PlayerCommendations] = @PlayerCommendations, [CurrentFacewear] = @CurrentFacewear, [CurrentOrnament] = @CurrentOrnament, [UnreadLetters] = @UnreadLetters, [Attributes] = @Attributes, [Currencies] = @Currencies, [Jobs] = @Jobs, [Profile] = @Profile, [Quests] = @Quests, [Inventory] = @Inventory, [ArmoryInventory] = @ArmoryInventory, [Saddle] = @Saddle, [Gear] = @Gear, [Retainers] = @Retainers, [BlacklistedRetainers] = @BlacklistedRetainers, [Minions] = @Minions, [Mounts] = @Mounts, [TripleTriadCards] = @TripleTriadCards, [Emotes] = @Emotes, [Bardings] = @Bardings, [FramerKits] = @FramerKits, [OrchestrionRolls] = @OrchestrionRolls, [Ornaments] = @Ornaments, [Glasses] = @Glasses, [BeastReputations] = @BeastReputations, [Duties] = @Duties, [DutiesUnlocked] = @DutiesUnlocked, [Houses] = @Houses, [Hairstyles] = @Hairstyles, [Facepaints] = @Facepaints, [SecretRecipeBooks] = @SecretRecipeBooks, [Vistas] = @Vistas, [SightseeingLogUnlockState] = @SightseeingLogUnlockState, [SightseeingLogUnlockStateEx] = @SightseeingLogUnlockStateEx, [Armoire] = @Armoire, [GlamourDresser] = @GlamourDresser, [PvPProfile] = @PvPProfile WHERE [CharacterId] = @CharacterId";
+                    $"UPDATE {CharacterTableName} SET [FirstName] = @FirstName, [LastName] = @LastName, [HomeWorld] = @HomeWorld, [Datacenter] = @Datacenter, [Region] = @Region, [IsSprout] = @IsSprout, [IsBattleMentor] = @IsBattleMentor, [IsTradeMentor] = @IsTradeMentor, [IsReturner] = @IsReturner, [LastJob] = @LastJob, [LastJobLevel] = @LastJobLevel, [FCTag] = @FCTag, [FreeCompany] = @FreeCompany, [LastOnline] = @LastOnline, [PlayTime] = @PlayTime, [LastPlayTimeUpdate] = @LastPlayTimeUpdate, [HasPremiumSaddlebag] = @HasPremiumSaddlebag, [PlayerCommendations] = @PlayerCommendations, [CurrentFacewear] = @CurrentFacewear, [CurrentOrnament] = @CurrentOrnament, [UnreadLetters] = @UnreadLetters, [IslandSanctuaryUnlocked] = @IslandSanctuaryUnlocked, [IslandSanctuaryLevel] = @IslandSanctuaryLevel, [Attributes] = @Attributes, [Currencies] = @Currencies, [Jobs] = @Jobs, [Profile] = @Profile, [Quests] = @Quests, [Inventory] = @Inventory, [ArmoryInventory] = @ArmoryInventory, [Saddle] = @Saddle, [Gear] = @Gear, [Retainers] = @Retainers, [BlacklistedRetainers] = @BlacklistedRetainers, [Minions] = @Minions, [Mounts] = @Mounts, [TripleTriadCards] = @TripleTriadCards, [Emotes] = @Emotes, [Bardings] = @Bardings, [FramerKits] = @FramerKits, [OrchestrionRolls] = @OrchestrionRolls, [Ornaments] = @Ornaments, [Glasses] = @Glasses, [BeastReputations] = @BeastReputations, [Duties] = @Duties, [DutiesUnlocked] = @DutiesUnlocked, [Houses] = @Houses, [Hairstyles] = @Hairstyles, [Facepaints] = @Facepaints, [SecretRecipeBooks] = @SecretRecipeBooks, [Vistas] = @Vistas, [SightseeingLogUnlockState] = @SightseeingLogUnlockState, [SightseeingLogUnlockStateEx] = @SightseeingLogUnlockStateEx, [Armoire] = @Armoire, [GlamourDresser] = @GlamourDresser, [PvPProfile] = @PvPProfile WHERE [CharacterId] = @CharacterId";
                 int result = db.Execute(updateSql, FormatCharacterForDatabase(character));
-                if (result != 1)
-                {
-                    return result;
-                }
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Plugin.Log.Error(ex.ToString());
+                return 0;
+            }
+        }
+        public static int UpdateCharacterCurrencyHistory(SqliteConnection db, Character character)
+        {
+            Plugin.Log.Debug(
+                $"Entering UpdateCharacterCurrencyHistory with character : id = {character.CharacterId}, FirstName = {character.FirstName}, LastName = {character.LastName}, HomeWorld = {character.HomeWorld}, DataCenter = {character.Datacenter}, LastJob = {character.LastJob}, LastJobLevel = {character.LastJobLevel}, FCTag = {character.FCTag}, FreeCompany = {character.FreeCompany}, LastOnline = {character.LastOnline}, PlayTime = {character.PlayTime}, LastPlayTimeUpdate = {character.LastPlayTimeUpdate}");
+            if (character.CharacterId == 0) return 0;
 
+            try
+            {
                 if (character.Currencies == null)
                 {
-                    return result;
+                    return 0;
                 }
 
-                int result2 = AddCharacterCurrencyHistory(db, character.CharacterId, character.Currencies);
-                Plugin.Log.Debug($"UpdateCharacter => AddCharacterCurrencyHistory result: {result2}");
-                return result2;
+                int result = AddCharacterCurrencyHistory(db, character.CharacterId, character.Currencies);
+                Plugin.Log.Debug($"UpdateCharacterCurrencyHistory => AddCharacterCurrencyHistory result: {result}");
+                return result;
             }
             catch (Exception ex)
             {
@@ -808,18 +838,20 @@ namespace Altoholic.Database
                 CurrentFacewear = currentFacewear,
                 CurrentOrnament = databaseCharacter.CurrentOrnament,
                 UnreadLetters = databaseCharacter.UnreadLetters,
+                IslandSanctuaryUnlocked = databaseCharacter.IslandSanctuaryUnlocked,
+                IslandSanctuaryLevel = databaseCharacter.IslandSanctuaryLevel,
                 Attributes = attributes,
                 Currencies = currencies,
                 Jobs = jobs,
                 Profile = profile,
-                Quests = [..quests],
+                Quests = [.. quests],
                 Inventory = inventory,
                 ArmoryInventory = armoryInventory,
                 Saddle = saddle,
                 Gear = gear,
                 Retainers = retainers,
                 BlacklistedRetainers = blacklistedRetainers,
-                Minions = [..minions],
+                Minions = [.. minions],
                 Mounts = [.. mounts],
                 TripleTriadCards = [.. tripleTriadCards],
                 Emotes = [.. emotes],
@@ -829,7 +861,7 @@ namespace Altoholic.Database
                 Ornaments = [.. ornaments],
                 Glasses = [.. glasses],
                 BeastReputations = beastReputations,
-                Duties = [..duties],
+                Duties = [.. duties],
                 DutiesUnlocked = [.. dutiesUnlocked],
                 Houses = [.. houses],
                 Hairstyles = [.. hairstyles],
@@ -906,6 +938,8 @@ namespace Altoholic.Database
                 CurrentFacewear = currentFacewear,
                 CurrentOrnament = character.CurrentOrnament,
                 UnreadLetters = character.UnreadLetters,
+                IslandSanctuaryUnlocked = character.IslandSanctuaryUnlocked,
+                IslandSanctuaryLevel = character.IslandSanctuaryLevel,
                 Attributes = attributes,
                 Currencies = currencies,
                 Jobs = jobs,
@@ -946,8 +980,8 @@ namespace Altoholic.Database
         {
             Plugin.Log.Debug("Entering AddCharacter()");
             const string insertQuery =
-                $"INSERT INTO {CharacterTableName}([CharacterId], [FirstName], [LastName], [HomeWorld], [Datacenter], [Region], [IsSprout], [IsBattleMentor], [IsTradeMentor], [IsReturner], [LastJob], [LastJobLevel], [FCTag], [FreeCompany], [LastOnline], [PlayTime], [LastPlayTimeUpdate], [HasPremiumSaddlebag], [PlayerCommendations], [CurrentFacewear], [CurrentOrnament], [UnreadLetters], [Attributes], [Currencies], [Jobs], [Profile], [Quests], [Inventory], [ArmoryInventory], [Saddle], [Gear], [Retainers], [BlacklistedRetainers], [Minions], [Mounts], [TripleTriadCards], [Emotes], [Bardings], [FramerKits], [OrchestrionRolls], [Ornaments], [Glasses], [BeastReputations], [Duties], [DutiesUnlocked], [Houses], [Hairstyles], [Facepaints], [SecretRecipeBooks], [Vistas], [SightseeingLogUnlockState], [SightseeingLogUnlockStateEx], [Armoire], [GlamourDresser], [PvPProfile]) " +
-                "VALUES (@CharacterId, @FirstName, @LastName, @HomeWorld, @Datacenter, @Region, @IsSprout, @IsBattleMentor, @IsTradeMentor, @IsReturner, @LastJob, @LastJobLevel, @FCTag, @FreeCompany, @LastOnline, @PlayTime, @LastPlayTimeUpdate, @HasPremiumSaddlebag, @PlayerCommendations, @CurrentFacewear, @CurrentOrnament, @UnreadLetters, @Attributes, @Currencies, @Jobs, @Profile, @Quests, @Inventory, @ArmoryInventory, @Saddle, @Gear, @Retainers, @BlacklistedRetainers, @Minions, @Mounts, @TripleTriadCards, @Emotes, @Bardings, @FramerKits, @OrchestrionRolls, @Ornaments, @Glasses, @BeastReputations, @Duties, @DutiesUnlocked, @Houses, @Hairstyles, @Facepaints, @SecretRecipeBooks, @Vistas, @SightseeingLogUnlockState, @SightseeingLogUnlockStateEx, @Armoire, @GlamourDresser, @PvPProfile)";
+                $"INSERT INTO {CharacterTableName}([CharacterId], [FirstName], [LastName], [HomeWorld], [Datacenter], [Region], [IsSprout], [IsBattleMentor], [IsTradeMentor], [IsReturner], [LastJob], [LastJobLevel], [FCTag], [FreeCompany], [LastOnline], [PlayTime], [LastPlayTimeUpdate], [HasPremiumSaddlebag], [PlayerCommendations], [CurrentFacewear], [CurrentOrnament], [UnreadLetters], [IslandSanctuaryUnlocked], [IslandSanctuaryLevel], [Attributes], [Currencies], [Jobs], [Profile], [Quests], [Inventory], [ArmoryInventory], [Saddle], [Gear], [Retainers], [BlacklistedRetainers], [Minions], [Mounts], [TripleTriadCards], [Emotes], [Bardings], [FramerKits], [OrchestrionRolls], [Ornaments], [Glasses], [BeastReputations], [Duties], [DutiesUnlocked], [Houses], [Hairstyles], [Facepaints], [SecretRecipeBooks], [Vistas], [SightseeingLogUnlockState], [SightseeingLogUnlockStateEx], [Armoire], [GlamourDresser], [PvPProfile]) " +
+                "VALUES (@CharacterId, @FirstName, @LastName, @HomeWorld, @Datacenter, @Region, @IsSprout, @IsBattleMentor, @IsTradeMentor, @IsReturner, @LastJob, @LastJobLevel, @FCTag, @FreeCompany, @LastOnline, @PlayTime, @LastPlayTimeUpdate, @HasPremiumSaddlebag, @PlayerCommendations, @CurrentFacewear, @CurrentOrnament, @UnreadLetters, @IslandSanctuaryUnlocked, @IslandSanctuaryLevel, @Attributes, @Currencies, @Jobs, @Profile, @Quests, @Inventory, @ArmoryInventory, @Saddle, @Gear, @Retainers, @BlacklistedRetainers, @Minions, @Mounts, @TripleTriadCards, @Emotes, @Bardings, @FramerKits, @OrchestrionRolls, @Ornaments, @Glasses, @BeastReputations, @Duties, @DutiesUnlocked, @Houses, @Hairstyles, @Facepaints, @SecretRecipeBooks, @Vistas, @SightseeingLogUnlockState, @SightseeingLogUnlockStateEx, @Armoire, @GlamourDresser, @PvPProfile)";
 
             int result = db.Execute(insertQuery, FormatCharacterForDatabase(character));
 

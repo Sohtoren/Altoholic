@@ -29,6 +29,8 @@ namespace Altoholic.Models
         public string CurrentFacewear { get; init; } = string.Empty;
         public ushort CurrentOrnament { get; init; } = 0;
         public ushort UnreadLetters { get; init; } = 0;
+        public bool IslandSanctuaryUnlocked { get; init; } = false;
+        public byte IslandSanctuaryLevel { get; init; } = 0;
         public string Attributes { get; init; } = string.Empty;
         public string Currencies { get; init; } = string.Empty;
         public string Jobs { get; init; } = string.Empty;

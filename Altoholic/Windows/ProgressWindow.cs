@@ -290,6 +290,17 @@ namespace Altoholic.Windows
                 }
             }
 
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 14252));
+            ImGui.TableSetColumnIndex(1);
+            foreach (Character currChar in chars)
+            {
+                ImGui.TableNextColumn();
+                ImGui.TextUnformatted($"{(currChar.IslandSanctuaryUnlocked ? currChar.IslandSanctuaryLevel : "")}");
+            }
+
+
             DrawAllCharsMount(chars, 277, 24000);
             DrawAllCharsMount(chars, 286, 35000);
             DrawAllCharsMount(chars, 282, 50000);

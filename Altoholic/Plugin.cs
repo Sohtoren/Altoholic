@@ -6,8 +6,8 @@ using Dalamud.Game;
 using Dalamud.Game.ClientState.Conditions;
 using Dalamud.Game.ClientState.Objects.SubKinds;
 using Dalamud.Game.Command;
-using Dalamud.Game.Inventory.InventoryEventArgTypes;
 using Dalamud.Game.Inventory;
+using Dalamud.Game.Inventory.InventoryEventArgTypes;
 using Dalamud.Game.Text;
 using Dalamud.Hooking;
 using Dalamud.Interface;
@@ -20,24 +20,25 @@ using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.Game.Character;
 using FFXIVClientStructs.FFXIV.Client.Game.Control;
+using FFXIVClientStructs.FFXIV.Client.Game.MJI;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using FFXIVClientStructs.FFXIV.Client.System.String;
 using FFXIVClientStructs.FFXIV.Client.UI;
+using FFXIVClientStructs.FFXIV.Client.UI.Agent;
+using FFXIVClientStructs.FFXIV.Client.UI.Info;
 using Lumina.Excel.Sheets;
 using Lumina.Text;
 using Microsoft.Data.Sqlite;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Numerics;
 using System.Runtime.InteropServices;
 using static FFXIVClientStructs.FFXIV.Client.UI.RaptureAtkModule;
 using Character = Altoholic.Models.Character;
-using FFXIVClientStructs.FFXIV.Client.UI.Info;
-using System.Numerics;
-using System.Diagnostics;
-using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using PvPProfile = Altoholic.Models.PvPProfile;
 
 namespace Altoholic
@@ -780,6 +781,7 @@ namespace Altoholic
             GetPlayerMail();
             GetHousing();
             GetPlayerGlamourInventory();
+            GetPlayerIsland();
 
             if (_autoSaveWatch.Elapsed.Minutes >= 1 && _autoSaveWatch.Elapsed.Minutes <= Configuration.AutoSaveTimer && _autoSaveWatch.Elapsed.Seconds == 0)
             {
@@ -1876,6 +1878,27 @@ namespace Altoholic
             //Log.Debug($"Add house: tt:{tt}, mId:{mId}, w:{ward + 1}, d:{division}, plot: {p}, room: {room}, id: {id}");
         }
 
+        private unsafe void GetPlayerIsland()
+        {
+            if(MJIManager.Instance() == null)
+            {
+                return;
+            }
+            if (!MJIManager.Instance()->IsPlayerInSanctuary)
+            {
+                return;
+            }
+            if(!MJIManager.Instance()->IslandState.CanEditIsland)
+            {
+                return;
+            }
+            if (_localPlayer.HasQuest((int)QuestIds.ISLAND_SANCTUARY))
+            {
+                _localPlayer.IslandSanctuaryUnlocked = true;
+                _localPlayer.IslandSanctuaryLevel = MJIManager.Instance()->IslandState.CurrentRank;
+            }
+        }
+
         private void CleanLastLocalCharacter()
         {
             _localPlayer = new Character();
@@ -1950,6 +1973,7 @@ namespace Altoholic
             Log.Debug("Altoholic : OnCharacterLogout called");
             GetPlayerCompletedQuests();
             UpdateCharacter();
+            Database.Database.UpdateCharacterCurrencyHistory(_db, _localPlayer);
             CleanLastLocalCharacter();
 
             ProgressWindow.IsOpen = false;
@@ -1983,7 +2007,7 @@ namespace Altoholic
             }
 
             if (_localPlayer.IsDutyCompleted(d.Id)) return;
-            Log.Debug($"Duty {d.Id}:<{d.EnglishName}> not completed");
+            Log.Debug($"Duty {d.Id}:<{d.EnglishName}> not completed, adding it to the completed list");
             _localPlayer.Duties.Add(d.Id);
         }
 
