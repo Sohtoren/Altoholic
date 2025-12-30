@@ -292,7 +292,7 @@ namespace Altoholic.Windows
 
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
-            ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 14252));
+            ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 14252).Replace(":",""));
             ImGui.TableSetColumnIndex(1);
             foreach (Character currChar in chars)
             {
