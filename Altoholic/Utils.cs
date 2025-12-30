@@ -391,27 +391,6 @@ namespace Altoholic
                     {
                         if (gender == 0)
                         {
-                            ExcelSheet<GCRankUldahMaleText>? dgcrlmt =
-                                Plugin.DataManager.GetExcelSheet<GCRankUldahMaleText>(currentLocale);
-                            GCRankUldahMaleText? lumina = dgcrlmt?.GetRow((uint)rank);
-                            if (lumina != null)
-                                return lumina.Value.Singular.ExtractText();
-                        }
-                        else
-                        {
-                            ExcelSheet<GCRankUldahFemaleText>? dgcrlft =
-                                Plugin.DataManager.GetExcelSheet<GCRankUldahFemaleText>(currentLocale);
-                            GCRankUldahFemaleText? lumina = dgcrlft?.GetRow((uint)rank);
-                            if (lumina != null)
-                                return lumina.Value.Singular.ExtractText();
-                        }
-
-                        return string.Empty;
-                    }
-                case 3:
-                    {
-                        if (gender == 0)
-                        {
                             ExcelSheet<GCRankGridaniaMaleText>? dgcrlmt =
                                 Plugin.DataManager.GetExcelSheet<GCRankGridaniaMaleText>(currentLocale);
                             GCRankGridaniaMaleText? lumina = dgcrlmt?.GetRow((uint)rank);
@@ -423,6 +402,27 @@ namespace Altoholic
                             ExcelSheet<GCRankGridaniaFemaleText>? dgcrlft =
                                 Plugin.DataManager.GetExcelSheet<GCRankGridaniaFemaleText>(currentLocale);
                             GCRankGridaniaFemaleText? lumina = dgcrlft?.GetRow((uint)rank);
+                            if (lumina != null)
+                                return lumina.Value.Singular.ExtractText();
+                        }
+
+                        return string.Empty;
+                    }
+                case 3:
+                    {
+                        if (gender == 0)
+                        {
+                            ExcelSheet<GCRankUldahMaleText>? dgcrlmt =
+                                Plugin.DataManager.GetExcelSheet<GCRankUldahMaleText>(currentLocale);
+                            GCRankUldahMaleText? lumina = dgcrlmt?.GetRow((uint)rank);
+                            if (lumina != null)
+                                return lumina.Value.Singular.ExtractText();
+                        }
+                        else
+                        {
+                            ExcelSheet<GCRankUldahFemaleText>? dgcrlft =
+                                Plugin.DataManager.GetExcelSheet<GCRankUldahFemaleText>(currentLocale);
+                            GCRankUldahFemaleText? lumina = dgcrlft?.GetRow((uint)rank);
                             if (lumina != null)
                                 return lumina.Value.Singular.ExtractText();
                         }
