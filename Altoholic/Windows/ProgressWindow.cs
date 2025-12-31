@@ -1,4 +1,4 @@
-﻿using Altoholic.Cache;
+using Altoholic.Cache;
 using Altoholic.Models;
 using CheapLoc;
 using Dalamud.Game;
@@ -292,7 +292,7 @@ namespace Altoholic.Windows
 
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
-            ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 14252).Replace(":",""));
+            ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 14252).Replace(":", ""));
             ImGui.TableSetColumnIndex(1);
             foreach (Character currChar in chars)
             {
@@ -1027,6 +1027,54 @@ namespace Altoholic.Windows
             DrawAllLine(chars, charactersQuests, $"{Loc.Localize("Event_MoonfireFaire", "Moonfire Faire")} (2012)", 14);
             DrawAllLine(chars, charactersQuests, $"{Loc.Localize("Event_FoundationDay", "Foundation Day")} (2012)", 15);
             DrawAllLine(chars, charactersQuests, $"{Loc.Localize("Event_MoonfireFaire", "Moonfire Faire")} (2013)", 16);*/
+
+            using (var progressEvent2025Tab = ImRaii.TabItem("2026###progressEvent#Tabs#2026"))
+            {
+                if (progressEvent2025Tab.Success)
+                {
+                    using var charactersEventTable = ImRaii.Table(
+                        $"###CharactersProgress#All#Event#2026#Table",
+                        chars.Count + 1,
+                        ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner |
+                        ImGuiTableFlags.ScrollX, new Vector2(-1, 335));
+                    if (!charactersEventTable) return;
+
+                    ImGui.TableSetupColumn($"###CharactersProgress#All#Event#2026#Name",
+                        ImGuiTableColumnFlags.WidthFixed, 260);
+                    foreach (Character c in chars)
+                    {
+                        ImGui.TableSetupColumn($"###CharactersProgress#All#Event#2026#{c.CharacterId}",
+                            ImGuiTableColumnFlags.WidthFixed, 20);
+                    }
+
+                    ImGui.TableNextRow();
+                    ImGui.TableSetColumnIndex(0);
+                    ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 1898));
+                    if (ImGui.IsItemHovered())
+                    {
+                        ImGui.BeginTooltip();
+                        ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 14055));
+                        ImGui.EndTooltip();
+                    }
+
+                    foreach (Character currChar in chars)
+                    {
+                        ImGui.TableNextColumn();
+                        ImGui.TextUnformatted($"{currChar.FirstName[0]}.{currChar.LastName[0]}");
+                        if (ImGui.IsItemHovered())
+                        {
+                            ImGui.BeginTooltip();
+                            ImGui.TextUnformatted(
+                                $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
+                            ImGui.EndTooltip();
+                        }
+                    }
+
+                    DrawAllLine(chars, charactersQuests,
+                        $"{Loc.Localize("Event_Heavensturn", "Heavensturn")} (2026)",
+                        131);
+                }
+            }
 
             using (var progressEvent2025Tab = ImRaii.TabItem("2025###progressEvent#Tabs#2025"))
             {

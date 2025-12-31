@@ -1,4 +1,4 @@
-﻿using Altoholic.Cache;
+using Altoholic.Cache;
 using Altoholic.Models;
 using CheapLoc;
 using Dalamud.Game;
@@ -3810,6 +3810,7 @@ namespace Altoholic
                     character.HasQuest((int)QuestIds.EVENT_RISING_2025),
                     character.HasQuest((int)QuestIds.EVENT_ALL_SAINTS_WAKE_2025),
                     character.HasQuest((int)QuestIds.EVENT_STARLIGHT_2025),
+                    character.HasQuest((int)QuestIds.EVENT_HEAVENSTURN_2026),
                 ];
                 result.Add(completedQuests);
             }

@@ -1,4 +1,4 @@
-﻿namespace Altoholic.Models
+namespace Altoholic.Models
 {
     public enum QuestIds
     {
@@ -187,6 +187,7 @@
         EVENT_RISING_2025 = 70834,
         EVENT_ALL_SAINTS_WAKE_2025 = 70912,
         EVENT_STARLIGHT_2025 = 70767,
+        EVENT_HEAVENSTURN_2026 = 70766,
         HILDIBRAND_ARR_THE_IMMACULATE_DECEPTION = 66743,
         HILDIBRAND_ARR_THE_THREE_COLLECTORS = 66854,
         HILDIBRAND_ARR_A_CASE_OF_INDECENCY = 66977,
