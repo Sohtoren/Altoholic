@@ -211,7 +211,7 @@ namespace Altoholic
         public static string GetNameday(ClientLanguage currentLocale, int day, int month)
         {
             string nameday = string.Empty;
-            string namedayMonth;
+            string namedayMonth = string.Empty;
             switch (currentLocale)
             {
                 case ClientLanguage.German:
@@ -869,7 +869,7 @@ namespace Altoholic
             }
         }
 
-        public static (Dictionary<uint,PvPSeries>, uint) GetPvPSeries(ClientLanguage currentLocale)
+        public static (Dictionary<uint, PvPSeries>, uint) GetPvPSeries(ClientLanguage currentLocale)
         {
             Dictionary<uint, PvPSeries> series = new();
             uint lastId = 0;
@@ -885,7 +885,7 @@ namespace Altoholic
 
             return (series, lastId);
         }
-        public static Dictionary<uint,PvPSeriesLevel> GetPvPSeriesLevel(ClientLanguage currentLocale)
+        public static Dictionary<uint, PvPSeriesLevel> GetPvPSeriesLevel(ClientLanguage currentLocale)
         {
             Dictionary<uint, PvPSeriesLevel> seriesLevel = new();
             ExcelSheet<PvPSeriesLevel>? dct = Plugin.DataManager.GetExcelSheet<PvPSeriesLevel>(currentLocale);
@@ -920,12 +920,12 @@ namespace Altoholic
                 switch (currentLocale)
                 {
                     case ClientLanguage.German:
-                        p.Transients.GermanTransients.Add(0,pt.Value.Unknown0.ExtractText());
-                        p.Transients.GermanTransients.Add(1,pt.Value.Unknown1.ExtractText());
-                        p.Transients.GermanTransients.Add(2,pt.Value.Unknown2.ExtractText());
-                        p.Transients.GermanTransients.Add(3,pt.Value.Unknown3.ExtractText());
-                        p.Transients.GermanTransients.Add(4,pt.Value.Unknown4.ExtractText());
-                        p.Transients.GermanTransients.Add(5,pt.Value.Unknown5.ExtractText());
+                        p.Transients.GermanTransients.Add(0, pt.Value.Unknown0.ExtractText());
+                        p.Transients.GermanTransients.Add(1, pt.Value.Unknown1.ExtractText());
+                        p.Transients.GermanTransients.Add(2, pt.Value.Unknown2.ExtractText());
+                        p.Transients.GermanTransients.Add(3, pt.Value.Unknown3.ExtractText());
+                        p.Transients.GermanTransients.Add(4, pt.Value.Unknown4.ExtractText());
+                        p.Transients.GermanTransients.Add(5, pt.Value.Unknown5.ExtractText());
                         break;
                     case ClientLanguage.English:
                         p.Transients.Id = pt.Value.RowId;
@@ -961,7 +961,7 @@ namespace Altoholic
 
         public static void DrawPvPRankBar(uint left, uint right, int width, Vector4 fgColor, Vector4 bgColor)
         {
-            float progress = (float)left /right;
+            float progress = (float)left / right;
 
             ImGui.PushStyleColor(ImGuiCol.FrameBg, bgColor);
             ImGui.PushStyleColor(ImGuiCol.PlotHistogram, fgColor);
@@ -1064,7 +1064,7 @@ namespace Altoholic
                 Materia m = mEnumerator.Current;
                 if (!m.Item[0].IsValid) continue;
                 Models.Materia materia = new() { Id = m.RowId, BaseParamId = m.BaseParam.RowId, Grades = new uint[16], Values = new short[16] };
-                for (int i = 0; i < 16;i++)
+                for (int i = 0; i < 16; i++)
                 {
                     materia.Grades[i] = m.Item[i].RowId;
                     materia.Values[i] = m.Value[i];
@@ -1130,7 +1130,7 @@ namespace Altoholic
             if (c is not null)
             {
                 ImGui.PushStyleColor(ImGuiCol.Text, ConvertColorToVector4(c.Value.Dark));
-                ImGui.TextUnformatted(isAllied ? $"{reputationLevel + 1}. {brr.Value.Name}" : $"{ reputationLevel}. { brr.Value.AlliedNames}");
+                ImGui.TextUnformatted(isAllied ? $"{reputationLevel + 1}. {brr.Value.Name}" : $"{reputationLevel}. {brr.Value.AlliedNames}");
                 ImGui.PopStyleColor();
             }
             else
@@ -1400,9 +1400,9 @@ namespace Altoholic
             ImGui.Image(texture.Handle, size, uv0, uv1);
         }
 
-         private static void DrawGearPiece(ClientLanguage currentLocale, ref GlobalCache globalCache, List<Gear> gear,
-            GearSlot slot, string tooltip, Vector2 iconSize,
-            IDalamudTextureWrap? fallbackTexture, IDalamudTextureWrap? emptySlot)
+        private static void DrawGearPiece(ClientLanguage currentLocale, ref GlobalCache globalCache, List<Gear> gear,
+           GearSlot slot, string tooltip, Vector2 iconSize,
+           IDalamudTextureWrap? fallbackTexture, IDalamudTextureWrap? emptySlot)
         {
             if (fallbackTexture is null || emptySlot is null) return;
             Gear? foundGear = gear.FirstOrDefault(g => g.Slot == (short)slot);
@@ -1424,7 +1424,7 @@ namespace Altoholic
                 ItemItemLevel? itl = globalCache.ItemStorage.LoadItemWithItemLevel(currentLocale, foundGear.ItemId);
                 if (itl == null) return;
                 Item? i = itl.Item;
-                if(i == null) return;
+                if (i == null) return;
                 DrawIcon(globalCache.IconStorage.LoadIcon(i.Value.Icon, foundGear.HQ), iconSize);
                 if (ImGui.IsItemHovered())
                 {
@@ -1635,7 +1635,7 @@ namespace Altoholic
 
                 for (int i = 0; i < 5; i++)
                 {
-                    bool isOver = i+1 > dbItem.Value.MateriaSlotCount;
+                    bool isOver = i + 1 > dbItem.Value.MateriaSlotCount;
                     if (item.Materia[i] == 0)
                     {
                         if (isOver) continue;
@@ -1674,7 +1674,7 @@ namespace Altoholic
 
             ImGui.Separator();
             uint jobId = dbItem.Value.ClassJobRepair.RowId;
-            DrawIcon(globalCache.IconStorage.LoadIcon(GetJobIconWithCornerSmall(jobId)), new Vector2(24,24));
+            DrawIcon(globalCache.IconStorage.LoadIcon(GetJobIconWithCornerSmall(jobId)), new Vector2(24, 24));
             ImGui.SameLine();
             ImGui.TextUnformatted(
                 $"{globalCache.AddonStorage.LoadAddonString(currentLocale, 497)}"); // Crafting & Repairs
@@ -1800,7 +1800,7 @@ namespace Altoholic
                     ImGuiTableColumnFlags.WidthFixed, 55);
                 ImGui.TableSetupColumn($"###DrawItemTooltip#Item_{item.RowId}#NameIcon#Name",
                     ImGuiTableColumnFlags.WidthFixed, 305);
-  
+
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
                 DrawIcon(globalCache.IconStorage.LoadIcon(item.Icon), new Vector2(40, 40));
@@ -2746,7 +2746,7 @@ namespace Altoholic
             str = str.Replace("Extractable: YN", "Extractable: ");
             str = str.Replace("Projectable: YN", (item.IsGlamorous) ? "Projectable: Y" : "Projectable: N");
             //str = str.Replace("<If(GreaterThan(IntegerParameter(3),0))><Value>IntegerParameter(4)</Value>.00<Else/>N</If>", (item.Desynth == 0)? "N" : "Y");
-            str = str.Replace(".00N", (item.Desynth == 0)? "N" : "Y");
+            str = str.Replace(".00N", (item.Desynth == 0) ? "N" : "Y");
             return str;
         }
         private static string GetSellableString(ClientLanguage currentLocale, GlobalCache globalCache, Item item, Gear gear)
@@ -2802,7 +2802,7 @@ namespace Altoholic
             Addon? lumina = da.GetRow((uint)id);
             return lumina != null ? lumina.Value.Text.ExtractText() : string.Empty;
         }
-        
+
         public static Companion? GetMinion(ClientLanguage currentLocale, uint id)
         {
             ExcelSheet<Companion>? dc = Plugin.DataManager.GetExcelSheet<Companion>(currentLocale);
@@ -2905,7 +2905,7 @@ namespace Altoholic
                     ChestLegsFeetPercent = baseParam.ChestLegsFeetPercent,
                     Unknown1 = baseParam.Unknown1,
                     OrderPriority = baseParam.OrderPriority,
-                    MeldParam = [..baseParam.MeldParam],
+                    MeldParam = [.. baseParam.MeldParam],
                     PacketIndex = baseParam.PacketIndex,
                     Unknown2 = baseParam.Unknown2
                 };
@@ -3071,7 +3071,7 @@ namespace Altoholic
                         e.GermanName = emote.Name.ExtractText();
                         e.TextCommand.GermanCommand = tc.Value.Command.ExtractText();
                         e.TextCommand.GermanShortCommand = tc.Value.ShortCommand.ExtractText();
-                        e.TextCommand.GermanDescription= tc.Value.Description.ExtractText();
+                        e.TextCommand.GermanDescription = tc.Value.Description.ExtractText();
                         e.TextCommand.GermanAlias = tc.Value.Alias.ExtractText();
                         e.TextCommand.GermanShortAlias = tc.Value.ShortAlias.ExtractText();
                         break;
@@ -3126,7 +3126,7 @@ namespace Altoholic
                 if (barding.Name.IsEmpty || barding.RowId == 0) continue;
                 Barding b = new() { Id = barding.RowId };
                 Item? item = GetItemFromName(currentLocale, barding.Name.ExtractText());
-                b.Icon = (item is null || item.Value.RowId == 0) ? barding.IconHead: item.Value.Icon;
+                b.Icon = (item is null || item.Value.RowId == 0) ? barding.IconHead : item.Value.Icon;
                 switch (currentLocale)
                 {
                     case ClientLanguage.German:
@@ -3393,7 +3393,7 @@ namespace Altoholic
 
         public static string Capitalize(string str)
         {
-            if(str.Length == 0) return str;
+            if (str.Length == 0) return str;
             return char.ToUpper(str[0]) + str[1..];
         }
 
@@ -3415,7 +3415,7 @@ namespace Altoholic
             items.AddRange(str.Split("_").Select(Capitalize));
             return string.Join("_", items);
         }
-        
+
         public static string CapitalizeCurrency(string str)
         {
             if (str is "MGP" or "MGF")
@@ -3561,7 +3561,7 @@ namespace Altoholic
                 if (duty.Name.IsEmpty) continue;
 
                 Duty? d = GetDuty(duty.RowId);
-                if(d == null) continue;
+                if (d == null) continue;
                 returnedDuties.Add(d);
             }
 
@@ -3933,7 +3933,7 @@ namespace Altoholic
             ClassJobCategory? lumina = djc.GetRow(id.Value);
             return lumina != null ? lumina.Value.Name.ExtractText() : string.Empty;
         }
-        
+
         public static ClassJob? GetClassJobFromId(uint? id, ClientLanguage clientLanguage)
         {
             //Plugin.Log.Debug($"GetItemNameFromId : {id}");
@@ -4063,7 +4063,7 @@ namespace Altoholic
                 Lumina.Excel.Sheets.PlaceName place = placeEnumerator.Current;
                 if (place.Name.IsEmpty) continue;
                 uint id = place.RowId;
-                Models.PlaceName pn = new(){Id = id};
+                Models.PlaceName pn = new() { Id = id };
                 List<ClientLanguage> langs =
                     [ClientLanguage.German, ClientLanguage.English, ClientLanguage.French, ClientLanguage.Japanese];
                 foreach (ClientLanguage l in langs)
@@ -4299,12 +4299,12 @@ namespace Altoholic
         }
 
         public static long GetLastPlayTimeUpdateDiff(long lastOnline)
-           {
-               long now = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-               long diff = now - lastOnline;
-               long diffDays = Math.Abs(diff / 86400);
-               return diffDays;
-           }
+        {
+            long now = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+            long diff = now - lastOnline;
+            long diffDays = Math.Abs(diff / 86400);
+            return diffDays;
+        }
 
         public static string GetLastOnlineFormatted(long lastOnline /*, string firstname*/)
         {
