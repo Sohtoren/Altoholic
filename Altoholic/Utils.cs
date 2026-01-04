@@ -35,7 +35,7 @@ using Lumina.Text.ReadOnly;
 
 namespace Altoholic
 {
-    internal class Utils
+    internal abstract class Utils
     {
         // ReSharper disable once InconsistentNaming
         private const uint FALLBACK_ICON = 055396;
@@ -211,7 +211,7 @@ namespace Altoholic
         public static string GetNameday(ClientLanguage currentLocale, int day, int month)
         {
             string nameday = string.Empty;
-            string namedayMonth = string.Empty;
+            string namedayMonth;
             switch (currentLocale)
             {
                 case ClientLanguage.German:
@@ -871,7 +871,7 @@ namespace Altoholic
 
         public static (Dictionary<uint,PvPSeries>, uint) GetPvPSeries(ClientLanguage currentLocale)
         {
-            Dictionary<uint, PvPSeries>? series = new();
+            Dictionary<uint, PvPSeries> series = new();
             uint lastId = 0;
             ExcelSheet<PvPSeries>? dct = Plugin.DataManager.GetExcelSheet<PvPSeries>(currentLocale);
             using IEnumerator<PvPSeries>? seriesEnumerator = dct?.GetEnumerator();
@@ -887,7 +887,7 @@ namespace Altoholic
         }
         public static Dictionary<uint,PvPSeriesLevel> GetPvPSeriesLevel(ClientLanguage currentLocale)
         {
-            Dictionary<uint, PvPSeriesLevel>? seriesLevel = new();
+            Dictionary<uint, PvPSeriesLevel> seriesLevel = new();
             ExcelSheet<PvPSeriesLevel>? dct = Plugin.DataManager.GetExcelSheet<PvPSeriesLevel>(currentLocale);
             using IEnumerator<PvPSeriesLevel>? seriesLevelEnumerator = dct?.GetEnumerator();
             if (seriesLevelEnumerator is null) return seriesLevel;
@@ -2569,7 +2569,7 @@ namespace Altoholic
             }
         }
 
-        public static void DrawHairstyleFacepaintTooltip(ClientLanguage currentLocale, ref GlobalCache globalCache, Models.Hairstyle hairstyle)
+        public static void DrawHairstyleFacepaintTooltip(ClientLanguage currentLocale, ref GlobalCache globalCache, Hairstyle hairstyle)
         {
             using var drawhairstyleTooltip = ImRaii.Tooltip();
             if (!drawhairstyleTooltip) return;
@@ -3115,11 +3115,11 @@ namespace Altoholic
             BuddyEquip? lumina = dbe?.GetRow(id);
             return lumina;
         }
-        public static List<Barding>? GetAllBardings(ClientLanguage currentLocale)
+        public static List<Barding> GetAllBardings(ClientLanguage currentLocale)
         {
             List<Barding> returnedBardingsIds = [];
-            ExcelSheet<BuddyEquip>? dbe = Plugin.DataManager.GetExcelSheet<BuddyEquip>(currentLocale);
-            using IEnumerator<BuddyEquip>? bardingEnumerator = dbe.GetEnumerator();
+            ExcelSheet<BuddyEquip> dbe = Plugin.DataManager.GetExcelSheet<BuddyEquip>(currentLocale);
+            using IEnumerator<BuddyEquip> bardingEnumerator = dbe.GetEnumerator();
             while (bardingEnumerator.MoveNext())
             {
                 BuddyEquip barding = bardingEnumerator.Current;
@@ -3483,7 +3483,7 @@ namespace Altoholic
             return q;
         }
 
-        public static Duty? GetDuty(uint id)
+        public static Duty GetDuty(uint id)
         {
             Duty d = new();
             List<ClientLanguage> langs =

@@ -382,7 +382,7 @@ namespace Altoholic.Windows
 
                 foreach (GlamourItem glamourItem in character.GlamourDresser)
                 {
-                    if (glamourItem == null)
+                    if (glamourItem == null) //While this shouldn't be null, some weird case happen where it is
                     {
                         continue;
                     }
@@ -801,17 +801,17 @@ namespace Altoholic.Windows
 
                     if (itm.Value.StackSize > 1)
                     {
-                        if (item.Quantity >= 100)
+                        switch (item.Quantity)
                         {
-                            ImGui.SetCursorPos(new Vector2(p.X + 20, p.Y + 20));
-                        }
-                        else if(item.Quantity > 9 && item.Quantity <= 100)
-                        {
-                            ImGui.SetCursorPos(new Vector2(p.X + 26, p.Y + 20));
-                        }
-                        else
-                        {
-                            ImGui.SetCursorPos(new Vector2(p.X + 30, p.Y + 20));
+                            case >= 100:
+                                ImGui.SetCursorPos(new Vector2(p.X + 20, p.Y + 20));
+                                break;
+                            case > 9:
+                                ImGui.SetCursorPos(new Vector2(p.X + 26, p.Y + 20));
+                                break;
+                            default:
+                                ImGui.SetCursorPos(new Vector2(p.X + 30, p.Y + 20));
+                                break;
                         }
                         ImGui.TextUnformatted($"{item.Quantity}");
                         ImGui.SetCursorPos(p);
@@ -836,7 +836,7 @@ namespace Altoholic.Windows
 
         private void DrawKeyInventory(string label, List<Inventory> inventory)
         {
-            int itemCount = inventory.FindAll(i => i.ItemId != 0).ToList().Count;
+            int itemCount = inventory.FindAll(i => i.ItemId != 0).Count;
             int rows = (int)Math.Ceiling(itemCount / (double)7);
             int height = rows * 36;
 
@@ -1157,7 +1157,7 @@ namespace Altoholic.Windows
             if (inventory == null) return;
             inventory = [.. inventory.OrderByDescending(i => i.ItemId != 0)];
 
-            int armoryCount = inventory.FindAll(i => i.ItemId != 0).ToList().Count;
+            int armoryCount = inventory.FindAll(i => i.ItemId != 0).Count;
             int rows = (int)Math.Ceiling(armoryCount / (double)5);
             int height = rows * 48;
 
@@ -1487,7 +1487,7 @@ namespace Altoholic.Windows
                     ImGui.TableNextRow();
                 }
 
-                if (setPassed == false && isInASet)
+                if (!setPassed && isInASet)
                 {
                     ImGui.TableNextRow();
                     setPassed = true;

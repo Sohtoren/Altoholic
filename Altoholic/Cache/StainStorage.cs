@@ -1,7 +1,6 @@
 ﻿using Dalamud.Game;
 using System;
 using System.Collections.Generic;
-using System.Numerics;
 
 namespace Altoholic.Cache
 {

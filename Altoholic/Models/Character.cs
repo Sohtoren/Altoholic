@@ -68,6 +68,7 @@ namespace Altoholic.Models
         public HashSet<uint> Armoire { get; set; } = [];
         public GlamourItem[] GlamourDresser { get; init; } = new GlamourItem[8000];
         public PvPProfile? PvPProfile { get; set; }
+        public Timers Timers { get; init; } = new();
 
         public bool HasAnyLevelJob(int level)
         {

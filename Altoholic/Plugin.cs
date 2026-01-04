@@ -3,6 +3,8 @@ using Altoholic.Models;
 using Altoholic.Windows;
 using CheapLoc;
 using Dalamud.Game;
+using Dalamud.Game.Addon.Lifecycle;
+using Dalamud.Game.Addon.Lifecycle.AddonArgTypes;
 using Dalamud.Game.ClientState.Conditions;
 using Dalamud.Game.ClientState.Objects.SubKinds;
 using Dalamud.Game.Command;
@@ -26,6 +28,7 @@ using FFXIVClientStructs.FFXIV.Client.System.String;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using FFXIVClientStructs.FFXIV.Client.UI.Info;
+using FFXIVClientStructs.FFXIV.Component.GUI;
 using Lumina.Excel.Sheets;
 using Lumina.Text;
 using Microsoft.Data.Sqlite;
@@ -47,7 +50,7 @@ namespace Altoholic
     {
         private static string Name => "Altoholic";
         private const string CommandName = "/altoholic";
-        private readonly Array _questIds = Enum.GetValues(typeof(QuestIds));
+        private readonly Array _questIds = Enum.GetValues<QuestIds>();
 
         [PluginService] public static IDalamudPluginInterface PluginInterface { get; set; } = null!;
         [PluginService] private static IClientState ClientState { get; set; } = null!;
@@ -58,13 +61,13 @@ namespace Altoholic
         [PluginService] public static ITextureProvider TextureProvider { get; set; } = null!;
         [PluginService] private static INotificationManager NotificationManager { get; set; } = null!;
         [PluginService] private static ICondition Condition { get; set; } = null!;
-        [PluginService] public static Dalamud.Plugin.Services.ISigScanner SigScanner { get; set; } = null!;
         [PluginService] private static IGameInteropProvider Hook { get; set; } = null!;
         [PluginService] public static IChatGui ChatGui { get; set; } = null!;
         [PluginService] private static IDutyState DutyState { get; set; } = null!;
         [PluginService] private static IGameInventory GameInventory { get; set; } = null!;
         [PluginService] private static IPlayerState PlayerState { get; set; } = null!;
         [PluginService] private static IObjectTable ObjectTable { get; set; } = null!;
+        [PluginService] private static IAddonLifecycle AddonLifecycle { get; set; } = null!;
 
 
         private readonly Hook<UIModule.Delegates.HandlePacket> _playtimeHook;
@@ -83,6 +86,7 @@ namespace Altoholic
         private CollectionWindow CollectionWindow { get; }
         private ProgressWindow ProgressWindow { get; }
         private PvPWindow PvPWindow { get; }
+        private TimerWindow TimerWindow { get; }
 
         //private readonly LiteDatabase _db;
         private readonly SqliteConnection _db;
@@ -172,8 +176,11 @@ namespace Altoholic
                 Log.Debug($"Blacklisted id: {blacklistedCharacter.CharacterId}");
             }
 #endif
-            Configuration = PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
-            Configuration.Initialize(PluginInterface);
+            Configuration = PluginInterface.GetPluginConfig() as Configuration ?? new Configuration
+            {
+                EnabledTimers = []
+            };
+            Configuration.Initialize(PluginInterface.Manifest.AssemblyVersion.Major, PluginInterface);
 
             if (Configuration.Language != ClientState.ClientLanguage)
             {
@@ -267,6 +274,15 @@ namespace Altoholic
                 GetOthersCharactersList = () => _altoholicService.GetOthersCharacters(),
             };
 
+            TimerWindow = new TimerWindow(
+                this,
+                $"{Name} v{PluginInterface.Manifest.AssemblyVersion}###Timers",
+                _globalCache
+            )
+            {
+                GetPlayer = () => _altoholicService.GetPlayer(),
+                GetOthersCharactersList = () => _altoholicService.GetOthersCharacters(),
+            };
 
             MainWindow = new MainWindow(
                 this,
@@ -281,10 +297,12 @@ namespace Altoholic
                 CollectionWindow,
                 ProgressWindow,
                 PvPWindow,
+                TimerWindow,
                 ConfigWindow);
 
             _windowSystem.AddWindow(ConfigWindow);
             _windowSystem.AddWindow(MainWindow);
+            _windowSystem.AddWindow(TimerWindow);
 
             CommandManager.AddHandler(CommandName, new CommandInfo(OnCommand)
             {
@@ -302,6 +320,7 @@ namespace Altoholic
             GameInventory.ItemRemoved += OnGameInventoryItemEvent;
             ClientState.Login += OnCharacterLogin;
             ClientState.Logout += OnCharacterLogout;
+            ClientState.TerritoryChanged += OnZoneChange;
             Framework.Update += OnFrameworkUpdate;
 
             _autoSaveWatch.Start();
@@ -351,6 +370,7 @@ namespace Altoholic
             DetailsWindow.Dispose();
             CharactersWindow.Dispose();
             MainWindow.Dispose();
+            TimerWindow.Dispose();
 
             CleanLastLocalCharacter();
 
@@ -363,7 +383,11 @@ namespace Altoholic
             DutyState.DutyCompleted -= OnDutyCompleted;
             ClientState.Login -= OnCharacterLogin;
             ClientState.Logout -= OnCharacterLogout;
+            ClientState.TerritoryChanged -= OnZoneChange;
             Framework.Update -= OnFrameworkUpdate;
+
+            //AddonLifecycle.UnregisterListener(AozContentResultPopSetup);
+
             _db.Close();
             _db.Dispose();
             SqliteConnection.ClearAllPools();
@@ -392,22 +416,14 @@ namespace Altoholic
             {
                 case "help":
                     SeStringBuilder builder = new();
-                    //builder.Append($"[{Name}] {CommandName} ");
-                    builder.Append($"[");
-                    builder.Append(Name);
-                    builder.Append("]");
-                    builder.Append(CommandName);
-                    builder.Append(" ");//remove this for oneliner after iresettable is fixed
+                    builder.Append($"[{Name}] {CommandName} ");
                     builder.PushColorRgba(KnownColor.LimeGreen.Vector());
                     builder.Append("option\n");
                     builder.PopColor();
                     builder.PushColorRgba(KnownColor.LimeGreen.Vector());
                     builder.Append("No option");
                     builder.PopColor();
-                    //builder.Append($": Show/hide {Name} main window\n");
-                    builder.Append($": Show/hide ");
-                    builder.Append(Name);
-                    builder.Append(" main window\n");//remove this for oneliner after iresettable is fixed
+                    builder.Append($": Show/hide {Name} main window\n");
                     builder.Append("Options:\n");
                     builder.PushColorRgba(KnownColor.LimeGreen.Vector());
                     builder.Append("help");
@@ -448,6 +464,10 @@ namespace Altoholic
                 case "unbl":
                     OnUnblacklistCommand();
                     break;
+                case "timer":
+                case "timers":
+                    DrawTimerUI();
+                    break;
                 default:
                     if (MainWindow.IsOpen)
                     {
@@ -460,6 +480,31 @@ namespace Altoholic
                     }
                     break;
             }
+        }
+
+        private void DrawTimerUI()
+        {
+            if (!ClientState.IsLoggedIn)
+            {
+                Log.Error("No character logged in, doing nothing");
+
+                NotificationManager.AddNotification(new Notification
+                {
+                    Title = "Altoholic",
+                    Content = "This plugin need a character to be logged in",
+                    Type = NotificationType.Error,
+                    Minimized = false,
+                    InitialDuration = TimeSpan.FromSeconds(3)
+                });
+                return;
+            }
+
+            if (_localPlayer.CharacterId != 0)
+            {
+                _otherCharacters = Database.Database.GetOthersCharacters(_db, _localPlayer.CharacterId);
+            }
+
+            TimerWindow.IsOpen = !TimerWindow.IsOpen;
         }
 
         // ReSharper disable once InconsistentNaming
@@ -485,7 +530,7 @@ namespace Altoholic
                 });
                 return;
             }
-            Plugin.Log.Debug($"localPlayerName : {_localPlayer.CharacterId} {_localPlayer.FirstName} {_localPlayer.LastName}");
+            //Log.Debug($"localPlayerName : {_localPlayer.CharacterId} {_localPlayer.FirstName} {_localPlayer.LastName}");
             if (_localPlayer.CharacterId == 0 || string.IsNullOrEmpty(_localPlayer.FirstName))
             {
                 Character? p = GetCharacterFromGameOrDatabase();
@@ -761,7 +806,6 @@ namespace Altoholic
                 _localPlayer.CurrentRegion = Utils.GetRegionFromWorld(_localPlayer.CurrentWorld);
             }
 
-
             uint job = lPlayer.ClassJob.RowId;
             if (job != _localPlayer.LastJob)
             {
@@ -782,6 +826,7 @@ namespace Altoholic
             GetHousing();
             GetPlayerGlamourInventory();
             GetPlayerIsland();
+            GetPlayerAllowances();
 
             if (_autoSaveWatch.Elapsed.Minutes >= 1 && _autoSaveWatch.Elapsed.Minutes <= Configuration.AutoSaveTimer && _autoSaveWatch.Elapsed.Seconds == 0)
             {
@@ -794,6 +839,69 @@ namespace Altoholic
 
             UpdateCharacter();
             _autoSaveWatch.Restart();
+        }
+
+        private unsafe void GetPlayerAllowances()
+        {
+            if (_localPlayer.HasQuest((int)QuestIds.TRIBE_ARR_AMALJ_AA) ||
+                _localPlayer.HasQuest((int)QuestIds.TRIBE_ARR_SYLPHS) ||
+                _localPlayer.HasQuest((int)QuestIds.TRIBE_ARR_KOBOLDS) ||
+                _localPlayer.HasQuest((int)QuestIds.TRIBE_ARR_SAHAGIN) ||
+                _localPlayer.HasQuest((int)QuestIds.TRIBE_ARR_IXAL) ||
+                _localPlayer.HasQuest((int)QuestIds.TRIBE_HW_VANU_VANU) ||
+                _localPlayer.HasQuest((int)QuestIds.TRIBE_HW_VATH) ||
+                _localPlayer.HasQuest((int)QuestIds.TRIBE_HW_MOOGLES) ||
+                _localPlayer.HasQuest((int)QuestIds.TRIBE_SB_KOJIN) ||
+                _localPlayer.HasQuest((int)QuestIds.TRIBE_SB_ANANTA) ||
+                _localPlayer.HasQuest((int)QuestIds.TRIBE_SB_NAMAZU) ||
+                _localPlayer.HasQuest((int)QuestIds.TRIBE_SHB_PIXIES) ||
+                _localPlayer.HasQuest((int)QuestIds.TRIBE_SHB_QITARI) ||
+                _localPlayer.HasQuest((int)QuestIds.TRIBE_SHB_DWARVES) ||
+                _localPlayer.HasQuest((int)QuestIds.TRIBE_EW_ARKASODARA) ||
+                _localPlayer.HasQuest((int)QuestIds.TRIBE_EW_OMICRONS) ||
+                _localPlayer.HasQuest((int)QuestIds.TRIBE_EW_LOPORRITS) ||
+                _localPlayer.HasQuest((int)QuestIds.TRIBE_DT_PELUPELU) ||
+                _localPlayer.HasQuest((int)QuestIds.TRIBE_DT_MAMOOL_JA) ||
+                _localPlayer.HasQuest((int)QuestIds.TRIBE_DT_YOK_HUY))
+            {
+                _localPlayer.Timers.TribeRemainingAllowances = QuestManager.Instance()->GetBeastTribeAllowance();
+                _localPlayer.Timers.TribeLastCheck = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Utc);
+            }
+
+            if (_localPlayer.HasQuest((int)QuestIds.CUSTOM_DELIVERIES_ZHLOE_ALIAPOH) ||
+                _localPlayer.HasQuest((int)QuestIds.CUSTOM_DELIVERIES_M_NAAGO) ||
+                _localPlayer.HasQuest((int)QuestIds.CUSTOM_DELIVERIES_KURENAI) ||
+                _localPlayer.HasQuest((int)QuestIds.CUSTOM_DELIVERIES_ADKIRAGH) ||
+                _localPlayer.HasQuest((int)QuestIds.CUSTOM_DELIVERIES_KAI_SHIRR) ||
+                _localPlayer.HasQuest((int)QuestIds.CUSTOM_DELIVERIES_EHLL_TOU) ||
+                _localPlayer.HasQuest((int)QuestIds.CUSTOM_DELIVERIES_CHARLEMEND) ||
+                _localPlayer.HasQuest((int)QuestIds.CUSTOM_DELIVERIES_AMELIANCE) ||
+                _localPlayer.HasQuest((int)QuestIds.CUSTOM_DELIVERIES_ANDEN) ||
+                _localPlayer.HasQuest((int)QuestIds.CUSTOM_DELIVERIES_MARGRAT) ||
+                _localPlayer.HasQuest((int)QuestIds.CUSTOM_DELIVERIES_NITOWIKWE)
+               )
+            {
+                _localPlayer.Timers.CustomDeliveriesAllowances =
+                    SatisfactionSupplyManager.Instance()->GetRemainingAllowances();
+                _localPlayer.Timers.CustomDeliveriesLastCheck = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Utc);
+            }
+
+            if (_localPlayer.HasQuest((int)QuestIds.MASKED_CARNIVAL))
+            {
+                var a = AgentAozContentBriefing.Instance();
+                if (a->IsAgentActive())
+                {
+                    _localPlayer.Timers.MaskedCarnivaleNoviceChallenge =
+                        a->IsWeeklyChallengeComplete(AozWeeklyChallenge.Novice);
+                    _localPlayer.Timers.MaskedCarnivaleModerateChallenge =
+                        a->IsWeeklyChallengeComplete(AozWeeklyChallenge.Moderate);
+                    _localPlayer.Timers.MaskedCarnivaleAdvancedChallenge =
+                        a->IsWeeklyChallengeComplete(AozWeeklyChallenge.Advanced);
+                    _localPlayer.Timers.MaskedFestivalLastCheck = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Utc);
+                }
+            }
+
+            CheckCurrentTerritoryType(ClientState.TerritoryType);
         }
 
         private unsafe void GetPlayerAttributesProfileAndJobs()
@@ -1892,11 +2000,14 @@ namespace Altoholic
             {
                 return;
             }
-            if (_localPlayer.HasQuest((int)QuestIds.ISLAND_SANCTUARY))
+
+            if (!_localPlayer.HasQuest((int)QuestIds.ISLAND_SANCTUARY))
             {
-                _localPlayer.IslandSanctuaryUnlocked = true;
-                _localPlayer.IslandSanctuaryLevel = MJIManager.Instance()->IslandState.CurrentRank;
+                return;
             }
+
+            _localPlayer.IslandSanctuaryUnlocked = true;
+            _localPlayer.IslandSanctuaryLevel = MJIManager.Instance()->IslandState.CurrentRank;
         }
 
         private void CleanLastLocalCharacter()
@@ -1932,7 +2043,28 @@ namespace Altoholic
 
             GetCollectionFromState();
             GetDuties();
+
+            //AddonLifecycle.RegisterListener(AddonEvent.PostSetup, "AOZContentResult", AozContentResultPopSetup);
         }
+
+        /*private unsafe void AozContentResultPopSetup(AddonEvent type, AddonArgs addonInfo)
+        {
+            var addon = (AtkUnitBase*)addonInfo.Addon.Address;
+
+            if (addon->AtkValues[112] is not { Type: FFXIVClientStructs.FFXIV.Component.GUI.ValueType.UInt, UInt: var completionIndex }) return;
+            if (addon->AtkValues[114] is not { Type: FFXIVClientStructs.FFXIV.Component.GUI.ValueType.Bool, Byte: var completionStatus }) return;
+
+            Log.Debug($"AozContentResultPopSetup index: {completionIndex}, status:{completionStatus}");
+
+            switch(completionIndex)
+            {
+                case 0: _localPlayer.Timers.MaskedCarnivaleNoviceChallenge = completionStatus != 0;break;
+                case 1: _localPlayer.Timers.MaskedCarnivaleModerateChallenge = completionStatus != 0; break;
+                case 2: _localPlayer.Timers.MaskedCarnivaleAdvancedChallenge = completionStatus != 0; break;
+            }
+
+            _localPlayer.Timers.MaskedFestivalLastCheck = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Utc);
+        }*/
 
         private void GetDuties()
         {
@@ -2070,8 +2202,11 @@ namespace Altoholic
 
         public void ReloadConfig()
         {
-            Configuration = PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
-            Configuration.Initialize(PluginInterface);
+            Configuration = PluginInterface.GetPluginConfig() as Configuration ?? new Configuration
+            {
+                EnabledTimers = []
+            };
+            Configuration.Initialize(PluginInterface.Manifest.AssemblyVersion.Major, PluginInterface);
         }
 
         /*private long PlaytimePacket(uint param1, long param2, uint param3)
@@ -2109,7 +2244,6 @@ namespace Altoholic
             _localPlayer.LastPlayTimeUpdate = newPlayTimeUpdate;
             Log.Debug($"Updating playtime with {player.Item1}, {player.Item2}, {totalPlaytime}, {newPlayTimeUpdate}.");
             Database.Database.UpdatePlaytime(_db, id, totalPlaytime, newPlayTimeUpdate);
-            return;
         }
 
         private (string, string, string) GetLocalPlayerNameWorldRegion()
@@ -2175,7 +2309,7 @@ namespace Altoholic
                 return chara;
             }
 
-            return new Character
+            return new Character()
             {
                 CharacterId = PlayerState.ContentId,
                 FirstName = names[0],
@@ -2202,6 +2336,8 @@ namespace Altoholic
                 CurrentFacewear = _localPlayer.CurrentFacewear,
                 CurrentOrnament = _localPlayer.CurrentOrnament,
                 UnreadLetters = _localPlayer.UnreadLetters,
+                IslandSanctuaryUnlocked = _localPlayer.IslandSanctuaryUnlocked,
+                IslandSanctuaryLevel = _localPlayer.IslandSanctuaryLevel,
                 Attributes = _localPlayer.Attributes,
                 Currencies = _localPlayer.Currencies,
                 Jobs = _localPlayer.Jobs,
@@ -2212,6 +2348,7 @@ namespace Altoholic
                 Saddle = _localPlayer.Saddle,
                 Gear = _localPlayer.Gear,
                 Retainers = _localPlayer.Retainers,
+                BlacklistedRetainers = _localPlayer.BlacklistedRetainers,
                 Minions = _localPlayer.Minions,
                 Mounts = _localPlayer.Mounts,
                 TripleTriadCards = _localPlayer.TripleTriadCards,
@@ -2233,7 +2370,9 @@ namespace Altoholic
                 SightseeingLogUnlockState = _localPlayer.SightseeingLogUnlockState,
                 SightseeingLogUnlockStateEx = _localPlayer.SightseeingLogUnlockStateEx,
                 Armoire = _localPlayer.Armoire,
-                GlamourDresser = _localPlayer.GlamourDresser
+                GlamourDresser = _localPlayer.GlamourDresser,
+                PvPProfile = _localPlayer.PvPProfile,
+                Timers = _localPlayer.Timers?? new Timers(),
             };
 
         }
@@ -2249,6 +2388,75 @@ namespace Altoholic
             };
 
             _localization.SetupWithLangCode(isoLang);
+        }
+
+        private void OnZoneChange(ushort territoryTypeId)
+        {
+            Log.Debug($"ZoneChanged:{territoryTypeId}");
+            CheckCurrentTerritoryType(territoryTypeId);
+        }
+
+        private void CheckCurrentTerritoryType(ushort territoryTypeId)
+        {
+            if (ClientState.IsPvP) return;
+            if (!ClientState.IsLoggedIn) return;
+
+            //Log.Debug($"territoryTypeId: {territoryTypeId}");
+            switch (territoryTypeId)
+            {
+                // Doman Enclave
+                case 759:
+                    {
+                        bool complete = _localPlayer.HasQuest((int)QuestIds.DOMAN_ENCLAVE) || Utils.IsQuestCompleted((int)QuestIds.DOMAN_ENCLAVE);
+                        if (complete)
+                        {
+                            GetDomanEnclave();
+                        }
+                        break;
+                    }
+                // Gold Saucer
+                case 144:
+                    {
+                        //GetGoldSaucer();
+                        break;
+                    }
+            }
+        }
+
+        /*private unsafe void GetGoldSaucer()
+        {
+            var gs = AgentModule.Instance()->GetAgentByInternalId(AgentId.Fashion);
+            if (gs->IsAgentActive())
+            {
+                //gs->
+            }
+        }*/
+
+        private unsafe void GetDomanEnclave()
+        {
+            if (_localPlayer.Timers.DomanEnclaveLastCheck != null &&
+                (DateTime.Now - _localPlayer.Timers.DomanEnclaveLastCheck.Value.ToUniversalTime()).TotalSeconds <= 6)
+            {
+                return;
+            }
+
+            int? lastAllowance = _localPlayer.Timers.DomanEnclaveWeeklyAllowances;
+            int? lastDonation = _localPlayer.Timers.DomanEnclaveWeeklyDonation;
+
+            DomanEnclaveManager* dem = DomanEnclaveManager.Instance();
+            if (!dem->IsLoaded) return;
+            if (!dem->State.IsAcceptingDonations) return;
+
+            _localPlayer.Timers.DomanEnclaveWeeklyAllowances = dem->State.Allowance;
+            _localPlayer.Timers.DomanEnclaveWeeklyDonation = dem->State.Donated;
+            _localPlayer.Timers.DomanEnclaveLastCheck = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Utc);
+
+            //Log.Debug($"{_localPlayer.Timers.DomanEnclaveWeeklyDonation}/{_localPlayer.Timers.DomanEnclaveWeeklyAllowances}");
+            if (lastAllowance != _localPlayer.Timers.DomanEnclaveWeeklyAllowances ||
+                lastDonation != _localPlayer.Timers.DomanEnclaveWeeklyAllowances)
+            {
+                UpdateCharacter();
+            }
         }
     }
 }
