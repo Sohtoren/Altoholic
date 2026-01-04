@@ -406,7 +406,7 @@ namespace Altoholic.Windows
             // Filter by search string if provided
             if (!string.IsNullOrWhiteSpace(_searchMinions))
             {
-                minions = Utils.FilterBySearch<uint, Minion>(
+                minions = Utils.FilterBySearch(
                     minions,
                     _searchMinions,
                     _currentLocale,
@@ -561,7 +561,7 @@ namespace Altoholic.Windows
             // Filter by search string if provided
             if (!string.IsNullOrWhiteSpace(_searchMounts))
             {
-                mounts = Utils.FilterBySearch<uint, Mount>(
+                mounts = Utils.FilterBySearch(
                     mounts,
                     _searchMounts,
                     _currentLocale,
@@ -700,7 +700,7 @@ namespace Altoholic.Windows
             // Filter by search string if provided
             if (!string.IsNullOrWhiteSpace(_searchTripleTriadCards))
             {
-                tripleTriadCards = Utils.FilterBySearch<uint, TripleTriadCard>(
+                tripleTriadCards = Utils.FilterBySearch(
                     tripleTriadCards,
                     _searchTripleTriadCards,
                     _currentLocale,
@@ -841,7 +841,7 @@ namespace Altoholic.Windows
             // Filter by search string if provided
             if (!string.IsNullOrWhiteSpace(_searchEmotes))
             {
-                emotes = Utils.FilterBySearch<uint, Emote>(
+                emotes = Utils.FilterBySearch(
                     emotes,
                     _searchEmotes,
                     _currentLocale,
@@ -1018,7 +1018,7 @@ namespace Altoholic.Windows
             List<uint> bardings = (_obtainedBardingsOnly) ? [..currentCharacter.Bardings] : _globalCache.BardingStorage.Get();
             if (!string.IsNullOrWhiteSpace(_searchBardings))
             {
-                bardings = Utils.FilterBySearch<uint, Barding>(
+                bardings = Utils.FilterBySearch(
                     bardings,
                     _searchBardings,
                     _currentLocale,
@@ -1172,7 +1172,7 @@ namespace Altoholic.Windows
             // Filter by search string if provided
             if (!string.IsNullOrWhiteSpace(_searchFramerKits))
             {
-                framerKits = Utils.FilterBySearch<uint, FramerKit>(
+                framerKits = Utils.FilterBySearch(
                     framerKits,
                     _searchFramerKits,
                     _currentLocale,
@@ -1327,7 +1327,7 @@ namespace Altoholic.Windows
             // Filter by search string if provided
             if (!string.IsNullOrWhiteSpace(_searchOrchestrionRolls))
             {
-                orchestrionRolls = Utils.FilterBySearch<uint, OrchestrionRoll>(
+                orchestrionRolls = Utils.FilterBySearch(
                     orchestrionRolls,
                     _searchOrchestrionRolls,
                     _currentLocale,
@@ -1483,7 +1483,7 @@ namespace Altoholic.Windows
             // Filter by search string if provided
             if (!string.IsNullOrWhiteSpace(_searchOrnaments))
             {
-                ornaments = Utils.FilterBySearch<uint, Ornament>(
+                ornaments = Utils.FilterBySearch(
                     ornaments,
                     _searchOrnaments,
                     _currentLocale,
@@ -1639,7 +1639,7 @@ namespace Altoholic.Windows
             // Filter by search string if provided
             if (!string.IsNullOrWhiteSpace(_searchGlasses))
             {
-                glasses = Utils.FilterBySearch<uint, Glasses>(
+                glasses = Utils.FilterBySearch(
                     glasses,
                     _searchGlasses,
                     _currentLocale,
@@ -1801,7 +1801,7 @@ namespace Altoholic.Windows
             }
             else
             {
-                endStr += $"/{availableHairstyles.Count()}";
+                endStr += $"/{availableHairstyles.Count}";
             }
             ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 3501)}: {currentCharacter.Hairstyles.Count}{endStr}");
         }
@@ -1820,7 +1820,7 @@ namespace Altoholic.Windows
             // Filter by search string if provided
             if (!string.IsNullOrWhiteSpace(_searchHairstyles))
             {
-                hairstyles = Utils.FilterBySearch<uint, Hairstyle>(
+                hairstyles = Utils.FilterBySearch(
                     hairstyles,
                     _searchHairstyles,
                     _currentLocale,
@@ -1987,7 +1987,7 @@ namespace Altoholic.Windows
             }
             else
             {
-                endStr += $"/{availableFacepaints.Count()}";
+                endStr += $"/{availableFacepaints.Count}";
             }
             ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 3501)}: {currentCharacter.Facepaints.Count}{endStr}");
         }
@@ -2003,7 +2003,7 @@ namespace Altoholic.Windows
             // Filter by search string if provided
             if (!string.IsNullOrWhiteSpace(_searchFacepaints))
             {
-                facepaints = Utils.FilterBySearch<uint, Hairstyle>(
+                facepaints = Utils.FilterBySearch(
                     facepaints,
                     _searchFacepaints,
                     _currentLocale,
@@ -2164,7 +2164,7 @@ namespace Altoholic.Windows
             // Filter by search string if provided
             if (!string.IsNullOrWhiteSpace(_searchSecretRecipeBooks))
             {
-                secretRecipeBooks = Utils.FilterBySearch<uint, Models.SecretRecipeBook>(
+                secretRecipeBooks = Utils.FilterBySearch(
                     secretRecipeBooks,
                     _searchSecretRecipeBooks,
                     _currentLocale,
@@ -2329,7 +2329,7 @@ namespace Altoholic.Windows
             // Filter by search string if provided
             if (!string.IsNullOrWhiteSpace(_searchVistas))
             {
-                vistas = Utils.FilterBySearch<uint, Vista>(
+                vistas = Utils.FilterBySearch(
                     vistas,
                     _searchVistas,
                     _currentLocale,

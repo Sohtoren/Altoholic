@@ -64,5 +64,6 @@ namespace Altoholic.Models
         public string Armoire { get; init; } = string.Empty;
         public string GlamourDresser { get; init; } = string.Empty;
         public string PvPProfile { get; init; } = string.Empty;
+        public string Timers { get; init; } = string.Empty;
     }
 }

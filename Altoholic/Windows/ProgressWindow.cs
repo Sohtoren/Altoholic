@@ -4293,14 +4293,12 @@ namespace Altoholic.Windows
                 ImRaii.TabBar($"###CharactersProgressTable#ProgressTabs#{selectedCharacter.CharacterId}#TabBar");
             if (!tab) return;
 
-            using (ImRaii.IEndObject reputationTab =
-                   ImRaii.TabItem(
-                       $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 102512)}###CharactersProgressTable#ProgressTabs#{selectedCharacter.CharacterId}#TabBar#Tabs#Reputation"))
+            using ImRaii.IEndObject reputationTab =
+                ImRaii.TabItem(
+                    $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 102512)}###CharactersProgressTable#ProgressTabs#{selectedCharacter.CharacterId}#TabBar#Tabs#Reputation");
+            if (reputationTab.Success)
             {
-                if (reputationTab.Success)
-                {
-                    DrawReputations(selectedCharacter);
-                }
+                DrawReputations(selectedCharacter);
             }
         }
 

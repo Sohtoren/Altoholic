@@ -48,11 +48,15 @@ namespace Altoholic.Windows
             DrawConfig();
             ImGui.TableSetColumnIndex(1);
             DrawCredits();
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            DrawTimerConfig();
+            ImGui.TableSetColumnIndex(1);
         }
 
         private void DrawConfig()
         {
-            _selectedLanguage = _plugin.Configuration.Language;
+            _selectedLanguage = _configuration.Language;
             ImGui.SetNextItemWidth(200);
             using (var langCombo =
                    ImRaii.Combo($"{_globalCache.AddonStorage.LoadAddonString(_selectedLanguage, 338)}###LangCombo",
@@ -60,25 +64,25 @@ namespace Altoholic.Windows
             {
                 if (langCombo.Success)
                 {
-                    if (ImGui.Selectable(ClientLanguage.German.ToString(),
-                            ClientLanguage.German.ToString() == _selectedLanguage.ToString()))
+                    if (ImGui.Selectable(nameof(ClientLanguage.German),
+                            nameof(ClientLanguage.German) == _selectedLanguage.ToString()))
                     {
                         _selectedLanguage = ClientLanguage.German;
                     }
 
-                    if (ImGui.Selectable(ClientLanguage.English.ToString(),
-                            ClientLanguage.English.ToString() == _selectedLanguage.ToString()))
+                    if (ImGui.Selectable(nameof(ClientLanguage.English),
+                            nameof(ClientLanguage.English) == _selectedLanguage.ToString()))
                     {
                         _selectedLanguage = ClientLanguage.English;
                     }
 
-                    if (ImGui.Selectable(ClientLanguage.French.ToString(),
-                            ClientLanguage.French.ToString() == _selectedLanguage.ToString()))
+                    if (ImGui.Selectable(nameof(ClientLanguage.French),
+                            nameof(ClientLanguage.French) == _selectedLanguage.ToString()))
                     {
                         _selectedLanguage = ClientLanguage.French;
                     }
 
-                    if (ImGui.Selectable("日本語", ClientLanguage.Japanese.ToString() == _selectedLanguage.ToString()))
+                    if (ImGui.Selectable("日本語", nameof(ClientLanguage.Japanese) == _selectedLanguage.ToString()))
                     {
                         _selectedLanguage = ClientLanguage.Japanese;
                     }
@@ -165,6 +169,118 @@ namespace Altoholic.Windows
             ImGui.Separator();
             ImGui.TextUnformatted("NebulousByte (https://github.com/NebulousByte)");
             ImGui.TextUnformatted("Dalamud discord server");
+        }
+
+        private void DrawTimerConfig()
+        {
+            _selectedLanguage = _configuration.Language;
+            ImGui.Separator();
+            ImGui.TextUnformatted(Loc.Localize("ConfigEnabledTimer", "Enabled Timers"));
+
+            /*bool isMiniCacpopEnabled = _configuration.EnabledTimers.Contains(TimersStatus.MiniCacpot);
+            if (ImGui.Checkbox($"{_globalCache.AddonStorage.LoadAddonString(_selectedLanguage, 9260)}###MiniCacpot", ref isMiniCacpopEnabled))
+            {
+                if (isMiniCacpopEnabled)
+                {
+                    _configuration.EnabledTimers.Add(TimersStatus.MiniCacpot);
+                }
+                else
+                {
+                    _configuration.EnabledTimers.Remove(TimersStatus.MiniCacpot);
+                }
+
+                _configuration.Save();
+            }
+
+            bool isJumboCacpopEnabled = _configuration.EnabledTimers.Contains(TimersStatus.JumboCacpot);
+            if (ImGui.Checkbox($"{_globalCache.AddonStorage.LoadAddonString(_selectedLanguage, 9272)}###JumboCacpot", ref isJumboCacpopEnabled))
+            {
+                if (isJumboCacpopEnabled)
+                {
+                    _configuration.EnabledTimers.Add(TimersStatus.JumboCacpot);
+                }
+                else
+                {
+                    _configuration.EnabledTimers.Remove(TimersStatus.JumboCacpot);
+                }
+
+                _configuration.Save();
+            }
+
+            bool isFashionReportEnabled = _configuration.EnabledTimers.Contains(TimersStatus.FashionReport);
+            if (ImGui.Checkbox($"{_globalCache.AddonStorage.LoadAddonString(_selectedLanguage, 8819)}###FashionReport", ref isFashionReportEnabled))
+            {
+                if (isJumboCacpopEnabled)
+                {
+                    _configuration.EnabledTimers.Add(TimersStatus.FashionReport);
+                }
+                else
+                {
+                    _configuration.EnabledTimers.Remove(TimersStatus.FashionReport);
+                }
+
+                _configuration.Save();
+            }*/
+
+            bool isCustomDeliveriesEnabled = _configuration.EnabledTimers.Contains(TimersStatus.CustomDeliveries);
+            if (ImGui.Checkbox($"{_globalCache.AddonStorage.LoadAddonString(_selectedLanguage, 5700)}###CustomDeliveries", ref isCustomDeliveriesEnabled))
+            {
+                if (isCustomDeliveriesEnabled)
+                {
+                    _configuration.EnabledTimers.Add(TimersStatus.CustomDeliveries);
+                }
+                else
+                {
+                    _configuration.EnabledTimers.Remove(TimersStatus.CustomDeliveries);
+                }
+
+                _configuration.Save();
+            }
+
+            bool isDomanEnclaveEnabled = _configuration.EnabledTimers.Contains(TimersStatus.DomanEnclave);
+            if (ImGui.Checkbox($"{_globalCache.AddonStorage.LoadAddonString(_selectedLanguage, 8821)}###DomanEnclave", ref isDomanEnclaveEnabled))
+            {
+                if (isDomanEnclaveEnabled)
+                {
+                    _configuration.EnabledTimers.Add(TimersStatus.DomanEnclave);
+                }
+                else
+                {
+                    _configuration.EnabledTimers.Remove(TimersStatus.DomanEnclave);
+                }
+
+                _configuration.Save();
+            }
+
+            bool isMaskedCarnivaleEnabled = _configuration.EnabledTimers.Contains(TimersStatus.MaskedCarnivale);
+            if (ImGui.Checkbox($"{_globalCache.AddonStorage.LoadAddonString(_selectedLanguage, 8832)}###MaskedCarnivale", ref isMaskedCarnivaleEnabled))
+            {
+                if (isMaskedCarnivaleEnabled)
+                {
+                    _configuration.EnabledTimers.Add(TimersStatus.MaskedCarnivale);
+                }
+                else
+                {
+                    _configuration.EnabledTimers.Remove(TimersStatus.MaskedCarnivale);
+                }
+
+                _configuration.Save();
+            }
+
+            bool isTribeEnabled = _configuration.EnabledTimers.Contains(TimersStatus.Tribes);
+            if (ImGui.Checkbox($"{_globalCache.AddonStorage.LoadAddonString(_selectedLanguage, 102515)}###Tribes", ref isTribeEnabled))
+            {
+                if (isTribeEnabled)
+                {
+                    _configuration.EnabledTimers.Add(TimersStatus.Tribes);
+                }
+                else
+                {
+                    _configuration.EnabledTimers.Remove(TimersStatus.Tribes);
+                }
+
+                _configuration.Save();
+            }
         }
     }
 }

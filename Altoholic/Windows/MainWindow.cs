@@ -1,8 +1,9 @@
 using Altoholic.Cache;
+using CheapLoc;
+using Dalamud.Bindings.ImGui;
 using Dalamud.Game;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
-using Dalamud.Bindings.ImGui;
 using System;
 using System.Numerics;
 
@@ -20,6 +21,7 @@ namespace Altoholic.Windows
         private CollectionWindow CollectionWindow { get; }
         private ProgressWindow ProgressWindow { get; }
         private PvPWindow PvPWindow { get; }
+        private TimerWindow TimerWindow { get; }
         private ConfigWindow ConfigWindow { get; }
 
         private ClientLanguage _currentLocale;
@@ -39,6 +41,7 @@ namespace Altoholic.Windows
             CollectionWindow collectionWindow,
             ProgressWindow progressWindow,
             PvPWindow pvPWindow,
+            TimerWindow timerWindow,
             ConfigWindow configWindow
         )
             : base(name, ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse)
@@ -58,6 +61,7 @@ namespace Altoholic.Windows
             CollectionWindow = collectionWindow;
             ProgressWindow = progressWindow;
             PvPWindow = pvPWindow;
+            TimerWindow = timerWindow;
             ConfigWindow = configWindow;
         }
 
@@ -92,6 +96,7 @@ namespace Altoholic.Windows
             CollectionWindow.IsOpen = false;
             ProgressWindow.IsOpen = false;
             PvPWindow.IsOpen = false;
+            TimerWindow.IsOpen = false;
             ConfigWindow.IsOpen = false;
         }
 
@@ -106,6 +111,7 @@ namespace Altoholic.Windows
             CollectionWindow.IsOpen = false;
             ProgressWindow.IsOpen = false;
             PvPWindow.IsOpen = false;
+            TimerWindow.IsOpen = false;
             ConfigWindow.IsOpen = false;
         }
 
@@ -184,6 +190,14 @@ namespace Altoholic.Windows
                 if (pvpTab.Success)
                 {
                     PvPWindow.Draw();
+                }
+            }
+
+            using (var timersTab = ImRaii.TabItem($"{Loc.Localize("Timers", "Timers")}"))
+            {
+                if (timersTab.Success)
+                {
+                    TimerWindow.DrawNotHovered();
                 }
             }
 

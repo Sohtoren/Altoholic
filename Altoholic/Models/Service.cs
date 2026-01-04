@@ -33,7 +33,7 @@ namespace Altoholic.Models
 
         public void SetBlacklistedCharacter(ulong id)
         {
-            BlacklistedCharacters.DynamicInvoke([new Blacklist() { CharacterId = id }]);
+            BlacklistedCharacters.DynamicInvoke(new Blacklist { CharacterId = id });
         }
     }
 }
