@@ -105,6 +105,7 @@ namespace Altoholic.Windows
 
         private void DrawTimers(List<Character> chars, bool drawBg = false)
         {
+            if (_plugin.Configuration.EnabledTimers is null) return;
             HashSet<TimersStatus> enabledTimers = _plugin.Configuration.EnabledTimers;
             if (chars.Count == 0) return;
 

@@ -222,64 +222,74 @@ namespace Altoholic.Windows
                 _configuration.Save();
             }*/
 
-            bool isCustomDeliveriesEnabled = _configuration.EnabledTimers.Contains(TimersStatus.CustomDeliveries);
-            if (ImGui.Checkbox($"{_globalCache.AddonStorage.LoadAddonString(_selectedLanguage, 5700)}###CustomDeliveries", ref isCustomDeliveriesEnabled))
+            if (_configuration.EnabledTimers is not null)
             {
-                if (isCustomDeliveriesEnabled)
+                bool isCustomDeliveriesEnabled = _configuration.EnabledTimers.Contains(TimersStatus.CustomDeliveries);
+                if (ImGui.Checkbox(
+                        $"{_globalCache.AddonStorage.LoadAddonString(_selectedLanguage, 5700)}###CustomDeliveries",
+                        ref isCustomDeliveriesEnabled))
                 {
-                    _configuration.EnabledTimers.Add(TimersStatus.CustomDeliveries);
-                }
-                else
-                {
-                    _configuration.EnabledTimers.Remove(TimersStatus.CustomDeliveries);
+                    if (isCustomDeliveriesEnabled)
+                    {
+                        _configuration.EnabledTimers.Add(TimersStatus.CustomDeliveries);
+                    }
+                    else
+                    {
+                        _configuration.EnabledTimers.Remove(TimersStatus.CustomDeliveries);
+                    }
+
+                    _configuration.Save();
                 }
 
-                _configuration.Save();
-            }
+                bool isDomanEnclaveEnabled = _configuration.EnabledTimers.Contains(TimersStatus.DomanEnclave);
+                if (ImGui.Checkbox(
+                        $"{_globalCache.AddonStorage.LoadAddonString(_selectedLanguage, 8821)}###DomanEnclave",
+                        ref isDomanEnclaveEnabled))
+                {
+                    if (isDomanEnclaveEnabled)
+                    {
+                        _configuration.EnabledTimers.Add(TimersStatus.DomanEnclave);
+                    }
+                    else
+                    {
+                        _configuration.EnabledTimers.Remove(TimersStatus.DomanEnclave);
+                    }
 
-            bool isDomanEnclaveEnabled = _configuration.EnabledTimers.Contains(TimersStatus.DomanEnclave);
-            if (ImGui.Checkbox($"{_globalCache.AddonStorage.LoadAddonString(_selectedLanguage, 8821)}###DomanEnclave", ref isDomanEnclaveEnabled))
-            {
-                if (isDomanEnclaveEnabled)
-                {
-                    _configuration.EnabledTimers.Add(TimersStatus.DomanEnclave);
-                }
-                else
-                {
-                    _configuration.EnabledTimers.Remove(TimersStatus.DomanEnclave);
-                }
-
-                _configuration.Save();
-            }
-
-            bool isMaskedCarnivaleEnabled = _configuration.EnabledTimers.Contains(TimersStatus.MaskedCarnivale);
-            if (ImGui.Checkbox($"{_globalCache.AddonStorage.LoadAddonString(_selectedLanguage, 8832)}###MaskedCarnivale", ref isMaskedCarnivaleEnabled))
-            {
-                if (isMaskedCarnivaleEnabled)
-                {
-                    _configuration.EnabledTimers.Add(TimersStatus.MaskedCarnivale);
-                }
-                else
-                {
-                    _configuration.EnabledTimers.Remove(TimersStatus.MaskedCarnivale);
+                    _configuration.Save();
                 }
 
-                _configuration.Save();
-            }
-
-            bool isTribeEnabled = _configuration.EnabledTimers.Contains(TimersStatus.Tribes);
-            if (ImGui.Checkbox($"{_globalCache.AddonStorage.LoadAddonString(_selectedLanguage, 102515)}###Tribes", ref isTribeEnabled))
-            {
-                if (isTribeEnabled)
+                bool isMaskedCarnivaleEnabled = _configuration.EnabledTimers.Contains(TimersStatus.MaskedCarnivale);
+                if (ImGui.Checkbox(
+                        $"{_globalCache.AddonStorage.LoadAddonString(_selectedLanguage, 8832)}###MaskedCarnivale",
+                        ref isMaskedCarnivaleEnabled))
                 {
-                    _configuration.EnabledTimers.Add(TimersStatus.Tribes);
-                }
-                else
-                {
-                    _configuration.EnabledTimers.Remove(TimersStatus.Tribes);
+                    if (isMaskedCarnivaleEnabled)
+                    {
+                        _configuration.EnabledTimers.Add(TimersStatus.MaskedCarnivale);
+                    }
+                    else
+                    {
+                        _configuration.EnabledTimers.Remove(TimersStatus.MaskedCarnivale);
+                    }
+
+                    _configuration.Save();
                 }
 
-                _configuration.Save();
+                bool isTribeEnabled = _configuration.EnabledTimers.Contains(TimersStatus.Tribes);
+                if (ImGui.Checkbox($"{_globalCache.AddonStorage.LoadAddonString(_selectedLanguage, 102515)}###Tribes",
+                        ref isTribeEnabled))
+                {
+                    if (isTribeEnabled)
+                    {
+                        _configuration.EnabledTimers.Add(TimersStatus.Tribes);
+                    }
+                    else
+                    {
+                        _configuration.EnabledTimers.Remove(TimersStatus.Tribes);
+                    }
+
+                    _configuration.Save();
+                }
             }
 
             ImGui.Separator();

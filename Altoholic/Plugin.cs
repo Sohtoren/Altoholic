@@ -177,8 +177,21 @@ namespace Altoholic
 #endif
             Configuration = PluginInterface.GetPluginConfig() as Configuration ?? new Configuration
             {
-                EnabledTimers = []
+                EnabledTimers =
+                [
+                    TimersStatus.CustomDeliveries,
+                    TimersStatus.DomanEnclave,
+                    TimersStatus.MaskedCarnivale,
+                    TimersStatus.Tribes
+                ]
             };
+            Configuration.EnabledTimers ??=
+            [
+                TimersStatus.CustomDeliveries,
+                TimersStatus.DomanEnclave,
+                TimersStatus.MaskedCarnivale,
+                TimersStatus.Tribes
+            ];
             Configuration.Initialize(PluginInterface.Manifest.AssemblyVersion.Major, PluginInterface);
 
             if (Configuration.Language != ClientState.ClientLanguage)
@@ -2205,8 +2218,21 @@ namespace Altoholic
         {
             Configuration = PluginInterface.GetPluginConfig() as Configuration ?? new Configuration
             {
-                EnabledTimers = []
+                EnabledTimers =
+                [
+                    TimersStatus.CustomDeliveries,
+                    TimersStatus.DomanEnclave,
+                    TimersStatus.MaskedCarnivale,
+                    TimersStatus.Tribes
+                ]
             };
+            Configuration.EnabledTimers ??=
+            [
+                TimersStatus.CustomDeliveries,
+                TimersStatus.DomanEnclave,
+                TimersStatus.MaskedCarnivale,
+                TimersStatus.Tribes
+            ];
             Configuration.Initialize(PluginInterface.Manifest.AssemblyVersion.Major, PluginInterface);
         }
 
