@@ -28,6 +28,10 @@ namespace Altoholic
         public bool IsAutoSaveChatMessageEnabled { get; set; } = true;
         public int AutoSaveTimer { get; set; } = 5;
         public required HashSet<TimersStatus> EnabledTimers { get; set; }
+        public int TimerStandaloneIcon { get; set; } = 48;
+        public float TimerStandaloneIconAlpha { get; set; } = 0.5f;
+        /*public float TimerStandaloneWindowPositionX { get; set; }
+        public float TimerStandaloneWindowPositionY { get; set; }*/
 
         // the below exist just to make saving less cumbersome
         [NonSerialized]

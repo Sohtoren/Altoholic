@@ -24,7 +24,7 @@ namespace Altoholic.Windows
             ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoScrollbar |
             ImGuiWindowFlags.NoScrollWithMouse)
         {
-            Size = new Vector2(300, 250);
+            Size = new Vector2(600, 500);
             SizeCondition = ImGuiCond.Always;
 
             _configuration = plugin.Configuration;
@@ -281,6 +281,38 @@ namespace Altoholic.Windows
 
                 _configuration.Save();
             }
+
+            ImGui.Separator();
+            ImGui.TextUnformatted("Timer Standalone Icon");
+            int iconSize = _configuration.TimerStandaloneIcon is 0 or > 100 ? 48 : _configuration.TimerStandaloneIcon;
+            if (ImGui.SliderInt("Size (default 48)###TimerIconSize", ref iconSize, 15, 100))
+            {
+                _configuration.TimerStandaloneIcon = iconSize;
+                _configuration.Save();
+            }
+            float iconAlpha = _configuration.TimerStandaloneIconAlpha is 0f or > 1f ? 0.5f : _configuration.TimerStandaloneIconAlpha;
+            if (ImGui.SliderFloat("Transparency (default 0.5)###TimerIconAlpha", ref iconAlpha, 0.1f, 1f, "%.1f"))
+            {
+                _configuration.TimerStandaloneIconAlpha = iconAlpha;
+                _configuration.Save();
+            }
+            ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(_selectedLanguage, 14051)}:");
+            Utils.DrawIcon(_globalCache.IconStorage.LoadHighResIcon(91), new Vector2(iconSize, iconSize),
+                new Vector4(1, 1, 1, iconAlpha));
+
+            /*float iconPosX = _configuration.TimerStandaloneWindowPositionX;
+            ImGui.TextUnformatted("Icon position");
+            if (ImGui.SliderFloat("X###TimerIconPosX", ref iconPosX, 20, ImGui.GetMainViewport().WorkSize.X - iconSize, "%.0f"))
+            {
+                _configuration.TimerStandaloneWindowPositionX = iconPosX;
+                _configuration.Save();
+            }
+            float iconPosY = _configuration.TimerStandaloneWindowPositionY;
+            if (ImGui.SliderFloat("Y###TimerIconPosY", ref iconPosY, 20, ImGui.GetMainViewport().WorkSize.Y - iconSize, "%.0f"))
+            {
+                _configuration.TimerStandaloneWindowPositionY = iconPosY;
+                _configuration.Save();
+            }*/
         }
     }
 }

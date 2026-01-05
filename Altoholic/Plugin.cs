@@ -28,7 +28,6 @@ using FFXIVClientStructs.FFXIV.Client.System.String;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using FFXIVClientStructs.FFXIV.Client.UI.Info;
-using FFXIVClientStructs.FFXIV.Component.GUI;
 using Lumina.Excel.Sheets;
 using Lumina.Text;
 using Microsoft.Data.Sqlite;
@@ -504,7 +503,9 @@ namespace Altoholic
                 _otherCharacters = Database.Database.GetOthersCharacters(_db, _localPlayer.CharacterId);
             }
 
+            //TimerWindow.Position = new Vector2(Configuration.TimerStandaloneWindowPositionX, Configuration.TimerStandaloneWindowPositionY);
             TimerWindow.IsOpen = !TimerWindow.IsOpen;
+            //TimerWindow.Position = null;
         }
 
         // ReSharper disable once InconsistentNaming

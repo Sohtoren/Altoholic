@@ -37,6 +37,7 @@ namespace Altoholic.Windows
 
         public Func<Character>? GetPlayer { get; init; }
         public Func<List<Character>>? GetOthersCharactersList { get; init; }
+        //public Vector2 OldWindowPosition { get; set; }
 
         public override void OnClose()
         {
@@ -52,15 +53,29 @@ namespace Altoholic.Windows
             if (GetOthersCharactersList?.Invoke() == null) return;
             _currentLocale = _plugin.Configuration.Language;
 
+            /*if (Position != null && (Position.Value.X != OldWindowPosition.X || Position.Value.Y != OldWindowPosition.Y))
+            {
+                Plugin.Log.Debug("New window position");
+                _plugin.Configuration.TimerStandaloneWindowPositionX = Position.Value.X;
+                _plugin.Configuration.TimerStandaloneWindowPositionY = Position.Value.Y;
+                _plugin.Configuration.Save();
+
+                OldWindowPosition = Position.Value;
+            }*/
+
             List<Character> chars = [];
             chars.Insert(0, GetPlayer.Invoke());
             chars.AddRange(GetOthersCharactersList.Invoke());
+            //Position = new Vector2(_plugin.Configuration.TimerStandaloneWindowPositionX, _plugin.Configuration.TimerStandaloneWindowPositionY);
 
-            Utils.DrawIcon(_globalCache.IconStorage.LoadHighResIcon(91), new Vector2(48, 48),
-                new Vector4(1, 1, 1, 0.5f));
+            int iconSize = _plugin.Configuration.TimerStandaloneIcon is 0 or > 100 ? 48 : _plugin.Configuration.TimerStandaloneIcon;
+            float iconAlpha = _plugin.Configuration.TimerStandaloneIconAlpha is 0f or > 1f ? 0.5f : _plugin.Configuration.TimerStandaloneIconAlpha;
+
+            Utils.DrawIcon(_globalCache.IconStorage.LoadHighResIcon(91), new Vector2(iconSize, iconSize),
+                new Vector4(1, 1, 1, iconAlpha));
             if (ImGui.IsItemHovered())
             {
-                if (Position is not null)
+                /*if (Position is not null)
                 {
                     float winX = Position.Value.X;
                     float winY = Position.Value.Y;
@@ -69,10 +84,12 @@ namespace Altoholic.Windows
                     {
                         ImGui.SetNextWindowPos(new Vector2(winX - 200, winY));
                     }
-                }
+                }*/
 
                 DrawTimers(chars, true);
             }
+
+            //Position = null;
         }
         public void DrawNotHovered()
         {
