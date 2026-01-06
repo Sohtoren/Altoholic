@@ -89,7 +89,7 @@ namespace Altoholic.Windows
                     //ImGui.TableSetupColumn("Last online", ImGuiTableColumnFlags.WidthFixed, 80);
                     ImGui.TableSetupColumn($"{Loc.Localize("Playtime", "Playtime")}###Characters#Playtime", ImGuiTableColumnFlags.WidthStretch);
                     //ImGui.TableSetupColumn($"{Loc.Localize("Playtime", "Playtime")}###Characters#Playtime", ImGuiTableColumnFlags.WidthFixed, 200);
-                    ImGui.TableSetupColumn($"{Loc.Localize("Action", "Action")}###Characters#Action", ImGuiTableColumnFlags.WidthFixed, 40);
+                    ImGui.TableSetupColumn($"{Loc.Localize("CharacterWindowAction", "Action")}###Characters#Action", ImGuiTableColumnFlags.WidthFixed, 40);
                     ImGui.TableHeadersRow();
 
                     List<Character> chars = [];
@@ -311,7 +311,7 @@ namespace Altoholic.Windows
                 {
                     ImGui.BeginTooltip();
                     ImGui.TextUnformatted(
-                        $"{Loc.Localize("LastUpdateOn","Last updated on: ")}{Utils.FormatDate(dateFormat, Utils.UnixTimeStampToDateTime(character.LastPlayTimeUpdate))} - {Utils.GetLastOnlineFormatted(character.LastPlayTimeUpdate)}");
+                        $"{Loc.Localize("LastUpdateOn","Last updated on:")} {Utils.FormatDate(dateFormat, Utils.UnixTimeStampToDateTime(character.LastPlayTimeUpdate))} - {Utils.GetLastOnlineFormatted(character.LastPlayTimeUpdate)}");
                     ImGui.EndTooltip();
                 }
             }

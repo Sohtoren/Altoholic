@@ -1001,11 +1001,11 @@ namespace Altoholic.Windows
         {
             if (chars.Count == 0) return;
             List<List<bool>> charactersQuests = Utils.GetCharactersEventsQuests(chars);
-            ImGui.TextUnformatted($"{Loc.Localize("RecurringEvent",
-                "* As certain event do not change when reoccuring, completing them once will mark all of them done.")}");
+            ImGui.TextUnformatted($"* {Loc.Localize("ProgressRecurringEvent",
+                "As certain event do not change when reoccuring, completing them once will mark all of them done.")}");
 
-            ImGui.TextUnformatted($"{Loc.Localize("Blunderville",
-                "** For the Blunderville event, the introduction quest is used for completion.")}");
+            ImGui.TextUnformatted($"** {Loc.Localize("ProgressEventBlundervilleMessage",
+                "For the Blunderville event, the introduction quest is used for completion.")}");
 
             using var tabBar = ImRaii.TabBar("###progressEvent#Tabs", ImGuiTabBarFlags.Reorderable);
             if (!tabBar.Success) return;
@@ -1278,7 +1278,7 @@ namespace Altoholic.Windows
                         $"{Loc.Localize("Event_HatchingTide", "Hatching-tide")} (2023)",
                         100);
                     DrawAllLine(chars, charactersQuests,
-                        $"{Loc.Localize("Event_TheMakeItRainCampaign", "The Make It Rain Campaign 2023")}", 101);
+                        $"{Loc.Localize("Event_TheMakeItRainCampaign", "The Make It Rain Campaign")} (2023)", 101);
                     DrawAllLine(chars, charactersQuests,
                         $"{Loc.Localize("Event_MoonfireFaire", "Moonfire Faire")} (2023)",
                         102);
@@ -1924,7 +1924,7 @@ namespace Altoholic.Windows
         private void DrawMoogleRewards(List<Character> chars)
         {
             Dictionary<int, string> mooglesNames = [];
-            mooglesNames[0] = Loc.Localize("OldMoogleEvent", "Old Events");
+            mooglesNames[0] = Loc.Localize("PreviousMoogleEvent", "Previous Events");
             string revelationName = _currentLocale switch
             {
                 ClientLanguage.German => "Aufgezeigte Offenbarungen",

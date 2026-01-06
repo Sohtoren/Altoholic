@@ -286,7 +286,7 @@ namespace Altoholic.Windows
                             if (ImGui.IsItemHovered())
                             {
                                 ImGui.BeginTooltip();
-                                ImGui.TextUnformatted($"{Loc.Localize("LastCheck", "Last check: ")} {Utils.FormatDate(dateFormat, currChar.Timers.CustomDeliveriesLastCheck.Value)}");
+                                ImGui.TextUnformatted($"{Loc.Localize("LastCheck", "Last check:")} {Utils.FormatDate(dateFormat, currChar.Timers.CustomDeliveriesLastCheck.Value)}");
                                 ImGui.EndTooltip();
                             }
                         }
@@ -315,7 +315,7 @@ namespace Altoholic.Windows
                             if (ImGui.IsItemHovered())
                             {
                                 ImGui.BeginTooltip();
-                                ImGui.TextUnformatted($"{Loc.Localize("LastCheck", "Last check: ")} {Utils.FormatDate(dateFormat, currChar.Timers.DomanEnclaveLastCheck.Value)}");
+                                ImGui.TextUnformatted($"{Loc.Localize("LastCheck", "Last check:")} {Utils.FormatDate(dateFormat, currChar.Timers.DomanEnclaveLastCheck.Value)}");
                                 ImGui.EndTooltip();
                             }
                         }
@@ -407,7 +407,7 @@ namespace Altoholic.Windows
                                         $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 12442)}");
                                 }
 
-                                ImGui.TextUnformatted($"{Loc.Localize("LastCheck", "Last check: ")} {Utils.FormatDate(dateFormat, currChar.Timers.MaskedFestivalLastCheck.Value)}");
+                                ImGui.TextUnformatted($"{Loc.Localize("LastCheck", "Last check:")} {Utils.FormatDate(dateFormat, currChar.Timers.MaskedFestivalLastCheck.Value)}");
 
                                 ImGui.EndTooltip();
                             }
@@ -440,7 +440,7 @@ namespace Altoholic.Windows
                         if (ImGui.IsItemHovered())
                         {
                             ImGui.BeginTooltip();
-                            ImGui.TextUnformatted($"{Loc.Localize("LastCheck", "Last check: ")} {Utils.FormatDate(dateFormat, currChar.Timers.TribeLastCheck.Value)}");
+                            ImGui.TextUnformatted($"{Loc.Localize("LastCheck", "Last check:")} {Utils.FormatDate(dateFormat, currChar.Timers.TribeLastCheck.Value)}");
                             ImGui.EndTooltip();
                         }
                     }

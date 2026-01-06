@@ -584,7 +584,7 @@ namespace Altoholic.Windows
             else
             {
                 ImGui.TextUnformatted(
-                    $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 5448)} {Loc.Localize("OpenRetainer", "Open the retainer to update the gear")}");
+                    $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 5448)} {Loc.Localize("OpenRetainerToUpdateGear", "Open the retainer to update the gear")}");
             }
         }
 
@@ -592,7 +592,7 @@ namespace Altoholic.Windows
         {
             if (selectedRetainer.Inventory.Count != 193)
             {
-                ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 5448)} {Loc.Localize("OpenRetainer", "Open the retainer to update")}");
+                ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 5448)} {Loc.Localize("OpenRetainerToUpdate", "Open the retainer to update")}");
             }
             else
             {
@@ -860,7 +860,7 @@ namespace Altoholic.Windows
             }
             else
             {
-                ImGui.TextUnformatted($"{selectedRetainer.MarketItemCount} found. {Loc.Localize("OpenRetainerToUpdateList", "Open the retainer to list")}");
+                ImGui.TextUnformatted($"{selectedRetainer.MarketItemCount} found. {Loc.Localize("OpenRetainerToUpdateList", "Open the retainer to update market item list")}");
             }
         }
     }

@@ -1,18 +1,246 @@
 {
-  "Playtime": {
-    "message": "Gesamtspielzeit",
-    "description": "PlaytimeString"
-  },
-  "OpenSaddlebag": {
-    "message": "Öffnen Sie Saddlebag zum Aktualisieren",
-    "description": "OpenSaddlebagString"
-  },
-  "OpenRetainerToUpdate": {
-    "message": "Öffnen Sie den Gehilfe zum Aktualisieren",
-    "description": "Retainer.OpenInventoryString"
-  },
-  "OpenRetainerToUpdateList": {
-    "message": "Öffnen Sie den Gehilfe, um die Liste zu aktualisieren",
-    "description": "Retainer.OpenInventoryString"
-  }
+    "CharacterWindowAction": {
+        "message": "Action",
+        "description": ""
+    },
+    "ArmoireNotLoaded": {
+        "message": "No item found. You might need open the armoire to update",
+        "description": ""
+    },
+    "CollectionTabBarding": {
+        "message": "Barding",
+        "description": ""
+    },
+    "ProgressEventBlundervilleMessage": {
+        "message": "For the Blunderville event, the introduction quest is used for completion.",
+        "description": ""
+    },
+    "CharacterNotScannedYet": {
+        "message": "This character was not scanned yet",
+        "description": ""
+    },    
+    "ConfigAutoSaveChatMessage": {
+        "message": "display a chat message when the character is (auto) saved",
+        "description": ""
+    },
+    "ConfigEnableAutosave": {
+        "message": "Enable autosave chat message",
+        "description": ""
+    },
+    "ConfigEnabledTimer": {
+        "message": "enabled timers",
+        "description": ""
+    },    
+    "ConfigObtainedOnly": {
+        "message": "display unobtained items, mounts, minions, etc with a non spoiler icon",
+        "description": ""
+    },
+    "Event_AllSaintsWake": {
+        "message": "all saints' wake",
+        "description": ""
+    },
+    "Event_ANocturneforHeroes": {
+        "message": "A Nocturne for Heroes",
+        "description": ""
+    },
+    "Event_Blunderville": {
+        "message": "Blunderville",
+        "description": ""
+    },
+    "Event_BreakingBrickMountains": {
+        "message": "Breaking Brick Mountains",
+        "description": ""
+    },
+    "Event_BurgeoningDread": {
+        "message": "Burgeoning Dread",
+        "description": ""
+    },
+    "Event_FirefallFaire": {
+        "message": "Firefall Faire",
+        "description": ""
+    },
+    "Event_FoundationDay": {
+        "message": "Foundation Day",
+        "description": ""
+    },
+    "Event_HatchingTide": {
+        "message": "Hatching-tide",
+        "description": ""
+    },
+    "Event_Heavensturn": {
+        "message": "Heavensturn",
+        "description": ""
+    },
+    "Event_HuntersMoon": {
+        "message": "Hunter's Moon",
+        "description": ""
+    },
+    "Event_LightningReturns": {
+        "message": "Lightning Returns",
+        "description": ""
+    },
+    "Event_LightningStrikes": {
+        "message": "Lightning Strikes",
+        "description": ""
+    },
+    "Event_LittleLadiesAndHatchingTideDay": {
+        "message": "Little Ladies' Day & Hatching-tide",
+        "description": ""
+    },
+    "Event_LittleLadiesDay": {
+        "message": "Little Ladies' Day",
+        "description": ""
+    },
+    "Event_MaidensRhapsody": {
+        "message": "The Maiden's Rhapsody",
+        "description": ""
+    },
+    "Event_MoonfireFaire": {
+        "message": "Moonfire Faire",
+        "description": ""
+    },
+    "Event_Starlight": {
+        "message": "Starlight Celebration",
+        "description": ""
+    },
+    "Event_ThatOldBlackMagic": {
+        "message": "That Old Black Magic",
+        "description": ""
+    },
+    "Event_TheHuntForRathalos": {
+        "message": "The Hunt For Rathalos",
+        "description": ""
+    },
+    "event_themakeitraincampaign": {
+        "message": "the make it rain campaign",
+        "description": ""
+    },
+    "Event_ThePathInterfal": {
+        "message": "The Path Infernal",
+        "description": ""
+    },
+    "Event_TheRising": {
+        "message": "The Rising",
+        "description": ""
+    },
+    "Event_ValentioneAndLittleLadiesDays": {
+        "message": "Valentione's and Little Ladies' Day",
+        "description": ""
+    },
+    "Event_ValentioneDay": {
+        "message": "Valentione's Day",
+        "description": ""
+    },
+    "Event_YoKai": {
+        "message": "Yo-kai Watch: Gather One, Gather All!",
+        "description": ""
+    },
+    "CollectionTabFacepaint": {
+        "message": "Facepaint",
+        "description": ""
+    },
+    "CollectionTabFramerkit": {
+        "message": "Framer's kit",
+        "description": ""
+    },
+    "GlamDresserNotLoaded": {
+        "message": "No item found. You might need open the glamour dresser",
+        "description": ""
+    },
+    "CollectionTabHairstyle": {
+        "message": "Hairstyle",
+        "description": ""
+    },
+    "LastCheck": {
+        "message": "Last check: ",
+        "description": "Last time a check was done. Is followed by a date and time"
+    },
+    "LastPlaytimeOutdated": {
+        "message": "More than 7 days since the last update, consider using the /playtime command",
+        "description": ""
+    },
+    "LastUpdateOn": {
+        "message": "Last updated on: ",
+        "description": "Last time an update was done. Is followed by a date and time"
+    },
+    "NoItemOnAnyCharacter": {
+        "message": "Item not found on any characters.\r\nCheck if inventories are available and updated.",
+        "description": ""
+    },
+    "NoItemOnAnyRetainer": {
+        "message": "Item not found on any retainers.\r\nCheck if inventories are available and updated.",
+        "description": ""
+    },
+    "NoPlaytimeFound": {
+        "message": "No playtime found, use /playtime",
+        "description": ""
+    },
+    "NoPurchasableFacepaintsUnlocked": {
+        "message": "No purchasable facepaint unlocked",
+        "description": ""
+    },
+    "NoPurchasableHairstylesUnlocked": {
+        "message": "No purchasable hairstyle unlocked",
+        "description": ""
+    },
+    "ObtainedLowercase": {
+        "message": "obtained",
+        "description": "Has an item/minion/mount/etc name in front of"
+    },
+    "ObtainedOnly": {
+        "message": "Obtained only",
+        "description": "String for the obtained only checkbox"
+    },
+    "PreviousMoogleEvent": {
+        "message": "Previous Events",
+        "description": ""
+    },
+    "OpenRetainerToUpdateGear": {
+        "message": "Open the retainer to update the gear",
+        "description": ""
+    },
+    "OpenRetainerToUpdate": {
+        "message": "Open the retainer to update",
+        "description": ""
+    },
+    "OpenRetainerToUpdateList": {
+        "message": "Open the retainer to update market item list",
+        "description": ""
+    },
+    "OpenSaddlebagToUpdate": {
+        "message": "The Saddlebag may be empty or open to update",
+        "description": "Saddlebag is the ingame name of the saddle bag window"
+    },
+    "Playtime": {
+        "message": "Gesamtspielzeit",
+        "description": "Column name"
+    },
+    "PvPProfileNotLoaded": {
+        "message": "This character PvP profile wasn't loaded",
+        "description": ""
+    },
+    "pvpprofilenotunlocked": {
+        "message": "This character doesn't have PvP unlocked",
+        "description": ""
+    },
+    "ProgressRecurringEvent": {
+        "message": "As certain event do not change when reoccuring, completing them once will mark all of them done.",
+        "description": ""
+    },
+    "ConfigEnableSpoilers": {
+        "message": "Enable Spoilers",
+        "description": ""
+    },
+    "ConfigSpoilersMessage": {
+        "message": "Display unobtained icons instead of placeholders",
+        "description": ""
+    },
+    "Timers": {
+        "message": "Timers",
+        "description": ""
+    },
+    "vistanotunlocked": {
+        "message": "Sightseeing Log not unlocked",
+        "description": ""
+    }
 }

@@ -214,7 +214,7 @@ namespace Altoholic.Windows
 
             using (var bardingsTab =
                    ImRaii.TabItem(
-                       $"{Loc.Localize("Barding", "Barding")}###CollectionWindow#Tabs#Bardings")) // Harnisch Barding Barde バード
+                       $"{Loc.Localize("CollectionTabBarding", "Barding")}###CollectionWindow#Tabs#Bardings")) // Harnisch Barding Barde バード
             {
                 if (bardingsTab.Success)
                 {
@@ -243,7 +243,7 @@ namespace Altoholic.Windows
             }
 
             using (var facepaintTab =
-                   ImRaii.TabItem($"{Loc.Localize("Facepaint", "Facepaint")}###CollectionWindow#Tabs#Facepaints"))
+                   ImRaii.TabItem($"{Loc.Localize("CollectionTabFacepaint", "Facepaint")}###CollectionWindow#Tabs#Facepaints"))
             {
                 if (facepaintTab.Success)
                 {
@@ -253,7 +253,7 @@ namespace Altoholic.Windows
 
             using (var framerKitTab =
                    ImRaii.TabItem(
-                       $"{Loc.Localize("FramerKit", "Framer's kit")}###CollectionWindow#Tabs#Framerkits")) // Portraitmaterial[p] / Framer's kit / Portrait / ポートレート
+                       $"{Loc.Localize("CollectionTabFramerKit", "Framer's kit")}###CollectionWindow#Tabs#Framerkits")) // Portraitmaterial[p] / Framer's kit / Portrait / ポートレート
             {
                 if (framerKitTab.Success)
                 {
@@ -273,7 +273,7 @@ namespace Altoholic.Windows
 
             using (var hairsTab =
                    ImRaii.TabItem(
-                       $"{Loc.Localize("Hairstyle", "Hairstyle")}###CollectionWindow#Tabs#Hairstyles")) // Frisur Hairstyle Coupe de cheveux 髪型
+                       $"{Loc.Localize("CollectionTabHairstyle", "Hairstyle")}###CollectionWindow#Tabs#Hairstyles")) // Frisur Hairstyle Coupe de cheveux 髪型
             {
                 if (hairsTab.Success)
                 {
@@ -391,7 +391,7 @@ namespace Altoholic.Windows
             string endStr = string.Empty;
             if (!_isSpoilerEnabled)
             {
-                endStr += $"{Loc.Localize("ObtainedLowercase", " obtained")}";
+                endStr += $" {Loc.Localize("ObtainedLowercase", " obtained")}";
             }
             else
             {
@@ -546,7 +546,7 @@ namespace Altoholic.Windows
             string endStr = string.Empty;
             if (!_isSpoilerEnabled)
             {
-                endStr += $"{Loc.Localize("ObtainedLowercase", " obtained")}";
+                endStr += $" {Loc.Localize("ObtainedLowercase", " obtained")}";
             }
             else
             {
@@ -1004,7 +1004,7 @@ namespace Altoholic.Windows
             string endStr = string.Empty;
             if (!_isSpoilerEnabled)
             {
-                endStr += $"{Loc.Localize("ObtainedLowercase", " obtained")}";
+                endStr += $" {Loc.Localize("ObtainedLowercase", " obtained")}";
             }
             else
             {
@@ -1157,7 +1157,7 @@ namespace Altoholic.Windows
             string endStr = string.Empty;
             if (!_isSpoilerEnabled)
             {
-                endStr += $"{Loc.Localize("ObtainedLowercase", " obtained")}";
+                endStr += $" {Loc.Localize("ObtainedLowercase", " obtained")}";
             }
             else
             {
@@ -1312,7 +1312,7 @@ namespace Altoholic.Windows
             string endStr = string.Empty;
             if (!_isSpoilerEnabled)
             {
-                endStr += $"{Loc.Localize("ObtainedLowercase", " obtained")}";
+                endStr += $" {Loc.Localize("ObtainedLowercase", " obtained")}";
             }
             else
             {
@@ -1468,7 +1468,7 @@ namespace Altoholic.Windows
             string endStr = string.Empty;
             if (!_isSpoilerEnabled)
             {
-                endStr += $"{Loc.Localize("ObtainedLowercase", " obtained")}";
+                endStr += $" {Loc.Localize("ObtainedLowercase", " obtained")}";
             }
             else
             {
@@ -1624,7 +1624,7 @@ namespace Altoholic.Windows
             string endStr = string.Empty;
             if (!_isSpoilerEnabled)
             {
-                endStr += $"{Loc.Localize("ObtainedLowercase", " obtained")}";
+                endStr += $" {Loc.Localize("ObtainedLowercase", " obtained")}";
             }
             else
             {
@@ -1797,7 +1797,7 @@ namespace Altoholic.Windows
             string endStr = string.Empty;
             if (!_isSpoilerEnabled)
             {
-                endStr += $"{Loc.Localize("ObtainedLowercase", " obtained")}";
+                endStr += $" {Loc.Localize("ObtainedLowercase", " obtained")}";
             }
             else
             {
@@ -1983,7 +1983,7 @@ namespace Altoholic.Windows
             string endStr = string.Empty;
             if (!_isSpoilerEnabled)
             {
-                endStr += $"{Loc.Localize("ObtainedLowercase", " obtained")}";
+                endStr += $" {Loc.Localize("ObtainedLowercase", " obtained")}";
             }
             else
             {
@@ -2149,7 +2149,7 @@ namespace Altoholic.Windows
             string endStr = string.Empty;
             if (!_isSpoilerEnabled)
             {
-                endStr += $"{Loc.Localize("ObtainedLowercase", " obtained")}";
+                endStr += $" {Loc.Localize("ObtainedLowercase", " obtained")}";
             }
             else
             {
@@ -2314,7 +2314,7 @@ namespace Altoholic.Windows
             string endStr = string.Empty;
             if (!_isSpoilerEnabled)
             {
-                endStr += $"{Loc.Localize("ObtainedLowercase", " obtained")}";
+                endStr += $" {Loc.Localize("ObtainedLowercase", " obtained")}";
             }
             else
             {

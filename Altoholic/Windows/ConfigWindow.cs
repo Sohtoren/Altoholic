@@ -113,11 +113,11 @@ namespace Altoholic.Windows
                 using var tooltip = ImRaii.Tooltip();
                 if (!tooltip) return;
                 ImGui.TextUnformatted(
-                    $"{Loc.Localize("ObtainedOnly", "Display unobtained items, mounts, minions, etc with a non spoiler icon")}");
+                    $"{Loc.Localize("ConfigObtainedOnly", "Display unobtained items, mounts, minions, etc with a non spoiler icon")}");
             }
 
             bool isEnabled = _configuration.IsSpoilersEnabled;
-            if (ImGui.Checkbox("Enable Spoilers####EnableSpoilers", ref isEnabled))
+            if (ImGui.Checkbox($"{Loc.Localize("ConfigEnableSpoilers","Enable Spoilers####EnableSpoilers")}", ref isEnabled))
             {
                 _configuration.IsSpoilersEnabled = isEnabled;
                 _configuration.Save();
@@ -127,11 +127,11 @@ namespace Altoholic.Windows
             {
                 using var tooltip = ImRaii.Tooltip();
                 if (!tooltip) return;
-                ImGui.TextUnformatted($"{Loc.Localize("Spoilers", "Display unobtained icons instead of placeholder")}");
+                ImGui.TextUnformatted($"{Loc.Localize("ConfigSpoilersMessage", "Display unobtained icons instead of placeholder")}");
             }
 
             bool isAutoSaveChatMessageEnabled = _configuration.IsAutoSaveChatMessageEnabled;
-            if (ImGui.Checkbox("Enable autosave chat message####EnableAutoSaveChatMessage",
+            if (ImGui.Checkbox($"{Loc.Localize("ConfigEnableAutosave","Enable autosave chat message####EnableAutoSaveChatMessage")}",
                     ref isAutoSaveChatMessageEnabled))
             {
                 _configuration.IsAutoSaveChatMessageEnabled = isAutoSaveChatMessageEnabled;
@@ -143,7 +143,7 @@ namespace Altoholic.Windows
                 using var tooltip = ImRaii.Tooltip();
                 if (!tooltip) return;
                 ImGui.TextUnformatted(
-                    $"{Loc.Localize("AutoSave Chat Message", "Display a chat message when the character is (auto) saved")}");
+                    $"{Loc.Localize("ConfigAutoSaveChatMessage", "Display a chat message when the character is (auto) saved")}");
             }
 
             int autoSaveTimer = _configuration.AutoSaveTimer;
