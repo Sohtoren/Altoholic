@@ -3,8 +3,6 @@ using Altoholic.Models;
 using Altoholic.Windows;
 using CheapLoc;
 using Dalamud.Game;
-using Dalamud.Game.Addon.Lifecycle;
-using Dalamud.Game.Addon.Lifecycle.AddonArgTypes;
 using Dalamud.Game.ClientState.Conditions;
 using Dalamud.Game.ClientState.Objects.SubKinds;
 using Dalamud.Game.Command;

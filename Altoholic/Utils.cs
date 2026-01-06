@@ -4291,7 +4291,13 @@ namespace Altoholic
             }
         }
 
-        public static string UnixTimeStampToDateTime(long lastOnline)
+        public static DateTime UnixTimeStampToDateTime(long lastOnline)
+        {
+            DateTime dateTime = new(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+            dateTime = dateTime.AddSeconds(lastOnline).ToLocalTime();
+            return dateTime;
+        }
+        public static string UnixTimeStampToDateTimeString(long lastOnline)
         {
             DateTime dateTime = new(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
             dateTime = dateTime.AddSeconds(lastOnline).ToLocalTime();
@@ -4368,7 +4374,7 @@ namespace Altoholic
             return time;
         }
 
-        public enum TimeOptions
+        private enum TimeOptions
         {
             Normal = 0,
             Seconds = 1,
@@ -4409,6 +4415,74 @@ namespace Altoholic
                 formatted = formatted[..^2];
 
             return formatted;
+        }
+
+        public static string FormatDateToLocale(ClientLanguage local, DateTime date)
+        {
+            switch (local)
+            {
+                case ClientLanguage.English:
+                    return $"{date: yyyyMMdd}";
+                case ClientLanguage.German:
+                case ClientLanguage.French:
+                    return $"{date: dd-MM-yyyy}";
+                case ClientLanguage.Japanese:
+                    return $"{date: yyyy年MM月ddD日 HH時mm分}";
+                default:
+                    return $"{date: yyyyMMdd}";
+            }
+        }
+
+        public static string FormatDate(int format, DateTime date)
+        {
+            switch (format)
+            {
+                case 0:
+                    return $"{date: yyyyMMdd HH:mm}";
+                case 1:
+                    return $"{date: yyyy-MM-dd HH:mm}";
+                case 2:
+                    return $"{date: yyyy/MM/dd HH:mm}";
+                case 3:
+                    return $"{date: ddMMyyyy HH:mm}";
+                case 4:
+                    return $"{date: dd-MM-yyyy HH:mm}";
+                case 5:
+                    return $"{date: dd/MM/yyyy HH:mm}";
+                case 6:
+                    return $"{date: MMddyyyy HH:mm}";
+                case 7:
+                    return $"{date: MM-dd-yyyy HH:mm}";
+                case 8:
+                    return $"{date: MM/dd/yyyy HH:mm}";
+                case 20:
+                    return $"{date: yyyy年MM月ddD日 HH時mm分}";
+                default:
+                    return $"{date: yyyy/MM/dd HH:mm}";
+            }
+        }
+
+        public static string FormatDateString(int format, DateTime date)
+        {
+            switch (format)
+            {
+                case 0:
+                    return $"{date: yyyyMMdd HH:mm}";
+                case 1:
+                    return $"{date: yyyy-MM-dd HH:mm}";
+                case 2:
+                    return $"{date: ddMMyyyy HH:mm}";
+                case 3:
+                    return $"{date: dd-MM-yyyy HH:mm}";
+                case 4:
+                    return $"{date: MMddyyyy HH:mm}";
+                case 5:
+                    return $"{date: MM-dd-yyyy HH:mm}";
+                case 8:
+                    return $"{date: yyyy年MM月ddD日 HH時mm分}";
+                default:
+                    return $"{date: yyyyMMdd HH:mm}";
+            }
         }
     }
 }

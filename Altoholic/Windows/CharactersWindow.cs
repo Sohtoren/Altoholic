@@ -194,6 +194,7 @@ namespace Altoholic.Windows
 
         private void DrawCharacter(int pos, Character character)
         {
+            int dateFormat = _plugin.Configuration.DateFormat;
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
             if (character.UnreadLetters > 0)
@@ -297,7 +298,7 @@ namespace Altoholic.Windows
                 if (ImGui.IsItemHovered())
                 {
                     ImGui.BeginTooltip();
-                    ImGui.TextUnformatted(Utils.UnixTimeStampToDateTime(character.LastOnline));
+                    ImGui.TextUnformatted(Utils.FormatDate(dateFormat, Utils.UnixTimeStampToDateTime(character.LastOnline)));
                     ImGui.EndTooltip();
                 }
             }
@@ -310,7 +311,7 @@ namespace Altoholic.Windows
                 {
                     ImGui.BeginTooltip();
                     ImGui.TextUnformatted(
-                        $"Last updated on : {Utils.UnixTimeStampToDateTime(character.LastPlayTimeUpdate)} - {Utils.GetLastOnlineFormatted(character.LastPlayTimeUpdate)}");
+                        $"{Loc.Localize("LastUpdateOn","Last updated on: ")}{Utils.FormatDate(dateFormat, Utils.UnixTimeStampToDateTime(character.LastPlayTimeUpdate))} - {Utils.GetLastOnlineFormatted(character.LastPlayTimeUpdate)}");
                     ImGui.EndTooltip();
                 }
             }

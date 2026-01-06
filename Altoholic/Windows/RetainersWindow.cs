@@ -813,7 +813,7 @@ namespace Altoholic.Windows
             }
             if (selectedRetainer.MarketInventory.Count > 0)
             {
-                ImGui.TextUnformatted($"On the market until: {Utils.UnixTimeStampToDateTime(selectedRetainer.MarketExpire)}");
+                ImGui.TextUnformatted($"On the market until: {Utils.FormatDate(_plugin.Configuration.DateFormat, Utils.UnixTimeStampToDateTime(selectedRetainer.MarketExpire))}");
                 int count = 0;
                 using (var table = ImRaii.Table($"###Retainer#{selectedRetainer.Id}#MarketTable", 2))
                 {

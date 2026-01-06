@@ -27,6 +27,7 @@ namespace Altoholic
         public Models.Sort CharacterWindowSort { get; set; } = Models.Sort.Auto;
         public bool IsAutoSaveChatMessageEnabled { get; set; } = true;
         public int AutoSaveTimer { get; set; } = 5;
+        public int DateFormat { get; set; }
         public HashSet<TimersStatus>? EnabledTimers { get; set; }
         public int TimerStandaloneIcon { get; set; } = 48;
         public float TimerStandaloneIconAlpha { get; set; } = 0.5f;

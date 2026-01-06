@@ -1,11 +1,11 @@
-﻿using System;
-using System.Numerics;
-using Altoholic.Cache;
+﻿using Altoholic.Cache;
 using CheapLoc;
+using Dalamud.Bindings.ImGui;
 using Dalamud.Game;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
-using Dalamud.Bindings.ImGui;
+using System;
+using System.Numerics;
 
 namespace Altoholic.Windows
 {
@@ -33,6 +33,7 @@ namespace Altoholic.Windows
         }
 
         private ClientLanguage _selectedLanguage;
+        private int _selectedDateFormat;
 
         public void Dispose() { }
 
@@ -161,6 +162,100 @@ namespace Altoholic.Windows
 
             _configuration.AutoSaveTimer = autoSaveTimer;
             _configuration.Save();
+
+            switch (_selectedLanguage)
+            {
+                case ClientLanguage.German:
+                    ImGui.TextUnformatted(" Datumsformat");
+                    break;
+                case ClientLanguage.English:
+                    ImGui.TextUnformatted("Date format");
+                    break;
+                case ClientLanguage.French:
+                    ImGui.TextUnformatted("Format date");
+                    break;
+                case ClientLanguage.Japanese:
+                    ImGui.TextUnformatted("日付形式（にっぷしき）");
+                    break;
+                default:
+                    ImGui.TextUnformatted("Date format");
+                    break;
+            }
+            _selectedDateFormat = _configuration.DateFormat;
+            DateTime dt = DateTime.Now;
+            ImGui.SetNextItemWidth(200);
+            using (var dateFormatCombo =
+                   ImRaii.Combo($"###DateFormatCombo",
+                       Utils.FormatDateString(_selectedDateFormat, dt)))
+            {
+                if (dateFormatCombo.Success)
+                {
+                    if (ImGui.Selectable($"{dt: yyyyMMdd HH:ss} (yyyymmdd)",
+                            0 == _selectedDateFormat))
+                    {
+                        _selectedDateFormat = 0;
+                    }
+                    if (ImGui.Selectable($"{dt: yyyy-MM-dd HH:ss} (yyyy-mm-dd)",
+                            0 == _selectedDateFormat))
+                    {
+                        _selectedDateFormat = 1;
+                    }
+                    if (ImGui.Selectable($"{dt: yyyy/MM/dd HH:ss} (yyyy/mm/dd)",
+                            0 == _selectedDateFormat))
+                    {
+                        _selectedDateFormat = 2;
+                    }
+                    if (ImGui.Selectable($"{dt: ddMMyyyy HH:ss} (ddmmyyyy)",
+                            0 == _selectedDateFormat))
+                    {
+                        _selectedDateFormat = 3;
+                    }
+                    if (ImGui.Selectable($"{dt: dd-MM-yyyy HH:ss}(dd-mm-yyyy)",
+                            0 == _selectedDateFormat))
+                    {
+                        _selectedDateFormat = 4;
+                    }
+                    if (ImGui.Selectable($"{dt: dd/MM/yyyy HH:ss}(dd/mm/yyyy)",
+                            0 == _selectedDateFormat))
+                    {
+                        _selectedDateFormat = 5;
+                    }
+                    if (ImGui.Selectable($"{dt: MMddyyyy HH:ss tt} (mmddyyyy)",
+                            0 == _selectedDateFormat))
+                    {
+                        _selectedDateFormat = 6;
+                    }
+                    if (ImGui.Selectable($"{dt: MM-dd-yyyy HH:ss tt} (mm-dd-yyyy)",
+                            0 == _selectedDateFormat))
+                    {
+                        _selectedDateFormat = 7;
+                    }
+                    if (ImGui.Selectable($"{dt: MM/dd/yyyy HH:ss tt} (mm/dd/yyyy)",
+                            0 == _selectedDateFormat))
+                    {
+                        _selectedDateFormat = 8;
+                    }
+
+                    if (_selectedLanguage == ClientLanguage.Japanese)
+                    {
+                        if (ImGui.Selectable($"{dt: yyyy年MM月ddD日 HH時mm分}",
+                                0 == _selectedDateFormat))
+                        {
+                            _selectedDateFormat = 20;
+                        }
+                    }
+
+                    _configuration.DateFormat = _selectedDateFormat;
+                    try
+                    {
+                        _configuration.Save();
+                    }
+                    catch (Exception e)
+                    {
+                        Plugin.Log.Debug($"Config save error: {e}");
+                    }
+                }
+            }
         }
 
         private void DrawCredits()
