@@ -4,6 +4,7 @@ using Dalamud.Bindings.ImGui;
 using Dalamud.Game;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
+using Dalamud.Plugin.Services;
 using System;
 using System.Numerics;
 
@@ -92,7 +93,7 @@ namespace Altoholic.Windows
                     _plugin.ChangeLanguage(_selectedLanguage);
                     try
                     {
-                        _configuration.Save();
+                        _configuration.TrySave();
                     }
                     catch (Exception e)
                     {
@@ -105,7 +106,7 @@ namespace Altoholic.Windows
             if (ImGui.Checkbox("Obtained Only###ObtainedOnly", ref isObtainedOnlyEnabled))
             {
                 _configuration.ObtainedOnly = isObtainedOnlyEnabled;
-                _configuration.Save();
+                _configuration.TrySave();
             }
 
             if (ImGui.IsItemHovered())
@@ -117,39 +118,45 @@ namespace Altoholic.Windows
             }
 
             bool isSpoilersEnabled = _configuration.IsSpoilersEnabled;
-            if (ImGui.Checkbox($"{Loc.Localize("ConfigEnableSpoilers","Enable Spoilers")}####EnableSpoilers", ref isSpoilersEnabled))
+            if (ImGui.Checkbox($"{Loc.Localize("ConfigEnableSpoilers", "Enable Spoilers")}####EnableSpoilers",
+                    ref isSpoilersEnabled))
             {
                 _configuration.IsSpoilersEnabled = isSpoilersEnabled;
-                _configuration.Save();
+                _configuration.TrySave();
             }
 
             if (ImGui.IsItemHovered())
             {
                 using var tooltip = ImRaii.Tooltip();
                 if (!tooltip) return;
-                ImGui.TextUnformatted($"{Loc.Localize("ConfigSpoilersMessage", "Display unobtained icons instead of non spoilery placeholder")}");
+                ImGui.TextUnformatted(
+                    $"{Loc.Localize("ConfigSpoilersMessage", "Display unobtained icons instead of non spoilery placeholder")}");
             }
 
             bool isPlaytimeNotificationEnabled = _configuration.IsPlaytimeNotificationEnabled;
-            if (ImGui.Checkbox($"{Loc.Localize("ConfigEnablePlaytimeNotification", "Enable playtime notification")}####EnableSpoilers", ref isPlaytimeNotificationEnabled))
+            if (ImGui.Checkbox(
+                    $"{Loc.Localize("ConfigEnablePlaytimeNotification", "Enable playtime notification")}####EnableSpoilers",
+                    ref isPlaytimeNotificationEnabled))
             {
                 _configuration.IsPlaytimeNotificationEnabled = isPlaytimeNotificationEnabled;
-                _configuration.Save();
+                _configuration.TrySave();
             }
 
             if (ImGui.IsItemHovered())
             {
                 using var tooltip = ImRaii.Tooltip();
                 if (!tooltip) return;
-                ImGui.TextUnformatted($"{Loc.Localize("ConfigPlaytimeNotificationMessage", "Display a notification in chat when /playtime hasn't been used for more than 7 days")}");
+                ImGui.TextUnformatted(
+                    $"{Loc.Localize("ConfigPlaytimeNotificationMessage", "Display a notification in chat when /playtime hasn't been used for more than 7 days")}");
             }
 
             bool isAutoSaveChatMessageEnabled = _configuration.IsAutoSaveChatMessageEnabled;
-            if (ImGui.Checkbox($"{Loc.Localize("ConfigEnableAutosave","Enable autosave chat message####EnableAutoSaveChatMessage")}",
+            if (ImGui.Checkbox(
+                    $"{Loc.Localize("ConfigEnableAutosave", "Enable autosave chat message####EnableAutoSaveChatMessage")}",
                     ref isAutoSaveChatMessageEnabled))
             {
                 _configuration.IsAutoSaveChatMessageEnabled = isAutoSaveChatMessageEnabled;
-                _configuration.Save();
+                _configuration.TrySave();
             }
 
             if (ImGui.IsItemHovered())
@@ -162,20 +169,13 @@ namespace Altoholic.Windows
 
             int autoSaveTimer = _configuration.AutoSaveTimer;
             ImGui.PushItemWidth(200);
-            ImGui.InputInt("Auto save Timer (max 60 mins)####AutoSaveTimer", ref autoSaveTimer);
+            if (ImGui.SliderInt("Auto save Timer (default 5 mins)###AutoSaveTimer", ref autoSaveTimer, 1, 60))
+            {
+                _configuration.AutoSaveTimer = autoSaveTimer;
+                _configuration.TrySave();
+                
+            }
             ImGui.PopItemWidth();
-            if (autoSaveTimer > 60)
-            {
-                autoSaveTimer = 60;
-            }
-
-            if (autoSaveTimer < 1)
-            {
-                autoSaveTimer = 1;
-            }
-
-            _configuration.AutoSaveTimer = autoSaveTimer;
-            _configuration.Save();
 
             switch (_selectedLanguage)
             {
@@ -260,14 +260,7 @@ namespace Altoholic.Windows
                     }
 
                     _configuration.DateFormat = _selectedDateFormat;
-                    try
-                    {
-                        _configuration.Save();
-                    }
-                    catch (Exception e)
-                    {
-                        Plugin.Log.Debug($"Config save error: {e}");
-                    }
+                    _configuration.TrySave();
                 }
             }
         }
@@ -298,7 +291,7 @@ namespace Altoholic.Windows
                     _configuration.EnabledTimers.Remove(TimersStatus.MiniCacpot);
                 }
 
-                _configuration.Save();
+                _configuration.TrySave();
             }
 
             bool isJumboCacpopEnabled = _configuration.EnabledTimers.Contains(TimersStatus.JumboCacpot);
@@ -313,7 +306,7 @@ namespace Altoholic.Windows
                     _configuration.EnabledTimers.Remove(TimersStatus.JumboCacpot);
                 }
 
-                _configuration.Save();
+                _configuration.TrySave();
             }
 
             bool isFashionReportEnabled = _configuration.EnabledTimers.Contains(TimersStatus.FashionReport);
@@ -328,7 +321,7 @@ namespace Altoholic.Windows
                     _configuration.EnabledTimers.Remove(TimersStatus.FashionReport);
                 }
 
-                _configuration.Save();
+                _configuration.TrySave();
             }*/
 
             if (_configuration.EnabledTimers is not null)
@@ -347,7 +340,7 @@ namespace Altoholic.Windows
                         _configuration.EnabledTimers.Remove(TimersStatus.CustomDeliveries);
                     }
 
-                    _configuration.Save();
+                    _configuration.TrySave();
                 }
 
                 bool isDomanEnclaveEnabled = _configuration.EnabledTimers.Contains(TimersStatus.DomanEnclave);
@@ -364,7 +357,7 @@ namespace Altoholic.Windows
                         _configuration.EnabledTimers.Remove(TimersStatus.DomanEnclave);
                     }
 
-                    _configuration.Save();
+                    _configuration.TrySave();
                 }
 
                 bool isMaskedCarnivaleEnabled = _configuration.EnabledTimers.Contains(TimersStatus.MaskedCarnivale);
@@ -381,7 +374,7 @@ namespace Altoholic.Windows
                         _configuration.EnabledTimers.Remove(TimersStatus.MaskedCarnivale);
                     }
 
-                    _configuration.Save();
+                    _configuration.TrySave();
                 }
 
                 bool isTribeEnabled = _configuration.EnabledTimers.Contains(TimersStatus.Tribes);
@@ -397,7 +390,7 @@ namespace Altoholic.Windows
                         _configuration.EnabledTimers.Remove(TimersStatus.Tribes);
                     }
 
-                    _configuration.Save();
+                    _configuration.TrySave();
                 }
             }
 
@@ -407,13 +400,13 @@ namespace Altoholic.Windows
             if (ImGui.SliderInt("Size (default 48)###TimerIconSize", ref iconSize, 15, 100))
             {
                 _configuration.TimerStandaloneIcon = iconSize;
-                _configuration.Save();
+                _configuration.TrySave();
             }
             float iconAlpha = _configuration.TimerStandaloneIconAlpha is 0f or > 1f ? 0.5f : _configuration.TimerStandaloneIconAlpha;
             if (ImGui.SliderFloat("Transparency (default 0.5)###TimerIconAlpha", ref iconAlpha, 0.1f, 1f, "%.1f"))
             {
                 _configuration.TimerStandaloneIconAlpha = iconAlpha;
-                _configuration.Save();
+                _configuration.TrySave();
             }
             ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(_selectedLanguage, 14051)}:");
             Utils.DrawIcon(_globalCache.IconStorage.LoadHighResIcon(91), new Vector2(iconSize, iconSize),
@@ -424,13 +417,13 @@ namespace Altoholic.Windows
             if (ImGui.SliderFloat("X###TimerIconPosX", ref iconPosX, 20, ImGui.GetMainViewport().WorkSize.X - iconSize, "%.0f"))
             {
                 _configuration.TimerStandaloneWindowPositionX = iconPosX;
-                _configuration.Save();
+                _configuration.TrySave();
             }
             float iconPosY = _configuration.TimerStandaloneWindowPositionY;
             if (ImGui.SliderFloat("Y###TimerIconPosY", ref iconPosY, 20, ImGui.GetMainViewport().WorkSize.Y - iconSize, "%.0f"))
             {
                 _configuration.TimerStandaloneWindowPositionY = iconPosY;
-                _configuration.Save();
+                _configuration.TrySave();
             }*/
         }
     }

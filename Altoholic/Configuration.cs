@@ -49,5 +49,16 @@ namespace Altoholic
         {
             _pluginInterface!.SavePluginConfig(this);
         }
+        public void TrySave()
+        {
+            try
+            {
+                _pluginInterface!.SavePluginConfig(this);
+            }
+            catch(Exception e)
+            {
+                Plugin.Log.Debug($"Config save error: {e}");
+            }
+        }
     }
 }

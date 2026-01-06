@@ -195,7 +195,7 @@ namespace Altoholic
             if (Configuration.Language != ClientState.ClientLanguage)
             {
                 Configuration.Language = ClientState.ClientLanguage;
-                Configuration.Save();
+                Configuration.TrySave();
             }
             ClientLanguage currentLocale = Configuration.Language;
             _localization.SetupWithLangCode(PluginInterface.UiLanguage);
