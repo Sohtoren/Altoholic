@@ -584,9 +584,11 @@ namespace Altoholic
                 }
 
                 GetCharacterPlaytime();
-                if (_localPlayer.LastPlayTimeUpdate > 0 && Utils.GetLastPlayTimeUpdateDiff(_localPlayer.LastPlayTimeUpdate) >= 7)
+                if (Configuration.IsPlaytimeNotificationEnabled && _localPlayer.LastPlayTimeUpdate > 0 &&
+                    Utils.GetLastPlayTimeUpdateDiff(_localPlayer.LastPlayTimeUpdate) >= 7)
                 {
-                    Utils.ChatMessage(Loc.Localize("LastPlaytimeOutdated", "More than 7 days since the last update, consider using the /playtime command"));
+                    Utils.ChatMessage(Loc.Localize("LastPlaytimeOutdated",
+                        "More than 7 days since the last update, consider using the /playtime command"));
                 }
 
                 if (_localPlayer.PlayTime == 0)

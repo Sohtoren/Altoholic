@@ -145,11 +145,11 @@ namespace Altoholic.Windows
             }).Replace(" ", "\n");
             string societalRelations = (_currentLocale switch
             {
-                ClientLanguage.German => "Stämme",
-                ClientLanguage.English => "Tribes",
-                ClientLanguage.French => "Tribus",
-                ClientLanguage.Japanese => "Tribes".ToUpper(),
-                _ => "Masked Carnivale"
+                ClientLanguage.German => "\nStämme",
+                ClientLanguage.English => "\nTribes",
+                ClientLanguage.French => "\nTribus",
+                ClientLanguage.Japanese => "\nTribes".ToUpper(),
+                _ => "Tribes"
             }).Replace(" ", "\n");
 
             string longestName = chars
@@ -310,11 +310,16 @@ namespace Altoholic.Windows
                         }
                         else
                         {
+                            int donation = currChar.Timers.DomanEnclaveWeeklyDonation.Value;
+                            string donationStr = (donation > 1000) ? $"{donation / 1_000}k" : donation.ToString();
+                            int allowance = currChar.Timers.DomanEnclaveWeeklyAllowances.Value;
+                            string allowanceStr = (allowance > 1000) ? $"{allowance / 1_000}k" : allowance.ToString();
                             ImGui.TextUnformatted(
-                                $"{currChar.Timers.DomanEnclaveWeeklyDonation}/{currChar.Timers.DomanEnclaveWeeklyAllowances}");
+                                $"{donationStr}/{allowanceStr}");
                             if (ImGui.IsItemHovered())
                             {
                                 ImGui.BeginTooltip();
+                                ImGui.TextUnformatted($"{donation}/{allowance}");
                                 ImGui.TextUnformatted($"{Loc.Localize("LastCheck", "Last check:")} {Utils.FormatDate(dateFormat, currChar.Timers.DomanEnclaveLastCheck.Value)}");
                                 ImGui.EndTooltip();
                             }

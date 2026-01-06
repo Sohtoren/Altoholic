@@ -25,6 +25,7 @@ namespace Altoholic
         public bool ObtainedOnly { get; set; } = true;
         public ClientLanguage Language { get; set; } = ClientLanguage.English;
         public Models.Sort CharacterWindowSort { get; set; } = Models.Sort.Auto;
+        public bool IsPlaytimeNotificationEnabled { get; set; } = true;
         public bool IsAutoSaveChatMessageEnabled { get; set; } = true;
         public int AutoSaveTimer { get; set; } = 5;
         public int DateFormat { get; set; }

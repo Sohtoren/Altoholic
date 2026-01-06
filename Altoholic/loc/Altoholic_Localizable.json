@@ -20,7 +20,7 @@
         "description": ""
     },    
     "ConfigAutoSaveChatMessage": {
-        "message": "display a chat message when the character is (auto) saved",
+        "message": "Display a chat message when the character is (auto) saved",
         "description": ""
     },
     "ConfigEnableAutosave": {
@@ -32,11 +32,19 @@
         "description": ""
     },    
     "ConfigObtainedOnly": {
-        "message": "display unobtained items, mounts, minions, etc with a non spoiler icon",
+        "message": "If checked, will only display collected items in collections",
+        "description": ""
+    },
+    "ConfigEnablePlaytimeNotification": {
+        "message": "Enable playtime notification",
+        "description": ""
+    },
+    "ConfigPlaytimeNotificationMessage": {
+        "message": "Display a notification in chat when /playtime hasn't been used for more than 7 days",
         "description": ""
     },
     "Event_AllSaintsWake": {
-        "message": "all saints' wake",
+        "message": "All Saints' Wake",
         "description": ""
     },
     "Event_ANocturneforHeroes": {
@@ -111,8 +119,8 @@
         "message": "The Hunt For Rathalos",
         "description": ""
     },
-    "event_themakeitraincampaign": {
-        "message": "the make it rain campaign",
+    "Event_TheMakeItRainCampaign": {
+        "message": "The Make It Rain Campaign",
         "description": ""
     },
     "Event_ThePathInterfal": {
@@ -232,7 +240,7 @@
         "description": ""
     },
     "ConfigSpoilersMessage": {
-        "message": "Display unobtained icons instead of placeholders",
+        "message": "Display unobtained icons instead of non spoilery placeholder",
         "description": ""
     },
     "Timers": {

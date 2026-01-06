@@ -113,13 +113,13 @@ namespace Altoholic.Windows
                 using var tooltip = ImRaii.Tooltip();
                 if (!tooltip) return;
                 ImGui.TextUnformatted(
-                    $"{Loc.Localize("ConfigObtainedOnly", "Display unobtained items, mounts, minions, etc with a non spoiler icon")}");
+                    $"{Loc.Localize("ConfigObtainedOnly", "If checked, will only display collected items in collections")}");
             }
 
-            bool isEnabled = _configuration.IsSpoilersEnabled;
-            if (ImGui.Checkbox($"{Loc.Localize("ConfigEnableSpoilers","Enable Spoilers####EnableSpoilers")}", ref isEnabled))
+            bool isSpoilersEnabled = _configuration.IsSpoilersEnabled;
+            if (ImGui.Checkbox($"{Loc.Localize("ConfigEnableSpoilers","Enable Spoilers")}####EnableSpoilers", ref isSpoilersEnabled))
             {
-                _configuration.IsSpoilersEnabled = isEnabled;
+                _configuration.IsSpoilersEnabled = isSpoilersEnabled;
                 _configuration.Save();
             }
 
@@ -127,7 +127,21 @@ namespace Altoholic.Windows
             {
                 using var tooltip = ImRaii.Tooltip();
                 if (!tooltip) return;
-                ImGui.TextUnformatted($"{Loc.Localize("ConfigSpoilersMessage", "Display unobtained icons instead of placeholder")}");
+                ImGui.TextUnformatted($"{Loc.Localize("ConfigSpoilersMessage", "Display unobtained icons instead of non spoilery placeholder")}");
+            }
+
+            bool isPlaytimeNotificationEnabled = _configuration.IsPlaytimeNotificationEnabled;
+            if (ImGui.Checkbox($"{Loc.Localize("ConfigEnablePlaytimeNotification", "Enable playtime notification")}####EnableSpoilers", ref isPlaytimeNotificationEnabled))
+            {
+                _configuration.IsPlaytimeNotificationEnabled = isPlaytimeNotificationEnabled;
+                _configuration.Save();
+            }
+
+            if (ImGui.IsItemHovered())
+            {
+                using var tooltip = ImRaii.Tooltip();
+                if (!tooltip) return;
+                ImGui.TextUnformatted($"{Loc.Localize("ConfigPlaytimeNotificationMessage", "Display a notification in chat when /playtime hasn't been used for more than 7 days")}");
             }
 
             bool isAutoSaveChatMessageEnabled = _configuration.IsAutoSaveChatMessageEnabled;
