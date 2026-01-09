@@ -4,51 +4,43 @@
         "description": ""
     },
     "ArmoireNotLoaded": {
-        "message": "No item found. You might need open the armoire to update",
+        "message": "Aucun objet trouvé. Vous pourriez avoir besoin d'ouvrir le bahut pour mettre à jour",
         "description": ""
     },
     "CollectionTabBarding": {
-        "message": "Barding",
+        "message": "Barde",
         "description": ""
     },
     "ProgressEventBlundervilleMessage": {
-        "message": "For the Blunderville event, the introduction quest is used for completion.",
+        "message": "Pour l'événement Blunderville, la quête d'introduction est utilisée pour la complétion.",
         "description": ""
     },
     "CharacterNotScannedYet": {
-        "message": "This character was not scanned yet",
+        "message": "Ce personnage n'a pas encore été analysé",
         "description": ""
-    },    
+    },
     "ConfigAutoSaveChatMessage": {
-        "message": "display a chat message when the character is (auto) saved",
+        "message": "afficher un message lorsque le personnage est (auto) sauvegardé",
         "description": ""
     },
     "ConfigEnableAutosave": {
-        "message": "Enable autosave chat message",
+        "message": "Activer la sauvegarde automatique du message de chat",
         "description": ""
     },
     "ConfigEnabledTimer": {
-        "message": "enabled timers",
+        "message": "minuteurs activés",
         "description": ""
-    },    
+    },
     "ConfigObtainedOnly": {
-        "message": "If checked, will only display collected items in collections",
-        "description": ""
-    },
-    "ConfigEnablePlaytimeNotification": {
-        "message": "Enable playtime notification",
-        "description": ""
-    },
-    "ConfigPlaytimeNotificationMessage": {
-        "message": "Display a notification in chat when /playtime hasn't been used for more than 7 days",
+        "message": "Si coché, n'affichera que les éléments obtenus dans les collections",
         "description": ""
     },
     "Event_AllSaintsWake": {
-        "message": "All Saints' Wake",
+        "message": "La Veillée des Saints",
         "description": ""
     },
     "Event_ANocturneforHeroes": {
-        "message": "A Nocturne for Heroes",
+        "message": "Le Nocture des Héros",
         "description": ""
     },
     "Event_Blunderville": {
@@ -56,11 +48,11 @@
         "description": ""
     },
     "Event_BreakingBrickMountains": {
-        "message": "Breaking Brick Mountains",
+        "message": "Golems Hors du Commun",
         "description": ""
     },
     "Event_BurgeoningDread": {
-        "message": "Burgeoning Dread",
+        "message": "Abomination Aberrante",
         "description": ""
     },
     "Event_FirefallFaire": {
@@ -68,15 +60,15 @@
         "description": ""
     },
     "Event_FoundationDay": {
-        "message": "Foundation Day",
+        "message": "Fête de la Fondation",
         "description": ""
     },
     "Event_HatchingTide": {
-        "message": "Hatching-tide",
+        "message": "Chasse aux Prœufs",
         "description": ""
     },
     "Event_Heavensturn": {
-        "message": "Heavensturn",
+        "message": "Fête de la Transition",
         "description": ""
     },
     "Event_HuntersMoon": {
@@ -92,23 +84,23 @@
         "description": ""
     },
     "Event_LittleLadiesAndHatchingTideDay": {
-        "message": "Little Ladies' Day & Hatching-tide",
+        "message": "Fête des Demoiselles et Chasse aux Prœufs",
         "description": ""
     },
     "Event_LittleLadiesDay": {
-        "message": "Little Ladies' Day",
+        "message": "Fête des Demoiselles",
         "description": ""
     },
     "Event_MaidensRhapsody": {
-        "message": "The Maiden's Rhapsody",
+        "message": "Rhapsodies de Vana'diel",
         "description": ""
     },
     "Event_MoonfireFaire": {
-        "message": "Moonfire Faire",
+        "message": "Feux de la Mort",
         "description": ""
     },
     "Event_Starlight": {
-        "message": "Starlight Celebration",
+        "message": "Fête des Étoiles",
         "description": ""
     },
     "Event_ThatOldBlackMagic": {
@@ -116,107 +108,107 @@
         "description": ""
     },
     "Event_TheHuntForRathalos": {
-        "message": "The Hunt For Rathalos",
+        "message": "La Chasse au Rathalos",
         "description": ""
     },
-    "Event_TheMakeItRainCampaign": {
-        "message": "The Make It Rain Campaign",
+    "event_themakeitraincampaign": {
+        "message": "Festival du Gold Saucer",
         "description": ""
     },
     "Event_ThePathInterfal": {
-        "message": "The Path Infernal",
+        "message": "Flammes Primordiales",
         "description": ""
     },
     "Event_TheRising": {
-        "message": "The Rising",
+        "message": "Fête de la Commémoration",
         "description": ""
     },
     "Event_ValentioneAndLittleLadiesDays": {
-        "message": "Valentione's and Little Ladies' Day",
+        "message": "Valention et Fête des Demoiselles",
         "description": ""
     },
     "Event_ValentioneDay": {
-        "message": "Valentione's Day",
+        "message": "Valention",
         "description": ""
     },
     "Event_YoKai": {
-        "message": "Yo-kai Watch: Gather One, Gather All!",
+        "message": "Yo-kai Watch : Adoptez-en un, adoptez-les tous !",
         "description": ""
     },
     "CollectionTabFacepaint": {
-        "message": "Facepaint",
+        "message": "Maquillage",
         "description": ""
     },
     "CollectionTabFramerkit": {
-        "message": "Framer's kit",
+        "message": "Art Portrait",
         "description": ""
     },
     "GlamDresserNotLoaded": {
-        "message": "No item found. You might need open the glamour dresser",
+        "message": "Aucun objet trouvé. Vous pourriez avoir besoin d'ouvrir la coiffeuse mirage",
         "description": ""
     },
     "CollectionTabHairstyle": {
-        "message": "Hairstyle",
+        "message": " Coiffure",
         "description": ""
     },
     "LastCheck": {
-        "message": "Last check: ",
+        "message": "Dernière vérification : ",
         "description": "Last time a check was done. Is followed by a date and time"
     },
     "LastPlaytimeOutdated": {
-        "message": "More than 7 days since the last update, consider using the /playtime command",
+        "message": "Plus de 7 jours se sont écoulés depuis la dernière mise à jour, pensez à utiliser la commande /tempsjeu (/playtime)",
         "description": ""
     },
     "LastUpdateOn": {
-        "message": "Last updated on: ",
+        "message": "Dernière mise à jour le : ",
         "description": "Last time an update was done. Is followed by a date and time"
     },
     "NoItemOnAnyCharacter": {
-        "message": "Item not found on any characters.\r\nCheck if inventories are available and updated.",
+        "message": "Objet introuvable sur aucuns personnages.\nVérifier si les inventaires sont disponibles et mis à jour.",
         "description": ""
     },
     "NoItemOnAnyRetainer": {
-        "message": "Item not found on any retainers.\r\nCheck if inventories are available and updated.",
+        "message": "Objet introuvable sur les servants.\nVérifier si les inventaires sont disponibles et mis à jour.",
         "description": ""
     },
     "NoPlaytimeFound": {
-        "message": "No playtime found, use /playtime",
+        "message": "Aucun temps de jeu trouvé, utilisez /tempsjeu (/playtime)",
         "description": ""
     },
     "NoPurchasableFacepaintsUnlocked": {
-        "message": "No purchasable facepaint unlocked",
+        "message": "Aucun maquillage achetable débloqué",
         "description": ""
     },
     "NoPurchasableHairstylesUnlocked": {
-        "message": "No purchasable hairstyle unlocked",
+        "message": "Aucune coiffure achetable débloquée",
         "description": ""
     },
     "ObtainedLowercase": {
-        "message": "obtained",
+        "message": "obtenu",
         "description": "Has an item/minion/mount/etc name in front of"
     },
     "ObtainedOnly": {
-        "message": "Obtained only",
+        "message": "Obtenu uniquement",
         "description": "String for the obtained only checkbox"
     },
     "PreviousMoogleEvent": {
-        "message": "Previous Events",
+        "message": "Événements passés",
         "description": ""
     },
     "OpenRetainerToUpdateGear": {
-        "message": "Open the retainer to update the gear",
+        "message": "Ouvrez le servant pour mettre à jour l'équipement",
         "description": ""
     },
     "OpenRetainerToUpdate": {
-        "message": "Open the retainer to update",
+        "message": "Ouvrez le servant pour mettre à jour",
         "description": ""
     },
     "OpenRetainerToUpdateList": {
-        "message": "Open the retainer to update market item list",
+        "message": "Ouvrez le servant pour mettre à jour la liste des objets en vente",
         "description": ""
     },
     "OpenSaddlebagToUpdate": {
-        "message": "The Saddlebag may be empty or open to update",
+        "message": "La sacoche chocobo peut être vide ou ouvrir pour mettre à jour",
         "description": "Saddlebag is the ingame name of the saddle bag window"
     },
     "Playtime": {
@@ -224,31 +216,39 @@
         "description": "Column name"
     },
     "PvPProfileNotLoaded": {
-        "message": "This character PvP profile wasn't loaded",
+        "message": "Ce profil JcJ de personnage n'a pas été chargé",
         "description": ""
     },
     "pvpprofilenotunlocked": {
-        "message": "This character doesn't have PvP unlocked",
+        "message": "Ce personnage n'a pas débloqué le JcJ",
         "description": ""
     },
     "ProgressRecurringEvent": {
-        "message": "As certain event do not change when reoccuring, completing them once will mark all of them done.",
+        "message": "Comme certains événements ne changent pas quand ils se reproduisent, les compléter une fois les marquera tous comme étant fait.",
         "description": ""
     },
     "ConfigEnableSpoilers": {
-        "message": "Enable Spoilers",
+        "message": "Activer les spoilers",
         "description": ""
     },
     "ConfigSpoilersMessage": {
-        "message": "Display unobtained icons instead of non spoilery placeholder",
+        "message": "Afficher les icônes non obtenues au lieu des espaces réservés",
         "description": ""
     },
     "Timers": {
-        "message": "Timers",
+        "message": "Minuteurs",
         "description": ""
     },
     "vistanotunlocked": {
-        "message": "Sightseeing Log not unlocked",
+        "message": "Carnet d'exploration non débloqué",
         "description": ""
+    },
+    "ConfigPlaytimeNotificationMessage": {
+        "message": "Afficher une notification dans le chat lorsque /playtime n'a pas été utilisé depuis plus de 7 jours",
+        "description": "ConfigPlaytimeNotificationMessage"
+    },
+    "ConfigEnablePlaytimeNotification": {
+        "message": "Activer la notification de temps de jeu",
+        "description": "ConfigEnablePlaytimeNotification"
     }
 }

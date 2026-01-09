@@ -209,7 +209,7 @@ namespace Altoholic.Windows
                 }
             }
 
-            using (var msqTab = ImRaii.TabItem("MSQ###CharactersProgressTable#All#TabBar#MSQ"))
+            using (var msqTab = ImRaii.TabItem($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 13357)}###CharactersProgressTable#All#TabBar#MSQ"))
             {
                 if (msqTab)
                 {
@@ -544,11 +544,19 @@ namespace Altoholic.Windows
                 ClientLanguage.Japanese => "零式",
                 _ => "Savage"
             };
+            string ultimate = _currentLocale switch
+            {
+                ClientLanguage.German => "Fatal",
+                ClientLanguage.English => "Ultimate",
+                ClientLanguage.French => "Fatal",
+                ClientLanguage.Japanese => "絶レイド",
+                _ => "Ultimate"
+            };
             List<string> dutyNames =
             [
                 _globalCache.AddonStorage.LoadAddonString(_currentLocale, 15403), //Criterion
                 _globalCache.AddonStorage.LoadAddonString(_currentLocale, 15402), //Variant
-                "Ultimate", //Ultimate
+                ultimate, //Ultimate
                 savage //Savage
             ];
 
@@ -624,7 +632,7 @@ namespace Altoholic.Windows
 
             using (var ultimateTab =
                    ImRaii.TabItem(
-                       $"Ultimate###CharactersProgressTable#All#TabBar#Duty#TabBar#Ultimate"))
+                       $"{ultimate}###CharactersProgressTable#All#TabBar#Duty#TabBar#Ultimate"))
             {
                 if (ultimateTab)
                 {
