@@ -75,32 +75,31 @@ namespace Altoholic.Windows
         public override void Draw()
         {
             _currentLocale = _plugin.Configuration.Language;
-            if(_selectedCurrency == "Currency" && _currentLocale != ClientLanguage.English)
+            if (_selectedCurrency == "Currency" && _currentLocale != ClientLanguage.English)
                 _selectedCurrency = _globalCache.AddonStorage.LoadAddonString(_currentLocale, 761);
             List<Character> chars = [];
             chars.Insert(0, GetPlayer.Invoke());
             chars.AddRange(GetOthersCharactersList.Invoke());
 
-            try
-            {
-                using var charactersCurrenciesTable = ImRaii.Table("###CharactersCurrenciesTable", 2);
-                if (!charactersCurrenciesTable) return;
-                ImGui.TableSetupColumn("###CharactersCurrenciesTable#CharactersList", ImGuiTableColumnFlags.WidthFixed,
-                    210);
-                ImGui.TableSetupColumn("###CharactersCurrenciesTable#Currencies", ImGuiTableColumnFlags.WidthStretch);
-                ImGui.TableNextRow();
-                ImGui.TableSetColumnIndex(0);
+            using var charactersCurrenciesTable = ImRaii.Table("###CharactersCurrenciesTable", 2);
+            if (!charactersCurrenciesTable) return;
+            ImGui.TableSetupColumn("###CharactersCurrenciesTable#CharactersList", ImGuiTableColumnFlags.WidthFixed,
+                210);
+            ImGui.TableSetupColumn("###CharactersCurrenciesTable#Currencies", ImGuiTableColumnFlags.WidthStretch);
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
 
-                using (var listbox =
-                       ImRaii.ListBox("###CharactersCurrenciesTable#CharactersListBox", new Vector2(200, -1)))
+            using (var listbox =
+                   ImRaii.ListBox("###CharactersCurrenciesTable#CharactersListBox", new Vector2(200, -1)))
+            {
+                if (listbox)
                 {
-                    if (listbox)
+                    if (ImGui.Selectable(
+                            $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 970)}###CharactersCurrenciesTable#CharactersListBox#All",
+                            _currentCharacter == null))
                     {
-                        if (ImGui.Selectable(
-                                $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 970)}###CharactersCurrenciesTable#CharactersListBox#All", _currentCharacter == null))
-                        {
-                            _currentCharacter = null;
-                        }
+                        _currentCharacter = null;
+                    }
 
 #if DEBUG
                         for (int i = 0; i < 15; i++)
@@ -117,29 +116,24 @@ namespace Altoholic.Windows
                         }
 #endif
 
-                        foreach (Character currChar in chars.Where(currChar =>
-                                     ImGui.Selectable(
-                                         $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}",
-                                         currChar == _currentCharacter)))
-                        {
-                            _currentCharacter = currChar;
-                        }
+                    foreach (Character currChar in chars.Where(currChar =>
+                                 ImGui.Selectable(
+                                     $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}",
+                                     currChar == _currentCharacter)))
+                    {
+                        _currentCharacter = currChar;
                     }
                 }
-
-                ImGui.TableSetColumnIndex(1);
-                if (_currentCharacter is not null)
-                {
-                    DrawPc(_currentCharacter);
-                }
-                else
-                {
-                    DrawAll(chars);
-                }
             }
-            catch (Exception e)
+
+            ImGui.TableSetColumnIndex(1);
+            if (_currentCharacter is not null)
             {
-                Plugin.Log.Debug("Altoholic : Exception : {0}", e);
+                DrawPc(_currentCharacter);
+            }
+            else
+            {
+                DrawAll(chars);
             }
         }
 

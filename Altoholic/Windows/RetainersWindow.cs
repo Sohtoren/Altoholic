@@ -115,22 +115,21 @@ namespace Altoholic.Windows
             chars.Insert(0, GetPlayer.Invoke());
             chars.AddRange(GetOthersCharactersList.Invoke());
 
-            try
-            {
-                using var table = ImRaii.Table("###CharactersRetainerTable", 2);
-                if (!table) return;
+            using var table = ImRaii.Table("###CharactersRetainerTable", 2);
+            if (!table) return;
 
-                ImGui.TableSetupColumn("###CharactersRetainerTable#CharactersListHeader", ImGuiTableColumnFlags.WidthFixed, 210);
-                ImGui.TableSetupColumn("###CharactersRetainerTable#Inventories", ImGuiTableColumnFlags.WidthStretch);
-                ImGui.TableNextRow();
-                ImGui.TableSetColumnIndex(0);
-                using (var listBox =
-                       ImRaii.ListBox("###CharactersRetainerTable#CharactersListBox", new Vector2(200, -1)))
+            ImGui.TableSetupColumn("###CharactersRetainerTable#CharactersListHeader", ImGuiTableColumnFlags.WidthFixed,
+                210);
+            ImGui.TableSetupColumn("###CharactersRetainerTable#Inventories", ImGuiTableColumnFlags.WidthStretch);
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            using (var listBox =
+                   ImRaii.ListBox("###CharactersRetainerTable#CharactersListBox", new Vector2(200, -1)))
+            {
+                if (listBox)
                 {
-                    if (listBox)
+                    if (chars.Count > 0)
                     {
-                        if (chars.Count > 0)
-                        {
 #if DEBUG
                             for (int i = 0; i < 15; i++)
                             {
@@ -142,32 +141,27 @@ namespace Altoholic.Windows
                                 });
                             }
 #endif
-                            foreach (Character currChar in chars.Where(currChar =>
-                                         ImGui.Selectable(
-                                             $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}",
-                                             currChar == _currentCharacter)))
-                            {
-                                _currentCharacter = currChar;
-                                _currentRetainer = null;
-                                _currentItem = null;
-                                _currentItems = null;
-                                _searchedItem = string.Empty;
-                                _lastSearchedItem = string.Empty;
-                            }
+                        foreach (Character currChar in chars.Where(currChar =>
+                                     ImGui.Selectable(
+                                         $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}",
+                                         currChar == _currentCharacter)))
+                        {
+                            _currentCharacter = currChar;
+                            _currentRetainer = null;
+                            _currentItem = null;
+                            _currentItems = null;
+                            _searchedItem = string.Empty;
+                            _lastSearchedItem = string.Empty;
                         }
                     }
                 }
-
-                ImGui.TableSetColumnIndex(1);
-                if (_currentCharacter is not null)
-                {
-                    DrawRetainers(_currentCharacter);
-                }
             }
-            catch (Exception e)
+
+            ImGui.TableSetColumnIndex(1);
+            if (_currentCharacter is not null)
             {
-                Plugin.Log.Debug("Altoholic CharactersRetainerTable Exception : {0}", e);
-            }    
+                DrawRetainers(_currentCharacter);
+            }
         }
 
         private void DrawAll(List<Retainer> retainers)
@@ -380,95 +374,100 @@ namespace Altoholic.Windows
 
         private void DrawRetainers(Character currentCharacter)
         {
-            try
+            if (currentCharacter.Retainers.FindAll(r => r.Name != "RETAINER").Count > 0)
             {
-                if (currentCharacter.Retainers.FindAll(r => r.Name != "RETAINER").Count > 0)
+                using var table = ImRaii.Table("###CharactersRetainerTable", 2);
+                if (!table) return;
+
+                ImGui.TableSetupColumn("###CharactersRetainerTable#RetainersListHeader",
+                    ImGuiTableColumnFlags.WidthFixed, 130);
+                ImGui.TableSetupColumn("###CharactersRetainerTable#Inventories", ImGuiTableColumnFlags.WidthStretch);
+                ImGui.TableNextRow();
+                ImGui.TableSetColumnIndex(0);
+                using (var listBox =
+                       ImRaii.ListBox("###CharactersRetainerTable#RetainerssListBox", new Vector2(200, -1)))
                 {
-                    using var table = ImRaii.Table("###CharactersRetainerTable", 2);
-                    if (!table) return;
-
-                    ImGui.TableSetupColumn("###CharactersRetainerTable#RetainersListHeader", ImGuiTableColumnFlags.WidthFixed, 130);
-                    ImGui.TableSetupColumn("###CharactersRetainerTable#Inventories", ImGuiTableColumnFlags.WidthStretch);
-                    ImGui.TableNextRow();
-                    ImGui.TableSetColumnIndex(0);
-                    using (var listBox = ImRaii.ListBox("###CharactersRetainerTable#RetainerssListBox", new Vector2(200, -1)))
+                    if (listBox)
                     {
-                        if (listBox)
+                        ImGui.SetScrollY(0);
+                        if (currentCharacter.Retainers.FindAll(r => r.Name != "RETAINER").Count > 0)
                         {
-                            ImGui.SetScrollY(0);
-                            if (currentCharacter.Retainers.FindAll(r => r.Name != "RETAINER").Count > 0)
+                            if (ImGui.Selectable(
+                                    $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 970)}###CharactersRetainerTable#RetainerssListBox#All",
+                                    _currentRetainer == null))
                             {
-                                if (ImGui.Selectable($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 970)}###CharactersRetainerTable#RetainerssListBox#All", _currentRetainer == null))
-                                {
-                                    _currentRetainer = null;
-                                }
+                                _currentRetainer = null;
+                            }
 
-                                foreach (Retainer currRetainer in currentCharacter.Retainers.Where(currRetainer => currRetainer.Name != "RETAINER" && !string.IsNullOrEmpty(currRetainer.Name) && !currentCharacter.BlacklistedRetainers.ContainsKey(currRetainer.Id)).Where(currRetainer => ImGui.Selectable($"{currRetainer.Name}", currRetainer == _currentRetainer,ImGuiSelectableFlags.AllowDoubleClick)))
-                                {
-                                    _currentRetainer = currRetainer;
-                                    _currentItem = null;
-                                    _currentItems = null;
-                                    _searchedItem = string.Empty;
-                                    _lastSearchedItem = string.Empty;
-                                }
+                            foreach (Retainer currRetainer in currentCharacter.Retainers
+                                         .Where(currRetainer =>
+                                             currRetainer.Name != "RETAINER" &&
+                                             !string.IsNullOrEmpty(currRetainer.Name) &&
+                                             !currentCharacter.BlacklistedRetainers.ContainsKey(currRetainer.Id))
+                                         .Where(currRetainer => ImGui.Selectable($"{currRetainer.Name}",
+                                             currRetainer == _currentRetainer, ImGuiSelectableFlags.AllowDoubleClick)))
+                            {
+                                _currentRetainer = currRetainer;
+                                _currentItem = null;
+                                _currentItems = null;
+                                _searchedItem = string.Empty;
+                                _lastSearchedItem = string.Empty;
+                            }
 
-                                if (ImGui.IsMouseDoubleClicked(0))
-                                {
-                                    Plugin.Log.Debug("Double clicked");
-                                    if (_currentRetainer == null) return;
-                                    ImGui.OpenPopup($"Blacklist {_currentRetainer}###BLModal_{_currentRetainer.Id}");
-                                }
+                            if (ImGui.IsMouseDoubleClicked(0))
+                            {
+                                Plugin.Log.Debug("Double clicked");
+                                if (_currentRetainer == null) return;
+                                ImGui.OpenPopup($"Blacklist {_currentRetainer}###BLModal_{_currentRetainer.Id}");
+                            }
 
-                                if (_currentRetainer != null)
+                            if (_currentRetainer != null)
+                            {
+                                using ImRaii.IEndObject blacklist =
+                                    ImRaii.PopupModal($"###BLModal_{_currentRetainer.Id}");
+                                if (blacklist)
                                 {
-                                    using ImRaii.IEndObject blacklist =
-                                        ImRaii.PopupModal($"###BLModal_{_currentRetainer.Id}");
-                                    if (blacklist)
+                                    ImGui.TextUnformatted("Are you sure you want to blacklist retainer?");
+                                    ImGui.TextUnformatted(
+                                        "This will prevent this retainer to be added in the future");
+                                    ImGui.Separator();
+
+                                    if (ImGui.Button("OK", new Vector2(120, 0)))
                                     {
-                                        ImGui.TextUnformatted("Are you sure you want to blacklist retainer?");
-                                        ImGui.TextUnformatted(
-                                            "This will prevent this retainer to be added in the future");
-                                        ImGui.Separator();
-
-                                        if (ImGui.Button("OK", new Vector2(120, 0)))
-                                        {
-                                            Utils.ChatMessage(
-                                                $"{_currentRetainer.Name} has been blacklisted.");
-                                            currentCharacter.BlacklistedRetainers.Add(_currentRetainer.Id, _currentRetainer.Name);
-                                            currentCharacter.Retainers.Remove(_currentRetainer);
-                                            Database.Database.UpdateCharacter(_db, currentCharacter);
-                                            ImGui.CloseCurrentPopup();
-                                        }
-
-                                        ImGui.SetItemDefaultFocus();
-                                        ImGui.SameLine();
-                                        if (ImGui.Button("Cancel", new Vector2(120, 0))) { ImGui.CloseCurrentPopup(); }
+                                        Utils.ChatMessage(
+                                            $"{_currentRetainer.Name} has been blacklisted.");
+                                        currentCharacter.BlacklistedRetainers.Add(_currentRetainer.Id,
+                                            _currentRetainer.Name);
+                                        currentCharacter.Retainers.Remove(_currentRetainer);
+                                        Database.Database.UpdateCharacter(_db, currentCharacter);
+                                        ImGui.CloseCurrentPopup();
                                     }
+
+                                    ImGui.SetItemDefaultFocus();
+                                    ImGui.SameLine();
+                                    if (ImGui.Button("Cancel", new Vector2(120, 0))) { ImGui.CloseCurrentPopup(); }
                                 }
                             }
                         }
                     }
-                    ImGui.TableSetColumnIndex(1);
-                    if (_currentRetainer is not null)
-                    {
-                        DrawRetainer(_currentRetainer, currentCharacter);
-                    }
-                    else
-                    {
-                        if (_currentCharacter is not null)
-                        {
-                            DrawAll(currentCharacter.Retainers);
-                        }
-                    }
+                }
+
+                ImGui.TableSetColumnIndex(1);
+                if (_currentRetainer is not null)
+                {
+                    DrawRetainer(_currentRetainer, currentCharacter);
                 }
                 else
                 {
-                    ImGui.TextUnformatted("No retainer found, please visit the retainer bell");//Todo: localization
+                    if (_currentCharacter is not null)
+                    {
+                        DrawAll(currentCharacter.Retainers);
+                    }
                 }
             }
-            catch (Exception e)
+            else
             {
-                Plugin.Log.Debug("Altoholic CharactersRetainerTable Exception : {0}", e);
+                ImGui.TextUnformatted("No retainer found, please visit the retainer bell"); //Todo: localization
             }
         }
 

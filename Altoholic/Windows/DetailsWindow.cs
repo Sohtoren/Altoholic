@@ -88,25 +88,24 @@ namespace Altoholic.Windows
 
         public override void Draw()
         {
-            if(GetPlayer?.Invoke() == null) return;
-            if(GetOthersCharactersList?.Invoke() == null) return;
+            if (GetPlayer?.Invoke() == null) return;
+            if (GetOthersCharactersList?.Invoke() == null) return;
             _currentLocale = _plugin.Configuration.Language;
             //Plugin.Log.Debug($"DrawDetails character with c : id = {character.CharacterId}, FirstName = {character.FirstName}, LastName = {character.LastName}, HomeWorld = {character.HomeWorld}, DataCenter = {character.Datacenter}, LastJob = {character.LastJob}, LastJobLevel = {character.LastJobLevel}, FCTag = {character.FCTag}, FreeCompany = {character.FreeCompany}, LastOnline = {character.LastOnline}, PlayTime = {character.PlayTime}, LastPlayTimeUpdate = {character.LastPlayTimeUpdate}, Quests = {character.Quests.Count}, Inventory = {character.Inventory.Count}, Gear {character.Gear.Count}, Retainers = {character.Retainers.Count}");
             List<Character> chars = [];
             chars.Insert(0, GetPlayer.Invoke());
             chars.AddRange(GetOthersCharactersList.Invoke());
-            try
+
+            using var characterDetailsTable = ImRaii.Table("###CharactersDetailsTable", 2);
+            if (!characterDetailsTable) return;
+            ImGui.TableSetupColumn("###CharactersDetailsTable#CharacterLists", ImGuiTableColumnFlags.WidthFixed, 200);
+            ImGui.TableSetupColumn("###CharactersDetailsTable#Details", ImGuiTableColumnFlags.WidthStretch);
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            using (var listBox = ImRaii.ListBox("###CharactersDetailsTable#CharactersListBox", new Vector2(200, -1)))
             {
-                using var characterDetailsTable = ImRaii.Table("###CharactersDetailsTable", 2);
-                if (!characterDetailsTable) return;
-                ImGui.TableSetupColumn("###CharactersDetailsTable#CharacterLists", ImGuiTableColumnFlags.WidthFixed, 200);
-                ImGui.TableSetupColumn("###CharactersDetailsTable#Details", ImGuiTableColumnFlags.WidthStretch);
-                ImGui.TableNextRow();
-                ImGui.TableSetColumnIndex(0);
-                using (var listBox = ImRaii.ListBox("###CharactersDetailsTable#CharactersListBox", new Vector2(200, -1)))
+                if (listBox)
                 {
-                    if (listBox)
-                    {
 #if DEBUG
                         for (int i = 0; i < 15; i++)
                         {
@@ -118,24 +117,20 @@ namespace Altoholic.Windows
                             });
                         }
 #endif
-                        foreach (Character currChar in chars.Where(currChar =>
-                                     ImGui.Selectable(
-                                         $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}",
-                                         currChar == _currentCharacter)))
-                        {
-                            _currentCharacter = currChar;
-                        }
+                    foreach (Character currChar in chars.Where(currChar =>
+                                 ImGui.Selectable(
+                                     $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}",
+                                     currChar == _currentCharacter)))
+                    {
+                        _currentCharacter = currChar;
                     }
                 }
-                ImGui.TableSetColumnIndex(1);
-                if (_currentCharacter is not null)
-                {
-                    DrawDetails(_currentCharacter);
-                }
             }
-            catch (Exception e)
+
+            ImGui.TableSetColumnIndex(1);
+            if (_currentCharacter is not null)
             {
-                Plugin.Log.Debug("Altoholic : Exception : {0}", e);
+                DrawDetails(_currentCharacter);
             }
         }
 

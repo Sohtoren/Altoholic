@@ -59,27 +59,25 @@ namespace Altoholic.Windows
             chars.Insert(0, GetPlayer.Invoke());
             chars.AddRange(GetOthersCharactersList.Invoke());
 
-            try
+            using var charactersJobsTable = ImRaii.Table("###CharactersJobsTable", 2);
+            if (!charactersJobsTable) return;
+            ImGui.TableSetupColumn("###CharactersJobsTable#CharactersListHeader", ImGuiTableColumnFlags.WidthFixed,
+                210);
+            ImGui.TableSetupColumn("###CharactersJobsTable#Jobs", ImGuiTableColumnFlags.WidthStretch);
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            using (var listbox = ImRaii.ListBox("###CharactersJobsTable#CharactersListBox", new Vector2(200, -1)))
             {
-                using var charactersJobsTable = ImRaii.Table("###CharactersJobsTable", 2);
-                if (!charactersJobsTable) return;
-                ImGui.TableSetupColumn("###CharactersJobsTable#CharactersListHeader", ImGuiTableColumnFlags.WidthFixed,
-                    210);
-                ImGui.TableSetupColumn("###CharactersJobsTable#Jobs", ImGuiTableColumnFlags.WidthStretch);
-                ImGui.TableNextRow();
-                ImGui.TableSetColumnIndex(0);
-                using (var listbox = ImRaii.ListBox("###CharactersJobsTable#CharactersListBox", new Vector2(200, -1)))
+                if (listbox)
                 {
-                    if (listbox)
+                    if (chars.Count > 0)
                     {
-                        if (chars.Count > 0)
+                        if (ImGui.Selectable(
+                                $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 970)}###CharactersJobsTable#CharactersListBox#All",
+                                _currentCharacter == null))
                         {
-                            if (ImGui.Selectable(
-                                    $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 970)}###CharactersJobsTable#CharactersListBox#All",
-                                    _currentCharacter == null))
-                            {
-                                _currentCharacter = null;
-                            }
+                            _currentCharacter = null;
+                        }
 
 #if DEBUG
                             for (int i = 0; i < 15; i++)
@@ -93,30 +91,25 @@ namespace Altoholic.Windows
                             }
 #endif
 
-                            foreach (var currChar in chars.Where(currChar =>
-                                         ImGui.Selectable(
-                                             $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}",
-                                             currChar == _currentCharacter)))
-                            {
-                                _currentCharacter = currChar;
-                            }
+                        foreach (var currChar in chars.Where(currChar =>
+                                     ImGui.Selectable(
+                                         $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}",
+                                         currChar == _currentCharacter)))
+                        {
+                            _currentCharacter = currChar;
                         }
                     }
                 }
-
-                ImGui.TableSetColumnIndex(1);
-                if (_currentCharacter is not null)
-                {
-                    DrawJobs(_currentCharacter);
-                }
-                else
-                {
-                    DrawAll(chars);
-                }
             }
-            catch (Exception e)
+
+            ImGui.TableSetColumnIndex(1);
+            if (_currentCharacter is not null)
             {
-                Plugin.Log.Debug("Altoholic : Exception : {0}", e);
+                DrawJobs(_currentCharacter);
+            }
+            else
+            {
+                DrawAll(chars);
             }
         }
 

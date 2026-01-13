@@ -142,30 +142,29 @@ namespace Altoholic.Windows
             _obtainedSecretRecipeBookOnly = _plugin.Configuration.ObtainedOnly;
             _obtainedTripleTriadCardsOnly = _plugin.Configuration.ObtainedOnly;
             _obtainedVistaOnly = _plugin.Configuration.ObtainedOnly;
-            
+
             List<Character> chars = [];
             chars.Insert(0, GetPlayer.Invoke());
             chars.AddRange(GetOthersCharactersList.Invoke());
 
-            try
-            {
-                using var table = ImRaii.Table("###CharactersCollectionTable", 2);
-                if (!table) return;
+            using var table = ImRaii.Table("###CharactersCollectionTable", 2);
+            if (!table) return;
 
-                ImGui.TableSetupColumn("###CharactersCollectionTable#CharactersListHeader", ImGuiTableColumnFlags.WidthFixed, 210);
-                ImGui.TableSetupColumn("###CharactersCollectionTable#Inventories", ImGuiTableColumnFlags.WidthStretch);
-                ImGui.TableNextRow();
-                ImGui.TableSetColumnIndex(0);
-                using (var listBox = ImRaii.ListBox("###CharactersCollectionTable#CharactersListBox", new Vector2(200, -1)))
+            ImGui.TableSetupColumn("###CharactersCollectionTable#CharactersListHeader",
+                ImGuiTableColumnFlags.WidthFixed, 210);
+            ImGui.TableSetupColumn("###CharactersCollectionTable#Inventories", ImGuiTableColumnFlags.WidthStretch);
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            using (var listBox = ImRaii.ListBox("###CharactersCollectionTable#CharactersListBox", new Vector2(200, -1)))
+            {
+                if (listBox)
                 {
-                    if (listBox)
+                    if (chars.Count > 0)
                     {
-                        if (chars.Count > 0)
+                        /*if (ImGui.Selectable($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 970)}###CharactersCollectionTable#CharactersListBox#All", _currentCharacter == null))
                         {
-                            /*if (ImGui.Selectable($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 970)}###CharactersCollectionTable#CharactersListBox#All", _currentCharacter == null))
-                            {
-                                _currentCharacter = null;
-                            }*/
+                            _currentCharacter = null;
+                        }*/
 
 #if DEBUG
                             for (int i = 0; i < 15; i++)
@@ -179,26 +178,25 @@ namespace Altoholic.Windows
                             }
 #endif
 
-                            foreach (Character currChar in chars.Where(currChar => ImGui.Selectable($"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}", currChar == _currentCharacter)))
-                            {
-                                _currentCharacter = currChar;
-                            }
+                        foreach (Character currChar in chars.Where(currChar =>
+                                     ImGui.Selectable(
+                                         $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}",
+                                         currChar == _currentCharacter)))
+                        {
+                            _currentCharacter = currChar;
                         }
                     }
                 }
-                ImGui.TableSetColumnIndex(1);
-                if (_currentCharacter is not null)
-                {
-                    DrawTabs(_currentCharacter);
-                }
-                else
-                {
-                    DrawAll(chars);
-                }
             }
-            catch (Exception e)
+
+            ImGui.TableSetColumnIndex(1);
+            if (_currentCharacter is not null)
             {
-                Plugin.Log.Debug("Altoholic CharactersCollectionTable Exception : {0}", e);
+                DrawTabs(_currentCharacter);
+            }
+            else
+            {
+                DrawAll(chars);
             }
         }
 

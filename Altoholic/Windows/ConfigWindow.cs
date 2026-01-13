@@ -24,7 +24,7 @@ namespace Altoholic.Windows
             ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoScrollbar |
             ImGuiWindowFlags.NoScrollWithMouse)
         {
-            Size = new Vector2(600, 500);
+            Size = new Vector2(1050, 565);
             SizeCondition = ImGuiCond.Always;
 
             _configuration = plugin.Configuration;
@@ -411,6 +411,13 @@ namespace Altoholic.Windows
             Utils.DrawIcon(_globalCache.IconStorage.LoadHighResIcon(91), new Vector2(iconSize, iconSize),
                 new Vector4(1, 1, 1, iconAlpha));
 
+            bool isTimerStandaloneAtStart = _configuration.TimerStandaloneShowAtStartup;
+            if (ImGui.Checkbox($"{Loc.Localize("TimerStandaloneShowAtStart", "Show timer standalone icon on login")}###TimerIconStartup",
+                    ref isTimerStandaloneAtStart))
+            {
+                _configuration.TimerStandaloneShowAtStartup = isTimerStandaloneAtStart;
+                _configuration.TrySave();
+            }
             /*float iconPosX = _configuration.TimerStandaloneWindowPositionX;
             ImGui.TextUnformatted("Icon position");
             if (ImGui.SliderFloat("X###TimerIconPosX", ref iconPosX, 20, ImGui.GetMainViewport().WorkSize.X - iconSize, "%.0f"))

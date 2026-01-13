@@ -67,6 +67,7 @@ namespace Altoholic.Windows
             List<Character> chars = [];
             chars.Insert(0, GetPlayer.Invoke());
             chars.AddRange(GetOthersCharactersList.Invoke());
+
             //Position = new Vector2(_plugin.Configuration.TimerStandaloneWindowPositionX, _plugin.Configuration.TimerStandaloneWindowPositionY);
 
             int iconSize = _plugin.Configuration.TimerStandaloneIcon is 0 or > 100 ? 48 : _plugin.Configuration.TimerStandaloneIcon;
@@ -472,7 +473,7 @@ namespace Altoholic.Windows
 
         private static DateTime GetLastDailyReset()
         {
-            DateTime nowUtc = DateTime.Today;
+            DateTime nowUtc = DateTime.Now;
             DateTime now = DateTime.SpecifyKind(nowUtc, DateTimeKind.Utc).ToLocalTime();
 
             DateTime todayFourPm = new(

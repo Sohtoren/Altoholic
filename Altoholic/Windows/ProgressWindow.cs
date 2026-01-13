@@ -94,65 +94,58 @@ namespace Altoholic.Windows
             chars.Insert(0, GetPlayer.Invoke());
             chars.AddRange(GetOthersCharactersList.Invoke());
 
-            try
-            {
-                using ImRaii.IEndObject table = ImRaii.Table("###CharactersProgressTable", 2);
-                if (!table) return;
+            using ImRaii.IEndObject table = ImRaii.Table("###CharactersProgressTable", 2);
+            if (!table) return;
 
-                ImGui.TableSetupColumn("###CharactersProgressTable#CharactersListHeader",
-                    ImGuiTableColumnFlags.WidthFixed, 210);
-                ImGui.TableSetupColumn("###CharactersProgressTable#ProgressTabs", ImGuiTableColumnFlags.WidthStretch);
-                ImGui.TableNextRow();
-                ImGui.TableSetColumnIndex(0);
-                using (ImRaii.IEndObject listBox =
-                       ImRaii.ListBox("###CharactersProgressTable#CharactersListBox", new Vector2(200, -1)))
+            ImGui.TableSetupColumn("###CharactersProgressTable#CharactersListHeader",
+                ImGuiTableColumnFlags.WidthFixed, 210);
+            ImGui.TableSetupColumn("###CharactersProgressTable#ProgressTabs", ImGuiTableColumnFlags.WidthStretch);
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            using (ImRaii.IEndObject listBox =
+                   ImRaii.ListBox("###CharactersProgressTable#CharactersListBox", new Vector2(200, -1)))
+            {
+                if (listBox)
                 {
-                    if (listBox)
+                    if (ImGui.Selectable(
+                            $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 970)}###CharactersCurrenciesTable#CharactersListBox#All",
+                            _currentCharacter == null))
                     {
-                        if (ImGui.Selectable(
-                                $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 970)}###CharactersCurrenciesTable#CharactersListBox#All",
-                                _currentCharacter == null))
-                        {
-                            _currentCharacter = null;
-                        }
+                        _currentCharacter = null;
+                    }
 #if DEBUG
-                        for (int i = 0; i < 15; i++)
+                    for (int i = 0; i < 15; i++)
+                    {
+                        chars.Add(new Character()
                         {
-                            chars.Add(new Character()
-                            {
-                                FirstName = $"Dummy {i}",
-                                LastName = $"LN {i}",
-                                HomeWorld = $"Homeworld {i}",
-                                Datacenter = $"EU",
-                                FCTag = $"FC {i}",
-                                Currencies = new PlayerCurrencies() { Gil = i },
-                            });
-                        }
+                            FirstName = $"Dummy {i}",
+                            LastName = $"LN {i}",
+                            HomeWorld = $"Homeworld {i}",
+                            Datacenter = $"EU",
+                            FCTag = $"FC {i}",
+                            Currencies = new PlayerCurrencies() { Gil = i },
+                        });
+                    }
 #endif
 
-                        foreach (Character currChar in chars.Where(currChar =>
-                                     ImGui.Selectable(
-                                         $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}",
-                                         currChar == _currentCharacter)))
-                        {
-                            _currentCharacter = currChar;
-                        }
+                    foreach (Character currChar in chars.Where(currChar =>
+                                 ImGui.Selectable(
+                                     $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}",
+                                     currChar == _currentCharacter)))
+                    {
+                        _currentCharacter = currChar;
                     }
                 }
-
-                ImGui.TableSetColumnIndex(1);
-                if (_currentCharacter is not null)
-                {
-                    DrawTabs(_currentCharacter);
-                }
-                else
-                {
-                    DrawAll(chars);
-                }
             }
-            catch (Exception e)
+
+            ImGui.TableSetColumnIndex(1);
+            if (_currentCharacter is not null)
             {
-                Plugin.Log.Debug("Altoholic CharactersProgressTable Exception : {0}", e);
+                DrawTabs(_currentCharacter);
+            }
+            else
+            {
+                DrawAll(chars);
             }
         }
 

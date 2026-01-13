@@ -32,6 +32,7 @@ namespace Altoholic
         public HashSet<TimersStatus>? EnabledTimers { get; set; }
         public int TimerStandaloneIcon { get; set; } = 48;
         public float TimerStandaloneIconAlpha { get; set; } = 0.5f;
+        public bool TimerStandaloneShowAtStartup { get; set; }
         /*public float TimerStandaloneWindowPositionX { get; set; }
         public float TimerStandaloneWindowPositionY { get; set; }*/
 

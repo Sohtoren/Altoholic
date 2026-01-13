@@ -336,6 +336,10 @@ namespace Altoholic
             _autoSaveWatch.Start();
             Log.Info("Starting altoholic autosave timer");
             Log.Info($"Database version: {Database.Database.GetDbVersion(_db)}");
+            if (Configuration.TimerStandaloneShowAtStartup)
+            {
+                DrawTimerUI();
+            }
         }
 
         public void Dispose()
@@ -494,21 +498,24 @@ namespace Altoholic
 
         private void DrawTimerUI()
         {
-            if (!ClientState.IsLoggedIn)
+            if (!ClientState.IsLoggedIn) return;
+
+            if (_localPlayer.CharacterId == 0)
             {
-                Log.Error("No character logged in, doing nothing");
-
-                NotificationManager.AddNotification(new Notification
+                Character? p = GetCharacterFromGameOrDatabase();
+                if (p != null)
                 {
-                    Title = "Altoholic",
-                    Content = "This plugin need a character to be logged in",
-                    Type = NotificationType.Error,
-                    Minimized = false,
-                    InitialDuration = TimeSpan.FromSeconds(3)
-                });
-                return;
-            }
+                    _localPlayer = p;
+                }
+                else
+                {
+                    if (PlayerState.ContentId != 0)
+                    {
+                        _localPlayer = new Character { CharacterId = PlayerState.ContentId };
+                    }
+                }
 
+            }
             if (_localPlayer.CharacterId != 0)
             {
                 _otherCharacters = Database.Database.GetOthersCharacters(_db, _localPlayer.CharacterId);
@@ -528,6 +535,7 @@ namespace Altoholic
         // ReSharper disable once InconsistentNaming
         private void DrawMainUI()
         {
+            MainWindow.Position = null;
             if (!ClientState.IsLoggedIn)
             {
                 Log.Error("No character logged in, doing nothing");
@@ -2058,6 +2066,10 @@ namespace Altoholic
             GetCollectionFromState();
             GetDuties();
 
+            if (Configuration.TimerStandaloneShowAtStartup)
+            {
+                DrawTimerUI();
+            }
             //AddonLifecycle.RegisterListener(AddonEvent.PostSetup, "AOZContentResult", AozContentResultPopSetup);
         }
 
@@ -2122,6 +2134,7 @@ namespace Altoholic
             Database.Database.UpdateCharacterCurrencyHistory(_db, _localPlayer);
             CleanLastLocalCharacter();
 
+            TimerWindow.IsOpen = false;
             ProgressWindow.IsOpen = false;
             ProgressWindow.Clear();
             CollectionWindow.IsOpen = false;
@@ -2153,7 +2166,7 @@ namespace Altoholic
             }
 
             if (_localPlayer.IsDutyCompleted(d.Id)) return;
-            Log.Debug($"Duty {d.Id}:<{d.EnglishName}> not completed, adding it to the completed list");
+            Log.Debug($"Duty {d.Id}:<{d.EnglishName}> completed, adding it to the completed list");
             _localPlayer.Duties.Add(d.Id);
         }
 
@@ -2236,11 +2249,6 @@ namespace Altoholic
             Configuration.Initialize(PluginInterface.Manifest.AssemblyVersion.Major, PluginInterface);
         }
 
-        /*private long PlaytimePacket(uint param1, long param2, uint param3)
-        {
-            long result = _playtimeHook.Original(param1, param2, param3);
-            if (param1 != 11)
-                return result;*/
         private unsafe void PlaytimePacket(UIModule* thisPtr, UIModulePacketType type, uint uintParam, void* packet)
         {
             _playtimeHook.Original(thisPtr, type, uintParam, packet);
@@ -2251,13 +2259,12 @@ namespace Altoholic
             if (player.Item1.Length == 0)
                 return;
 
-            Log.Debug($"Extracted Player Name: {player.Item1}{(char)SeIconChar.CrossWorld}{player.Item2}");
+            //Log.Debug($"Extracted Player Name: {player.Item1}{(char)SeIconChar.CrossWorld}{player.Item2}");
 
-            //uint totalPlaytime = (uint)Marshal.ReadInt32((nint)param2 + 0x10);
             uint totalPlaytime = (uint)Marshal.ReadInt32((nint)packet + 0x10);
-            Log.Debug($"Value from address {totalPlaytime}");
+            //Log.Debug($"Value from address {totalPlaytime}");
             TimeSpan playtime = TimeSpan.FromMinutes(totalPlaytime);
-            Log.Debug($"Value from timespan {playtime}");
+            //Log.Debug($"Value from timespan {playtime}");
 
             string[] names = player.Item1.Split(' ');
             if (names.Length == 0)
@@ -2269,25 +2276,25 @@ namespace Altoholic
 
             long newPlayTimeUpdate = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
             _localPlayer.LastPlayTimeUpdate = newPlayTimeUpdate;
-            Log.Debug($"Updating playtime with {player.Item1}, {player.Item2}, {totalPlaytime}, {newPlayTimeUpdate}.");
+            Log.Info($"Updating playtime with {player.Item1}, {player.Item2}, {totalPlaytime}, {newPlayTimeUpdate}.");
             Database.Database.UpdatePlaytime(_db, id, totalPlaytime, newPlayTimeUpdate);
         }
 
         private (string, string, string) GetLocalPlayerNameWorldRegion()
         {
-            IPlayerCharacter? local = ObjectTable.LocalPlayer;
-            if (local == null || local.HomeWorld.ValueNullable == null)
+            IPlayerState? local = PlayerState;
+            if (local.HomeWorld.ValueNullable == null)
                 return (string.Empty, string.Empty, string.Empty);
             string homeworld = local.HomeWorld.Value.Name.ExtractText();
 
-            return ($"{local.Name}", $"{homeworld}", $"{Utils.GetRegionFromWorld(homeworld)}");
+            return ($"{local.CharacterName}", $"{homeworld}", $"{Utils.GetRegionFromWorld(homeworld)}");
         }
 
         public void UpdateCharacter()
         {
             if (_localPlayer.CharacterId == 0 || _localPlayer.FirstName.Length == 0) return;
 
-            Log.Debug($"Updating characters with {_localPlayer.CharacterId} {_localPlayer.FirstName} {_localPlayer.LastName}{(char)SeIconChar.CrossWorld}{_localPlayer.HomeWorld}, {Utils.GetRegionFromWorld(_localPlayer.HomeWorld)}.");
+            Log.Info($"Updating characters with {_localPlayer.CharacterId} {_localPlayer.FirstName} {_localPlayer.LastName}{(char)SeIconChar.CrossWorld}{_localPlayer.HomeWorld}, {Utils.GetRegionFromWorld(_localPlayer.HomeWorld)}.");
             Blacklist? b = Database.Database.GetBlacklist(_db, _localPlayer.CharacterId);
             if (b != null) return;
             Character? charExist = Database.Database.GetCharacter(_db, _localPlayer.CharacterId);
@@ -2317,7 +2324,9 @@ namespace Altoholic
 
         private Character? GetCharacterFromGameOrDatabase()
         {
+            if(PlayerState.ContentId == 0) return null;
             if (_blacklistedCharacters.Exists(b => b.CharacterId == PlayerState.ContentId)) return null;
+
             (string, string, string) player = GetLocalPlayerNameWorldRegion();
             if (string.IsNullOrEmpty(player.Item1) || string.IsNullOrEmpty(player.Item2) || string.IsNullOrEmpty(player.Item3)) return null;
 
@@ -2419,7 +2428,7 @@ namespace Altoholic
 
         private void OnZoneChange(ushort territoryTypeId)
         {
-            Log.Debug($"ZoneChanged:{territoryTypeId}");
+            //Log.Debug($"ZoneChanged:{territoryTypeId}");
             CheckCurrentTerritoryType(territoryTypeId);
         }
 

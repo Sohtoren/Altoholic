@@ -96,20 +96,19 @@ namespace Altoholic.Windows
             List<Character> chars = [];
             chars.Insert(0, GetPlayer.Invoke());
             chars.AddRange(GetOthersCharactersList.Invoke());
-            try
+
+            using var characterDetailsTable = ImRaii.Table("###CharactersDetailsTable", 2);
+            if (!characterDetailsTable) return;
+            ImGui.TableSetupColumn("###CharactersDetailsTable#CharacterLists", ImGuiTableColumnFlags.WidthFixed,
+                200);
+            ImGui.TableSetupColumn("###CharactersDetailsTable#Details", ImGuiTableColumnFlags.WidthStretch);
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            using (var listBox =
+                   ImRaii.ListBox("###CharactersDetailsTable#CharactersListBox", new Vector2(200, -1)))
             {
-                using var characterDetailsTable = ImRaii.Table("###CharactersDetailsTable", 2);
-                if (!characterDetailsTable) return;
-                ImGui.TableSetupColumn("###CharactersDetailsTable#CharacterLists", ImGuiTableColumnFlags.WidthFixed,
-                    200);
-                ImGui.TableSetupColumn("###CharactersDetailsTable#Details", ImGuiTableColumnFlags.WidthStretch);
-                ImGui.TableNextRow();
-                ImGui.TableSetColumnIndex(0);
-                using (var listBox =
-                       ImRaii.ListBox("###CharactersDetailsTable#CharactersListBox", new Vector2(200, -1)))
+                if (listBox)
                 {
-                    if (listBox)
-                    {
 #if DEBUG
                         for (int i = 0; i < 15; i++)
                         {
@@ -121,25 +120,20 @@ namespace Altoholic.Windows
                             });
                         }
 #endif
-                        foreach (Character currChar in chars.Where(currChar =>
-                                     ImGui.Selectable(
-                                         $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}",
-                                         currChar == _currentCharacter)))
-                        {
-                            _currentCharacter = currChar;
-                        }
+                    foreach (Character currChar in chars.Where(currChar =>
+                                 ImGui.Selectable(
+                                     $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}",
+                                     currChar == _currentCharacter)))
+                    {
+                        _currentCharacter = currChar;
                     }
                 }
-
-                ImGui.TableSetColumnIndex(1);
-                if (_currentCharacter is not null)
-                {
-                    DrawPvP(_currentCharacter);
-                }
             }
-            catch (Exception e)
+
+            ImGui.TableSetColumnIndex(1);
+            if (_currentCharacter is not null)
             {
-                Plugin.Log.Debug("Altoholic : Exception : {0}", e);
+                DrawPvP(_currentCharacter);
             }
         }
 
