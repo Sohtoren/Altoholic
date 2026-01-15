@@ -284,12 +284,12 @@ namespace Altoholic.Windows
                         else
                         {
                             ImGui.TextUnformatted($"{currChar.Timers.CustomDeliveriesAllowances}");
-                            if (ImGui.IsItemHovered())
-                            {
-                                ImGui.BeginTooltip();
-                                ImGui.TextUnformatted($"{Loc.Localize("LastCheck", "Last check:")} {Utils.FormatDate(dateFormat, currChar.Timers.CustomDeliveriesLastCheck.Value)}");
-                                ImGui.EndTooltip();
-                            }
+                        }
+                        if (ImGui.IsItemHovered())
+                        {
+                            ImGui.BeginTooltip();
+                            ImGui.TextUnformatted($"{Loc.Localize("LastCheck", "Last check:")} {Utils.FormatDate(dateFormat, currChar.Timers.CustomDeliveriesLastCheck.Value)}");
+                            ImGui.EndTooltip();
                         }
                     }
                 }
@@ -308,6 +308,12 @@ namespace Altoholic.Windows
                             ImGui.PushFont(UiBuilder.IconFont);
                             ImGui.TextUnformatted($"{FontAwesomeIcon.Check.ToIconString()}");
                             ImGui.PopFont();
+                            if (ImGui.IsItemHovered())
+                            {
+                                ImGui.BeginTooltip();
+                                ImGui.TextUnformatted($"{Loc.Localize("LastCheck", "Last check:")} {Utils.FormatDate(dateFormat, currChar.Timers.DomanEnclaveLastCheck.Value)}");
+                                ImGui.EndTooltip();
+                            }
                         }
                         else
                         {
@@ -343,6 +349,10 @@ namespace Altoholic.Windows
                             ImGui.PushFont(UiBuilder.IconFont);
                             ImGui.TextUnformatted($"{FontAwesomeIcon.Check.ToIconString()}");
                             ImGui.PopFont();
+                            if (ImGui.IsItemHovered())
+                            {
+                                ImGui.TextUnformatted($"{Loc.Localize("LastCheck", "Last check:")} {Utils.FormatDate(dateFormat, currChar.Timers.MaskedFestivalLastCheck.Value)}");
+                            }
                         }
                         else
                         {
@@ -439,16 +449,17 @@ namespace Altoholic.Windows
                         ImGui.PushFont(UiBuilder.IconFont);
                         ImGui.TextUnformatted($"{FontAwesomeIcon.Check.ToIconString()}");
                         ImGui.PopFont();
+
                     }
                     else
                     {
                         ImGui.TextUnformatted($"{currChar.Timers.TribeRemainingAllowances}");
-                        if (ImGui.IsItemHovered())
-                        {
-                            ImGui.BeginTooltip();
-                            ImGui.TextUnformatted($"{Loc.Localize("LastCheck", "Last check:")} {Utils.FormatDate(dateFormat, currChar.Timers.TribeLastCheck.Value)}");
-                            ImGui.EndTooltip();
-                        }
+                    }
+                    if (ImGui.IsItemHovered())
+                    {
+                        ImGui.BeginTooltip();
+                        ImGui.TextUnformatted($"{Loc.Localize("LastCheck", "Last check:")} {Utils.FormatDate(dateFormat, currChar.Timers.TribeLastCheck.Value)}");
+                        ImGui.EndTooltip();
                     }
                 }
             }

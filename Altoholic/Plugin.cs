@@ -425,8 +425,10 @@ namespace Altoholic
         private void OnCommand(string command, string args)
         {
             Log.Debug($"OnCommand called {(args.Length > 0 ? args : "")}");
+            args = args.Replace("<", "").Replace(">", "");
+            string[] argsArray = args.Split(" ");
 
-            switch (args.Replace("<", "").Replace(">", ""))
+            switch (argsArray[0])
             {
                 case "help":
                     SeStringBuilder builder = new();
@@ -452,7 +454,7 @@ namespace Altoholic
                     builder.PushColorRgba(KnownColor.LimeGreen.Vector());
                     builder.Append("reset");
                     builder.PopColor();
-                    builder.Append(" : Reset main window position\n");
+                    builder.Append(" : Reset data for this character. Use this if some data seems inaccurate.\n");
                     builder.PushColorRgba(KnownColor.LimeGreen.Vector());
                     builder.Append("unbl");
                     builder.PopColor();
@@ -460,16 +462,18 @@ namespace Altoholic
                     builder.PushColorRgba(KnownColor.LimeGreen.Vector());
                     builder.Append("unblacklist");
                     builder.PopColor();
-                    builder.Append(" : Remove current character from blacklist");
+                    builder.Append(" : Remove current character from blacklist\n");
+                    builder.PushColorRgba(KnownColor.LimeGreen.Vector());
+                    builder.Append("window");
+                    builder.PopColor();
+                    builder.Append(" : Reset main window position");
 
                     XivChatEntry chatEntry = new() { Message = builder.ToReadOnlySeString().ToDalamudString(), Type = XivChatType.Echo };
 
                     ChatGui.Print(chatEntry);
                     break;
                 case "reset":
-                    Log.Debug($"Window position: {MainWindow.Position}");
-                    MainWindow.Position = new Vector2(100, 100);
-                    DrawMainUI();
+                    ResetCommand(argsArray.Length > 1 ? argsArray[1] : "");
                     break;
                 case "save":
                     UpdateCharacter();
@@ -481,6 +485,11 @@ namespace Altoholic
                 case "timer":
                 case "timers":
                     DrawTimerUI();
+                    break;
+                case "window":
+                    //Log.Debug($"Window position: {MainWindow.Position}");
+                    MainWindow.Position = new Vector2(100, 100);
+                    DrawMainUI();
                     break;
                 default:
                     if (MainWindow.IsOpen)
@@ -2408,7 +2417,7 @@ namespace Altoholic
                 Armoire = _localPlayer.Armoire,
                 GlamourDresser = _localPlayer.GlamourDresser,
                 PvPProfile = _localPlayer.PvPProfile,
-                Timers = _localPlayer.Timers?? new Timers(),
+                Timers = _localPlayer.Timers,
             };
 
         }
@@ -2492,6 +2501,201 @@ namespace Altoholic
                 lastDonation != _localPlayer.Timers.DomanEnclaveWeeklyAllowances)
             {
                 UpdateCharacter();
+            }
+        }
+
+        private void ResetCommand(string arg)
+        {
+            switch (arg.ToLower())
+            {
+                case "barding":
+                case "bardings":
+                    _localPlayer.Bardings.Clear();
+                    break;
+                case "emote":
+                case "emotes":
+                    _localPlayer.Emotes.Clear();
+                    break;
+                case "facepaint":
+                case "facepaints":
+                    _localPlayer.Facepaints.Clear();
+                    break;
+                case "facewear":
+                case "facewears":
+                    _localPlayer.Glasses.Clear();
+                    break;
+                case "framerkit":
+                case "framerkits":
+                    _localPlayer.FramerKits.Clear();
+                    break;
+                case "hairstyle":
+                case "hairstyles":
+                    _localPlayer.Hairstyles.Clear();
+                    break;
+                case "minion":
+                case "minions":
+                    _localPlayer.Minions.Clear();
+                    break;
+                case "mount":
+                case "mounts":
+                    _localPlayer.Mounts.Clear();
+                    break;
+                case "orchestrion":
+                case "orchestrions":
+                    _localPlayer.OrchestrionRolls.Clear();
+                    break;
+                case "ornament":
+                case "ornaments":
+                    _localPlayer.Ornaments.Clear();
+                    break;
+                case "quest":
+                case "quests":
+                    _localPlayer.Quests.Clear();
+                    break;
+                case "ttc":
+                    _localPlayer.TripleTriadCards.Clear();
+                    break;
+                case "help":
+                    {
+                        ClientLanguage currentLocale = Configuration.Language;
+                        SeStringBuilder builder = new();
+                        builder.Append($"[{Name}] {CommandName} reset ");
+                        builder.PushColorRgba(KnownColor.LimeGreen.Vector());
+                        builder.Append("option\n");
+                        builder.PopColor();
+                        builder.PushColorRgba(KnownColor.LimeGreen.Vector());
+                        builder.Append("No option");
+                        builder.PopColor();
+                        builder.Append(": Show this help\n");
+                        builder.Append("Options:\n");
+                        builder.PushColorRgba(KnownColor.LimeGreen.Vector());
+                        builder.Append("Bardings");
+                        builder.PopColor();
+                        if (currentLocale != ClientLanguage.English)
+                        {
+                            builder.Append($" ({Loc.Localize("CollectionTabBarding", "Barding")})\n");
+                        }
+                        else 
+                        {
+                            builder.Append("\n");
+                        }
+                        builder.PushColorRgba(KnownColor.LimeGreen.Vector());
+                        builder.Append("Emotes");
+                        builder.PopColor();
+                        if (currentLocale != ClientLanguage.English)
+                        {
+                            builder.Append($" ({_globalCache.AddonStorage.LoadAddonString(currentLocale, 780)})\n");
+                        }
+                        else
+                        {
+                            builder.Append("\n");
+                        }
+                        builder.PushColorRgba(KnownColor.LimeGreen.Vector());
+                        builder.Append("Facepaints");
+                        builder.PopColor();
+                        if (currentLocale != ClientLanguage.English)
+                        {
+                            builder.Append($" ({Loc.Localize("CollectionTabFacepaint", "Facepaint")})\n");
+                        }
+                        else
+                        {
+                            builder.Append("\n");
+                        }
+                        builder.PushColorRgba(KnownColor.LimeGreen.Vector());
+                        builder.Append("Facewears");
+                        builder.PopColor();
+                        if (currentLocale != ClientLanguage.English)
+                        {
+                            builder.Append($": {_globalCache.AddonStorage.LoadAddonString(currentLocale, 16051)}\n");
+                        }
+                        else
+                        {
+                            builder.Append("\n");
+                        }
+                        builder.PushColorRgba(KnownColor.LimeGreen.Vector());
+                        builder.Append("Framerkits");
+                        builder.PopColor();
+                        if (currentLocale != ClientLanguage.English)
+                        {
+                            builder.Append($" ({Loc.Localize("CollectionTabFramerKit", "Framer's kit")})\n");
+                        }
+                        else
+                        {
+                            builder.Append("\n");
+                        }
+                        builder.PushColorRgba(KnownColor.LimeGreen.Vector());
+                        builder.Append("Hairstyles");
+                        builder.PopColor();
+                        if (currentLocale != ClientLanguage.English)
+                        {
+                            builder.Append($" ({Loc.Localize("CollectionTabHairstyle", "Hairstyle")})\n");
+                        }
+                        else
+                        {
+                            builder.Append("\n");
+                        }
+                        builder.PushColorRgba(KnownColor.LimeGreen.Vector());
+                        builder.Append("Minions");
+                        builder.PopColor();
+                        if (currentLocale != ClientLanguage.English)
+                        {
+                            builder.Append($" ({_globalCache.AddonStorage.LoadAddonString(currentLocale, 8303)})\n");
+                        }
+                        else
+                        {
+                            builder.Append("\n");
+                        }
+                        builder.PushColorRgba(KnownColor.LimeGreen.Vector());
+                        builder.Append("Mounts");
+                        builder.PopColor();
+                        if (currentLocale != ClientLanguage.English)
+                        {
+                            builder.Append($" ({_globalCache.AddonStorage.LoadAddonString(currentLocale, 8302)})\n");
+                        }
+                        else
+                        {
+                            builder.Append("\n");
+                        }
+                        builder.PushColorRgba(KnownColor.LimeGreen.Vector());
+                        builder.Append("Orchestrions\n");
+                        builder.PopColor();
+                        builder.PushColorRgba(KnownColor.LimeGreen.Vector());
+                        builder.Append("Ornaments");
+                        builder.PopColor();
+                        builder.Append($" ({_globalCache.AddonStorage.LoadAddonString(currentLocale, 13671)})\n");
+                        builder.PushColorRgba(KnownColor.LimeGreen.Vector());
+                        builder.Append("Quests");
+                        builder.PopColor();
+                        if (currentLocale != ClientLanguage.English)
+                        {
+                            builder.Append($" ({_globalCache.AddonStorage.LoadAddonString(currentLocale, 454)})\n");
+                        }
+                        else
+                        {
+                            builder.Append("\n");
+                        }
+
+                        builder.PushColorRgba(KnownColor.LimeGreen.Vector());
+                        builder.Append("Tomes\n");
+                        builder.PopColor();
+                        builder.PushColorRgba(KnownColor.LimeGreen.Vector());
+                        builder.Append("TTC");
+                        builder.PopColor();
+                        builder.Append($" ({_globalCache.AddonStorage.LoadAddonString(currentLocale, 9529)})\n");
+                        XivChatEntry chatEntry = new()
+                        {
+                            Message = builder.ToReadOnlySeString().ToDalamudString(),
+                            Type = XivChatType.Echo
+                        };
+
+                        ChatGui.Print(chatEntry);
+                        break;
+                    }
+                default:
+                    {
+                        ResetCommand("help");
+                        break;
+                    }
             }
         }
     }

@@ -90,14 +90,7 @@ namespace Altoholic.Windows
 
                     _configuration.Language = _selectedLanguage;
                     _plugin.ChangeLanguage(_selectedLanguage);
-                    try
-                    {
-                        _configuration.TrySave();
-                    }
-                    catch (Exception e)
-                    {
-                        Plugin.Log.Debug($"Config save error: {e}");
-                    }
+                    _configuration.TrySave();
                 }
             }
 
