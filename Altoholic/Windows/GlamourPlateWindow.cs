@@ -152,6 +152,7 @@ namespace Altoholic.Windows
                     {
                         _currentCharacter = currChar;
                         _currentGlamourPlate = null;
+                        ResetCurrentTexture();
                     }
                 }
             }

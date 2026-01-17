@@ -250,5 +250,13 @@
     "ConfigEnablePlaytimeNotification": {
         "message": "Activer la notification de temps de jeu",
         "description": "ConfigEnablePlaytimeNotification"
+    },
+    "GlamourSetGlamourPlateLinked1": {
+        "message": "La planche mirage ",
+        "description": "The plate number follow this, keep a space at the end (unless the number start the sentence)"
+    },
+    "GlamourSetGlamourPlateLinked2": {
+        "message": " est lié à cette tenue",
+        "description": "The plate number precede this, keep a space at the start"
     }
 }

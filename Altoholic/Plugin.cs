@@ -2265,6 +2265,8 @@ namespace Altoholic
             Database.Database.UpdateCharacterCurrencyHistory(_db, _localPlayer);
             CleanLastLocalCharacter();
 
+            GlamourPlateWindow.IsOpen = false;
+            GlamourPlateWindow.Clear();
             GearSetWindow.IsOpen = false;
             GearSetWindow.Clear();
             TimerWindow.IsOpen = false;
@@ -2542,6 +2544,9 @@ namespace Altoholic
                 GlamourDresser = _localPlayer.GlamourDresser,
                 PvPProfile = _localPlayer.PvPProfile,
                 Timers = _localPlayer.Timers,
+                CurrentGearSet = _localPlayer.CurrentGearSet,
+                GearSets = _localPlayer.GearSets,
+                GlamourPlates = _localPlayer.GlamourPlates
             };
 
         }
@@ -2652,6 +2657,15 @@ namespace Altoholic
                 case "framerkits":
                     _localPlayer.FramerKits.Clear();
                     break;
+                case "gearset":
+                case "gearsets":
+                    _localPlayer.GearSets.Clear();
+                    break;
+                case "glamour":
+                case "glamourplates":
+                case "plates":
+                    _localPlayer.GlamourPlates.Clear();
+                    break;
                 case "hairstyle":
                 case "hairstyles":
                     _localPlayer.Hairstyles.Clear();
@@ -2742,6 +2756,28 @@ namespace Altoholic
                         if (currentLocale != ClientLanguage.English)
                         {
                             builder.Append($" ({Loc.Localize("CollectionTabFramerKit", "Framer's kit")})\n");
+                        }
+                        else
+                        {
+                            builder.Append("\n");
+                        }
+                        builder.PushColorRgba(KnownColor.LimeGreen.Vector());
+                        builder.Append("Gearsets");
+                        builder.PopColor();
+                        if (currentLocale != ClientLanguage.English)
+                        {
+                            builder.Append($" ({_globalCache.AddonStorage.LoadAddonString(currentLocale, 764)})\n");
+                        }
+                        else
+                        {
+                            builder.Append("\n");
+                        }
+                        builder.PushColorRgba(KnownColor.LimeGreen.Vector());
+                        builder.Append("GlamourPlates");
+                        builder.PopColor();
+                        if (currentLocale != ClientLanguage.English)
+                        {
+                            builder.Append($" ({_globalCache.AddonStorage.LoadAddonString(currentLocale, 3185)})\n");
                         }
                         else
                         {

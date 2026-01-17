@@ -247,8 +247,12 @@
         "message": "Timers",
         "description": ""
     },
-    "vistanotunlocked": {
-        "message": "Sightseeing Log not unlocked",
-        "description": ""
+    "GlamourSetGlamourPlateLinked1": {
+        "message": "Glamour plate ",
+        "description": "The plate number follow this, keep a space at the end (unless the number start the sentence)"
+    },
+    "GlamourSetGlamourPlateLinked2": {
+        "message": " is linked to this gearset",
+        "description": "The plate number precede this, keep a space at the start"
     }
 }

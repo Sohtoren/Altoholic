@@ -65,5 +65,8 @@ namespace Altoholic.Models
         public string GlamourDresser { get; init; } = string.Empty;
         public string PvPProfile { get; init; } = string.Empty;
         public string Timers { get; init; } = string.Empty;
+        public string CurrentGearSet { get; init; } = string.Empty;
+        public string GearSets { get; init; } = string.Empty;
+        public string GlamourPlates { get; init; } = string.Empty;
     }
 }

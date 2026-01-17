@@ -45,7 +45,7 @@ namespace Altoholic.Models
         public List<Inventory> Saddle { get; set; } = [];
         public List<Gear> Gear { get; set; } = [];
         public List<Retainer> Retainers { get; set; } = [];
-        public Dictionary<ulong, string> BlacklistedRetainers { get; set; } = [];
+        public Dictionary<ulong, string> BlacklistedRetainers { get; init; } = [];
         public HashSet<uint> Minions { get; init; } = [];
         public HashSet<uint> Mounts { get; init; } = [];
         public HashSet<uint> TripleTriadCards { get; init; } = [];
@@ -71,8 +71,8 @@ namespace Altoholic.Models
         public PvPProfile? PvPProfile { get; set; }
         public Timers Timers { get; init; } = new();
         public GearSet? CurrentGearSet { get; set; }
-        public Dictionary<int, GearSet> GearSets { get; set; } = new(100);
-        public Dictionary<byte, GlamourPlate> GlamourPlates { get; set; } = new(20);
+        public Dictionary<int, GearSet> GearSets { get; init; } = new(100);
+        public Dictionary<byte, GlamourPlate> GlamourPlates { get; init; } = new(20);
 
 
         public bool HasAnyLevelJob(int level)

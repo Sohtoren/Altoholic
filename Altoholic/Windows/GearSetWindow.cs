@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Numerics;
 using Altoholic.Cache;
 using Altoholic.Models;
+using CheapLoc;
 using Dalamud.Game;
 using Dalamud.Game.Text;
 using Dalamud.Interface;
@@ -57,6 +58,10 @@ namespace Altoholic.Windows
             _characterTextures.Add(GearSlot.FACEWEAR, _characterIcons.LoadTexturePart("ui/uld/Character_hr1.tex", 55));
             _characterTextures.Add(GearSlot.EMPTY,
                 Plugin.TextureProvider.GetFromGame("ui/uld/img03/DragTargetA_hr1.tex").RentAsync().Result);
+
+            _glamourSetIcon = Plugin.TextureProvider.GetFromGame("ui/uld/img03/GearSetList_hr1.tex").RentAsync().Result;
+            (_glamourSetIconUv0, _glamourSetIconUv1) = Utils.GetTextureCoordinate(_glamourSetIcon.Size, 280, 0, 48, 48);
+
         }
 
         public Func<Character>? GetPlayer { get; init; }
@@ -65,6 +70,9 @@ namespace Altoholic.Windows
         private GearSet? _currentGearSet;
         private readonly UldWrapper _characterIcons;
         private Dictionary<GearSlot, IDalamudTextureWrap?> _characterTextures = [];
+        private readonly IDalamudTextureWrap _glamourSetIcon;
+        private readonly Vector2 _glamourSetIconUv0;
+        private readonly Vector2 _glamourSetIconUv1;
 
         public void Clear()
         {
@@ -151,7 +159,7 @@ namespace Altoholic.Windows
         private void DrawGearSetList(Character selectedCharacter)
         {
             using var charactersGearSetTableGearSetListTable =
-                ImRaii.Table("###CharactersGearSetTable#Profile#GearSetListTable", 5, ImGuiTableFlags.ScrollY);
+                ImRaii.Table("###CharactersGearSetTable#Profile#GearSetListTable", 6, ImGuiTableFlags.ScrollY);
             if (!charactersGearSetTableGearSetListTable) return;
             ImGui.TableSetupColumn("###CharactersGearSetTable#Profile#GearSetListTable#Index",
                 ImGuiTableColumnFlags.WidthFixed, 10);
@@ -160,9 +168,11 @@ namespace Altoholic.Windows
             ImGui.TableSetupColumn("###CharactersGearSetTable#Profile#GearSetListTable#Name",
                 ImGuiTableColumnFlags.WidthFixed, 150);
             ImGui.TableSetupColumn("###CharactersGearSetTable#Profile#GearSetListTable#Ilvl",
-                ImGuiTableColumnFlags.WidthFixed, 100);
-            ImGui.TableSetupColumn("###CharactersGearSetTable#Profile#GearSetListTable#Ilvl",
                 ImGuiTableColumnFlags.WidthFixed, 50);
+            ImGui.TableSetupColumn("###CharactersGearSetTable#Profile#GearSetListTable#Open",
+                ImGuiTableColumnFlags.WidthFixed, 30);
+            ImGui.TableSetupColumn("###CharactersGearSetTable#Profile#GearSetListTable#Open",
+                ImGuiTableColumnFlags.WidthFixed, 100);
 
             for (int i = 0; i < selectedCharacter.GearSets.Count; i++)
             {
@@ -186,10 +196,33 @@ namespace Altoholic.Windows
                 ImGui.PushFont(UiBuilder.IconFont);
                 ImGui.TextUnformatted($"{FontAwesomeIcon.Search.ToIconString()}");
                 ImGui.PopFont();
+                if (ImGui.IsItemHovered())
+                {
+                    ImGui.BeginTooltip();
+                    ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 4360) }");
+                    ImGui.EndTooltip();
+                }
                 if (ImGui.IsItemClicked())
                 {
                     _currentGearSet = gs;
                 }
+                ImGui.TableSetColumnIndex(5);
+                if (gs.GlamourSetLink == 0)
+                {
+                    continue;
+                }
+
+                Vector2 p = ImGui.GetCursorPos();
+                ImGui.Image(_glamourSetIcon.Handle, new Vector2(23, 23), _glamourSetIconUv0, _glamourSetIconUv1);
+                if (ImGui.IsItemHovered())
+                {
+                    ImGui.BeginTooltip();
+                    ImGui.TextUnformatted($"{Loc.Localize("GlamourSetGlamourPlateLinked1", "Glamour plate ")}{gs.GlamourSetLink}{Loc.Localize("GlamourSetGlamourPlateLinked2", " is linked to this gearset")}");
+                    ImGui.EndTooltip();
+                }
+                ImGui.SetCursorPos(new Vector2(p.X + 20, p.Y + 15));
+                ImGui.TextUnformatted($"{gs.GlamourSetLink}");
+                ImGui.SetCursorPos(p);
             }
         }
     }
