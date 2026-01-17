@@ -38,12 +38,12 @@ namespace Altoholic.Cache
             if (_items.TryGetValue(id, out ItemItemLevel? ret))
                 return ret;
 
-            Item? dbItem = Utils.GetItemFromId(currentLocale, id);
-            if(dbItem == null) return null;
+            Item? dbItem = LoadItem(currentLocale, id);
+            if (dbItem == null) return null;
             ret = new ItemItemLevel
             {
                 Item = dbItem.Value,
-                ItemLevel = Utils.GetItemLevelFromId(dbItem.Value.LevelItem.RowId)!
+                ItemLevel = Utils.GetItemLevelFromId(dbItem.Value.LevelItem.RowId)
             };
             _items[id] = ret;
             return ret;

@@ -28,14 +28,13 @@ namespace Altoholic.Windows
             string name,
             SqliteConnection db,
             GlobalCache globalCache
-        ) 
+        )
             : base(
                 name, ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse)
         {
             SizeConstraints = new WindowSizeConstraints
             {
-                MinimumSize = new Vector2(1000, 450),
-                MaximumSize = new Vector2(float.MaxValue, float.MaxValue)
+                MinimumSize = new Vector2(1000, 450), MaximumSize = new Vector2(float.MaxValue, float.MaxValue)
             };
             _plugin = plugin;
             _db = db;
@@ -54,10 +53,13 @@ namespace Altoholic.Windows
             _characterTextures.Add(GearSlot.NECK, _characterIcons.LoadTexturePart("ui/uld/Character_hr1.tex", 26));
             _characterTextures.Add(GearSlot.WRISTS, _characterIcons.LoadTexturePart("ui/uld/Character_hr1.tex", 27));
             _characterTextures.Add(GearSlot.LEFT_RING, _characterIcons.LoadTexturePart("ui/uld/Character_hr1.tex", 28));
-            _characterTextures.Add(GearSlot.RIGHT_RING, _characterIcons.LoadTexturePart("ui/uld/Character_hr1.tex", 28));
-            _characterTextures.Add(GearSlot.SOUL_CRYSTAL, _characterIcons.LoadTexturePart("ui/uld/Character_hr1.tex", 29));
+            _characterTextures.Add(GearSlot.RIGHT_RING,
+                _characterIcons.LoadTexturePart("ui/uld/Character_hr1.tex", 28));
+            _characterTextures.Add(GearSlot.SOUL_CRYSTAL,
+                _characterIcons.LoadTexturePart("ui/uld/Character_hr1.tex", 29));
             _characterTextures.Add(GearSlot.FACEWEAR, _characterIcons.LoadTexturePart("ui/uld/Character_hr1.tex", 55));
-            _characterTextures.Add(GearSlot.EMPTY, Plugin.TextureProvider.GetFromGame("ui/uld/img03/DragTargetA_hr1.tex").RentAsync().Result);
+            _characterTextures.Add(GearSlot.EMPTY,
+                Plugin.TextureProvider.GetFromGame("ui/uld/img03/DragTargetA_hr1.tex").RentAsync().Result);
         }
 
         public Func<Character>? GetPlayer { get; init; }
@@ -82,7 +84,8 @@ namespace Altoholic.Windows
         {
             Plugin.Log.Info("DetailsWindow, Dispose() called");
             _currentCharacter = null;
-            foreach(KeyValuePair<GearSlot, IDalamudTextureWrap?> loadedTexture in _characterTextures) loadedTexture.Value?.Dispose();
+            foreach (KeyValuePair<GearSlot, IDalamudTextureWrap?> loadedTexture in _characterTextures)
+                loadedTexture.Value?.Dispose();
             _characterIcons.Dispose();
         }
 
@@ -138,8 +141,10 @@ namespace Altoholic.Windows
         {
             using var charactersDetailsTableProfileTable = ImRaii.Table("###CharactersDetailsTable#ProfileTable", 2);
             if (!charactersDetailsTableProfileTable) return;
-            ImGui.TableSetupColumn("###CharactersDetailsTable#ProfileTable#ProfileCol", ImGuiTableColumnFlags.WidthStretch);
-            ImGui.TableSetupColumn("###CharactersDetailsTable#ProfileTable#GearCol", ImGuiTableColumnFlags.WidthStretch);
+            ImGui.TableSetupColumn("###CharactersDetailsTable#ProfileTable#ProfileCol",
+                ImGuiTableColumnFlags.WidthStretch);
+            ImGui.TableSetupColumn("###CharactersDetailsTable#ProfileTable#GearCol",
+                ImGuiTableColumnFlags.WidthStretch);
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
             using var tabBar = ImRaii.TabBar("###CharactersDetailsTable#ProfileTable#ProfileCol#ProfileTabBar");
@@ -173,7 +178,8 @@ namespace Altoholic.Windows
 
             ImGui.TableSetColumnIndex(1);
             Utils.DrawGear(_currentLocale, ref _globalCache, ref _characterTextures, selectedCharacter.Gear,
-                selectedCharacter.LastJob, selectedCharacter.LastJobLevel, 300, 350, false, 0, selectedCharacter.CurrentFacewear);
+                selectedCharacter.LastJob, selectedCharacter.LastJobLevel, 300, 350, false, 0,
+                selectedCharacter.CurrentFacewear);
         }
 
         private void DrawAttributes(Character selectedCharacter)
@@ -191,8 +197,10 @@ namespace Altoholic.Windows
 
             using var attributesStrDexVitIntMindTable = ImRaii.Table("###Attributes#StrDexVitIntMindTable", 2);
             if (!attributesStrDexVitIntMindTable) return;
-            ImGui.TableSetupColumn("###Attributes#StrDexVitIntMindTable#LabelHeader", ImGuiTableColumnFlags.WidthStretch);
-            ImGui.TableSetupColumn("###Attributes#StrDexVitIntMindTable#ValueHeader", ImGuiTableColumnFlags.WidthStretch);
+            ImGui.TableSetupColumn("###Attributes#StrDexVitIntMindTable#LabelHeader",
+                ImGuiTableColumnFlags.WidthStretch);
+            ImGui.TableSetupColumn("###Attributes#StrDexVitIntMindTable#ValueHeader",
+                ImGuiTableColumnFlags.WidthStretch);
             ImGui.TableNextRow();
             ImGui.TextUnformatted("Attributes");
             ImGui.Separator();
@@ -285,7 +293,8 @@ namespace Altoholic.Windows
             if (selectedCharacter.Profile.GrandCompany is not 0)
             {
                 ImGui.TextUnformatted("");
-                ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 791)}"); //Grand Company
+                ImGui.TextUnformatted(
+                    $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 791)}"); //Grand Company
                 ImGui.Separator();
                 using var profileTableGrandCompanyTable = ImRaii.Table("###ProfileTable#GrandCompanyTable", 2);
                 if (!profileTableGrandCompanyTable) return;
@@ -294,7 +303,8 @@ namespace Altoholic.Windows
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
                 Utils.DrawIcon(
-                    _globalCache.IconStorage.LoadIcon(Utils.GetGrandCompanyIcon(selectedCharacter.Profile.GrandCompany)),
+                    _globalCache.IconStorage.LoadIcon(
+                        Utils.GetGrandCompanyIcon(selectedCharacter.Profile.GrandCompany)),
                     new Vector2(40, 40));
 
                 ImGui.TableSetColumnIndex(1);
@@ -307,7 +317,8 @@ namespace Altoholic.Windows
                     ImGuiTableColumnFlags.WidthFixed, 50);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                ImGui.TextUnformatted($"{Utils.GetGrandCompany(_currentLocale, selectedCharacter.Profile.GrandCompany)}");
+                ImGui.TextUnformatted(
+                    $"{Utils.GetGrandCompany(_currentLocale, selectedCharacter.Profile.GrandCompany)}");
                 ImGui.TextUnformatted(
                     $"{Utils.Capitalize(Utils.GetGrandCompanyRank(_currentLocale, selectedCharacter.Profile.GrandCompany, selectedCharacter.Profile.GrandCompanyRank, selectedCharacter.Profile.Gender))}");
                 ImGui.TableSetColumnIndex(1);
@@ -318,7 +329,8 @@ namespace Altoholic.Windows
             }
 
             ImGui.TextUnformatted("");
-            ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 793)}"); //Race/Clan/Gender
+            ImGui.TextUnformatted(
+                $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 793)}"); //Race/Clan/Gender
             ImGui.Separator();
             ImGui.TextUnformatted(
                 $"{Utils.GetRace(_currentLocale, selectedCharacter.Profile.Gender, selectedCharacter.Profile.Race)} / {Utils.GetTribe(_currentLocale, selectedCharacter.Profile.Gender, selectedCharacter.Profile.Tribe)} / {Utils.GetGender(selectedCharacter.Profile.Gender)}");
@@ -364,11 +376,15 @@ namespace Altoholic.Windows
 
         private void DrawHousing(Character selectedCharacter)
         {
-            using var charactersDetailsTableProfileTable = ImRaii.Table("###CharactersDetailsTable#Profile#HousingTable", 3);
+            using var charactersDetailsTableProfileTable =
+                ImRaii.Table("###CharactersDetailsTable#Profile#HousingTable", 3);
             if (!charactersDetailsTableProfileTable) return;
-            ImGui.TableSetupColumn("###CharactersDetailsTable#Profile#HousingTable#Icon", ImGuiTableColumnFlags.WidthFixed, 48);
-            ImGui.TableSetupColumn("###CharactersDetailsTable#Profile#HousingTable#Text", ImGuiTableColumnFlags.WidthStretch);
-            ImGui.TableSetupColumn("###CharactersDetailsTable#Profile#HousingTable#Delete", ImGuiTableColumnFlags.WidthFixed, 40);
+            ImGui.TableSetupColumn("###CharactersDetailsTable#Profile#HousingTable#Icon",
+                ImGuiTableColumnFlags.WidthFixed, 48);
+            ImGui.TableSetupColumn("###CharactersDetailsTable#Profile#HousingTable#Text",
+                ImGuiTableColumnFlags.WidthStretch);
+            ImGui.TableSetupColumn("###CharactersDetailsTable#Profile#HousingTable#Delete",
+                ImGuiTableColumnFlags.WidthFixed, 40);
             foreach (Housing house in selectedCharacter.Houses.ToList())
             {
                 ImGui.TableNextRow();
@@ -376,7 +392,7 @@ namespace Altoholic.Windows
                 IDalamudTextureWrap icon = (house.Plot == -127 || house.Plot == -128 || house.Room != 0)
                     ? _globalCache.IconStorage.LoadHighResIcon(066403)
                     : _globalCache.IconStorage.LoadHighResIcon(066458);
-                Utils.DrawIcon(icon, new Vector2(48,48));
+                Utils.DrawIcon(icon, new Vector2(48, 48));
                 ImGui.TableSetColumnIndex(1);
                 ImGui.TextUnformatted(
                     //$"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 8495)}: {GetHouseTerritoryString(house.TerritoryId)}" +
@@ -386,8 +402,10 @@ namespace Altoholic.Windows
                 if (house.Plot != -127 && house.Plot != -128)
                 {
                     ImGui.SameLine();
-                    ImGui.TextUnformatted($"- {_globalCache.AddonStorage.LoadAddonString(_currentLocale, 14312)}: {house.Plot+1}");
+                    ImGui.TextUnformatted(
+                        $"- {_globalCache.AddonStorage.LoadAddonString(_currentLocale, 14312)}: {house.Plot + 1}");
                 }
+
                 if (house.Room != 0)
                 {
                     ImGui.SameLine();
@@ -399,8 +417,10 @@ namespace Altoholic.Windows
                         ClientLanguage.Japanese => "Room",
                         _ => "Room"
                     };
-                    ImGui.TextUnformatted($"- {room} {_globalCache.AddonStorage.LoadAddonString(_currentLocale, 6454)} {house.Room}");
+                    ImGui.TextUnformatted(
+                        $"- {room} {_globalCache.AddonStorage.LoadAddonString(_currentLocale, 6454)} {house.Room}");
                 }
+
                 ImGui.Separator();
 
                 ImGui.TableSetColumnIndex(2);
@@ -413,6 +433,7 @@ namespace Altoholic.Windows
                     Plugin.Log.Debug(
                         $"Remove {_globalCache.AddonStorage.LoadAddonString(_currentLocale, 14312)}: {house.Plot + 1} hit");
                 }
+
                 ImGui.PopFont();
                 if (ImGui.IsItemHovered())
                 {

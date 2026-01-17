@@ -1,36 +1,36 @@
 using Altoholic.Cache;
 using Altoholic.Models;
 using CheapLoc;
+using Dalamud.Bindings.ImGui;
 using Dalamud.Game;
 using Dalamud.Game.Text;
 using Dalamud.Interface.Textures.TextureWraps;
 using Dalamud.Interface.Utility.Raii;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
-using Dalamud.Bindings.ImGui;
 using Lumina.Excel;
 using Lumina.Excel.Sheets;
+using Lumina.Text.ReadOnly;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using ClassJob = Lumina.Excel.Sheets.ClassJob;
-using Mount = Lumina.Excel.Sheets.Mount;
-using Stain = Lumina.Excel.Sheets.Stain;
-using TripleTriadCard = Lumina.Excel.Sheets.TripleTriadCard;
-using Emote = Lumina.Excel.Sheets.Emote;
-using TextCommand = Lumina.Excel.Sheets.TextCommand;
-using Ornament = Lumina.Excel.Sheets.Ornament;
-using Glasses = Lumina.Excel.Sheets.Glasses;
-using Quest = Lumina.Excel.Sheets.Quest;
-using Cabinet = Lumina.Excel.Sheets.Cabinet;
 using System.Runtime.CompilerServices;
 using BaseParam = Lumina.Excel.Sheets.BaseParam;
+using Cabinet = Lumina.Excel.Sheets.Cabinet;
+using ClassJob = Lumina.Excel.Sheets.ClassJob;
+using Emote = Lumina.Excel.Sheets.Emote;
+using Glasses = Lumina.Excel.Sheets.Glasses;
 using Materia = Lumina.Excel.Sheets.Materia;
+using Mount = Lumina.Excel.Sheets.Mount;
+using Ornament = Lumina.Excel.Sheets.Ornament;
 using PvPRankTransient = Altoholic.Models.PvPRankTransient;
+using Quest = Lumina.Excel.Sheets.Quest;
+using Stain = Lumina.Excel.Sheets.Stain;
+using TextCommand = Lumina.Excel.Sheets.TextCommand;
+using TripleTriadCard = Lumina.Excel.Sheets.TripleTriadCard;
 using Vector2 = FFXIVClientStructs.FFXIV.Common.Math.Vector2;
 using Vector4 = FFXIVClientStructs.FFXIV.Common.Math.Vector4;
-using Lumina.Text.ReadOnly;
 
 
 namespace Altoholic
@@ -641,7 +641,14 @@ namespace Altoholic
             return lumina;
         }
 
-        private static uint GetJobIcon(uint jobId)
+        private static ParamGrow? GetParamGrow(uint id)
+        {
+            ExcelSheet<ParamGrow>? ditm = Plugin.DataManager.GetExcelSheet<ParamGrow>(ClientLanguage.English);
+            ParamGrow? lumina = ditm?.GetRow(id);
+            return lumina;
+        }
+
+        public static uint GetJobIcon(uint jobId)
         {
             return jobId switch
             {
@@ -1180,7 +1187,7 @@ namespace Altoholic
 
         public static void DrawGear(ClientLanguage currentLocale, ref GlobalCache globalCache,
             ref Dictionary<GearSlot, IDalamudTextureWrap?> defaultTextures, List<Gear> gears, uint job, int jobLevel,
-            int middleWidth, int middleHeigth, bool retainer = false, int maxLevel = 0, ushort[]? currentFacewear = null)
+            int middleWidth, int middleHeigth, bool retainer = false, int maxLevel = 0, ushort[]? currentFacewear = null, bool isGearSet = false, int gearSetIlvl=0)
         {
             if (gears.Count == 0) return;
             using (var gearTableHeader = ImRaii.Table("###GearTableHeader", 3))
@@ -1193,9 +1200,13 @@ namespace Altoholic
                 ImGui.TableSetColumnIndex(0);
                 DrawGearPiece(currentLocale, ref globalCache, gears, GearSlot.MH,
                     globalCache.AddonStorage.LoadAddonString(currentLocale, 11524), new Vector2(40, 40),
-                    defaultTextures[GearSlot.MH], defaultTextures[GearSlot.EMPTY]);
+                    defaultTextures[GearSlot.MH], defaultTextures[GearSlot.EMPTY], isGearSet);
                 ImGui.TableSetColumnIndex(1);
-                ImGui.TextUnformatted($"{globalCache.AddonStorage.LoadAddonString(currentLocale, 335)} {jobLevel}");
+                if (jobLevel != 0)
+                {
+                    ImGui.TextUnformatted($"{globalCache.AddonStorage.LoadAddonString(currentLocale, 335)} {jobLevel}");
+                }
+
                 using (var gearTableRoleIconNameTable = ImRaii.Table("###GearTable#RoleIconNameTable", 2))
                 {
                     if (!gearTableRoleIconNameTable) return;
@@ -1229,31 +1240,31 @@ namespace Altoholic
                 ImGui.TableSetColumnIndex(0);
                 DrawGearPiece(currentLocale, ref globalCache, gears, GearSlot.HEAD,
                     globalCache.AddonStorage.LoadAddonString(currentLocale, 11525), new Vector2(40, 40),
-                    defaultTextures[GearSlot.HEAD], defaultTextures[GearSlot.EMPTY]);
+                    defaultTextures[GearSlot.HEAD], defaultTextures[GearSlot.EMPTY], isGearSet);
 
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
                 DrawGearPiece(currentLocale, ref globalCache, gears, GearSlot.BODY,
                     globalCache.AddonStorage.LoadAddonString(currentLocale, 11526), new Vector2(40, 40),
-                    defaultTextures[GearSlot.BODY], defaultTextures[GearSlot.EMPTY]);
+                    defaultTextures[GearSlot.BODY], defaultTextures[GearSlot.EMPTY], isGearSet);
 
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
                 DrawGearPiece(currentLocale, ref globalCache, gears, GearSlot.HANDS,
                     globalCache.AddonStorage.LoadAddonString(currentLocale, 11527), new Vector2(40, 40),
-                    defaultTextures[GearSlot.HANDS], defaultTextures[GearSlot.EMPTY]);
+                    defaultTextures[GearSlot.HANDS], defaultTextures[GearSlot.EMPTY], isGearSet);
 
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
                 DrawGearPiece(currentLocale, ref globalCache, gears, GearSlot.LEGS,
                     globalCache.AddonStorage.LoadAddonString(currentLocale, 11528), new Vector2(40, 40),
-                    defaultTextures[GearSlot.LEGS], defaultTextures[GearSlot.EMPTY]);
+                    defaultTextures[GearSlot.LEGS], defaultTextures[GearSlot.EMPTY], isGearSet);
 
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
                 DrawGearPiece(currentLocale, ref globalCache, gears, GearSlot.FEET,
                     globalCache.AddonStorage.LoadAddonString(currentLocale, 11529), new Vector2(40, 40),
-                    defaultTextures[GearSlot.FEET], defaultTextures[GearSlot.EMPTY]);
+                    defaultTextures[GearSlot.FEET], defaultTextures[GearSlot.EMPTY], isGearSet);
                 if (!retainer && currentFacewear is not null)
                 {
                     ImGui.TableNextRow();
@@ -1266,6 +1277,15 @@ namespace Altoholic
 
             ImGui.TableSetColumnIndex(1);
             DrawIcon(globalCache.IconStorage.LoadIcon(055396), new Vector2(middleWidth, middleHeigth));
+            if (isGearSet)
+            {
+                ImGui.TextUnformatted(
+                    $"{globalCache.AddonStorage.LoadAddonString(currentLocale, 3273)}: {gearSetIlvl}");
+            }
+            else
+            {
+                DrawAverageItemLevel(currentLocale, globalCache, gears, job, jobLevel);
+            }
 
             ImGui.TableSetColumnIndex(2);
             using var gearTableRightGearColumn = ImRaii.Table("###GearTable#RightGearColumn", 1);
@@ -1275,37 +1295,37 @@ namespace Altoholic
             ImGui.TableSetColumnIndex(0);
             DrawGearPiece(currentLocale, ref globalCache, gears, GearSlot.OH,
                 globalCache.AddonStorage.LoadAddonString(currentLocale, 12227), new Vector2(40, 40),
-                defaultTextures[GearSlot.OH], defaultTextures[GearSlot.EMPTY]);
+                defaultTextures[GearSlot.OH], defaultTextures[GearSlot.EMPTY], isGearSet);
 
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
             DrawGearPiece(currentLocale, ref globalCache, gears, GearSlot.EARS,
                 globalCache.AddonStorage.LoadAddonString(currentLocale, 11530), new Vector2(40, 40),
-                defaultTextures[GearSlot.EARS], defaultTextures[GearSlot.EMPTY]);
+                defaultTextures[GearSlot.EARS], defaultTextures[GearSlot.EMPTY], isGearSet);
 
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
             DrawGearPiece(currentLocale, ref globalCache, gears, GearSlot.NECK,
                 globalCache.AddonStorage.LoadAddonString(currentLocale, 11531), new Vector2(40, 40),
-                defaultTextures[GearSlot.NECK], defaultTextures[GearSlot.EMPTY]);
+                defaultTextures[GearSlot.NECK], defaultTextures[GearSlot.EMPTY], isGearSet);
 
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
             DrawGearPiece(currentLocale, ref globalCache, gears, GearSlot.WRISTS,
                 globalCache.AddonStorage.LoadAddonString(currentLocale, 11532), new Vector2(40, 40),
-                defaultTextures[GearSlot.WRISTS], defaultTextures[GearSlot.EMPTY]);
+                defaultTextures[GearSlot.WRISTS], defaultTextures[GearSlot.EMPTY], isGearSet);
 
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
             DrawGearPiece(currentLocale, ref globalCache, gears, GearSlot.RIGHT_RING,
                 globalCache.AddonStorage.LoadAddonString(currentLocale, 11533), new Vector2(40, 40),
-                defaultTextures[GearSlot.RIGHT_RING], defaultTextures[GearSlot.EMPTY]);
+                defaultTextures[GearSlot.RIGHT_RING], defaultTextures[GearSlot.EMPTY], isGearSet);
 
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
             DrawGearPiece(currentLocale, ref globalCache, gears, GearSlot.LEFT_RING,
                 globalCache.AddonStorage.LoadAddonString(currentLocale, 11534), new Vector2(40, 40),
-                defaultTextures[GearSlot.LEFT_RING], defaultTextures[GearSlot.EMPTY]);
+                defaultTextures[GearSlot.LEFT_RING], defaultTextures[GearSlot.EMPTY], isGearSet);
 
             if (!retainer)
             {
@@ -1313,7 +1333,7 @@ namespace Altoholic
                 ImGui.TableSetColumnIndex(0);
                 DrawGearPiece(currentLocale, ref globalCache, gears, GearSlot.SOUL_CRYSTAL,
                     globalCache.AddonStorage.LoadAddonString(currentLocale, 12238), new Vector2(40, 40),
-                    defaultTextures[GearSlot.SOUL_CRYSTAL], defaultTextures[GearSlot.EMPTY]);
+                    defaultTextures[GearSlot.SOUL_CRYSTAL], defaultTextures[GearSlot.EMPTY], isGearSet);
             }
             else
             {
@@ -1321,6 +1341,226 @@ namespace Altoholic
                 ImGui.TableSetColumnIndex(0);
                 DrawRetainerJob(currentLocale, ref globalCache, job);
             }
+        }
+
+        private static void DrawAverageItemLevel(ClientLanguage currentLocale, GlobalCache globalCache,
+            List<Gear> gears, uint job, int characterLevel)
+        {
+            long avgIlvl = 0;
+            int itemCount = 0;
+            Gear? mh = gears.FirstOrDefault(g => g.Slot == (short)GearSlot.MH);
+            if (mh != null && mh.ItemId != 0)
+            {
+                ItemItemLevel? ilvl =
+                    globalCache.ItemStorage.LoadItemWithItemLevel(ClientLanguage.English, mh.ItemId);
+                if (ilvl is { Item: not null, ItemLevel: not null })
+                {
+                    avgIlvl += GetRealIlvl(ilvl.Item.Value, ilvl.ItemLevel.Value, characterLevel);
+                    itemCount++;
+                }
+            }
+
+            Gear? oh = gears.FirstOrDefault(g => g.Slot == (short)GearSlot.OH);
+            if (oh != null && oh.ItemId != 0)
+            {
+                ItemItemLevel? ilvl =
+                    globalCache.ItemStorage.LoadItemWithItemLevel(ClientLanguage.English, oh.ItemId);
+                if (ilvl is { Item: not null, ItemLevel: not null })
+                {
+                    avgIlvl += GetRealIlvl(ilvl.Item.Value, ilvl.ItemLevel.Value, characterLevel);
+                    itemCount++;
+                }
+            }
+
+            Gear? head = gears.FirstOrDefault(g => g.Slot == (short)GearSlot.HEAD);
+            if (head != null && head.ItemId != 0)
+            {
+                ItemItemLevel? ilvl =
+                    globalCache.ItemStorage.LoadItemWithItemLevel(ClientLanguage.English, head.ItemId);
+                if (ilvl is { Item: not null, ItemLevel: not null })
+                {
+                    avgIlvl += GetRealIlvl(ilvl.Item.Value, ilvl.ItemLevel.Value, characterLevel);
+                    itemCount++;
+                }
+            }
+
+            Gear? chest = gears.FirstOrDefault(g => g.Slot == (short)GearSlot.BODY);
+            if (chest != null && chest.ItemId != 0)
+            {
+                ItemItemLevel? ilvl =
+                    globalCache.ItemStorage.LoadItemWithItemLevel(ClientLanguage.English, chest.ItemId);
+                if (ilvl is { Item: not null, ItemLevel: not null })
+                {
+                    avgIlvl += GetRealIlvl(ilvl.Item.Value, ilvl.ItemLevel.Value, characterLevel);
+                    itemCount++;
+                }
+            }
+
+            Gear? hands = gears.FirstOrDefault(g => g.Slot == (short)GearSlot.HANDS);
+            if (hands != null && hands.ItemId != 0)
+            {
+                ItemItemLevel? ilvl =
+                    globalCache.ItemStorage.LoadItemWithItemLevel(ClientLanguage.English, hands.ItemId);
+                if (ilvl is { Item: not null, ItemLevel: not null })
+                {
+                    avgIlvl += GetRealIlvl(ilvl.Item.Value, ilvl.ItemLevel.Value, characterLevel);
+                    itemCount++;
+                }
+            }
+
+            Gear? legs = gears.FirstOrDefault(g => g.Slot == (short)GearSlot.LEGS);
+            if (legs != null && legs.ItemId != 0)
+            {
+                ItemItemLevel? ilvl =
+                    globalCache.ItemStorage.LoadItemWithItemLevel(ClientLanguage.English, legs.ItemId);
+                if (ilvl is { Item: not null, ItemLevel: not null })
+                {
+                    avgIlvl += GetRealIlvl(ilvl.Item.Value, ilvl.ItemLevel.Value, characterLevel);
+                    itemCount++;
+                }
+            }
+
+            Gear? feet = gears.FirstOrDefault(g => g.Slot == (short)GearSlot.FEET);
+            if (feet != null && feet.ItemId != 0)
+            {
+                ItemItemLevel? ilvl =
+                    globalCache.ItemStorage.LoadItemWithItemLevel(ClientLanguage.English, feet.ItemId);
+                if (ilvl is { Item: not null, ItemLevel: not null })
+                {
+                    avgIlvl += GetRealIlvl(ilvl.Item.Value, ilvl.ItemLevel.Value, characterLevel);
+                    itemCount++;
+                }
+            }
+
+            Gear? earrings = gears.FirstOrDefault(g => g.Slot == (short)GearSlot.EARS);
+            if (earrings != null && earrings.ItemId != 0)
+            {
+                ItemItemLevel? ilvl =
+                    globalCache.ItemStorage.LoadItemWithItemLevel(ClientLanguage.English, earrings.ItemId);
+                if (ilvl is { Item: not null, ItemLevel: not null })
+                {
+                    Plugin.Log.Debug($"ilvlvllv: {ilvl.ItemLevel.Value.RowId}");
+                    avgIlvl += GetRealIlvl(ilvl.Item.Value, ilvl.ItemLevel.Value, characterLevel);
+                    itemCount++;
+                }
+            }
+
+            Gear? neck = gears.FirstOrDefault(g => g.Slot == (short)GearSlot.NECK);
+            if (neck != null && neck.ItemId != 0)
+            {
+                ItemItemLevel? ilvl =
+                    globalCache.ItemStorage.LoadItemWithItemLevel(ClientLanguage.English, neck.ItemId);
+                if (ilvl is { Item: not null, ItemLevel: not null })
+                {
+                    avgIlvl += GetRealIlvl(ilvl.Item.Value, ilvl.ItemLevel.Value, characterLevel);
+                    itemCount++;
+                }
+            }
+
+            Gear? wrists = gears.FirstOrDefault(g => g.Slot == (short)GearSlot.WRISTS);
+            if (wrists != null && wrists.ItemId != 0)
+            {
+                ItemItemLevel? ilvl =
+                    globalCache.ItemStorage.LoadItemWithItemLevel(ClientLanguage.English, wrists.ItemId);
+                if (ilvl is { Item: not null, ItemLevel: not null })
+                {
+                    avgIlvl += GetRealIlvl(ilvl.Item.Value, ilvl.ItemLevel.Value, characterLevel);
+                    itemCount++;
+                }
+            }
+
+            Gear? ringRing = gears.FirstOrDefault(g => g.Slot == (short)GearSlot.RIGHT_RING);
+            if (ringRing != null && ringRing.ItemId != 0)
+            {
+                ItemItemLevel? ilvl =
+                    globalCache.ItemStorage.LoadItemWithItemLevel(ClientLanguage.English, ringRing.ItemId);
+                if (ilvl is { Item: not null, ItemLevel: not null })
+                {
+                    avgIlvl += GetRealIlvl(ilvl.Item.Value, ilvl.ItemLevel.Value, characterLevel);
+                    itemCount++;
+                }
+            }
+
+            Gear? leftRing = gears.FirstOrDefault(g => g.Slot == (short)GearSlot.LEFT_RING);
+            if (leftRing != null && leftRing.ItemId != 0)
+            {
+                ItemItemLevel? ilvl =
+                    globalCache.ItemStorage.LoadItemWithItemLevel(ClientLanguage.English, leftRing.ItemId);
+                if (ilvl is { Item: not null, ItemLevel: not null })
+                {
+                    avgIlvl += GetRealIlvl(ilvl.Item.Value, ilvl.ItemLevel.Value, characterLevel);
+                    itemCount++;
+                }
+            }
+
+            if (itemCount <= 0)
+            {
+                return;
+            }
+
+            switch (job)
+            {
+                case 3 or 4 or 5 or 21 or 22 or 23 or 24 or 25 or 26 or 27 or 28 or 31 or 32 or 33 or 34 or 35 or 37 or 38 or 39 or 40 or 41 or 42:
+                    {
+                        if (mh != null && mh.ItemId != 0)
+                        {
+                            ItemItemLevel? ilvl =
+                                globalCache.ItemStorage.LoadItemWithItemLevel(ClientLanguage.English, mh.ItemId);
+                            if (ilvl is { Item: not null, ItemLevel: not null })
+                            {
+                                avgIlvl += GetRealIlvl(ilvl.Item.Value, ilvl.ItemLevel.Value, characterLevel);
+                                itemCount++;
+                            }
+                        }
+
+                        break;
+                    }
+                case 36:
+                    {
+                        if (mh != null && mh.ItemId != 0)
+                        {
+                            ItemItemLevel? ilvl =
+                                globalCache.ItemStorage.LoadItemWithItemLevel(ClientLanguage.English, mh.ItemId);
+                            if (ilvl is { Item: not null, ItemLevel: not null })
+                            {
+                                avgIlvl -= ilvl.ItemLevel.Value.RowId;
+                                itemCount--;
+                            }
+                        }
+
+                        break;
+                    }
+                case 6 or 7 or 8 or 9 or 10 or 11 or 12 or 13 or 14 or 15 or 16 or 17 or 18 or 19 or 20 or 29 or 30:
+                    if (oh is { ItemId: 0 })
+                    {
+                        if (mh != null && mh.ItemId != 0)
+                        {
+                            ItemItemLevel? ilvl =
+                                globalCache.ItemStorage.LoadItemWithItemLevel(ClientLanguage.English, mh.ItemId);
+                            if (ilvl is { Item: not null, ItemLevel: not null })
+                            {
+                                avgIlvl += GetRealIlvl(ilvl.Item.Value, ilvl.ItemLevel.Value, characterLevel);
+                                itemCount++;
+                            }
+                        }
+                    }
+                    break;
+            }
+
+            ImGui.TextUnformatted(
+                $"{globalCache.AddonStorage.LoadAddonString(currentLocale, 3273)}: {avgIlvl / itemCount}");
+        }
+
+        private static uint GetRealIlvl(Item item, ItemLevel ilvl, int level)
+        {
+            if (item.SubStatCategory != 2)
+            {
+                return ilvl.RowId;
+            }
+
+            ParamGrow? growth = GetParamGrow((uint)level);
+            if (growth is null) return ilvl.RowId;
+            return growth.Value.ItemLevelSync < ilvl.RowId ? growth.Value.ItemLevelSync : ilvl.RowId;
         }
 
         private static void DrawRetainerJob(ClientLanguage currentLocale, ref GlobalCache globalCache, uint job)
@@ -1402,10 +1642,10 @@ namespace Altoholic
 
         private static void DrawGearPiece(ClientLanguage currentLocale, ref GlobalCache globalCache, List<Gear> gear,
            GearSlot slot, string tooltip, Vector2 iconSize,
-           IDalamudTextureWrap? fallbackTexture, IDalamudTextureWrap? emptySlot)
+           IDalamudTextureWrap? fallbackTexture, IDalamudTextureWrap? emptySlot, bool isGearSet=false)
         {
             if (fallbackTexture is null || emptySlot is null) return;
-            Gear? foundGear = gear.FirstOrDefault(g => g.Slot == (short)slot);
+            Gear? foundGear = (isGearSet) ? GetGearsetFromGearSlot(gear, slot) : gear.FirstOrDefault(g => g.Slot == (short)slot);
             if (foundGear == null || foundGear.ItemId == 0)
             {
                 System.Numerics.Vector2 p = ImGui.GetCursorPos();
@@ -1421,6 +1661,12 @@ namespace Altoholic
             }
             else
             {
+                if (isGearSet && foundGear.ItemId > 1000000)
+                {
+                    foundGear.HQ = true;
+                    foundGear.ItemId -= 1000000;
+                }
+
                 ItemItemLevel? itl = globalCache.ItemStorage.LoadItemWithItemLevel(currentLocale, foundGear.ItemId);
                 if (itl == null) return;
                 Item? i = itl.Item;
@@ -1431,6 +1677,29 @@ namespace Altoholic
                     DrawGearTooltip(currentLocale, ref globalCache, foundGear, itl);
                 }
             }
+        }
+
+        private static Gear? GetGearsetFromGearSlot(List<Gear> gear, GearSlot slot)
+        {
+            int index = slot switch
+            {
+                GearSlot.MH => 0,
+                GearSlot.OH => 1,
+                GearSlot.HEAD => 2,
+                GearSlot.BODY => 3,
+                GearSlot.HANDS => 4,
+                GearSlot.BELT => 5,
+                GearSlot.LEGS => 6,
+                GearSlot.FEET => 7,
+                GearSlot.EARS => 8,
+                GearSlot.NECK => 9,
+                GearSlot.WRISTS => 10,
+                GearSlot.RIGHT_RING => 11,
+                GearSlot.LEFT_RING => 12,
+                GearSlot.SOUL_CRYSTAL => 13,
+                _ => 99
+            };
+            return index == 99 ? null : gear[index];
         }
 
         private static void DrawFacewearPiece(ClientLanguage currentLocale, ref GlobalCache globalCache, ushort id, string tooltip, Vector2 iconSize,
@@ -1465,10 +1734,11 @@ namespace Altoholic
         public static void DrawGearTooltip(ClientLanguage currentLocale, ref GlobalCache globalCache, Gear item,
             ItemItemLevel itm)
         {
+            Plugin.Log.Debug($"{itm.Item?.Name}, ilvl:{itm.ItemLevel}");
             Item? dbItem = itm.Item;
             if (dbItem == null) return;
+
             ItemLevel? ilvl = itm.ItemLevel;
-            if (ilvl == null) return;
 
             ImGui.BeginTooltip();
 
@@ -1556,9 +1826,13 @@ namespace Altoholic
             }
 
             ImGui.Separator();
-            ImGui.TextUnformatted(
-                $"{globalCache.AddonStorage.LoadAddonString(currentLocale, 13775)} {ilvl.Value.RowId}"); // Item Level
-            ImGui.Separator();
+            if (ilvl is not null)
+            {
+                ImGui.TextUnformatted(
+                    $"{globalCache.AddonStorage.LoadAddonString(currentLocale, 13775)} {ilvl.Value.RowId}"); // Item Level
+                ImGui.Separator();
+            }
+
             ImGui.TextUnformatted($"{GetClassJobCategoryFromId(currentLocale, dbItem.Value.ClassJobCategory.ValueNullable?.RowId)}");
             ImGui.TextUnformatted(
                 $"{globalCache.AddonStorage.LoadAddonString(currentLocale, 1034)} {dbItem.Value.LevelEquip}");

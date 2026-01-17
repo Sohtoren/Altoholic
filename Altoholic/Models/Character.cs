@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -69,6 +70,10 @@ namespace Altoholic.Models
         public GlamourItem[] GlamourDresser { get; init; } = new GlamourItem[8000];
         public PvPProfile? PvPProfile { get; set; }
         public Timers Timers { get; init; } = new();
+        public GearSet? CurrentGearSet { get; set; }
+        public Dictionary<int, GearSet> GearSets { get; set; } = new(100);
+        public Dictionary<byte, GlamourPlate> GlamourPlates { get; set; } = new(20);
+
 
         public bool HasAnyLevelJob(int level)
         {
@@ -186,6 +191,22 @@ namespace Altoholic.Models
         public bool HasArmoire(uint id)
         {
             return Armoire.Count > 0 && Armoire.Contains(id);
+        }
+
+
+        public void TryAddGearSet(int key, GearSet gs)
+        {
+            if (GearSets.Count >= 100 && !GearSets.ContainsKey(key))
+                throw new InvalidOperationException("Dictionary size limit reached.");
+
+            GearSets[key] = gs;
+        }
+        public void TryAddGlamourPlate(byte key, GlamourPlate gp)
+        {
+            if (GlamourPlates.Count >= 20 && !GlamourPlates.ContainsKey(key))
+                throw new InvalidOperationException("Dictionary size limit reached.");
+
+            GlamourPlates[key] = gp;
         }
     }
 }

@@ -14,6 +14,7 @@ namespace Altoholic.Windows
         private readonly Plugin _plugin;
         private CharactersWindow CharactersWindow { get; }
         private DetailsWindow DetailsWindow { get; }
+        private GearSetWindow GearSetWindow { get; }
         private JobsWindow JobsWindow { get; }
         private CurrenciesWindow CurrenciesWindow { get; }
         private InventoriesWindow InventoriesWindow { get; }
@@ -34,6 +35,7 @@ namespace Altoholic.Windows
             GlobalCache globalCache,
             CharactersWindow charactersWindow,
             DetailsWindow detailsWindow,
+            GearSetWindow gearSetWindow,
             JobsWindow jobsWindow,
             CurrenciesWindow currenciesWindow,
             InventoriesWindow inventoriesWindow,
@@ -54,6 +56,7 @@ namespace Altoholic.Windows
             _globalCache = globalCache;
             CharactersWindow = charactersWindow;
             DetailsWindow = detailsWindow;
+            GearSetWindow = gearSetWindow;
             JobsWindow = jobsWindow;
             CurrenciesWindow = currenciesWindow;
             InventoriesWindow = inventoriesWindow;
@@ -64,13 +67,6 @@ namespace Altoholic.Windows
             TimerWindow = timerWindow;
             ConfigWindow = configWindow;
         }
-
-        /*public override bool DrawConditions()
-        {
-            Plugin.Log.Debug("MainWindow DrawConditions");
-            return true;
-        }*/
-
         public override void OnClose()
         {
             Plugin.Log.Debug("MainWindow, OnClose() called");
@@ -136,6 +132,13 @@ namespace Altoholic.Windows
                 }
             }
 
+            using (var gearSetTab = ImRaii.TabItem($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 764)}"))
+            {
+                if (gearSetTab.Success)
+                {
+                    GearSetWindow.Draw();
+                }
+            }
 
             using (var jobsTab = ImRaii.TabItem($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 760)}"))
             {

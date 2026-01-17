@@ -26,6 +26,7 @@ using FFXIVClientStructs.FFXIV.Client.System.String;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using FFXIVClientStructs.FFXIV.Client.UI.Info;
+using FFXIVClientStructs.FFXIV.Client.UI.Misc;
 using Lumina.Excel.Sheets;
 using Lumina.Text;
 using Microsoft.Data.Sqlite;
@@ -37,6 +38,7 @@ using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Runtime.InteropServices;
+using static FFXIVClientStructs.FFXIV.Client.UI.Misc.RaptureGearsetModule;
 using static FFXIVClientStructs.FFXIV.Client.UI.RaptureAtkModule;
 using Character = Altoholic.Models.Character;
 using PvPProfile = Altoholic.Models.PvPProfile;
@@ -76,6 +78,7 @@ namespace Altoholic
         private MainWindow MainWindow { get; }
         private CharactersWindow CharactersWindow { get; }
         private DetailsWindow DetailsWindow { get; }
+        private GearSetWindow GearSetWindow { get; }
         private JobsWindow JobsWindow { get; }
         private CurrenciesWindow CurrenciesWindow { get; }
         private InventoriesWindow InventoriesWindow { get; }
@@ -85,7 +88,6 @@ namespace Altoholic
         private PvPWindow PvPWindow { get; }
         private TimerWindow TimerWindow { get; }
 
-        //private readonly LiteDatabase _db;
         private readonly SqliteConnection _db;
 
         private Character _localPlayer = new();
@@ -242,6 +244,12 @@ namespace Altoholic
                 GetOthersCharactersList = () => _altoholicService.GetOthersCharacters(),
             };
 
+            GearSetWindow = new GearSetWindow(this, $"{Name} characters gear sets", _db, _globalCache)
+            {
+                GetPlayer = () => _altoholicService.GetPlayer(),
+                GetOthersCharactersList = () => _altoholicService.GetOthersCharacters(),
+            };
+
             JobsWindow = new JobsWindow(this, $"{Name} characters jobs", _globalCache)
             {
                 GetPlayer = () => _altoholicService.GetPlayer(),
@@ -300,6 +308,7 @@ namespace Altoholic
                 _globalCache,
                 CharactersWindow,
                 DetailsWindow,
+                GearSetWindow,
                 JobsWindow,
                 CurrenciesWindow,
                 InventoriesWindow,
@@ -858,6 +867,8 @@ namespace Altoholic
             GetPlayerGlamourInventory();
             GetPlayerIsland();
             GetPlayerAllowances();
+            GetPlayerGearSets();
+            GetPlayerGlamourPlates();
 
             if (_autoSaveWatch.Elapsed.Minutes >= 1 && _autoSaveWatch.Elapsed.Minutes <= Configuration.AutoSaveTimer && _autoSaveWatch.Elapsed.Seconds == 0)
             {
@@ -870,6 +881,118 @@ namespace Altoholic
 
             UpdateCharacter();
             _autoSaveWatch.Restart();
+        }
+
+        private unsafe void GetPlayerGearSets()
+        {
+            RaptureGearsetModule* raptureGearsetModule = RaptureGearsetModule.Instance();
+
+            byte gearsetCount = InventoryManager.Instance()->GetPermittedGearsetCount();
+            if (gearsetCount == 0) return;
+
+            foreach (GearsetEntry gearset in raptureGearsetModule->Entries)
+            {
+                if (gearset.ItemLevel == 0) continue;
+                Log.Debug($"{gearset.Id} {gearset.NameString} exist?:{gearset.Flags.HasFlag(GearsetFlag.Exists)}");
+                if (!gearset.Flags.HasFlag(GearsetFlag.Exists))
+                {
+                    _localPlayer.GearSets.Remove(gearset.Id);
+                }
+                else
+                {
+                    //if (raptureGearsetModule->EnabledGearsetIndex2EntryIndex[gearset.Id] != 0) continue;
+                    /*if (_deletedGearSets.TryGetValue(_localPlayer.CharacterId, out HashSet<int>? sets))
+                    {
+                        Log.Debug($"GetPlayerGearSets deletedGearSets found {sets.Count}");
+                        foreach (int i in sets)
+                        {
+                            Log.Debug($"deletedset: {i}");
+                        }
+                        if (sets.Contains(gearset.Id)) continue;
+                    }*/
+                    //EnabledGearsetIndex2EntryIndex
+                    List<Gear> gearList = [];
+
+                    if (!gearset.Items.IsEmpty)
+                    {
+                        foreach (GearsetItem gearsetItem in gearset.Items)
+                        {
+                            Gear g = new()
+                            {
+                                ItemId = gearsetItem.ItemId,
+                                GlamourID = gearsetItem.GlamourId,
+                                Materia = new ushort[5],
+                                MateriaGrade = new byte[5],
+                                Stain = gearsetItem.Stain0Id,
+                                Stain2 = gearsetItem.Stain1Id,
+                            };
+                            for (byte j = 0; j < 5; j++)
+                            {
+                                ushort materiaId = gearsetItem.Materia[j];
+                                if (materiaId == 0) continue;
+                                g.Materia[j] = materiaId;
+                                g.MateriaGrade[j] = gearsetItem.MateriaGrades[j];
+                            }
+
+                            gearList.Add(g);
+                        }
+                    }
+
+                    GearSet gs = new()
+                    {
+                        Id = gearset.Id,
+                        Name = gearset.NameString,
+                        ClassJob = gearset.ClassJob,
+                        GlamourSetLink = gearset.GlamourSetLink,
+                        ItemLevel = gearset.ItemLevel,
+                        BannerIndex = gearset.BannerIndex,
+                        Flags = gearset.Flags,
+                        Gears = gearList,
+                        GlassesIds = gearset.GlassesIds.ToArray()
+                    };
+
+                    _localPlayer.TryAddGearSet(gearset.Id, gs);
+                    if (RaptureGearsetModule.Instance()->CurrentGearsetIndex == gearset.Id)
+                    {
+                        _localPlayer.CurrentGearSet = gs;
+                    }
+                }
+            }
+        }
+        private unsafe bool HasGearsetForClassJobId(byte classJobId)
+        {
+            RaptureGearsetModule* raptureGearsetModule = RaptureGearsetModule.Instance();
+            byte gearsetCount = InventoryManager.Instance()->GetPermittedGearsetCount();
+
+            for (var gearsetIndex = 0; gearsetIndex < gearsetCount; gearsetIndex++)
+            {
+                GearsetEntry* gearset = raptureGearsetModule->GetGearset(gearsetIndex);
+                if (!gearset->Flags.HasFlag(GearsetFlag.Exists))
+                    continue;
+
+                if (gearset->ClassJob == classJobId)
+                    return true;
+            }
+
+            return false;
+        }
+
+        private unsafe void GetPlayerGlamourPlates()
+        {
+            ref readonly MirageManager mm = ref *MirageManager.Instance();
+            if (!mm.GlamourPlatesLoaded) return;
+            for (byte i=0;i<mm.GlamourPlates.Length;i++)
+            {
+                MirageManager.GlamourPlate glamourPlate = mm.GlamourPlates[i];
+                GlamourPlate gp = new()
+                {
+                    Number = i,
+                    GearsIds = glamourPlate.ItemIds.ToArray(),
+                    Stain0Ids = glamourPlate.Stain0Ids.ToArray(),
+                    Stain1Ids = glamourPlate.Stain1Ids.ToArray(),
+                };
+                _localPlayer.TryAddGlamourPlate(i, gp);
+            }
         }
 
         private unsafe void GetPlayerAllowances()
