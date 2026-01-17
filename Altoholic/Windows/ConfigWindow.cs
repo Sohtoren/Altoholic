@@ -39,7 +39,7 @@ namespace Altoholic.Windows
 
         public override void Draw()
         {
-            using var table = ImRaii.Table("###ConfigTable", 2);
+            using var table = ImRaii.Table("###ConfigTable", 2, ImGuiTableFlags.ScrollY);
             if (!table) return;
 
             ImGui.TableSetupColumn("###ConfigTable#Config", ImGuiTableColumnFlags.WidthStretch);

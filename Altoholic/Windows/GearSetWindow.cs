@@ -117,11 +117,11 @@ namespace Altoholic.Windows
             ImGui.TableSetColumnIndex(1);
             if (_currentCharacter is not null)
             {
-                DrawDetails(_currentCharacter);
+                DrawGearSet(_currentCharacter);
             }
         }
 
-        private void DrawDetails(Character selectedCharacter)
+        private void DrawGearSet(Character selectedCharacter)
         {
             using var charactersGearSetTableProfileTable = ImRaii.Table("###CharactersGearSetTable#ProfileTable", 2);
             if (!charactersGearSetTableProfileTable) return;
@@ -164,7 +164,6 @@ namespace Altoholic.Windows
             ImGui.TableSetupColumn("###CharactersGearSetTable#Profile#GearSetListTable#Ilvl",
                 ImGuiTableColumnFlags.WidthFixed, 50);
 
-            Plugin.Log.Debug($"{selectedCharacter.GearSets.Count} count");
             for (int i = 0; i < selectedCharacter.GearSets.Count; i++)
             {
                 if (!selectedCharacter.GearSets.TryGetValue(i, out GearSet? gs))

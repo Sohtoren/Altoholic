@@ -8,6 +8,7 @@ using Dalamud.Interface.Textures.TextureWraps;
 using Dalamud.Interface.Utility.Raii;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
+using Lumina.Data.Structs;
 using Lumina.Excel;
 using Lumina.Excel.Sheets;
 using Lumina.Text.ReadOnly;
@@ -631,6 +632,7 @@ namespace Altoholic
         {
             ExcelSheet<ItemLevel> dilvl = Plugin.DataManager.GetExcelSheet<ItemLevel>(ClientLanguage.English);
             ItemLevel? lumina = dilvl.GetRow(id);
+            Plugin.Log.Debug($"GetItemLevelFromId: {id}, {lumina}");
             return lumina;
         }
 
@@ -1439,7 +1441,6 @@ namespace Altoholic
                     globalCache.ItemStorage.LoadItemWithItemLevel(ClientLanguage.English, earrings.ItemId);
                 if (ilvl is { Item: not null, ItemLevel: not null })
                 {
-                    Plugin.Log.Debug($"ilvlvllv: {ilvl.ItemLevel.Value.RowId}");
                     avgIlvl += GetRealIlvl(ilvl.Item.Value, ilvl.ItemLevel.Value, characterLevel);
                     itemCount++;
                 }
@@ -1581,6 +1582,126 @@ namespace Altoholic
             }
         }
 
+        public static void DrawPlate(ClientLanguage currentLocale, ref GlobalCache globalCache,
+            ref Dictionary<GearSlot, IDalamudTextureWrap?> defaultTextures, GlamourPlate plate, int middleWidth,
+            int middleHeigth, IDalamudTextureWrap? miragePrismIcon, Vector2 miragePrismBoxSetIconUv0, Vector2 miragePrismBoxSetIconUv1)
+        {
+            if (plate.GearsIds.Length == 0) return;
+            List<GlamourItem> gears = [];
+            for (uint i = 0; i <plate.GearsIds.Length; i++)
+            {
+                Item? item = globalCache.ItemStorage.LoadItem(currentLocale, plate.GearsIds[i]);
+                if(item is null) continue;
+
+                // This is needed because belt slot doesn't exist in this list
+                // so 5 is not the belt slot but legs
+                uint j = i switch
+                {
+                    >= 5 => i + 1,
+                    _ => i
+                };
+
+                gears.Add(new GlamourItem
+                {
+                    ItemId = item.Value.RowId,
+                    Slot = (short)j,
+                    Stain0 = plate.Stain0Ids[i],
+                    Stain1 = plate.Stain1Ids[i],
+                });
+            }
+
+            using var gearTable = ImRaii.Table("###GearTable", 3);
+            if (!gearTable) return;
+            ImGui.TableSetupColumn("###GearTable#LeftGearColumnHeader", ImGuiTableColumnFlags.WidthFixed, 44);
+            ImGui.TableSetupColumn("###GearTable#CentralColumnHeader", ImGuiTableColumnFlags.WidthFixed, middleWidth);
+            ImGui.TableSetupColumn("###GearTable#RightGearColumnHeader", ImGuiTableColumnFlags.WidthFixed, 44);
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            using (var gearTableLeftGearColumn = ImRaii.Table("###GearTable#LeftGearColumn", 1))
+            {
+                if (!gearTableLeftGearColumn) return;
+                ImGui.TableSetupColumn("###GearTable#LeftGearColum#Column", ImGuiTableColumnFlags.WidthFixed, 42);
+                ImGui.TableNextRow();
+                ImGui.TableSetColumnIndex(0);
+                DrawGlamourPiece(currentLocale, ref globalCache, gears, GearSlot.MH,
+                    globalCache.AddonStorage.LoadAddonString(currentLocale, 11524), new Vector2(40, 40),
+                    defaultTextures[GearSlot.MH], defaultTextures[GearSlot.EMPTY], miragePrismIcon, miragePrismBoxSetIconUv0, miragePrismBoxSetIconUv1);
+
+                ImGui.TableNextRow();
+                ImGui.TableSetColumnIndex(0);
+                DrawGlamourPiece(currentLocale, ref globalCache, gears, GearSlot.HEAD,
+                    globalCache.AddonStorage.LoadAddonString(currentLocale, 11525), new Vector2(40, 40),
+                    defaultTextures[GearSlot.HEAD], defaultTextures[GearSlot.EMPTY], miragePrismIcon, miragePrismBoxSetIconUv0, miragePrismBoxSetIconUv1);
+
+                ImGui.TableNextRow();
+                ImGui.TableSetColumnIndex(0);
+                DrawGlamourPiece(currentLocale, ref globalCache, gears, GearSlot.BODY,
+                    globalCache.AddonStorage.LoadAddonString(currentLocale, 11526), new Vector2(40, 40),
+                    defaultTextures[GearSlot.BODY], defaultTextures[GearSlot.EMPTY], miragePrismIcon, miragePrismBoxSetIconUv0, miragePrismBoxSetIconUv1);
+
+                ImGui.TableNextRow();
+                ImGui.TableSetColumnIndex(0);
+                DrawGlamourPiece(currentLocale, ref globalCache, gears, GearSlot.HANDS,
+                    globalCache.AddonStorage.LoadAddonString(currentLocale, 11527), new Vector2(40, 40),
+                    defaultTextures[GearSlot.HANDS], defaultTextures[GearSlot.EMPTY], miragePrismIcon, miragePrismBoxSetIconUv0, miragePrismBoxSetIconUv1);
+
+                ImGui.TableNextRow();
+                ImGui.TableSetColumnIndex(0);
+                DrawGlamourPiece(currentLocale, ref globalCache, gears, GearSlot.LEGS,
+                    globalCache.AddonStorage.LoadAddonString(currentLocale, 11528), new Vector2(40, 40),
+                    defaultTextures[GearSlot.LEGS], defaultTextures[GearSlot.EMPTY], miragePrismIcon, miragePrismBoxSetIconUv0, miragePrismBoxSetIconUv1);
+
+                ImGui.TableNextRow();
+                ImGui.TableSetColumnIndex(0);
+                DrawGlamourPiece(currentLocale, ref globalCache, gears, GearSlot.FEET,
+                    globalCache.AddonStorage.LoadAddonString(currentLocale, 11529), new Vector2(40, 40),
+                    defaultTextures[GearSlot.FEET], defaultTextures[GearSlot.EMPTY], miragePrismIcon, miragePrismBoxSetIconUv0, miragePrismBoxSetIconUv1);
+            }
+
+            ImGui.TableSetColumnIndex(1);
+            DrawIcon(globalCache.IconStorage.LoadIcon(055396), new Vector2(middleWidth, middleHeigth));
+
+            ImGui.TableSetColumnIndex(2);
+            using var gearTableRightGearColumn = ImRaii.Table("###GearTable#RightGearColumn", 1);
+            if (!gearTableRightGearColumn) return;
+            ImGui.TableSetupColumn("###GearTable#RightGearColum#Column", ImGuiTableColumnFlags.WidthFixed, 42);
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            DrawGlamourPiece(currentLocale, ref globalCache, gears, GearSlot.OH,
+                globalCache.AddonStorage.LoadAddonString(currentLocale, 12227), new Vector2(40, 40),
+                defaultTextures[GearSlot.OH], defaultTextures[GearSlot.EMPTY], miragePrismIcon, miragePrismBoxSetIconUv0, miragePrismBoxSetIconUv1);
+
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            DrawGlamourPiece(currentLocale, ref globalCache, gears, GearSlot.EARS,
+                globalCache.AddonStorage.LoadAddonString(currentLocale, 11530), new Vector2(40, 40),
+                defaultTextures[GearSlot.EARS], defaultTextures[GearSlot.EMPTY], miragePrismIcon, miragePrismBoxSetIconUv0, miragePrismBoxSetIconUv1);
+
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            DrawGlamourPiece(currentLocale, ref globalCache, gears, GearSlot.NECK,
+                globalCache.AddonStorage.LoadAddonString(currentLocale, 11531), new Vector2(40, 40),
+                defaultTextures[GearSlot.NECK], defaultTextures[GearSlot.EMPTY], miragePrismIcon, miragePrismBoxSetIconUv0, miragePrismBoxSetIconUv1);
+
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            DrawGlamourPiece(currentLocale, ref globalCache, gears, GearSlot.WRISTS,
+                globalCache.AddonStorage.LoadAddonString(currentLocale, 11532), new Vector2(40, 40),
+                defaultTextures[GearSlot.WRISTS], defaultTextures[GearSlot.EMPTY], miragePrismIcon, miragePrismBoxSetIconUv0, miragePrismBoxSetIconUv1);
+
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            DrawGlamourPiece(currentLocale, ref globalCache, gears, GearSlot.RIGHT_RING,
+                globalCache.AddonStorage.LoadAddonString(currentLocale, 11533), new Vector2(40, 40),
+                defaultTextures[GearSlot.RIGHT_RING], defaultTextures[GearSlot.EMPTY], miragePrismIcon, miragePrismBoxSetIconUv0, miragePrismBoxSetIconUv1);
+
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            DrawGlamourPiece(currentLocale, ref globalCache, gears, GearSlot.LEFT_RING,
+                globalCache.AddonStorage.LoadAddonString(currentLocale, 11534), new Vector2(40, 40),
+                defaultTextures[GearSlot.LEFT_RING], defaultTextures[GearSlot.EMPTY], miragePrismIcon, miragePrismBoxSetIconUv0, miragePrismBoxSetIconUv1);
+        }
+
         public static (Vector2 uv0, Vector2 uv1) GetTextureCoordinate(Vector2 textureSize, int u, int v, int w, int h)
         {
             float u1 = (u + w) / textureSize.X;
@@ -1675,6 +1796,43 @@ namespace Altoholic
                 if (ImGui.IsItemHovered())
                 {
                     DrawGearTooltip(currentLocale, ref globalCache, foundGear, itl);
+                }
+            }
+        }
+
+        private static void DrawGlamourPiece(ClientLanguage currentLocale, ref GlobalCache globalCache, List<GlamourItem> gear,
+           GearSlot slot, string tooltip, Vector2 iconSize,
+           IDalamudTextureWrap? fallbackTexture, IDalamudTextureWrap? emptySlot, IDalamudTextureWrap? miragePrismIcon, Vector2 miragePrismBoxSetIconUv0, Vector2 miragePrismBoxSetIconUv1)
+        {
+            if (fallbackTexture is null || emptySlot is null) return;
+            GlamourItem? foundGear = gear.FirstOrDefault(g => g.Slot == (short)slot);
+
+            if (foundGear == null ||foundGear.ItemId == 0)
+            {
+                System.Numerics.Vector2 p = ImGui.GetCursorPos();
+                ImGui.Image(emptySlot.Handle, new Vector2(42, 42));
+                ImGui.SetCursorPos(new Vector2(p.X + 1, p.Y + 1));
+                ImGui.Image(fallbackTexture.Handle, new Vector2(40, 40));
+                if (ImGui.IsItemHovered())
+                {
+                    ImGui.BeginTooltip();
+                    ImGui.TextUnformatted(tooltip);
+                    ImGui.EndTooltip();
+                }
+            }
+            else
+            {
+                var sets = globalCache.MirageSetStorage.GetMirageSetItemLookup(foundGear.ItemId);
+                bool canBeInASet = sets != null && sets.Count != 0;
+                ItemItemLevel? itl = globalCache.ItemStorage.LoadItemWithItemLevel(currentLocale, foundGear.ItemId);
+                if (itl == null) return;
+                Item? i = itl.Item;
+                if (i == null) return;
+                DrawIcon(globalCache.IconStorage.LoadIcon(i.Value.Icon), iconSize);
+                if (ImGui.IsItemHovered())
+                {
+                    DrawGlamourDresserTooltip(currentLocale, ref globalCache, foundGear, itl, false,
+                        miragePrismIcon, miragePrismBoxSetIconUv0, miragePrismBoxSetIconUv1, false, canBeInASet); 
                 }
             }
         }
@@ -1943,7 +2101,6 @@ namespace Altoholic
                         ImGui.TextUnformatted($"{paramName} {value}");
                     }
                 }
-
             }
 
             ImGui.Separator();
@@ -1970,6 +2127,7 @@ namespace Altoholic
 
             ImGui.EndTooltip();
         }
+
 
         private static void DrawMateriaEmptyIcon(GlobalCache globalCache)
         {

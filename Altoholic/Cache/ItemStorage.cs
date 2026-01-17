@@ -21,7 +21,6 @@ namespace Altoholic.Cache
             if (_items.TryGetValue(id, out ItemItemLevel? ret))
                 return ret.Item;
 
-
             Item? dbItem = Utils.GetItemFromId(currentLocale, id);
             if (dbItem == null) return null;
             ret = new ItemItemLevel
@@ -36,7 +35,12 @@ namespace Altoholic.Cache
         public ItemItemLevel? LoadItemWithItemLevel(ClientLanguage currentLocale, uint id)
         {
             if (_items.TryGetValue(id, out ItemItemLevel? ret))
-                return ret;
+            {
+                if (ret is { Item: not null, ItemLevel: not null })
+                {
+                    return ret;
+                }
+            }
 
             Item? dbItem = LoadItem(currentLocale, id);
             if (dbItem == null) return null;

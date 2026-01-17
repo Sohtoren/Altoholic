@@ -79,6 +79,7 @@ namespace Altoholic
         private CharactersWindow CharactersWindow { get; }
         private DetailsWindow DetailsWindow { get; }
         private GearSetWindow GearSetWindow { get; }
+        private GlamourPlateWindow GlamourPlateWindow { get; }
         private JobsWindow JobsWindow { get; }
         private CurrenciesWindow CurrenciesWindow { get; }
         private InventoriesWindow InventoriesWindow { get; }
@@ -250,6 +251,12 @@ namespace Altoholic
                 GetOthersCharactersList = () => _altoholicService.GetOthersCharacters(),
             };
 
+            GlamourPlateWindow = new GlamourPlateWindow(this, $"{Name} characters glamour plates", _db, _globalCache)
+            {
+                GetPlayer = () => _altoholicService.GetPlayer(),
+                GetOthersCharactersList = () => _altoholicService.GetOthersCharacters(),
+            };
+
             JobsWindow = new JobsWindow(this, $"{Name} characters jobs", _globalCache)
             {
                 GetPlayer = () => _altoholicService.GetPlayer(),
@@ -309,6 +316,7 @@ namespace Altoholic
                 CharactersWindow,
                 DetailsWindow,
                 GearSetWindow,
+                GlamourPlateWindow,
                 JobsWindow,
                 CurrenciesWindow,
                 InventoriesWindow,
@@ -384,6 +392,8 @@ namespace Altoholic
             _globalCache.VistaStorage.Dispose();
             _globalCache.ArmoireStorage.Dispose();
 
+            GlamourPlateWindow.Dispose();
+            GearSetWindow.Dispose();
             CollectionWindow.Dispose();
             RetainersWindow.Dispose();
             InventoriesWindow.Dispose();
@@ -893,24 +903,13 @@ namespace Altoholic
             foreach (GearsetEntry gearset in raptureGearsetModule->Entries)
             {
                 if (gearset.ItemLevel == 0) continue;
-                Log.Debug($"{gearset.Id} {gearset.NameString} exist?:{gearset.Flags.HasFlag(GearsetFlag.Exists)}");
+                //Log.Debug($"{gearset.Id} {gearset.NameString} exist?:{gearset.Flags.HasFlag(GearsetFlag.Exists)}");
                 if (!gearset.Flags.HasFlag(GearsetFlag.Exists))
                 {
                     _localPlayer.GearSets.Remove(gearset.Id);
                 }
                 else
                 {
-                    //if (raptureGearsetModule->EnabledGearsetIndex2EntryIndex[gearset.Id] != 0) continue;
-                    /*if (_deletedGearSets.TryGetValue(_localPlayer.CharacterId, out HashSet<int>? sets))
-                    {
-                        Log.Debug($"GetPlayerGearSets deletedGearSets found {sets.Count}");
-                        foreach (int i in sets)
-                        {
-                            Log.Debug($"deletedset: {i}");
-                        }
-                        if (sets.Contains(gearset.Id)) continue;
-                    }*/
-                    //EnabledGearsetIndex2EntryIndex
                     List<Gear> gearList = [];
 
                     if (!gearset.Items.IsEmpty)
@@ -2266,6 +2265,8 @@ namespace Altoholic
             Database.Database.UpdateCharacterCurrencyHistory(_db, _localPlayer);
             CleanLastLocalCharacter();
 
+            GearSetWindow.IsOpen = false;
+            GearSetWindow.Clear();
             TimerWindow.IsOpen = false;
             ProgressWindow.IsOpen = false;
             ProgressWindow.Clear();

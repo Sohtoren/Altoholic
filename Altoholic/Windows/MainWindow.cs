@@ -15,6 +15,7 @@ namespace Altoholic.Windows
         private CharactersWindow CharactersWindow { get; }
         private DetailsWindow DetailsWindow { get; }
         private GearSetWindow GearSetWindow { get; }
+        private GlamourPlateWindow GlamourPlateWindow { get; }
         private JobsWindow JobsWindow { get; }
         private CurrenciesWindow CurrenciesWindow { get; }
         private InventoriesWindow InventoriesWindow { get; }
@@ -36,6 +37,7 @@ namespace Altoholic.Windows
             CharactersWindow charactersWindow,
             DetailsWindow detailsWindow,
             GearSetWindow gearSetWindow,
+            GlamourPlateWindow glamourPlateWindow,
             JobsWindow jobsWindow,
             CurrenciesWindow currenciesWindow,
             InventoriesWindow inventoriesWindow,
@@ -57,6 +59,7 @@ namespace Altoholic.Windows
             CharactersWindow = charactersWindow;
             DetailsWindow = detailsWindow;
             GearSetWindow = gearSetWindow;
+            GlamourPlateWindow = glamourPlateWindow;
             JobsWindow = jobsWindow;
             CurrenciesWindow = currenciesWindow;
             InventoriesWindow = inventoriesWindow;
@@ -86,6 +89,8 @@ namespace Altoholic.Windows
             CharactersWindow.IsOpen = false;
             CurrenciesWindow.IsOpen = false;
             DetailsWindow.IsOpen = false;
+            GearSetWindow.IsOpen = false;
+            GlamourPlateWindow.IsOpen = false;
             JobsWindow.IsOpen = false;
             InventoriesWindow.IsOpen = false;
             RetainersWindow.IsOpen = false;
@@ -101,6 +106,8 @@ namespace Altoholic.Windows
             CharactersWindow.IsOpen = false;
             CurrenciesWindow.IsOpen = false;
             DetailsWindow.IsOpen = false;
+            GearSetWindow.IsOpen = false;
+            GlamourPlateWindow.IsOpen = false;
             JobsWindow.IsOpen = false;
             InventoriesWindow.IsOpen = false;
             RetainersWindow.IsOpen = false;
@@ -137,6 +144,14 @@ namespace Altoholic.Windows
                 if (gearSetTab.Success)
                 {
                     GearSetWindow.Draw();
+                }
+            }
+
+            using (var glamourTab = ImRaii.TabItem($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 3185)}"))
+            {
+                if (glamourTab.Success)
+                {
+                    GlamourPlateWindow.Draw();
                 }
             }
 

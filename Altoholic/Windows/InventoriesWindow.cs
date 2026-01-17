@@ -81,7 +81,7 @@ namespace Altoholic.Windows
 
         private readonly UldWrapper _armouryBoard;
         private readonly Dictionary<InventoryType, IDalamudTextureWrap?> _armoryTabTextures = [];
-        private readonly IDalamudTextureWrap? _miragePrismBoxSetIcon;
+        private readonly IDalamudTextureWrap _miragePrismBoxSetIcon;
         private readonly Vector2 _miragePrismBoxSetIconUv0;
         private readonly Vector2 _miragePrismBoxSetIconUv1;
         private readonly Vector2 _miragePrismBoxSetIconUv2;
@@ -119,6 +119,7 @@ namespace Altoholic.Windows
 
             foreach (var loadedTexture in _armoryTabTextures) loadedTexture.Value?.Dispose();
             _armouryBoard.Dispose();
+            _miragePrismBoxSetIcon.Dispose();
         }
 
         public void Clear()
