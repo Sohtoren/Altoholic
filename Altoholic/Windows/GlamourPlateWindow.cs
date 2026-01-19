@@ -233,6 +233,7 @@ namespace Altoholic.Windows
                 ImGui.Image(_glamourIcons.Handle, new Vector2(46, 26), texture.Item1, texture.Item2);
                 if (ImGui.IsItemClicked())
                 {
+                    ResetCurrentTexture();
                     _currentTextures[i] = 1;
                     if (selectedCharacter.GlamourPlates.TryGetValue(i, out GlamourPlate? plate))
                     {
