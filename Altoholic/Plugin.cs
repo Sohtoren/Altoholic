@@ -1646,7 +1646,22 @@ namespace Altoholic
                         ItemId = ii.ItemId,
                         HQ = flags.HasFlag(InventoryItem.ItemFlags.HighQuality),
                         Quantity = (uint)ii.Quantity,
+                        Spiritbond = ii.SpiritbondOrCollectability,
+                        Condition = ii.Condition,
+                        CrafterContentID = ii.CrafterContentId,
+                        Materia = new ushort[5],
+                        MateriaGrade = new byte[5],
+                        Stain = ii.Stains[0],
+                        Stain2 = ii.Stains[1],
+                        GlamourID = ii.GlamourId
                     };
+                    for (byte j = 0; j < 5; j++)
+                    {
+                        ushort materiaId = ii.Materia[j];
+                        if (materiaId == 0) continue;
+                        currInv.Materia[j] = materiaId;
+                        currInv.MateriaGrade[j] = ii.MateriaGrades[j];
+                    }
                     //Plugin.Log.Debug($"{currInv.ItemId}");
                     items.Add(currInv);
                 }

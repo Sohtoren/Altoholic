@@ -1,6 +1,7 @@
 using Altoholic.Cache;
 using Altoholic.Models;
 using CheapLoc;
+using Dalamud.Bindings.ImGui;
 using Dalamud.Game;
 using Dalamud.Game.Text;
 using Dalamud.Interface;
@@ -8,7 +9,6 @@ using Dalamud.Interface.Textures.TextureWraps;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
 using FFXIVClientStructs.FFXIV.Client.Game;
-using Dalamud.Bindings.ImGui;
 using Lumina.Excel.Sheets;
 using System;
 using System.Collections.Generic;
@@ -787,7 +787,18 @@ namespace Altoholic.Windows
                     var sets = _globalCache.MirageSetStorage.GetMirageSetItemLookup(item.ItemId);
                     bool canBeInASet = sets != null && sets.Count != 0;
 
+                    Vector2 gcsp = ImGui.GetCursorScreenPos();
                     Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Value.Icon, item.HQ), new Vector2(36, 36));
+                    if (item.Stain != 0)
+                    {
+                        Utils.DrawRound(gcsp, _globalCache.StainStorage.LoadStainWithColor(_currentLocale, item.Stain).Item2, 4.0f, 30.0f, 1.0f);
+                    }
+
+                    if (item.Stain2 != 0)
+                    {
+                        Utils.DrawRound(gcsp, _globalCache.StainStorage.LoadStainWithColor(_currentLocale, item.Stain2).Item2, 3.4f, 30.0f, 15.0f);
+                    }
+                    ImGui.SetCursorScreenPos(gcsp);
                     if (ImGui.IsItemHovered())
                     {
                         Utils.DrawInventoryItemTooltip(_currentLocale, ref _globalCache, item, armoire, canBeInASet);

@@ -1792,7 +1792,18 @@ namespace Altoholic
                 if (itl == null) return;
                 Item? i = itl.Item;
                 if (i == null) return;
+                Vector2 p = ImGui.GetCursorScreenPos();
                 DrawIcon(globalCache.IconStorage.LoadIcon(i.Value.Icon, foundGear.HQ), iconSize);
+                if (foundGear.Stain != 0)
+                {
+                    DrawRound(p, globalCache.StainStorage.LoadStainWithColor(currentLocale, foundGear.Stain).Item2, 4.0f, 33.0f, 1.0f);
+                }
+
+                if (foundGear.Stain2 != 0)
+                {
+                    DrawRound(p, globalCache.StainStorage.LoadStainWithColor(currentLocale, foundGear.Stain2).Item2, 3.4f, 33.0f, 15.0f);
+                }
+                ImGui.SetCursorScreenPos(p);
                 if (ImGui.IsItemHovered())
                 {
                     DrawGearTooltip(currentLocale, ref globalCache, foundGear, itl);
@@ -1828,13 +1839,33 @@ namespace Altoholic
                 if (itl == null) return;
                 Item? i = itl.Item;
                 if (i == null) return;
+
+                Vector2 p = ImGui.GetCursorScreenPos();
                 DrawIcon(globalCache.IconStorage.LoadIcon(i.Value.Icon), iconSize);
+                if (foundGear.Stain0 != 0)
+                {
+                    DrawRound(p, globalCache.StainStorage.LoadStainWithColor(currentLocale, foundGear.Stain0).Item2, 4.0f, 33.0f, 1.0f);
+                }
+
+                if (foundGear.Stain1 != 0)
+                {
+                    DrawRound(p, globalCache.StainStorage.LoadStainWithColor(currentLocale, foundGear.Stain1).Item2, 3.4f, 33.0f, 15.0f);
+                }
+
+                ImGui.SetCursorScreenPos(p);
                 if (ImGui.IsItemHovered())
                 {
                     DrawGlamourDresserTooltip(currentLocale, ref globalCache, foundGear, itl, false,
                         miragePrismIcon, miragePrismBoxSetIconUv0, miragePrismBoxSetIconUv1, false, canBeInASet); 
                 }
             }
+        }
+
+        public static void DrawRound(Vector2 p, uint color, float radius, float pX, float pY)
+        {
+            ImDrawListPtr drawList = ImGui.GetWindowDrawList();
+            Vector2 centre = new(p.X + radius + pX, p.Y + radius + pY);
+            drawList.AddCircleFilled(centre, radius, ConvertColorToAbgr(color));
         }
 
         private static Gear? GetGearsetFromGearSlot(List<Gear> gear, GearSlot slot)
