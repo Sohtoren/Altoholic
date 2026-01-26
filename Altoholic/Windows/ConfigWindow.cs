@@ -442,7 +442,7 @@ namespace Altoholic.Windows
             if (ImGui.Checkbox($"{Loc.Localize("TimerCrossMarkForNotUnlocked", "Show cross mark if timer is not unlocked on character instead of nothing")}###TimerCrossMarkForNotUnlocked",
                     ref timerCrossMarkForNotUnlocked))
             {
-                _configuration.TimerStandaloneShowAtStartup = timerCrossMarkForNotUnlocked;
+                _configuration.TimerCrossMarkForNotUnlocked = timerCrossMarkForNotUnlocked;
                 _configuration.TrySave();
             }
             /*float iconPosX = _configuration.TimerStandaloneWindowPositionX;

@@ -296,7 +296,7 @@ namespace Altoholic.Windows
                     }
                     else
                     {
-                        if (timerCrossMarkForNotUnlocked)
+                        if (!currChar.HasAnyCustomDeliveryUnlocked() && timerCrossMarkForNotUnlocked)
                         {
                             ImGui.PushFont(UiBuilder.IconFont);
                             ImGui.TextUnformatted($"{FontAwesomeIcon.Times.ToIconString()}");
@@ -449,6 +449,15 @@ namespace Altoholic.Windows
                             }
                         }
                     }
+                    else
+                    {
+                        if (!currChar.HasQuest((int)QuestIds.MASKED_CARNIVAL) && timerCrossMarkForNotUnlocked)
+                        {
+                            ImGui.PushFont(UiBuilder.IconFont);
+                            ImGui.TextUnformatted($"{FontAwesomeIcon.Times.ToIconString()}");
+                            ImGui.PopFont();
+                        }
+                    }
                 }
 
                 if (enabledTimers.Contains(TimersStatus.Tribes))
@@ -461,7 +470,7 @@ namespace Altoholic.Windows
                                 TribeLastCheck: not null
                             } || !(currChar.Timers.TribeLastCheck > GetLastDailyReset()))
                     {
-                        if (timerCrossMarkForNotUnlocked)
+                        if (!currChar.HasAnyCustomDeliveryUnlocked() && timerCrossMarkForNotUnlocked)
                         {
                             ImGui.PushFont(UiBuilder.IconFont);
                             ImGui.TextUnformatted($"{FontAwesomeIcon.Times.ToIconString()}");
