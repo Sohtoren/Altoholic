@@ -152,6 +152,53 @@ namespace Altoholic.Models
             return BeastReputations.Count > 0 && BeastReputations.Exists(br => br.Id == id);
         }
 
+        public bool HasAnyBeastReputationUnlocked()
+        {
+            return HasAnyPreviousBeastReputationUnlocked() ||
+                   HasAnyCurrentBeastReputationUnlocked();
+        }
+        public bool HasAnyPreviousBeastReputationUnlocked()
+        {
+            return HasQuest((int)QuestIds.TRIBE_ARR_AMALJ_AA) ||
+                   HasQuest((int)QuestIds.TRIBE_ARR_SYLPHS) ||
+                   HasQuest((int)QuestIds.TRIBE_ARR_KOBOLDS) ||
+                   HasQuest((int)QuestIds.TRIBE_ARR_SAHAGIN) ||
+                   HasQuest((int)QuestIds.TRIBE_ARR_IXAL) ||
+                   HasQuest((int)QuestIds.TRIBE_HW_VANU_VANU) ||
+                   HasQuest((int)QuestIds.TRIBE_HW_VATH) ||
+                   HasQuest((int)QuestIds.TRIBE_HW_MOOGLES) ||
+                   HasQuest((int)QuestIds.TRIBE_SB_KOJIN) ||
+                   HasQuest((int)QuestIds.TRIBE_SB_ANANTA) ||
+                   HasQuest((int)QuestIds.TRIBE_SB_NAMAZU) ||
+                   HasQuest((int)QuestIds.TRIBE_SHB_PIXIES) ||
+                   HasQuest((int)QuestIds.TRIBE_SHB_QITARI) ||
+                   HasQuest((int)QuestIds.TRIBE_SHB_DWARVES) ||
+                   HasQuest((int)QuestIds.TRIBE_EW_ARKASODARA) ||
+                   HasQuest((int)QuestIds.TRIBE_EW_OMICRONS) ||
+                   HasQuest((int)QuestIds.TRIBE_EW_LOPORRITS);
+        }
+        public bool HasAnyCurrentBeastReputationUnlocked()
+        {
+            return HasQuest((int)QuestIds.TRIBE_DT_PELUPELU) ||
+                   HasQuest((int)QuestIds.TRIBE_DT_MAMOOL_JA) ||
+                   HasQuest((int)QuestIds.TRIBE_DT_YOK_HUY);
+        }
+
+        public bool HasAnyCustomDeliveryUnlocked()
+        {
+            return HasQuest((int)QuestIds.CUSTOM_DELIVERIES_ZHLOE_ALIAPOH) ||
+                   HasQuest((int)QuestIds.CUSTOM_DELIVERIES_M_NAAGO) ||
+                   HasQuest((int)QuestIds.CUSTOM_DELIVERIES_KURENAI) ||
+                   HasQuest((int)QuestIds.CUSTOM_DELIVERIES_ADKIRAGH) ||
+                   HasQuest((int)QuestIds.CUSTOM_DELIVERIES_KAI_SHIRR) ||
+                   HasQuest((int)QuestIds.CUSTOM_DELIVERIES_EHLL_TOU) ||
+                   HasQuest((int)QuestIds.CUSTOM_DELIVERIES_CHARLEMEND) ||
+                   HasQuest((int)QuestIds.CUSTOM_DELIVERIES_AMELIANCE) ||
+                   HasQuest((int)QuestIds.CUSTOM_DELIVERIES_ANDEN) ||
+                   HasQuest((int)QuestIds.CUSTOM_DELIVERIES_MARGRAT) ||
+                   HasQuest((int)QuestIds.CUSTOM_DELIVERIES_NITOWIKWE);
+        }
+
         public bool IsDutyCompleted(uint id)
         {
             return Duties.Count > 0 && Duties.Contains(id);

@@ -458,8 +458,6 @@ namespace Altoholic.Windows
                 {
                     bool r = selectedCharacter.Houses.Remove(house);
                     int result = Database.Database.UpdateCharacter(_db, selectedCharacter);
-                    //SetBlacklistedCharacter(character.CharacterId);
-                    //this.SetOthersCharactersList(oC);
                     Utils.ChatMessage("Housing removed");
                     ImGui.CloseCurrentPopup();
                 }

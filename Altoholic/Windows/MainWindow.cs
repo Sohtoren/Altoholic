@@ -5,6 +5,7 @@ using Dalamud.Game;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
 using System;
+using System.Collections.Generic;
 using System.Numerics;
 
 namespace Altoholic.Windows
@@ -211,8 +212,10 @@ namespace Altoholic.Windows
                 }
             }
 
-            using (var timersTab = ImRaii.TabItem($"{Loc.Localize("Timers", "Timers")}"))
+            HashSet<TimersStatus>? enabledTimers = _plugin.Configuration.EnabledTimers;
+            if (enabledTimers != null && enabledTimers.Count != 0)
             {
+                using var timersTab = ImRaii.TabItem($"{Loc.Localize("Timers", "Timers")}");
                 if (timersTab.Success)
                 {
                     TimerWindow.DrawNotHovered();

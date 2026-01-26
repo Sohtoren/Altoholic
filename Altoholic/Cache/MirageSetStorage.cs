@@ -31,7 +31,7 @@ namespace Altoholic.Cache
 
         public bool MirageSetLookup(uint id)
         {
-            return _mirageSetLookup.TryGetValue(id, out HashSet<uint>? ret);
+            return _mirageSetLookup.TryGetValue(id, out HashSet<uint>? _);
         }
         public HashSet<uint>? GetMirageSetLookup(uint id)
         {

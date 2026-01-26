@@ -308,24 +308,7 @@ namespace Altoholic.Windows
                 }
             }
 
-            if (selectedCharacter.HasQuest((int)QuestIds.TRIBE_ARR_AMALJ_AA) ||
-                selectedCharacter.HasQuest((int)QuestIds.TRIBE_ARR_SYLPHS) ||
-                selectedCharacter.HasQuest((int)QuestIds.TRIBE_ARR_KOBOLDS) ||
-                selectedCharacter.HasQuest((int)QuestIds.TRIBE_ARR_SAHAGIN) ||
-                selectedCharacter.HasQuest((int)QuestIds.TRIBE_ARR_IXAL) ||
-                selectedCharacter.HasQuest((int)QuestIds.TRIBE_HW_VANU_VANU) ||
-                selectedCharacter.HasQuest((int)QuestIds.TRIBE_HW_VATH) ||
-                selectedCharacter.HasQuest((int)QuestIds.TRIBE_HW_MOOGLES) ||
-                selectedCharacter.HasQuest((int)QuestIds.TRIBE_SB_KOJIN) ||
-                selectedCharacter.HasQuest((int)QuestIds.TRIBE_SB_ANANTA) ||
-                selectedCharacter.HasQuest((int)QuestIds.TRIBE_SB_NAMAZU) ||
-                selectedCharacter.HasQuest((int)QuestIds.TRIBE_SHB_PIXIES) ||
-                selectedCharacter.HasQuest((int)QuestIds.TRIBE_SHB_QITARI) ||
-                selectedCharacter.HasQuest((int)QuestIds.TRIBE_SHB_DWARVES) ||
-                selectedCharacter.HasQuest((int)QuestIds.TRIBE_EW_ARKASODARA) ||
-                selectedCharacter.HasQuest((int)QuestIds.TRIBE_EW_OMICRONS) ||
-                selectedCharacter.HasQuest((int)QuestIds.TRIBE_EW_LOPORRITS)
-               )
+            if (selectedCharacter.HasAnyPreviousBeastReputationUnlocked())
             {
 
                 using var tribalTab =
@@ -339,9 +322,7 @@ namespace Altoholic.Windows
                 }
             }
 
-            if (!selectedCharacter.HasQuest((int)QuestIds.TRIBE_DT_PELUPELU) &&
-                !selectedCharacter.HasQuest((int)QuestIds.TRIBE_DT_MAMOOL_JA) &&
-                !selectedCharacter.HasQuest((int)QuestIds.TRIBE_DT_YOK_HUY))
+            if (!selectedCharacter.HasAnyCurrentBeastReputationUnlocked())
             {
                 return;
             }

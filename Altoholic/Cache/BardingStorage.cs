@@ -14,7 +14,7 @@ namespace Altoholic.Cache
         public void Init(ClientLanguage currentLocale, GlobalCache globalCache)
         {
             List<Barding>? bardings = Utils.GetAllBardings(currentLocale);
-            if (bardings == null || bardings.Count == 0)
+            if (bardings.Count == 0)
             {
                 return;
             }

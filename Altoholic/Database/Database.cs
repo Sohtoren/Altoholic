@@ -975,11 +975,6 @@ namespace Altoholic.Database
             string pvPProfile = System.Text.Json.JsonSerializer.Serialize(character.PvPProfile);
             string timers = System.Text.Json.JsonSerializer.Serialize(character.Timers);
             string currentGearSet = System.Text.Json.JsonSerializer.Serialize(character.CurrentGearSet);
-            foreach (KeyValuePair<int, GearSet> characterGearSet in character.GearSets)
-            {
-                GearSet gearset = characterGearSet.Value;
-                Plugin.Log.Debug($"{1}: {gearset.Id} {gearset.Name}");
-            }
             string gearSets = System.Text.Json.JsonSerializer.Serialize(character.GearSets);
             string glamourPlates = System.Text.Json.JsonSerializer.Serialize(character.GlamourPlates);
 

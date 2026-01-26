@@ -4430,10 +4430,11 @@ namespace Altoholic.Windows
                 if (!_hasValueBeenSelected && !shbUnlocked)
                     _selectedExpansion = _globalCache.AddonStorage.LoadAddonString(_currentLocale, 8160);
             }
+
             if (selectedCharacter.HasQuest((int)QuestIds.TRIBE_DT_PELUPELU) ||
                 selectedCharacter.HasQuest((int)QuestIds.TRIBE_DT_MAMOOL_JA) ||
                 selectedCharacter.HasQuest((int)QuestIds.TRIBE_DT_YOK_HUY)
-                  )
+               )
             {
                 expansionNames.Add(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 8175));
                 dtUnlocked = true;
@@ -4445,7 +4446,8 @@ namespace Altoholic.Windows
             {
                 if (combo)
                 {
-                    foreach (string name in expansionNames.Where(name => ImGui.Selectable(name, name == _selectedExpansion)))
+                    foreach (string name in expansionNames.Where(name =>
+                                 ImGui.Selectable(name, name == _selectedExpansion)))
                     {
                         _selectedExpansion = name;
                         _rightChevron = true;
@@ -4454,13 +4456,15 @@ namespace Altoholic.Windows
                     }
                 }
             }
+
             if (ImGui.IsItemClicked())
             {
                 _rightChevron = false;
                 _downChevron = true;
             }
 
-            using ImRaii.IEndObject charactersReputationTable = ImRaii.Table("###CharactersProgress#Reputations##Reputation", 1, ImGuiTableFlags.ScrollY);
+            using ImRaii.IEndObject charactersReputationTable =
+                ImRaii.Table("###CharactersProgress#Reputations##Reputation", 1, ImGuiTableFlags.ScrollY);
             if (!charactersReputationTable) return;
             ImGui.TableSetupColumn("###CharactersProgress#ReputationsTable", ImGuiTableColumnFlags.WidthFixed, 560);
             switch (_selectedExpansion)

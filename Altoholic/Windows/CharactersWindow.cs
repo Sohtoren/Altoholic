@@ -193,6 +193,7 @@ namespace Altoholic.Windows
         private void DrawCharacter(int pos, Character character)
         {
             int dateFormat = _plugin.Configuration.DateFormat;
+            int lastPlaytimeDaysConfig = _plugin.Configuration.PlaytimeNotificationDays;
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
             if (character.UnreadLetters > 0)
@@ -313,7 +314,7 @@ namespace Altoholic.Windows
                     ImGui.EndTooltip();
                 }
             }
-            if (character.LastPlayTimeUpdate > 0 && Utils.GetLastPlayTimeUpdateDiff(character.LastPlayTimeUpdate) >= 7)
+            if (character.LastPlayTimeUpdate > 0 && Utils.GetLastPlayTimeUpdateDiff(character.LastPlayTimeUpdate) >= lastPlaytimeDaysConfig)
             {
                 ImGui.SameLine();
                 ImGui.PushFont(UiBuilder.IconFont);
@@ -322,8 +323,8 @@ namespace Altoholic.Windows
                 if (ImGui.IsItemHovered())
                 {
                     ImGui.BeginTooltip();
-                    ImGui.TextUnformatted(
-                        Loc.Localize("LastPlaytimeOutdated", "More than 7 days since the last update, consider using the /playtime command"));
+                    ImGui.TextUnformatted($"{Loc.Localize("LastPlaytimeOutdatedStart",
+                        "More than")} {lastPlaytimeDaysConfig} {Loc.Localize("LastPlaytimeOutdatedEnd", "days since the last update, consider using the /playtime command")}");
                     ImGui.EndTooltip();
                 }
             }

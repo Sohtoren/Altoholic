@@ -620,11 +620,12 @@ namespace Altoholic
                 }
 
                 GetCharacterPlaytime();
+                int lastPlaytimeDaysConfig = Configuration.PlaytimeNotificationDays;
                 if (Configuration.IsPlaytimeNotificationEnabled && _localPlayer.LastPlayTimeUpdate > 0 &&
-                    Utils.GetLastPlayTimeUpdateDiff(_localPlayer.LastPlayTimeUpdate) >= 7)
+                    Utils.GetLastPlayTimeUpdateDiff(_localPlayer.LastPlayTimeUpdate) >= lastPlaytimeDaysConfig)
                 {
-                    Utils.ChatMessage(Loc.Localize("LastPlaytimeOutdated",
-                        "More than 7 days since the last update, consider using the /playtime command"));
+                    Utils.ChatMessage($"{Loc.Localize("LastPlaytimeOutdatedStart",
+                        "More than")} {lastPlaytimeDaysConfig} {Loc.Localize("LastPlaytimeOutdatedEnd","days since the last update, consider using the /playtime command")}");
                 }
 
                 if (_localPlayer.PlayTime == 0)
@@ -996,43 +997,13 @@ namespace Altoholic
 
         private unsafe void GetPlayerAllowances()
         {
-            if (_localPlayer.HasQuest((int)QuestIds.TRIBE_ARR_AMALJ_AA) ||
-                _localPlayer.HasQuest((int)QuestIds.TRIBE_ARR_SYLPHS) ||
-                _localPlayer.HasQuest((int)QuestIds.TRIBE_ARR_KOBOLDS) ||
-                _localPlayer.HasQuest((int)QuestIds.TRIBE_ARR_SAHAGIN) ||
-                _localPlayer.HasQuest((int)QuestIds.TRIBE_ARR_IXAL) ||
-                _localPlayer.HasQuest((int)QuestIds.TRIBE_HW_VANU_VANU) ||
-                _localPlayer.HasQuest((int)QuestIds.TRIBE_HW_VATH) ||
-                _localPlayer.HasQuest((int)QuestIds.TRIBE_HW_MOOGLES) ||
-                _localPlayer.HasQuest((int)QuestIds.TRIBE_SB_KOJIN) ||
-                _localPlayer.HasQuest((int)QuestIds.TRIBE_SB_ANANTA) ||
-                _localPlayer.HasQuest((int)QuestIds.TRIBE_SB_NAMAZU) ||
-                _localPlayer.HasQuest((int)QuestIds.TRIBE_SHB_PIXIES) ||
-                _localPlayer.HasQuest((int)QuestIds.TRIBE_SHB_QITARI) ||
-                _localPlayer.HasQuest((int)QuestIds.TRIBE_SHB_DWARVES) ||
-                _localPlayer.HasQuest((int)QuestIds.TRIBE_EW_ARKASODARA) ||
-                _localPlayer.HasQuest((int)QuestIds.TRIBE_EW_OMICRONS) ||
-                _localPlayer.HasQuest((int)QuestIds.TRIBE_EW_LOPORRITS) ||
-                _localPlayer.HasQuest((int)QuestIds.TRIBE_DT_PELUPELU) ||
-                _localPlayer.HasQuest((int)QuestIds.TRIBE_DT_MAMOOL_JA) ||
-                _localPlayer.HasQuest((int)QuestIds.TRIBE_DT_YOK_HUY))
+            if (_localPlayer.HasAnyBeastReputationUnlocked())
             {
                 _localPlayer.Timers.TribeRemainingAllowances = QuestManager.Instance()->GetBeastTribeAllowance();
                 _localPlayer.Timers.TribeLastCheck = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Utc);
             }
 
-            if (_localPlayer.HasQuest((int)QuestIds.CUSTOM_DELIVERIES_ZHLOE_ALIAPOH) ||
-                _localPlayer.HasQuest((int)QuestIds.CUSTOM_DELIVERIES_M_NAAGO) ||
-                _localPlayer.HasQuest((int)QuestIds.CUSTOM_DELIVERIES_KURENAI) ||
-                _localPlayer.HasQuest((int)QuestIds.CUSTOM_DELIVERIES_ADKIRAGH) ||
-                _localPlayer.HasQuest((int)QuestIds.CUSTOM_DELIVERIES_KAI_SHIRR) ||
-                _localPlayer.HasQuest((int)QuestIds.CUSTOM_DELIVERIES_EHLL_TOU) ||
-                _localPlayer.HasQuest((int)QuestIds.CUSTOM_DELIVERIES_CHARLEMEND) ||
-                _localPlayer.HasQuest((int)QuestIds.CUSTOM_DELIVERIES_AMELIANCE) ||
-                _localPlayer.HasQuest((int)QuestIds.CUSTOM_DELIVERIES_ANDEN) ||
-                _localPlayer.HasQuest((int)QuestIds.CUSTOM_DELIVERIES_MARGRAT) ||
-                _localPlayer.HasQuest((int)QuestIds.CUSTOM_DELIVERIES_NITOWIKWE)
-               )
+            if (_localPlayer.HasAnyCustomDeliveryUnlocked())
             {
                 _localPlayer.Timers.CustomDeliveriesAllowances =
                     SatisfactionSupplyManager.Instance()->GetRemainingAllowances();

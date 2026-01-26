@@ -362,7 +362,7 @@ namespace Altoholic.Windows
             if (ImGui.Checkbox($"{Loc.Localize("ObtainedOnly", "Obtained only")}", ref _obtainedMinionsOnly))
             {
                 _plugin.Configuration.ObtainedOnly = _obtainedMinionsOnly;
-                _plugin.Configuration.Save();
+                _plugin.Configuration.TrySave();
             }
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
@@ -517,7 +517,7 @@ namespace Altoholic.Windows
             if (ImGui.Checkbox($"{Loc.Localize("ObtainedOnly", "Obtained only")}", ref _obtainedMountsOnly))
             {
                 _plugin.Configuration.ObtainedOnly = _obtainedMountsOnly;
-                _plugin.Configuration.Save();
+                _plugin.Configuration.TrySave();
             }
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
@@ -672,7 +672,7 @@ namespace Altoholic.Windows
             if (ImGui.Checkbox($"{Loc.Localize("ObtainedOnly", "Obtained only")}", ref _obtainedTripleTriadCardsOnly))
             {
                 _plugin.Configuration.ObtainedOnly = _obtainedTripleTriadCardsOnly;
-                _plugin.Configuration.Save();
+                _plugin.Configuration.TrySave();
             }
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
@@ -812,7 +812,7 @@ namespace Altoholic.Windows
             if (ImGui.Checkbox($"{Loc.Localize("ObtainedOnly", "Obtained only")}", ref _obtainedEmotesOnly))
             {
                 _plugin.Configuration.ObtainedOnly = _obtainedEmotesOnly;
-                _plugin.Configuration.Save();
+                _plugin.Configuration.TrySave();
             }
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
@@ -975,7 +975,7 @@ namespace Altoholic.Windows
             if (ImGui.Checkbox($"{Loc.Localize("ObtainedOnly", "Obtained only")}", ref _obtainedBardingsOnly))
             {
                 _plugin.Configuration.ObtainedOnly = _obtainedBardingsOnly;
-                _plugin.Configuration.Save();
+                _plugin.Configuration.TrySave();
             }
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
@@ -1128,7 +1128,7 @@ namespace Altoholic.Windows
             if (ImGui.Checkbox($"{Loc.Localize("ObtainedOnly", "Obtained only")}", ref _obtainedFramerKitsOnly))
             {
                 _plugin.Configuration.ObtainedOnly = _obtainedFramerKitsOnly;
-                _plugin.Configuration.Save();
+                _plugin.Configuration.TrySave();
             }
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
@@ -1283,7 +1283,7 @@ namespace Altoholic.Windows
             if (ImGui.Checkbox($"{Loc.Localize("ObtainedOnly", "Obtained only")}", ref _obtainedOrchestrionRollsOnly))
             {
                 _plugin.Configuration.ObtainedOnly = _obtainedOrchestrionRollsOnly;
-                _plugin.Configuration.Save();
+                _plugin.Configuration.TrySave();
             }
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
@@ -1439,7 +1439,7 @@ namespace Altoholic.Windows
             if (ImGui.Checkbox($"{Loc.Localize("ObtainedOnly", "Obtained only")}", ref _obtainedOrnamentsOnly))
             {
                 _plugin.Configuration.ObtainedOnly = _obtainedOrnamentsOnly;
-                _plugin.Configuration.Save();
+                _plugin.Configuration.TrySave();
             }
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
@@ -1595,7 +1595,7 @@ namespace Altoholic.Windows
             if (ImGui.Checkbox($"{Loc.Localize("ObtainedOnly", "Obtained only")}", ref _obtainedGlassesOnly))
             {
                 _plugin.Configuration.ObtainedOnly = _obtainedGlassesOnly;
-                _plugin.Configuration.Save();
+                _plugin.Configuration.TrySave();
             }
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
@@ -1760,7 +1760,7 @@ namespace Altoholic.Windows
             if (ImGui.Checkbox($"{Loc.Localize("ObtainedOnly", "Obtained only")}", ref _obtainedHairstylesOnly))
             {
                 _plugin.Configuration.ObtainedOnly = _obtainedHairstylesOnly;
-                _plugin.Configuration.Save();
+                _plugin.Configuration.TrySave();
             }
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
@@ -1946,7 +1946,7 @@ namespace Altoholic.Windows
             if (ImGui.Checkbox($"{Loc.Localize("ObtainedOnly", "Obtained only")}", ref _obtainedFacepaintsOnly))
             {
                 _plugin.Configuration.ObtainedOnly = _obtainedFacepaintsOnly;
-                _plugin.Configuration.Save();
+                _plugin.Configuration.TrySave();
             }
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
@@ -2120,7 +2120,7 @@ namespace Altoholic.Windows
             if (ImGui.Checkbox($"{Loc.Localize("ObtainedOnly", "Obtained only")}", ref _obtainedSecretRecipeBookOnly))
             {
                 _plugin.Configuration.ObtainedOnly = _obtainedSecretRecipeBookOnly;
-                _plugin.Configuration.Save();
+                _plugin.Configuration.TrySave();
             }
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
@@ -2285,7 +2285,7 @@ namespace Altoholic.Windows
             if (ImGui.Checkbox($"{Loc.Localize("ObtainedOnly", "Obtained only")}", ref _obtainedVistaOnly))
             {
                 _plugin.Configuration.ObtainedOnly = _obtainedVistaOnly;
-                _plugin.Configuration.Save();
+                _plugin.Configuration.TrySave();
             }
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);

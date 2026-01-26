@@ -59,7 +59,7 @@ namespace Altoholic.Windows
                 Plugin.Log.Debug("New window position");
                 _plugin.Configuration.TimerStandaloneWindowPositionX = Position.Value.X;
                 _plugin.Configuration.TimerStandaloneWindowPositionY = Position.Value.Y;
-                _plugin.Configuration.Save();
+                _plugin.Configuration.TrySave();
 
                 OldWindowPosition = Position.Value;
             }*/
@@ -108,9 +108,11 @@ namespace Altoholic.Windows
         private void DrawTimers(List<Character> chars, bool drawBg = false)
         {
             if (_plugin.Configuration.EnabledTimers is null) return;
-            int dateFormat = _plugin.Configuration.DateFormat;
             HashSet<TimersStatus> enabledTimers = _plugin.Configuration.EnabledTimers;
+            if (enabledTimers.Count == 0) return;
             if (chars.Count == 0) return;
+            int dateFormat = _plugin.Configuration.DateFormat;
+            bool timerCrossMarkForNotUnlocked = _plugin.Configuration.TimerCrossMarkForNotUnlocked;
 
             if (drawBg)
             {
@@ -292,6 +294,15 @@ namespace Altoholic.Windows
                             ImGui.EndTooltip();
                         }
                     }
+                    else
+                    {
+                        if (timerCrossMarkForNotUnlocked)
+                        {
+                            ImGui.PushFont(UiBuilder.IconFont);
+                            ImGui.TextUnformatted($"{FontAwesomeIcon.Times.ToIconString()}");
+                            ImGui.PopFont();
+                        }
+                    }
                 }
 
                 if (enabledTimers.Contains(TimersStatus.DomanEnclave))
@@ -330,6 +341,15 @@ namespace Altoholic.Windows
                                 ImGui.TextUnformatted($"{Loc.Localize("LastCheck", "Last check:")} {Utils.FormatDate(dateFormat, currChar.Timers.DomanEnclaveLastCheck.Value)}");
                                 ImGui.EndTooltip();
                             }
+                        }
+                    }
+                    else
+                    {
+                        if (timerCrossMarkForNotUnlocked)
+                        {
+                            ImGui.PushFont(UiBuilder.IconFont);
+                            ImGui.TextUnformatted($"{FontAwesomeIcon.Times.ToIconString()}");
+                            ImGui.PopFont();
                         }
                     }
                 }
@@ -441,6 +461,13 @@ namespace Altoholic.Windows
                                 TribeLastCheck: not null
                             } || !(currChar.Timers.TribeLastCheck > GetLastDailyReset()))
                     {
+                        if (timerCrossMarkForNotUnlocked)
+                        {
+                            ImGui.PushFont(UiBuilder.IconFont);
+                            ImGui.TextUnformatted($"{FontAwesomeIcon.Times.ToIconString()}");
+                            ImGui.PopFont();
+                        }
+
                         continue;
                     }
 
@@ -449,7 +476,6 @@ namespace Altoholic.Windows
                         ImGui.PushFont(UiBuilder.IconFont);
                         ImGui.TextUnformatted($"{FontAwesomeIcon.Check.ToIconString()}");
                         ImGui.PopFont();
-
                     }
                     else
                     {

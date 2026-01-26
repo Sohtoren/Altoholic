@@ -64,7 +64,7 @@ namespace Altoholic.Database.Migrations
 #pragma warning restore CA1812
         private class Character
         {
-            public ulong CharacterId { get; init; } = 0;
+            public ulong CharacterId { get; init; }
             public Models.ArmoryGear? ArmoryInventory { get; set; } = null;
             public List<Models.Retainer> Retainers { get; set; } = [];
             public List<Models.Gear> Gear { get; set; } = [];

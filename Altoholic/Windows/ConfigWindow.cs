@@ -2,9 +2,12 @@
 using CheapLoc;
 using Dalamud.Bindings.ImGui;
 using Dalamud.Game;
+using Dalamud.Game.Text.SeStringHandling;
+using Dalamud.Interface;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
 using System;
+using System.Drawing;
 using System.Numerics;
 
 namespace Altoholic.Windows
@@ -127,11 +130,28 @@ namespace Altoholic.Windows
 
             bool isPlaytimeNotificationEnabled = _configuration.IsPlaytimeNotificationEnabled;
             if (ImGui.Checkbox(
-                    $"{Loc.Localize("ConfigEnablePlaytimeNotification", "Enable playtime notification")}####EnableSpoilers",
+                    $"{Loc.Localize("ConfigEnablePlaytimeNotification", "Enable playtime notification")}####EnablePlaytimeNotification",
                     ref isPlaytimeNotificationEnabled))
             {
                 _configuration.IsPlaytimeNotificationEnabled = isPlaytimeNotificationEnabled;
                 _configuration.TrySave();
+            }
+            int playtimeNotificationDays = _configuration.PlaytimeNotificationDays;
+            ImGui.PushItemWidth(200);
+            if (ImGui.SliderInt("Days (default)###PlaytimeNotificationDays", ref playtimeNotificationDays, 1, 90))
+            {
+                _configuration.PlaytimeNotificationDays = playtimeNotificationDays;
+                _configuration.TrySave();
+
+            }
+            ImGui.PopItemWidth();
+
+            if (ImGui.IsItemHovered())
+            {
+                using var tooltip = ImRaii.Tooltip();
+                if (!tooltip) return;
+                ImGui.TextUnformatted(
+                    $"{Loc.Localize("ConfigPlaytimeNotificationDaysMessage", "Number of days before showing the playtime notification")}");
             }
 
             if (ImGui.IsItemHovered())
@@ -261,7 +281,13 @@ namespace Altoholic.Windows
         {
             ImGui.TextUnformatted("Special Thanks:");
             ImGui.Separator();
-            ImGui.TextUnformatted("NebulousByte (https://github.com/NebulousByte)");
+            ImGui.PushStyleColor(ImGuiCol.Text, KnownColor.LightBlue.Vector());
+            ImGui.TextUnformatted("NebulousByte");
+            ImGui.PopStyleColor();
+            if (ImGui.IsItemClicked())
+            {
+                Dalamud.Utility.Util.OpenLink("https://github.com/NebulousByte");
+            }
             ImGui.TextUnformatted("Dalamud discord server");
         }
 
@@ -409,6 +435,14 @@ namespace Altoholic.Windows
                     ref isTimerStandaloneAtStart))
             {
                 _configuration.TimerStandaloneShowAtStartup = isTimerStandaloneAtStart;
+                _configuration.TrySave();
+            }
+
+            bool timerCrossMarkForNotUnlocked = _configuration.TimerCrossMarkForNotUnlocked;
+            if (ImGui.Checkbox($"{Loc.Localize("TimerCrossMarkForNotUnlocked", "Show cross mark if timer is not unlocked on character instead of nothing")}###TimerCrossMarkForNotUnlocked",
+                    ref timerCrossMarkForNotUnlocked))
+            {
+                _configuration.TimerStandaloneShowAtStartup = timerCrossMarkForNotUnlocked;
                 _configuration.TrySave();
             }
             /*float iconPosX = _configuration.TimerStandaloneWindowPositionX;

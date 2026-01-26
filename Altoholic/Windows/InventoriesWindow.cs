@@ -1290,7 +1290,7 @@ namespace Altoholic.Windows
             if (ImGui.Checkbox($"{Loc.Localize("ObtainedOnly", "Obtained only")}", ref _obtainedArmoireOnly))
             {
                 _plugin.Configuration.ObtainedOnly = _obtainedArmoireOnly;
-                _plugin.Configuration.Save();
+                _plugin.Configuration.TrySave();
             }
 
             ImGui.TableNextRow();
@@ -1417,7 +1417,7 @@ namespace Altoholic.Windows
 
         private void DrawGlamourDresser(GlamourItem[] inventory)
         {
-            int count = inventory.Where(i => i?.ItemId != 0 && i?.GlamourId == 0).ToList().Count;
+            int count = inventory.Where(i => i.ItemId != 0 && i?.GlamourId == 0).ToList().Count;
             if (count == 0)
             {
                 ImGui.TextUnformatted($"{Loc.Localize("GlamDresserNotLoaded", "No item found. You might need open the glamour dresser")}");
@@ -1545,12 +1545,9 @@ namespace Altoholic.Windows
 
         private void DrawCanBeInASetIcon(Vector2 p)
         {
-            if (_miragePrismBoxSetIcon is not null)
-            {
-                ImGui.SetCursorPos(p with { X = p.X + 20 });
-                ImGui.Image(_miragePrismBoxSetIcon.Handle, new Vector2(20, 20), _miragePrismBoxSetIconUv2, _miragePrismBoxSetIconUv3);
-                ImGui.SetCursorPos(p);
-            }
+            ImGui.SetCursorPos(p with { X = p.X + 20 });
+            ImGui.Image(_miragePrismBoxSetIcon.Handle, new Vector2(20, 20), _miragePrismBoxSetIconUv2, _miragePrismBoxSetIconUv3);
+            ImGui.SetCursorPos(p);
         }
 
         private class CharacterInventories

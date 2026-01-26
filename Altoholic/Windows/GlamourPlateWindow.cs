@@ -10,8 +10,6 @@ using Dalamud.Interface.Textures.TextureWraps;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
 using Dalamud.Bindings.ImGui;
-using FFXIVClientStructs.FFXIV.Common.Lua;
-using Lumina.Excel.Sheets;
 using System.Linq;
 using Microsoft.Data.Sqlite;
 
