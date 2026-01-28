@@ -49,13 +49,25 @@ namespace Altoholic.Windows
             ImGui.TableSetupColumn("###ConfigTable#Credits", ImGuiTableColumnFlags.WidthStretch);
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
-            DrawConfig();
+            using var tabBar = ImRaii.TabBar("###ConfigWindow#Tabs");
+            if (!tabBar.Success) return;
+            using (var generalTab = ImRaii.TabItem($"{_globalCache.AddonStorage.LoadAddonString(_selectedLanguage, 662)}###General"))
+            {
+                if (generalTab)
+                {
+                    DrawConfig();
+                }
+            }
+
+            using (var timersTab = ImRaii.TabItem($"{Loc.Localize("Timers", "Timers")}###Timers"))
+            {
+                if (timersTab.Success)
+                {
+                    DrawTimerConfig();
+                }
+            }
             ImGui.TableSetColumnIndex(1);
             DrawCredits();
-            ImGui.TableNextRow();
-            ImGui.TableSetColumnIndex(0);
-            DrawTimerConfig();
-            ImGui.TableSetColumnIndex(1);
         }
 
         private void DrawConfig()
@@ -294,7 +306,6 @@ namespace Altoholic.Windows
         private void DrawTimerConfig()
         {
             _selectedLanguage = _configuration.Language;
-            ImGui.Separator();
             ImGui.TextUnformatted(Loc.Localize("ConfigEnabledTimer", "Enabled Timers"));
 
             /*bool isMiniCacpopEnabled = _configuration.EnabledTimers.Contains(TimersStatus.MiniCacpot);

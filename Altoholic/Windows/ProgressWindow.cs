@@ -1074,6 +1074,9 @@ namespace Altoholic.Windows
                     DrawAllLine(chars, charactersQuests,
                         $"{Loc.Localize("Event_Heavensturn", "Heavensturn")} (2026)",
                         131);
+                    DrawAllLine(chars, charactersQuests,
+                        $"{Loc.Localize("Event_ValentioneDay", "Valentione's Day")} (2026)",
+                        132);
                 }
             }
 

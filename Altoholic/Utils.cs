@@ -4273,6 +4273,7 @@ namespace Altoholic
                     character.HasQuest((int)QuestIds.EVENT_ALL_SAINTS_WAKE_2025),
                     character.HasQuest((int)QuestIds.EVENT_STARLIGHT_2025),
                     character.HasQuest((int)QuestIds.EVENT_HEAVENSTURN_2026),
+                    character.HasQuest((int)QuestIds.EVENT_VALENTIONE_S_DAY_2026),
                 ];
                 result.Add(completedQuests);
             }
