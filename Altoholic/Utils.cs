@@ -4958,15 +4958,24 @@ namespace Altoholic
 
             return lastTuesdayReset;
         }
+
         public static DateTime GetLastDailyReset()
         {
-            DateTime nowUtc = DateTime.Now;
-            DateTime now = DateTime.SpecifyKind(nowUtc, DateTimeKind.Utc).ToLocalTime();
+            DateTime utcNow = DateTime.UtcNow;
 
-            DateTime todayFourPm = new(
-                now.Year, now.Month, now.Day, 16, 0, 0, DateTimeKind.Utc);
+            DateTime utcFourPmToday = new(
+                utcNow.Year,
+                utcNow.Month,
+                utcNow.Day,
+                16, 0, 0,
+                DateTimeKind.Utc
+            );
 
-            return now >= todayFourPm ? todayFourPm : todayFourPm.AddDays(-1);
+            DateTime lastUtcFourPm = utcNow < utcFourPmToday
+                ? utcFourPmToday.AddDays(-1)
+                : utcFourPmToday;
+
+            return lastUtcFourPm;
         }
         public static DateTime GetFashionReportReset()
         {
