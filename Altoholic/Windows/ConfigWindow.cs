@@ -360,8 +360,8 @@ namespace Altoholic.Windows
                     string[] fashionReportThresholdString =
                     [
                         $"{Loc.Localize("FashionReportThresholdSingleAttempt", "Single Attempt")}",
-                        $"{Loc.Localize("FashionReportThreshold80", "80")}",
-                        $"{Loc.Localize("FashionReportThreshold100", "100")}"
+                        $"{Loc.Localize("FashionReportThreshold80", "80 points")}",
+                        $"{Loc.Localize("FashionReportThreshold100", "100 points")}"
                     ];
                     ImGui.SetNextItemWidth(200);
                     using var fashionCombo =

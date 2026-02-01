@@ -4,12 +4,12 @@ namespace Altoholic.Models
 {
     public class GlamourItem
     {
-        public uint ItemId { get; set; } = 0;
-        public short Slot { get; set; } = 0;
+        public uint ItemId { get; init; } = 0;
+        public short Slot { get; init; } = 0;
         public uint GlamourId { get; set; } = 0;
-        public ushort Stain0 { get; set; } = 0;
-        public ushort Stain1 { get; set; } = 0;
-        public InventoryItem.ItemFlags Flags { get; set; }
+        public ushort Stain0 { get; init; } = 0;
+        public ushort Stain1 { get; init; } = 0;
+        public InventoryItem.ItemFlags Flags { get; init; }
 
         public bool IsSame(GlamourItem? otherItem)
         {

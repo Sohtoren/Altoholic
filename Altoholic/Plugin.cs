@@ -1557,7 +1557,7 @@ namespace Altoholic
 #if DEBUG
                 Log.Debug($"Quest {id} completed, adding");
 #endif
-                    _localPlayer.Quests.Add(id);
+                _localPlayer.Quests.Add(id);
             }
         }
 

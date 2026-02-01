@@ -1417,7 +1417,8 @@ namespace Altoholic.Windows
 
         private void DrawGlamourDresser(GlamourItem[] inventory)
         {
-            int count = inventory.Where(i => i.ItemId != 0 && i?.GlamourId == 0).ToList().Count;
+            if(inventory.Length == 0) return;
+            int count = inventory.Where(i => i?.ItemId != 0 && i?.GlamourId == 0).ToList().Count;
             if (count == 0)
             {
                 ImGui.TextUnformatted($"{Loc.Localize("GlamDresserNotLoaded", "No item found. You might need open the glamour dresser")}");
