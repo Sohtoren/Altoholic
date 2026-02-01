@@ -2,7 +2,6 @@
 using CheapLoc;
 using Dalamud.Bindings.ImGui;
 using Dalamud.Game;
-using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.Interface;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
@@ -308,53 +307,88 @@ namespace Altoholic.Windows
             _selectedLanguage = _configuration.Language;
             ImGui.TextUnformatted(Loc.Localize("ConfigEnabledTimer", "Enabled Timers"));
 
-            /*bool isMiniCacpopEnabled = _configuration.EnabledTimers.Contains(TimersStatus.MiniCacpot);
-            if (ImGui.Checkbox($"{_globalCache.AddonStorage.LoadAddonString(_selectedLanguage, 9260)}###MiniCacpot", ref isMiniCacpopEnabled))
-            {
-                if (isMiniCacpopEnabled)
-                {
-                    _configuration.EnabledTimers.Add(TimersStatus.MiniCacpot);
-                }
-                else
-                {
-                    _configuration.EnabledTimers.Remove(TimersStatus.MiniCacpot);
-                }
-
-                _configuration.TrySave();
-            }
-
-            bool isJumboCacpopEnabled = _configuration.EnabledTimers.Contains(TimersStatus.JumboCacpot);
-            if (ImGui.Checkbox($"{_globalCache.AddonStorage.LoadAddonString(_selectedLanguage, 9272)}###JumboCacpot", ref isJumboCacpopEnabled))
-            {
-                if (isJumboCacpopEnabled)
-                {
-                    _configuration.EnabledTimers.Add(TimersStatus.JumboCacpot);
-                }
-                else
-                {
-                    _configuration.EnabledTimers.Remove(TimersStatus.JumboCacpot);
-                }
-
-                _configuration.TrySave();
-            }
-
-            bool isFashionReportEnabled = _configuration.EnabledTimers.Contains(TimersStatus.FashionReport);
-            if (ImGui.Checkbox($"{_globalCache.AddonStorage.LoadAddonString(_selectedLanguage, 8819)}###FashionReport", ref isFashionReportEnabled))
-            {
-                if (isJumboCacpopEnabled)
-                {
-                    _configuration.EnabledTimers.Add(TimersStatus.FashionReport);
-                }
-                else
-                {
-                    _configuration.EnabledTimers.Remove(TimersStatus.FashionReport);
-                }
-
-                _configuration.TrySave();
-            }*/
-
             if (_configuration.EnabledTimers is not null)
             {
+                bool isMiniCacpopEnabled = _configuration.EnabledTimers.Contains(TimersStatus.MiniCacpot);
+                if (ImGui.Checkbox($"{_globalCache.AddonStorage.LoadAddonString(_selectedLanguage, 9260)}###MiniCacpot", ref isMiniCacpopEnabled))
+                {
+                    if (isMiniCacpopEnabled)
+                    {
+                        _configuration.EnabledTimers.Add(TimersStatus.MiniCacpot);
+                    }
+                    else
+                    {
+                        _configuration.EnabledTimers.Remove(TimersStatus.MiniCacpot);
+                    }
+
+                    _configuration.TrySave();
+                }
+
+                bool isJumboCacpopEnabled = _configuration.EnabledTimers.Contains(TimersStatus.JumboCacpot);
+                if (ImGui.Checkbox($"{_globalCache.AddonStorage.LoadAddonString(_selectedLanguage, 9272)}###JumboCacpot", ref isJumboCacpopEnabled))
+                {
+                    if (isJumboCacpopEnabled)
+                    {
+                        _configuration.EnabledTimers.Add(TimersStatus.JumboCacpot);
+                    }
+                    else
+                    {
+                        _configuration.EnabledTimers.Remove(TimersStatus.JumboCacpot);
+                    }
+
+                    _configuration.TrySave();
+                }
+
+                bool isFashionReportEnabled = _configuration.EnabledTimers.Contains(TimersStatus.FashionReport);
+                if (ImGui.Checkbox($"{_globalCache.AddonStorage.LoadAddonString(_selectedLanguage, 8819)}###FashionReport", ref isFashionReportEnabled))
+                {
+                    if (isFashionReportEnabled)
+                    {
+                        _configuration.EnabledTimers.Add(TimersStatus.FashionReport);
+                    }
+                    else
+                    {
+                        _configuration.EnabledTimers.Remove(TimersStatus.FashionReport);
+                    }
+
+                    _configuration.TrySave();
+                }
+
+                if (isFashionReportEnabled)
+                {
+                    int threshold = _configuration.FashionReportThreshold;
+                    string[] fashionReportThresholdString =
+                    [
+                        $"{Loc.Localize("FashionReportThresholdSingleAttempt", "Single Attempt")}",
+                        $"{Loc.Localize("FashionReportThreshold80", "80")}",
+                        $"{Loc.Localize("FashionReportThreshold100", "100")}"
+                    ];
+                    ImGui.SetNextItemWidth(200);
+                    using var fashionCombo =
+                        ImRaii.Combo(
+                            $"{Loc.Localize("FashionReportCompletionMode", "Completion Mode")}###FashionReportCombo",
+                            fashionReportThresholdString[threshold]);
+                    if (fashionCombo.Success)
+                    {
+                        if (ImGui.Selectable($"{fashionReportThresholdString[0]}###FashionSingle", threshold == 0))
+                        {
+                            _configuration.FashionReportThreshold = 0;
+                        }
+
+                        if (ImGui.Selectable($"{fashionReportThresholdString[1]}###Fashion80", threshold == 1))
+                        {
+                            _configuration.FashionReportThreshold = 1;
+                        }
+
+                        if (ImGui.Selectable($"{fashionReportThresholdString[2]}###Fashion100", threshold == 2))
+                        {
+                            _configuration.FashionReportThreshold = 2;
+                        }
+
+                        _configuration.TrySave();
+                    }
+                }
+
                 bool isCustomDeliveriesEnabled = _configuration.EnabledTimers.Contains(TimersStatus.CustomDeliveries);
                 if (ImGui.Checkbox(
                         $"{_globalCache.AddonStorage.LoadAddonString(_selectedLanguage, 5700)}###CustomDeliveries",

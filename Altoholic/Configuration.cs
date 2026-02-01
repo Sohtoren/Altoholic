@@ -37,6 +37,7 @@ namespace Altoholic
         public bool TimerCrossMarkForNotUnlocked { get; set; } = false;
         /*public float TimerStandaloneWindowPositionX { get; set; }
         public float TimerStandaloneWindowPositionY { get; set; }*/
+        public int FashionReportThreshold { get; set; }
 
         // the below exist just to make saving less cumbersome
         [NonSerialized]

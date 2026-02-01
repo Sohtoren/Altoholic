@@ -4947,6 +4947,55 @@ namespace Altoholic
                     return $"{date: yyyyMMdd HH:mm}";
             }
         }
+
+        public static DateTime GetLastWeeklyReset()
+        {
+            DateTime todayUtc = DateTime.Today;
+            DateTime today = DateTime.SpecifyKind(todayUtc, DateTimeKind.Utc).ToLocalTime();
+            int daysSinceTuesday = ((int)today.DayOfWeek - (int)DayOfWeek.Tuesday + 7) % 7;
+            DateTime lastTuesday = today.Date.AddDays(-daysSinceTuesday);
+            DateTime lastTuesdayReset = lastTuesday.AddHours(8);
+
+            return lastTuesdayReset;
+        }
+        public static DateTime GetLastDailyReset()
+        {
+            DateTime nowUtc = DateTime.Now;
+            DateTime now = DateTime.SpecifyKind(nowUtc, DateTimeKind.Utc).ToLocalTime();
+
+            DateTime todayFourPm = new(
+                now.Year, now.Month, now.Day, 16, 0, 0, DateTimeKind.Utc);
+
+            return now >= todayFourPm ? todayFourPm : todayFourPm.AddDays(-1);
+        }
+        public static DateTime GetFashionReportReset()
+        {
+            DateTime todayUtc = DateTime.Today;
+            DateTime today = DateTime.SpecifyKind(todayUtc, DateTimeKind.Utc).ToLocalTime();
+            int daysSinceFriday = ((int)today.DayOfWeek - (int)DayOfWeek.Friday + 7) % 7;
+            DateTime lastFriday = today.Date.AddDays(-daysSinceFriday);
+            DateTime lastFridayReset = lastFriday.AddHours(8);
+
+            return lastFridayReset;
+        }
+        public static DateTime GetJumboCactpotReset(string datacenter)
+        {
+            DateTime todayUtc = DateTime.Today;
+            DateTime today = DateTime.SpecifyKind(todayUtc, DateTimeKind.Utc).ToLocalTime();
+            (int dayOfWeekX, int addHours) = datacenter switch
+            {
+                "Elemental" or "Gaia" or "Mana" or "Meteor" => ((int)DayOfWeek.Saturday, 12),
+                "Crystal" or "Dynamis" or "Primal" => ((int)DayOfWeek.Sunday, 2),
+                "Chaos" or "Light" => ((int)DayOfWeek.Saturday, 19),
+                "Materia" => ((int)DayOfWeek.Saturday, 9),
+                _ => ((int)DayOfWeek.Saturday, 19)
+            };
+            int daysSinceX = ((int)today.DayOfWeek - dayOfWeekX + 7) % 7;
+            DateTime lastX = today.Date.AddDays(-daysSinceX);
+            DateTime lastXReset = lastX.AddHours(addHours);
+
+            return lastXReset;
+        }
     }
 }
 

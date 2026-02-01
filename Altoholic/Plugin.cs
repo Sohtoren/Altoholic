@@ -3,6 +3,8 @@ using Altoholic.Models;
 using Altoholic.Windows;
 using CheapLoc;
 using Dalamud.Game;
+using Dalamud.Game.Addon.Lifecycle;
+using Dalamud.Game.Addon.Lifecycle.AddonArgTypes;
 using Dalamud.Game.ClientState.Conditions;
 using Dalamud.Game.ClientState.Objects.SubKinds;
 using Dalamud.Game.Command;
@@ -20,13 +22,16 @@ using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.Game.Character;
 using FFXIVClientStructs.FFXIV.Client.Game.Control;
+using FFXIVClientStructs.FFXIV.Client.Game.Event;
 using FFXIVClientStructs.FFXIV.Client.Game.MJI;
+using FFXIVClientStructs.FFXIV.Client.Game.Object;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using FFXIVClientStructs.FFXIV.Client.System.String;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using FFXIVClientStructs.FFXIV.Client.UI.Info;
 using FFXIVClientStructs.FFXIV.Client.UI.Misc;
+using FFXIVClientStructs.FFXIV.Component.GUI;
 using Lumina.Excel.Sheets;
 using Lumina.Text;
 using Microsoft.Data.Sqlite;
@@ -70,7 +75,8 @@ namespace Altoholic
 
 
         private readonly Hook<UIModule.Delegates.HandlePacket> _playtimeHook;
-
+        private readonly Hook<EventFramework.Delegates.ProcessEventPlay>? _frameworkEventHook;
+        private readonly Hook<AgentInterface.Delegates.ReceiveEvent>? _onJumboCactpotReceiveEventHook;
         public Configuration Configuration { get; private set; }
         private readonly WindowSystem _windowSystem = new("Altoholic");
 
@@ -135,7 +141,10 @@ namespace Altoholic
 
             _playtimeHook = Hook.HookFromAddress<UIModule.Delegates.HandlePacket>(UIModule.StaticVirtualTablePointer->HandlePacket, PlaytimePacket);
             _playtimeHook.Enable();
-
+            _frameworkEventHook ??= Hook.HookFromAddress<EventFramework.Delegates.ProcessEventPlay>(EventFramework.MemberFunctionPointers.ProcessEventPlay, OnFrameworkEvent);
+            _frameworkEventHook.Enable();
+            _onJumboCactpotReceiveEventHook = Hook.HookFromAddress<AgentInterface.Delegates.ReceiveEvent>(AgentModule.Instance()->GetAgentByInternalId(AgentId.LotteryWeekly)->VirtualTable->ReceiveEvent, OnJumboCacpotReceiveEvent);
+            _onJumboCactpotReceiveEventHook?.Enable();
 #if DEBUG
             string dbpath = Path.Combine(PluginInterface.AssemblyLocation.Directory?.FullName!, "altoholic.db");
             Log.Info($"dbpath = {dbpath}");
@@ -362,6 +371,8 @@ namespace Altoholic
         public void Dispose()
         {
             _playtimeHook.Dispose();
+            _frameworkEventHook?.Dispose();
+            _onJumboCactpotReceiveEventHook?.Dispose();
             _windowSystem.RemoveAllWindows();
 
             PluginInterface.UiBuilder.Draw -= DrawUI;
@@ -420,6 +431,7 @@ namespace Altoholic
             Framework.Update -= OnFrameworkUpdate;
 
             //AddonLifecycle.UnregisterListener(AozContentResultPopSetup);
+            AddonLifecycle.UnregisterListener(LotteryDailyPreSetup);
 
             _db.Close();
             _db.Dispose();
@@ -2188,6 +2200,7 @@ namespace Altoholic
                 DrawTimerUI();
             }
             //AddonLifecycle.RegisterListener(AddonEvent.PostSetup, "AOZContentResult", AozContentResultPopSetup);
+            AddonLifecycle.RegisterListener(AddonEvent.PreSetup, "LotteryDaily", LotteryDailyPreSetup);
         }
 
         /*private unsafe void AozContentResultPopSetup(AddonEvent type, AddonArgs addonInfo)
@@ -2843,6 +2856,150 @@ namespace Altoholic
                         break;
                     }
             }
+        }
+
+        private unsafe void OnFrameworkEvent(EventFramework* thisPtr, GameObject* gameObject, EventId eventId, short scene, ulong sceneFlags, uint* sceneData, byte sceneDataCount)
+        {
+            _frameworkEventHook!.Original(thisPtr, gameObject, eventId, scene, sceneFlags, sceneData, sceneDataCount);
+
+            OnNpcInteraction(thisPtr, gameObject, eventId, scene, sceneFlags, sceneData, sceneDataCount);
+        }
+
+        private unsafe void OnNpcInteraction(EventFramework* thisPtr, GameObject* gameObject, EventId eventId, short scene, ulong sceneFlags, uint* sceneData, byte sceneDataCount)
+        {
+            uint baseId = gameObject->BaseId;
+            Log.Debug($"OnNpcInteraction: {baseId}");
+            switch (baseId)
+            {
+                case 1010445:
+                    GetMiniCactpot(sceneData, sceneDataCount);
+                    break;
+                case 1010446:
+                    GetJumboCactpot(sceneData);
+                    break;
+                case 1025176:
+                    GetFashionReport(scene, sceneData);
+                    break;
+            }
+        }
+
+        private unsafe void GetJumboCactpot(uint* sceneData)
+        {
+            //Log.Debug($"GetJumboCactpot: {sceneData[0]},{sceneData[1]},{sceneData[2]},{sceneData[3]},{sceneData[4]}");
+            _localPlayer.Timers.JumboCacpotTickets.Clear();
+            for (int i = 0; i < 3; ++i)
+            {
+                uint ticketValue = sceneData[i + 2];
+
+                if (ticketValue != 10000)
+                {
+                    _localPlayer.Timers.JumboCacpotTickets.Add((int)ticketValue);
+                }
+            }
+            _localPlayer.Timers.JumpboCacpotLastCheck = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Utc);
+        }
+
+        private unsafe void GetMiniCactpot(uint* sceneData, byte sceneDataCount)
+        {
+            //Log.Debug($"GetMiniCactpot: {sceneData[0]},{sceneData[1]},{sceneData[2]},{sceneData[3]},{sceneData[4]}, count: {sceneDataCount}");
+            if (sceneDataCount == 5)
+            {
+                _localPlayer.Timers.MinicacpotAllowances = (int)sceneData[4];
+            }
+            else
+            {
+                _localPlayer.Timers.MinicacpotAllowances = 0;
+            }
+            _localPlayer.Timers.MinicacpotLastCheck = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Utc);
+        }
+        private void LotteryDailyPreSetup(AddonEvent type, AddonArgs args)
+        {
+            _localPlayer.Timers.MinicacpotAllowances -= 1;
+            _localPlayer.Timers.MinicacpotLastCheck = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Utc);
+        } 
+
+        private unsafe void GetFashionReport(short scene, uint* sceneData)
+        {
+            //Log.Debug($"GetFashionReport scene:{scene}, sceneData 0: {sceneData[0]}, 1: {sceneData[1]}");
+            switch (scene)
+            {
+                case 1: // Talking to Masked Rose
+                    _localPlayer.Timers.FashionReportAllowances = (int)sceneData[1];
+                    _localPlayer.Timers.FashionReportHighestScore = (int)sceneData[0];
+                    _localPlayer.Timers.FashionReportLastCheck = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Utc);
+                    break;
+
+                case 2: // Enter judging
+                    int threshold = Configuration.FashionReportThreshold;
+                    if (_localPlayer.Timers.FashionReportLastCheck > Utils.GetFashionReportReset())
+                    {
+                        int highest = Configuration.FashionReportThreshold switch
+                        {
+                            1 => 80,
+                            2 => 100,
+                            _ => 0
+                        };
+                        //Needed because sceneData return the current outfit value and not highest that might have been done before
+                        if (_localPlayer.Timers.FashionReportHighestScore >= highest) break;
+
+                        _localPlayer.Timers.FashionReportHighestScore = (int)sceneData[0];
+                        _localPlayer.Timers.FashionReportLastCheck =
+                            DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Utc);
+                    }
+                    else
+                    {
+                        _localPlayer.Timers.FashionReportHighestScore = (int)sceneData[0];
+                        _localPlayer.Timers.FashionReportLastCheck =
+                            DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Utc);
+                    }
+                    break;
+
+                case 5: // Judging finished
+                    _localPlayer.Timers.FashionReportAllowances = (int)sceneData[0];
+                    _localPlayer.Timers.FashionReportLastCheck = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Utc);
+                    break;
+            }
+        }
+
+        private int _ticketData = -1;
+        private unsafe AtkValue* OnJumboCacpotReceiveEvent(AgentInterface* agent, AtkValue* returnValue, AtkValue* args, uint argCount, ulong sender)
+        {
+            var result = _onJumboCactpotReceiveEventHook!.Original(agent, returnValue, args, argCount, sender);
+            Log.Debug("OnJumboCacpotReceiveEvent called");
+            try
+            {
+                var data = args->Int;
+
+                switch (sender)
+                {
+                    // Message is from JumboCactpot
+                    case 0 when data >= 0:
+                        _ticketData = data;
+                        break;
+
+                    // Message is from SelectYesNo
+                    case 5:
+                        switch (data)
+                        {
+                            case -1:
+                            case 1:
+                                _ticketData = -1;
+                                break;
+
+                            case 0 when _ticketData >= 0:
+                                _localPlayer.Timers.JumboCacpotTickets.Add(_ticketData);
+                                _ticketData = -1;
+                                break;
+                        }
+                        break;
+                }
+            }
+            catch (Exception e)
+            {
+                Log.Error(e, "Exception processing JumboCactpot Event");
+            }
+
+            return result;
         }
     }
 }

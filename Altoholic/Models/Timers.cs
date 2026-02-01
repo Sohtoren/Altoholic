@@ -1,15 +1,17 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Altoholic.Models
 {
     public class Timers
     {
-        public uint? MinicacpotAllowances { get; init; }
-        public DateTime? MinicacpotLastCheck { get; init; }
-        public uint? JumboCacpotAllowances { get; init; }
-        public DateTime? JumpboCacpotLastCheck { get; init; }
-        public int? FashionReportAllowances { get; init; }
-        public DateTime? FashionReportLastCheck { get; init; }
+        public int? MinicacpotAllowances { get; set; }
+        public DateTime? MinicacpotLastCheck { get; set; }
+        public List<int> JumboCacpotTickets { get; set; } = [];
+        public DateTime? JumpboCacpotLastCheck { get; set; }
+        public int? FashionReportAllowances { get; set; }
+        public int? FashionReportHighestScore { get; set; }
+        public DateTime? FashionReportLastCheck { get; set; }
         public int? CustomDeliveriesAllowances { get; set; }
         public DateTime? CustomDeliveriesLastCheck { get; set; }
         public int? DomanEnclaveWeeklyAllowances { get; set; }

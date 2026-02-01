@@ -256,16 +256,124 @@ namespace Altoholic.Windows
                 if (enabledTimers.Contains(TimersStatus.MiniCacpot))
                 {
                     ImGui.TableNextColumn();
+                    if (currChar.Timers is
+                        {
+                            MinicacpotAllowances: not null,
+                            MinicacpotLastCheck: not null
+                        } && currChar.Timers.MinicacpotLastCheck > Utils.GetLastDailyReset())
+                    {
+                        if (currChar.Timers.MinicacpotAllowances == 0)
+                        {
+                            ImGui.PushFont(UiBuilder.IconFont);
+                            ImGui.TextUnformatted($"{FontAwesomeIcon.Check.ToIconString()}");
+                            ImGui.PopFont();
+                        }
+                        else
+                        {
+                            ImGui.TextUnformatted($"{currChar.Timers.MinicacpotAllowances}/3");
+                        }
+                        if (ImGui.IsItemHovered())
+                        {
+                            ImGui.BeginTooltip();
+                            ImGui.TextUnformatted($"{Loc.Localize("LastCheck", "Last check:")} {Utils.FormatDate(dateFormat, currChar.Timers.MinicacpotLastCheck.Value)}");
+                            ImGui.TextUnformatted($"{Loc.Localize("RemainingTickets", "Remaining tickets :")} {currChar.Timers.MinicacpotAllowances}/3");
+                            ImGui.EndTooltip();
+                        }
+                    }
+                    else
+                    {
+                        if (!currChar.HasQuest((int)QuestIds.GOLD_SAUCER_JUMPBO_CACTPOT) && timerCrossMarkForNotUnlocked)
+                        {
+                            ImGui.PushFont(UiBuilder.IconFont);
+                            ImGui.TextUnformatted($"{FontAwesomeIcon.Times.ToIconString()}");
+                            ImGui.PopFont();
+                        }
+                    }
                 }
 
                 if (enabledTimers.Contains(TimersStatus.JumboCacpot))
                 {
                     ImGui.TableNextColumn();
+                    if (currChar.Timers is
+                        {
+                            JumboCacpotTickets.Count: not 0,
+                            JumpboCacpotLastCheck: not null
+                        } && currChar.Timers.JumpboCacpotLastCheck > Utils.GetJumboCactpotReset(currChar.Datacenter))
+                    {
+                        if (currChar.Timers.JumboCacpotTickets.Count == 3)
+                        {
+                            ImGui.PushFont(UiBuilder.IconFont);
+                            ImGui.TextUnformatted($"{FontAwesomeIcon.Check.ToIconString()}");
+                            ImGui.PopFont();
+                        }
+                        else
+                        {
+                            ImGui.TextUnformatted($"{currChar.Timers.JumboCacpotTickets.Count}/3");
+                        }
+                        if (ImGui.IsItemHovered())
+                        {
+                            ImGui.BeginTooltip();
+                            ImGui.TextUnformatted($"{Loc.Localize("LastCheck", "Last check:")} {Utils.FormatDate(dateFormat, currChar.Timers.JumpboCacpotLastCheck.Value)}");
+                            ImGui.TextUnformatted($"{Loc.Localize("Tickets", "Tickets :")}");
+                            for (int i = 0; i < currChar.Timers.JumboCacpotTickets.Count; i++)
+                            {
+                                ImGui.TextUnformatted($"{i}: {currChar.Timers.JumboCacpotTickets[i]}");
+                            }
+                            ImGui.EndTooltip();
+                        }
+                    }
+                    else
+                    {
+                        if (!currChar.HasQuest((int)QuestIds.GOLD_SAUCER_JUMPBO_CACTPOT) && timerCrossMarkForNotUnlocked)
+                        {
+                            ImGui.PushFont(UiBuilder.IconFont);
+                            ImGui.TextUnformatted($"{FontAwesomeIcon.Times.ToIconString()}");
+                            ImGui.PopFont();
+                        }
+                    }
                 }
 
                 if (enabledTimers.Contains(TimersStatus.FashionReport))
                 {
                     ImGui.TableNextColumn();
+                    if (currChar.Timers is
+                        {
+                            FashionReportAllowances: not null, FashionReportHighestScore: not null,
+                            FashionReportLastCheck: not null
+                        } && currChar.Timers.FashionReportLastCheck > Utils.GetFashionReportReset())
+                    {
+                        int threshold = _plugin.Configuration.FashionReportThreshold;
+
+                        if ((threshold == 0 && currChar.Timers.FashionReportAllowances <= 3) ||
+                            (threshold == 1 && currChar.Timers.FashionReportHighestScore >= 80) ||
+                            (threshold == 2 && currChar.Timers.FashionReportHighestScore == 100))
+                        {
+                            ImGui.PushFont(UiBuilder.IconFont);
+                            ImGui.TextUnformatted($"{FontAwesomeIcon.Check.ToIconString()}");
+                            ImGui.PopFont();
+                        }
+                        else
+                        {
+                            ImGui.TextUnformatted($"{currChar.Timers.FashionReportAllowances}/4");
+                        }
+                        if (ImGui.IsItemHovered())
+                        {
+                            ImGui.BeginTooltip();
+                            ImGui.TextUnformatted($"{Loc.Localize("LastCheck", "Last check:")} {Utils.FormatDate(dateFormat, currChar.Timers.FashionReportLastCheck.Value)}");
+                            ImGui.TextUnformatted($"{Loc.Localize("Attempts", "Attempts :")} {currChar.Timers.FashionReportAllowances}/4");
+                            ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 11237)}: {currChar.Timers.FashionReportHighestScore}");
+                            ImGui.EndTooltip();
+                        }
+                    }
+                    else
+                    {
+                        if (!currChar.HasQuest((int)QuestIds.GOLD_SAUCER_FASHION_REPORT) && timerCrossMarkForNotUnlocked)
+                        {
+                            ImGui.PushFont(UiBuilder.IconFont);
+                            ImGui.TextUnformatted($"{FontAwesomeIcon.Times.ToIconString()}");
+                            ImGui.PopFont();
+                        }
+                    }
                 }
 
                 if (enabledTimers.Contains(TimersStatus.CustomDeliveries))
@@ -275,7 +383,7 @@ namespace Altoholic.Windows
                         {
                             CustomDeliveriesAllowances: not null,
                             CustomDeliveriesLastCheck: not null
-                        } && currChar.Timers.CustomDeliveriesLastCheck > GetLastWeeklyReset())
+                        } && currChar.Timers.CustomDeliveriesLastCheck > Utils.GetLastWeeklyReset())
                     {
                         if (currChar.Timers.CustomDeliveriesAllowances == 0)
                         {
@@ -312,7 +420,7 @@ namespace Altoholic.Windows
                         {
                             DomanEnclaveWeeklyDonation: not null, DomanEnclaveWeeklyAllowances: not null,
                             DomanEnclaveLastCheck: not null
-                        } && currChar.Timers.DomanEnclaveLastCheck > GetLastWeeklyReset())
+                        } && currChar.Timers.DomanEnclaveLastCheck > Utils.GetLastWeeklyReset())
                     {
                         if (currChar.Timers.DomanEnclaveWeeklyDonation == currChar.Timers.DomanEnclaveWeeklyAllowances)
                         {
@@ -358,7 +466,7 @@ namespace Altoholic.Windows
                 {
                     ImGui.TableNextColumn();
                     if (currChar.Timers.MaskedFestivalLastCheck is not null &&
-                        currChar.Timers.MaskedFestivalLastCheck > GetLastWeeklyReset())
+                        currChar.Timers.MaskedFestivalLastCheck > Utils.GetLastWeeklyReset())
                     {
                         if (currChar.Timers is
                             {
@@ -468,7 +576,7 @@ namespace Altoholic.Windows
                             {
                                 TribeRemainingAllowances: not null,
                                 TribeLastCheck: not null
-                            } || !(currChar.Timers.TribeLastCheck > GetLastDailyReset()))
+                            } || !(currChar.Timers.TribeLastCheck > Utils.GetLastDailyReset()))
                     {
                         if (!currChar.HasAnyCustomDeliveryUnlocked() && timerCrossMarkForNotUnlocked)
                         {
@@ -504,28 +612,6 @@ namespace Altoholic.Windows
             {
                 ImGui.PopStyleColor();
             }
-        }
-
-        private static DateTime GetLastWeeklyReset()
-        {
-            DateTime todayUtc = DateTime.Today;
-            DateTime today = DateTime.SpecifyKind(todayUtc, DateTimeKind.Utc).ToLocalTime();
-            int daysSinceTuesday = ((int)today.DayOfWeek - (int)DayOfWeek.Tuesday + 7) % 7;
-            DateTime lastTuesday = today.Date.AddDays(-daysSinceTuesday);
-            DateTime lastTuesdayReset = lastTuesday.AddHours(8);
-
-            return lastTuesdayReset;
-        }
-
-        private static DateTime GetLastDailyReset()
-        {
-            DateTime nowUtc = DateTime.Now;
-            DateTime now = DateTime.SpecifyKind(nowUtc, DateTimeKind.Utc).ToLocalTime();
-
-            DateTime todayFourPm = new(
-                now.Year, now.Month, now.Day, 16, 0, 0, DateTimeKind.Utc);
-
-            return now >= todayFourPm ? todayFourPm : todayFourPm.AddDays(-1);
         }
     }
 }
