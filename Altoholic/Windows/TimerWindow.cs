@@ -275,7 +275,7 @@ namespace Altoholic.Windows
                         if (ImGui.IsItemHovered())
                         {
                             ImGui.BeginTooltip();
-                            ImGui.TextUnformatted($"{Loc.Localize("LastCheck", "Last check:")} {Utils.FormatDate(dateFormat, currChar.Timers.MinicacpotLastCheck.Value)}");
+                            ImGui.TextUnformatted($"{Loc.Localize("LastCheck", "Last check:")} {Utils.FormatDate(dateFormat, currChar.Timers.MinicacpotLastCheck.Value.ToLocalTime())}");
                             ImGui.TextUnformatted($"{Loc.Localize("RemainingTickets", "Remaining tickets :")} {currChar.Timers.MinicacpotAllowances}/3");
                             ImGui.EndTooltip();
                         }
@@ -313,7 +313,7 @@ namespace Altoholic.Windows
                         if (ImGui.IsItemHovered())
                         {
                             ImGui.BeginTooltip();
-                            ImGui.TextUnformatted($"{Loc.Localize("LastCheck", "Last check:")} {Utils.FormatDate(dateFormat, currChar.Timers.JumpboCacpotLastCheck.Value)}");
+                            ImGui.TextUnformatted($"{Loc.Localize("LastCheck", "Last check:")} {Utils.FormatDate(dateFormat, currChar.Timers.JumpboCacpotLastCheck.Value.ToLocalTime())}");
                             ImGui.TextUnformatted($"{Loc.Localize("Tickets", "Tickets :")}");
                             for (int i = 0; i < currChar.Timers.JumboCacpotTickets.Count; i++)
                             {
@@ -359,7 +359,7 @@ namespace Altoholic.Windows
                         if (ImGui.IsItemHovered())
                         {
                             ImGui.BeginTooltip();
-                            ImGui.TextUnformatted($"{Loc.Localize("LastCheck", "Last check:")} {Utils.FormatDate(dateFormat, currChar.Timers.FashionReportLastCheck.Value)}");
+                            ImGui.TextUnformatted($"{Loc.Localize("LastCheck", "Last check:")} {Utils.FormatDate(dateFormat, currChar.Timers.FashionReportLastCheck.Value.ToLocalTime())}");
                             ImGui.TextUnformatted($"{Loc.Localize("Attempts", "Attempts :")} {currChar.Timers.FashionReportAllowances}/4");
                             ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 11237)}: {currChar.Timers.FashionReportHighestScore}");
                             ImGui.EndTooltip();
@@ -398,7 +398,7 @@ namespace Altoholic.Windows
                         if (ImGui.IsItemHovered())
                         {
                             ImGui.BeginTooltip();
-                            ImGui.TextUnformatted($"{Loc.Localize("LastCheck", "Last check:")} {Utils.FormatDate(dateFormat, currChar.Timers.CustomDeliveriesLastCheck.Value)}");
+                            ImGui.TextUnformatted($"{Loc.Localize("LastCheck", "Last check:")} {Utils.FormatDate(dateFormat, currChar.Timers.CustomDeliveriesLastCheck.Value.ToLocalTime())}");
                             ImGui.EndTooltip();
                         }
                     }
@@ -430,7 +430,7 @@ namespace Altoholic.Windows
                             if (ImGui.IsItemHovered())
                             {
                                 ImGui.BeginTooltip();
-                                ImGui.TextUnformatted($"{Loc.Localize("LastCheck", "Last check:")} {Utils.FormatDate(dateFormat, currChar.Timers.DomanEnclaveLastCheck.Value)}");
+                                ImGui.TextUnformatted($"{Loc.Localize("LastCheck", "Last check:")} {Utils.FormatDate(dateFormat, currChar.Timers.DomanEnclaveLastCheck.Value.ToLocalTime())}");
                                 ImGui.EndTooltip();
                             }
                         }
@@ -446,7 +446,7 @@ namespace Altoholic.Windows
                             {
                                 ImGui.BeginTooltip();
                                 ImGui.TextUnformatted($"{donation}/{allowance}");
-                                ImGui.TextUnformatted($"{Loc.Localize("LastCheck", "Last check:")} {Utils.FormatDate(dateFormat, currChar.Timers.DomanEnclaveLastCheck.Value)}");
+                                ImGui.TextUnformatted($"{Loc.Localize("LastCheck", "Last check:")} {Utils.FormatDate(dateFormat, currChar.Timers.DomanEnclaveLastCheck.Value.ToLocalTime())}");
                                 ImGui.EndTooltip();
                             }
                         }
@@ -479,7 +479,7 @@ namespace Altoholic.Windows
                             ImGui.PopFont();
                             if (ImGui.IsItemHovered())
                             {
-                                ImGui.TextUnformatted($"{Loc.Localize("LastCheck", "Last check:")} {Utils.FormatDate(dateFormat, currChar.Timers.MaskedFestivalLastCheck.Value)}");
+                                ImGui.TextUnformatted($"{Loc.Localize("LastCheck", "Last check:")} {Utils.FormatDate(dateFormat, currChar.Timers.MaskedFestivalLastCheck.Value.ToLocalTime())}");
                             }
                         }
                         else
@@ -551,7 +551,7 @@ namespace Altoholic.Windows
                                         $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 12442)}");
                                 }
 
-                                ImGui.TextUnformatted($"{Loc.Localize("LastCheck", "Last check:")} {Utils.FormatDate(dateFormat, currChar.Timers.MaskedFestivalLastCheck.Value)}");
+                                ImGui.TextUnformatted($"{Loc.Localize("LastCheck", "Last check:")} {Utils.FormatDate(dateFormat, currChar.Timers.MaskedFestivalLastCheck.Value.ToLocalTime())}");
 
                                 ImGui.EndTooltip();
                             }
@@ -601,7 +601,7 @@ namespace Altoholic.Windows
                     if (ImGui.IsItemHovered())
                     {
                         ImGui.BeginTooltip();
-                        ImGui.TextUnformatted($"{Loc.Localize("LastCheck", "Last check:")} {Utils.FormatDate(dateFormat, currChar.Timers.TribeLastCheck.Value)}");
+                        ImGui.TextUnformatted($"{Loc.Localize("LastCheck", "Last check:")} {Utils.FormatDate(dateFormat, currChar.Timers.TribeLastCheck.Value.ToLocalTime())}");
                         ImGui.EndTooltip();
                     }
                 }

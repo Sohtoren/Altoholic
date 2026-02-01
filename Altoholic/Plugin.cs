@@ -1012,14 +1012,14 @@ namespace Altoholic
             if (_localPlayer.HasAnyBeastReputationUnlocked())
             {
                 _localPlayer.Timers.TribeRemainingAllowances = QuestManager.Instance()->GetBeastTribeAllowance();
-                _localPlayer.Timers.TribeLastCheck = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Utc);
+                _localPlayer.Timers.TribeLastCheck = DateTime.UtcNow;
             }
 
             if (_localPlayer.HasAnyCustomDeliveryUnlocked())
             {
                 _localPlayer.Timers.CustomDeliveriesAllowances =
                     SatisfactionSupplyManager.Instance()->GetRemainingAllowances();
-                _localPlayer.Timers.CustomDeliveriesLastCheck = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Utc);
+                _localPlayer.Timers.CustomDeliveriesLastCheck = DateTime.UtcNow;
             }
 
             if (_localPlayer.HasQuest((int)QuestIds.MASKED_CARNIVAL))
@@ -1033,7 +1033,7 @@ namespace Altoholic
                         a->IsWeeklyChallengeComplete(AozWeeklyChallenge.Moderate);
                     _localPlayer.Timers.MaskedCarnivaleAdvancedChallenge =
                         a->IsWeeklyChallengeComplete(AozWeeklyChallenge.Advanced);
-                    _localPlayer.Timers.MaskedFestivalLastCheck = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Utc);
+                    _localPlayer.Timers.MaskedFestivalLastCheck = DateTime.UtcNow;
                 }
             }
 
@@ -2219,7 +2219,7 @@ namespace Altoholic
                 case 2: _localPlayer.Timers.MaskedCarnivaleAdvancedChallenge = completionStatus != 0; break;
             }
 
-            _localPlayer.Timers.MaskedFestivalLastCheck = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Utc);
+            _localPlayer.Timers.MaskedFestivalLastCheck = DateTime.UtcNow;
         }*/
 
         private void GetDuties()
@@ -2622,7 +2622,7 @@ namespace Altoholic
 
             _localPlayer.Timers.DomanEnclaveWeeklyAllowances = dem->State.Allowance;
             _localPlayer.Timers.DomanEnclaveWeeklyDonation = dem->State.Donated;
-            _localPlayer.Timers.DomanEnclaveLastCheck = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Utc);
+            _localPlayer.Timers.DomanEnclaveLastCheck = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc);
 
             //Log.Debug($"{_localPlayer.Timers.DomanEnclaveWeeklyDonation}/{_localPlayer.Timers.DomanEnclaveWeeklyAllowances}");
             if (lastAllowance != _localPlayer.Timers.DomanEnclaveWeeklyAllowances ||
@@ -2883,22 +2883,6 @@ namespace Altoholic
             }
         }
 
-        private unsafe void GetJumboCactpot(uint* sceneData)
-        {
-            //Log.Debug($"GetJumboCactpot: {sceneData[0]},{sceneData[1]},{sceneData[2]},{sceneData[3]},{sceneData[4]}");
-            _localPlayer.Timers.JumboCacpotTickets.Clear();
-            for (int i = 0; i < 3; ++i)
-            {
-                uint ticketValue = sceneData[i + 2];
-
-                if (ticketValue != 10000)
-                {
-                    _localPlayer.Timers.JumboCacpotTickets.Add((int)ticketValue);
-                }
-            }
-            _localPlayer.Timers.JumpboCacpotLastCheck = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Utc);
-        }
-
         private unsafe void GetMiniCactpot(uint* sceneData, byte sceneDataCount)
         {
             //Log.Debug($"GetMiniCactpot: {sceneData[0]},{sceneData[1]},{sceneData[2]},{sceneData[3]},{sceneData[4]}, count: {sceneDataCount}");
@@ -2910,12 +2894,12 @@ namespace Altoholic
             {
                 _localPlayer.Timers.MinicacpotAllowances = 0;
             }
-            _localPlayer.Timers.MinicacpotLastCheck = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Utc);
+            _localPlayer.Timers.MinicacpotLastCheck = DateTime.UtcNow;
         }
         private void LotteryDailyPreSetup(AddonEvent type, AddonArgs args)
         {
             _localPlayer.Timers.MinicacpotAllowances -= 1;
-            _localPlayer.Timers.MinicacpotLastCheck = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Utc);
+            _localPlayer.Timers.MinicacpotLastCheck = DateTime.UtcNow;
         } 
 
         private unsafe void GetFashionReport(short scene, uint* sceneData)
@@ -2926,7 +2910,7 @@ namespace Altoholic
                 case 1: // Talking to Masked Rose
                     _localPlayer.Timers.FashionReportAllowances = (int)sceneData[1];
                     _localPlayer.Timers.FashionReportHighestScore = (int)sceneData[0];
-                    _localPlayer.Timers.FashionReportLastCheck = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Utc);
+                    _localPlayer.Timers.FashionReportLastCheck = DateTime.UtcNow;
                     break;
 
                 case 2: // Enter judging
@@ -2944,28 +2928,44 @@ namespace Altoholic
 
                         _localPlayer.Timers.FashionReportHighestScore = (int)sceneData[0];
                         _localPlayer.Timers.FashionReportLastCheck =
-                            DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Utc);
+                            DateTime.UtcNow;
                     }
                     else
                     {
                         _localPlayer.Timers.FashionReportHighestScore = (int)sceneData[0];
                         _localPlayer.Timers.FashionReportLastCheck =
-                            DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Utc);
+                            DateTime.UtcNow;
                     }
                     break;
 
                 case 5: // Judging finished
                     _localPlayer.Timers.FashionReportAllowances = (int)sceneData[0];
-                    _localPlayer.Timers.FashionReportLastCheck = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Utc);
+                    _localPlayer.Timers.FashionReportLastCheck = DateTime.UtcNow;
                     break;
             }
+        }
+
+        private unsafe void GetJumboCactpot(uint* sceneData)
+        {
+            //Log.Debug($"GetJumboCactpot: {sceneData[0]},{sceneData[1]},{sceneData[2]},{sceneData[3]},{sceneData[4]}");
+            _localPlayer.Timers.JumboCacpotTickets.Clear();
+            for (int i = 0; i < 3; ++i)
+            {
+                uint ticketValue = sceneData[i + 2];
+
+                if (ticketValue != 10000)
+                {
+                    _localPlayer.Timers.JumboCacpotTickets.Add((int)ticketValue);
+                }
+            }
+            _localPlayer.Timers.JumpboCacpotLastCheck = DateTime.UtcNow;
         }
 
         private int _ticketData = -1;
         private unsafe AtkValue* OnJumboCacpotReceiveEvent(AgentInterface* agent, AtkValue* returnValue, AtkValue* args, uint argCount, ulong sender)
         {
             var result = _onJumboCactpotReceiveEventHook!.Original(agent, returnValue, args, argCount, sender);
-            Log.Debug("OnJumboCacpotReceiveEvent called");
+            //Log.Debug("OnJumboCacpotReceiveEvent called");
             try
             {
                 var data = args->Int;

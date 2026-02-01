@@ -7,7 +7,7 @@ namespace Altoholic.Models
     {
         public int? MinicacpotAllowances { get; set; }
         public DateTime? MinicacpotLastCheck { get; set; }
-        public List<int> JumboCacpotTickets { get; set; } = [];
+        public List<int> JumboCacpotTickets { get; init; } = [];
         public DateTime? JumpboCacpotLastCheck { get; set; }
         public int? FashionReportAllowances { get; set; }
         public int? FashionReportHighestScore { get; set; }

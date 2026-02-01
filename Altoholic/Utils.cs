@@ -4967,7 +4967,7 @@ namespace Altoholic
                 utcNow.Year,
                 utcNow.Month,
                 utcNow.Day,
-                16, 0, 0,
+                15, 0, 0,
                 DateTimeKind.Utc
             );
 

@@ -149,7 +149,7 @@ namespace Altoholic.Windows
             }
             int playtimeNotificationDays = _configuration.PlaytimeNotificationDays;
             ImGui.PushItemWidth(200);
-            if (ImGui.SliderInt("Days (default)###PlaytimeNotificationDays", ref playtimeNotificationDays, 1, 90))
+            if (ImGui.SliderInt("Days (default 7)###PlaytimeNotificationDays", ref playtimeNotificationDays, 1, 90))
             {
                 _configuration.PlaytimeNotificationDays = playtimeNotificationDays;
                 _configuration.TrySave();

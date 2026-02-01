@@ -644,7 +644,7 @@ namespace Altoholic.Database
             Plugin.Log.Debug($"Entering DeleteCharacterCurrenciesHistories with character id = {id}");
             const string sql = $"DELETE FROM {CharactersCurrenciesHistoryTableName} WHERE characterId = @id";
             int result = db.Execute(sql, new { id });
-            Plugin.Log.Debug($"DeleteCharacterCurrenciesHistories result: {result}");
+            //Plugin.Log.Debug($"DeleteCharacterCurrenciesHistories result: {result}");
             return result;
         }
 
@@ -681,7 +681,7 @@ namespace Altoholic.Database
                 }
 
                 int result = AddCharacterCurrencyHistory(db, character.CharacterId, character.Currencies);
-                Plugin.Log.Debug($"UpdateCharacterCurrencyHistory => AddCharacterCurrencyHistory result: {result}");
+                //Plugin.Log.Debug($"UpdateCharacterCurrencyHistory => AddCharacterCurrencyHistory result: {result}");
                 return result;
             }
             catch (Exception ex)
@@ -694,7 +694,7 @@ namespace Altoholic.Database
         public static int UpdatePlaytime(SqliteConnection db, ulong id, uint playTime, long playTimeUpdate)
         {
             if (playTime == 0) return 0;
-            Plugin.Log.Debug($"UpdatePlayTime {id} {playTime} {playTimeUpdate}");
+            //Plugin.Log.Debug($"UpdatePlayTime {id} {playTime} {playTimeUpdate}");
             try
             {
                 Character? c = GetCharacter(db, id);
