@@ -177,6 +177,8 @@ namespace Altoholic
                 Database.Database.CheckOrCreateDatabases(_db);
             }
 
+            Database.Database.CheckAndBackup(_db, PluginInterface.Manifest.AssemblyVersion);
+
             _blacklistedCharacters = Database.Database.GetBlacklists(_db);
 #if DEBUG
             Log.Debug("BlacklistedCharacters.Count: ", BlacklistedCharacters.Count);

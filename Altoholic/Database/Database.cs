@@ -14,7 +14,8 @@ namespace Altoholic.Database
         private const string CharacterTableName = "characters";
         private const string CharactersCurrenciesHistoryTableName = "charactersCurrenciesHistories";
         private const string BlacklistTableName = "blacklist";
-        private const string VersionTableName = "db_version";
+        private const string VersionTableName = "dbVersion";
+        private const string PluginVersionTableName = "pluginVersion";
 
         public static bool IsSqLiteDatabase(string pathToFile)
         {
@@ -500,6 +501,32 @@ namespace Altoholic.Database
             }
 
             BackupAndUpgradeDbVersion(db, 3, 4);
+
+            BackupAndUpgradeDbVersion(db, 4, 5);
+            if (DoesTableExist(db, "db_version"))
+            {
+                const string oldName = "db_version";
+                const string sql = $"DROP TABLE IF EXISTS [{oldName}]";
+                int result = db.Execute(sql);
+                Plugin.Log.Debug("Drop old version table name");
+                BackupAndUpgradeDbVersion(db, 1, 6);
+            }
+            BackupAndUpgradeDbVersion(db, 5, 6);
+            if (!DoesTableExist(db, PluginVersionTableName))
+            {
+                const string defaultVersion = "0.0.0.0";
+                const string sql = $"""
+                                        CREATE TABLE IF NOT EXISTS {PluginVersionTableName}(
+                                            Version TEXT
+                                       );
+                                     """;
+                int result = db.Execute(sql);
+                Plugin.Log.Debug($"CREATE TABLE {PluginVersionTableName} result: {result}");
+
+                const string sql2 = $"INSERT INTO {PluginVersionTableName} ([Version]) VALUES(@Version)";
+                int result2 = db.Execute(sql2, new { Version = defaultVersion });
+                Plugin.Log.Debug($"Set plugin db version to {defaultVersion} Result: {result2}");
+            }
         }
 
         private static void BackupAndUpgradeDbVersion(SqliteConnection db, int oldVer, int newVer)
@@ -1194,9 +1221,54 @@ namespace Altoholic.Database
             DateTime date = DateTime.Now;
             string dbpath = Path.Combine(Plugin.PluginInterface.GetPluginConfigDirectory(), "altoholic.db");
             string backupdbpath = Path.Combine(Plugin.PluginInterface.GetPluginConfigDirectory(), "backups",
-                $"altoholic.db.{date:yyyyMMdd}");
+                $"altoholic.db.{date:yyyyMMddHHmmss}");
+            if(File.Exists(backupdbpath)) return;
             Directory.CreateDirectory(Path.Combine(Plugin.PluginInterface.GetPluginConfigDirectory(), "backups"));
             File.Copy(dbpath, backupdbpath);
+        }
+
+        public static void CheckAndBackup(SqliteConnection db, Version version)
+        {
+            Plugin.Log.Debug("Database/CheckAndBackup entered");
+            try
+            {
+                const string sql = $"SELECT Version FROM {PluginVersionTableName}";
+                string? pluginVersionInDb = db.QueryFirstOrDefault<string?>(sql);
+                if (string.IsNullOrEmpty(pluginVersionInDb) || pluginVersionInDb == "0.0.0.0")
+                {
+                    SetPluginVersionInDb(db, version.ToString());
+                }
+                else
+                {
+                    if (version.ToString() != pluginVersionInDb)
+                    {
+                        BackupDatabase();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Plugin.Log.Error(ex.ToString());
+            }
+        }
+
+        private static void SetPluginVersionInDb(SqliteConnection db, string version)
+        {
+            if (!DoesTableExist(db, PluginVersionTableName))
+            {
+                return;
+            }
+            try{
+                Plugin.Log.Info($"Current plugin DB version is:{version}");
+
+                string sql = $"UPDATE {PluginVersionTableName} SET Version = '{version}'";
+                int result = db.Execute(sql);
+                Plugin.Log.Info($"Set plugin db version to {version}. Result: {result}");
+            }
+            catch(Exception ex)
+            {
+                Plugin.Log.Error($"Set plugin DB version error: {ex}");
+            }
         }
     }
 }
