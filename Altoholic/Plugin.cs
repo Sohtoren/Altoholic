@@ -191,6 +191,9 @@ namespace Altoholic
             {
                 EnabledTimers =
                 [
+                    TimersStatus.MiniCacpot,
+                    TimersStatus.JumboCacpot,
+                    TimersStatus.FashionReport,
                     TimersStatus.CustomDeliveries,
                     TimersStatus.DomanEnclave,
                     TimersStatus.MaskedCarnivale,
@@ -199,6 +202,9 @@ namespace Altoholic
             };
             Configuration.EnabledTimers ??=
             [
+                TimersStatus.MiniCacpot,
+                TimersStatus.JumboCacpot,
+                TimersStatus.FashionReport,
                 TimersStatus.CustomDeliveries,
                 TimersStatus.DomanEnclave,
                 TimersStatus.MaskedCarnivale,

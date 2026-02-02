@@ -336,42 +336,50 @@ namespace Altoholic.Windows
                 if (enabledTimers.Contains(TimersStatus.FashionReport))
                 {
                     ImGui.TableNextColumn();
-                    if (currChar.Timers is
-                        {
-                            FashionReportAllowances: not null, FashionReportHighestScore: not null,
-                            FashionReportLastCheck: not null
-                        } && currChar.Timers.FashionReportLastCheck > Utils.GetFashionReportReset())
+                    if (!Utils.IsNowInTuesdayToFridayWindow())
                     {
-                        int threshold = _plugin.Configuration.FashionReportThreshold;
-
-                        if ((threshold == 0 && currChar.Timers.FashionReportAllowances <= 3) ||
-                            (threshold == 1 && currChar.Timers.FashionReportHighestScore >= 80) ||
-                            (threshold == 2 && currChar.Timers.FashionReportHighestScore == 100))
+                        if (currChar.Timers is
+                            {
+                                FashionReportAllowances: not null, FashionReportHighestScore: not null,
+                                FashionReportLastCheck: not null
+                            } && currChar.Timers.FashionReportLastCheck > Utils.GetFashionReportReset())
                         {
-                            ImGui.PushFont(UiBuilder.IconFont);
-                            ImGui.TextUnformatted($"{FontAwesomeIcon.Check.ToIconString()}");
-                            ImGui.PopFont();
+                            int threshold = _plugin.Configuration.FashionReportThreshold;
+
+                            if ((threshold == 0 && currChar.Timers.FashionReportAllowances <= 3) ||
+                                (threshold == 1 && currChar.Timers.FashionReportHighestScore >= 80) ||
+                                (threshold == 2 && currChar.Timers.FashionReportHighestScore == 100))
+                            {
+                                ImGui.PushFont(UiBuilder.IconFont);
+                                ImGui.TextUnformatted($"{FontAwesomeIcon.Check.ToIconString()}");
+                                ImGui.PopFont();
+                            }
+                            else
+                            {
+                                ImGui.TextUnformatted($"{currChar.Timers.FashionReportAllowances}/4");
+                            }
+
+                            if (ImGui.IsItemHovered())
+                            {
+                                ImGui.BeginTooltip();
+                                ImGui.TextUnformatted(
+                                    $"{Loc.Localize("LastCheck", "Last check:")} {Utils.FormatDate(dateFormat, currChar.Timers.FashionReportLastCheck.Value.ToLocalTime())}");
+                                ImGui.TextUnformatted(
+                                    $"{Loc.Localize("Attempts", "Attempts :")} {currChar.Timers.FashionReportAllowances}/4");
+                                ImGui.TextUnformatted(
+                                    $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 11237)}: {currChar.Timers.FashionReportHighestScore}");
+                                ImGui.EndTooltip();
+                            }
                         }
                         else
                         {
-                            ImGui.TextUnformatted($"{currChar.Timers.FashionReportAllowances}/4");
-                        }
-                        if (ImGui.IsItemHovered())
-                        {
-                            ImGui.BeginTooltip();
-                            ImGui.TextUnformatted($"{Loc.Localize("LastCheck", "Last check:")} {Utils.FormatDate(dateFormat, currChar.Timers.FashionReportLastCheck.Value.ToLocalTime())}");
-                            ImGui.TextUnformatted($"{Loc.Localize("Attempts", "Attempts :")} {currChar.Timers.FashionReportAllowances}/4");
-                            ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 11237)}: {currChar.Timers.FashionReportHighestScore}");
-                            ImGui.EndTooltip();
-                        }
-                    }
-                    else
-                    {
-                        if (!currChar.HasQuest((int)QuestIds.GOLD_SAUCER_FASHION_REPORT) && timerCrossMarkForNotUnlocked)
-                        {
-                            ImGui.PushFont(UiBuilder.IconFont);
-                            ImGui.TextUnformatted($"{FontAwesomeIcon.Times.ToIconString()}");
-                            ImGui.PopFont();
+                            if (!currChar.HasQuest((int)QuestIds.GOLD_SAUCER_FASHION_REPORT) &&
+                                timerCrossMarkForNotUnlocked)
+                            {
+                                ImGui.PushFont(UiBuilder.IconFont);
+                                ImGui.TextUnformatted($"{FontAwesomeIcon.Times.ToIconString()}");
+                                ImGui.PopFont();
+                            }
                         }
                     }
                 }

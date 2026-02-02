@@ -4953,6 +4953,10 @@ namespace Altoholic
             DateTime todayUtc = DateTime.Today;
             DateTime today = DateTime.SpecifyKind(todayUtc, DateTimeKind.Utc).ToLocalTime();
             int daysSinceTuesday = ((int)today.DayOfWeek - (int)DayOfWeek.Tuesday + 7) % 7;
+            if (daysSinceTuesday == 0 && todayUtc is { DayOfWeek: DayOfWeek.Tuesday, Hour: < 8 })
+            {
+                daysSinceTuesday = 7;
+            }
             DateTime lastTuesday = today.Date.AddDays(-daysSinceTuesday);
             DateTime lastTuesdayReset = lastTuesday.AddHours(8);
 
@@ -4982,11 +4986,29 @@ namespace Altoholic
             DateTime todayUtc = DateTime.Today;
             DateTime today = DateTime.SpecifyKind(todayUtc, DateTimeKind.Utc).ToLocalTime();
             int daysSinceFriday = ((int)today.DayOfWeek - (int)DayOfWeek.Friday + 7) % 7;
+            if (daysSinceFriday == 0 && todayUtc is { DayOfWeek: DayOfWeek.Friday, Hour: < 8 })
+            {
+                daysSinceFriday = 7;
+            }
             DateTime lastFriday = today.Date.AddDays(-daysSinceFriday);
             DateTime lastFridayReset = lastFriday.AddHours(8);
 
             return lastFridayReset;
         }
+
+        public static bool IsNowInTuesdayToFridayWindow()
+        {
+            DateTime utcNow = DateTime.UtcNow;
+
+            return utcNow switch
+            {
+                { DayOfWeek: DayOfWeek.Wednesday } or { DayOfWeek: DayOfWeek.Thursday }
+                    or { DayOfWeek: DayOfWeek.Tuesday, Hour: > 8 }
+                    or { DayOfWeek: DayOfWeek.Friday, Hour: < 8 } => true,
+                _ => false
+            };
+        }
+
         public static DateTime GetJumboCactpotReset(string datacenter)
         {
             DateTime todayUtc = DateTime.Today;
