@@ -3,7 +3,7 @@
 
   <PropertyGroup>
     <Authors>Sohtoren</Authors>
-    <Version>1.7.5</Version>
+    <Version>1.7.6</Version>
     <Description>Altoholic plugin</Description>
     <PackageProjectUrl>https://github.com/sohtoren/Altoholic</PackageProjectUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
