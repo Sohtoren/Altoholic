@@ -5009,18 +5009,21 @@ namespace Altoholic
 
         public static DateTime GetJumboCactpotReset(string datacenter)
         {
-            DateTime todayUtc = DateTime.Today;
-            DateTime today = DateTime.SpecifyKind(todayUtc, DateTimeKind.Utc).ToLocalTime();
-            (int dayOfWeekX, int addHours) = datacenter switch
+            DateTime now = DateTime.UtcNow;
+            (DayOfWeek dayOfWeekX, int addHours) = datacenter switch
             {
-                "Elemental" or "Gaia" or "Mana" or "Meteor" => ((int)DayOfWeek.Saturday, 12),
-                "Crystal" or "Dynamis" or "Primal" => ((int)DayOfWeek.Sunday, 2),
-                "Chaos" or "Light" => ((int)DayOfWeek.Saturday, 19),
-                "Materia" => ((int)DayOfWeek.Saturday, 9),
-                _ => ((int)DayOfWeek.Saturday, 19)
+                "Elemental" or "Gaia" or "Mana" or "Meteor" => (DayOfWeek.Saturday, 12),
+                "Crystal" or "Dynamis" or "Primal" => (DayOfWeek.Sunday, 2),
+                "Chaos" or "Light" => (DayOfWeek.Saturday, 19),
+                "Materia" => (DayOfWeek.Saturday, 9),
+                _ => (DayOfWeek.Saturday, 19)
             };
-            int daysSinceX = ((int)today.DayOfWeek - dayOfWeekX + 7) % 7;
-            DateTime lastX = today.Date.AddDays(-daysSinceX);
+            int daysSinceX = ((int)now.DayOfWeek - (int)dayOfWeekX + 7) % 7;
+            if(daysSinceX == 0 && now.DayOfWeek == dayOfWeekX && now.Hour < addHours)
+            {
+                daysSinceX = 7;
+            }
+            DateTime lastX = now.Date.AddDays(-daysSinceX);
             DateTime lastXReset = lastX.AddHours(addHours);
 
             return lastXReset;

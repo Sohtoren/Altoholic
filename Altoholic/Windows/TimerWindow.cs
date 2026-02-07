@@ -365,7 +365,7 @@ namespace Altoholic.Windows
                                 ImGui.TextUnformatted(
                                     $"{Loc.Localize("LastCheck", "Last check:")} {Utils.FormatDate(dateFormat, currChar.Timers.FashionReportLastCheck.Value.ToLocalTime())}");
                                 ImGui.TextUnformatted(
-                                    $"{Loc.Localize("Attempts", "Attempts :")} {currChar.Timers.FashionReportAllowances}/4");
+                                    $"{Loc.Localize("RemainingAttempts", "Remaining attempts :")} {currChar.Timers.FashionReportAllowances}/4");
                                 ImGui.TextUnformatted(
                                     $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 11237)}: {currChar.Timers.FashionReportHighestScore}");
                                 ImGui.EndTooltip();
