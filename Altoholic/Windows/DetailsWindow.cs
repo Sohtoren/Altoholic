@@ -12,6 +12,7 @@ using Dalamud.Interface.Windowing;
 using Dalamud.Bindings.ImGui;
 using System.Linq;
 using Microsoft.Data.Sqlite;
+using CheapLoc;
 
 namespace Altoholic.Windows
 {
@@ -376,6 +377,7 @@ namespace Altoholic.Windows
 
         private void DrawHousing(Character selectedCharacter)
         {
+            int dateFormat = _plugin.Configuration.DateFormat;
             using var charactersDetailsTableProfileTable =
                 ImRaii.Table("###CharactersDetailsTable#Profile#HousingTable", 3);
             if (!charactersDetailsTableProfileTable) return;
@@ -394,6 +396,7 @@ namespace Altoholic.Windows
                     : _globalCache.IconStorage.LoadHighResIcon(066458);
                 Utils.DrawIcon(icon, new Vector2(48, 48));
                 ImGui.TableSetColumnIndex(1);
+                ImGui.BeginGroup();
                 ImGui.TextUnformatted(
                     //$"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 8495)}: {GetHouseTerritoryString(house.TerritoryId)}" +
                     $"{GetHouseTerritoryString(house.TerritoryId, house.Division)}");
@@ -422,7 +425,16 @@ namespace Altoholic.Windows
                 }
 
                 ImGui.Separator();
-
+                ImGui.EndGroup();
+                if (house.LastCheck is not null)
+                {
+                    if (ImGui.IsItemHovered())
+                    {
+                        ImGui.BeginTooltip();
+                        ImGui.TextUnformatted($"{Loc.Localize("LastVisit", "Last visit: ")}{Utils.FormatDate(dateFormat, house.LastCheck.Value)}");
+                        ImGui.EndTooltip();
+                    }
+                }
                 ImGui.TableSetColumnIndex(2);
                 ImGui.PushFont(UiBuilder.IconFont);
                 ImGui.TextUnformatted(FontAwesomeIcon.Ban.ToIconString());

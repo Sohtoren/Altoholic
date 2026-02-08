@@ -1,4 +1,6 @@
-﻿namespace Altoholic.Models
+﻿using System;
+
+namespace Altoholic.Models
 {
     public class Housing
     {
@@ -10,5 +12,6 @@
         public byte Division { get; set; }
         public short Room { get; set; }
         public bool IsFreeCompany { get; set; }
+        public DateTime? LastCheck { get; set; }
     }
 }

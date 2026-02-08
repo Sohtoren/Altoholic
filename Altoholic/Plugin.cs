@@ -2127,6 +2127,7 @@ namespace Altoholic
                 {
                     house.Room = room;
                 }
+                house.LastCheck = DateTime.UtcNow;
             }
             else
             {
@@ -2138,7 +2139,8 @@ namespace Altoholic
                     Plot = plot,
                     Room = room,
                     MapId = mId,
-                    TerritoryId = tt
+                    TerritoryId = tt,
+                    LastCheck = DateTime.UtcNow
                 });
             }
 
