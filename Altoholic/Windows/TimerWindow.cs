@@ -113,6 +113,8 @@ namespace Altoholic.Windows
             if (chars.Count == 0) return;
             int dateFormat = _plugin.Configuration.DateFormat;
             bool timerCrossMarkForNotUnlocked = _plugin.Configuration.TimerCrossMarkForNotUnlocked;
+            List<Roulette> roulettes = _globalCache.DutyStorage.GetAllRoulettes().FindAll(r => r.ContentRouletteRoleBonus != 0);
+            HashSet<uint> trackedRoulettes = _plugin.Configuration.TrackingRoulettes;
 
             if (drawBg)
             {
@@ -120,6 +122,10 @@ namespace Altoholic.Windows
             }
 
             int columns = enabledTimers.Count;
+            if(enabledTimers.Contains(TimersStatus.Roulettes) && trackedRoulettes.Count > 0)
+            {
+                columns += trackedRoulettes.Count;
+            }
 
             using var charactersTimers = ImRaii.Table("###CharactersTimers#All", 1 + columns,
                 ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner |
@@ -203,6 +209,25 @@ namespace Altoholic.Windows
                     ImGui.CalcTextSize(societalRelations).X);
             }
 
+            if (enabledTimers.Contains(TimersStatus.Roulettes) && trackedRoulettes.Count > 0)
+            {
+                foreach (Roulette roulette in roulettes)
+                {
+                    if (!trackedRoulettes.Contains(roulette.Id)) continue;
+                    string name = (_currentLocale switch
+                    {
+                        ClientLanguage.German => roulette.GermanName.Replace("Zufallsinhalt", ""),
+                        ClientLanguage.English => roulette.EnglishName.Replace("Duty Roulette", ""),
+                        ClientLanguage.French => Utils.CapitalizeSentence(roulette.FrenchName.Replace("Mission aléatoire", "")),
+                        ClientLanguage.Japanese => roulette.JapaneseName.Replace("コンテンツルーレット", ""),
+                        _ => roulette.EnglishName.Replace("Duty Roulette", "")
+                    }).Replace(":", "").Replace("：", "").Trim().Replace(" ", "\n");
+
+                    ImGui.TableSetupColumn($"###CharactersTimers#All#Timer_Roulette_{roulette.Id}", ImGuiTableColumnFlags.WidthFixed,
+                        ImGui.CalcTextSize(name.Trim().Replace(" ", "\n")).X);
+                }
+            }
+
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
             if (enabledTimers.Contains(TimersStatus.MiniCacpot))
@@ -245,6 +270,25 @@ namespace Altoholic.Windows
             {
                 ImGui.TableNextColumn();
                 ImGui.TextUnformatted(societalRelations);
+            }
+            
+            if (enabledTimers.Contains(TimersStatus.Roulettes) && trackedRoulettes.Count > 0)
+            {
+                foreach (Roulette roulette in roulettes)
+                {
+                    if (!trackedRoulettes.Contains(roulette.Id)) continue;
+                    string name = (_currentLocale switch
+                    {
+                        ClientLanguage.German => roulette.GermanName.Replace("Zufallsinhalt", ""),
+                        ClientLanguage.English => roulette.EnglishName.Replace("Duty Roulette", ""),
+                        ClientLanguage.French => Utils.CapitalizeSentence(roulette.FrenchName.Replace("Mission aléatoire", "")),
+                        ClientLanguage.Japanese => roulette.JapaneseName.Replace("コンテンツルーレット", ""),
+                        _ => roulette.EnglishName.Replace("Duty Roulette", "")
+                    }).Replace(":", "").Replace("：", "").Trim().Replace(" ", "\n");
+
+                    ImGui.TableNextColumn();
+                    ImGui.TextUnformatted(name);
+                }
             }
 
             foreach (Character currChar in chars)
@@ -611,6 +655,43 @@ namespace Altoholic.Windows
                         ImGui.BeginTooltip();
                         ImGui.TextUnformatted($"{Loc.Localize("LastCheck", "Last check:")} {Utils.FormatDate(dateFormat, currChar.Timers.TribeLastCheck.Value.ToLocalTime())}");
                         ImGui.EndTooltip();
+                    }
+                }
+
+                if (enabledTimers.Contains(TimersStatus.Roulettes) && trackedRoulettes.Count > 0)
+                {
+                    foreach (Roulette roulette in roulettes)
+                    {
+                        if (!trackedRoulettes.Contains(roulette.Id)) continue;
+                        ImGui.TableNextColumn();
+                        if (_plugin.Configuration.DutyRouletteCompletedWhenTomestoneCap)
+                        {
+                            if (currChar.Currencies is not null)
+                            {
+                                if (currChar.Currencies.Weekly_Acquired_Tomestone == currChar.Currencies.Weekly_Limit_Tomestone)
+                                {
+                                    ImGui.PushFont(UiBuilder.IconFont);
+                                    ImGui.TextUnformatted($"{FontAwesomeIcon.Check.ToIconString()}");
+                                    ImGui.PopFont();
+                                }
+                            }
+                            continue;
+                        }
+                        DateTime lastCheck;
+                        bool charHasRoulette = currChar.CompletedRoulettes.TryGetValue(roulette.Id, out lastCheck);
+                        if (charHasRoulette && lastCheck >= Utils.GetLastDailyReset())
+                        {
+                            ImGui.PushFont(UiBuilder.IconFont);
+                            ImGui.TextUnformatted($"{FontAwesomeIcon.Check.ToIconString()}");
+                            ImGui.PopFont();
+
+                            if (ImGui.IsItemHovered())
+                            {
+                                ImGui.BeginTooltip();
+                                ImGui.TextUnformatted($"{Loc.Localize("LastCheck", "Last check:")} {Utils.FormatDate(dateFormat, lastCheck.ToLocalTime())}");
+                                ImGui.EndTooltip();
+                            }
+                        }
                     }
                 }
             }

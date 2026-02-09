@@ -199,7 +199,8 @@ namespace Altoholic
                     TimersStatus.CustomDeliveries,
                     TimersStatus.DomanEnclave,
                     TimersStatus.MaskedCarnivale,
-                    TimersStatus.Tribes
+                    TimersStatus.Tribes,
+                    TimersStatus.Roulettes
                 ]
             };
             Configuration.EnabledTimers ??=
@@ -210,7 +211,8 @@ namespace Altoholic
                 TimersStatus.CustomDeliveries,
                 TimersStatus.DomanEnclave,
                 TimersStatus.MaskedCarnivale,
-                TimersStatus.Tribes
+                TimersStatus.Tribes,
+                TimersStatus.Roulettes
             ];
             Configuration.Initialize(PluginInterface.Manifest.AssemblyVersion.Major, PluginInterface);
 

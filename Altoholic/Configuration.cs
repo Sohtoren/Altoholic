@@ -14,7 +14,8 @@ namespace Altoholic
         CustomDeliveries,
         DomanEnclave,
         MaskedCarnivale,
-        Tribes
+        Tribes,
+        Roulettes
     }
 
     [Serializable]
@@ -38,7 +39,8 @@ namespace Altoholic
         /*public float TimerStandaloneWindowPositionX { get; set; }
         public float TimerStandaloneWindowPositionY { get; set; }*/
         public int FashionReportThreshold { get; set; }
-        public int DutyRouletteCompletedWhenTomestoneCap { get; set; }
+        public bool DutyRouletteCompletedWhenTomestoneCap { get; set; }
+        public HashSet<uint> TrackingRoulettes { get; set; } = [];
 
         // the below exist just to make saving less cumbersome
         [NonSerialized]

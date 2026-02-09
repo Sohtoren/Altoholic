@@ -1,4 +1,5 @@
 ﻿using Altoholic.Cache;
+using Altoholic.Models;
 using CheapLoc;
 using Dalamud.Bindings.ImGui;
 using Dalamud.Game;
@@ -63,6 +64,19 @@ namespace Altoholic.Windows
                 if (timersTab.Success)
                 {
                     DrawTimerConfig();
+                }
+            }
+            if (_configuration.EnabledTimers is not null)
+            {
+                if (_configuration.EnabledTimers.Contains(TimersStatus.Roulettes))
+                {
+                    using (var rouletteTimersTab = ImRaii.TabItem($"{_globalCache.AddonStorage.LoadAddonString(_selectedLanguage, 16918)}###RouletteTimers"))
+                    {
+                        if (rouletteTimersTab.Success)
+                        {
+                            DrawTimerRoulettesConfig();
+                        }
+                    }
                 }
             }
             ImGui.TableSetColumnIndex(1);
@@ -196,7 +210,7 @@ namespace Altoholic.Windows
             {
                 _configuration.AutoSaveTimer = autoSaveTimer;
                 _configuration.TrySave();
-                
+
             }
             ImGui.PopItemWidth();
 
@@ -298,6 +312,12 @@ namespace Altoholic.Windows
             if (ImGui.IsItemClicked())
             {
                 Dalamud.Utility.Util.OpenLink("https://github.com/NebulousByte");
+            }
+            if (ImGui.IsItemHovered())
+            {
+                ImGui.BeginTooltip();
+                ImGui.TextUnformatted("https://github.com/NebulousByte");
+                ImGui.EndTooltip();
             }
             ImGui.TextUnformatted("Dalamud discord server");
         }
@@ -455,6 +475,21 @@ namespace Altoholic.Windows
 
                     _configuration.TrySave();
                 }
+                bool isRoulettesEnabled = _configuration.EnabledTimers.Contains(TimersStatus.Roulettes);
+                if (ImGui.Checkbox($"{_globalCache.AddonStorage.LoadAddonString(_selectedLanguage, 16918)}###Roulettes",
+                        ref isRoulettesEnabled))
+                {
+                    if (isRoulettesEnabled)
+                    {
+                        _configuration.EnabledTimers.Add(TimersStatus.Roulettes);
+                    }
+                    else
+                    {
+                        _configuration.EnabledTimers.Remove(TimersStatus.Roulettes);
+                    }
+
+                    _configuration.TrySave();
+                }
             }
 
             ImGui.Separator();
@@ -503,6 +538,49 @@ namespace Altoholic.Windows
                 _configuration.TimerStandaloneWindowPositionY = iconPosY;
                 _configuration.TrySave();
             }*/
+        }
+
+        private void DrawTimerRoulettesConfig()
+        {
+            ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(_selectedLanguage, 102580)}");
+
+            bool dutyRouletteCompletedWhenTomestoneCap = _configuration.DutyRouletteCompletedWhenTomestoneCap;
+            if (ImGui.Checkbox($"{Loc.Localize("DutyRouletteCompletedWhenTomestoneCap", "Show roulette as completed if character has reached the weekly tomestone cap")}###DutyRouletteCompletedWhenTomestoneCap",
+                    ref dutyRouletteCompletedWhenTomestoneCap))
+            {
+                _configuration.DutyRouletteCompletedWhenTomestoneCap = dutyRouletteCompletedWhenTomestoneCap;
+                _configuration.TrySave();
+            }
+            ImGui.Separator();
+            foreach (Roulette roulette in _globalCache.DutyStorage.GetAllRoulettes())
+            {
+                if (roulette.ContentRouletteRoleBonus is 0) continue;
+                bool isInTrackedList = _configuration.TrackingRoulettes.Contains(roulette.Id);
+                string name = _selectedLanguage switch
+                {
+                    ClientLanguage.German => roulette.GermanName,
+                    ClientLanguage.English => roulette.EnglishName,
+                    ClientLanguage.French => roulette.FrenchName,
+                    ClientLanguage.Japanese => roulette.JapaneseName,
+                    _ => roulette.EnglishName
+                };
+
+                if (ImGui.Checkbox(
+                        $"{name}###Timers#Roulette#{roulette.Id}",
+                        ref isInTrackedList))
+                {
+                    if (isInTrackedList)
+                    {
+                        _configuration.TrackingRoulettes.Add(roulette.Id);
+                    }
+                    else
+                    {
+                        _configuration.TrackingRoulettes.Remove(roulette.Id);
+                    }
+
+                    _configuration.TrySave();
+                }
+            }
         }
     }
 }
