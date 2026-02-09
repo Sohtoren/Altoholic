@@ -43,9 +43,11 @@ using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Runtime.InteropServices;
+using static FFXIVClientStructs.FFXIV.Client.Game.UI.InstanceContent;
 using static FFXIVClientStructs.FFXIV.Client.UI.Misc.RaptureGearsetModule;
 using static FFXIVClientStructs.FFXIV.Client.UI.RaptureAtkModule;
 using Character = Altoholic.Models.Character;
+using InstanceContent = FFXIVClientStructs.FFXIV.Client.Game.UI.InstanceContent;
 using PvPProfile = Altoholic.Models.PvPProfile;
 
 namespace Altoholic
@@ -2262,6 +2264,20 @@ namespace Altoholic
                 else
                 {
                     Log.Debug($"Duty {i.Id}:{i.EnglishName} not completed");
+                }
+
+                GetRoulette();
+            }
+        }
+
+        private unsafe void GetRoulette()
+        {
+            _localPlayer.CompletedRoulettes.Clear();
+            foreach (Roulette r in _globalCache.DutyStorage.GetAllRoulettes())
+            {
+                if (InstanceContent.Instance()->IsRouletteComplete((byte)r.Id))
+                {
+                    _localPlayer.CompletedRoulettes.Add(r.Id, DateTime.UtcNow);
                 }
             }
         }

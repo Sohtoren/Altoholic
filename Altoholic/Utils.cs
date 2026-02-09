@@ -3904,6 +3904,14 @@ namespace Altoholic
         {
             return UIState.IsInstanceContentUnlocked(dutyId);
         }
+        public static bool IsPublicContentCompleted(uint dutyId)
+        {
+            return UIState.IsPublicContentCompleted(dutyId);
+        }
+        public static bool IsPublicContentUnlocked(uint dutyId)
+        {
+            return UIState.IsPublicContentUnlocked(dutyId);
+        }
 
         public static Models.Quest? GetQuest(uint id)
         {
@@ -4042,6 +4050,108 @@ namespace Altoholic
                 { ContentTypeId: 5, ContentMemberType: 4 } => DutyType.Alliance,
                 _ => DutyType.Unknown,
             };
+        }
+
+        public static Roulette GetRoulette(uint id)
+        {
+            Roulette r = new();
+            List<ClientLanguage> langs =
+                [ClientLanguage.German, ClientLanguage.English, ClientLanguage.French, ClientLanguage.Japanese];
+            foreach (ClientLanguage l in langs)
+            {
+                ExcelSheet<Lumina.Excel.Sheets.ContentRoulette>? cr =
+                    Plugin.DataManager.GetExcelSheet<Lumina.Excel.Sheets.ContentRoulette>(l);
+                Lumina.Excel.Sheets.ContentRoulette? roulette = cr?.GetRow(id);
+                if (roulette == null) continue;
+                if (roulette.Value.Name.IsEmpty) continue;
+
+                switch (l)
+                {
+                    case ClientLanguage.German:
+                        {
+                            r.GermanName = roulette.Value.Name.ExtractText();
+                            r.GermanDescription = roulette.Value.Description.ExtractText() ?? string.Empty;
+                            break;
+                        }
+                    case ClientLanguage.English:
+                        {
+                            r.Id = roulette.Value.RowId;
+                            r.EnglishName = roulette.Value.Name.ExtractText();
+                            r.EnglishDescription = roulette.Value.Description.ExtractText() ?? string.Empty;
+                            r.Category = roulette.Value.Category.ExtractText() ?? string.Empty;
+                            r.DutyType = roulette.Value.DutyType.ExtractText() ?? string.Empty;
+                            r.Icon = roulette.Value.Image;
+                            r.ItemLevelRequired = roulette.Value.ItemLevelRequired;
+                            r.ItemLevelSync = roulette.Value.ItemLevelSync;
+                            r.RewardTomeA = roulette.Value.RewardTomeA;
+                            r.RewardTomeB = roulette.Value.RewardTomeB;
+                            r.RewardTomeC = roulette.Value.RewardTomeC;
+                            r.InstanceContent = roulette.Value.ContentType.ValueNullable?.RowId;
+                            r.RequiredExVersion = roulette.Value.RequiredExVersion.ValueNullable?.RowId;
+                            r.OpenRule = roulette.Value.OpenRule.RowId;
+                            r.RequiredLevel = roulette.Value.RequiredLevel;
+                            r.SyncedFromLevel = roulette.Value.SyncedFromLevel;
+                            r.ContentRouletteRoleBonus = roulette.Value.ContentRouletteRoleBonus.RowId;
+                            r.SortKey = roulette.Value.SortKey;
+                            r.ClassJobCategory = roulette.Value.ClassJobCategory.RowId;
+                            r.ContentMemberType = roulette.Value.ContentMemberType.RowId;
+                            r.QueueMaxPlayers = roulette.Value.QueueMaxPlayers;
+                            r.ContentType = roulette.Value.ContentType.ValueNullable?.RowId;
+                            r.TimeLimit = roulette.Value.TimeLimit;
+                            r.TimeLimitMax = roulette.Value.TimeLimitMax;
+                            r.LootModeType = roulette.Value.LootModeType.ValueNullable?.RowId;
+                            r.PenaltyTimestampArrayIndex = roulette.Value.PenaltyTimestampArrayIndex;
+                            r.CompletionArrayIndex = roulette.Value.CompletionArrayIndex;
+                            r.IsGoldSaucer = roulette.Value.IsGoldSaucer;
+                            r.IsInDutyFinder = roulette.Value.IsInDutyFinder;
+                            r.IsPvP = roulette.Value.IsPvP;
+                            r.AppliesHighestAverageDutyItemLevel = roulette.Value.AppliesHighestAverageDutyItemLevel;
+                            r.AllowConsumableItems = roulette.Value.AllowConsumableItems;
+                            r.AllowPhoenixDown = roulette.Value.AllowPhoenixDown;
+                            r.AllowReplacement = roulette.Value.AllowReplacement;
+                            r.RatedMatch = roulette.Value.RatedMatch;
+                            r.Rated = roulette.Value.Rated;
+                            r.IsRegistrationAllowedFromAnyDataCenter = roulette.Value.IsRegistrationAllowedFromAnyDataCenter;
+
+                            break;
+                        }
+                    case ClientLanguage.French:
+                        {
+                            r.FrenchName = roulette.Value.Name.ExtractText();
+                            r.FrenchDescription = roulette.Value.Description.ExtractText() ?? string.Empty;
+                            break;
+                        }
+                    case ClientLanguage.Japanese:
+                        {
+                            r.JapaneseName = roulette.Value.Name.ExtractText();
+                            r.JapaneseDescription = roulette.Value.Description.ExtractText() ?? string.Empty;
+                            break;
+                        }
+                }
+            }
+
+            return r;
+        }
+
+        public static List<Roulette>? GetRouletteList()
+        {
+            List<Roulette> returnedRoulettes = [];
+
+            ExcelSheet<Lumina.Excel.Sheets.ContentRoulette>? dor =
+                Plugin.DataManager.GetExcelSheet<Lumina.Excel.Sheets.ContentRoulette>(ClientLanguage.English);
+            using IEnumerator<Lumina.Excel.Sheets.ContentRoulette>? roulettes = dor?.GetEnumerator();
+            if (roulettes is null) return null;
+            while (roulettes.MoveNext())
+            {
+                Lumina.Excel.Sheets.ContentRoulette contentRoulette = roulettes.Current;
+                if (contentRoulette.Name.IsEmpty) continue;
+
+                Roulette? r = GetRoulette(contentRoulette.RowId);
+                if (r == null) continue;
+                returnedRoulettes.Add(r);
+            }
+
+            return returnedRoulettes;
         }
 
         public static List<List<bool>> GetCharactersMainScenarioQuests(List<Character> characters)

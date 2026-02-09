@@ -1,4 +1,5 @@
 ﻿using Altoholic.Models;
+using Lumina.Excel.Sheets;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,6 +9,7 @@ namespace Altoholic.Cache
     public class DutyStorage(int size = 120) : IDisposable
     {
         private readonly Dictionary<uint, Duty> _duties = new(size);
+        private readonly Dictionary<uint, Roulette> _roulettes = new(size);
 
         public void Init(GlobalCache globalCache)
         {
@@ -25,6 +27,22 @@ namespace Altoholic.Cache
                 }
 
                 _duties.Add(d.Id, d);
+            }
+
+            List<Roulette>? roulettes = Utils.GetRouletteList();
+            if (roulettes == null || roulettes.Count == 0)
+            {
+                return;
+            }
+
+            foreach (Roulette r in roulettes)
+            {
+                if (r.Icon != 0)
+                {
+                    globalCache.IconStorage.LoadIcon(r.Icon);
+                }
+
+                _roulettes.Add(r.Id, r);
             }
         }
 
@@ -55,9 +73,14 @@ namespace Altoholic.Cache
         {
             return _duties.Values.ToList();
         }
+        public List<Roulette> GetAllRoulettes()
+        {
+            return _roulettes.Values.ToList();
+        }
         public void Dispose()
         {
             _duties.Clear();
+            _roulettes.Clear();
         }
 
         public Duty? GetFromTerritory(ushort e)

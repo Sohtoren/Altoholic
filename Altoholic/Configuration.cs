@@ -38,6 +38,7 @@ namespace Altoholic
         /*public float TimerStandaloneWindowPositionX { get; set; }
         public float TimerStandaloneWindowPositionY { get; set; }*/
         public int FashionReportThreshold { get; set; }
+        public int DutyRouletteCompletedWhenTomestoneCap { get; set; }
 
         // the below exist just to make saving less cumbersome
         [NonSerialized]
