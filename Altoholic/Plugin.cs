@@ -2635,11 +2635,6 @@ namespace Altoholic
             _localPlayer.Timers.DomanEnclaveLastCheck = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc);
 
             //Log.Debug($"{_localPlayer.Timers.DomanEnclaveWeeklyDonation}/{_localPlayer.Timers.DomanEnclaveWeeklyAllowances}");
-            if (lastAllowance != _localPlayer.Timers.DomanEnclaveWeeklyAllowances ||
-                lastDonation != _localPlayer.Timers.DomanEnclaveWeeklyAllowances)
-            {
-                UpdateCharacter();
-            }
         }
 
         private void ResetCommand(string arg)
@@ -3013,4 +3008,5 @@ namespace Altoholic
         }
     }
 }
+
 
