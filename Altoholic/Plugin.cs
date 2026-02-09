@@ -2884,8 +2884,15 @@ namespace Altoholic
         private unsafe void OnFrameworkEvent(EventFramework* thisPtr, GameObject* gameObject, EventId eventId, short scene, ulong sceneFlags, uint* sceneData, byte sceneDataCount)
         {
             _frameworkEventHook!.Original(thisPtr, gameObject, eventId, scene, sceneFlags, sceneData, sceneDataCount);
+            try
+            {
+                OnNpcInteraction(thisPtr, gameObject, eventId, scene, sceneFlags, sceneData, sceneDataCount);
+            }
+            catch (Exception e)
+            {
+                Log.Error($"OnFrameworkEvent OnNpcInteraction error: {e.Message}");
+            }
 
-            OnNpcInteraction(thisPtr, gameObject, eventId, scene, sceneFlags, sceneData, sceneDataCount);
         }
 
         private unsafe void OnNpcInteraction(EventFramework* thisPtr, GameObject* gameObject, EventId eventId, short scene, ulong sceneFlags, uint* sceneData, byte sceneDataCount)
