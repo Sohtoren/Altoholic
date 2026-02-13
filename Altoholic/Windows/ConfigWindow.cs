@@ -42,6 +42,8 @@ namespace Altoholic.Windows
 
         public override void Draw()
         {
+            _selectedLanguage = _configuration.Language;
+            _plugin.ChangeLanguage(_selectedLanguage);
             using var table = ImRaii.Table("###ConfigTable", 2, ImGuiTableFlags.ScrollY);
             if (!table) return;
 
@@ -85,7 +87,6 @@ namespace Altoholic.Windows
 
         private void DrawConfig()
         {
-            _selectedLanguage = _configuration.Language;
             ImGui.SetNextItemWidth(200);
             using (var langCombo =
                    ImRaii.Combo($"{_globalCache.AddonStorage.LoadAddonString(_selectedLanguage, 338)}###LangCombo",
@@ -324,7 +325,6 @@ namespace Altoholic.Windows
 
         private void DrawTimerConfig()
         {
-            _selectedLanguage = _configuration.Language;
             ImGui.TextUnformatted(Loc.Localize("ConfigEnabledTimer", "Enabled Timers"));
 
             if (_configuration.EnabledTimers is not null)
@@ -554,8 +554,9 @@ namespace Altoholic.Windows
             ImGui.Separator();
             foreach (Roulette roulette in _globalCache.DutyStorage.GetAllRoulettes())
             {
-                if (roulette.ContentRouletteRoleBonus is 0) continue;
+                if(roulette.ContentType is not 1) continue;
                 bool isInTrackedList = _configuration.TrackingRoulettes.Contains(roulette.Id);
+                Plugin.Log.Debug($"_selectedLanguage:{_selectedLanguage}");
                 string name = _selectedLanguage switch
                 {
                     ClientLanguage.German => roulette.GermanName,

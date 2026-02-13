@@ -113,7 +113,7 @@ namespace Altoholic.Windows
             if (chars.Count == 0) return;
             int dateFormat = _plugin.Configuration.DateFormat;
             bool timerCrossMarkForNotUnlocked = _plugin.Configuration.TimerCrossMarkForNotUnlocked;
-            List<Roulette> roulettes = _globalCache.DutyStorage.GetAllRoulettes().FindAll(r => r.ContentRouletteRoleBonus != 0);
+            List<Roulette> roulettes = _globalCache.DutyStorage.GetAllRoulettes().FindAll(r => r.ContentType == 1);
             HashSet<uint> trackedRoulettes = _plugin.Configuration.TrackingRoulettes;
 
             if (drawBg)
@@ -216,11 +216,11 @@ namespace Altoholic.Windows
                     if (!trackedRoulettes.Contains(roulette.Id)) continue;
                     string name = (_currentLocale switch
                     {
-                        ClientLanguage.German => roulette.GermanName.Replace("Zufallsinhalt", ""),
-                        ClientLanguage.English => roulette.EnglishName.Replace("Duty Roulette", ""),
-                        ClientLanguage.French => Utils.CapitalizeSentence(roulette.FrenchName.Replace("Mission aléatoire", "")),
-                        ClientLanguage.Japanese => roulette.JapaneseName.Replace("コンテンツルーレット", ""),
-                        _ => roulette.EnglishName.Replace("Duty Roulette", "")
+                        ClientLanguage.German => roulette.GermanName.Replace("Zufallsinhalt", "").Replace("Tagesherausforderung", ""),
+                        ClientLanguage.English => roulette.EnglishName.Replace("Duty Roulette", "").Replace("Daily Challenge", ""),
+                        ClientLanguage.French => Utils.CapitalizeSentence(roulette.FrenchName.Replace("Mission aléatoire", "").Replace("Challenge quotidien","")),
+                        ClientLanguage.Japanese => roulette.JapaneseName.Replace("コンテンツルーレット", "").Replace("デイリーチャレンジ", ""),
+                        _ => roulette.EnglishName.Replace("Duty Roulette", "").Replace("Daily Challenge", "")
                     }).Replace(":", "").Replace("：", "").Trim().Replace(" ", "\n");
 
                     ImGui.TableSetupColumn($"###CharactersTimers#All#Timer_Roulette_{roulette.Id}", ImGuiTableColumnFlags.WidthFixed,
@@ -279,11 +279,11 @@ namespace Altoholic.Windows
                     if (!trackedRoulettes.Contains(roulette.Id)) continue;
                     string name = (_currentLocale switch
                     {
-                        ClientLanguage.German => roulette.GermanName.Replace("Zufallsinhalt", ""),
-                        ClientLanguage.English => roulette.EnglishName.Replace("Duty Roulette", ""),
-                        ClientLanguage.French => Utils.CapitalizeSentence(roulette.FrenchName.Replace("Mission aléatoire", "")),
-                        ClientLanguage.Japanese => roulette.JapaneseName.Replace("コンテンツルーレット", ""),
-                        _ => roulette.EnglishName.Replace("Duty Roulette", "")
+                        ClientLanguage.German => roulette.GermanName.Replace("Zufallsinhalt", "").Replace("Tagesherausforderung", ""),
+                        ClientLanguage.English => roulette.EnglishName.Replace("Duty Roulette", "").Replace("Daily Challenge", ""),
+                        ClientLanguage.French => Utils.CapitalizeSentence(roulette.FrenchName.Replace("Mission aléatoire", "").Replace("Challenge quotidien", "")),
+                        ClientLanguage.Japanese => roulette.JapaneseName.Replace("コンテンツルーレット", "").Replace("デイリーチャレンジ", ""),
+                        _ => roulette.EnglishName.Replace("Duty Roulette", "").Replace("Daily Challenge", "")
                     }).Replace(":", "").Replace("：", "").Trim().Replace(" ", "\n");
 
                     ImGui.TableNextColumn();

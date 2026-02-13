@@ -377,8 +377,8 @@ namespace Altoholic.Windows
             using (ImRaii.IEndObject blacklist = ImRaii.PopupModal($"###BLModal_{character.CharacterId}"))
             {
                 if (!blacklist) return;
-                ImGui.TextUnformatted("Are you sure you want to blacklist this character?");
-                ImGui.TextUnformatted("This will prevent this character to be added in the future");
+                ImGui.TextUnformatted($"{Loc.Localize("BlacklistingConfirm","Are you sure you want to blacklist this character?")}");
+                ImGui.TextUnformatted($"{Loc.Localize("BlacklistingMessage", "This will delete this character and prevent it from being added in the future")}");
                 ImGui.Separator();
 
                 if (ImGui.Button("OK", new Vector2(120, 0)))
