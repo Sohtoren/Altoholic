@@ -556,7 +556,6 @@ namespace Altoholic.Windows
             {
                 if(roulette.ContentType is not 1) continue;
                 bool isInTrackedList = _configuration.TrackingRoulettes.Contains(roulette.Id);
-                Plugin.Log.Debug($"_selectedLanguage:{_selectedLanguage}");
                 string name = _selectedLanguage switch
                 {
                     ClientLanguage.German => roulette.GermanName,
