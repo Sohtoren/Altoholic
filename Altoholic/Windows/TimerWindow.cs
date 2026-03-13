@@ -115,6 +115,7 @@ namespace Altoholic.Windows
             bool timerCrossMarkForNotUnlocked = _plugin.Configuration.TimerCrossMarkForNotUnlocked;
             List<Roulette> roulettes = _globalCache.DutyStorage.GetAllRoulettes().FindAll(r => r.ContentType == 1);
             HashSet<uint> trackedRoulettes = _plugin.Configuration.TrackingRoulettes;
+            HashSet<uint> trackedNormalRaids = _plugin.Configuration.TrackingNormalRaids;
 
             if (drawBg)
             {
@@ -124,7 +125,13 @@ namespace Altoholic.Windows
             int columns = enabledTimers.Count;
             if(enabledTimers.Contains(TimersStatus.Roulettes) && trackedRoulettes.Count > 0)
             {
+                columns -= 1;
                 columns += trackedRoulettes.Count;
+            }
+            if(enabledTimers.Contains(TimersStatus.NormalRaids) && trackedNormalRaids.Count > 0)
+            {
+                columns -= 1;
+                columns += trackedNormalRaids.Count;
             }
 
             using var charactersTimers = ImRaii.Table("###CharactersTimers#All", 1 + columns,
@@ -224,7 +231,27 @@ namespace Altoholic.Windows
                     }).Replace(":", "").Replace("：", "").Trim().Replace(" ", "\n");
 
                     ImGui.TableSetupColumn($"###CharactersTimers#All#Timer_Roulette_{roulette.Id}", ImGuiTableColumnFlags.WidthFixed,
-                        ImGui.CalcTextSize(name.Trim().Replace(" ", "\n")).X);
+                        ImGui.CalcTextSize(name).X);
+                }
+            }
+            if (enabledTimers.Contains(TimersStatus.NormalRaids) && trackedNormalRaids.Count > 0)
+            {
+                foreach (uint id in _globalCache.DutyStorage.RewardsNormalRaidId)
+                {
+                    if (!trackedNormalRaids.Contains(id)) continue;
+                    Duty? duty = _globalCache.DutyStorage.LoadDuty(id);
+                    if (duty == null) continue;
+                    string name = (_currentLocale switch
+                    {
+                        ClientLanguage.German => duty.GermanName,
+                        ClientLanguage.English => duty.EnglishName,
+                        ClientLanguage.French => duty.FrenchName,
+                        ClientLanguage.Japanese => duty.JapaneseName,
+                        _ => duty.EnglishName
+                    }).Replace(":", "").Replace("：", "").Trim().ReplaceFirst(" ", "\n");
+
+                    ImGui.TableSetupColumn($"###CharactersTimers#All#Timer_NormalRaid_{duty.Id}", ImGuiTableColumnFlags.WidthFixed,
+                        ImGui.CalcTextSize(name).X);
                 }
             }
 
@@ -285,6 +312,26 @@ namespace Altoholic.Windows
                         ClientLanguage.Japanese => roulette.JapaneseName.Replace("コンテンツルーレット", "").Replace("デイリーチャレンジ", ""),
                         _ => roulette.EnglishName.Replace("Duty Roulette", "").Replace("Daily Challenge", "")
                     }).Replace(":", "").Replace("：", "").Trim().Replace(" ", "\n");
+
+                    ImGui.TableNextColumn();
+                    ImGui.TextUnformatted(name);
+                }
+            }
+            if (enabledTimers.Contains(TimersStatus.NormalRaids) && trackedNormalRaids.Count > 0)
+            {
+                foreach (uint id in _globalCache.DutyStorage.RewardsNormalRaidId)
+                {
+                    if (!trackedNormalRaids.Contains(id)) continue;
+                    Duty? duty = _globalCache.DutyStorage.LoadDuty(id);
+                    if (duty == null) continue;
+                    string name = (_currentLocale switch
+                    {
+                        ClientLanguage.German => duty.GermanName,
+                        ClientLanguage.English => duty.EnglishName,
+                        ClientLanguage.French => duty.FrenchName,
+                        ClientLanguage.Japanese => duty.JapaneseName,
+                        _ => duty.EnglishName
+                    }).Replace(":", "").Replace("：", "").Trim().ReplaceFirst(" ", "\n");
 
                     ImGui.TableNextColumn();
                     ImGui.TextUnformatted(name);
@@ -694,7 +741,49 @@ namespace Altoholic.Windows
                         }
                     }
                 }
+                if (enabledTimers.Contains(TimersStatus.NormalRaids))
+                {
+                    foreach (uint id in _globalCache.DutyStorage.RewardsNormalRaidId)
+                    {
+                        if (!trackedNormalRaids.Contains(id)) continue;
+                        ImGui.TableNextColumn();
+                        RaidReward? reward;
+                        bool charHasRaidRewards = currChar.NormalRaidRewards.TryGetValue(id, out reward);
+                        if (reward is null) continue;
+
+                        if (charHasRaidRewards && reward.Reward > 0 && reward.LastCheck >= Utils.GetLastWeeklyReset())
+                        {
+                            ImGui.PushFont(UiBuilder.IconFont);
+                            if (id == _globalCache.DutyStorage.RewardsNormalRaidId.Last())
+                            {
+                                if (_plugin.Configuration.DoubleLastNormalRaidRewards)
+                                {
+                                    ImGui.TextUnformatted($"{FontAwesomeIcon.Check.ToIconString()}");
+                                }
+                                else
+                                {
+                                    ImGui.TextUnformatted($"{FontAwesomeIcon.Circle.ToIconString()}");
+                                }
+                            }
+                            else
+                            {
+                                ImGui.TextUnformatted($"{FontAwesomeIcon.Check.ToIconString()}");
+                            }
+                            ImGui.PopFont();
+
+                            if (ImGui.IsItemHovered())
+                            {
+                                ImGui.BeginTooltip();
+                                if (id == _globalCache.DutyStorage.RewardsNormalRaidId.Last()) ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 102588)} ({reward.Reward}/2)");
+                                ImGui.TextUnformatted($"{Loc.Localize("LastCheck", "Last check:")} {Utils.FormatDate(dateFormat, reward.LastCheck.ToLocalTime())}");
+                                ImGui.EndTooltip();
+                            }
+                        }
+                    }
+                }
             }
+
+
 
             //Todo: Add weekly raid for current tier
             if (drawBg)

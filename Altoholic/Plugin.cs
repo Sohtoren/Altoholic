@@ -200,7 +200,8 @@ namespace Altoholic
                     TimersStatus.DomanEnclave,
                     TimersStatus.MaskedCarnivale,
                     TimersStatus.Tribes,
-                    TimersStatus.Roulettes
+                    TimersStatus.Roulettes,
+                    TimersStatus.NormalRaids
                 ]
             };
             Configuration.EnabledTimers ??=
@@ -212,7 +213,8 @@ namespace Altoholic
                 TimersStatus.DomanEnclave,
                 TimersStatus.MaskedCarnivale,
                 TimersStatus.Tribes,
-                TimersStatus.Roulettes
+                TimersStatus.Roulettes,
+                TimersStatus.NormalRaids
             ];
             Configuration.Initialize(PluginInterface.Manifest.AssemblyVersion.Major, PluginInterface);
 
@@ -904,6 +906,7 @@ namespace Altoholic
             GetPlayerAllowances();
             GetPlayerGearSets();
             GetPlayerGlamourPlates();
+            GetRaidsRewards();
 
             if (_autoSaveWatch.Elapsed.Minutes >= 1 && _autoSaveWatch.Elapsed.Minutes <= Configuration.AutoSaveTimer && _autoSaveWatch.Elapsed.Seconds == 0)
             {
@@ -916,6 +919,32 @@ namespace Altoholic
 
             UpdateCharacter();
             _autoSaveWatch.Restart();
+        }
+
+        private unsafe void GetRaidsRewards()
+        {
+            if (Configuration.EnabledTimers is not null)
+            {
+                if (Configuration.EnabledTimers.Contains(TimersStatus.NormalRaids))
+                {
+                    var agent = AgentContentsFinder.Instance();
+                    if (agent is not null && agent->IsAgentActive())
+                    {
+                        var selectedDuty = agent->SelectedDuty.Id;
+                        var numRewards = agent->NumCollectedRewards;
+                        //Log.Debug($"GetRaidsRewards: {selectedDuty}, {numRewards}");
+                        if (_localPlayer.NormalRaidRewards.TryGetValue(selectedDuty, out var reward))
+                        {
+                            _localPlayer.NormalRaidRewards[selectedDuty].Reward = numRewards;
+                            _localPlayer.NormalRaidRewards[selectedDuty].LastCheck = DateTime.UtcNow;
+                        }
+                        else
+                        {
+                            _localPlayer.NormalRaidRewards.Add(selectedDuty, new() { Reward = numRewards, LastCheck = DateTime.UtcNow });
+                        }
+                    }
+                }
+            }
         }
 
         private unsafe void GetPlayerGearSets()
@@ -2573,7 +2602,9 @@ namespace Altoholic
                 Timers = _localPlayer.Timers,
                 CurrentGearSet = _localPlayer.CurrentGearSet,
                 GearSets = _localPlayer.GearSets,
-                GlamourPlates = _localPlayer.GlamourPlates
+                GlamourPlates = _localPlayer.GlamourPlates,
+                CompletedRoulettes = _localPlayer.CompletedRoulettes,
+                NormalRaidRewards = _localPlayer.NormalRaidRewards
             };
 
         }

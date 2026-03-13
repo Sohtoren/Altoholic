@@ -4,6 +4,7 @@ using Microsoft.Data.Sqlite;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 
@@ -156,6 +157,7 @@ namespace Altoholic.Database
                                                     GearSets TEXT,
                                                     GlamourPlates TEXT,
                                                     CompletedRoulettes TEXT
+                                                    NormalRaidRewards TEXT
                                                 );
                                     """;
                 int result = db.Execute(sql);
@@ -377,6 +379,14 @@ namespace Altoholic.Database
                     int result32 = db.Execute(sql32);
                     Plugin.Log.Debug(
                         $"ALTER TABLE {CharacterTableName} ADD COLUMN CompletedRoulettes TEXT result: {result32}");
+                }
+                if (!DoesColumnExist(db, CharacterTableName, "NormalRaidRewards"))
+                {
+                    Plugin.Log.Debug($"Column {CharacterTableName}.NormalRaidRewards does not exist");
+                    const string sql33 = $"ALTER TABLE {CharacterTableName} ADD COLUMN NormalRaidRewards TEXT";
+                    int result33 = db.Execute(sql33);
+                    Plugin.Log.Debug(
+                        $"ALTER TABLE {CharacterTableName} ADD COLUMN NormalRaidRewards TEXT result: {result33}");
                 }
             }
 
@@ -693,7 +703,7 @@ namespace Altoholic.Database
             try
             {
                 const string updateSql =
-                    $"UPDATE {CharacterTableName} SET [FirstName] = @FirstName, [LastName] = @LastName, [HomeWorld] = @HomeWorld, [Datacenter] = @Datacenter, [Region] = @Region, [IsSprout] = @IsSprout, [IsBattleMentor] = @IsBattleMentor, [IsTradeMentor] = @IsTradeMentor, [IsReturner] = @IsReturner, [LastJob] = @LastJob, [LastJobLevel] = @LastJobLevel, [FCTag] = @FCTag, [FreeCompany] = @FreeCompany, [LastOnline] = @LastOnline, [PlayTime] = @PlayTime, [LastPlayTimeUpdate] = @LastPlayTimeUpdate, [HasPremiumSaddlebag] = @HasPremiumSaddlebag, [PlayerCommendations] = @PlayerCommendations, [CurrentFacewear] = @CurrentFacewear, [CurrentOrnament] = @CurrentOrnament, [UnreadLetters] = @UnreadLetters, [IslandSanctuaryUnlocked] = @IslandSanctuaryUnlocked, [IslandSanctuaryLevel] = @IslandSanctuaryLevel, [Attributes] = @Attributes, [Currencies] = @Currencies, [Jobs] = @Jobs, [Profile] = @Profile, [Quests] = @Quests, [Inventory] = @Inventory, [ArmoryInventory] = @ArmoryInventory, [Saddle] = @Saddle, [Gear] = @Gear, [Retainers] = @Retainers, [BlacklistedRetainers] = @BlacklistedRetainers, [Minions] = @Minions, [Mounts] = @Mounts, [TripleTriadCards] = @TripleTriadCards, [Emotes] = @Emotes, [Bardings] = @Bardings, [FramerKits] = @FramerKits, [OrchestrionRolls] = @OrchestrionRolls, [Ornaments] = @Ornaments, [Glasses] = @Glasses, [BeastReputations] = @BeastReputations, [Duties] = @Duties, [DutiesUnlocked] = @DutiesUnlocked, [Houses] = @Houses, [Hairstyles] = @Hairstyles, [Facepaints] = @Facepaints, [SecretRecipeBooks] = @SecretRecipeBooks, [Vistas] = @Vistas, [SightseeingLogUnlockState] = @SightseeingLogUnlockState, [SightseeingLogUnlockStateEx] = @SightseeingLogUnlockStateEx, [Armoire] = @Armoire, [GlamourDresser] = @GlamourDresser, [PvPProfile] = @PvPProfile, [Timers] = @Timers, [CurrentGearSet] = @CurrentGearSet, [GearSets] = @GearSets, [GlamourPlates] = @GlamourPlates, [CompletedRoulettes] = @CompletedRoulettes WHERE [CharacterId] = @CharacterId";
+                    $"UPDATE {CharacterTableName} SET [FirstName] = @FirstName, [LastName] = @LastName, [HomeWorld] = @HomeWorld, [Datacenter] = @Datacenter, [Region] = @Region, [IsSprout] = @IsSprout, [IsBattleMentor] = @IsBattleMentor, [IsTradeMentor] = @IsTradeMentor, [IsReturner] = @IsReturner, [LastJob] = @LastJob, [LastJobLevel] = @LastJobLevel, [FCTag] = @FCTag, [FreeCompany] = @FreeCompany, [LastOnline] = @LastOnline, [PlayTime] = @PlayTime, [LastPlayTimeUpdate] = @LastPlayTimeUpdate, [HasPremiumSaddlebag] = @HasPremiumSaddlebag, [PlayerCommendations] = @PlayerCommendations, [CurrentFacewear] = @CurrentFacewear, [CurrentOrnament] = @CurrentOrnament, [UnreadLetters] = @UnreadLetters, [IslandSanctuaryUnlocked] = @IslandSanctuaryUnlocked, [IslandSanctuaryLevel] = @IslandSanctuaryLevel, [Attributes] = @Attributes, [Currencies] = @Currencies, [Jobs] = @Jobs, [Profile] = @Profile, [Quests] = @Quests, [Inventory] = @Inventory, [ArmoryInventory] = @ArmoryInventory, [Saddle] = @Saddle, [Gear] = @Gear, [Retainers] = @Retainers, [BlacklistedRetainers] = @BlacklistedRetainers, [Minions] = @Minions, [Mounts] = @Mounts, [TripleTriadCards] = @TripleTriadCards, [Emotes] = @Emotes, [Bardings] = @Bardings, [FramerKits] = @FramerKits, [OrchestrionRolls] = @OrchestrionRolls, [Ornaments] = @Ornaments, [Glasses] = @Glasses, [BeastReputations] = @BeastReputations, [Duties] = @Duties, [DutiesUnlocked] = @DutiesUnlocked, [Houses] = @Houses, [Hairstyles] = @Hairstyles, [Facepaints] = @Facepaints, [SecretRecipeBooks] = @SecretRecipeBooks, [Vistas] = @Vistas, [SightseeingLogUnlockState] = @SightseeingLogUnlockState, [SightseeingLogUnlockStateEx] = @SightseeingLogUnlockStateEx, [Armoire] = @Armoire, [GlamourDresser] = @GlamourDresser, [PvPProfile] = @PvPProfile, [Timers] = @Timers, [CurrentGearSet] = @CurrentGearSet, [GearSets] = @GearSets, [GlamourPlates] = @GlamourPlates, [CompletedRoulettes] = @CompletedRoulettes, [NormalRaidRewards] = @NormalRaidRewards WHERE [CharacterId] = @CharacterId";
                 int result = db.Execute(updateSql, FormatCharacterForDatabase(character));
                 return result;
             }
@@ -909,6 +919,10 @@ namespace Altoholic.Database
                 ? []
                 : System.Text.Json.JsonSerializer.Deserialize<Dictionary<uint, DateTime>>(databaseCharacter.CompletedRoulettes) ?? [];
             Plugin.Log.Debug("CompletedRoulettes deserialized");
+            Dictionary<uint, RaidReward> normalRaidRewards = string.IsNullOrEmpty(databaseCharacter.NormalRaidRewards)
+                ? []
+                : System.Text.Json.JsonSerializer.Deserialize<Dictionary<uint, RaidReward>>(databaseCharacter.NormalRaidRewards) ?? [];
+            Plugin.Log.Debug("NormalRaidRewards deserialized");
 
             return new Character()
             {
@@ -976,7 +990,8 @@ namespace Altoholic.Database
                 CurrentGearSet = currentGearSet,
                 GearSets = gearSets,
                 GlamourPlates = glamourPlates,
-                CompletedRoulettes = completedRoulettes
+                CompletedRoulettes = completedRoulettes,
+                NormalRaidRewards = normalRaidRewards
             };
         }
 
@@ -1019,6 +1034,7 @@ namespace Altoholic.Database
             string gearSets = System.Text.Json.JsonSerializer.Serialize(character.GearSets);
             string glamourPlates = System.Text.Json.JsonSerializer.Serialize(character.GlamourPlates);
             string completedRoulettes = System.Text.Json.JsonSerializer.Serialize(character.CompletedRoulettes);
+            string normalRaidRewards = System.Text.Json.JsonSerializer.Serialize(character.NormalRaidRewards);
 
             return new DatabaseCharacter()
             {
@@ -1086,7 +1102,8 @@ namespace Altoholic.Database
                 CurrentGearSet = currentGearSet,
                 GearSets = gearSets,
                 GlamourPlates = glamourPlates,
-                CompletedRoulettes = completedRoulettes
+                CompletedRoulettes = completedRoulettes,
+                NormalRaidRewards = normalRaidRewards
             };
         }
 
@@ -1094,8 +1111,8 @@ namespace Altoholic.Database
         {
             Plugin.Log.Debug("Entering AddCharacter()");
             const string insertQuery =
-                $"INSERT INTO {CharacterTableName}([CharacterId], [FirstName], [LastName], [HomeWorld], [Datacenter], [Region], [IsSprout], [IsBattleMentor], [IsTradeMentor], [IsReturner], [LastJob], [LastJobLevel], [FCTag], [FreeCompany], [LastOnline], [PlayTime], [LastPlayTimeUpdate], [HasPremiumSaddlebag], [PlayerCommendations], [CurrentFacewear], [CurrentOrnament], [UnreadLetters], [IslandSanctuaryUnlocked], [IslandSanctuaryLevel], [Attributes], [Currencies], [Jobs], [Profile], [Quests], [Inventory], [ArmoryInventory], [Saddle], [Gear], [Retainers], [BlacklistedRetainers], [Minions], [Mounts], [TripleTriadCards], [Emotes], [Bardings], [FramerKits], [OrchestrionRolls], [Ornaments], [Glasses], [BeastReputations], [Duties], [DutiesUnlocked], [Houses], [Hairstyles], [Facepaints], [SecretRecipeBooks], [Vistas], [SightseeingLogUnlockState], [SightseeingLogUnlockStateEx], [Armoire], [GlamourDresser], [PvPProfile], [Timers], [CurrentGearSet], [GearSets], [GlamourPlates], [CompletedRoulettes]) " +
-                "VALUES (@CharacterId, @FirstName, @LastName, @HomeWorld, @Datacenter, @Region, @IsSprout, @IsBattleMentor, @IsTradeMentor, @IsReturner, @LastJob, @LastJobLevel, @FCTag, @FreeCompany, @LastOnline, @PlayTime, @LastPlayTimeUpdate, @HasPremiumSaddlebag, @PlayerCommendations, @CurrentFacewear, @CurrentOrnament, @UnreadLetters, @IslandSanctuaryUnlocked, @IslandSanctuaryLevel, @Attributes, @Currencies, @Jobs, @Profile, @Quests, @Inventory, @ArmoryInventory, @Saddle, @Gear, @Retainers, @BlacklistedRetainers, @Minions, @Mounts, @TripleTriadCards, @Emotes, @Bardings, @FramerKits, @OrchestrionRolls, @Ornaments, @Glasses, @BeastReputations, @Duties, @DutiesUnlocked, @Houses, @Hairstyles, @Facepaints, @SecretRecipeBooks, @Vistas, @SightseeingLogUnlockState, @SightseeingLogUnlockStateEx, @Armoire, @GlamourDresser, @PvPProfile, @Timers, @CurrentGearSet, @GearSets, @GlamourPlates, @CompletedRoulettes)";
+                $"INSERT INTO {CharacterTableName}([CharacterId], [FirstName], [LastName], [HomeWorld], [Datacenter], [Region], [IsSprout], [IsBattleMentor], [IsTradeMentor], [IsReturner], [LastJob], [LastJobLevel], [FCTag], [FreeCompany], [LastOnline], [PlayTime], [LastPlayTimeUpdate], [HasPremiumSaddlebag], [PlayerCommendations], [CurrentFacewear], [CurrentOrnament], [UnreadLetters], [IslandSanctuaryUnlocked], [IslandSanctuaryLevel], [Attributes], [Currencies], [Jobs], [Profile], [Quests], [Inventory], [ArmoryInventory], [Saddle], [Gear], [Retainers], [BlacklistedRetainers], [Minions], [Mounts], [TripleTriadCards], [Emotes], [Bardings], [FramerKits], [OrchestrionRolls], [Ornaments], [Glasses], [BeastReputations], [Duties], [DutiesUnlocked], [Houses], [Hairstyles], [Facepaints], [SecretRecipeBooks], [Vistas], [SightseeingLogUnlockState], [SightseeingLogUnlockStateEx], [Armoire], [GlamourDresser], [PvPProfile], [Timers], [CurrentGearSet], [GearSets], [GlamourPlates], [CompletedRoulettes], [NormalRaidRewards]) " +
+                "VALUES (@CharacterId, @FirstName, @LastName, @HomeWorld, @Datacenter, @Region, @IsSprout, @IsBattleMentor, @IsTradeMentor, @IsReturner, @LastJob, @LastJobLevel, @FCTag, @FreeCompany, @LastOnline, @PlayTime, @LastPlayTimeUpdate, @HasPremiumSaddlebag, @PlayerCommendations, @CurrentFacewear, @CurrentOrnament, @UnreadLetters, @IslandSanctuaryUnlocked, @IslandSanctuaryLevel, @Attributes, @Currencies, @Jobs, @Profile, @Quests, @Inventory, @ArmoryInventory, @Saddle, @Gear, @Retainers, @BlacklistedRetainers, @Minions, @Mounts, @TripleTriadCards, @Emotes, @Bardings, @FramerKits, @OrchestrionRolls, @Ornaments, @Glasses, @BeastReputations, @Duties, @DutiesUnlocked, @Houses, @Hairstyles, @Facepaints, @SecretRecipeBooks, @Vistas, @SightseeingLogUnlockState, @SightseeingLogUnlockStateEx, @Armoire, @GlamourDresser, @PvPProfile, @Timers, @CurrentGearSet, @GearSets, @GlamourPlates, @CompletedRoulettes, @NormalRaidRewards)";
 
             int result = db.Execute(insertQuery, FormatCharacterForDatabase(character));
 
@@ -1242,6 +1259,49 @@ namespace Altoholic.Database
             Directory.CreateDirectory(Path.Combine(Plugin.PluginInterface.GetPluginConfigDirectory(), "backups"));
             File.Copy(dbpath, backupdbpath);
         }
+        private static void DeleteAndKeepLastFiveBackup()
+        {
+            Plugin.Log.Debug("Database/DeleteAndKeepLastFiveBackup entered");
+            Plugin.Log.Debug("Cleaning old backups");
+            string backupdbpath = Path.Combine(Plugin.PluginInterface.GetPluginConfigDirectory(), "backups");
+            if (!Directory.Exists(backupdbpath))
+                throw new DirectoryNotFoundException($"Folder not found: {backupdbpath}");
+
+            var files = Directory
+                .EnumerateFiles(backupdbpath, "altoholic.db.*", SearchOption.TopDirectoryOnly)
+                .Select(path => new
+                {
+                    Path = path,
+                    DatePart = Path.GetFileName(path).Split('.').Last()
+                })
+                .Select(f =>
+                {
+                    bool goodFormat = DateTime.TryParseExact(
+                        f.DatePart,
+                        "yyyyMMddHHmmss",
+                        CultureInfo.InvariantCulture,
+                        DateTimeStyles.None,
+                        out DateTime datetime);
+                    return new { f.Path, ParsedDate = goodFormat ? (DateTime?)datetime : null };
+                })
+                .Where(x => x.ParsedDate.HasValue)
+                .OrderByDescending(x => x.ParsedDate.Value)
+                .ToList();
+
+            if (files.Count <= 5) return;
+
+            foreach (var file in files.Skip(5))
+            {
+                try
+                {
+                    File.Delete(file.Path);
+                }
+                catch (Exception ex)
+                {
+                    Plugin.Log.Error($"Failed to delete old backup: {file.Path} with message: {ex.Message}");
+                }
+            }
+        }
 
         public static void CheckAndBackup(SqliteConnection db, Version version)
         {
@@ -1250,17 +1310,25 @@ namespace Altoholic.Database
             {
                 const string sql = $"SELECT Version FROM {PluginVersionTableName}";
                 string? pluginVersionInDb = db.QueryFirstOrDefault<string?>(sql);
-                if (string.IsNullOrEmpty(pluginVersionInDb) || pluginVersionInDb == "0.0.0.0")
-                {
-                    SetPluginVersionInDb(db, version.ToString());
+                if (string.IsNullOrEmpty(pluginVersionInDb)) {
+                    pluginVersionInDb = "0.0.0.0";
                 }
-                else
+                if (!Version.TryParse(pluginVersionInDb, out Version? pluginVersion))
                 {
-                    if (version.ToString() != pluginVersionInDb)
+                    Plugin.Log.Warning($"Plugin version in db is not valid version {pluginVersionInDb}");
+                    pluginVersion = new Version("0.0.0.0");
+                }
+                if (pluginVersion != null)
+                {
+                    int compare = version.CompareTo(pluginVersion); // < 0 if v1 < v2, 0 if equal, > 0 if v1 > v2
+                    if (compare > 0)
                     {
+                        Plugin.Log.Info($"Plugin version is newer than db plugin version, updating db plugin version");
+                        SetPluginVersionInDb(db, version.ToString());
                         BackupDatabase();
                     }
                 }
+                DeleteAndKeepLastFiveBackup();
             }
             catch (Exception ex)
             {

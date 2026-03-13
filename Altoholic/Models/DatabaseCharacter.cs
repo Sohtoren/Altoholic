@@ -69,5 +69,6 @@ namespace Altoholic.Models
         public string GearSets { get; init; } = string.Empty;
         public string GlamourPlates { get; init; } = string.Empty;
         public string CompletedRoulettes { get; init; } = string.Empty;
+        public string NormalRaidRewards { get; init; } = string.Empty;
     }
 }

@@ -5,6 +5,12 @@ using System.Reflection;
 
 namespace Altoholic.Models
 {
+    public class RaidReward
+    {
+        public int Reward { get; set; }
+        public DateTime LastCheck { get; set; }
+    }
+
     public class Character
     {
         public ulong CharacterId { get; init; }
@@ -74,6 +80,7 @@ namespace Altoholic.Models
         public Dictionary<int, GearSet> GearSets { get; init; } = new(100);
         public Dictionary<byte, GlamourPlate> GlamourPlates { get; init; } = new(20);
         public Dictionary<uint, DateTime> CompletedRoulettes { get; init; } = [];
+        public Dictionary<uint, RaidReward> NormalRaidRewards { get; init; } = [];
 
 
         public bool HasAnyLevelJob(int level)

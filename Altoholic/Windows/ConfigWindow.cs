@@ -8,6 +8,7 @@ using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
 using System;
 using System.Drawing;
+using System.Linq;
 using System.Numerics;
 
 namespace Altoholic.Windows
@@ -77,6 +78,27 @@ namespace Altoholic.Windows
                         if (rouletteTimersTab.Success)
                         {
                             DrawTimerRoulettesConfig();
+                        }
+                    }
+                }
+            }
+            if (_configuration.EnabledTimers is not null)
+            {
+                if (_configuration.EnabledTimers.Contains(TimersStatus.NormalRaids))
+                {
+                    string name = _selectedLanguage switch
+                    {
+                        ClientLanguage.German => "Normale Raids",
+                        ClientLanguage.English => "Normal Raids",
+                        ClientLanguage.French => "Raids normaux",
+                        ClientLanguage.Japanese => "ノーマルレイド",
+                        _ => "Normal Raids"
+                    };
+                    using (var normalRaidsTimersTab = ImRaii.TabItem($"{name}###NormalRaidsTimersTab"))
+                    {
+                        if (normalRaidsTimersTab.Success)
+                        {
+                            DrawTimerNormalRaidsConfig();
                         }
                     }
                 }
@@ -490,6 +512,29 @@ namespace Altoholic.Windows
 
                     _configuration.TrySave();
                 }
+                bool isNormalRaidsEnabled = _configuration.EnabledTimers.Contains(TimersStatus.NormalRaids);
+                string raidTabName = _selectedLanguage switch
+                {
+                    ClientLanguage.German => "Normale Raids",
+                    ClientLanguage.English => "Normal Raids",
+                    ClientLanguage.French => "Raids normaux",
+                    ClientLanguage.Japanese => "ノーマルレイド",
+                    _ => "Normal Raids"
+                };
+                if (ImGui.Checkbox($"{raidTabName}###NormalRaids",
+                        ref isNormalRaidsEnabled))
+                {
+                    if (isNormalRaidsEnabled)
+                    {
+                        _configuration.EnabledTimers.Add(TimersStatus.NormalRaids);
+                    }
+                    else
+                    {
+                        _configuration.EnabledTimers.Remove(TimersStatus.NormalRaids);
+                    }
+
+                    _configuration.TrySave();
+                }
             }
 
             ImGui.Separator();
@@ -579,6 +624,53 @@ namespace Altoholic.Windows
                     }
 
                     _configuration.TrySave();
+                }
+            }
+        }
+        private void DrawTimerNormalRaidsConfig()
+        {
+            ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(_selectedLanguage, 102580)}");
+            ImGui.Separator();
+            foreach (uint id in _globalCache.DutyStorage.RewardsNormalRaidId)
+            {
+                bool isInTrackedList = _configuration.TrackingNormalRaids.Contains(id);
+                Duty? duty = _globalCache.DutyStorage.LoadDuty(id);
+                if (duty is null) return;
+                string name = _selectedLanguage switch
+                {
+                    ClientLanguage.German => duty.GermanName,
+                    ClientLanguage.English => duty.EnglishName,
+                    ClientLanguage.French => duty.FrenchName,
+                    ClientLanguage.Japanese => duty.JapaneseName,
+                    _ => duty.EnglishName
+                };
+
+                if (ImGui.Checkbox(
+                        $"{name}###Timers#NormalRaid#{id}",
+                        ref isInTrackedList))
+                {
+                    if (isInTrackedList)
+                    {
+                        _configuration.TrackingNormalRaids.Add(id);
+                    }
+                    else
+                    {
+                        _configuration.TrackingNormalRaids.Remove(id);
+                    }
+
+                    _configuration.TrySave();
+                }
+
+                if (id == _globalCache.DutyStorage.RewardsNormalRaidId.Last())
+                {
+                    ImGui.SameLine();
+                    ImGui.SetNextItemWidth(50);
+                    int doubleLastNormalRaidRewards = _configuration.DoubleLastNormalRaidRewards ? 2 : 1;
+                    if (ImGui.SliderInt($"{_globalCache.AddonStorage.LoadAddonString(_selectedLanguage, 463)}###DoubleLastNormalRaidRewards", ref doubleLastNormalRaidRewards, 1, 2))
+                    {
+                        _configuration.DoubleLastNormalRaidRewards = doubleLastNormalRaidRewards == 2 ? true : false;
+                        _configuration.TrySave();
+                    }
                 }
             }
         }

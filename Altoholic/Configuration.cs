@@ -15,7 +15,8 @@ namespace Altoholic
         DomanEnclave,
         MaskedCarnivale,
         Tribes,
-        Roulettes
+        Roulettes,
+        NormalRaids
     }
 
     [Serializable]
@@ -41,6 +42,8 @@ namespace Altoholic
         public int FashionReportThreshold { get; set; }
         public bool DutyRouletteCompletedWhenTomestoneCap { get; set; }
         public HashSet<uint> TrackingRoulettes { get; set; } = [];
+        public HashSet<uint> TrackingNormalRaids { get; set; } = [];
+        public bool DoubleLastNormalRaidRewards { get; set; } = true;
 
         // the below exist just to make saving less cumbersome
         [NonSerialized]

@@ -431,7 +431,7 @@ namespace Altoholic.Windows
                     if (ImGui.IsItemHovered())
                     {
                         ImGui.BeginTooltip();
-                        ImGui.TextUnformatted($"{Loc.Localize("LastVisit", "Last visit: ")}{Utils.FormatDate(dateFormat, house.LastCheck.Value)}");
+                        ImGui.TextUnformatted($"{Loc.Localize("LastVisit", "Last visit: ")}{Utils.FormatDate(dateFormat, house.LastCheck.Value.ToLocalTime())}");
                         ImGui.EndTooltip();
                     }
                 }
