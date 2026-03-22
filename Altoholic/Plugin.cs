@@ -183,8 +183,8 @@ namespace Altoholic
 
             _blacklistedCharacters = Database.Database.GetBlacklists(_db);
 #if DEBUG
-            Log.Debug("BlacklistedCharacters.Count: ", BlacklistedCharacters.Count);
-            foreach (Blacklist blacklistedCharacter in BlacklistedCharacters)
+            Log.Debug("BlacklistedCharacters.Count: ", _blacklistedCharacters.Count);
+            foreach (Blacklist blacklistedCharacter in _blacklistedCharacters)
             {
                 Log.Debug($"Blacklisted id: {blacklistedCharacter.CharacterId}");
             }
@@ -201,7 +201,7 @@ namespace Altoholic
                     TimersStatus.MaskedCarnivale,
                     TimersStatus.Tribes,
                     TimersStatus.Roulettes,
-                    TimersStatus.NormalRaids
+                    TimersStatus.Raids
                 ]
             };
             Configuration.EnabledTimers ??=
@@ -214,7 +214,7 @@ namespace Altoholic
                 TimersStatus.MaskedCarnivale,
                 TimersStatus.Tribes,
                 TimersStatus.Roulettes,
-                TimersStatus.NormalRaids
+                TimersStatus.Raids
             ];
             Configuration.Initialize(PluginInterface.Manifest.AssemblyVersion.Major, PluginInterface);
 
@@ -925,7 +925,7 @@ namespace Altoholic
         {
             if (Configuration.EnabledTimers is not null)
             {
-                if (Configuration.EnabledTimers.Contains(TimersStatus.NormalRaids))
+                if (Configuration.EnabledTimers.Contains(TimersStatus.Raids))
                 {
                     var agent = AgentContentsFinder.Instance();
                     if (agent is not null && agent->IsAgentActive())
@@ -933,14 +933,14 @@ namespace Altoholic
                         var selectedDuty = agent->SelectedDuty.Id;
                         var numRewards = agent->NumCollectedRewards;
                         //Log.Debug($"GetRaidsRewards: {selectedDuty}, {numRewards}");
-                        if (_localPlayer.NormalRaidRewards.TryGetValue(selectedDuty, out var reward))
+                        if (_localPlayer.RaidRewards.TryGetValue(selectedDuty, out var reward))
                         {
-                            _localPlayer.NormalRaidRewards[selectedDuty].Reward = numRewards;
-                            _localPlayer.NormalRaidRewards[selectedDuty].LastCheck = DateTime.UtcNow;
+                            _localPlayer.RaidRewards[selectedDuty].Reward = numRewards;
+                            _localPlayer.RaidRewards[selectedDuty].LastCheck = DateTime.UtcNow;
                         }
                         else
                         {
-                            _localPlayer.NormalRaidRewards.Add(selectedDuty, new() { Reward = numRewards, LastCheck = DateTime.UtcNow });
+                            _localPlayer.RaidRewards.Add(selectedDuty, new() { Reward = numRewards, LastCheck = DateTime.UtcNow });
                         }
                     }
                 }
@@ -2424,18 +2424,28 @@ namespace Altoholic
             {
                 EnabledTimers =
                 [
+                    TimersStatus.MiniCacpot,
+                    TimersStatus.JumboCacpot,
+                    TimersStatus.FashionReport,
                     TimersStatus.CustomDeliveries,
                     TimersStatus.DomanEnclave,
                     TimersStatus.MaskedCarnivale,
-                    TimersStatus.Tribes
+                    TimersStatus.Tribes,
+                    TimersStatus.Roulettes,
+                    TimersStatus.Raids
                 ]
             };
             Configuration.EnabledTimers ??=
             [
+                TimersStatus.MiniCacpot,
+                TimersStatus.JumboCacpot,
+                TimersStatus.FashionReport,
                 TimersStatus.CustomDeliveries,
                 TimersStatus.DomanEnclave,
                 TimersStatus.MaskedCarnivale,
-                TimersStatus.Tribes
+                TimersStatus.Tribes,
+                TimersStatus.Roulettes,
+                TimersStatus.Raids
             ];
             Configuration.Initialize(PluginInterface.Manifest.AssemblyVersion.Major, PluginInterface);
         }
@@ -2485,7 +2495,7 @@ namespace Altoholic
         {
             if (_localPlayer.CharacterId == 0 || _localPlayer.FirstName.Length == 0) return;
 
-            Log.Info($"Updating characters with {_localPlayer.CharacterId} {_localPlayer.FirstName} {_localPlayer.LastName}{(char)SeIconChar.CrossWorld}{_localPlayer.HomeWorld}, {Utils.GetRegionFromWorld(_localPlayer.HomeWorld)}.");
+            Log.Info($"Updating character with {_localPlayer.CharacterId} {_localPlayer.FirstName} {_localPlayer.LastName}{(char)SeIconChar.CrossWorld}{_localPlayer.HomeWorld}, {Utils.GetRegionFromWorld(_localPlayer.HomeWorld)}.");
             Blacklist? b = Database.Database.GetBlacklist(_db, _localPlayer.CharacterId);
             if (b != null) return;
             Character? charExist = Database.Database.GetCharacter(_db, _localPlayer.CharacterId);
@@ -2604,7 +2614,7 @@ namespace Altoholic
                 GearSets = _localPlayer.GearSets,
                 GlamourPlates = _localPlayer.GlamourPlates,
                 CompletedRoulettes = _localPlayer.CompletedRoulettes,
-                NormalRaidRewards = _localPlayer.NormalRaidRewards
+                RaidRewards = _localPlayer.RaidRewards
             };
 
         }

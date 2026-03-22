@@ -423,19 +423,6 @@ namespace Altoholic.Windows
                     "###CharactersInventory#All#SearchItemsTable#CharacterItems#Item#Table#CharacterItem",
                     ImGuiTableColumnFlags.WidthStretch);
 
-#if DEBUG
-                for (int i = 0; i < 15; i++)
-                {
-                    characters.Add(new Character()
-                    {
-                        FirstName = $"Dummy {i}",
-                        LastName = $"LN {i}",
-                        HomeWorld = $"Homeworld {i}",
-                    });
-                }
-#endif
-
-                //foreach (Character character in characters)
                 foreach (CharacterInventories characterInventories in inventories)
                 {
                     uint totalAmount = 0;

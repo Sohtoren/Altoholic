@@ -16,7 +16,7 @@ namespace Altoholic
         MaskedCarnivale,
         Tribes,
         Roulettes,
-        NormalRaids
+        Raids
     }
 
     [Serializable]
@@ -42,7 +42,7 @@ namespace Altoholic
         public int FashionReportThreshold { get; set; }
         public bool DutyRouletteCompletedWhenTomestoneCap { get; set; }
         public HashSet<uint> TrackingRoulettes { get; set; } = [];
-        public HashSet<uint> TrackingNormalRaids { get; set; } = [];
+        public HashSet<uint> TrackingRaids { get; set; } = [];
         public bool DoubleLastNormalRaidRewards { get; set; } = true;
 
         // the below exist just to make saving less cumbersome

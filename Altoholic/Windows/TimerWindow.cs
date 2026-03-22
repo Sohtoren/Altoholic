@@ -115,7 +115,7 @@ namespace Altoholic.Windows
             bool timerCrossMarkForNotUnlocked = _plugin.Configuration.TimerCrossMarkForNotUnlocked;
             List<Roulette> roulettes = _globalCache.DutyStorage.GetAllRoulettes().FindAll(r => r.ContentType == 1);
             HashSet<uint> trackedRoulettes = _plugin.Configuration.TrackingRoulettes;
-            HashSet<uint> trackedNormalRaids = _plugin.Configuration.TrackingNormalRaids;
+            HashSet<uint> trackedRaids = _plugin.Configuration.TrackingRaids;
 
             if (drawBg)
             {
@@ -123,15 +123,15 @@ namespace Altoholic.Windows
             }
 
             int columns = enabledTimers.Count;
-            if(enabledTimers.Contains(TimersStatus.Roulettes) && trackedRoulettes.Count > 0)
+            if (enabledTimers.Contains(TimersStatus.Roulettes) && trackedRoulettes.Count > 0)
             {
                 columns -= 1;
                 columns += trackedRoulettes.Count;
             }
-            if(enabledTimers.Contains(TimersStatus.NormalRaids) && trackedNormalRaids.Count > 0)
+            if(enabledTimers.Contains(TimersStatus.Raids) && trackedRaids.Count > 0)
             {
                 columns -= 1;
-                columns += trackedNormalRaids.Count;
+                columns += trackedRaids.Count;
             }
 
             using var charactersTimers = ImRaii.Table("###CharactersTimers#All", 1 + columns,
@@ -234,11 +234,11 @@ namespace Altoholic.Windows
                         ImGui.CalcTextSize(name).X);
                 }
             }
-            if (enabledTimers.Contains(TimersStatus.NormalRaids) && trackedNormalRaids.Count > 0)
+            if (enabledTimers.Contains(TimersStatus.Raids) && trackedRaids.Count > 0)
             {
-                foreach (uint id in _globalCache.DutyStorage.RewardsNormalRaidId)
+                foreach (uint id in _globalCache.DutyStorage.RewardsRaidId)
                 {
-                    if (!trackedNormalRaids.Contains(id)) continue;
+                    if (!trackedRaids.Contains(id)) continue;
                     Duty? duty = _globalCache.DutyStorage.LoadDuty(id);
                     if (duty == null) continue;
                     string name = (_currentLocale switch
@@ -250,7 +250,7 @@ namespace Altoholic.Windows
                         _ => duty.EnglishName
                     }).Replace(":", "").Replace("：", "").Trim().ReplaceFirst(" ", "\n");
 
-                    ImGui.TableSetupColumn($"###CharactersTimers#All#Timer_NormalRaid_{duty.Id}", ImGuiTableColumnFlags.WidthFixed,
+                    ImGui.TableSetupColumn($"###CharactersTimers#All#Timer_Raid_{duty.Id}", ImGuiTableColumnFlags.WidthFixed,
                         ImGui.CalcTextSize(name).X);
                 }
             }
@@ -317,11 +317,11 @@ namespace Altoholic.Windows
                     ImGui.TextUnformatted(name);
                 }
             }
-            if (enabledTimers.Contains(TimersStatus.NormalRaids) && trackedNormalRaids.Count > 0)
+            if (enabledTimers.Contains(TimersStatus.Raids) && trackedRaids.Count > 0)
             {
-                foreach (uint id in _globalCache.DutyStorage.RewardsNormalRaidId)
+                foreach (uint id in _globalCache.DutyStorage.RewardsRaidId)
                 {
-                    if (!trackedNormalRaids.Contains(id)) continue;
+                    if (!trackedRaids.Contains(id)) continue;
                     Duty? duty = _globalCache.DutyStorage.LoadDuty(id);
                     if (duty == null) continue;
                     string name = (_currentLocale switch
@@ -741,22 +741,22 @@ namespace Altoholic.Windows
                         }
                     }
                 }
-                if (enabledTimers.Contains(TimersStatus.NormalRaids))
+                if (enabledTimers.Contains(TimersStatus.Raids))
                 {
-                    foreach (uint id in _globalCache.DutyStorage.RewardsNormalRaidId)
+                    foreach (uint id in _globalCache.DutyStorage.RewardsRaidId)
                     {
-                        if (!trackedNormalRaids.Contains(id)) continue;
+                        if (!trackedRaids.Contains(id)) continue;
                         ImGui.TableNextColumn();
                         RaidReward? reward;
-                        bool charHasRaidRewards = currChar.NormalRaidRewards.TryGetValue(id, out reward);
+                        bool charHasRaidRewards = currChar.RaidRewards.TryGetValue(id, out reward);
                         if (reward is null) continue;
 
                         if (charHasRaidRewards && reward.Reward > 0 && reward.LastCheck >= Utils.GetLastWeeklyReset())
                         {
                             ImGui.PushFont(UiBuilder.IconFont);
-                            if (id == _globalCache.DutyStorage.RewardsNormalRaidId.Last())
+                            if (id == _globalCache.DutyStorage.DoubleRaidLootId)
                             {
-                                if (_plugin.Configuration.DoubleLastNormalRaidRewards)
+                                if (_plugin.Configuration.DoubleLastNormalRaidRewards && reward.Reward == 2)
                                 {
                                     ImGui.TextUnformatted($"{FontAwesomeIcon.Check.ToIconString()}");
                                 }
@@ -774,7 +774,7 @@ namespace Altoholic.Windows
                             if (ImGui.IsItemHovered())
                             {
                                 ImGui.BeginTooltip();
-                                if (id == _globalCache.DutyStorage.RewardsNormalRaidId.Last()) ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 102588)} ({reward.Reward}/2)");
+                                if (id == _globalCache.DutyStorage.DoubleRaidLootId) ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 102588)} ({reward.Reward}/2)");
                                 ImGui.TextUnformatted($"{Loc.Localize("LastCheck", "Last check:")} {Utils.FormatDate(dateFormat, reward.LastCheck.ToLocalTime())}");
                                 ImGui.EndTooltip();
                             }

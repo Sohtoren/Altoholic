@@ -80,7 +80,7 @@ namespace Altoholic.Models
         public Dictionary<int, GearSet> GearSets { get; init; } = new(100);
         public Dictionary<byte, GlamourPlate> GlamourPlates { get; init; } = new(20);
         public Dictionary<uint, DateTime> CompletedRoulettes { get; init; } = [];
-        public Dictionary<uint, RaidReward> NormalRaidRewards { get; init; } = [];
+        public Dictionary<uint, RaidReward> RaidRewards { get; init; } = [];
 
 
         public bool HasAnyLevelJob(int level)

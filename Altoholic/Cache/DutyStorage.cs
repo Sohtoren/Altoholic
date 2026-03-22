@@ -11,7 +11,8 @@ namespace Altoholic.Cache
         private readonly Dictionary<uint, Duty> _duties = new(size);
         private readonly Dictionary<uint, Roulette> _roulettes = new(size);
 
-        public uint[] RewardsNormalRaidId = [1068, 1070, 1072, 1074];
+        public uint[] RewardsRaidId = [1058, 1068, 1070, 1072, 1074, 1069, 1071, 1073, 1075];
+        public uint DoubleRaidLootId = 1074;
 
         public void Init(GlobalCache globalCache)
         {

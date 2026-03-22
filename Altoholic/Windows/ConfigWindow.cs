@@ -84,21 +84,13 @@ namespace Altoholic.Windows
             }
             if (_configuration.EnabledTimers is not null)
             {
-                if (_configuration.EnabledTimers.Contains(TimersStatus.NormalRaids))
+                if (_configuration.EnabledTimers.Contains(TimersStatus.Raids))
                 {
-                    string name = _selectedLanguage switch
+                    using (var raidsTimersTab = ImRaii.TabItem($"{_globalCache.AddonStorage.LoadAddonString(_selectedLanguage, 8609)}###RaidsTimersTab"))
                     {
-                        ClientLanguage.German => "Normale Raids",
-                        ClientLanguage.English => "Normal Raids",
-                        ClientLanguage.French => "Raids normaux",
-                        ClientLanguage.Japanese => "ノーマルレイド",
-                        _ => "Normal Raids"
-                    };
-                    using (var normalRaidsTimersTab = ImRaii.TabItem($"{name}###NormalRaidsTimersTab"))
-                    {
-                        if (normalRaidsTimersTab.Success)
+                        if (raidsTimersTab.Success)
                         {
-                            DrawTimerNormalRaidsConfig();
+                            DrawTimerRaidsConfig();
                         }
                     }
                 }
@@ -512,25 +504,17 @@ namespace Altoholic.Windows
 
                     _configuration.TrySave();
                 }
-                bool isNormalRaidsEnabled = _configuration.EnabledTimers.Contains(TimersStatus.NormalRaids);
-                string raidTabName = _selectedLanguage switch
+                bool isRaidsEnabled = _configuration.EnabledTimers.Contains(TimersStatus.Raids);
+                if (ImGui.Checkbox($"{_globalCache.AddonStorage.LoadAddonString(_selectedLanguage, 8609)}###Raids",
+                        ref isRaidsEnabled))
                 {
-                    ClientLanguage.German => "Normale Raids",
-                    ClientLanguage.English => "Normal Raids",
-                    ClientLanguage.French => "Raids normaux",
-                    ClientLanguage.Japanese => "ノーマルレイド",
-                    _ => "Normal Raids"
-                };
-                if (ImGui.Checkbox($"{raidTabName}###NormalRaids",
-                        ref isNormalRaidsEnabled))
-                {
-                    if (isNormalRaidsEnabled)
+                    if (isRaidsEnabled)
                     {
-                        _configuration.EnabledTimers.Add(TimersStatus.NormalRaids);
+                        _configuration.EnabledTimers.Add(TimersStatus.Raids);
                     }
                     else
                     {
-                        _configuration.EnabledTimers.Remove(TimersStatus.NormalRaids);
+                        _configuration.EnabledTimers.Remove(TimersStatus.Raids);
                     }
 
                     _configuration.TrySave();
@@ -627,13 +611,11 @@ namespace Altoholic.Windows
                 }
             }
         }
-        private void DrawTimerNormalRaidsConfig()
+        private void DrawTimerRaidsConfig()
         {
-            ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(_selectedLanguage, 102580)}");
-            ImGui.Separator();
-            foreach (uint id in _globalCache.DutyStorage.RewardsNormalRaidId)
+            foreach (uint id in _globalCache.DutyStorage.RewardsRaidId)
             {
-                bool isInTrackedList = _configuration.TrackingNormalRaids.Contains(id);
+                bool isInTrackedList = _configuration.TrackingRaids.Contains(id);
                 Duty? duty = _globalCache.DutyStorage.LoadDuty(id);
                 if (duty is null) return;
                 string name = _selectedLanguage switch
@@ -646,22 +628,22 @@ namespace Altoholic.Windows
                 };
 
                 if (ImGui.Checkbox(
-                        $"{name}###Timers#NormalRaid#{id}",
+                        $"{name}###Timers#Raid#{id}",
                         ref isInTrackedList))
                 {
                     if (isInTrackedList)
                     {
-                        _configuration.TrackingNormalRaids.Add(id);
+                        _configuration.TrackingRaids.Add(id);
                     }
                     else
                     {
-                        _configuration.TrackingNormalRaids.Remove(id);
+                        _configuration.TrackingRaids.Remove(id);
                     }
 
                     _configuration.TrySave();
                 }
 
-                if (id == _globalCache.DutyStorage.RewardsNormalRaidId.Last())
+                if (id == _globalCache.DutyStorage.DoubleRaidLootId)
                 {
                     ImGui.SameLine();
                     ImGui.SetNextItemWidth(50);
