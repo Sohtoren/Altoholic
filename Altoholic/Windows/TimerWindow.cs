@@ -783,9 +783,6 @@ namespace Altoholic.Windows
                 }
             }
 
-
-
-            //Todo: Add weekly raid for current tier
             if (drawBg)
             {
                 ImGui.PopStyleColor();
