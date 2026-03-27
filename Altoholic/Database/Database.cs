@@ -156,7 +156,7 @@ namespace Altoholic.Database
                                                     CurrentGearSet TEXT,
                                                     GearSets TEXT,
                                                     GlamourPlates TEXT,
-                                                    CompletedRoulettes TEXT
+                                                    CompletedRoulettes TEXT,
                                                     RaidRewards TEXT
                                                 );
                                     """;

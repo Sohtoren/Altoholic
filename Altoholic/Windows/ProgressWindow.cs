@@ -1,13 +1,14 @@
 using Altoholic.Cache;
 using Altoholic.Models;
 using CheapLoc;
+using Dalamud.Bindings.ImGui;
 using Dalamud.Game;
 using Dalamud.Game.Text;
 using Dalamud.Interface;
 using Dalamud.Interface.Textures.TextureWraps;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
-using Dalamud.Bindings.ImGui;
+using FFXIVClientStructs.FFXIV.Client.Game.Event;
 using Lumina.Excel.Sheets;
 using System;
 using System.Collections.Generic;
@@ -1080,7 +1081,7 @@ namespace Altoholic.Windows
                     DrawAllLine(chars, charactersQuests,
                         $"{Loc.Localize("Event_LittleLadiesDay", "Little Ladies' Day")} (2026)",
                         133);
-                    DrawAllLine(chars, charactersQuests,
+                    DrawAllEventLine(chars, charactersQuests,
                         $"{Loc.Localize("Event_HatchingTide", "Hatching-tide")} (2026)",
                         134);
                 }
@@ -1935,29 +1936,29 @@ namespace Altoholic.Windows
         {
             Dictionary<int, string> mooglesNames = [];
             mooglesNames[0] = Loc.Localize("PreviousMoogleEvent", "Previous Events");
-            string revelationName = _currentLocale switch
+            string aphorismName = _currentLocale switch
             {
-                ClientLanguage.German => "Aufgezeigte Offenbarungen",
-                ClientLanguage.English => "The Hunt for Revelation",
-                ClientLanguage.French => "Révélation Kupo",
-                ClientLanguage.Japanese => "\uff5e黙示への道標\uff5e",
-                _ => "The Hunt for Revelation"
+                ClientLanguage.German => "Allgegenwärtige Aphorismen",
+                ClientLanguage.English => "The Hunt for Aphorism",
+                ClientLanguage.French => "Aphorisme Kupo",
+                ClientLanguage.Japanese => "～霧の中の経典～",
+                _ => "The Hunt for Aphorism"
             };
-            if (ImGui.CollapsingHeader($"2025 - {revelationName}"))
+            if (ImGui.CollapsingHeader($"2026 - {aphorismName}"))
             {
                 using var charactersEventTable = ImRaii.Table(
-                    $"###CharactersProgress#All#Event#MogRewards#Table#Event2025_3",
+                    $"###CharactersProgress#All#Event#MogRewards#Table#Event2026_1",
                     chars.Count + 2,
                     ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner |
                     ImGuiTableFlags.ScrollX | ImGuiTableFlags.ScrollY);
                 if (!charactersEventTable) return;
-                ImGui.TableSetupColumn($"###CharactersProgress#All#Event#MogRewards#Event2025_3#Name",
+                ImGui.TableSetupColumn($"###CharactersProgress#All#Event#MogRewards#Event2026_1#Name",
                     ImGuiTableColumnFlags.WidthFixed, 270);
-                ImGui.TableSetupColumn($"###CharactersProgress#All#Event#MogRewards#Event2025_3#Currency",
+                ImGui.TableSetupColumn($"###CharactersProgress#All#Event#MogRewards#Event2026_1#Currency",
                     ImGuiTableColumnFlags.WidthFixed, 20);
                 foreach (Character c in chars)
                 {
-                    ImGui.TableSetupColumn($"###CharactersProgress#All#Event#MogRewards#Event2025_3#{c.CharacterId}",
+                    ImGui.TableSetupColumn($"###CharactersProgress#All#Event#MogRewards#Event2026_1#{c.CharacterId}",
                         ImGuiTableColumnFlags.WidthFixed, 20);
                 }
 
@@ -1968,7 +1969,7 @@ namespace Altoholic.Windows
 
                 ImGui.TableSetColumnIndex(1);
                 Item? itm = _globalCache.ItemStorage.LoadItem(_currentLocale,
-                    (uint)Currencies.IRREGULAR_TOMESTONE_OF_REVELATION);
+                    (uint)Currencies.IRREGULAR_TOMESTONE_OF_APHORISM);
                 if (itm == null) return;
                 Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Value.Icon), new Vector2(16, 16));
                 if (ImGui.IsItemHovered())
@@ -1989,29 +1990,37 @@ namespace Altoholic.Windows
                     }
                 }
 
-                DrawAllCharsMount(chars, 226, 50);
-                DrawAllCharsEmote(chars, 180, 50);
-                DrawAllCharsHairstyle(chars, 23370, 50);
-                DrawAllCharsOrchestrion(chars, 417, 50);
-                DrawAllCharsMinion(chars, 346, 30);
-                DrawAllCharsBarding(chars, 61, 30);
-                DrawAllCharsOrnament(chars, 1, 30);
-                DrawAllCharsMount(chars, 20, 30);
-                DrawAllCharsMount(chars, 26, 30);
-                DrawAllCharsMount(chars, 133, 30);
-                DrawAllCharsMount(chars, 144, 30);
-                DrawAllCharsMinion(chars, 61, 15);
-                DrawAllCharsTripleTriadCard(chars, 158, 10);
-                DrawAllCharsTripleTriadCard(chars, 160, 10);
-                DrawAllCharsTripleTriadCard(chars, 244, 7);
-                DrawAllCharsTripleTriadCard(chars, 306, 7);
-                DrawAllCharsTripleTriadCard(chars, 291, 7);
-                DrawAllCharsMinion(chars, 144, 7);
-                DrawAllCharsMinion(chars, 362, 5);
-                DrawAllCharsOrchestrion(chars, 289, 3);
-                DrawAllCharsTotal(chars, 481);
+                DrawAllCharsOrnament(chars, 14, 50);
+                DrawAllCharsMount(chars, 238, 50);
+                DrawAllCharsMount(chars, 130, 50);
+                DrawAllCharsHairstyle(chars, 24234, 50);
+                DrawAllCharsEmote(chars, 169, 50);
+                DrawAllCharsOrchestrion(chars, 388, 50);
+                DrawAllCharsMinion(chars, 351, 30);
+                DrawAllCharsMount(chars, 27, 30);
+                DrawAllCharsMount(chars, 35, 30);
+                DrawAllCharsMount(chars, 158, 30);
+                DrawAllCharsMount(chars, 172, 30);
+                DrawAllCharsMinion(chars, 59, 30);
+                DrawAllCharsTripleTriadCard(chars, 183, 10);
+                DrawAllCharsTripleTriadCard(chars, 184, 10);
+                DrawAllCharsTripleTriadCard(chars, 234, 7);
+                DrawAllCharsTripleTriadCard(chars, 87, 7);
+                DrawAllCharsTripleTriadCard(chars, 324, 7);
+                DrawAllCharsMinion(chars, 82, 7);
+                DrawAllCharsOrchestrion(chars, 371, 7);
+                DrawAllCharsBarding(chars, 48, 5);
             }
 
+            string revelationName = _currentLocale switch
+            {
+                ClientLanguage.German => "Aufgezeigte Offenbarungen",
+                ClientLanguage.English => "The Hunt for Revelation",
+                ClientLanguage.French => "Révélation Kupo",
+                ClientLanguage.Japanese => "\uff5e黙示への道標\uff5e",
+                _ => "The Hunt for Revelation"
+            };
+            mooglesNames[2025_3] = $"2025 {revelationName}";
             string allegoryName = _currentLocale switch
             {
                 ClientLanguage.German => "Fantastische Fachsimpeleien",
@@ -2190,6 +2199,75 @@ namespace Altoholic.Windows
 
             switch (_currentOldMoogleReward)
             {
+                case 2025_3:
+                    {
+                        using var charactersEventTable = ImRaii.Table(
+                            $"###CharactersProgress#All#Event#MogRewards#Table#Event2025_3",
+                            chars.Count + 2,
+                            ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner |
+                            ImGuiTableFlags.ScrollX | ImGuiTableFlags.ScrollY);
+                        if (!charactersEventTable) return;
+                        ImGui.TableSetupColumn($"###CharactersProgress#All#Event#MogRewards#Event2025_3#Name",
+                            ImGuiTableColumnFlags.WidthFixed, 270);
+                        ImGui.TableSetupColumn($"###CharactersProgress#All#Event#MogRewards#Event2025_3#Currency",
+                            ImGuiTableColumnFlags.WidthFixed, 20);
+                        foreach (Character c in chars)
+                        {
+                            ImGui.TableSetupColumn($"###CharactersProgress#All#Event#MogRewards#Event2025_3#{c.CharacterId}",
+                                ImGuiTableColumnFlags.WidthFixed, 20);
+                        }
+
+                        ImGui.TableSetupScrollFreeze(-1, 1); //Freeze header so it shows while scrolling
+                        ImGui.TableNextRow();
+                        ImGui.TableSetColumnIndex(0);
+                        ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 1885));
+
+                        ImGui.TableSetColumnIndex(1);
+                        Item? itm = _globalCache.ItemStorage.LoadItem(_currentLocale,
+                            (uint)Currencies.IRREGULAR_TOMESTONE_OF_REVELATION);
+                        if (itm == null) return;
+                        Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Value.Icon), new Vector2(16, 16));
+                        if (ImGui.IsItemHovered())
+                        {
+                            Utils.DrawItemTooltip(_currentLocale, ref _globalCache, itm.Value);
+                        }
+
+                        foreach (Character currChar in chars)
+                        {
+                            ImGui.TableNextColumn();
+                            ImGui.TextUnformatted($"{currChar.FirstName[0]}.{currChar.LastName[0]}");
+                            if (ImGui.IsItemHovered())
+                            {
+                                ImGui.BeginTooltip();
+                                ImGui.TextUnformatted(
+                                    $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
+                                ImGui.EndTooltip();
+                            }
+                        }
+
+                        DrawAllCharsMount(chars, 226, 50);
+                        DrawAllCharsEmote(chars, 180, 50);
+                        DrawAllCharsHairstyle(chars, 23370, 50);
+                        DrawAllCharsOrchestrion(chars, 417, 50);
+                        DrawAllCharsMinion(chars, 346, 30);
+                        DrawAllCharsBarding(chars, 61, 30);
+                        DrawAllCharsOrnament(chars, 1, 30);
+                        DrawAllCharsMount(chars, 20, 30);
+                        DrawAllCharsMount(chars, 26, 30);
+                        DrawAllCharsMount(chars, 133, 30);
+                        DrawAllCharsMount(chars, 144, 30);
+                        DrawAllCharsMinion(chars, 61, 15);
+                        DrawAllCharsTripleTriadCard(chars, 158, 10);
+                        DrawAllCharsTripleTriadCard(chars, 160, 10);
+                        DrawAllCharsTripleTriadCard(chars, 244, 7);
+                        DrawAllCharsTripleTriadCard(chars, 306, 7);
+                        DrawAllCharsTripleTriadCard(chars, 291, 7);
+                        DrawAllCharsMinion(chars, 144, 7);
+                        DrawAllCharsMinion(chars, 362, 5);
+                        DrawAllCharsOrchestrion(chars, 289, 3);
+                        DrawAllCharsTotal(chars, 481);
+                        break;
+                    }
                 case 2025_2:
                     {
                         using var charactersEventTable = ImRaii.Table(
@@ -3384,6 +3462,84 @@ namespace Altoholic.Windows
             }
         }
 
+        private void DrawEventRewardsTooltip(List<Character> chars, int msqIndex)
+        {
+            if (ImGui.IsItemClicked())
+            {
+                ImGui.BeginPopup($"###{msqIndex}");
+                using var charactersEventTable = ImRaii.Table(
+                $"###CharactersProgress#All#Event#RewardTable#{msqIndex}",
+                chars.Count + 2,
+                ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner |
+                ImGuiTableFlags.ScrollX | ImGuiTableFlags.ScrollY);
+                if (!charactersEventTable) return;
+                ImGui.TableSetupColumn($"###CharactersProgress#All#Event#RewardTable#{msqIndex}#Name",
+                    ImGuiTableColumnFlags.WidthFixed, 270);
+                ImGui.TableSetupColumn($"###CharactersProgress#All#Event#RewardTable#{msqIndex}#Currency",
+                    ImGuiTableColumnFlags.WidthFixed, 20);
+                foreach (Character c in chars)
+                {
+                    ImGui.TableSetupColumn($"###CharactersProgress#All#Event#RewardTable#{msqIndex}#{c.CharacterId}",
+                        ImGuiTableColumnFlags.WidthFixed, 20);
+                }
+
+                ImGui.TableSetupScrollFreeze(-1, 1); //Freeze header so it shows while scrolling
+                ImGui.TableNextRow();
+                ImGui.TableSetColumnIndex(0);
+                ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 1885));
+
+                ImGui.TableSetColumnIndex(1);
+                Item? itm = _globalCache.ItemStorage.LoadItem(_currentLocale, GetItemIconFromEventId(msqIndex));
+                if (itm == null) return;
+                Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Value.Icon), new Vector2(16, 16));
+                if (ImGui.IsItemHovered())
+                {
+                    Utils.DrawItemTooltip(_currentLocale, ref _globalCache, itm.Value);
+                }
+
+                foreach (Character currChar in chars)
+                {
+                    ImGui.TableNextColumn();
+                    ImGui.TextUnformatted($"{currChar.FirstName[0]}.{currChar.LastName[0]}");
+                    if (ImGui.IsItemHovered())
+                    {
+                        ImGui.BeginTooltip();
+                        ImGui.TextUnformatted(
+                            $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
+                        ImGui.EndTooltip();
+                    }
+                }
+
+                DrawEventReward(chars, msqIndex);
+                ImGui.EndPopup();
+            }
+        }
+
+        private uint GetItemIconFromEventId(int msqIndex)
+        {
+            return msqIndex switch
+            {
+                164 => 50089,
+                _ => 0
+            };
+        }
+
+        private void DrawEventReward(List<Character> chars, int msqIndex)
+        {
+            switch (msqIndex)
+            {
+                case 134:
+                    {
+                        DrawAllCharsFacewear(chars, 481, 20);
+                        DrawAllCharsFacewear(chars, 505, 20);
+                        DrawAllCharsFacewear(chars, 517, 20);
+                        DrawAllCharsFacewear(chars, 529, 20);
+                        DrawAllCharsFacewear(chars, 541, 20);
+                    }
+                    break;
+            }
+        }
+
         private void DrawAllCharsEmote(List<Character> chars, uint id, int cost)
         {
             ImGui.TableNextRow();
@@ -4181,7 +4337,31 @@ namespace Altoholic.Windows
             foreach ((List<bool> cq, int index) charactersQuest in charactersQuests.Select((cq, index) => (cq, index)))
             {
                 ImGui.TableNextColumn();
-                //ImGui.TextUnformatted(charactersQuest.cq[msqIndex] ? "\u2713" : "");
+                ImGui.PushFont(UiBuilder.IconFont);
+                ImGui.TextUnformatted(charactersQuest.cq[msqIndex] ? FontAwesomeIcon.Check.ToIconString() : "");
+                ImGui.PopFont();
+                if (ImGui.IsItemHovered())
+                {
+                    ImGui.BeginTooltip();
+                    ImGui.TextUnformatted(name);
+                    ImGui.TextUnformatted(
+                        $"{chars[charactersQuest.index].FirstName} {chars[charactersQuest.index].LastName}{(char)SeIconChar.CrossWorld}{chars[charactersQuest.index].HomeWorld}");
+                    ImGui.EndTooltip();
+                }
+            }
+        }
+
+        private void DrawAllEventLine(List<Character> chars, List<List<bool>> charactersQuests, string name,
+            int msqIndex)
+        {
+            //Plugin.Log.Debug($"DrawAllLine: {chars.Count}, name: {name}, msqIndex: {msqIndex}");
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            ImGui.TextUnformatted(name);
+            //DrawEventRewardsTooltip(chars, msqIndex);
+            foreach ((List<bool> cq, int index) charactersQuest in charactersQuests.Select((cq, index) => (cq, index)))
+            {
+                ImGui.TableNextColumn();
                 ImGui.PushFont(UiBuilder.IconFont);
                 ImGui.TextUnformatted(charactersQuest.cq[msqIndex] ? FontAwesomeIcon.Check.ToIconString() : "");
                 ImGui.PopFont();
