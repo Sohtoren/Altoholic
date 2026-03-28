@@ -96,6 +96,7 @@ namespace Altoholic.Windows
                 }
             }
             ImGui.TableSetColumnIndex(1);
+            DrawFeedback();
             DrawCredits();
         }
 
@@ -317,6 +318,24 @@ namespace Altoholic.Windows
             }
         }
 
+        private void DrawFeedback()
+        {
+            ImGui.TextUnformatted("Feedback/Support:");
+            ImGui.Separator();
+            ImGui.PushStyleColor(ImGuiCol.Text, KnownColor.LightBlue.Vector());
+            ImGui.TextUnformatted("Dalamud discord thread");
+            ImGui.PopStyleColor();
+            if (ImGui.IsItemClicked())
+            {
+                Dalamud.Utility.Util.OpenLink("https://discord.com/channels/581875019861328007/1466008720470315061");
+            }
+            if (ImGui.IsItemHovered())
+            {
+                ImGui.BeginTooltip();
+                ImGui.TextUnformatted("Dalamud discord thread");
+                ImGui.EndTooltip();
+            }
+        }
         private void DrawCredits()
         {
             ImGui.TextUnformatted("Special Thanks:");
