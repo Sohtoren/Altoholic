@@ -2002,7 +2002,8 @@ namespace Altoholic.Windows
                 DrawAllCharsMount(chars, 35, 30);
                 DrawAllCharsMount(chars, 158, 30);
                 DrawAllCharsMount(chars, 172, 30);
-                DrawAllCharsMinion(chars, 59, 30);
+                DrawAllCharsMinion(chars, 59, 15);
+                DrawAllCharsMinion(chars, 188, 15);
                 DrawAllCharsTripleTriadCard(chars, 183, 10);
                 DrawAllCharsTripleTriadCard(chars, 184, 10);
                 DrawAllCharsTripleTriadCard(chars, 234, 7);
@@ -2011,6 +2012,7 @@ namespace Altoholic.Windows
                 DrawAllCharsMinion(chars, 82, 7);
                 DrawAllCharsOrchestrion(chars, 371, 7);
                 DrawAllCharsBarding(chars, 48, 5);
+                DrawAllCharsTotal(chars, 540);
             }
 
             string revelationName = _currentLocale switch
@@ -2266,7 +2268,6 @@ namespace Altoholic.Windows
                         DrawAllCharsMinion(chars, 144, 7);
                         DrawAllCharsMinion(chars, 362, 5);
                         DrawAllCharsOrchestrion(chars, 289, 3);
-                        DrawAllCharsTotal(chars, 481);
                         break;
                     }
                 case 2025_2:
@@ -4032,7 +4033,7 @@ namespace Altoholic.Windows
                 if (ImGui.IsItemHovered())
                 {
                     ImGui.BeginTooltip();
-                    ImGui.TextUnformatted(name);
+                    ImGui.TextUnformatted(Utils.CapitalizeSentence(name));
                     ImGui.TextUnformatted(
                         $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
                     ImGui.EndTooltip();
@@ -4050,7 +4051,7 @@ namespace Altoholic.Windows
             foreach (Character currChar in chars)
             {
                 ImGui.TableNextColumn();
-                ImGui.TextUnformatted($"{(currChar.Currencies != null ? currChar.Currencies.Irregular_Tomestone_Of_Revelation : "")}");
+                ImGui.TextUnformatted($"{(currChar.Currencies != null ? currChar.Currencies.Irregular_Tomestone_Of_Aphorism : "")}");
                 if (ImGui.IsItemHovered())
                 {
                     ImGui.BeginTooltip();
