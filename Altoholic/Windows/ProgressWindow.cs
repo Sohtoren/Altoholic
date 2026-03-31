@@ -1978,6 +1978,8 @@ namespace Altoholic.Windows
                     Utils.DrawItemTooltip(_currentLocale, ref _globalCache, itm.Value);
                 }
 
+                int neededTomestone = 540;
+                Dictionary<ulong, int> charactersTotalNeededTomestone = [];
                 foreach (Character currChar in chars)
                 {
                     ImGui.TableNextColumn();
@@ -1989,30 +1991,32 @@ namespace Altoholic.Windows
                             $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
                         ImGui.EndTooltip();
                     }
+
+                    charactersTotalNeededTomestone[currChar.CharacterId] = neededTomestone;
                 }
 
-                DrawAllCharsOrnament(chars, 14, 50);
-                DrawAllCharsMount(chars, 238, 50);
-                DrawAllCharsMount(chars, 130, 50);
-                DrawAllCharsHairstyle(chars, 24234, 50);
-                DrawAllCharsEmote(chars, 169, 50);
-                DrawAllCharsOrchestrion(chars, 388, 50);
-                DrawAllCharsMinion(chars, 351, 30);
-                DrawAllCharsMount(chars, 27, 30);
-                DrawAllCharsMount(chars, 35, 30);
-                DrawAllCharsMount(chars, 158, 30);
-                DrawAllCharsMount(chars, 172, 30);
-                DrawAllCharsMinion(chars, 59, 15);
-                DrawAllCharsMinion(chars, 188, 15);
-                DrawAllCharsTripleTriadCard(chars, 183, 10);
-                DrawAllCharsTripleTriadCard(chars, 184, 10);
-                DrawAllCharsTripleTriadCard(chars, 234, 7);
-                DrawAllCharsTripleTriadCard(chars, 87, 7);
-                DrawAllCharsTripleTriadCard(chars, 324, 7);
-                DrawAllCharsMinion(chars, 82, 7);
-                DrawAllCharsOrchestrion(chars, 371, 7);
-                DrawAllCharsBarding(chars, 48, 5);
-                DrawAllCharsTotal(chars, 540);
+                DrawAllCharsOrnament(chars, 14, 50, charactersTotalNeededTomestone);
+                DrawAllCharsMount(chars, 238, 50, charactersTotalNeededTomestone);
+                DrawAllCharsMount(chars, 130, 50, charactersTotalNeededTomestone);
+                DrawAllCharsHairstyle(chars, 24234, 50, charactersTotalNeededTomestone);
+                DrawAllCharsEmote(chars, 169, 50, charactersTotalNeededTomestone);
+                DrawAllCharsOrchestrion(chars, 388, 50, charactersTotalNeededTomestone);
+                DrawAllCharsMinion(chars, 351, 30, charactersTotalNeededTomestone);
+                DrawAllCharsMount(chars, 27, 30, charactersTotalNeededTomestone);
+                DrawAllCharsMount(chars, 35, 30, charactersTotalNeededTomestone);
+                DrawAllCharsMount(chars, 158, 30, charactersTotalNeededTomestone);
+                DrawAllCharsMount(chars, 172, 30, charactersTotalNeededTomestone);
+                DrawAllCharsMinion(chars, 59, 15, charactersTotalNeededTomestone);
+                DrawAllCharsMinion(chars, 188, 15, charactersTotalNeededTomestone);
+                DrawAllCharsTripleTriadCard(chars, 183, 10, charactersTotalNeededTomestone);
+                DrawAllCharsTripleTriadCard(chars, 184, 10, charactersTotalNeededTomestone);
+                DrawAllCharsTripleTriadCard(chars, 234, 7, charactersTotalNeededTomestone);
+                DrawAllCharsTripleTriadCard(chars, 87, 7, charactersTotalNeededTomestone);
+                DrawAllCharsTripleTriadCard(chars, 324, 7, charactersTotalNeededTomestone);
+                DrawAllCharsMinion(chars, 82, 7, charactersTotalNeededTomestone);
+                DrawAllCharsOrchestrion(chars, 371, 7, charactersTotalNeededTomestone);
+                DrawAllCharsBarding(chars, 48, 5, charactersTotalNeededTomestone);
+                DrawAllCharsTotal(chars, neededTomestone, charactersTotalNeededTomestone);
             }
 
             string revelationName = _currentLocale switch
@@ -3562,7 +3566,7 @@ namespace Altoholic.Windows
             }
         }
 
-        private void DrawAllCharsEmote(List<Character> chars, uint id, int cost)
+        private void DrawAllCharsEmote(List<Character> chars, uint id, int cost, Dictionary<ulong, int>? characterNeededTomestone = null)
         {
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
@@ -3594,9 +3598,12 @@ namespace Altoholic.Windows
                 foreach (Character currChar in chars)
                 {
                     ImGui.TableNextColumn();
-                    //ImGui.TextUnformatted(currChar.HasEmote(id) ? "\u2713" : "");
                     ImGui.PushFont(UiBuilder.IconFont);
-                    ImGui.TextUnformatted(currChar.HasEmote(id) ? FontAwesomeIcon.Check.ToIconString() : "");
+                    if(currChar.HasEmote(id))
+                    {
+                        characterNeededTomestone?[currChar.CharacterId] = characterNeededTomestone[currChar.CharacterId] - cost;
+                        ImGui.TextUnformatted(FontAwesomeIcon.Check.ToIconString());
+                    }
                     ImGui.PopFont();
                     if (ImGui.IsItemHovered())
                     {
@@ -3609,7 +3616,7 @@ namespace Altoholic.Windows
                 }
             }
         }
-        private void DrawAllCharsMount(List<Character> chars, uint id, int cost)
+        private void DrawAllCharsMount(List<Character> chars, uint id, int cost, Dictionary<ulong, int>? characterNeededTomestone = null)
         {
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
@@ -3642,9 +3649,12 @@ namespace Altoholic.Windows
                 foreach (Character currChar in chars)
                 {
                     ImGui.TableNextColumn();
-                    //ImGui.TextUnformatted(currChar.HasMount(id) ? "\u2713" : "");
                     ImGui.PushFont(UiBuilder.IconFont);
-                    ImGui.TextUnformatted(currChar.HasMount(id) ? FontAwesomeIcon.Check.ToIconString() : "");
+                    if(currChar.HasMount(id))
+                    {
+                        characterNeededTomestone?[currChar.CharacterId] = characterNeededTomestone[currChar.CharacterId] - cost;
+                        ImGui.TextUnformatted(FontAwesomeIcon.Check.ToIconString());
+                    }
                     ImGui.PopFont();
                     if (ImGui.IsItemHovered())
                     {
@@ -3657,7 +3667,7 @@ namespace Altoholic.Windows
                 }
             }
         }
-        private void DrawAllCharsMinion(List<Character> chars, uint id, int cost)
+        private void DrawAllCharsMinion(List<Character> chars, uint id, int cost, Dictionary<ulong, int>? characterNeededTomestone = null)
         {
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
@@ -3690,9 +3700,12 @@ namespace Altoholic.Windows
                 foreach (Character currChar in chars)
                 {
                     ImGui.TableNextColumn();
-                    //ImGui.TextUnformatted(currChar.HasMinion(id) ? "\u2713" : "");
                     ImGui.PushFont(UiBuilder.IconFont);
-                    ImGui.TextUnformatted(currChar.HasMinion(id) ? FontAwesomeIcon.Check.ToIconString() : "");
+                    if(currChar.HasMinion(id))
+                    {
+                        characterNeededTomestone?[currChar.CharacterId] = characterNeededTomestone[currChar.CharacterId] - cost;
+                        ImGui.TextUnformatted(FontAwesomeIcon.Check.ToIconString());
+                    }
                     ImGui.PopFont();
                     if (ImGui.IsItemHovered())
                     {
@@ -3705,7 +3718,7 @@ namespace Altoholic.Windows
                 }
             }
         }
-        private void DrawAllCharsOrchestrion(List<Character> chars, uint id, int cost)
+        private void DrawAllCharsOrchestrion(List<Character> chars, uint id, int cost, Dictionary<ulong, int>? characterNeededTomestone = null)
         {
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
@@ -3737,9 +3750,12 @@ namespace Altoholic.Windows
                 foreach (Character currChar in chars)
                 {
                     ImGui.TableNextColumn();
-                    //ImGui.TextUnformatted(currChar.HasOrchestrionRoll(id) ? "\u2713" : "");
                     ImGui.PushFont(UiBuilder.IconFont);
-                    ImGui.TextUnformatted(currChar.HasOrchestrionRoll(id) ? FontAwesomeIcon.Check.ToIconString() : "");
+                    if(currChar.HasOrchestrionRoll(id))
+                    {
+                        characterNeededTomestone?[currChar.CharacterId] = characterNeededTomestone[currChar.CharacterId] - cost;
+                        ImGui.TextUnformatted(FontAwesomeIcon.Check.ToIconString());
+                    }
                     ImGui.PopFont();
                     if (ImGui.IsItemHovered())
                     {
@@ -3752,7 +3768,7 @@ namespace Altoholic.Windows
                 }
             }
         }
-        private void DrawAllCharsFramerKit(List<Character> chars, uint id, int cost)
+        private void DrawAllCharsFramerKit(List<Character> chars, uint id, int cost, Dictionary<ulong, int>? characterNeededTomestone = null)
         {
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
@@ -3788,9 +3804,12 @@ namespace Altoholic.Windows
                     foreach (Character currChar in chars)
                     {
                         ImGui.TableNextColumn();
-                        //ImGui.TextUnformatted(currChar.HasFramerKit(fkId.Value) ? "\u2713" : "");
                         ImGui.PushFont(UiBuilder.IconFont);
-                        ImGui.TextUnformatted(currChar.HasFramerKit(fk.Id) ? FontAwesomeIcon.Check.ToIconString() : "");
+                        if (currChar.HasFramerKit(fk.Id))
+                        {
+                            characterNeededTomestone?[currChar.CharacterId] = characterNeededTomestone[currChar.CharacterId] - cost;
+                            ImGui.TextUnformatted(FontAwesomeIcon.Check.ToIconString());
+                        }
                         ImGui.PopFont();
                         if (ImGui.IsItemHovered())
                         {
@@ -3804,7 +3823,7 @@ namespace Altoholic.Windows
                 }
             }
         }
-        private void DrawAllCharsBarding(List<Character> chars, uint id, int cost)
+        private void DrawAllCharsBarding(List<Character> chars, uint id, int cost, Dictionary<ulong, int>? characterNeededTomestone = null)
         {
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
@@ -3837,9 +3856,12 @@ namespace Altoholic.Windows
                 foreach (Character currChar in chars)
                 {
                     ImGui.TableNextColumn();
-                    //ImGui.TextUnformatted(currChar.HasBarding(id) ? "\u2713" : "");
                     ImGui.PushFont(UiBuilder.IconFont);
-                    ImGui.TextUnformatted(currChar.HasBarding(id) ? FontAwesomeIcon.Check.ToIconString() : "");
+                    if(currChar.HasBarding(id))
+                    {
+                        characterNeededTomestone?[currChar.CharacterId] = characterNeededTomestone[currChar.CharacterId] - cost;
+                        ImGui.TextUnformatted(FontAwesomeIcon.Check.ToIconString());
+                    }
                     ImGui.PopFont();
                     if (ImGui.IsItemHovered())
                     {
@@ -3852,7 +3874,7 @@ namespace Altoholic.Windows
                 }
             }
         }
-        private void DrawAllCharsTripleTriadCard(List<Character> chars, uint id, int cost)
+        private void DrawAllCharsTripleTriadCard(List<Character> chars, uint id, int cost, Dictionary<ulong, int>? characterNeededTomestone = null)
         {
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
@@ -3885,9 +3907,12 @@ namespace Altoholic.Windows
                 foreach (Character currChar in chars)
                 {
                     ImGui.TableNextColumn();
-                    //ImGui.TextUnformatted(currChar.HasTTC(id) ? "\u2713" : "");
                     ImGui.PushFont(UiBuilder.IconFont);
-                    ImGui.TextUnformatted(currChar.HasTTC(id) ? FontAwesomeIcon.Check.ToIconString() : "");
+                    if(currChar.HasTTC(id))
+                    {
+                        characterNeededTomestone?[currChar.CharacterId] = characterNeededTomestone[currChar.CharacterId] - cost;
+                        ImGui.TextUnformatted(FontAwesomeIcon.Check.ToIconString());
+                    }
                     ImGui.PopFont();
                     if (ImGui.IsItemHovered())
                     {
@@ -3900,8 +3925,7 @@ namespace Altoholic.Windows
                 }
             }
         }
-
-        private void DrawAllCharsOrnament(List<Character> chars, uint id, int cost)
+        private void DrawAllCharsOrnament(List<Character> chars, uint id, int cost, Dictionary<ulong, int>? characterNeededTomestone = null)
         {
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
@@ -3934,9 +3958,12 @@ namespace Altoholic.Windows
                 foreach (Character currChar in chars)
                 {
                     ImGui.TableNextColumn();
-                    //ImGui.TextUnformatted(currChar.HasOrnament(id) ? "\u2713" : "");
                     ImGui.PushFont(UiBuilder.IconFont);
-                    ImGui.TextUnformatted(currChar.HasOrnament(id) ? FontAwesomeIcon.Check.ToIconString() : "");
+                    if(currChar.HasOrnament(id))
+                    {
+                        characterNeededTomestone?[currChar.CharacterId] = characterNeededTomestone[currChar.CharacterId] - cost;
+                        ImGui.TextUnformatted(FontAwesomeIcon.Check.ToIconString());
+                    }
                     ImGui.PopFont();
                     if (ImGui.IsItemHovered())
                     {
@@ -3949,8 +3976,7 @@ namespace Altoholic.Windows
                 }
             }
         }
-
-        private void DrawAllCharsHairstyle(List<Character> chars, uint itemId, int cost)
+        private void DrawAllCharsHairstyle(List<Character> chars, uint itemId, int cost, Dictionary<ulong, int>? characterNeededTomestone = null)
         {
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
@@ -3981,7 +4007,11 @@ namespace Altoholic.Windows
             {
                 ImGui.TableNextColumn();
                 ImGui.PushFont(UiBuilder.IconFont);
-                ImGui.TextUnformatted(currChar.HasHairstyleFromIds(ids) ? FontAwesomeIcon.Check.ToIconString() : "");
+                if (currChar.HasHairstyleFromIds(ids))
+                {
+                    characterNeededTomestone?[currChar.CharacterId] = characterNeededTomestone[currChar.CharacterId] - cost;
+                    ImGui.TextUnformatted(FontAwesomeIcon.Check.ToIconString());
+                }
                 ImGui.PopFont();
                 if (ImGui.IsItemHovered())
                 {
@@ -3993,7 +4023,7 @@ namespace Altoholic.Windows
                 }
             }
         }
-        private void DrawAllCharsFacewear(List<Character> chars, uint id, int cost)
+        private void DrawAllCharsFacewear(List<Character> chars, uint id, int cost, Dictionary<ulong, int>? characterNeededTomestone = null)
         {
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
@@ -4028,7 +4058,11 @@ namespace Altoholic.Windows
             {
                 ImGui.TableNextColumn();
                 ImGui.PushFont(UiBuilder.IconFont);
-                ImGui.TextUnformatted(currChar.HasGlasses(id) ? FontAwesomeIcon.Check.ToIconString() : "");
+                if(currChar.HasGlasses(id))
+                {
+                    characterNeededTomestone?[currChar.CharacterId] = characterNeededTomestone[currChar.CharacterId] - cost;
+                    ImGui.TextUnformatted(FontAwesomeIcon.Check.ToIconString());
+                }
                 ImGui.PopFont();
                 if (ImGui.IsItemHovered())
                 {
@@ -4041,22 +4075,31 @@ namespace Altoholic.Windows
             }
         }
 
-        private void DrawAllCharsTotal(List<Character> chars, int total)
+        private void DrawAllCharsTotal(List<Character> chars, int total, Dictionary<ulong, int>? characterNeededTomestone = null)
         {
+            string totalStr = _currentLocale switch
+            {
+                ClientLanguage.German => "Gesamtbedarf",
+                ClientLanguage.English => "Total required",
+                ClientLanguage.French => "Total requis",
+                ClientLanguage.Japanese => "必要合計",
+                _ => "Total required"
+            };
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
-            ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 935)}");
+            ImGui.TextUnformatted($"{totalStr}");
             ImGui.TableSetColumnIndex(1);
             ImGui.TextUnformatted($"{total}");
             foreach (Character currChar in chars)
             {
                 ImGui.TableNextColumn();
-                ImGui.TextUnformatted($"{(currChar.Currencies != null ? currChar.Currencies.Irregular_Tomestone_Of_Aphorism : "")}");
+                ImGui.TextUnformatted($"{(characterNeededTomestone is not null ? characterNeededTomestone[currChar.CharacterId] : "")}");
                 if (ImGui.IsItemHovered())
                 {
                     ImGui.BeginTooltip();
                     ImGui.TextUnformatted(
                         $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
+                    ImGui.TextUnformatted($"{currChar.Currencies?.Irregular_Tomestone_Of_Aphorism}{(characterNeededTomestone is not null ? "/" + characterNeededTomestone[currChar.CharacterId] : "")}");
                     ImGui.EndTooltip();
                 }
             }
