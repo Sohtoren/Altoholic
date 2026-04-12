@@ -44,6 +44,8 @@ namespace Altoholic
         public HashSet<uint> TrackingRoulettes { get; set; } = [];
         public HashSet<uint> TrackingRaids { get; set; } = [];
         public bool DoubleLastNormalRaidRewards { get; set; } = true;
+        public bool IsHousingLastEntryAlertEnabled { get; set; } = true;
+        public int HousingLastEntryNotificationDays { get; set; } = 35;
 
         // the below exist just to make saving less cumbersome
         [NonSerialized]

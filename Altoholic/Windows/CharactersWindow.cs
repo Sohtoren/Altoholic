@@ -223,6 +223,32 @@ namespace Altoholic.Windows
                 }
                 ImGui.SameLine();
             }
+            if(_plugin.Configuration.IsHousingLastEntryAlertEnabled)
+            {
+                int neededHouseEntries = 0;
+                foreach(Housing house in character.Houses)
+                {
+                    if (house.Plot == -127 || house.Plot == -128 || house.Room != 0) continue;
+                    if (house.LastCheck is not null && (DateTime.UtcNow - house.LastCheck.Value).Days >= _plugin.Configuration.HousingLastEntryNotificationDays)
+                    {
+                        neededHouseEntries =+ 1;
+                    }
+
+                    if(neededHouseEntries > 0)
+                    {
+                        ImGui.PushFont(UiBuilder.IconFont);
+                        ImGui.TextUnformatted($"{FontAwesomeIcon.HouseCircleExclamation.ToIconString()}");
+                        ImGui.PopFont();
+                        if (ImGui.IsItemHovered())
+                        {
+                            ImGui.BeginTooltip();
+                            ImGui.TextUnformatted($"{Loc.Localize("LastVisit", "Last visit: ")}{Utils.FormatDate(dateFormat, house.LastCheck.Value.ToLocalTime())}");
+                            ImGui.EndTooltip();
+                        }
+                       ImGui.SameLine();
+                    }
+                }
+            }
             ImGui.TextUnformatted(
                 $"{(character.IsSprout ? (char)SeIconChar.BotanistSprout : "")}{character.FirstName}");
             ImGui.TableSetColumnIndex(1);

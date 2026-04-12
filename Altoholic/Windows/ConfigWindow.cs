@@ -177,6 +177,14 @@ namespace Altoholic.Windows
                 _configuration.IsPlaytimeNotificationEnabled = isPlaytimeNotificationEnabled;
                 _configuration.TrySave();
             }
+            if (ImGui.IsItemHovered())
+            {
+                using var tooltip = ImRaii.Tooltip();
+                if (!tooltip) return;
+                ImGui.TextUnformatted(
+                    $"{Loc.Localize("ConfigPlaytimeNotificationMessage", "Display a notification in chat when /playtime hasn't been used for more than chosen days")}");
+            }
+
             int playtimeNotificationDays = _configuration.PlaytimeNotificationDays;
             ImGui.PushItemWidth(200);
             if (ImGui.SliderInt("Days (default 7)###PlaytimeNotificationDays", ref playtimeNotificationDays, 1, 90))
@@ -193,14 +201,6 @@ namespace Altoholic.Windows
                 if (!tooltip) return;
                 ImGui.TextUnformatted(
                     $"{Loc.Localize("ConfigPlaytimeNotificationDaysMessage", "Number of days before showing the playtime notification")}");
-            }
-
-            if (ImGui.IsItemHovered())
-            {
-                using var tooltip = ImRaii.Tooltip();
-                if (!tooltip) return;
-                ImGui.TextUnformatted(
-                    $"{Loc.Localize("ConfigPlaytimeNotificationMessage", "Display a notification in chat when /playtime hasn't been used for more than 7 days")}");
             }
 
             bool isAutoSaveChatMessageEnabled = _configuration.IsAutoSaveChatMessageEnabled;
@@ -315,6 +315,40 @@ namespace Altoholic.Windows
                     _configuration.DateFormat = _selectedDateFormat;
                     _configuration.TrySave();
                 }
+            }
+
+            bool isHousingLastEntryAlertEnabled = _configuration.IsHousingLastEntryAlertEnabled;
+            if (ImGui.Checkbox(
+                    $"{Loc.Localize("ConfigEnableHousingLastEntryAlert", "Enable housing last entry alert####EnableHousingLastEntryAlert")}",
+                    ref isHousingLastEntryAlertEnabled))
+            {
+                _configuration.IsHousingLastEntryAlertEnabled = isHousingLastEntryAlertEnabled;
+                _configuration.TrySave();
+            }
+            if (ImGui.IsItemHovered())
+            {
+                using var tooltip = ImRaii.Tooltip();
+                if (!tooltip) return;
+                ImGui.TextUnformatted(
+                    $"{Loc.Localize("ConfigHousingLastEntryAlert", "Display an icon in character list if a character has a house that hasn't been entered for more than selected number of days")}");
+            }
+
+            int housingLastEntryNotificationDays = _configuration.HousingLastEntryNotificationDays;
+            ImGui.PushItemWidth(200);
+            if (ImGui.SliderInt("Days (default 35)###HousingLastEntryNotificationDays", ref housingLastEntryNotificationDays, 1, 45))
+            {
+                _configuration.HousingLastEntryNotificationDays = housingLastEntryNotificationDays;
+                _configuration.TrySave();
+
+            }
+            ImGui.PopItemWidth();
+
+            if (ImGui.IsItemHovered())
+            {
+                using var tooltip = ImRaii.Tooltip();
+                if (!tooltip) return;
+                ImGui.TextUnformatted(
+                    $"{Loc.Localize("ConfigHousingLastEntryNotificationDaysMessage", "Number of days before showing the housing notification")}");
             }
         }
 
