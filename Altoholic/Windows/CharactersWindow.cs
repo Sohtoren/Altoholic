@@ -229,7 +229,8 @@ namespace Altoholic.Windows
                 foreach(Housing house in character.Houses)
                 {
                     if (house.Plot == -127 || house.Plot == -128 || house.Room != 0) continue;
-                    if (house.LastCheck is not null && (DateTime.UtcNow - house.LastCheck.Value).Days >= _plugin.Configuration.HousingLastEntryNotificationDays)
+                    if (house.LastCheck is null) continue;
+                    if ((DateTime.UtcNow - house.LastCheck.Value).Days >= _plugin.Configuration.HousingLastEntryNotificationDays)
                     {
                         neededHouseEntries =+ 1;
                     }
