@@ -1259,13 +1259,17 @@ namespace Altoholic.Database
             Directory.CreateDirectory(Path.Combine(Plugin.PluginInterface.GetPluginConfigDirectory(), "backups"));
             File.Copy(dbpath, backupdbpath);
         }
+
         private static void DeleteAndKeepLastFiveBackup()
         {
             Plugin.Log.Debug("Database/DeleteAndKeepLastFiveBackup entered");
-            Plugin.Log.Debug("Cleaning old backups");
+            Plugin.Log.Info("Cleaning old backups");
             string backupdbpath = Path.Combine(Plugin.PluginInterface.GetPluginConfigDirectory(), "backups");
             if (!Directory.Exists(backupdbpath))
-                throw new DirectoryNotFoundException($"Folder not found: {backupdbpath}");
+            {
+                Plugin.Log.Error($"Backups folder not found: {backupdbpath}");
+                return;
+            }
 
             var files = Directory
                 .EnumerateFiles(backupdbpath, "altoholic.db.*", SearchOption.TopDirectoryOnly)
