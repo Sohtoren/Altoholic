@@ -2357,9 +2357,30 @@ namespace Altoholic
                 return;
             }
 
+            IsDutyTimerTracked(d.Id);
+
             if (_localPlayer.IsDutyCompleted(d.Id)) return;
             Log.Debug($"Duty {d.Id}:<{d.EnglishName}> completed, adding it to the completed list");
             _localPlayer.Duties.Add(d.Id);
+        }
+
+        private void IsDutyTimerTracked(uint dutyId)
+        {
+            if (_localPlayer.RaidRewards.TryGetValue(dutyId, out var reward))
+            {
+                if (dutyId != _globalCache.DutyStorage.DoubleRaidLootId) return;
+                if (_localPlayer.RaidRewards[dutyId].LastCheck > Utils.GetLastWeeklyReset() && _localPlayer.RaidRewards[dutyId].Reward > 0) return;
+
+                _localPlayer.RaidRewards[dutyId].Reward = 1;
+                _localPlayer.RaidRewards[dutyId].LastCheck = DateTime.UtcNow;
+            }
+            else
+            {
+                if (dutyId == _globalCache.DutyStorage.DoubleRaidLootId)
+                {
+                    _localPlayer.RaidRewards.Add(dutyId, new() { Reward = 1, LastCheck = DateTime.UtcNow });
+                }
+            }
         }
 
         private void OnGameInventoryItemEvent(GameInventoryEvent type, InventoryEventArgs data)

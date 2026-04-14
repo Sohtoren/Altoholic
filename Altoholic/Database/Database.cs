@@ -1288,8 +1288,8 @@ namespace Altoholic.Database
                         out DateTime datetime);
                     return new { f.Path, ParsedDate = goodFormat ? (DateTime?)datetime : null };
                 })
-                .Where(x => x.ParsedDate.HasValue)
-                .OrderByDescending(x => x.ParsedDate.Value)
+                .Where(f => f.ParsedDate.HasValue)
+                .OrderByDescending(f => f.ParsedDate.Value)
                 .ToList();
 
             if (files.Count <= 5) return;
