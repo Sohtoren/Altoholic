@@ -2357,29 +2357,42 @@ namespace Altoholic
                 return;
             }
 
-            IsDutyTimerTracked(d.Id);
-
             if (_localPlayer.IsDutyCompleted(d.Id)) return;
             Log.Debug($"Duty {d.Id}:<{d.EnglishName}> completed, adding it to the completed list");
             _localPlayer.Duties.Add(d.Id);
         }
 
-        private void IsDutyTimerTracked(uint dutyId)
-        {
-            if (_localPlayer.RaidRewards.TryGetValue(dutyId, out var reward))
-            {
-                if (dutyId != _globalCache.DutyStorage.DoubleRaidLootId) return;
-                if (_localPlayer.RaidRewards[dutyId].LastCheck > Utils.GetLastWeeklyReset() && _localPlayer.RaidRewards[dutyId].Reward > 0) return;
 
-                _localPlayer.RaidRewards[dutyId].Reward = 1;
-                _localPlayer.RaidRewards[dutyId].LastCheck = DateTime.UtcNow;
-            }
-            else
+        private unsafe void CheckIfLootIsFromTrackedTimerDuty(GameInventoryItem gameInventoryItem)
+        {
+            if (gameInventoryItem.ContainerType is not (GameInventoryType.Inventory1 or GameInventoryType.Inventory2 or GameInventoryType.Inventory3 or GameInventoryType.Inventory4)) return;
+
+            ushort currentDuty = GameMain.Instance()->CurrentContentFinderConditionId;
+
+            if (!_globalCache.DutyStorage.RewardsRaidId.Contains(currentDuty)) return;
+
+            Item? item = _globalCache.ItemStorage.LoadItem(Configuration.Language, gameInventoryItem.ItemId);
+            if (item is null || item.Value.RowId is 0) return;
+
+            if (_localPlayer.RaidRewards[currentDuty].LastCheck < Utils.GetLastWeeklyReset())
             {
-                if (dutyId == _globalCache.DutyStorage.DoubleRaidLootId)
-                {
-                    _localPlayer.RaidRewards.Add(dutyId, new() { Reward = 1, LastCheck = DateTime.UtcNow });
-                }
+                _localPlayer.RaidRewards[currentDuty].Reward = 0;
+            }
+
+                // If the item is a limited type that we care about, mark as completed
+                switch (item.Value.ItemUICategory.RowId)
+            {
+                case 34: // Head
+                case 35: // Body
+                case 36: // Legs
+                case 37: // Hands
+                case 38: // Feet
+                case 61 when item.Value.ItemAction.RowId == 0: // Miscellany with no itemAction
+                    {
+                        _localPlayer.RaidRewards[currentDuty].Reward = _localPlayer.RaidRewards[currentDuty].Reward + 1;
+                        _localPlayer.RaidRewards[currentDuty].LastCheck = DateTime.UtcNow;
+                    }
+                    break;
             }
         }
 
@@ -2392,6 +2405,7 @@ namespace Altoholic
 #endif
             GameInventoryItem i = data.Item;
             if (i.ItemId is 0) return;
+            CheckIfLootIsFromTrackedTimerDuty(i);
             switch (i.ContainerType)
             {
                 case GameInventoryType.Inventory1:
