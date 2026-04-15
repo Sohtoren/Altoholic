@@ -387,7 +387,9 @@ namespace Altoholic.Windows
                 ImGui.TextUnformatted("https://github.com/NebulousByte");
                 ImGui.EndTooltip();
             }
-            ImGui.TextUnformatted("Dalamud discord server");
+            ImGui.TextUnformatted("Better Playtime's Infiziert90");
+            ImGui.TextUnformatted("Daily duty's MidoriKami");
+            ImGui.TextUnformatted("Dalamud's discord server");
         }
 
         private void DrawTimerConfig()
