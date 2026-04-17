@@ -201,7 +201,8 @@ namespace Altoholic
                     TimersStatus.MaskedCarnivale,
                     TimersStatus.Tribes,
                     TimersStatus.Roulettes,
-                    TimersStatus.Raids
+                    TimersStatus.Raids,
+                    TimersStatus.WondrousTails
                 ]
             };
             Configuration.EnabledTimers ??=
@@ -214,7 +215,8 @@ namespace Altoholic
                 TimersStatus.MaskedCarnivale,
                 TimersStatus.Tribes,
                 TimersStatus.Roulettes,
-                TimersStatus.Raids
+                TimersStatus.Raids,
+                TimersStatus.WondrousTails
             ];
             Configuration.Initialize(PluginInterface.Manifest.AssemblyVersion.Major, PluginInterface);
 
@@ -1338,8 +1340,35 @@ namespace Altoholic
             GetBeastTribeReputationFromState(player);
             _localPlayer.SightseeingLogUnlockState = player.SightseeingLogUnlockState;
             _localPlayer.SightseeingLogUnlockStateEx = player.SightseeingLogUnlockStateEx;
+            GetWondrousTailFromState(player);
             //Log.Debug($"sightseeing: {player.SightseeingLogUnlockState}");// 0 = Not Unlocked, 1 = ARR Part 1, 2 = ARR Part 2
             //Log.Debug($"sightseeing ex: {player.SightseeingLogUnlockStateEx}");// 3 = Quest "Sights of the North" completed (= AdventureExPhase unlocked?)
+        }
+
+        private void GetWondrousTailFromState(PlayerState player)
+        {
+            _localPlayer.WondrousTails = new WondrousTails
+            {
+                HasWeeklyBingoJournal = player.HasWeeklyBingoJournal,
+                WeeklyBingoNumSecondChancePoints = player.WeeklyBingoNumSecondChancePoints,
+                WeeklyBingoNumPlacedStickers = player.WeeklyBingoNumPlacedStickers,
+                IsWeeklyBingoExpired = player.IsWeeklyBingoExpired(),
+                WeeklyBingoTaskStatus = new int[16],
+                WeeklyBingoExpireUnixTimestamp = Utils.UnixTimeStampToDateTime(player.GetWeeklyBingoExpireUnixTimestamp()),
+                LastCheck = DateTime.UtcNow
+            };
+            if (!player.HasWeeklyBingoJournal) return;
+            for (int i = 0; i < 16; i++)
+            {
+                PlayerState.WeeklyBingoTaskStatus status = player.GetWeeklyBingoTaskStatus(i);
+                _localPlayer.WondrousTails.WeeklyBingoTaskStatus[i] = status switch
+                {
+                    FFXIVClientStructs.FFXIV.Client.Game.UI.PlayerState.WeeklyBingoTaskStatus.Open => 0,
+                    FFXIVClientStructs.FFXIV.Client.Game.UI.PlayerState.WeeklyBingoTaskStatus.Claimable => 1,
+                    FFXIVClientStructs.FFXIV.Client.Game.UI.PlayerState.WeeklyBingoTaskStatus.Claimed => 2,
+                    _ => -1,
+                };
+            }
         }
 
         private void GetMountFromState(PlayerState player)
@@ -2650,7 +2679,8 @@ namespace Altoholic
                 GearSets = _localPlayer.GearSets,
                 GlamourPlates = _localPlayer.GlamourPlates,
                 CompletedRoulettes = _localPlayer.CompletedRoulettes,
-                RaidRewards = _localPlayer.RaidRewards
+                RaidRewards = _localPlayer.RaidRewards,
+                WondrousTails = _localPlayer.WondrousTails
             };
 
         }
@@ -2727,7 +2757,7 @@ namespace Altoholic
 
             _localPlayer.Timers.DomanEnclaveWeeklyAllowances = dem->State.Allowance;
             _localPlayer.Timers.DomanEnclaveWeeklyDonation = dem->State.Donated;
-            _localPlayer.Timers.DomanEnclaveLastCheck = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc);
+            _localPlayer.Timers.DomanEnclaveLastCheck = DateTime.UtcNow;
 
             //Log.Debug($"{_localPlayer.Timers.DomanEnclaveWeeklyDonation}/{_localPlayer.Timers.DomanEnclaveWeeklyAllowances}");
         }

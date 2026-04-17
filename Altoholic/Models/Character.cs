@@ -81,6 +81,7 @@ namespace Altoholic.Models
         public Dictionary<byte, GlamourPlate> GlamourPlates { get; init; } = new(20);
         public Dictionary<uint, DateTime> CompletedRoulettes { get; init; } = [];
         public Dictionary<uint, RaidReward> RaidRewards { get; init; } = [];
+        public WondrousTails? WondrousTails { get; set; }
 
 
         public bool HasAnyLevelJob(int level)
@@ -205,6 +206,11 @@ namespace Altoholic.Models
                    HasQuest((int)QuestIds.CUSTOM_DELIVERIES_ANDEN) ||
                    HasQuest((int)QuestIds.CUSTOM_DELIVERIES_MARGRAT) ||
                    HasQuest((int)QuestIds.CUSTOM_DELIVERIES_NITOWIKWE);
+        }
+
+        public bool HasWondrousTailUnlocked()
+        {
+            return HasQuest((int)QuestIds.WONDROUS_TAILS);
         }
 
         public bool IsDutyCompleted(uint id)

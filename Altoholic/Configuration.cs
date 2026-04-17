@@ -16,7 +16,8 @@ namespace Altoholic
         MaskedCarnivale,
         Tribes,
         Roulettes,
-        Raids
+        Raids,
+        WondrousTails
     }
 
     [Serializable]

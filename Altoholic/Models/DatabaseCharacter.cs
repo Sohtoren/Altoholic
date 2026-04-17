@@ -70,5 +70,6 @@ namespace Altoholic.Models
         public string GlamourPlates { get; init; } = string.Empty;
         public string CompletedRoulettes { get; init; } = string.Empty;
         public string RaidRewards { get; init; } = string.Empty;
+        public string WondrousTails { get; init; } = string.Empty;
     }
 }

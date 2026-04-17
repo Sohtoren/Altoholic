@@ -143,6 +143,7 @@ namespace Altoholic.Windows
             string jumboCacpot = _globalCache.AddonStorage.LoadAddonString(_currentLocale, 9272).Replace(" ", "\n");
             string fashionReport = _globalCache.AddonStorage.LoadAddonString(_currentLocale, 8819).Replace(" ", "\n");
             string customDelivery = _globalCache.AddonStorage.LoadAddonString(_currentLocale, 5700).Replace(" ", "\n");
+            string wondrousTails = _globalCache.AddonStorage.LoadAddonString(_currentLocale, 5600).Replace(" ", "\n");
             string domanEnclave = (_currentLocale switch
             {
                 ClientLanguage.German => "Domanischen Enklave",
@@ -214,6 +215,12 @@ namespace Altoholic.Windows
             {
                 ImGui.TableSetupColumn($"###CharactersTimers#All#Timer_6", ImGuiTableColumnFlags.WidthFixed,
                     ImGui.CalcTextSize(societalRelations).X);
+            }
+
+            if (enabledTimers.Contains(TimersStatus.WondrousTails))
+            {
+                ImGui.TableSetupColumn($"###CharactersTimers#All#Timer_7", ImGuiTableColumnFlags.WidthFixed,
+                    ImGui.CalcTextSize(wondrousTails).X);
             }
 
             if (enabledTimers.Contains(TimersStatus.Roulettes) && trackedRoulettes.Count > 0)
@@ -297,6 +304,12 @@ namespace Altoholic.Windows
             {
                 ImGui.TableNextColumn();
                 ImGui.TextUnformatted(societalRelations);
+            }
+
+            if (enabledTimers.Contains(TimersStatus.WondrousTails))
+            {
+                ImGui.TableNextColumn();
+                ImGui.TextUnformatted(wondrousTails);
             }
             
             if (enabledTimers.Contains(TimersStatus.Roulettes) && trackedRoulettes.Count > 0)
@@ -701,6 +714,85 @@ namespace Altoholic.Windows
                     {
                         ImGui.BeginTooltip();
                         ImGui.TextUnformatted($"{Loc.Localize("LastCheck", "Last check:")} {Utils.FormatDate(dateFormat, currChar.Timers.TribeLastCheck.Value.ToLocalTime())}");
+                        ImGui.EndTooltip();
+                    }
+                }
+
+                if (enabledTimers.Contains(TimersStatus.WondrousTails))
+                {
+                    ImGui.TableNextColumn();
+                    if (currChar.WondrousTails is null || !(currChar.WondrousTails.LastCheck > Utils.GetLastDailyReset()))
+                    {
+                        if (!currChar.HasWondrousTailUnlocked() && timerCrossMarkForNotUnlocked)
+                        {
+                            ImGui.PushFont(UiBuilder.IconFont);
+                            ImGui.TextUnformatted($"{FontAwesomeIcon.Times.ToIconString()}");
+                            ImGui.PopFont();
+                        }
+                        continue;
+                    }
+
+                    string expirationStr = _currentLocale switch
+                    {
+                        ClientLanguage.German => "Ablaufdatum",
+                        ClientLanguage.English => "Expiration date",
+                        ClientLanguage.French => "Date d'expiration",
+                        ClientLanguage.Japanese => "有効期限",
+                        _ => "Expiration date"
+                    };
+                    if (DateTime.UtcNow > currChar.WondrousTails.WeeklyBingoExpireUnixTimestamp.ToLocalTime())
+                    {
+                        ImGui.PushFont(UiBuilder.IconFont);
+                        ImGui.TextUnformatted($"{FontAwesomeIcon.Times.ToIconString()}");
+                        ImGui.PopFont();
+                        if (ImGui.IsItemHovered())
+                        {
+                            ImGui.BeginTooltip();
+                            ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 2534)}");
+                            ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 5616)}: {currChar.WondrousTails.WeeklyBingoNumSecondChancePoints}");
+                            ImGui.TextUnformatted($"{expirationStr}: {Utils.FormatDate(dateFormat, currChar.WondrousTails.WeeklyBingoExpireUnixTimestamp.ToLocalTime())}");
+                            ImGui.TextUnformatted($"{Loc.Localize("LastCheck", "Last check:")} {Utils.FormatDate(dateFormat, currChar.WondrousTails.LastCheck.ToLocalTime())}");
+                            ImGui.EndTooltip();
+                        }
+                        continue;
+                    }
+
+                    if(currChar.WondrousTails.LastCheck > Utils.GetLastDailyReset() && !currChar.WondrousTails.IsWeeklyBingoExpired && !currChar.WondrousTails.HasWeeklyBingoJournal)
+                    {
+                        ImGui.PushFont(UiBuilder.IconFont);
+                        ImGui.TextUnformatted($"{FontAwesomeIcon.Star.ToIconString()}");
+                        ImGui.PopFont();
+                        if(ImGui.IsItemHovered())
+                        {
+                            string str = _currentLocale switch {
+                                ClientLanguage.German => "Verfügbar",
+                                ClientLanguage.English => "Available",
+                                ClientLanguage.French => "Disponible",
+                                ClientLanguage.Japanese => "Wondrous Tail 入手可能",
+                                _ => "Available"
+                            };
+                            ImGui.BeginTooltip();
+                            ImGui.TextUnformatted($"{str}");
+                            ImGui.EndTooltip();
+                        }
+                    }
+
+                    if (currChar.WondrousTails.WeeklyBingoNumPlacedStickers == 9)
+                    {
+                        ImGui.PushFont(UiBuilder.IconFont);
+                        ImGui.TextUnformatted($"{FontAwesomeIcon.Check.ToIconString()}");
+                        ImGui.PopFont();
+                    }
+                    else
+                    {
+                        ImGui.TextUnformatted($"{currChar.WondrousTails.WeeklyBingoNumPlacedStickers}/9");
+                    }
+                    if (ImGui.IsItemHovered())
+                    {
+                        ImGui.BeginTooltip();
+                        ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 5616)}: {currChar.WondrousTails.WeeklyBingoNumSecondChancePoints}");
+                        ImGui.TextUnformatted($"{expirationStr}: {Utils.FormatDate(dateFormat, currChar.WondrousTails.WeeklyBingoExpireUnixTimestamp.ToLocalTime())}");
+                        ImGui.TextUnformatted($"{Loc.Localize("LastCheck", "Last check:")} {Utils.FormatDate(dateFormat, currChar.WondrousTails.LastCheck.ToLocalTime())}");
                         ImGui.EndTooltip();
                     }
                 }

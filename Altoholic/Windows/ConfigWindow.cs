@@ -574,6 +574,21 @@ namespace Altoholic.Windows
 
                     _configuration.TrySave();
                 }
+                bool isWondrousTailsEnabled = _configuration.EnabledTimers.Contains(TimersStatus.WondrousTails);
+                if (ImGui.Checkbox($"{_globalCache.AddonStorage.LoadAddonString(_selectedLanguage, 5600)}###WondrousTails",
+                        ref isWondrousTailsEnabled))
+                {
+                    if (isWondrousTailsEnabled)
+                    {
+                        _configuration.EnabledTimers.Add(TimersStatus.WondrousTails);
+                    }
+                    else
+                    {
+                        _configuration.EnabledTimers.Remove(TimersStatus.WondrousTails);
+                    }
+
+                    _configuration.TrySave();
+                }
             }
 
             ImGui.Separator();
