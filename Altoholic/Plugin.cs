@@ -1347,6 +1347,7 @@ namespace Altoholic
 
         private void GetWondrousTailFromState(PlayerState player)
         {
+            if (!_localPlayer.HasWondrousTailUnlocked()) return;
             _localPlayer.WondrousTails = new WondrousTails
             {
                 HasWeeklyBingoJournal = player.HasWeeklyBingoJournal,
