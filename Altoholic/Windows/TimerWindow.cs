@@ -123,14 +123,20 @@ namespace Altoholic.Windows
             }
 
             int columns = enabledTimers.Count;
-            if (enabledTimers.Contains(TimersStatus.Roulettes) && trackedRoulettes.Count > 0)
+            if (enabledTimers.Contains(TimersStatus.Roulettes))
             {
                 columns -= 1;
+            }
+            if (trackedRoulettes.Count > 0) 
+            {
                 columns += trackedRoulettes.Count;
             }
-            if(enabledTimers.Contains(TimersStatus.Raids) && trackedRaids.Count > 0)
+            if (enabledTimers.Contains(TimersStatus.Raids))
             {
                 columns -= 1;
+            }
+            if (trackedRaids.Count > 0)
+            {
                 columns += trackedRaids.Count;
             }
 
@@ -696,30 +702,38 @@ namespace Altoholic.Windows
                             ImGui.TextUnformatted($"{FontAwesomeIcon.Times.ToIconString()}");
                             ImGui.PopFont();
                         }
-
-                        continue;
-                    }
-
-                    if (currChar.Timers.TribeRemainingAllowances == 0)
-                    {
-                        ImGui.PushFont(UiBuilder.IconFont);
-                        ImGui.TextUnformatted($"{FontAwesomeIcon.Check.ToIconString()}");
-                        ImGui.PopFont();
                     }
                     else
                     {
-                        ImGui.TextUnformatted($"{currChar.Timers.TribeRemainingAllowances}");
-                    }
-                    if (ImGui.IsItemHovered())
-                    {
-                        ImGui.BeginTooltip();
-                        ImGui.TextUnformatted($"{Loc.Localize("LastCheck", "Last check:")} {Utils.FormatDate(dateFormat, currChar.Timers.TribeLastCheck.Value.ToLocalTime())}");
-                        ImGui.EndTooltip();
+                        if (currChar.Timers.TribeRemainingAllowances == 0)
+                        {
+                            ImGui.PushFont(UiBuilder.IconFont);
+                            ImGui.TextUnformatted($"{FontAwesomeIcon.Check.ToIconString()}");
+                            ImGui.PopFont();
+                        }
+                        else
+                        {
+                            ImGui.TextUnformatted($"{currChar.Timers.TribeRemainingAllowances}");
+                        }
+                        if (ImGui.IsItemHovered())
+                        {
+                            ImGui.BeginTooltip();
+                            ImGui.TextUnformatted($"{Loc.Localize("LastCheck", "Last check:")} {Utils.FormatDate(dateFormat, currChar.Timers.TribeLastCheck.Value.ToLocalTime())}");
+                            ImGui.EndTooltip();
+                        }
                     }
                 }
 
                 if (enabledTimers.Contains(TimersStatus.WondrousTails))
                 {
+                    string expirationStr = _currentLocale switch
+                    {
+                        ClientLanguage.German => "Ablaufdatum",
+                        ClientLanguage.English => "Expiration date",
+                        ClientLanguage.French => "Date d'expiration",
+                        ClientLanguage.Japanese => "有効期限",
+                        _ => "Expiration date"
+                    };
                     ImGui.TableNextColumn();
                     if (currChar.WondrousTails is null || !(currChar.WondrousTails.LastCheck > Utils.GetLastDailyReset()))
                     {
@@ -729,18 +743,8 @@ namespace Altoholic.Windows
                             ImGui.TextUnformatted($"{FontAwesomeIcon.Times.ToIconString()}");
                             ImGui.PopFont();
                         }
-                        continue;
                     }
-
-                    string expirationStr = _currentLocale switch
-                    {
-                        ClientLanguage.German => "Ablaufdatum",
-                        ClientLanguage.English => "Expiration date",
-                        ClientLanguage.French => "Date d'expiration",
-                        ClientLanguage.Japanese => "有効期限",
-                        _ => "Expiration date"
-                    };
-                    if (DateTime.UtcNow > currChar.WondrousTails.WeeklyBingoExpireUnixTimestamp.ToLocalTime())
+                    else if (DateTime.UtcNow > currChar.WondrousTails.WeeklyBingoExpireUnixTimestamp.ToLocalTime())
                     {
                         ImGui.PushFont(UiBuilder.IconFont);
                         ImGui.TextUnformatted($"{FontAwesomeIcon.Times.ToIconString()}");
@@ -754,10 +758,8 @@ namespace Altoholic.Windows
                             ImGui.TextUnformatted($"{Loc.Localize("LastCheck", "Last check:")} {Utils.FormatDate(dateFormat, currChar.WondrousTails.LastCheck.ToLocalTime())}");
                             ImGui.EndTooltip();
                         }
-                        continue;
                     }
-
-                    if(currChar.WondrousTails.LastCheck > Utils.GetLastDailyReset() && !currChar.WondrousTails.IsWeeklyBingoExpired && !currChar.WondrousTails.HasWeeklyBingoJournal)
+                    else if(currChar.WondrousTails.LastCheck > Utils.GetLastDailyReset() && !currChar.WondrousTails.IsWeeklyBingoExpired && !currChar.WondrousTails.HasWeeklyBingoJournal)
                     {
                         ImGui.PushFont(UiBuilder.IconFont);
                         ImGui.TextUnformatted($"{FontAwesomeIcon.Star.ToIconString()}");
@@ -776,8 +778,7 @@ namespace Altoholic.Windows
                             ImGui.EndTooltip();
                         }
                     }
-
-                    if (currChar.WondrousTails.WeeklyBingoNumPlacedStickers == 9)
+                    else if (currChar.WondrousTails.WeeklyBingoNumPlacedStickers == 9)
                     {
                         ImGui.PushFont(UiBuilder.IconFont);
                         ImGui.TextUnformatted($"{FontAwesomeIcon.Check.ToIconString()}");
