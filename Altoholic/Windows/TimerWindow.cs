@@ -392,7 +392,7 @@ namespace Altoholic.Windows
                     }
                     else
                     {
-                        if (!currChar.HasQuest((int)QuestIds.GOLD_SAUCER_JUMPBO_CACTPOT) && timerCrossMarkForNotUnlocked)
+                        if (!currChar.HasQuest((int)QuestIds.GOLD_SAUCER_JUMBO_CACTPOT) && timerCrossMarkForNotUnlocked)
                         {
                             ImGui.PushFont(UiBuilder.IconFont);
                             ImGui.TextUnformatted($"{FontAwesomeIcon.Times.ToIconString()}");
@@ -407,10 +407,10 @@ namespace Altoholic.Windows
                     if (currChar.Timers is
                         {
                             JumboCacpotTickets.Count: not 0,
-                            JumpboCacpotLastCheck: not null
-                        } && currChar.Timers.JumpboCacpotLastCheck > Utils.GetJumboCactpotReset(currChar.Datacenter))
+                            JumboCacpotLastCheck: not null
+                        } && currChar.Timers.JumboCacpotLastCheck > Utils.GetJumboCactpotReset(currChar.Datacenter))
                     {
-                        if (currChar.Timers.JumboCacpotTickets.Count == 3)
+                        if (currChar.Timers.JumboCacpotTickets.Count == 3 && currChar.Timers.JumboCacpotTickets.FindAll(t => t.LastCheck < Utils.GetJumboCactpotReset(currChar.Datacenter)).Count == 0)
                         {
                             ImGui.PushFont(UiBuilder.IconFont);
                             ImGui.TextUnformatted($"{FontAwesomeIcon.Check.ToIconString()}");
@@ -423,18 +423,18 @@ namespace Altoholic.Windows
                         if (ImGui.IsItemHovered())
                         {
                             ImGui.BeginTooltip();
-                            ImGui.TextUnformatted($"{Loc.Localize("LastCheck", "Last check:")} {Utils.FormatDate(dateFormat, currChar.Timers.JumpboCacpotLastCheck.Value.ToLocalTime())}");
+                            ImGui.TextUnformatted($"{Loc.Localize("LastCheck", "Last check:")} {Utils.FormatDate(dateFormat, currChar.Timers.JumboCacpotLastCheck.Value.ToLocalTime())}");
                             ImGui.TextUnformatted($"{Loc.Localize("Tickets", "Tickets :")}");
                             for (int i = 0; i < currChar.Timers.JumboCacpotTickets.Count; i++)
                             {
-                                ImGui.TextUnformatted($"{i}: {currChar.Timers.JumboCacpotTickets[i]}");
+                                ImGui.TextUnformatted($"{i}: {currChar.Timers.JumboCacpotTickets[i].Value}");
                             }
                             ImGui.EndTooltip();
                         }
                     }
                     else
                     {
-                        if (!currChar.HasQuest((int)QuestIds.GOLD_SAUCER_JUMPBO_CACTPOT) && timerCrossMarkForNotUnlocked)
+                        if (!currChar.HasQuest((int)QuestIds.GOLD_SAUCER_JUMBO_CACTPOT) && timerCrossMarkForNotUnlocked)
                         {
                             ImGui.PushFont(UiBuilder.IconFont);
                             ImGui.TextUnformatted($"{FontAwesomeIcon.Times.ToIconString()}");

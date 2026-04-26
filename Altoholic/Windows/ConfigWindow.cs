@@ -45,13 +45,7 @@ namespace Altoholic.Windows
         {
             _selectedLanguage = _configuration.Language;
             _plugin.ChangeLanguage(_selectedLanguage);
-            using var table = ImRaii.Table("###ConfigTable", 2, ImGuiTableFlags.ScrollY);
-            if (!table) return;
 
-            ImGui.TableSetupColumn("###ConfigTable#Config", ImGuiTableColumnFlags.WidthStretch);
-            ImGui.TableSetupColumn("###ConfigTable#Credits", ImGuiTableColumnFlags.WidthStretch);
-            ImGui.TableNextRow();
-            ImGui.TableSetColumnIndex(0);
             using var tabBar = ImRaii.TabBar("###ConfigWindow#Tabs");
             if (!tabBar.Success) return;
             using (var generalTab = ImRaii.TabItem($"{_globalCache.AddonStorage.LoadAddonString(_selectedLanguage, 662)}###General"))
@@ -95,9 +89,12 @@ namespace Altoholic.Windows
                     }
                 }
             }
-            ImGui.TableSetColumnIndex(1);
-            DrawFeedback();
-            DrawCredits();
+            using var creditTab = ImRaii.TabItem($"Credits");
+            if (!creditTab.Success) return;
+            {
+                DrawFeedback();
+                DrawCredits();
+            }
         }
 
         private void DrawConfig()
@@ -394,6 +391,13 @@ namespace Altoholic.Windows
 
         private void DrawTimerConfig()
         {
+            using var table = ImRaii.Table("###ConfigTable", 2, ImGuiTableFlags.ScrollY);
+            if (!table) return;
+
+            ImGui.TableSetupColumn("###ConfigTable#Timers#Enabled", ImGuiTableColumnFlags.WidthStretch);
+            ImGui.TableSetupColumn("###ConfigTable#Timers#Options", ImGuiTableColumnFlags.WidthStretch);
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
             ImGui.TextUnformatted(Loc.Localize("ConfigEnabledTimer", "Enabled Timers"));
 
             if (_configuration.EnabledTimers is not null)
@@ -591,7 +595,7 @@ namespace Altoholic.Windows
                 }
             }
 
-            ImGui.Separator();
+            ImGui.TableSetColumnIndex(1);
             ImGui.TextUnformatted("Timer Standalone Icon");
             int iconSize = _configuration.TimerStandaloneIcon is 0 or > 100 ? 48 : _configuration.TimerStandaloneIcon;
             if (ImGui.SliderInt("Size (default 48)###TimerIconSize", ref iconSize, 15, 100))
@@ -637,6 +641,13 @@ namespace Altoholic.Windows
                 _configuration.TimerStandaloneWindowPositionY = iconPosY;
                 _configuration.TrySave();
             }*/
+            bool timerRemainderOnZoneChange = _configuration.TimerRemainderOnZoneChange;
+            if (ImGui.Checkbox($"{Loc.Localize("TimerRemainderOnZoneChange", "Show remaining timers on current character in chat on zone change")}###TimerRemainderOnZoneChange",
+                    ref timerRemainderOnZoneChange))
+            {
+                _configuration.TimerRemainderOnZoneChange = timerRemainderOnZoneChange;
+                _configuration.TrySave();
+            }
         }
 
         private void DrawTimerRoulettesConfig()

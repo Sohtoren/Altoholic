@@ -2701,8 +2701,41 @@ namespace Altoholic
 
         private void OnZoneChange(ushort territoryTypeId)
         {
-            //Log.Debug($"ZoneChanged:{territoryTypeId}");
+            Log.Debug($"ZoneChanged:{territoryTypeId}");
             CheckCurrentTerritoryType(territoryTypeId);
+            if (Configuration.TimerRemainderOnZoneChange)
+            {
+                TimerChatReminder();
+            }
+        }
+
+        private void TimerChatReminder()
+        {
+            //Log.Debug("TimerChatReminder enter");
+            if (Configuration.EnabledTimers is null || Configuration.EnabledTimers.Count == 0) return;
+            SeStringBuilder builder = new();
+            builder.Append($"[{Name}] ");
+
+            if (Configuration.EnabledTimers.Contains(TimersStatus.DomanEnclave) && _localPlayer.Timers.DomanEnclaveWeeklyDonation != _localPlayer.Timers.DomanEnclaveWeeklyAllowances)
+            {
+                Utils.ChatMessage($"{_globalCache.AddonStorage.LoadAddonString(Configuration.Language, 8821)}: {_localPlayer.Timers.DomanEnclaveWeeklyDonation}/{_localPlayer.Timers.DomanEnclaveWeeklyAllowances}");
+            }
+
+            if (Configuration.EnabledTimers.Contains(TimersStatus.JumboCacpot) && _localPlayer.Timers.JumboCacpotTickets.Count != 3 || _localPlayer.Timers.JumboCacpotLastCheck < Utils.GetJumboCactpotReset(_localPlayer.Datacenter) || _localPlayer.Timers.JumboCacpotTickets.FindAll(t => t.LastCheck < Utils.GetJumboCactpotReset(_localPlayer.Datacenter)).Count > 0)
+            {
+                Log.Debug($"Showing Jumbo Cacpot remainder");
+                builder.PushColorRgba(KnownColor.Yellow.Vector());
+                builder.Append($"{_globalCache.AddonStorage.LoadAddonString(Configuration.Language, 9272)}:");
+                builder.PopColor();
+                builder.PushColorRgba(KnownColor.Red.Vector());
+                builder.Append($" { _localPlayer.Timers.JumboCacpotTickets.FindAll(t => t.LastCheck > Utils.GetJumboCactpotReset(_localPlayer.Datacenter)).Count}/ 3");
+                builder.PopColor();
+            }
+
+            if (builder.ToReadOnlySeString().ToString().Trim() == $"[{Name}]") return;
+            XivChatEntry chatEntry = new() { Message = builder.ToReadOnlySeString().ToDalamudString(), Type = XivChatType.Echo };
+
+            ChatGui.Print(chatEntry);
         }
 
         private void CheckCurrentTerritoryType(ushort territoryTypeId)
@@ -3085,7 +3118,7 @@ namespace Altoholic
 
         private unsafe void GetJumboCactpot(uint* sceneData)
         {
-            //Log.Debug($"GetJumboCactpot: {sceneData[0]},{sceneData[1]},{sceneData[2]},{sceneData[3]},{sceneData[4]}");
+            Log.Debug($"GetJumboCactpot: {sceneData[0]},{sceneData[1]},{sceneData[2]},{sceneData[3]},{sceneData[4]}");
             _localPlayer.Timers.JumboCacpotTickets.Clear();
             for (int i = 0; i < 3; ++i)
             {
@@ -3093,10 +3126,15 @@ namespace Altoholic
 
                 if (ticketValue != 10000)
                 {
-                    _localPlayer.Timers.JumboCacpotTickets.Add((int)ticketValue);
+                    JumboCacpotTicket jct = new JumboCacpotTicket
+                    {
+                        Value = (int)ticketValue,
+                        LastCheck = DateTime.UtcNow
+                    };
+                    _localPlayer.Timers.JumboCacpotTickets.Add(jct);
                 }
             }
-            _localPlayer.Timers.JumpboCacpotLastCheck = DateTime.UtcNow;
+            _localPlayer.Timers.JumboCacpotLastCheck = DateTime.UtcNow;
         }
 
         private int _ticketData = -1;
@@ -3125,7 +3163,12 @@ namespace Altoholic
                                 break;
 
                             case 0 when _ticketData >= 0:
-                                _localPlayer.Timers.JumboCacpotTickets.Add(_ticketData);
+                                JumboCacpotTicket jct = new JumboCacpotTicket
+                                {
+                                    Value = _ticketData,
+                                    LastCheck = DateTime.UtcNow
+                                };
+                                _localPlayer.Timers.JumboCacpotTickets.Add(jct);
                                 _ticketData = -1;
                                 break;
                         }

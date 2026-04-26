@@ -38,6 +38,7 @@ namespace Altoholic
         public float TimerStandaloneIconAlpha { get; set; } = 0.5f;
         public bool TimerStandaloneShowAtStartup { get; set; }
         public bool TimerCrossMarkForNotUnlocked { get; set; } = false;
+        public bool TimerRemainderOnZoneChange { get; set; } = false;
         /*public float TimerStandaloneWindowPositionX { get; set; }
         public float TimerStandaloneWindowPositionY { get; set; }*/
         public int FashionReportThreshold { get; set; }

@@ -555,6 +555,31 @@ namespace Altoholic.Database
                 int result2 = db.Execute(sql2, new { Version = defaultVersion });
                 Plugin.Log.Debug($"Set plugin db version to {defaultVersion} Result: {result2}");
             }
+
+            if (DoesTableExist(db, VersionTableName))
+            {
+                Plugin.Log.Debug("Check version migration 6 to 7");
+                int? version = GetDbVersion(db);
+                Plugin.Log.Debug($"Current DB version is:{version}");
+                if (version is 6)
+                {
+                    const string sql = $"UPDATE {CharacterTableName} SET Timers = json_remove(json_insert(Timers, '$.JumboCacpotTickets', json_extract(Timers, '$.JumpboCacpotTickets')),'$.JumpboCacpotTickets');";
+                    int result = db.Execute(sql);
+                    Plugin.Log.Debug($"Rename characters Timers property JumpboCacpotTickets to JumboCacpotTickets. Result: {result}");
+
+                    const string sql2 = $"UPDATE {CharacterTableName} SET Timers = json_remove(Timers, '$.JumboCacpotTickets');";
+                    int result2 = db.Execute(sql2);
+                    Plugin.Log.Debug($"Remove characters Timers JumboCacpotTickets. Result: {result2}");
+
+                    const string sql3 = $"UPDATE {VersionTableName} SET Version = 7";
+                    int result3 = db.Execute(sql3);
+                    Plugin.Log.Debug($"Set db version to 7 Result: {result3}");
+                }
+                else
+                {
+                    Plugin.Log.Info("Skipping migration");
+                }
+            }
         }
 
         private static void BackupAndUpgradeDbVersion(SqliteConnection db, int oldVer, int newVer)
