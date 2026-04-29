@@ -2718,7 +2718,12 @@ namespace Altoholic
 
             if (Configuration.EnabledTimers.Contains(TimersStatus.DomanEnclave) && _localPlayer.Timers.DomanEnclaveWeeklyDonation != _localPlayer.Timers.DomanEnclaveWeeklyAllowances)
             {
-                Utils.ChatMessage($"{_globalCache.AddonStorage.LoadAddonString(Configuration.Language, 8821)}: {_localPlayer.Timers.DomanEnclaveWeeklyDonation}/{_localPlayer.Timers.DomanEnclaveWeeklyAllowances}");
+                builder.PushColorRgba(KnownColor.Yellow.Vector());
+                builder.Append($"{_globalCache.AddonStorage.LoadAddonString(Configuration.Language, 8821)}:");
+                builder.PopColor();
+                builder.PushColorRgba(KnownColor.Red.Vector());
+                builder.Append($" {_localPlayer.Timers.DomanEnclaveWeeklyDonation}/{_localPlayer.Timers.DomanEnclaveWeeklyAllowances}");
+                builder.PopColor();
             }
 
             if (Configuration.EnabledTimers.Contains(TimersStatus.JumboCacpot) && _localPlayer.Timers.JumboCacpotTickets.Count != 3 || _localPlayer.Timers.JumboCacpotLastCheck < Utils.GetJumboCactpotReset(_localPlayer.Datacenter) || _localPlayer.Timers.JumboCacpotTickets.FindAll(t => t.LastCheck < Utils.GetJumboCactpotReset(_localPlayer.Datacenter)).Count > 0)
