@@ -96,7 +96,7 @@ namespace Altoholic.Windows
             chars.Insert(0, GetPlayer.Invoke());
             chars.AddRange(GetOthersCharactersList.Invoke());
 
-            using ImRaii.IEndObject table = ImRaii.Table("###CharactersProgressTable", 2);
+            using var table = ImRaii.Table("###CharactersProgressTable", 2);
             if (!table) return;
 
             ImGui.TableSetupColumn("###CharactersProgressTable#CharactersListHeader",
@@ -104,7 +104,7 @@ namespace Altoholic.Windows
             ImGui.TableSetupColumn("###CharactersProgressTable#ProgressTabs", ImGuiTableColumnFlags.WidthStretch);
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
-            using (ImRaii.IEndObject listBox =
+            using (var listBox =
                    ImRaii.ListBox("###CharactersProgressTable#CharactersListBox", new Vector2(200, -1)))
             {
                 if (listBox)
@@ -3484,7 +3484,7 @@ namespace Altoholic.Windows
                 ImGui.EndTooltip();
             }
 
-            using ImRaii.IEndObject rewardModal = ImRaii.PopupModal($"###CharactersProgress#All#Event#RewardModal#{msqIndex}");
+            using var rewardModal = ImRaii.PopupModal($"###CharactersProgress#All#Event#RewardModal#{msqIndex}");
             if (!rewardModal)
             {
                 return;
@@ -4549,7 +4549,7 @@ namespace Altoholic.Windows
                 ImRaii.TabBar($"###CharactersProgressTable#ProgressTabs#{selectedCharacter.CharacterId}#TabBar");
             if (!tab) return;
 
-            using ImRaii.IEndObject reputationTab =
+            using var reputationTab =
                 ImRaii.TabItem(
                     $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 102512)}###CharactersProgressTable#ProgressTabs#{selectedCharacter.CharacterId}#TabBar#Tabs#Reputation");
             if (reputationTab.Success)
@@ -4718,7 +4718,7 @@ namespace Altoholic.Windows
                 _downChevron = true;
             }
 
-            using ImRaii.IEndObject charactersReputationTable =
+            using var charactersReputationTable =
                 ImRaii.Table("###CharactersProgress#Reputations##Reputation", 1, ImGuiTableFlags.ScrollY);
             if (!charactersReputationTable) return;
             ImGui.TableSetupColumn("###CharactersProgress#ReputationsTable", ImGuiTableColumnFlags.WidthFixed, 560);

@@ -145,7 +145,6 @@ namespace Altoholic.Windows
             if (ImGui.IsItemHovered())
             {
                 using var tooltip = ImRaii.Tooltip();
-                if (!tooltip) return;
                 ImGui.TextUnformatted(
                     $"{Loc.Localize("ConfigObtainedOnly", "If checked, will only display collected items in collections")}");
             }
@@ -161,7 +160,6 @@ namespace Altoholic.Windows
             if (ImGui.IsItemHovered())
             {
                 using var tooltip = ImRaii.Tooltip();
-                if (!tooltip) return;
                 ImGui.TextUnformatted(
                     $"{Loc.Localize("ConfigSpoilersMessage", "Display unobtained icons instead of non spoilery placeholder")}");
             }
@@ -177,7 +175,6 @@ namespace Altoholic.Windows
             if (ImGui.IsItemHovered())
             {
                 using var tooltip = ImRaii.Tooltip();
-                if (!tooltip) return;
                 ImGui.TextUnformatted(
                     $"{Loc.Localize("ConfigPlaytimeNotificationMessage", "Display a notification in chat when /playtime hasn't been used for more than chosen days")}");
             }
@@ -195,7 +192,6 @@ namespace Altoholic.Windows
             if (ImGui.IsItemHovered())
             {
                 using var tooltip = ImRaii.Tooltip();
-                if (!tooltip) return;
                 ImGui.TextUnformatted(
                     $"{Loc.Localize("ConfigPlaytimeNotificationDaysMessage", "Number of days before showing the playtime notification")}");
             }
@@ -212,7 +208,6 @@ namespace Altoholic.Windows
             if (ImGui.IsItemHovered())
             {
                 using var tooltip = ImRaii.Tooltip();
-                if (!tooltip) return;
                 ImGui.TextUnformatted(
                     $"{Loc.Localize("ConfigAutoSaveChatMessage", "Display a chat message when the character is (auto) saved")}");
             }
@@ -325,7 +320,6 @@ namespace Altoholic.Windows
             if (ImGui.IsItemHovered())
             {
                 using var tooltip = ImRaii.Tooltip();
-                if (!tooltip) return;
                 ImGui.TextUnformatted(
                     $"{Loc.Localize("ConfigHousingLastEntryAlert", "Display an icon in character list if a character has a house that hasn't been entered for more than selected number of days")}");
             }
@@ -343,7 +337,6 @@ namespace Altoholic.Windows
             if (ImGui.IsItemHovered())
             {
                 using var tooltip = ImRaii.Tooltip();
-                if (!tooltip) return;
                 ImGui.TextUnformatted(
                     $"{Loc.Localize("ConfigHousingLastEntryNotificationDaysMessage", "Number of days before showing the housing notification")}");
             }
@@ -498,6 +491,22 @@ namespace Altoholic.Windows
 
                     _configuration.TrySave();
                 }
+                ImGui.SameLine();
+                ImGui.SetNextItemWidth(100);
+                int customDeliveryThreshold = _configuration.CustomDeliveryThreshold;
+                string thresholdStr = _selectedLanguage switch
+                {
+                    ClientLanguage.German => "Schwellenwert",
+                    ClientLanguage.English => "Threshold",
+                    ClientLanguage.French => "Seuil",
+                    ClientLanguage.Japanese => "しきい値",
+                    _ => "Threshold",
+                };
+                if (ImGui.SliderInt($"{thresholdStr}###CustomDeliveryThreshold", ref customDeliveryThreshold, 0, 12))
+                {
+                    _configuration.CustomDeliveryThreshold = customDeliveryThreshold;
+                    _configuration.TrySave();
+                }
 
                 bool isDomanEnclaveEnabled = _configuration.EnabledTimers.Contains(TimersStatus.DomanEnclave);
                 if (ImGui.Checkbox(
@@ -548,6 +557,15 @@ namespace Altoholic.Windows
 
                     _configuration.TrySave();
                 }
+                ImGui.SameLine();
+                ImGui.SetNextItemWidth(100);
+                int tribesThreshold = _configuration.TribesThreshold;
+                if (ImGui.SliderInt($"{thresholdStr}###TribesThreshold", ref tribesThreshold, 0, 12))
+                {
+                    _configuration.TribesThreshold = tribesThreshold;
+                    _configuration.TrySave();
+                }
+
                 bool isRoulettesEnabled = _configuration.EnabledTimers.Contains(TimersStatus.Roulettes);
                 if (ImGui.Checkbox($"{_globalCache.AddonStorage.LoadAddonString(_selectedLanguage, 16918)}###Roulettes",
                         ref isRoulettesEnabled))

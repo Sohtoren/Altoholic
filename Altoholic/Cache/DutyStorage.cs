@@ -86,7 +86,7 @@ namespace Altoholic.Cache
             _roulettes.Clear();
         }
 
-        public Duty? GetFromTerritory(ushort e)
+        public Duty? GetFromTerritory(uint e)
         {
             return _duties.Values.FirstOrDefault(d => d.TerritoryType == e);
         }

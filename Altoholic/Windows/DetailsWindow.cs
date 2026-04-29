@@ -455,7 +455,7 @@ namespace Altoholic.Windows
                     ImGui.EndTooltip();
                 }
 
-                using ImRaii.IEndObject removeHousing = ImRaii.PopupModal($"###DHModal_{house.Id}");
+                using var removeHousing = ImRaii.PopupModal($"###DHModal_{house.Id}");
                 if (!removeHousing)
                 {
                     continue;

@@ -2,12 +2,14 @@ using Altoholic.Cache;
 using Altoholic.Models;
 using Altoholic.Windows;
 using CheapLoc;
+using Dalamud.Bindings.ImGui;
 using Dalamud.Game;
 using Dalamud.Game.Addon.Lifecycle;
 using Dalamud.Game.Addon.Lifecycle.AddonArgTypes;
 using Dalamud.Game.ClientState.Conditions;
 using Dalamud.Game.ClientState.Objects.SubKinds;
 using Dalamud.Game.Command;
+using Dalamud.Game.DutyState;
 using Dalamud.Game.Inventory;
 using Dalamud.Game.Inventory.InventoryEventArgTypes;
 using Dalamud.Game.Text;
@@ -1296,7 +1298,7 @@ namespace Altoholic
                 foreach (uint i in _globalCache.ArmoireStorage.Get())
                 {
 
-                    if (uistate.Cabinet.IsItemInCabinet((int)i))
+                    if (uistate.Cabinet.IsItemInCabinet(i))
                     {
                         _localPlayer.Armoire.Add(i);
                     }
@@ -2181,7 +2183,7 @@ namespace Altoholic
             HousingTerritoryType it = housingManager.IndoorTerritory->GetTerritoryType();*/
             int p = plot is -127 or -128 ? 0 : plot;
 
-            ushort tt = ClientState.TerritoryType;
+            uint tt = ClientState.TerritoryType;
             uint mId = GameMain.Instance()->CurrentMapId;
 
             Housing? house = _localPlayer.Houses.Find(h => h.Id == id);
@@ -2378,10 +2380,13 @@ namespace Altoholic
             _autoSaveWatch.Stop();
         }
 
-        private void OnDutyCompleted(object? sender, ushort e)
+        //private void OnDutyCompleted(object? sender, ushort e)
+        private void OnDutyCompleted(IDutyStateEventArgs args)
         {
-            Log.Debug($"OnDutyCompleted entered with e: {e}");
-            Duty? d = _globalCache.DutyStorage.GetFromTerritory(e);
+            if (!args.TerritoryType.IsValid) return;
+
+            Log.Debug($"OnDutyCompleted entered with e: {args.TerritoryType.Value.RowId}");
+            Duty? d = _globalCache.DutyStorage.GetFromTerritory(args.TerritoryType.Value.RowId);
             if (d == null || d.Id == 0)
             {
                 return;
@@ -2699,7 +2704,7 @@ namespace Altoholic
             _localization.SetupWithLangCode(isoLang);
         }
 
-        private void OnZoneChange(ushort territoryTypeId)
+        private void OnZoneChange(uint territoryTypeId)
         {
             Log.Debug($"ZoneChanged:{territoryTypeId}");
             CheckCurrentTerritoryType(territoryTypeId);
@@ -2711,39 +2716,169 @@ namespace Altoholic
 
         private void TimerChatReminder()
         {
-            //Log.Debug("TimerChatReminder enter");
+            Log.Debug("TimerChatReminder enter");
             if (Configuration.EnabledTimers is null || Configuration.EnabledTimers.Count == 0) return;
             SeStringBuilder builder = new();
-            builder.Append($"[{Name}] ");
+            builder.Append($"[{Name}] Timers Status:");
 
-            if (Configuration.EnabledTimers.Contains(TimersStatus.DomanEnclave) && _localPlayer.Timers.DomanEnclaveWeeklyDonation != _localPlayer.Timers.DomanEnclaveWeeklyAllowances)
+            if (Configuration.EnabledTimers.Contains(TimersStatus.MiniCacpot) && (_localPlayer.Timers.MinicacpotLastCheck < Utils.GetLastDailyReset() || _localPlayer.Timers.MinicacpotAllowances != 0))
             {
-                builder.PushColorRgba(KnownColor.Yellow.Vector());
-                builder.Append($"{_globalCache.AddonStorage.LoadAddonString(Configuration.Language, 8821)}:");
+                builder.PushColorRgba(KnownColor.Orange.Vector());
+                builder.Append($"\n{_globalCache.AddonStorage.LoadAddonString(Configuration.Language, 9260)}: ");
                 builder.PopColor();
                 builder.PushColorRgba(KnownColor.Red.Vector());
-                builder.Append($" {_localPlayer.Timers.DomanEnclaveWeeklyDonation}/{_localPlayer.Timers.DomanEnclaveWeeklyAllowances}");
+                builder.Append($" {_localPlayer.Timers.MinicacpotAllowances}");
                 builder.PopColor();
             }
 
-            if (Configuration.EnabledTimers.Contains(TimersStatus.JumboCacpot) && _localPlayer.Timers.JumboCacpotTickets.Count != 3 || _localPlayer.Timers.JumboCacpotLastCheck < Utils.GetJumboCactpotReset(_localPlayer.Datacenter) || _localPlayer.Timers.JumboCacpotTickets.FindAll(t => t.LastCheck < Utils.GetJumboCactpotReset(_localPlayer.Datacenter)).Count > 0)
+            if (Configuration.EnabledTimers.Contains(TimersStatus.JumboCacpot) && (_localPlayer.Timers.JumboCacpotTickets.Count != 3 || _localPlayer.Timers.JumboCacpotLastCheck < Utils.GetJumboCactpotReset(_localPlayer.Datacenter) || _localPlayer.Timers.JumboCacpotTickets.FindAll(t => t.LastCheck < Utils.GetJumboCactpotReset(_localPlayer.Datacenter)).Count > 0))
             {
-                Log.Debug($"Showing Jumbo Cacpot remainder");
-                builder.PushColorRgba(KnownColor.Yellow.Vector());
-                builder.Append($"{_globalCache.AddonStorage.LoadAddonString(Configuration.Language, 9272)}:");
+                builder.PushColorRgba(KnownColor.Orange.Vector());
+                builder.Append($"\n{_globalCache.AddonStorage.LoadAddonString(Configuration.Language, 9272)}: ");
                 builder.PopColor();
                 builder.PushColorRgba(KnownColor.Red.Vector());
                 builder.Append($" { _localPlayer.Timers.JumboCacpotTickets.FindAll(t => t.LastCheck > Utils.GetJumboCactpotReset(_localPlayer.Datacenter)).Count}/ 3");
                 builder.PopColor();
             }
 
-            if (builder.ToReadOnlySeString().ToString().Trim() == $"[{Name}]") return;
+            if (Configuration.EnabledTimers.Contains(TimersStatus.FashionReport) && !Utils.IsNowInTuesdayToFridayWindow() && (_localPlayer.Timers.FashionReportLastCheck > Utils.GetFashionReportReset() &&
+                    (Configuration.FashionReportThreshold == 0 && _localPlayer.Timers.FashionReportAllowances <= 3) ||
+                    (Configuration.FashionReportThreshold == 1 && _localPlayer.Timers.FashionReportHighestScore >= 80) ||
+                    (Configuration.FashionReportThreshold == 2 && _localPlayer.Timers.FashionReportHighestScore == 100)))
+            {
+                builder.PushColorRgba(KnownColor.Orange.Vector());
+                builder.Append($"\n{_globalCache.AddonStorage.LoadAddonString(Configuration.Language, 8819)}: ");
+                builder.PopColor();
+                builder.PushColorRgba(KnownColor.Red.Vector());
+                builder.Append($"{_localPlayer.Timers.FashionReportAllowances}/4");
+                builder.PopColor();
+            }
+            
+            if (Configuration.EnabledTimers.Contains(TimersStatus.CustomDeliveries) && (Configuration.CustomDeliveryThreshold < 12 && (_localPlayer.Timers.CustomDeliveriesLastCheck > Utils.GetLastWeeklyReset() && _localPlayer.Timers.CustomDeliveriesAllowances > Configuration.CustomDeliveryThreshold)))
+            {
+                builder.PushColorRgba(KnownColor.Orange.Vector());
+                builder.Append($"\n{_globalCache.AddonStorage.LoadAddonString(Configuration.Language, 5700)}: ");
+                builder.PopColor();
+                builder.PushColorRgba(KnownColor.Red.Vector());
+                builder.Append($"{_localPlayer.Timers.CustomDeliveriesAllowances}");
+                builder.PopColor();
+            }
+
+            if (Configuration.EnabledTimers.Contains(TimersStatus.DomanEnclave) && (_localPlayer.Timers.DomanEnclaveLastCheck < Utils.GetLastWeeklyReset() || _localPlayer.Timers.DomanEnclaveLastCheck > Utils.GetLastWeeklyReset() && _localPlayer.Timers.DomanEnclaveWeeklyDonation != _localPlayer.Timers.DomanEnclaveWeeklyAllowances))
+            {
+                //Log.Debug($"Showing Doman Enclave remainder");
+                builder.PushColorRgba(KnownColor.Orange.Vector());
+                builder.Append($"\n{_globalCache.AddonStorage.LoadAddonString(Configuration.Language, 8821)}: ");
+                builder.PopColor();
+                builder.PushColorRgba(KnownColor.Red.Vector());
+                builder.Append($" {_localPlayer.Timers.DomanEnclaveWeeklyDonation}/{_localPlayer.Timers.DomanEnclaveWeeklyAllowances}");
+                builder.PopColor();
+            }
+
+            /*if (Configuration.EnabledTimers.Contains(TimersStatus.MaskedCarnivale) && (_localPlayer.Timers.MaskedFestivalLastCheck < Utils.GetLastWeeklyReset() || _localPlayer.Timers.MaskedFestivalLastCheck > Utils.GetLastWeeklyReset() && _localPlayer.Timers.M != _localPlayer.Timers.DomanEnclaveWeeklyAllowances))
+            {
+                builder.PushColorRgba(KnownColor.Orange.Vector());
+                builder.Append($"\n{_globalCache.AddonStorage.LoadAddonString(Configuration.Language, 8832)}: ");
+                builder.PopColor();
+                builder.PushColorRgba(KnownColor.Red.Vector());
+                builder.Append($" {_localPlayer.Timers.DomanEnclaveWeeklyDonation}/{_localPlayer.Timers.DomanEnclaveWeeklyAllowances}");
+                builder.PopColor();
+            }*/
+
+            if (Configuration.EnabledTimers.Contains(TimersStatus.Tribes) && (Configuration.TribesThreshold < 12 && (_localPlayer.Timers.TribeLastCheck < Utils.GetLastDailyReset() || (_localPlayer.Timers.TribeLastCheck > Utils.GetLastDailyReset() && _localPlayer.Timers.TribeRemainingAllowances > Configuration.TribesThreshold))))
+            {
+                builder.PushColorRgba(KnownColor.Orange.Vector());
+                builder.Append($"\n{_globalCache.AddonStorage.LoadAddonString(Configuration.Language, 102515)}: ");
+                builder.PopColor();
+                builder.PushColorRgba(KnownColor.Red.Vector());
+                builder.Append($" {_localPlayer.Timers.TribeRemainingAllowances}");
+                builder.PopColor();
+            }
+            
+            if (_localPlayer.WondrousTails is not null && Configuration.EnabledTimers.Contains(TimersStatus.WondrousTails) && (_localPlayer.WondrousTails.LastCheck < Utils.GetLastWeeklyReset() || DateTime.UtcNow > _localPlayer.WondrousTails.WeeklyBingoExpireUnixTimestamp.ToLocalTime() || (_localPlayer.WondrousTails.LastCheck > Utils.GetLastWeeklyReset() && _localPlayer.WondrousTails.WeeklyBingoNumPlacedStickers == 9)))
+            {
+                builder.PushColorRgba(KnownColor.Orange.Vector());
+                builder.Append($"\n{_globalCache.AddonStorage.LoadAddonString(Configuration.Language, 5600)}: ");
+                builder.PopColor();
+                builder.PushColorRgba(KnownColor.Red.Vector());
+                if(DateTime.UtcNow > _localPlayer.WondrousTails.WeeklyBingoExpireUnixTimestamp.ToLocalTime())
+                {
+                    builder.Append($"{_globalCache.AddonStorage.LoadAddonString(Configuration.Language, 2534)}");
+                }
+                else if (_localPlayer.WondrousTails.WeeklyBingoNumPlacedStickers != 0)
+                {
+                    builder.Append($" {_localPlayer.WondrousTails.WeeklyBingoNumPlacedStickers}");
+                }
+                builder.PopColor();
+            }
+
+            if (Configuration.EnabledTimers.Contains(TimersStatus.Roulettes))
+            {
+                HashSet<uint> trackedRoulettes = Configuration.TrackingRoulettes;
+                if (trackedRoulettes.Count > 0)
+                {
+                    string nonCompletedRouletteString = string.Empty;
+
+                    List<Roulette> roulettes = _globalCache.DutyStorage.GetAllRoulettes().FindAll(r => r.ContentType == 1);
+
+
+                    foreach (Roulette roulette in roulettes)
+                    {
+                        if (!trackedRoulettes.Contains(roulette.Id)) continue;
+
+                        if (Configuration.DutyRouletteCompletedWhenTomestoneCap)
+                        {
+                            if (_localPlayer.Currencies is not null)
+                            {
+                                if (_localPlayer.Currencies.Weekly_Acquired_Tomestone == _localPlayer.Currencies.Weekly_Limit_Tomestone)
+                                {
+                                    continue;
+                                }
+                            }
+                        }
+
+                        DateTime lastCheck;
+                        bool charHasRoulette = _localPlayer.CompletedRoulettes.TryGetValue(roulette.Id, out lastCheck);
+
+                        if (!charHasRoulette || (charHasRoulette && lastCheck < Utils.GetLastDailyReset()))
+                        {
+                            string name = (Configuration.Language switch
+                            {
+                                ClientLanguage.German => roulette.GermanName.Replace("Zufallsinhalt", "").Replace("Tagesherausforderung", ""),
+                                ClientLanguage.English => roulette.EnglishName.Replace("Duty Roulette", "").Replace("Daily Challenge", ""),
+                                ClientLanguage.French => Utils.CapitalizeSentence(roulette.FrenchName.Replace("Mission aléatoire", "").Replace("Challenge quotidien", "")),
+                                ClientLanguage.Japanese => roulette.JapaneseName.Replace("コンテンツルーレット", "").Replace("デイリーチャレンジ", ""),
+                                _ => roulette.EnglishName.Replace("Duty Roulette", "").Replace("Daily Challenge", "")
+                            }).Replace(":", "").Replace("：", "").Trim().Replace(" ", "\n");
+                            nonCompletedRouletteString += $"\n{name}";
+                        }
+                    }
+
+                    if (!string.IsNullOrEmpty(nonCompletedRouletteString))
+                    {
+                        builder.PushColorRgba(KnownColor.Orange.Vector());
+                        builder.Append($"\n{_globalCache.AddonStorage.LoadAddonString(Configuration.Language, 16918)}: ");
+                        builder.PopColor();
+                        builder.PushColorRgba(KnownColor.Red.Vector());
+                        builder.Append($"{nonCompletedRouletteString}");
+                        builder.PopColor();
+                    }
+                }
+            }
+
+            /*
+             * Roulettes,
+                Raids
+            */
+
+
+            if (builder.ToReadOnlySeString().ToString().Trim() == $"[{Name}] Timers Status:") return;
             XivChatEntry chatEntry = new() { Message = builder.ToReadOnlySeString().ToDalamudString(), Type = XivChatType.Echo };
 
             ChatGui.Print(chatEntry);
         }
 
-        private void CheckCurrentTerritoryType(ushort territoryTypeId)
+        private void CheckCurrentTerritoryType(uint territoryTypeId)
         {
             if (ClientState.IsPvP) return;
             if (!ClientState.IsLoggedIn) return;

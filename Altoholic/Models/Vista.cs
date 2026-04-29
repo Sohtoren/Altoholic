@@ -18,7 +18,7 @@
         public int IconList { get; set; }
         public int IconDiscovered{ get; set; }
         public int IconUndiscovered { get; set; }
-        public bool IsInitial { get; set; }
+        public byte IsInitial { get; set; }
         public string GermanImpression { get; set; } = string.Empty;
         public string GermanDescription{ get; set; } = string.Empty;
         public string EnglishImpression { get; set; } = string.Empty;

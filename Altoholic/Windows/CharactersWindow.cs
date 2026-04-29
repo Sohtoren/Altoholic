@@ -66,9 +66,9 @@ namespace Altoholic.Windows
         {
             _currentLocale = _plugin.Configuration.Language;
 
-            using (ImRaii.IEndObject charactersTable =
+            using (var charactersTable =
                    ImRaii.Table("###Characters", 10, ImGuiTableFlags.ScrollY, new Vector2(-1, 470)))
-                //using (ImRaii.IEndObject charactersTable = ImRaii.Table("###Characters", 10))
+                //using (var charactersTable = ImRaii.Table("###Characters", 10))
             {
                 if (!charactersTable) return;
                 ImGui.TableSetupColumn(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 330),
@@ -132,7 +132,7 @@ namespace Altoholic.Windows
                         .ToList());
             }
 
-            using ImRaii.IEndObject totalCharactersTable = ImRaii.Table("###TotalCharacters", 4);
+            using var totalCharactersTable = ImRaii.Table("###TotalCharacters", 4);
             if (!totalCharactersTable) return;
             ImGui.TableSetupColumn("###TotalCharacters#Count", ImGuiTableColumnFlags.WidthFixed, 440);
             ImGui.TableSetupColumn("###TotalCharacters#Gils", ImGuiTableColumnFlags.WidthFixed, 150);
@@ -144,7 +144,7 @@ namespace Altoholic.Windows
             ImGui.TextUnformatted($"Characters: {TotalCharacters}, Worlds: {TotalWorlds}");
             ImGui.TableSetColumnIndex(1);
             ImGui.Separator();
-            using (ImRaii.IEndObject charactersrGils = ImRaii.Table("###TotalCharacters#GilsTable", 2))
+            using (var charactersrGils = ImRaii.Table("###TotalCharacters#GilsTable", 2))
             {
                 if (!charactersrGils) return;
                 ImGui.TableSetupColumn("###TotalCharacters#GilsTable#Icon", ImGuiTableColumnFlags.WidthFixed, 20);
@@ -278,7 +278,7 @@ namespace Altoholic.Windows
             ImGui.TextUnformatted($"{Utils.GetFCTag(_currentLocale, _globalCache, character)}");
 
             ImGui.TableSetColumnIndex(6);
-            using (ImRaii.IEndObject charactersCharacterGils = ImRaii.Table($"###Characters#Character#Gils#{character.CharacterId}", 2))
+            using (var charactersCharacterGils = ImRaii.Table($"###Characters#Character#Gils#{character.CharacterId}", 2))
             {
                 if (!charactersCharacterGils) return;
                 ImGui.TableSetupColumn($"###Characters#Character#Gils#Icon#{character.CharacterId}",
@@ -367,7 +367,7 @@ namespace Altoholic.Windows
 
             ImGui.TableSetColumnIndex(9);
 
-            /*using ImRaii.IEndObject characterActions = ImRaii.Table($"###CharacterActions_{character.CharacterId}", 2);
+            /*using var characterActions = ImRaii.Table($"###CharacterActions_{character.CharacterId}", 2);
             if (!characterActions) return;
             ImGui.TableSetupColumn($"###CharacterActions_{character.CharacterId}#Blacklist", ImGuiTableColumnFlags.WidthFixed,
                 20);
@@ -401,7 +401,7 @@ namespace Altoholic.Windows
                 ImGui.EndTooltip();
             }
 
-            using (ImRaii.IEndObject blacklist = ImRaii.PopupModal($"###BLModal_{character.CharacterId}"))
+            using (var blacklist = ImRaii.PopupModal($"###BLModal_{character.CharacterId}"))
             {
                 if (!blacklist) return;
                 ImGui.TextUnformatted($"{Loc.Localize("BlacklistingConfirm","Are you sure you want to blacklist this character?")}");
@@ -446,7 +446,7 @@ namespace Altoholic.Windows
                 ImGui.EndTooltip();
             }
 
-            using ImRaii.IEndObject delete = ImRaii.PopupModal($"Delete {character.CharacterId}");
+            using var delete = ImRaii.PopupModal($"Delete {character.CharacterId}");
             if (!delete) return;
             ImGui.TextUnformatted("Are you sure you want to delete this char?");
             ImGui.TextUnformatted("It will be added again the next time you log in on this character");

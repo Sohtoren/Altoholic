@@ -48,6 +48,8 @@ namespace Altoholic
         public bool DoubleLastNormalRaidRewards { get; set; } = true;
         public bool IsHousingLastEntryAlertEnabled { get; set; } = true;
         public int HousingLastEntryNotificationDays { get; set; } = 35;
+        public int CustomDeliveryThreshold { get; set; } = 12;
+        public int TribesThreshold { get; set; } = 12;
 
         // the below exist just to make saving less cumbersome
         [NonSerialized]

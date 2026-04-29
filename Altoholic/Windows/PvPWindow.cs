@@ -531,7 +531,7 @@ namespace Altoholic.Windows
 
                         ImGui.TextUnformatted(
                             $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 16432)}");
-                        using (ImRaii.IEndObject t = ImRaii.Table("###Series#Rewards#10#Table", 5))
+                        using (var t = ImRaii.Table("###Series#Rewards#10#Table", 5))
                         {
                             if (t)
                             {
@@ -595,7 +595,7 @@ namespace Altoholic.Windows
 
                                 ImGui.TextUnformatted(
                                 $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 16432)}");
-                                using ImRaii.IEndObject t = ImRaii.Table("###Series#Rewards#9#Table", 5);
+                                using var t = ImRaii.Table("###Series#Rewards#9#Table", 5);
                                 if (t)
                                 {
                                     ImGui.TableSetupColumn("###Series#Rewards#9#Table#Reward#Emote",
@@ -644,7 +644,7 @@ namespace Altoholic.Windows
 
                                 ImGui.TextUnformatted(
                                     $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 16432)}");
-                                using ImRaii.IEndObject t = ImRaii.Table("###Series#Rewards#8#Table", 5);
+                                using var t = ImRaii.Table("###Series#Rewards#8#Table", 5);
                                 if (t)
                                 {
                                     ImGui.TableSetupColumn("###Series#Rewards#8#Table#Reward#Emote",
@@ -692,7 +692,7 @@ namespace Altoholic.Windows
 
                                 ImGui.TextUnformatted(
                                     $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 16432)}");
-                                using ImRaii.IEndObject t = ImRaii.Table("###Series#Rewards#7#Table", 5);
+                                using var t = ImRaii.Table("###Series#Rewards#7#Table", 5);
                                 if (t)
                                 {
                                     ImGui.TableSetupColumn("###Series#Rewards#7#Table#Reward#Emote",
@@ -740,7 +740,7 @@ namespace Altoholic.Windows
 
                                 ImGui.TextUnformatted(
                                     $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 16432)}");
-                                using ImRaii.IEndObject t = ImRaii.Table("###Series#Rewards#6#Table", 5);
+                                using var t = ImRaii.Table("###Series#Rewards#6#Table", 5);
                                 if (t)
                                 {
                                     ImGui.TableSetupColumn("###Series#Rewards#6#Table#Reward#Ornament",
@@ -788,7 +788,7 @@ namespace Altoholic.Windows
 
                                 ImGui.TextUnformatted(
                                     $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 16432)}");
-                                using ImRaii.IEndObject t = ImRaii.Table("###Series#Rewards#5#Table", 5);
+                                using var t = ImRaii.Table("###Series#Rewards#5#Table", 5);
                                 if (t)
                                 {
                                     ImGui.TableSetupColumn("###Series#Rewards#5#Table#Reward#Emote",
@@ -836,7 +836,7 @@ namespace Altoholic.Windows
 
                                 ImGui.TextUnformatted(
                                     $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 16432)}");
-                                using ImRaii.IEndObject t = ImRaii.Table("###Series#Rewards#4#Table", 5);
+                                using var t = ImRaii.Table("###Series#Rewards#4#Table", 5);
                                 if (t)
                                 {
                                     ImGui.TableSetupColumn("###Series#Rewards#4#Table#Reward#Emote",
@@ -885,7 +885,7 @@ namespace Altoholic.Windows
 
                                 ImGui.TextUnformatted(
                                     $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 16432)}");
-                                using ImRaii.IEndObject t = ImRaii.Table("###Series#Rewards#3#Table", 5);
+                                using var t = ImRaii.Table("###Series#Rewards#3#Table", 5);
                                 if (t)
                                 {
                                     ImGui.TableSetupColumn("###Series#Rewards#3#Table#Reward#Emote",
@@ -934,7 +934,7 @@ namespace Altoholic.Windows
 
                                 ImGui.TextUnformatted(
                                     $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 16432)}");
-                                using ImRaii.IEndObject t = ImRaii.Table("###Series#Rewards#2#Table", 6);
+                                using var t = ImRaii.Table("###Series#Rewards#2#Table", 6);
                                 if (t)
                                 {
                                     ImGui.TableSetupColumn("###Series#Rewards#2#Table#Reward#Emote",
@@ -987,7 +987,7 @@ namespace Altoholic.Windows
 
                                 ImGui.TextUnformatted(
                                     $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 16432)}");
-                                using ImRaii.IEndObject t = ImRaii.Table("###Series#Rewards#1#Table", 5);
+                                using var t = ImRaii.Table("###Series#Rewards#1#Table", 5);
                                 if (t)
                                 {
                                     ImGui.TableSetupColumn("###Series#Rewards#1#Table#Reward#Ornament",
@@ -1063,7 +1063,7 @@ namespace Altoholic.Windows
             uint left = pvPProfile.SeriesExperience;
             uint right = serie.Value.ExpToNext;
             Utils.DrawPvPRankBar(left, right, 250, ImGuiColors.ParsedPurple, ImGuiColors.DalamudGrey3);
-            using ImRaii.IEndObject pvpRankTable =
+            using var pvpRankTable =
                 ImRaii.Table("###pvpSerieTable", 3, ImGuiTableFlags.None, new Vector2(300, 30));
             if (!pvpRankTable)
             {

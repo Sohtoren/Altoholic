@@ -2630,7 +2630,7 @@ namespace Altoholic
             Models.Mount mount)
         {
             using var drawMountTooltip = ImRaii.Tooltip();
-            if (!drawMountTooltip) return;
+
             using (var drawMountTooltipItem = ImRaii.Table($"###DrawMountTooltipItem#Mount_{mount.Id}", 2))
             {
                 if (!drawMountTooltipItem) return;
@@ -2681,7 +2681,7 @@ namespace Altoholic
         public static void DrawMinionTooltip(ClientLanguage currentLocale, ref GlobalCache globalCache, Minion minion)
         {
             using var drawMinionTooltip = ImRaii.Tooltip();
-            if (!drawMinionTooltip) return;
+
             using (var drawMinionTooltipTable = ImRaii.Table($"###DrawMinionTooltip#Minion_{minion.Id}", 2))
             {
                 if (!drawMinionTooltipTable) return;
@@ -2733,7 +2733,6 @@ namespace Altoholic
             Models.TripleTriadCard tripleTriadCard)
         {
             using var drawTripleTriadCardTooltip = ImRaii.Tooltip();
-            if (!drawTripleTriadCardTooltip) return;
             using (var drawTripleTriadCardTooltipTable =
                    ImRaii.Table($"###DrawTripleTriadCardTooltip#TripleTriadCard_{tripleTriadCard.Id}", 2))
             {
@@ -2785,7 +2784,6 @@ namespace Altoholic
             Models.Emote emote)
         {
             using var drawTripleTriadCardTooltip = ImRaii.Tooltip();
-            if (!drawTripleTriadCardTooltip) return;
             using var drawTripleTriadCardTooltipTable =
                 ImRaii.Table($"###DrawEmoteTooltip#Emote_{emote.Id}", 2);
             if (!drawTripleTriadCardTooltipTable) return;
@@ -2836,7 +2834,6 @@ namespace Altoholic
             Barding barding)
         {
             using var drawTripleTriadCardTooltip = ImRaii.Tooltip();
-            if (!drawTripleTriadCardTooltip) return;
             using var drawTripleTriadCardTooltipTable =
                 ImRaii.Table($"###DrawBardingTooltip#Barding_{barding.Id}", 2);
             if (!drawTripleTriadCardTooltipTable) return;
@@ -2869,7 +2866,6 @@ namespace Altoholic
             FramerKit framerKit)
         {
             using var drawTripleTriadCardTooltip = ImRaii.Tooltip();
-            if (!drawTripleTriadCardTooltip) return;
             using var drawTripleTriadCardTooltipTable =
                 ImRaii.Table($"###DrawFramerKitTooltip#FramerKit_{framerKit.Id}", 2);
             if (!drawTripleTriadCardTooltipTable) return;
@@ -2901,7 +2897,6 @@ namespace Altoholic
         public static void DrawOrchestrionRollTooltip(ClientLanguage currentLocale, ref GlobalCache globalCache, OrchestrionRoll orchestrionRoll)
         {
             using var drawTripleTriadCardTooltip = ImRaii.Tooltip();
-            if (!drawTripleTriadCardTooltip) return;
             using var drawTripleTriadCardTooltipTable =
                 ImRaii.Table($"###DrawOrchestrionRollTooltip#OrchestrionRoll_{orchestrionRoll.Id}", 2);
             if (!drawTripleTriadCardTooltipTable) return;
@@ -2933,7 +2928,6 @@ namespace Altoholic
         public static void DrawOrnamentTooltip(ClientLanguage currentLocale, ref GlobalCache globalCache, Models.Ornament ornament)
         {
             using var drawOrnamentTooltip = ImRaii.Tooltip();
-            if (!drawOrnamentTooltip) return;
             using (var drawOrnamentTooltipItem = ImRaii.Table($"###DrawOrnamentTooltipItem#Ornament_{ornament.Id}", 2))
             {
                 if (!drawOrnamentTooltipItem) return;
@@ -2984,7 +2978,6 @@ namespace Altoholic
         public static void DrawGlassesTooltip(ClientLanguage currentLocale, ref GlobalCache globalCache, Models.Glasses glasses)
         {
             using var drawGlassesTooltip = ImRaii.Tooltip();
-            if (!drawGlassesTooltip) return;
             using (var drawGlassesDescriptionItem = ImRaii.Table($"###DrawGlassesDescriptionItem#Glasses_{glasses.Id}", 2))
             {
                 if (!drawGlassesDescriptionItem) return;
@@ -3034,7 +3027,6 @@ namespace Altoholic
         public static void DrawHairstyleFacepaintTooltip(ClientLanguage currentLocale, ref GlobalCache globalCache, Hairstyle hairstyle)
         {
             using var drawhairstyleTooltip = ImRaii.Tooltip();
-            if (!drawhairstyleTooltip) return;
             using var drawhairstyleDescriptionItem = ImRaii.Table($"###DrawhairstyleDescriptionItem#hairstyle_{hairstyle.Id}", 2);
             if (!drawhairstyleDescriptionItem) return;
             ImGui.TableSetupColumn($"###DrawhairstyleDescriptionItem#hairstyle_{hairstyle.Id}#Icon",
@@ -3065,7 +3057,6 @@ namespace Altoholic
         public static void DrawSecretRecipeBookTooltip(ClientLanguage currentLocale, ref GlobalCache globalCache, Models.SecretRecipeBook secretRecipeBook)
         {
             using var drawSecretRecipeBookTooltip = ImRaii.Tooltip();
-            if (!drawSecretRecipeBookTooltip) return;
             using var drawsecretRecipeBookDescriptionItem = ImRaii.Table($"###DrawsecretRecipeBookDescriptionItem#secretRecipeBook_{secretRecipeBook.Id}", 2);
             if (!drawsecretRecipeBookDescriptionItem) return;
             ImGui.TableSetupColumn($"###DrawsecretRecipeBookDescriptionItem#secretRecipeBook_{secretRecipeBook.Id}#Icon",
@@ -3096,7 +3087,6 @@ namespace Altoholic
         public static void DrawVistaTooltip(ClientLanguage currentLocale, ref GlobalCache globalCache, Vista vista, bool hasVista, bool isSpoilerEnabled)
         {
             using var drawVistaTooltip = ImRaii.Tooltip();
-            if (!drawVistaTooltip) return;
             using (var drawVistaDescriptionItem = ImRaii.Table($"###DrawVistaDescriptionItem#Vista_{vista.Id}", 2))
             {
                 if (!drawVistaDescriptionItem) return;

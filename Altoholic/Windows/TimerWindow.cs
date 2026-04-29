@@ -503,7 +503,8 @@ namespace Altoholic.Windows
                             CustomDeliveriesLastCheck: not null
                         } && currChar.Timers.CustomDeliveriesLastCheck > Utils.GetLastWeeklyReset())
                     {
-                        if (currChar.Timers.CustomDeliveriesAllowances == 0)
+                        int threshold = _plugin.Configuration.CustomDeliveryThreshold;
+                        if (threshold < 12 && currChar.Timers.CustomDeliveriesAllowances <= threshold)
                         {
                             ImGui.PushFont(UiBuilder.IconFont);
                             ImGui.TextUnformatted($"{FontAwesomeIcon.Check.ToIconString()}");
@@ -705,7 +706,7 @@ namespace Altoholic.Windows
                     }
                     else
                     {
-                        if (currChar.Timers.TribeRemainingAllowances == 0)
+                        if (currChar.Timers.TribeRemainingAllowances == _plugin.Configuration.TribesThreshold)
                         {
                             ImGui.PushFont(UiBuilder.IconFont);
                             ImGui.TextUnformatted($"{FontAwesomeIcon.Check.ToIconString()}");

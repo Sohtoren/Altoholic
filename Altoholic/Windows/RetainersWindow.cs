@@ -260,7 +260,7 @@ namespace Altoholic.Windows
             }
 
             long overallAmount = 0;
-            using (ImRaii.IEndObject table =
+            using (var table =
                    ImRaii.Table("###CharactersRetainer#All#SearchItemsTable#CharacterItems#Item#Table", 2,
                        ImGuiTableFlags.Borders))
             {
@@ -337,13 +337,13 @@ namespace Altoholic.Windows
                 return;
             }
 
-            using ImRaii.IEndObject blacklist = ImRaii.PopupModal($"###BLRModal_{_currentCharacter.CharacterId}", ImGuiWindowFlags.AlwaysAutoResize);
+            using var blacklist = ImRaii.PopupModal($"###BLRModal_{_currentCharacter.CharacterId}", ImGuiWindowFlags.AlwaysAutoResize);
             if (!blacklist) return;
             ImGui.TextUnformatted("Click on the retainer you want to unblacklist");
             ImGui.Separator();
 
             int blacklistedRetainerHeight = 15 + (15 * _currentCharacter.BlacklistedRetainers.Count);
-            using (ImRaii.IEndObject listBox =
+            using (var listBox =
                 ImRaii.ListBox("###CharactersRetainerTable#BlacklistedRetainerListBox", new Vector2(200, blacklistedRetainerHeight)))
             {
                 if (listBox)
@@ -423,7 +423,7 @@ namespace Altoholic.Windows
 
                             if (_currentRetainer != null)
                             {
-                                using ImRaii.IEndObject blacklist =
+                                using var blacklist =
                                     ImRaii.PopupModal($"###BLModal_{_currentRetainer.Id}");
                                 if (blacklist)
                                 {
