@@ -4190,7 +4190,8 @@ namespace Altoholic
                     character.HasQuest((int)QuestIds.MSQ_CROSSROADS),
                     character.HasQuest((int)QuestIds.MSQ_SEEKERS_OF_ETERNITY),
                     character.HasQuest((int)QuestIds.MSQ_THE_PROMISE_OF_TOMORROW),
-                    character.HasQuest((int)QuestIds.MSQ_THE_MIST)
+                    character.HasQuest((int)QuestIds.MSQ_THE_MIST),
+                    character.HasQuest((int)QuestIds.MSQ_TRAIL_TO_THE_HEAVENS)
                 ];
                 result.Add(completedQuests);
             }

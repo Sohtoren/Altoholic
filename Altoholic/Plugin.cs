@@ -2866,10 +2866,44 @@ namespace Altoholic
                 }
             }
 
-            /*
-             * Roulettes,
-                Raids
-            */
+            if (Configuration.EnabledTimers.Contains(TimersStatus.Raids))
+            {
+                HashSet<uint> trackedRaids = Configuration.TrackingRaids;
+                string nonCompletedRaidsString = string.Empty;
+                foreach (uint id in _globalCache.DutyStorage.RewardsRaidId)
+                {
+                    if (!trackedRaids.Contains(id)) continue;
+
+                    RaidReward? reward;
+                    bool charHasRaidRewards = _localPlayer.RaidRewards.TryGetValue(id, out reward);
+
+                    if (!charHasRaidRewards || charHasRaidRewards && reward is not null &&
+                        ((reward.LastCheck < Utils.GetLastWeeklyReset()) ||
+                        (reward.LastCheck >= Utils.GetLastWeeklyReset() && id == _globalCache.DutyStorage.DoubleRaidLootId && (Configuration.DoubleLastNormalRaidRewards && reward.Reward != 2) || (!Configuration.DoubleLastNormalRaidRewards && reward.Reward == 0))))
+                    {
+                        Duty? duty = _globalCache.DutyStorage.LoadDuty(id);
+                        if (duty == null) continue;
+                        string name = (Configuration.Language switch
+                        {
+                            ClientLanguage.German => duty.GermanName,
+                            ClientLanguage.English => duty.EnglishName,
+                            ClientLanguage.French => duty.FrenchName,
+                            ClientLanguage.Japanese => duty.JapaneseName,
+                            _ => duty.EnglishName
+                        }).Replace(":", "").Replace("：", "").Trim();
+                        nonCompletedRaidsString += $"\n{name}";
+                    }
+                }
+                if (!string.IsNullOrEmpty(nonCompletedRaidsString))
+                {
+                    builder.PushColorRgba(KnownColor.Orange.Vector());
+                    builder.Append($"\n{_globalCache.AddonStorage.LoadAddonString(Configuration.Language, 8609)}: ");
+                    builder.PopColor();
+                    builder.PushColorRgba(KnownColor.Red.Vector());
+                    builder.Append($"{nonCompletedRaidsString}");
+                    builder.PopColor();
+                }
+            }
 
 
             if (builder.ToReadOnlySeString().ToString().Trim() == $"[{Name}] Timers Status:") return;

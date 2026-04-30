@@ -998,6 +998,9 @@ namespace Altoholic.Windows
             DrawAllLine(chars, charactersQuests,
                 $"7.4 - {_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.MSQ_THE_MIST)}",
                 39);
+            DrawAllLine(chars, charactersQuests,
+                $"7.5 - {_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.MSQ_TRAIL_TO_THE_HEAVENS)}",
+                40);
         }
 
         private void DrawEventQuest(List<Character> chars)
