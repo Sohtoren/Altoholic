@@ -1501,6 +1501,7 @@ namespace Altoholic.Windows
                     continue;
                 }
 
+                bool armoire = _globalCache.ArmoireStorage.CanBeInArmoireFromItemId(itm.Value.RowId);
                 var sets = _globalCache.MirageSetStorage.GetMirageSetItemLookup(item.ItemId);
                 bool canBeInASet = sets != null && sets.Count != 0;
 
@@ -1511,7 +1512,7 @@ namespace Altoholic.Windows
                 if (ImGui.IsItemHovered())
                 {
                     Utils.DrawGlamourDresserTooltip(_currentLocale, ref _globalCache,
-                        item, itl, isInASet, _miragePrismBoxSetIcon, _miragePrismBoxSetIconUv0, _miragePrismBoxSetIconUv1, true, canBeInASet
+                        item, itl, isInASet, _miragePrismBoxSetIcon, _miragePrismBoxSetIconUv0, _miragePrismBoxSetIconUv1, true, canBeInASet, armoire
                         );
                 }
 
@@ -1525,6 +1526,13 @@ namespace Altoholic.Windows
                 if (!isInASet && canBeInASet)
                 {
                     DrawCanBeInASetIcon(p);
+                }
+
+                if (armoire)
+                {
+                    ImGui.SetCursorPos(p with { X = p.X + 20 });
+                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(066460), new Vector2(16, 16));
+                    ImGui.SetCursorPos(p);
                 }
 
                 maxIndex++;

@@ -2511,7 +2511,7 @@ namespace Altoholic
         }
 
         public static void DrawGlamourDresserTooltip(ClientLanguage currentLocale, ref GlobalCache globalCache, GlamourItem item,
-            ItemItemLevel itm, bool isInASet, IDalamudTextureWrap? miragePrismIcon, Vector2 miragePrismBoxSetIconUv0, Vector2 miragePrismBoxSetIconUv1, bool isGlamourDresser = false, bool canBeInASet = false)
+            ItemItemLevel itm, bool isInASet, IDalamudTextureWrap? miragePrismIcon, Vector2 miragePrismBoxSetIconUv0, Vector2 miragePrismBoxSetIconUv1, bool isGlamourDresser = false, bool canBeInASet = false, bool armoire = false)
         {
             Item? dbItem = itm.Item;
             if (dbItem == null) return;
@@ -2522,13 +2522,21 @@ namespace Altoholic
 
             ImGui.BeginTooltip();
 
-            using (var drawItemTooltipItem = ImRaii.Table($"##DrawItemTooltip#Item_{item.ItemId}", 3))
+            int col = (armoire) ? 5 : 3;
+            using (var drawItemTooltipItem = ImRaii.Table($"##DrawItemTooltip#Item_{item.ItemId}", col))
             {
                 if (!drawItemTooltipItem) return;
                 ImGui.TableSetupColumn($"###DrawItemTooltip#Item_{item.ItemId}#Icon", ImGuiTableColumnFlags.WidthFixed,
                     55);
                 ImGui.TableSetupColumn($"###DrawItemTooltip#Item_{item.ItemId}#Name", ImGuiTableColumnFlags.WidthFixed,
                     305);
+                if (armoire)
+                {
+                    ImGui.TableSetupColumn($"###DrawItemTooltip#Item_{item.ItemId}#NameIcon#Empty",
+                        ImGuiTableColumnFlags.WidthFixed, 50);
+                    ImGui.TableSetupColumn($"###DrawItemTooltip#Item_{item.ItemId}#NameIcon#Armoire",
+                        ImGuiTableColumnFlags.WidthStretch);
+                }
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
                 Vector2 p = ImGui.GetCursorPos();
@@ -2541,6 +2549,14 @@ namespace Altoholic
                 }
                 ImGui.TableSetColumnIndex(1);
                 ImGui.TextUnformatted($"{dbItem.Value.Name} {(hq ? (char)SeIconChar.HighQuality : "")}");
+                if (armoire)
+                {
+                    ImGui.TableSetColumnIndex(2);
+                    ImGui.TableSetColumnIndex(3);
+                    DrawIcon(globalCache.IconStorage.LoadIcon(066460), new Vector2(16, 16));
+                    ImGui.SameLine();
+                    ImGui.TextUnformatted(globalCache.AddonStorage.LoadAddonString(currentLocale, 11991));
+                }
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
                 ImGui.TextUnformatted(isInASet
