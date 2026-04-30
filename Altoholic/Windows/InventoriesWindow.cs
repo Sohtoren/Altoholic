@@ -819,7 +819,14 @@ namespace Altoholic.Windows
                         continue;
                     }
 
-                    ImGui.SetCursorPos(p with { X = p.X + 20 });
+                    if (!isInASet && canBeInASet)
+                    {
+                        ImGui.SetCursorPos(p with { X = p.X + 22, Y = p.Y + 16 });
+                    }
+                    else
+                    {
+                        ImGui.SetCursorPos(p with { X = p.X + 20 });
+                    }
                     Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(066460), new Vector2(16, 16));
                     ImGui.SetCursorPos(p);
                 }
@@ -1530,7 +1537,14 @@ namespace Altoholic.Windows
 
                 if (armoire)
                 {
-                    ImGui.SetCursorPos(p with { X = p.X + 20 });
+                    if (!isInASet && canBeInASet)
+                    {
+                        ImGui.SetCursorPos(p with { X = p.X + 22, Y = p.Y + 16 });
+                    }
+                    else
+                    {
+                        ImGui.SetCursorPos(p with { X = p.X + 20 });
+                    }
                     Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(066460), new Vector2(16, 16));
                     ImGui.SetCursorPos(p);
                 }
