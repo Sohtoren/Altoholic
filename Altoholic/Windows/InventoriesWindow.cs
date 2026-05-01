@@ -770,6 +770,7 @@ namespace Altoholic.Windows
                         continue;
                     }
 
+                    bool isInASet = _globalCache.MirageSetStorage.MirageSetLookup(item.ItemId);
                     bool armoire = _globalCache.ArmoireStorage.CanBeInArmoireFromItemId(itm.Value.RowId);
                     var sets = _globalCache.MirageSetStorage.GetMirageSetItemLookup(item.ItemId);
                     bool canBeInASet = sets != null && sets.Count != 0;
