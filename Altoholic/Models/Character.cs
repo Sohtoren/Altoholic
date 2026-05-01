@@ -253,7 +253,14 @@ namespace Altoholic.Models
         {
             return Armoire.Count > 0 && Armoire.Contains(id);
         }
-
+        public bool HasAnyTrackedRouletteUnlocked(HashSet<uint> trackingRoulettes)
+        {
+            return trackingRoulettes.Count > 0 && trackingRoulettes.Any(id => CompletedRoulettes.ContainsKey(id));
+        }
+        public bool HasAnyTrackedRaidUnlocked(HashSet<uint> trackingRaids)
+        {
+            return trackingRaids.Count > 0 && trackingRaids.Any(id => DutiesUnlocked.Contains(id));
+        }
 
         public void TryAddGearSet(int key, GearSet gs)
         {
