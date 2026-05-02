@@ -2751,7 +2751,7 @@ namespace Altoholic
             {
                 if (Configuration.EnabledTimers.Contains(TimersStatus.FashionReport) && !Utils.IsNowInTuesdayToFridayWindow() && _localPlayer.Timers.FashionReportLastCheck < Utils.GetFashionReportReset() || (_localPlayer.Timers.FashionReportLastCheck > Utils.GetFashionReportReset() &&
                         (Configuration.FashionReportThreshold == 0 && _localPlayer.Timers.FashionReportAllowances == 4) ||
-                        (Configuration.FashionReportThreshold == 1 && _localPlayer.Timers.FashionReportHighestScore <= 80) ||
+                        (Configuration.FashionReportThreshold == 1 && _localPlayer.Timers.FashionReportHighestScore < 80) ||
                         (Configuration.FashionReportThreshold == 2 && _localPlayer.Timers.FashionReportHighestScore != 100)))
                 {
                     builder.PushColorRgba(KnownColor.Orange.Vector());
