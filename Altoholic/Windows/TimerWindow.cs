@@ -541,7 +541,13 @@ namespace Altoholic.Windows
                             DomanEnclaveLastCheck: not null
                         } && currChar.Timers.DomanEnclaveLastCheck > Utils.GetLastWeeklyReset())
                     {
-                        if (currChar.Timers.DomanEnclaveWeeklyDonation == currChar.Timers.DomanEnclaveWeeklyAllowances)
+                        if (!currChar.HasQuest((int)QuestIds.DOMAN_ENCLAVE) && timerCrossMarkForNotUnlocked)
+                        {
+                            ImGui.PushFont(UiBuilder.IconFont);
+                            ImGui.TextUnformatted($"{FontAwesomeIcon.Times.ToIconString()}");
+                            ImGui.PopFont();
+                        }
+                        else if (currChar.Timers.DomanEnclaveWeeklyDonation == currChar.Timers.DomanEnclaveWeeklyAllowances)
                         {
                             ImGui.PushFont(UiBuilder.IconFont);
                             ImGui.TextUnformatted($"{FontAwesomeIcon.Check.ToIconString()}");
@@ -825,6 +831,14 @@ namespace Altoholic.Windows
                             }
                             continue;
                         }
+                        if(!currChar.IsDutyUnlocked(roulette.Id) && timerCrossMarkForNotUnlocked)
+                        {
+                            ImGui.PushFont(UiBuilder.IconFont);
+                            ImGui.TextUnformatted($"{FontAwesomeIcon.Times.ToIconString()}");
+                            ImGui.PopFont();
+
+                            continue;
+                        }
                         DateTime lastCheck;
                         bool charHasRoulette = currChar.CompletedRoulettes.TryGetValue(roulette.Id, out lastCheck);
                         if (charHasRoulette && lastCheck >= Utils.GetLastDailyReset())
@@ -848,6 +862,14 @@ namespace Altoholic.Windows
                     {
                         if (!trackedRaids.Contains(id)) continue;
                         ImGui.TableNextColumn();
+                        if (!currChar.IsDutyUnlocked(id) && timerCrossMarkForNotUnlocked)
+                        {
+                            ImGui.PushFont(UiBuilder.IconFont);
+                            ImGui.TextUnformatted($"{FontAwesomeIcon.Times.ToIconString()}");
+                            ImGui.PopFont();
+
+                            continue;
+                        }
                         RaidReward? reward;
                         bool charHasRaidRewards = currChar.RaidRewards.TryGetValue(id, out reward);
                         if (reward is null) continue;
