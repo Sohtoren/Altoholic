@@ -2721,7 +2721,7 @@ namespace Altoholic
             SeStringBuilder builder = new();
             builder.Append($"[{Name}] Timers Status:");
 
-            if (_localPlayer.HasQuest((int)QuestIds.GOLD_SAUCER_JUMBO_CACTPOT))
+            if (_localPlayer.HasQuest((int)QuestIds.GOLD_SAUCER_MINI_CACTPOT))
             {
                 if (Configuration.EnabledTimers.Contains(TimersStatus.MiniCacpot) && (_localPlayer.Timers.MinicacpotLastCheck < Utils.GetLastDailyReset() || _localPlayer.Timers.MinicacpotAllowances != 0))
                 {
@@ -2749,10 +2749,10 @@ namespace Altoholic
 
             if (_localPlayer.HasQuest((int)QuestIds.GOLD_SAUCER_FASHION_REPORT))
             {
-                if (Configuration.EnabledTimers.Contains(TimersStatus.FashionReport) && !Utils.IsNowInTuesdayToFridayWindow() && (_localPlayer.Timers.FashionReportLastCheck > Utils.GetFashionReportReset() &&
-                        (Configuration.FashionReportThreshold == 0 && _localPlayer.Timers.FashionReportAllowances <= 3) ||
-                        (Configuration.FashionReportThreshold == 1 && _localPlayer.Timers.FashionReportHighestScore >= 80) ||
-                        (Configuration.FashionReportThreshold == 2 && _localPlayer.Timers.FashionReportHighestScore == 100)))
+                if (Configuration.EnabledTimers.Contains(TimersStatus.FashionReport) && !Utils.IsNowInTuesdayToFridayWindow() && _localPlayer.Timers.FashionReportLastCheck < Utils.GetFashionReportReset() || (_localPlayer.Timers.FashionReportLastCheck > Utils.GetFashionReportReset() &&
+                        (Configuration.FashionReportThreshold == 0 && _localPlayer.Timers.FashionReportAllowances == 4) ||
+                        (Configuration.FashionReportThreshold == 1 && _localPlayer.Timers.FashionReportHighestScore <= 80) ||
+                        (Configuration.FashionReportThreshold == 2 && _localPlayer.Timers.FashionReportHighestScore != 100)))
                 {
                     builder.PushColorRgba(KnownColor.Orange.Vector());
                     builder.Append($"\n{_globalCache.AddonStorage.LoadAddonString(Configuration.Language, 8819)}: ");
@@ -2772,7 +2772,7 @@ namespace Altoholic
 
             if (_localPlayer.HasAnyCustomDeliveryUnlocked())
             {
-                if (Configuration.EnabledTimers.Contains(TimersStatus.CustomDeliveries) && (Configuration.CustomDeliveryThreshold < 12 && (_localPlayer.Timers.CustomDeliveriesLastCheck > Utils.GetLastWeeklyReset() && _localPlayer.Timers.CustomDeliveriesAllowances > Configuration.CustomDeliveryThreshold)))
+                if (Configuration.EnabledTimers.Contains(TimersStatus.CustomDeliveries) && _localPlayer.Timers.CustomDeliveriesLastCheck < Utils.GetLastWeeklyReset() || (Configuration.CustomDeliveryThreshold < 12 && (_localPlayer.Timers.CustomDeliveriesLastCheck > Utils.GetLastWeeklyReset() && _localPlayer.Timers.CustomDeliveriesAllowances > Configuration.CustomDeliveryThreshold)))
                 {
                     builder.PushColorRgba(KnownColor.Orange.Vector());
                     builder.Append($"\n{_globalCache.AddonStorage.LoadAddonString(Configuration.Language, 5700)}: ");

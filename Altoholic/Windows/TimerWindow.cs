@@ -127,7 +127,7 @@ namespace Altoholic.Windows
             {
                 columns -= 1;
             }
-            if (trackedRoulettes.Count > 0) 
+            if (enabledTimers.Contains(TimersStatus.Roulettes) && trackedRoulettes.Count > 0) 
             {
                 columns += trackedRoulettes.Count;
             }
@@ -135,7 +135,7 @@ namespace Altoholic.Windows
             {
                 columns -= 1;
             }
-            if (trackedRaids.Count > 0)
+            if (enabledTimers.Contains(TimersStatus.Raids) && trackedRaids.Count > 0)
             {
                 columns += trackedRaids.Count;
             }
