@@ -2742,7 +2742,7 @@ namespace Altoholic
                     builder.Append($"\n{_globalCache.AddonStorage.LoadAddonString(Configuration.Language, 9272)}: ");
                     builder.PopColor();
                     builder.PushColorRgba(KnownColor.Red.Vector());
-                    builder.Append($" {_localPlayer.Timers.JumboCacpotTickets.FindAll(t => t.LastCheck > Utils.GetJumboCactpotReset(_localPlayer.Datacenter)).Count}/ 3");
+                    builder.Append($" {_localPlayer.Timers.JumboCacpotTickets.FindAll(t => t.LastCheck > Utils.GetJumboCactpotReset(_localPlayer.Datacenter)).Count}/3");
                     builder.PopColor();
                 }
             }
