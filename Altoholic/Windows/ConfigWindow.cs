@@ -359,6 +359,19 @@ namespace Altoholic.Windows
                 ImGui.TextUnformatted("Dalamud discord thread");
                 ImGui.EndTooltip();
             }
+            ImGui.PushStyleColor(ImGuiCol.Text, KnownColor.LightBlue.Vector());
+            ImGui.TextUnformatted("Github issues");
+            ImGui.PopStyleColor();
+            if (ImGui.IsItemClicked())
+            {
+                Dalamud.Utility.Util.OpenLink("https://www.github.com/sohtoren/altoholic/issues/new");
+            }
+            if (ImGui.IsItemHovered())
+            {
+                ImGui.BeginTooltip();
+                ImGui.TextUnformatted("Github issues");
+                ImGui.EndTooltip();
+            }
         }
         private void DrawCredits()
         {

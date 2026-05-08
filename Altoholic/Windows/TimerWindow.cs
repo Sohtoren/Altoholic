@@ -578,7 +578,7 @@ namespace Altoholic.Windows
                     }
                     else
                     {
-                        if (timerCrossMarkForNotUnlocked)
+                        if (!currChar.HasQuest((int)QuestIds.DOMAN_ENCLAVE) && timerCrossMarkForNotUnlocked)
                         {
                             ImGui.PushFont(UiBuilder.IconFont);
                             ImGui.TextUnformatted($"{FontAwesomeIcon.Times.ToIconString()}");
