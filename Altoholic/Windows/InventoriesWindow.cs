@@ -603,8 +603,8 @@ namespace Altoholic.Windows
             List<Inventory> inventory =
                 [.. selectedCharacter.Inventory[..140].OrderByDescending(i => i.Quantity)]; //Todo: Use ItemOrderModule
             List<Inventory> keysitems =
-                [.. selectedCharacter.Inventory.Slice(141, 105).OrderByDescending(k => k.Quantity)];
-            bool isKeyItemEmpty = (keysitems.FindAll(k => k.Quantity == 0).Count == 105);
+                [.. selectedCharacter.Inventory.Slice(141, 123).OrderByDescending(k => k.Quantity)];
+            bool isKeyItemEmpty = (keysitems.FindAll(k => k.Quantity == 0).Count == 123);
             //List<Inventory> crystals = selected_character.Inventory.Slice(246, 32);
             List<Inventory> saddleBag = [.. selectedCharacter.Saddle.OrderByDescending(s => s.Quantity)];
 
