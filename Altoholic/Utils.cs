@@ -631,7 +631,7 @@ namespace Altoholic
         {
             ExcelSheet<ItemLevel> dilvl = Plugin.DataManager.GetExcelSheet<ItemLevel>(ClientLanguage.English);
             ItemLevel? lumina = dilvl.GetRow(id);
-            Plugin.Log.Debug($"GetItemLevelFromId: {id}, {lumina}");
+            //Plugin.Log.Debug($"GetItemLevelFromId: {id}, {lumina}");
             return lumina;
         }
 
