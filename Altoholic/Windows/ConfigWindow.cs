@@ -627,7 +627,7 @@ namespace Altoholic.Windows
             }
 
             ImGui.TableSetColumnIndex(1);
-            ImGui.TextUnformatted("Timer Standalone Icon");
+            ImGui.TextUnformatted("Timer Standalone Icon (/altoholic timers)");
             int iconSize = _configuration.TimerStandaloneIcon is 0 or > 100 ? 48 : _configuration.TimerStandaloneIcon;
             if (ImGui.SliderInt("Size (default 48)###TimerIconSize", ref iconSize, 15, 100))
             {
@@ -651,7 +651,7 @@ namespace Altoholic.Windows
                 _configuration.TimerStandaloneShowAtStartup = isTimerStandaloneAtStart;
                 _configuration.TrySave();
             }
-
+            ImGui.Separator();
             bool timerCrossMarkForNotUnlocked = _configuration.TimerCrossMarkForNotUnlocked;
             if (ImGui.Checkbox($"{Loc.Localize("TimerCrossMarkForNotUnlocked", "Show cross mark if timer is not unlocked on character instead of nothing")}###TimerCrossMarkForNotUnlocked",
                     ref timerCrossMarkForNotUnlocked))

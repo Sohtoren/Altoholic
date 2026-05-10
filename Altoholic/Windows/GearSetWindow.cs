@@ -174,17 +174,12 @@ namespace Altoholic.Windows
             ImGui.TableSetupColumn("###CharactersGearSetTable#Profile#GearSetListTable#Open",
                 ImGuiTableColumnFlags.WidthFixed, 100);
 
-            for (int i = 0; i < selectedCharacter.GearSets.Count; i++)
+            foreach((int key, GearSet gs) in selectedCharacter.GearSets)
             {
-                if (!selectedCharacter.GearSets.TryGetValue(i, out GearSet? gs))
-                {
-                    continue;
-                }
-
                 if (string.IsNullOrEmpty(gs.Name)) continue;
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                ImGui.TextUnformatted($"{i + 1}");
+                ImGui.TextUnformatted($"{key + 1}");
                 ImGui.TableSetColumnIndex(1);
                 Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(Utils.GetJobIcon(gs.ClassJob)),
                     new Vector2(40, 40));
