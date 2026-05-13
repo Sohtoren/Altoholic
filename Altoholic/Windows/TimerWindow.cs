@@ -492,6 +492,36 @@ namespace Altoholic.Windows
                             }
                         }
                     }
+                    else
+                    {
+                        if (!currChar.HasQuest((int)QuestIds.GOLD_SAUCER_FASHION_REPORT) &&
+                                timerCrossMarkForNotUnlocked)
+                        {
+                            ImGui.PushFont(UiBuilder.IconFont);
+                            ImGui.TextUnformatted($"{FontAwesomeIcon.Times.ToIconString()}");
+                            ImGui.PopFont();
+                        }
+                        else
+                        {
+                            string judging = _currentLocale switch
+                            {
+                                ClientLanguage.German => "Die Bewertungsphase hat noch nicht begonnen.",
+                                ClientLanguage.English => "Judging period has yet to begin.",
+                                ClientLanguage.French => "La période d'application n'a pas encore commencé.",
+                                ClientLanguage.Japanese => "ファッションコンテストの応募期間はまだ始まっていません。",
+                                _ => "Judging period has yet to begin.",
+                            };
+                            ImGui.PushFont(UiBuilder.IconFont);
+                            ImGui.TextUnformatted($"{FontAwesomeIcon.Ban.ToIconString()}");
+                            ImGui.PopFont();
+                            if (ImGui.IsItemHovered())
+                            {
+                                ImGui.BeginTooltip();
+                                ImGui.TextUnformatted($"{judging}");
+                                ImGui.EndTooltip();
+                            }
+                        }
+                    }
                 }
 
                 if (enabledTimers.Contains(TimersStatus.CustomDeliveries))
