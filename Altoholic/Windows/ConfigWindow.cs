@@ -722,6 +722,12 @@ namespace Altoholic.Windows
                     _configuration.TrySave();
                 }
             }
+
+            if (_configuration.TimerCrossMarkForNotUnlocked || _configuration.TimerRemainderOnZoneChange)
+            {
+                ImGui.Separator();
+                ImGui.TextUnformatted($"Due to limitation on roulette unlocking state, you need to do each roulette at least once on a character for it to show as unlocked {(_configuration.TimerCrossMarkForNotUnlocked ? "in chat reminders": "")} {(_configuration.TimerCrossMarkForNotUnlocked && _configuration.TimerRemainderOnZoneChange ? " or ": "")} {(_configuration.TimerRemainderOnZoneChange ? "for crossmark in columns to disappear" : "")}");
+            }
         }
         private void DrawTimerRaidsConfig()
         {

@@ -46,6 +46,7 @@ using System.Linq;
 using System.Numerics;
 using System.Runtime.InteropServices;
 using static FFXIVClientStructs.FFXIV.Client.Game.UI.InstanceContent;
+using static FFXIVClientStructs.FFXIV.Client.Game.UI.UIState.Delegates;
 using static FFXIVClientStructs.FFXIV.Client.UI.Misc.RaptureGearsetModule;
 using static FFXIVClientStructs.FFXIV.Client.UI.RaptureAtkModule;
 using Character = Altoholic.Models.Character;
@@ -915,6 +916,7 @@ namespace Altoholic
             if (_autoSaveWatch.Elapsed.Minutes >= 1 && _autoSaveWatch.Elapsed.Minutes <= Configuration.AutoSaveTimer && _autoSaveWatch.Elapsed.Seconds == 0)
             {
                 GetCollectionFromState();
+                GetDuties();
             }
             if (_autoSaveWatch.Elapsed.Minutes < Configuration.AutoSaveTimer)
             {
@@ -2329,9 +2331,8 @@ namespace Altoholic
                 {
                     Log.Debug($"Duty {i.Id}:{i.EnglishName} not completed");
                 }
-
-                GetRoulette();
             }
+            GetRoulette();
         }
 
         private unsafe void GetRoulette()
@@ -2342,6 +2343,10 @@ namespace Altoholic
                 if (InstanceContent.Instance()->IsRouletteComplete((byte)r.Id))
                 {
                     _localPlayer.CompletedRoulettes.Add(r.Id, DateTime.UtcNow);
+                    if (!_localPlayer.UnlockedRoulettes.Contains(r.Id))
+                    {
+                        _localPlayer.UnlockedRoulettes.Add(r.Id);
+                    }
                 }
             }
         }
@@ -2685,6 +2690,7 @@ namespace Altoholic
                 GearSets = _localPlayer.GearSets,
                 GlamourPlates = _localPlayer.GlamourPlates,
                 CompletedRoulettes = _localPlayer.CompletedRoulettes,
+                UnlockedRoulettes = _localPlayer.UnlockedRoulettes,
                 RaidRewards = _localPlayer.RaidRewards,
                 WondrousTails = _localPlayer.WondrousTails
             };
@@ -2879,7 +2885,7 @@ namespace Altoholic
                                     ClientLanguage.French => Utils.CapitalizeSentence(roulette.FrenchName.Replace("Mission aléatoire", "").Replace("Challenge quotidien", "")),
                                     ClientLanguage.Japanese => roulette.JapaneseName.Replace("コンテンツルーレット", "").Replace("デイリーチャレンジ", ""),
                                     _ => roulette.EnglishName.Replace("Duty Roulette", "").Replace("Daily Challenge", "")
-                                }).Replace(":", "").Replace("：", "").Trim().Replace(" ", "\n");
+                                }).Replace(":", "").Replace("：", "").Trim();
                                 nonCompletedRouletteString += $"\n{name}";
                             }
                         }
@@ -3059,6 +3065,11 @@ namespace Altoholic
                 case "quest":
                 case "quests":
                     _localPlayer.Quests.Clear();
+                    break;
+                case "roulette":
+                case "roulettes":
+                    _localPlayer.UnlockedRoulettes.Clear();
+                    _localPlayer.CompletedRoulettes.Clear();
                     break;
                 case "ttc":
                     _localPlayer.TripleTriadCards.Clear();

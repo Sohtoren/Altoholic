@@ -80,6 +80,7 @@ namespace Altoholic.Models
         public Dictionary<int, GearSet> GearSets { get; init; } = new(100);
         public Dictionary<byte, GlamourPlate> GlamourPlates { get; init; } = new(20);
         public Dictionary<uint, DateTime> CompletedRoulettes { get; init; } = [];
+        public HashSet<uint> UnlockedRoulettes { get; init; } = [];
         public Dictionary<uint, RaidReward> RaidRewards { get; init; } = [];
         public WondrousTails? WondrousTails { get; set; }
 
@@ -255,7 +256,7 @@ namespace Altoholic.Models
         }
         public bool HasAnyTrackedRouletteUnlocked(HashSet<uint> trackingRoulettes)
         {
-            return trackingRoulettes.Count > 0 && trackingRoulettes.Any(id => CompletedRoulettes.ContainsKey(id));
+            return trackingRoulettes.Count > 0 && UnlockedRoulettes.Count > 0 && trackingRoulettes.Any(id => UnlockedRoulettes.Contains(id));
         }
         public bool HasAnyTrackedRaidUnlocked(HashSet<uint> trackingRaids)
         {

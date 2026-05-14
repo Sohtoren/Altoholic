@@ -842,50 +842,71 @@ namespace Altoholic.Windows
                     }
                 }
 
+
                 if (enabledTimers.Contains(TimersStatus.Roulettes) && trackedRoulettes.Count > 0)
                 {
                     foreach (Roulette roulette in roulettes)
                     {
                         if (!trackedRoulettes.Contains(roulette.Id)) continue;
                         ImGui.TableNextColumn();
-                        if (_plugin.Configuration.DutyRouletteCompletedWhenTomestoneCap)
+
+                        if (!currChar.UnlockedRoulettes.Contains(roulette.Id))
                         {
-                            if (currChar.Currencies is not null)
+                            if (timerCrossMarkForNotUnlocked)
                             {
-                                if (currChar.Currencies.Weekly_Acquired_Tomestone == currChar.Currencies.Weekly_Limit_Tomestone)
+                                ImGui.PushFont(UiBuilder.IconFont);
+                                ImGui.TextUnformatted($"{FontAwesomeIcon.Times.ToIconString()}");
+                                ImGui.PopFont();
+                                if (ImGui.IsItemHovered())
                                 {
-                                    ImGui.PushFont(UiBuilder.IconFont);
-                                    ImGui.TextUnformatted($"{FontAwesomeIcon.Check.ToIconString()}");
-                                    ImGui.PopFont();
+                                    ImGui.BeginTooltip();
+                                    ImGui.TextUnformatted("Roulette not unlocked or unlocked state unknown (do specific roulette once to update)");
+                                    ImGui.EndTooltip();
                                 }
                             }
-                            continue;
                         }
-                        if(!currChar.IsDutyUnlocked(roulette.Id) && timerCrossMarkForNotUnlocked)
+                        else
                         {
-                            ImGui.PushFont(UiBuilder.IconFont);
-                            ImGui.TextUnformatted($"{FontAwesomeIcon.Times.ToIconString()}");
-                            ImGui.PopFont();
-
-                            continue;
-                        }
-                        DateTime lastCheck;
-                        bool charHasRoulette = currChar.CompletedRoulettes.TryGetValue(roulette.Id, out lastCheck);
-                        if (charHasRoulette && lastCheck >= Utils.GetLastDailyReset())
-                        {
-                            ImGui.PushFont(UiBuilder.IconFont);
-                            ImGui.TextUnformatted($"{FontAwesomeIcon.Check.ToIconString()}");
-                            ImGui.PopFont();
-
-                            if (ImGui.IsItemHovered())
+                            if (_plugin.Configuration.DutyRouletteCompletedWhenTomestoneCap)
                             {
-                                ImGui.BeginTooltip();
-                                ImGui.TextUnformatted($"{Loc.Localize("LastCheck", "Last check:")} {Utils.FormatDate(dateFormat, lastCheck.ToLocalTime())}");
-                                ImGui.EndTooltip();
+                                if (currChar.Currencies is not null)
+                                {
+                                    if (currChar.Currencies.Weekly_Acquired_Tomestone == currChar.Currencies.Weekly_Limit_Tomestone)
+                                    {
+                                        ImGui.PushFont(UiBuilder.IconFont);
+                                        ImGui.TextUnformatted($"{FontAwesomeIcon.Check.ToIconString()}");
+                                        ImGui.PopFont();
+                                    }
+                                }
+                                continue;
+                            }
+                            if (!currChar.IsDutyUnlocked(roulette.Id) && timerCrossMarkForNotUnlocked)
+                            {
+                                ImGui.PushFont(UiBuilder.IconFont);
+                                ImGui.TextUnformatted($"{FontAwesomeIcon.Times.ToIconString()}");
+                                ImGui.PopFont();
+
+                                continue;
+                            }
+                            DateTime lastCheck;
+                            bool charHasRoulette = currChar.CompletedRoulettes.TryGetValue(roulette.Id, out lastCheck);
+                            if (charHasRoulette && lastCheck >= Utils.GetLastDailyReset())
+                            {
+                                ImGui.PushFont(UiBuilder.IconFont);
+                                ImGui.TextUnformatted($"{FontAwesomeIcon.Check.ToIconString()}");
+                                ImGui.PopFont();
+
+                                if (ImGui.IsItemHovered())
+                                {
+                                    ImGui.BeginTooltip();
+                                    ImGui.TextUnformatted($"{Loc.Localize("LastCheck", "Last check:")} {Utils.FormatDate(dateFormat, lastCheck.ToLocalTime())}");
+                                    ImGui.EndTooltip();
+                                }
                             }
                         }
                     }
                 }
+
                 if (enabledTimers.Contains(TimersStatus.Raids))
                 {
                     foreach (uint id in _globalCache.DutyStorage.RewardsRaidId)
