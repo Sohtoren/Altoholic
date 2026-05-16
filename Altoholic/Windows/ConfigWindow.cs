@@ -731,7 +731,8 @@ namespace Altoholic.Windows
         }
         private void DrawTimerRaidsConfig()
         {
-            foreach (uint id in _globalCache.DutyStorage.RewardsRaidId)
+            uint[] ids = _globalCache.DutyStorage.RewardsRaidIds.Concat(_globalCache.DutyStorage.SavageRaidIds).ToArray();
+            foreach (uint id in ids)
             {
                 bool isInTrackedList = _configuration.TrackingRaids.Contains(id);
                 Duty? duty = _globalCache.DutyStorage.LoadDuty(id);

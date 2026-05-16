@@ -2397,6 +2397,8 @@ namespace Altoholic
                 return;
             }
 
+            _localPlayer.LastCompletedDutyDatetime[d.Id] = DateTime.UtcNow;
+
             if (_localPlayer.IsDutyCompleted(d.Id)) return;
             Log.Debug($"Duty {d.Id}:<{d.EnglishName}> completed, adding it to the completed list");
             _localPlayer.Duties.Add(d.Id);
@@ -2409,7 +2411,7 @@ namespace Altoholic
 
             ushort currentDuty = GameMain.Instance()->CurrentContentFinderConditionId;
 
-            if (!_globalCache.DutyStorage.RewardsRaidId.Contains(currentDuty)) return;
+            if (!_globalCache.DutyStorage.RewardsRaidIds.Contains(currentDuty)) return;
 
             Item? item = _globalCache.ItemStorage.LoadItem(Configuration.Language, gameInventoryItem.ItemId);
             if (item is null || item.Value.RowId is 0) return;
@@ -2419,8 +2421,8 @@ namespace Altoholic
                 _localPlayer.RaidRewards[currentDuty].Reward = 0;
             }
 
-                // If the item is a limited type that we care about, mark as completed
-                switch (item.Value.ItemUICategory.RowId)
+            // If the item is a limited type that we care about, mark as completed
+            switch (item.Value.ItemUICategory.RowId)
             {
                 case 34: // Head
                 case 35: // Body
@@ -2909,7 +2911,7 @@ namespace Altoholic
                 {
                     HashSet<uint> trackedRaids = Configuration.TrackingRaids;
                     string nonCompletedRaidsString = string.Empty;
-                    foreach (uint id in _globalCache.DutyStorage.RewardsRaidId)
+                    foreach (uint id in _globalCache.DutyStorage.RewardsRaidIds)
                     {
                         if (!trackedRaids.Contains(id)) continue;
 
@@ -2919,6 +2921,27 @@ namespace Altoholic
                         if (!charHasRaidRewards || charHasRaidRewards && reward is not null &&
                             ((reward.LastCheck < Utils.GetLastWeeklyReset()) ||
                             (reward.LastCheck >= Utils.GetLastWeeklyReset() && id == _globalCache.DutyStorage.DoubleRaidLootId && (Configuration.DoubleLastNormalRaidRewards && reward.Reward != 2) || (!Configuration.DoubleLastNormalRaidRewards && reward.Reward == 0))))
+                        {
+                            Duty? duty = _globalCache.DutyStorage.LoadDuty(id);
+                            if (duty == null) continue;
+                            string name = (Configuration.Language switch
+                            {
+                                ClientLanguage.German => duty.GermanName,
+                                ClientLanguage.English => duty.EnglishName,
+                                ClientLanguage.French => duty.FrenchName,
+                                ClientLanguage.Japanese => duty.JapaneseName,
+                                _ => duty.EnglishName
+                            }).Replace(":", "").Replace("：", "").Trim();
+                            nonCompletedRaidsString += $"\n{name}";
+                        }
+                    }
+                    foreach (uint id in _globalCache.DutyStorage.SavageRaidIds)
+                    {
+                        if (!trackedRaids.Contains(id)) continue;
+
+                        bool hasCompletedDutyDatetime = _localPlayer.LastCompletedDutyDatetime.TryGetValue(id, out DateTime lastCompletion);
+
+                        if (!hasCompletedDutyDatetime || hasCompletedDutyDatetime && lastCompletion < Utils.GetLastWeeklyReset())
                         {
                             Duty? duty = _globalCache.DutyStorage.LoadDuty(id);
                             if (duty == null) continue;

@@ -249,7 +249,8 @@ namespace Altoholic.Windows
             }
             if (enabledTimers.Contains(TimersStatus.Raids) && trackedRaids.Count > 0)
             {
-                foreach (uint id in _globalCache.DutyStorage.RewardsRaidId)
+                uint[] ids = _globalCache.DutyStorage.RewardsRaidIds.Concat(_globalCache.DutyStorage.SavageRaidIds).ToArray();
+                foreach (uint id in ids)
                 {
                     if (!trackedRaids.Contains(id)) continue;
                     Duty? duty = _globalCache.DutyStorage.LoadDuty(id);
@@ -338,7 +339,8 @@ namespace Altoholic.Windows
             }
             if (enabledTimers.Contains(TimersStatus.Raids) && trackedRaids.Count > 0)
             {
-                foreach (uint id in _globalCache.DutyStorage.RewardsRaidId)
+                uint[] ids = _globalCache.DutyStorage.RewardsRaidIds.Concat(_globalCache.DutyStorage.SavageRaidIds).ToArray();
+                foreach (uint id in ids)
                 {
                     if (!trackedRaids.Contains(id)) continue;
                     Duty? duty = _globalCache.DutyStorage.LoadDuty(id);
@@ -909,7 +911,8 @@ namespace Altoholic.Windows
 
                 if (enabledTimers.Contains(TimersStatus.Raids))
                 {
-                    foreach (uint id in _globalCache.DutyStorage.RewardsRaidId)
+                    uint[] ids = _globalCache.DutyStorage.RewardsRaidIds.Concat(_globalCache.DutyStorage.SavageRaidIds).ToArray();
+                    foreach (uint id in ids)
                     {
                         if (!trackedRaids.Contains(id)) continue;
                         ImGui.TableNextColumn();
@@ -921,36 +924,59 @@ namespace Altoholic.Windows
 
                             continue;
                         }
+
+                        bool hasThisWeekReward = false;
                         RaidReward? reward;
                         bool charHasRaidRewards = currChar.RaidRewards.TryGetValue(id, out reward);
                         if (reward is null) continue;
+                        hasThisWeekReward = charHasRaidRewards && reward.Reward > 0 && reward.LastCheck >= Utils.GetLastWeeklyReset();
 
-                        if (charHasRaidRewards && reward.Reward > 0 && reward.LastCheck >= Utils.GetLastWeeklyReset())
+                        bool hasCompletedDutyDatetime = currChar.LastCompletedDutyDatetime.TryGetValue(id, out DateTime lastCompletion);
+
+                        if (hasCompletedDutyDatetime && lastCompletion >= Utils.GetLastWeeklyReset() || hasThisWeekReward)
                         {
                             ImGui.PushFont(UiBuilder.IconFont);
-                            if (id == _globalCache.DutyStorage.DoubleRaidLootId)
+                            ImGui.TextUnformatted($"{FontAwesomeIcon.Check.ToIconString()}");
+                            ImGui.PopFont();
+                            if (!lastCompletion.Equals(new DateTime(0001, 01, 01)))
                             {
-                                if (_plugin.Configuration.DoubleLastNormalRaidRewards && reward.Reward == 2)
+                                if (ImGui.IsItemHovered())
                                 {
-                                    ImGui.TextUnformatted($"{FontAwesomeIcon.Check.ToIconString()}");
+                                    ImGui.BeginTooltip();
+                                    //0001/01/01 00:00
+                                    ImGui.TextUnformatted($"{Loc.Localize("LastCheck", "Last check:")} {Utils.FormatDate(dateFormat, lastCompletion.ToLocalTime())}");
+                                    ImGui.EndTooltip();
+                                }
+                            }
+                            if (_globalCache.DutyStorage.RewardsRaidIds.Contains(id) && hasThisWeekReward)
+                            {
+                                ImGui.SameLine();
+                                if (id == _globalCache.DutyStorage.DoubleRaidLootId)
+                                {
+                                    if (_plugin.Configuration.DoubleLastNormalRaidRewards && reward.Reward == 2)
+                                    {
+                                        Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(66460), new Vector2(16, 16));
+                                    }
+                                    else
+                                    {
+                                        Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(66460), new Vector2(16, 16),
+                                            new Vector4(1, 1, 1, 0.5f));
+                                    }
                                 }
                                 else
                                 {
-                                    ImGui.TextUnformatted($"{FontAwesomeIcon.Circle.ToIconString()}");
+                                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(66460), new Vector2(16, 16));
                                 }
-                            }
-                            else
-                            {
-                                ImGui.TextUnformatted($"{FontAwesomeIcon.Check.ToIconString()}");
-                            }
-                            ImGui.PopFont();
-
-                            if (ImGui.IsItemHovered())
-                            {
-                                ImGui.BeginTooltip();
-                                if (id == _globalCache.DutyStorage.DoubleRaidLootId) ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 102588)} ({reward.Reward}/2)");
-                                ImGui.TextUnformatted($"{Loc.Localize("LastCheck", "Last check:")} {Utils.FormatDate(dateFormat, reward.LastCheck.ToLocalTime())}");
-                                ImGui.EndTooltip();
+                                if (ImGui.IsItemHovered())
+                                {
+                                    ImGui.BeginTooltip();
+                                    if (reward is not null)
+                                    {
+                                        if (id == _globalCache.DutyStorage.DoubleRaidLootId) ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 102588)} ({reward.Reward}/2)");
+                                        ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 1885)}: {Loc.Localize("LastCheck", "Last check:")} {Utils.FormatDate(dateFormat, reward.LastCheck.ToLocalTime())}");
+                                    }
+                                    ImGui.EndTooltip();
+                                }
                             }
                         }
                     }

@@ -83,6 +83,7 @@ namespace Altoholic.Models
         public HashSet<uint> UnlockedRoulettes { get; init; } = [];
         public Dictionary<uint, RaidReward> RaidRewards { get; init; } = [];
         public WondrousTails? WondrousTails { get; set; }
+        public Dictionary<uint, DateTime> LastCompletedDutyDatetime { get; init; } = [];
 
 
         public bool HasAnyLevelJob(int level)

@@ -72,5 +72,6 @@ namespace Altoholic.Models
         public string UnlockedRoulettes { get; init; } = string.Empty;
         public string RaidRewards { get; init; } = string.Empty;
         public string WondrousTails { get; init; } = string.Empty;
+        public string LastCompletedDutyDatetime { get; init; } = string.Empty;
     }
 }
