@@ -2411,7 +2411,8 @@ namespace Altoholic
 
             ushort currentDuty = GameMain.Instance()->CurrentContentFinderConditionId;
 
-            if (!_globalCache.DutyStorage.RewardsRaidIds.Contains(currentDuty)) return;
+            uint[] ids = _globalCache.DutyStorage.RewardsRaidIds.Concat(_globalCache.DutyStorage.SavageRaidIds).ToArray();
+            if (!ids.Contains(currentDuty)) return;
 
             Item? item = _globalCache.ItemStorage.LoadItem(Configuration.Language, gameInventoryItem.ItemId);
             if (item is null || item.Value.RowId is 0) return;
@@ -2420,6 +2421,8 @@ namespace Altoholic
             {
                 _localPlayer.RaidRewards[currentDuty].Reward = 0;
             }
+
+
 
             // If the item is a limited type that we care about, mark as completed
             switch (item.Value.ItemUICategory.RowId)
@@ -2914,6 +2917,7 @@ namespace Altoholic
                     foreach (uint id in _globalCache.DutyStorage.RewardsRaidIds)
                     {
                         if (!trackedRaids.Contains(id)) continue;
+                        if (!_localPlayer.DutiesUnlocked.Contains(id)) continue;
 
                         RaidReward? reward;
                         bool charHasRaidRewards = _localPlayer.RaidRewards.TryGetValue(id, out reward);

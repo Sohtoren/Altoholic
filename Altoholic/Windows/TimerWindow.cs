@@ -933,20 +933,21 @@ namespace Altoholic.Windows
 
                         bool hasCompletedDutyDatetime = currChar.LastCompletedDutyDatetime.TryGetValue(id, out DateTime lastCompletion);
 
+                        if (lastCompletion.Equals(new DateTime(0001, 01, 01)) && hasThisWeekReward)
+                        {
+                            lastCompletion = reward.LastCheck;
+                        }
+
                         if (hasCompletedDutyDatetime && lastCompletion >= Utils.GetLastWeeklyReset() || hasThisWeekReward)
                         {
                             ImGui.PushFont(UiBuilder.IconFont);
                             ImGui.TextUnformatted($"{FontAwesomeIcon.Check.ToIconString()}");
                             ImGui.PopFont();
-                            if (!lastCompletion.Equals(new DateTime(0001, 01, 01)))
+                            if (ImGui.IsItemHovered())
                             {
-                                if (ImGui.IsItemHovered())
-                                {
-                                    ImGui.BeginTooltip();
-                                    //0001/01/01 00:00
-                                    ImGui.TextUnformatted($"{Loc.Localize("LastCheck", "Last check:")} {Utils.FormatDate(dateFormat, lastCompletion.ToLocalTime())}");
-                                    ImGui.EndTooltip();
-                                }
+                                ImGui.BeginTooltip();
+                                ImGui.TextUnformatted($"{Loc.Localize("LastCheck", "Last check:")} {Utils.FormatDate(dateFormat, lastCompletion.ToLocalTime())}");
+                                ImGui.EndTooltip();
                             }
                             if (_globalCache.DutyStorage.RewardsRaidIds.Contains(id) && hasThisWeekReward)
                             {
