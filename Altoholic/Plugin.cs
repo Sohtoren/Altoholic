@@ -158,7 +158,6 @@ namespace Altoholic
 #endif
             if (File.Exists(dbpath))
             {
-                List<Character> characters = [];
                 bool isSQliteDb = Database.Database.IsSqLiteDatabase(dbpath);
                 if (!isSQliteDb)
                 {
@@ -169,11 +168,7 @@ namespace Altoholic
                 _db = Database.Database.CreateDatabaseConnection(dbpath);
                 _db.Open();
                 Database.Database.CheckOrCreateDatabases(_db);
-                if (!isSQliteDb)
-                {
-                    Database.Database.AddCharacters(_db, characters);
-                }
-                Log.Info("Migration finished");
+                Log.Info("Database creation check finished");
             }
             else
             {
