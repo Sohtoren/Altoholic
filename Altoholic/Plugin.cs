@@ -2422,8 +2422,6 @@ namespace Altoholic
                 _localPlayer.RaidRewards[currentDuty].Reward = 0;
             }
 
-
-
             // If the item is a limited type that we care about, mark as completed
             switch (item.Value.ItemUICategory.RowId)
             {
