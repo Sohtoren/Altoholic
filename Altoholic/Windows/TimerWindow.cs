@@ -951,6 +951,8 @@ namespace Altoholic.Windows
                             if (_globalCache.DutyStorage.RewardsRaidIds.Contains(id) && hasThisWeekReward)
                             {
                                 ImGui.SameLine();
+                                Vector2 p = ImGui.GetCursorPos();
+                                ImGui.SetCursorPos(new Vector2(p.X + 15, p.Y + 1));
                                 if (id == _globalCache.DutyStorage.DoubleRaidLootId)
                                 {
                                     if (_plugin.Configuration.DoubleLastNormalRaidRewards && reward.Reward == 2)
@@ -965,8 +967,9 @@ namespace Altoholic.Windows
                                 }
                                 else
                                 {
-                                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(66460), new Vector2(16, 16));
+                                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(66460), new Vector2(17, 17));
                                 }
+                                ImGui.SetCursorPos(p);
                                 if (ImGui.IsItemHovered())
                                 {
                                     ImGui.BeginTooltip();
