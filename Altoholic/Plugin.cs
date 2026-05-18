@@ -1765,7 +1765,10 @@ namespace Altoholic
                     items.Add(currInv);
                 }
             }
-            _localPlayer.Saddle = items;
+            if (items.FindAll(i => i.Id != 0).Count > 0)
+            {
+                _localPlayer.Saddle = items;
+            }
         }
 
         private unsafe void GetPlayerArmoryInventory()

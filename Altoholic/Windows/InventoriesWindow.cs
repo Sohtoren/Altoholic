@@ -606,7 +606,7 @@ namespace Altoholic.Windows
                 [.. selectedCharacter.Inventory.Slice(141, 123).OrderByDescending(k => k.Quantity)];
             bool isKeyItemEmpty = (keysitems.FindAll(k => k.Quantity == 0).Count == 123);
             //List<Inventory> crystals = selected_character.Inventory.Slice(246, 32);
-            List<Inventory> saddleBag = [.. selectedCharacter.Saddle.OrderByDescending(s => s.Quantity)];
+            List<Inventory> saddleBag = selectedCharacter.Saddle.FindAll(i => i.ItemId != 0);
 
             ImGui.TableSetupColumn($"###CharactersInventoryTable#Inventories#Bags_{selectedCharacter.CharacterId}",
                 ImGuiTableColumnFlags.WidthFixed, 450);
@@ -682,8 +682,7 @@ namespace Altoholic.Windows
             }
             else
             {
-                DrawInventory($"Saddle_{selectedCharacter.CharacterId}", saddleBag, true,
-                    selectedCharacter.HasPremiumSaddlebag);
+                DrawInventory($"Saddle_{selectedCharacter.CharacterId}", saddleBag);
                 using var saddleAmountTable =
                     ImRaii.Table(
                         $"###CharactersInventoryTable#Inventories#Inventory#Saddle_{selectedCharacter.CharacterId}#Amount",
@@ -704,7 +703,16 @@ namespace Altoholic.Windows
                 ImGui.Text("");
                 ImGui.TableSetColumnIndex(1);
                 ImGui.TextUnformatted(
-                    $"{saddleBag.FindAll(i => i.ItemId != 0).Count}/{((selectedCharacter.HasPremiumSaddlebag) ? "140" : "70")}");
+                    $"{saddleBag.Count}/{((selectedCharacter.HasPremiumSaddlebag) ? "140" : "70")}");
+                if(!selectedCharacter.HasPremiumSaddlebag && saddleBag.Count > 70)
+                {
+                    if (ImGui.IsItemHovered())
+                    {
+                        ImGui.BeginTooltip();
+                        ImGui.TextUnformatted($"{Loc.Localize("PremiumSaddleNotAvailable", "The premium saddle bag is currently not available but items were put in before deactivation")}");
+                        ImGui.EndTooltip();
+                    }
+                }
             }
 
 #if DEBUG
@@ -717,7 +725,7 @@ namespace Altoholic.Windows
 #endif
         }
 
-        private void DrawInventory(string label, List<Inventory> inventory, bool saddle = false, bool premium = false)
+        private void DrawInventory(string label, List<Inventory> inventory)
         {
             using var table = ImRaii.Table($"###CharactersInventoryTable#Inventories#Inventory#{label}Table", 10,
                 ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner);
@@ -747,7 +755,6 @@ namespace Altoholic.Windows
             for (int i = 0; i < inventory.Count; i++)
             {
                 Inventory item = inventory[i];
-                if (saddle && !premium && i > 69) continue;
                 if (i % 10 == 0)
                 {
                     ImGui.TableNextRow();
