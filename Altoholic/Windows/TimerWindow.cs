@@ -928,12 +928,12 @@ namespace Altoholic.Windows
                         bool hasThisWeekReward = false;
                         RaidReward? reward;
                         bool charHasRaidRewards = currChar.RaidRewards.TryGetValue(id, out reward);
-                        if (reward is null) continue;
-                        hasThisWeekReward = charHasRaidRewards && reward.Reward > 0 && reward.LastCheck >= Utils.GetLastWeeklyReset();
+                        //if (reward is null) continue;
+                        hasThisWeekReward = charHasRaidRewards && (reward is not null && reward.Reward > 0 && reward.LastCheck >= Utils.GetLastWeeklyReset());
 
                         bool hasCompletedDutyDatetime = currChar.LastCompletedDutyDatetime.TryGetValue(id, out DateTime lastCompletion);
 
-                        if (lastCompletion.Equals(new DateTime(0001, 01, 01)) && hasThisWeekReward)
+                        if (lastCompletion.Equals(new DateTime(0001, 01, 01)) && hasThisWeekReward && reward is not null)
                         {
                             lastCompletion = reward.LastCheck;
                         }
@@ -956,7 +956,7 @@ namespace Altoholic.Windows
                                 ImGui.SetCursorPos(new Vector2(p.X + 15, p.Y + 1));
                                 if (id == _globalCache.DutyStorage.DoubleRaidLootId)
                                 {
-                                    if (_plugin.Configuration.DoubleLastNormalRaidRewards && reward.Reward == 2)
+                                    if (_plugin.Configuration.DoubleLastNormalRaidRewards && (reward is not null && reward.Reward == 2))
                                     {
                                         Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(66460), new Vector2(16, 16));
                                     }
