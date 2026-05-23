@@ -1088,6 +1088,9 @@ namespace Altoholic.Windows
                     DrawAllEventLine(chars, charactersQuests,
                         $"{Loc.Localize("Event_HatchingTide", "Hatching-tide")} (2026)",
                         134);
+                    DrawAllEventLine(chars, charactersQuests,
+                        $"{Loc.Localize("Event_TheMakeItRainCampaign", "The Make It Rain Campaign")} (2026)",
+                        135);
                 }
             }
 
@@ -3519,13 +3522,19 @@ namespace Altoholic.Windows
             ImGui.TableSetColumnIndex(0);
             ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 1885));
 
-            ImGui.TableSetColumnIndex(1);
-            Item? itm = _globalCache.ItemStorage.LoadItem(_currentLocale, GetItemIconFromEventId(msqIndex));
-            if (itm == null) return;
-            Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Value.Icon), new Vector2(16, 16));
-            if (ImGui.IsItemHovered())
+            uint eventCurrencyId = GetEventCurrencyFromEventId(msqIndex);
+            if (eventCurrencyId != 0)
             {
-                Utils.DrawItemTooltip(_currentLocale, ref _globalCache, itm.Value);
+                Item? itm = _globalCache.ItemStorage.LoadItem(_currentLocale, eventCurrencyId);
+                if (itm != null)
+                {
+                    ImGui.TableSetColumnIndex(1);
+                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Value.Icon), new Vector2(16, 16));
+                    if (ImGui.IsItemHovered())
+                    {
+                        Utils.DrawItemTooltip(_currentLocale, ref _globalCache, itm.Value);
+                    }
+                }
             }
 
             foreach (Character currChar in chars)
@@ -3544,7 +3553,7 @@ namespace Altoholic.Windows
             DrawEventReward(chars, msqIndex);
         }
 
-        private uint GetItemIconFromEventId(int msqIndex)
+        private uint GetEventCurrencyFromEventId(int msqIndex)
         {
             return msqIndex switch
             {
@@ -3564,8 +3573,14 @@ namespace Altoholic.Windows
                         DrawAllCharsFacewear(chars, 517, 20);
                         DrawAllCharsFacewear(chars, 529, 20);
                         DrawAllCharsFacewear(chars, 541, 20);
+                        break;
                     }
-                    break;
+                case 135:
+                    {
+                        DrawAllCharsMinion(chars, 579, 0);
+                        DrawAllCharsOrnament(chars, 52, 0);
+                        break;
+                    }
             }
         }
 

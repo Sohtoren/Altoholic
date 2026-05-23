@@ -4393,6 +4393,7 @@ namespace Altoholic
                     character.HasQuest((int)QuestIds.EVENT_VALENTIONE_S_DAY_2026),
                     character.HasQuest((int)QuestIds.EVENT_LITTLE_LADIES_DAY_2026),
                     character.HasQuest((int)QuestIds.EVENT_HATCHING_TIDE_2026),
+                    character.HasQuest((int)QuestIds.EVENT_THE_MAKE_IT_RAIN_CAMPAIGN_2026),
                 ];
                 result.Add(completedQuests);
             }
