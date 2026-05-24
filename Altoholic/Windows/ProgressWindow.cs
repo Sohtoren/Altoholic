@@ -295,36 +295,35 @@ namespace Altoholic.Windows
                 ImGui.TextUnformatted($"{(currChar.IslandSanctuaryUnlocked ? currChar.IslandSanctuaryLevel : "")}");
             }
 
-
-            DrawAllCharsMount(chars, 277, 24000);
-            DrawAllCharsMount(chars, 286, 35000);
-            DrawAllCharsMount(chars, 282, 50000);
-            DrawAllCharsMount(chars, 335, 100000);
-            DrawAllCharsMount(chars, 255, 12000);
-            DrawAllCharsMount(chars, 256, 12000);
-            DrawAllCharsMount(chars, 257, 12000);
-            DrawAllCharsMount(chars, 258, 18000);
-            DrawAllCharsMount(chars, 259, 18000);
-            DrawAllCharsMount(chars, 260, 18000);
-            DrawAllCharsMinion(chars, 456, 4000);
-            DrawAllCharsMinion(chars, 468, 4000);
-            DrawAllCharsMinion(chars, 481, 4000);
-            DrawAllCharsMinion(chars, 496, 4000);
-            DrawAllCharsOrnament(chars, 30, 6000);
-            DrawAllCharsOrnament(chars, 34, 6000);
-            DrawAllCharsOrnament(chars, 38, 6000);
-            DrawAllCharsOrnament(chars, 28, 6000);
-            DrawAllCharsHairstyle(chars, 38442, 6000);
-            DrawAllCharsHairstyle(chars, 38443, 6000);
-            DrawAllCharsOrchestrion(chars, 544, 4000);
-            DrawAllCharsOrchestrion(chars, 545, 4000);
-            DrawAllCharsOrchestrion(chars, 593, 4000);
-            DrawAllCharsTripleTriadCard(chars, 370, 1000);
-            DrawAllCharsBarding(chars, 89, 4000);
-            DrawAllCharsBarding(chars, 93, 4000);
-            DrawAllCharsFramerKit(chars, 39578, 3000);
-            DrawAllCharsFramerKit(chars, 39579, 3000);
-            DrawAllCharsFramerKit(chars, 46822, 3000);
+            Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 277, 24000);
+            Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 286, 35000);
+            Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 282, 50000);
+            Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 335, 100000);
+            Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 255, 12000);
+            Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 256, 12000);
+            Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 257, 12000);
+            Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 258, 18000);
+            Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 259, 18000);
+            Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 260, 18000);
+            Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Minion, 456, 4000);
+            Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Minion, 468, 4000);
+            Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Minion, 481, 4000);
+            Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Minion, 496, 4000);
+            Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Ornament, 30, 6000);
+            Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Ornament, 34, 6000);
+            Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Ornament, 38, 6000);
+            Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Ornament, 28, 6000);
+            Helpers.Reward.DrawAllCharsHairstyle(_currentLocale, _globalCache, chars, 38442, 6000);
+            Helpers.Reward.DrawAllCharsHairstyle(_currentLocale, _globalCache, chars, 38443, 6000);
+            Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Orchestrion, 544, 4000);
+            Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Orchestrion, 545, 4000);
+            Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Orchestrion, 593, 4000);
+            Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.TripleTriadCard, 370, 1000);
+            Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Barding, 89, 4000);
+            Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Barding, 93, 4000);
+            Helpers.Reward.DrawAllCharsFramerKit(_currentLocale, _globalCache, chars, 39578, 3000);
+            Helpers.Reward.DrawAllCharsFramerKit(_currentLocale, _globalCache, chars, 39579, 3000);
+            Helpers.Reward.DrawAllCharsFramerKit(_currentLocale, _globalCache, chars, 46822, 3000);
         }
 
         private void DrawCosmicExploration(List<Character> chars)
@@ -395,18 +394,18 @@ namespace Altoholic.Windows
                 }
             }
 
-            DrawAllCharsMount(chars, 401, 29000);
-            DrawAllCharsFramerKit(chars, 48091, 6000);
-            DrawAllCharsFramerKit(chars, 46768, 6000);
-            DrawAllCharsTripleTriadCard(chars, 449, 4000);
-            DrawAllCharsTripleTriadCard(chars, 450, 6000);
-            DrawAllCharsEmote(chars, 294, 9600);
-            DrawAllCharsFacewear(chars, 289, 6000);
-            DrawAllCharsFacewear(chars, 373, 3000);
-            DrawAllCharsFacewear(chars, 385, 3000);
-            DrawAllCharsOrchestrion(chars, 737, 6000);
-            DrawAllCharsOrchestrion(chars, 738, 6000);
-            DrawAllCharsOrchestrion(chars, 777, 6000);
+            Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 401, 29000);
+            Helpers.Reward.DrawAllCharsFramerKit(_currentLocale, _globalCache, chars, 48091, 6000);
+            Helpers.Reward.DrawAllCharsFramerKit(_currentLocale, _globalCache, chars, 46768, 6000);
+            Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.TripleTriadCard, 449, 4000);
+            Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.TripleTriadCard, 450, 6000);
+            Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Emote, 294, 9600);
+            Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Glass, 289, 6000);
+            Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Glass, 373, 3000);
+            Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Glass, 385, 3000);
+            Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Orchestrion, 737, 6000);
+            Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Orchestrion, 738, 6000);
+            Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Orchestrion, 777, 6000);
         }
         private void DrawCosmicExplorationShuffle(List<Character> chars)
         {
@@ -461,12 +460,12 @@ namespace Altoholic.Windows
                         }
                     }
 
-                    DrawAllCharsFacewear(chars, 301, 0);
-                    DrawAllCharsOrnament(chars, 47, 0);
-                    DrawAllCharsMount(chars, 364, 0);
-                    DrawAllCharsMinion(chars, 547, 0);
-                    DrawAllCharsEmote(chars, 286, 0);
-                    DrawAllCharsOrchestrion(chars, 745, 0);
+                    Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Glass, 301, 0);
+                    Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Ornament, 47, 0);
+                    Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 364, 0);
+                    Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Minion, 547, 0);
+                    Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Emote, 286, 0);
+                    Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Orchestrion, 745, 0);
                 }
             }
             using (var cosmicExplorationShufflePhaennaTab =
@@ -517,11 +516,11 @@ namespace Altoholic.Windows
                         }
                     }
 
-                    DrawAllCharsMount(chars, 386, 0);
-                    DrawAllCharsMinion(chars, 553, 0);
-                    DrawAllCharsOrchestrion(chars, 776, 0);
-                    DrawAllCharsEmote(chars, 304, 0);
-                    DrawAllCharsFacewear(chars, 397, 0);
+                    Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 386, 0);
+                    Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Minion, 553, 0);
+                    Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Orchestrion, 776, 0);
+                    Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Emote, 304, 0);
+                    Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Glass, 397, 0);
                 }
             }
         }
@@ -1006,7 +1005,7 @@ namespace Altoholic.Windows
         private void DrawEventQuest(List<Character> chars)
         {
             if (chars.Count == 0) return;
-            List<List<bool>> charactersQuests = Utils.GetCharactersEventsQuests(chars);
+            List<List<bool>> charactersQuests = Helpers.Event.GetCharactersEventsQuests(chars);
             ImGui.TextUnformatted($"* {Loc.Localize("ProgressRecurringEvent",
                 "As certain event do not change when reoccuring, completing them once will mark all of them done.")}");
 
@@ -2001,28 +2000,28 @@ namespace Altoholic.Windows
                     charactersTotalNeededTomestone[currChar.CharacterId] = neededTomestone;
                 }
 
-                DrawAllCharsOrnament(chars, 14, 50, charactersTotalNeededTomestone);
-                DrawAllCharsMount(chars, 238, 50, charactersTotalNeededTomestone);
-                DrawAllCharsMount(chars, 130, 50, charactersTotalNeededTomestone);
-                DrawAllCharsHairstyle(chars, 24234, 50, charactersTotalNeededTomestone);
-                DrawAllCharsEmote(chars, 169, 50, charactersTotalNeededTomestone);
-                DrawAllCharsOrchestrion(chars, 388, 50, charactersTotalNeededTomestone);
-                DrawAllCharsMinion(chars, 351, 30, charactersTotalNeededTomestone);
-                DrawAllCharsMount(chars, 27, 30, charactersTotalNeededTomestone);
-                DrawAllCharsMount(chars, 35, 30, charactersTotalNeededTomestone);
-                DrawAllCharsMount(chars, 158, 30, charactersTotalNeededTomestone);
-                DrawAllCharsMount(chars, 172, 30, charactersTotalNeededTomestone);
-                DrawAllCharsMinion(chars, 59, 15, charactersTotalNeededTomestone);
-                DrawAllCharsMinion(chars, 188, 15, charactersTotalNeededTomestone);
-                DrawAllCharsTripleTriadCard(chars, 183, 10, charactersTotalNeededTomestone);
-                DrawAllCharsTripleTriadCard(chars, 184, 10, charactersTotalNeededTomestone);
-                DrawAllCharsTripleTriadCard(chars, 234, 7, charactersTotalNeededTomestone);
-                DrawAllCharsTripleTriadCard(chars, 87, 7, charactersTotalNeededTomestone);
-                DrawAllCharsTripleTriadCard(chars, 324, 7, charactersTotalNeededTomestone);
-                DrawAllCharsMinion(chars, 82, 7, charactersTotalNeededTomestone);
-                DrawAllCharsOrchestrion(chars, 371, 7, charactersTotalNeededTomestone);
-                DrawAllCharsBarding(chars, 48, 5, charactersTotalNeededTomestone);
-                DrawAllCharsTotal(chars, neededTomestone, charactersTotalNeededTomestone);
+                Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Ornament, 14, 50, charactersTotalNeededTomestone);
+                Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 238, 50, charactersTotalNeededTomestone);
+                Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 130, 50, charactersTotalNeededTomestone);
+                Helpers.Reward.DrawAllCharsHairstyle(_currentLocale, _globalCache, chars, 24234, 50, charactersTotalNeededTomestone);
+                Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Emote, 169, 50, charactersTotalNeededTomestone);
+                Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Orchestrion, 388, 50, charactersTotalNeededTomestone);
+                Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Minion, 351, 30, charactersTotalNeededTomestone);
+                Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 27, 30, charactersTotalNeededTomestone);
+                Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 35, 30, charactersTotalNeededTomestone);
+                Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 158, 30, charactersTotalNeededTomestone);
+                Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 172, 30, charactersTotalNeededTomestone);
+                Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Minion, 59, 15, charactersTotalNeededTomestone);
+                Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Minion, 188, 15, charactersTotalNeededTomestone);
+                Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.TripleTriadCard, 183, 10, charactersTotalNeededTomestone);
+                Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.TripleTriadCard, 184, 10, charactersTotalNeededTomestone);
+                Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.TripleTriadCard, 234, 7, charactersTotalNeededTomestone);
+                Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.TripleTriadCard, 87, 7, charactersTotalNeededTomestone);
+                Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.TripleTriadCard, 324, 7, charactersTotalNeededTomestone);
+                Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Minion, 82, 7, charactersTotalNeededTomestone);
+                Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Orchestrion, 371, 7, charactersTotalNeededTomestone);
+                Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Barding, 48, 5, charactersTotalNeededTomestone);
+                Helpers.Reward.DrawAllCharsTotal(_currentLocale, _globalCache, chars, neededTomestone, charactersTotalNeededTomestone);
             }
 
             string revelationName = _currentLocale switch
@@ -2258,26 +2257,26 @@ namespace Altoholic.Windows
                             }
                         }
 
-                        DrawAllCharsMount(chars, 226, 50);
-                        DrawAllCharsEmote(chars, 180, 50);
-                        DrawAllCharsHairstyle(chars, 23370, 50);
-                        DrawAllCharsOrchestrion(chars, 417, 50);
-                        DrawAllCharsMinion(chars, 346, 30);
-                        DrawAllCharsBarding(chars, 61, 30);
-                        DrawAllCharsOrnament(chars, 1, 30);
-                        DrawAllCharsMount(chars, 20, 30);
-                        DrawAllCharsMount(chars, 26, 30);
-                        DrawAllCharsMount(chars, 133, 30);
-                        DrawAllCharsMount(chars, 144, 30);
-                        DrawAllCharsMinion(chars, 61, 15);
-                        DrawAllCharsTripleTriadCard(chars, 158, 10);
-                        DrawAllCharsTripleTriadCard(chars, 160, 10);
-                        DrawAllCharsTripleTriadCard(chars, 244, 7);
-                        DrawAllCharsTripleTriadCard(chars, 306, 7);
-                        DrawAllCharsTripleTriadCard(chars, 291, 7);
-                        DrawAllCharsMinion(chars, 144, 7);
-                        DrawAllCharsMinion(chars, 362, 5);
-                        DrawAllCharsOrchestrion(chars, 289, 3);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 226, 50);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Emote, 180, 50);
+                        Helpers.Reward.DrawAllCharsHairstyle(_currentLocale, _globalCache, chars, 23370, 50);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Orchestrion, 417, 50);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Minion, 346, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Barding, 61, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Ornament, 1, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 20, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 26, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 133, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 144, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Minion, 61, 15);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.TripleTriadCard, 158, 10);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.TripleTriadCard, 160, 10);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.TripleTriadCard, 244, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.TripleTriadCard, 306, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.TripleTriadCard, 291, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Minion, 144, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Minion, 362, 5);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Orchestrion, 289, 3);
                         break;
                     }
                 case 2025_2:
@@ -2325,27 +2324,27 @@ namespace Altoholic.Windows
                             }
                         }
 
-                        DrawAllCharsOrchestrion(chars, 365, 100);
-                        DrawAllCharsMount(chars, 217, 50);
-                        DrawAllCharsMount(chars, 191, 50);
-                        DrawAllCharsHairstyle(chars, 23369, 50);
-                        DrawAllCharsMinion(chars, 385, 50);
-                        DrawAllCharsBarding(chars, 76, 30);
-                        DrawAllCharsEmote(chars, 195, 30);
-                        DrawAllCharsOrnament(chars, 13, 30);
-                        DrawAllCharsMount(chars, 19, 30);
-                        DrawAllCharsMount(chars, 35, 30);
-                        DrawAllCharsMount(chars, 116, 30);
-                        DrawAllCharsMount(chars, 115, 30);
-                        DrawAllCharsMinion(chars, 60, 15);
-                        DrawAllCharsTripleTriadCard(chars, 141, 10);
-                        DrawAllCharsTripleTriadCard(chars, 142, 10);
-                        DrawAllCharsTripleTriadCard(chars, 290, 7);
-                        DrawAllCharsTripleTriadCard(chars, 293, 7);
-                        DrawAllCharsTripleTriadCard(chars, 326, 7);
-                        DrawAllCharsMinion(chars, 243, 7);
-                        DrawAllCharsOrchestrion(chars, 15, 7);
-                        DrawAllCharsMinion(chars, 199, 1);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Orchestrion, 365, 100);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 217, 50);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 191, 50);
+                        Helpers.Reward.DrawAllCharsHairstyle(_currentLocale, _globalCache, chars, 23369, 50);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Minion, 385, 50);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Barding, 76, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Emote, 195, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Ornament, 13, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 19, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 35, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 116, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 115, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Minion, 60, 15);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.TripleTriadCard, 141, 10);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.TripleTriadCard, 142, 10);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.TripleTriadCard, 290, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.TripleTriadCard, 293, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.TripleTriadCard, 326, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Minion, 243, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Orchestrion, 15, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Minion, 199, 1);
                         break;
                     }
                 case 2025_1:
@@ -2394,28 +2393,28 @@ namespace Altoholic.Windows
                             }
                         }
 
-                        DrawAllCharsMount(chars, 205, 50);
-                        DrawAllCharsMount(chars, 112, 50);
-                        DrawAllCharsMount(chars, 193, 50);
-                        DrawAllCharsBarding(chars, 79, 50);
-                        DrawAllCharsMinion(chars, 374, 50);
-                        DrawAllCharsOrchestrion(chars, 364, 50);
-                        DrawAllCharsHairstyle(chars, 24233, 30);
-                        DrawAllCharsOrnament(chars, 11, 30);
-                        DrawAllCharsEmote(chars, 203, 30);
-                        DrawAllCharsMount(chars, 26, 30);
-                        DrawAllCharsMount(chars, 27, 30);
-                        DrawAllCharsMount(chars, 133, 30);
-                        DrawAllCharsMount(chars, 182, 30);
-                        DrawAllCharsMinion(chars, 50, 15);
-                        DrawAllCharsTripleTriadCard(chars, 107, 10);
-                        DrawAllCharsTripleTriadCard(chars, 121, 10);
-                        DrawAllCharsTripleTriadCard(chars, 279, 7);
-                        DrawAllCharsTripleTriadCard(chars, 304, 7);
-                        DrawAllCharsTripleTriadCard(chars, 315, 7);
-                        DrawAllCharsMinion(chars, 340, 7);
-                        DrawAllCharsMinion(chars, 353, 7);
-                        DrawAllCharsOrchestrion(chars, 345, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 205, 50);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 112, 50);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 193, 50);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Barding, 79, 50);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Minion, 374, 50);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Orchestrion, 364, 50);
+                        Helpers.Reward.DrawAllCharsHairstyle(_currentLocale, _globalCache, chars, 24233, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Ornament, 11, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Emote, 203, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 26, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 27, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 133, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 182, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Minion, 50, 15);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.TripleTriadCard, 107, 10);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.TripleTriadCard, 121, 10);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.TripleTriadCard, 279, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.TripleTriadCard, 304, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.TripleTriadCard, 315, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Minion, 340, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Minion, 353, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Orchestrion, 345, 7);
                         break;
                     }
                 case 2024_3:
@@ -2463,26 +2462,26 @@ namespace Altoholic.Windows
                             }
                         }
 
-                        DrawAllCharsMount(chars, 192, 50);
-                        DrawAllCharsMount(chars, 126, 50);
-                        DrawAllCharsBarding(chars, 73, 50);
-                        DrawAllCharsHairstyle(chars, 32835, 50);
-                        DrawAllCharsOrchestrion(chars, 363, 50);
-                        DrawAllCharsEmote(chars, 215, 50);
-                        DrawAllCharsEmote(chars, 189, 30);
-                        DrawAllCharsMount(chars, 19, 30);
-                        DrawAllCharsMount(chars, 20, 30);
-                        DrawAllCharsMount(chars, 158, 30);
-                        DrawAllCharsMount(chars, 172, 30);
-                        DrawAllCharsMinion(chars, 58, 15);
-                        DrawAllCharsTripleTriadCard(chars, 105, 10);
-                        DrawAllCharsTripleTriadCard(chars, 106, 10);
-                        DrawAllCharsTripleTriadCard(chars, 228, 7);
-                        DrawAllCharsTripleTriadCard(chars, 271, 7);
-                        DrawAllCharsTripleTriadCard(chars, 303, 7);
-                        DrawAllCharsMinion(chars, 326, 7);
-                        DrawAllCharsMinion(chars, 336, 7);
-                        DrawAllCharsOrchestrion(chars, 231, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 192, 50);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 126, 50);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Barding, 73, 50);
+                        Helpers.Reward.DrawAllCharsHairstyle(_currentLocale, _globalCache, chars, 32835, 50);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Orchestrion, 363, 50);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Emote, 215, 50);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Emote, 189, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 19, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 20, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 158, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 172, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Minion, 58, 15);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.TripleTriadCard, 105, 10);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.TripleTriadCard, 106, 10);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.TripleTriadCard, 228, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.TripleTriadCard, 271, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.TripleTriadCard, 303, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Minion, 326, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Minion, 336, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Orchestrion, 231, 7);
 
                         break;
                     }
@@ -2532,24 +2531,24 @@ namespace Altoholic.Windows
                             }
                         }
 
-                        DrawAllCharsMount(chars, 211, 50);
-                        DrawAllCharsMount(chars, 224, 50);
-                        DrawAllCharsMinion(chars, 359, 50);
-                        DrawAllCharsOrchestrion(chars, 333, 50);
-                        DrawAllCharsBarding(chars, 54, 30);
-                        DrawAllCharsOrchestrion(chars, 76, 30);
-                        DrawAllCharsOrnament(chars, 7, 30);
-                        DrawAllCharsMount(chars, 35, 30);
-                        DrawAllCharsMount(chars, 30, 30);
-                        DrawAllCharsMount(chars, 77, 30);
-                        DrawAllCharsMount(chars, 144, 30);
-                        DrawAllCharsTripleTriadCard(chars, 103, 10);
-                        DrawAllCharsTripleTriadCard(chars, 104, 10);
-                        DrawAllCharsTripleTriadCard(chars, 267, 10);
-                        DrawAllCharsTripleTriadCard(chars, 282, 10);
-                        DrawAllCharsMinion(chars, 388, 7);
-                        DrawAllCharsMinion(chars, 148, 7);
-                        DrawAllCharsOrchestrion(chars, 207, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 211, 50);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 224, 50);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Minion, 359, 50);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Orchestrion, 333, 50);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Barding, 54, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Orchestrion, 76, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Ornament, 7, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 35, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 30, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 77, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 144, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.TripleTriadCard, 103, 10);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.TripleTriadCard, 104, 10);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.TripleTriadCard, 267, 10);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.TripleTriadCard, 282, 10);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Minion, 388, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Minion, 148, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Orchestrion, 207, 7);
 
 
                         break;
@@ -2600,24 +2599,24 @@ namespace Altoholic.Windows
                             }
                         }
 
-                        DrawAllCharsMount(chars, 242, 50);
-                        DrawAllCharsBarding(chars, 69, 50);
-                        DrawAllCharsHairstyle(chars, 28615, 50);
-                        DrawAllCharsMinion(chars, 319, 50);
-                        DrawAllCharsMount(chars, 208, 30);
-                        DrawAllCharsOrchestrion(chars, 254, 30);
-                        DrawAllCharsOrchestrion(chars, 78, 30);
-                        DrawAllCharsMount(chars, 27, 30);
-                        DrawAllCharsMount(chars, 43, 30);
-                        DrawAllCharsMount(chars, 76, 30);
-                        DrawAllCharsMount(chars, 133, 30);
-                        DrawAllCharsTripleTriadCard(chars, 111, 10);
-                        DrawAllCharsTripleTriadCard(chars, 102, 10);
-                        DrawAllCharsTripleTriadCard(chars, 249, 7);
-                        DrawAllCharsTripleTriadCard(chars, 261, 7);
-                        DrawAllCharsMinion(chars, 361, 7);
-                        DrawAllCharsMinion(chars, 144, 7);
-                        DrawAllCharsOrchestrion(chars, 179, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 242, 50);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Barding, 69, 50);
+                        Helpers.Reward.DrawAllCharsHairstyle(_currentLocale, _globalCache, chars, 28615, 50);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Minion, 319, 50);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 208, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Orchestrion, 254, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Orchestrion, 78, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 27, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 43, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 76, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 133, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.TripleTriadCard, 111, 10);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.TripleTriadCard, 102, 10);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.TripleTriadCard, 249, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.TripleTriadCard, 261, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Minion, 361, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Minion, 144, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Orchestrion, 179, 7);
 
 
                         break;
@@ -2668,46 +2667,46 @@ namespace Altoholic.Windows
                             }
                         }
 
-                        DrawAllCharsFramerKit(chars, 40501, 10);
-                        DrawAllCharsOrnament(chars, 14, 100);
-                        DrawAllCharsTripleTriadCard(chars, 68, 100);
-                        DrawAllCharsHairstyle(chars, 33706, 100);
-                        DrawAllCharsBarding(chars, 66, 100);
-                        DrawAllCharsEmote(chars, 181, 80);
-                        DrawAllCharsEmote(chars, 180, 50);
-                        DrawAllCharsEmote(chars, 213, 50);
-                        DrawAllCharsEmote(chars, 223, 50);
-                        DrawAllCharsEmote(chars, 214, 50);
-                        DrawAllCharsMount(chars, 189, 50);
-                        DrawAllCharsMount(chars, 236, 50);
-                        DrawAllCharsMount(chars, 150, 50);
-                        DrawAllCharsOrchestrion(chars, 45, 50);
-                        DrawAllCharsOrchestrion(chars, 386, 50);
-                        DrawAllCharsOrchestrion(chars, 507, 50);
-                        DrawAllCharsHairstyle(chars, 24234, 50);
-                        DrawAllCharsMinion(chars, 349, 50);
-                        DrawAllCharsMinion(chars, 352, 50);
-                        DrawAllCharsMount(chars, 116, 30);
-                        DrawAllCharsMount(chars, 115, 30);
-                        DrawAllCharsMount(chars, 133, 30);
-                        DrawAllCharsMount(chars, 144, 30);
-                        DrawAllCharsMount(chars, 158, 30);
-                        DrawAllCharsMount(chars, 172, 30);
-                        DrawAllCharsMount(chars, 182, 30);
-                        DrawAllCharsOrchestrion(chars, 257, 30);
-                        DrawAllCharsOrchestrion(chars, 258, 30);
-                        DrawAllCharsOrchestrion(chars, 259, 30);
-                        DrawAllCharsOrnament(chars, 2, 30);
-                        DrawAllCharsTripleTriadCard(chars, 83, 10);
-                        DrawAllCharsTripleTriadCard(chars, 84, 10);
-                        DrawAllCharsTripleTriadCard(chars, 235, 7);
-                        DrawAllCharsTripleTriadCard(chars, 250, 7);
-                        DrawAllCharsMinion(chars, 372, 7);
-                        DrawAllCharsMinion(chars, 373, 7);
-                        DrawAllCharsMinion(chars, 93, 7);
-                        DrawAllCharsMinion(chars, 110, 7);
-                        DrawAllCharsOrchestrion(chars, 345, 7);
-                        DrawAllCharsMinion(chars, 199, 1);
+                        Helpers.Reward.DrawAllCharsFramerKit(_currentLocale, _globalCache, chars, 40501, 10);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Ornament, 14, 100);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.TripleTriadCard, 68, 100);
+                        Helpers.Reward.DrawAllCharsHairstyle(_currentLocale, _globalCache, chars, 33706, 100);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Barding, 66, 100);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Emote, 181, 80);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Emote, 180, 50);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Emote, 213, 50);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Emote, 223, 50);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Emote, 214, 50);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 189, 50);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 236, 50);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 150, 50);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Orchestrion, 45, 50);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Orchestrion, 386, 50);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Orchestrion, 507, 50);
+                        Helpers.Reward.DrawAllCharsHairstyle(_currentLocale, _globalCache, chars, 24234, 50);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Minion, 349, 50);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Minion, 352, 50);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 116, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 115, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 133, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 144, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 158, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 172, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 182, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Orchestrion, 257, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Orchestrion, 258, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Orchestrion, 259, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Ornament, 2, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.TripleTriadCard, 83, 10);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.TripleTriadCard, 84, 10);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.TripleTriadCard, 235, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.TripleTriadCard, 250, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Minion, 372, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Minion, 373, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Minion, 93, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Minion, 110, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Orchestrion, 345, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Minion, 199, 1);
 
 
 
@@ -2759,28 +2758,28 @@ namespace Altoholic.Windows
                             }
                         }
 
-                        DrawAllCharsMount(chars, 121, 50);
-                        DrawAllCharsMount(chars, 130, 50);
-                        DrawAllCharsMount(chars, 225, 50);
-                        DrawAllCharsOrchestrion(chars, 324, 50);
-                        DrawAllCharsHairstyle(chars, 23369, 50);
-                        DrawAllCharsEmote(chars, 208, 30);
-                        DrawAllCharsMount(chars, 20, 30);
-                        DrawAllCharsMount(chars, 26, 30);
-                        DrawAllCharsMount(chars, 28, 30);
-                        DrawAllCharsMount(chars, 22, 30);
-                        DrawAllCharsMount(chars, 75, 30);
-                        DrawAllCharsMount(chars, 104, 30);
-                        DrawAllCharsMount(chars, 116, 30);
-                        DrawAllCharsMount(chars, 115, 30);
-                        DrawAllCharsTripleTriadCard(chars, 81, 10);
-                        DrawAllCharsTripleTriadCard(chars, 82, 10);
-                        DrawAllCharsTripleTriadCard(chars, 216, 7);
-                        DrawAllCharsTripleTriadCard(chars, 244, 7);
-                        DrawAllCharsMinion(chars, 82, 7);
-                        DrawAllCharsMinion(chars, 333, 7);
-                        DrawAllCharsOrchestrion(chars, 117, 7);
-                        DrawAllCharsOrchestrion(chars, 118, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 121, 50);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 130, 50);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 225, 50);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Orchestrion, 324, 50);
+                        Helpers.Reward.DrawAllCharsHairstyle(_currentLocale, _globalCache, chars, 23369, 50);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Emote, 208, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 20, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 26, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 28, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 22, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 75, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 104, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 116, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 115, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.TripleTriadCard, 81, 10);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.TripleTriadCard, 82, 10);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.TripleTriadCard, 216, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.TripleTriadCard, 244, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Minion, 82, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Minion, 333, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Orchestrion, 117, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Orchestrion, 118, 7);
 
 
                         break;
@@ -2831,27 +2830,27 @@ namespace Altoholic.Windows
                             }
                         }
 
-                        DrawAllCharsMount(chars, 182, 50);
-                        DrawAllCharsMount(chars, 209, 50);
-                        DrawAllCharsMount(chars, 112, 50);
-                        DrawAllCharsEmote(chars, 195, 50);
-                        DrawAllCharsOrchestrion(chars, 227, 50);
-                        DrawAllCharsOrchestrion(chars, 264, 50);
-                        DrawAllCharsEmote(chars, 207, 30);
-                        DrawAllCharsBarding(chars, 31, 30);
-                        DrawAllCharsMount(chars, 19, 30);
-                        DrawAllCharsMount(chars, 35, 30);
-                        DrawAllCharsMount(chars, 29, 30);
-                        DrawAllCharsMount(chars, 31, 30);
-                        DrawAllCharsMount(chars, 90, 30);
-                        DrawAllCharsMount(chars, 98, 30);
-                        DrawAllCharsOrchestrion(chars, 36, 10);
-                        DrawAllCharsOrchestrion(chars, 37, 10);
-                        DrawAllCharsOrchestrion(chars, 234, 7);
-                        DrawAllCharsOrchestrion(chars, 250, 7);
-                        DrawAllCharsMinion(chars, 256, 7);
-                        DrawAllCharsOrchestrion(chars, 85, 7);
-                        DrawAllCharsOrchestrion(chars, 86, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 182, 50);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 209, 50);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 112, 50);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Emote, 195, 50);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Orchestrion, 227, 50);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Orchestrion, 264, 50);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Emote, 207, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Barding, 31, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 19, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 35, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 29, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 31, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 90, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 98, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Orchestrion, 36, 10);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Orchestrion, 37, 10);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Orchestrion, 234, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Orchestrion, 250, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Minion, 256, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Orchestrion, 85, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Orchestrion, 86, 7);
 
 
                         break;
@@ -2902,25 +2901,25 @@ namespace Altoholic.Windows
                             }
                         }
 
-                        DrawAllCharsMount(chars, 158, 50);
-                        DrawAllCharsMount(chars, 211, 50);
-                        DrawAllCharsMinion(chars, 314, 50);
-                        DrawAllCharsHairstyle(chars, 31406, 50);
-                        DrawAllCharsOrchestrion(chars, 263, 50);
-                        DrawAllCharsEmote(chars, 203, 30);
-                        DrawAllCharsMount(chars, 26, 30);
-                        DrawAllCharsMount(chars, 27, 30);
-                        DrawAllCharsMount(chars, 30, 30);
-                        DrawAllCharsMount(chars, 40, 30);
-                        DrawAllCharsMount(chars, 77, 30);
-                        DrawAllCharsMount(chars, 78, 30);
-                        DrawAllCharsTripleTriadCard(chars, 33, 10);
-                        DrawAllCharsTripleTriadCard(chars, 35, 10);
-                        DrawAllCharsTripleTriadCard(chars, 224, 7);
-                        DrawAllCharsTripleTriadCard(chars, 229, 7);
-                        DrawAllCharsMinion(chars, 243, 7);
-                        DrawAllCharsMinion(chars, 330, 7);
-                        DrawAllCharsOrchestrion(chars, 231, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 158, 50);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 211, 50);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Minion, 314, 50);
+                        Helpers.Reward.DrawAllCharsHairstyle(_currentLocale, _globalCache, chars, 31406, 50);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Orchestrion, 263, 50);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Emote, 203, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 26, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 27, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 30, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 40, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 77, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 78, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.TripleTriadCard, 33, 10);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.TripleTriadCard, 35, 10);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.TripleTriadCard, 224, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.TripleTriadCard, 229, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Minion, 243, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Minion, 330, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Orchestrion, 231, 7);
 
                         break;
                     }
@@ -2970,22 +2969,22 @@ namespace Altoholic.Windows
                             }
                         }
 
-                        DrawAllCharsMount(chars, 172, 50);
-                        DrawAllCharsHairstyle(chars, 30113, 50);
-                        DrawAllCharsOrchestrion(chars, 262, 50);
-                        DrawAllCharsMount(chars, 19, 30);
-                        DrawAllCharsMount(chars, 20, 30);
-                        DrawAllCharsMount(chars, 28, 30);
-                        DrawAllCharsMount(chars, 43, 30);
-                        DrawAllCharsMount(chars, 75, 30);
-                        DrawAllCharsMount(chars, 76, 30);
-                        DrawAllCharsMinion(chars, 148, 7);
-                        DrawAllCharsMinion(chars, 254, 7);
-                        DrawAllCharsTripleTriadCard(chars, 213, 7);
-                        DrawAllCharsTripleTriadCard(chars, 215, 7);
-                        DrawAllCharsTripleTriadCard(chars, 209, 7);
-                        DrawAllCharsOrchestrion(chars, 179, 7);
-                        DrawAllCharsOrchestrion(chars, 207, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 172, 50);
+                        Helpers.Reward.DrawAllCharsHairstyle(_currentLocale, _globalCache, chars, 30113, 50);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Orchestrion, 262, 50);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 19, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 20, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 28, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 43, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 75, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 76, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Minion, 148, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Minion, 254, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.TripleTriadCard, 213, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.TripleTriadCard, 215, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.TripleTriadCard, 209, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Orchestrion, 179, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Orchestrion, 207, 7);
 
                         break;
                     }
@@ -3035,25 +3034,25 @@ namespace Altoholic.Windows
                             }
                         }
 
-                        DrawAllCharsMount(chars, 144, 50);
-                        DrawAllCharsMount(chars, 90, 50);
-                        DrawAllCharsHairstyle(chars, 24234, 50);
-                        DrawAllCharsOrchestrion(chars, 261, 50);
-                        DrawAllCharsBarding(chars, 54, 30);
-                        DrawAllCharsMount(chars, 19, 30);
-                        DrawAllCharsMount(chars, 20, 30);
-                        DrawAllCharsMount(chars, 26, 30);
-                        DrawAllCharsMount(chars, 27, 30);
-                        DrawAllCharsMount(chars, 35, 30);
-                        DrawAllCharsMount(chars, 29, 30);
-                        DrawAllCharsMount(chars, 31, 30);
-                        DrawAllCharsMinion(chars, 144, 7);
-                        DrawAllCharsMinion(chars, 283, 7);
-                        DrawAllCharsTripleTriadCard(chars, 206, 7);
-                        DrawAllCharsTripleTriadCard(chars, 179, 7);
-                        DrawAllCharsTripleTriadCard(chars, 197, 7);
-                        DrawAllCharsOrchestrion(chars, 117, 7);
-                        DrawAllCharsOrchestrion(chars, 118, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 144, 50);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 90, 50);
+                        Helpers.Reward.DrawAllCharsHairstyle(_currentLocale, _globalCache, chars, 24234, 50);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Orchestrion, 261, 50);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Barding, 54, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 19, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 20, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 26, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 27, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 35, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 29, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 31, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Minion, 144, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Minion, 283, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.TripleTriadCard, 206, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.TripleTriadCard, 179, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.TripleTriadCard, 197, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Orchestrion, 117, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Orchestrion, 118, 7);
 
                         break;
                     }
@@ -3103,24 +3102,24 @@ namespace Altoholic.Windows
                             }
                         }
 
-                        DrawAllCharsMount(chars, 133, 50);
-                        DrawAllCharsMount(chars, 115, 50);
-                        DrawAllCharsMount(chars, 116, 50);
-                        DrawAllCharsEmote(chars, 180, 50);
-                        DrawAllCharsEmote(chars, 181, 80);
-                        DrawAllCharsHairstyle(chars, 23369, 50);
-                        DrawAllCharsHairstyle(chars, 24233, 50);
-                        DrawAllCharsOrchestrion(chars, 257, 50);
-                        DrawAllCharsOrchestrion(chars, 258, 50);
-                        DrawAllCharsOrchestrion(chars, 259, 50);
-                        DrawAllCharsOrchestrion(chars, 260, 30);
-                        DrawAllCharsMinion(chars, 199, 1);
-                        DrawAllCharsMinion(chars, 270, 7);
-                        DrawAllCharsMinion(chars, 305, 7);
-                        DrawAllCharsMinion(chars, 197, 7);
-                        DrawAllCharsTripleTriadCard(chars, 201, 7);
-                        DrawAllCharsTripleTriadCard(chars, 190, 7);
-                        DrawAllCharsTripleTriadCard(chars, 191, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 133, 50);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 115, 50);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 116, 50);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Emote, 180, 50);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Emote, 181, 80);
+                        Helpers.Reward.DrawAllCharsHairstyle(_currentLocale, _globalCache, chars, 23369, 50);
+                        Helpers.Reward.DrawAllCharsHairstyle(_currentLocale, _globalCache, chars, 24233, 50);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Orchestrion, 257, 50);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Orchestrion, 258, 50);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Orchestrion, 259, 50);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Orchestrion, 260, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Minion, 199, 1);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Minion, 270, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Minion, 305, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Minion, 197, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.TripleTriadCard, 201, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.TripleTriadCard, 190, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.TripleTriadCard, 191, 7);
 
                         break;
                     }
@@ -3170,26 +3169,26 @@ namespace Altoholic.Windows
                             }
                         }
 
-                        DrawAllCharsMount(chars, 115, 50);
-                        DrawAllCharsMount(chars, 150, 50);
-                        DrawAllCharsMount(chars, 112, 50);
-                        DrawAllCharsMount(chars, 121, 50);
-                        DrawAllCharsOrchestrion(chars, 580, 50);
-                        DrawAllCharsMount(chars, 19, 30);
-                        DrawAllCharsMount(chars, 20, 30);
-                        DrawAllCharsMount(chars, 26, 30);
-                        DrawAllCharsMount(chars, 27, 30);
-                        DrawAllCharsMount(chars, 35, 30);
-                        DrawAllCharsMount(chars, 30, 30);
-                        DrawAllCharsMount(chars, 40, 30);
-                        DrawAllCharsMount(chars, 22, 30);
-                        DrawAllCharsMinion(chars, 143, 7);
-                        DrawAllCharsMinion(chars, 272, 7);
-                        DrawAllCharsTripleTriadCard(chars, 85, 7);
-                        DrawAllCharsTripleTriadCard(chars, 177, 7);
-                        DrawAllCharsTripleTriadCard(chars, 182, 7);
-                        DrawAllCharsOrchestrion(chars, 85, 7);
-                        DrawAllCharsOrchestrion(chars, 86, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 115, 50);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 150, 50);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 112, 50);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 121, 50);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Orchestrion, 580, 50);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 19, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 20, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 26, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 27, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 35, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 30, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 40, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 22, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Minion, 143, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Minion, 272, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.TripleTriadCard, 85, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.TripleTriadCard, 177, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.TripleTriadCard, 182, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Orchestrion, 85, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Orchestrion, 86, 7);
 
                         break;
                     }
@@ -3239,25 +3238,25 @@ namespace Altoholic.Windows
                             }
                         }
 
-                        DrawAllCharsMount(chars, 130, 50);
-                        DrawAllCharsMount(chars, 104, 50);
-                        DrawAllCharsMount(chars, 116, 50);
-                        DrawAllCharsOrchestrion(chars, 43, 50);
-                        DrawAllCharsOrchestrion(chars, 92, 50);
-                        DrawAllCharsMount(chars, 19, 30);
-                        DrawAllCharsMount(chars, 20, 30);
-                        DrawAllCharsMount(chars, 26, 30);
-                        DrawAllCharsMount(chars, 27, 30);
-                        DrawAllCharsMount(chars, 30, 30);
-                        DrawAllCharsMount(chars, 28, 30);
-                        DrawAllCharsMount(chars, 43, 30);
-                        DrawAllCharsMinion(chars, 178, 7);
-                        DrawAllCharsMinion(chars, 179, 7);
-                        DrawAllCharsTripleTriadCard(chars, 116, 7);
-                        DrawAllCharsTripleTriadCard(chars, 137, 7);
-                        DrawAllCharsTripleTriadCard(chars, 64, 7);
-                        DrawAllCharsOrchestrion(chars, 231, 7);
-                        DrawAllCharsOrchestrion(chars, 30, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 130, 50);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 104, 50);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 116, 50);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Orchestrion, 43, 50);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Orchestrion, 92, 50);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 19, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 20, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 26, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 27, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 30, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 28, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 43, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Minion, 178, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Minion, 179, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.TripleTriadCard, 116, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.TripleTriadCard, 137, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.TripleTriadCard, 64, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Orchestrion, 231, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Orchestrion, 30, 7);
 
                         break;
                     }
@@ -3308,27 +3307,27 @@ namespace Altoholic.Windows
                         }
 
 
-                        DrawAllCharsMount(chars, 121, 50);
-                        DrawAllCharsMount(chars, 78, 50);
-                        DrawAllCharsOrchestrion(chars, 45, 50);
-                        DrawAllCharsOrchestrion(chars, 78, 50);
-                        DrawAllCharsOrchestrion(chars, 76, 50);
-                        DrawAllCharsOrchestrion(chars, 77, 50);
-                        DrawAllCharsMount(chars, 19, 30);
-                        DrawAllCharsMount(chars, 20, 30);
-                        DrawAllCharsMount(chars, 26, 30);
-                        DrawAllCharsMount(chars, 27, 30);
-                        DrawAllCharsMount(chars, 35, 30);
-                        DrawAllCharsMount(chars, 29, 30);
-                        DrawAllCharsMount(chars, 31, 30);
-                        DrawAllCharsMinion(chars, 281, 7);
-                        DrawAllCharsMinion(chars, 141, 7);
-                        DrawAllCharsTripleTriadCard(chars, 43, 7);
-                        DrawAllCharsTripleTriadCard(chars, 55, 7);
-                        DrawAllCharsTripleTriadCard(chars, 98, 7);
-                        DrawAllCharsTripleTriadCard(chars, 168, 7);
-                        DrawAllCharsOrchestrion(chars, 179, 7);
-                        DrawAllCharsOrchestrion(chars, 207, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 121, 50);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 78, 50);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Orchestrion, 45, 50);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Orchestrion, 78, 50);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Orchestrion, 76, 50);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Orchestrion, 77, 50);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 19, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 20, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 26, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 27, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 35, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 29, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 31, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Minion, 281, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Minion, 141, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.TripleTriadCard, 43, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.TripleTriadCard, 55, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.TripleTriadCard, 98, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.TripleTriadCard, 168, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Orchestrion, 179, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Orchestrion, 207, 7);
                         break;
                     }
                 case 2019_2:
@@ -3377,28 +3376,28 @@ namespace Altoholic.Windows
                             }
                         }
 
-                        DrawAllCharsMount(chars, 112, 50);
-                        DrawAllCharsMount(chars, 77, 50);
-                        DrawAllCharsMount(chars, 98, 50);
-                        DrawAllCharsOrchestrion(chars, 45, 50);
-                        DrawAllCharsOrchestrion(chars, 78, 50);
-                        DrawAllCharsOrchestrion(chars, 76, 50);
-                        DrawAllCharsOrchestrion(chars, 77, 50);
-                        DrawAllCharsMount(chars, 19, 30);
-                        DrawAllCharsMount(chars, 20, 30);
-                        DrawAllCharsMount(chars, 26, 30);
-                        DrawAllCharsMount(chars, 27, 30);
-                        DrawAllCharsMount(chars, 35, 30);
-                        DrawAllCharsMount(chars, 30, 30);
-                        DrawAllCharsMount(chars, 40, 30);
-                        DrawAllCharsMinion(chars, 232, 7);
-                        DrawAllCharsMinion(chars, 259, 7);
-                        DrawAllCharsTripleTriadCard(chars, 52, 7);
-                        DrawAllCharsTripleTriadCard(chars, 219, 7);
-                        DrawAllCharsTripleTriadCard(chars, 110, 7);
-                        DrawAllCharsTripleTriadCard(chars, 99, 7);
-                        DrawAllCharsOrchestrion(chars, 117, 7);
-                        DrawAllCharsOrchestrion(chars, 118, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 112, 50);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 77, 50);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 98, 50);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Orchestrion, 45, 50);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Orchestrion, 78, 50);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Orchestrion, 76, 50);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Orchestrion, 77, 50);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 19, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 20, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 26, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 27, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 35, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 30, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 40, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Minion, 232, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Minion, 259, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.TripleTriadCard, 52, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.TripleTriadCard, 219, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.TripleTriadCard, 110, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.TripleTriadCard, 99, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Orchestrion, 117, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Orchestrion, 118, 7);
                         break;
                     }
                 case 2019_1:
@@ -3447,28 +3446,28 @@ namespace Altoholic.Windows
                             }
                         }
 
-                        DrawAllCharsMount(chars, 67, 50);
-                        DrawAllCharsMount(chars, 75, 50);
-                        DrawAllCharsMount(chars, 76, 50);
-                        DrawAllCharsOrchestrion(chars, 45, 50);
-                        DrawAllCharsMount(chars, 19, 30);
-                        DrawAllCharsMount(chars, 20, 30);
-                        DrawAllCharsMount(chars, 26, 30);
-                        DrawAllCharsMount(chars, 27, 30);
-                        DrawAllCharsMount(chars, 28, 30);
-                        DrawAllCharsMount(chars, 35, 30);
-                        DrawAllCharsMount(chars, 43, 30);
-                        DrawAllCharsBarding(chars, 16, 30);
-                        DrawAllCharsMinion(chars, 188, 7);
-                        DrawAllCharsMinion(chars, 194, 7);
-                        DrawAllCharsMinion(chars, 215, 7);
-                        DrawAllCharsMinion(chars, 299, 7);
-                        DrawAllCharsTripleTriadCard(chars, 136, 7);
-                        DrawAllCharsTripleTriadCard(chars, 152, 7);
-                        DrawAllCharsTripleTriadCard(chars, 163, 7);
-                        DrawAllCharsTripleTriadCard(chars, 229, 7);
-                        DrawAllCharsOrchestrion(chars, 85, 7);
-                        DrawAllCharsOrchestrion(chars, 86, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 67, 50);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 75, 50);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 76, 50);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Orchestrion, 45, 50);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 19, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 20, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 26, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 27, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 28, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 35, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 43, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Barding, 16, 30);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Minion, 188, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Minion, 194, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Minion, 215, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Minion, 299, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.TripleTriadCard, 136, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.TripleTriadCard, 152, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.TripleTriadCard, 163, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.TripleTriadCard, 229, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Orchestrion, 85, 7);
+                        Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Orchestrion, 86, 7);
                         break;
                     }
             }
@@ -3501,16 +3500,27 @@ namespace Altoholic.Windows
                 ImGui.CloseCurrentPopup();
             }
 
+            uint eventCurrencyId = Helpers.Event.GetEventCurrencyFromEventId(msqIndex);
+
+            int columns = chars.Count + 1;
+            if (eventCurrencyId != 0)
+            {
+                columns += 1;
+            }
+
             using var charactersEventTable = ImRaii.Table(
             $"###CharactersProgress#All#Event#RewardTable#{msqIndex}",
-            chars.Count + 2,
+            columns,
             ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner |
             ImGuiTableFlags.ScrollX | ImGuiTableFlags.ScrollY, new Vector2(-1, 200));
             if (!charactersEventTable) return;
             ImGui.TableSetupColumn($"###CharactersProgress#All#Event#RewardTable#{msqIndex}#Name",
                 ImGuiTableColumnFlags.WidthFixed, 270);
-            ImGui.TableSetupColumn($"###CharactersProgress#All#Event#RewardTable#{msqIndex}#Currency",
-                ImGuiTableColumnFlags.WidthFixed, 20);
+            if (eventCurrencyId != 0)
+            {
+                ImGui.TableSetupColumn($"###CharactersProgress#All#Event#RewardTable#{msqIndex}#Currency",
+                    ImGuiTableColumnFlags.WidthFixed, 20);
+            }
             foreach (Character c in chars)
             {
                 ImGui.TableSetupColumn($"###CharactersProgress#All#Event#RewardTable#{msqIndex}#{c.CharacterId}",
@@ -3522,7 +3532,6 @@ namespace Altoholic.Windows
             ImGui.TableSetColumnIndex(0);
             ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 1885));
 
-            uint eventCurrencyId = GetEventCurrencyFromEventId(msqIndex);
             if (eventCurrencyId != 0)
             {
                 Item? itm = _globalCache.ItemStorage.LoadItem(_currentLocale, eventCurrencyId);
@@ -3550,589 +3559,19 @@ namespace Altoholic.Windows
                 }
             }
 
-            DrawEventReward(chars, msqIndex);
-        }
-
-        private uint GetEventCurrencyFromEventId(int msqIndex)
-        {
-            return msqIndex switch
-            {
-                134 => 50089,
-                _ => 0
-            };
-        }
-
-        private void DrawEventReward(List<Character> chars, int msqIndex)
-        {
-            switch (msqIndex)
-            {
-                case 134:
-                    {
-                        DrawAllCharsFacewear(chars, 481, 20);
-                        DrawAllCharsFacewear(chars, 505, 20);
-                        DrawAllCharsFacewear(chars, 517, 20);
-                        DrawAllCharsFacewear(chars, 529, 20);
-                        DrawAllCharsFacewear(chars, 541, 20);
-                        break;
-                    }
-                case 135:
-                    {
-                        DrawAllCharsMinion(chars, 579, 0);
-                        DrawAllCharsOrnament(chars, 52, 0);
-                        break;
-                    }
-            }
-        }
-
-        private void DrawAllCharsEmote(List<Character> chars, uint id, int cost, Dictionary<ulong, int>? characterNeededTomestone = null)
-        {
-            ImGui.TableNextRow();
-            ImGui.TableSetColumnIndex(0);
-            Emote? e = _globalCache.EmoteStorage.GetEmote(_currentLocale, id);
-            if (e != null)
-            {
-                Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(e.Icon), new Vector2(32, 32));
-                if (ImGui.IsItemHovered())
-                {
-                    Utils.DrawEmoteTooltip(_currentLocale, ref _globalCache, e);
-                }
-                ImGui.SameLine();
-                string name = _currentLocale switch
-                {
-                    ClientLanguage.German => e.GermanName,
-                    ClientLanguage.English => e.EnglishName,
-                    ClientLanguage.French => e.FrenchName,
-                    ClientLanguage.Japanese => e.JapaneseName,
-                    _ => e.EnglishName
-                };
-                ImGui.TextUnformatted(name);
-
-                if (cost > 0)
-                {
-                    ImGui.TableNextColumn();
-                    ImGui.TextUnformatted($"{cost}");
-                }
-
-                foreach (Character currChar in chars)
-                {
-                    ImGui.TableNextColumn();
-                    ImGui.PushFont(UiBuilder.IconFont);
-                    if(currChar.HasEmote(id))
-                    {
-                        characterNeededTomestone?[currChar.CharacterId] = characterNeededTomestone[currChar.CharacterId] - cost;
-                        ImGui.TextUnformatted(FontAwesomeIcon.Check.ToIconString());
-                    }
-                    ImGui.PopFont();
-                    if (ImGui.IsItemHovered())
-                    {
-                        ImGui.BeginTooltip();
-                        ImGui.TextUnformatted(name);
-                        ImGui.TextUnformatted(
-                            $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
-                        ImGui.EndTooltip();
-                    }
-                }
-            }
-        }
-        private void DrawAllCharsMount(List<Character> chars, uint id, int cost, Dictionary<ulong, int>? characterNeededTomestone = null)
-        {
-            ImGui.TableNextRow();
-            ImGui.TableSetColumnIndex(0);
-            Mount? mount = _globalCache.MountStorage.GetMount(_currentLocale, id);
-            if (mount != null)
-            {
-                Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(mount.Icon), new Vector2(32, 32));
-                if (ImGui.IsItemHovered())
-                {
-                    Utils.DrawMountTooltip(_currentLocale, ref _globalCache, mount);
-                }
-
-                ImGui.SameLine();
-                string name = _currentLocale switch
-                {
-                    ClientLanguage.German => mount.GermanName,
-                    ClientLanguage.English => Utils.CapitalizeSentence(mount.EnglishName),
-                    ClientLanguage.French => Utils.CapitalizeSentence(mount.FrenchName),
-                    ClientLanguage.Japanese => mount.JapaneseName,
-                    _ => Utils.CapitalizeSentence(mount.EnglishName)
-                };
-                ImGui.TextUnformatted(name);
-
-                if (cost > 0)
-                {
-                    ImGui.TableNextColumn();
-                    ImGui.TextUnformatted($"{cost}");
-                }
-
-                foreach (Character currChar in chars)
-                {
-                    ImGui.TableNextColumn();
-                    ImGui.PushFont(UiBuilder.IconFont);
-                    if(currChar.HasMount(id))
-                    {
-                        characterNeededTomestone?[currChar.CharacterId] = characterNeededTomestone[currChar.CharacterId] - cost;
-                        ImGui.TextUnformatted(FontAwesomeIcon.Check.ToIconString());
-                    }
-                    ImGui.PopFont();
-                    if (ImGui.IsItemHovered())
-                    {
-                        ImGui.BeginTooltip();
-                        ImGui.TextUnformatted(name);
-                        ImGui.TextUnformatted(
-                            $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
-                        ImGui.EndTooltip();
-                    }
-                }
-            }
-        }
-        private void DrawAllCharsMinion(List<Character> chars, uint id, int cost, Dictionary<ulong, int>? characterNeededTomestone = null)
-        {
-            ImGui.TableNextRow();
-            ImGui.TableSetColumnIndex(0);
-            Minion? minion = _globalCache.MinionStorage.GetMinion(_currentLocale, id);
-            if (minion != null)
-            {
-                Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(minion.Icon), new Vector2(32, 32));
-                if (ImGui.IsItemHovered())
-                {
-                    Utils.DrawMinionTooltip(_currentLocale, ref _globalCache, minion);
-                }
-
-                ImGui.SameLine();
-                string name = _currentLocale switch
-                {
-                    ClientLanguage.German => minion.GermanName,
-                    ClientLanguage.English => Utils.CapitalizeSentence(minion.EnglishName),
-                    ClientLanguage.French => Utils.CapitalizeSentence(minion.FrenchName),
-                    ClientLanguage.Japanese => minion.JapaneseName,
-                    _ => Utils.CapitalizeSentence(minion.EnglishName)
-                };
-                ImGui.TextUnformatted(name);
-
-                if (cost > 0)
-                {
-                    ImGui.TableNextColumn();
-                    ImGui.TextUnformatted($"{cost}");
-                }
-
-                foreach (Character currChar in chars)
-                {
-                    ImGui.TableNextColumn();
-                    ImGui.PushFont(UiBuilder.IconFont);
-                    if(currChar.HasMinion(id))
-                    {
-                        characterNeededTomestone?[currChar.CharacterId] = characterNeededTomestone[currChar.CharacterId] - cost;
-                        ImGui.TextUnformatted(FontAwesomeIcon.Check.ToIconString());
-                    }
-                    ImGui.PopFont();
-                    if (ImGui.IsItemHovered())
-                    {
-                        ImGui.BeginTooltip();
-                        ImGui.TextUnformatted(name);
-                        ImGui.TextUnformatted(
-                            $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
-                        ImGui.EndTooltip();
-                    }
-                }
-            }
-        }
-        private void DrawAllCharsOrchestrion(List<Character> chars, uint id, int cost, Dictionary<ulong, int>? characterNeededTomestone = null)
-        {
-            ImGui.TableNextRow();
-            ImGui.TableSetColumnIndex(0);
-            OrchestrionRoll? o = _globalCache.OrchestrionRollStorage.GetOrchestrionRoll(_currentLocale, id);
-            if (o != null)
-            {
-                Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(o.Icon), new Vector2(32, 32));
-                if (ImGui.IsItemHovered())
-                {
-                    Utils.DrawOrchestrionRollTooltip(_currentLocale, ref _globalCache, o);
-                }
-                ImGui.SameLine();
-                string name = _currentLocale switch
-                {
-                    ClientLanguage.German => o.GermanName,
-                    ClientLanguage.English => o.EnglishName,
-                    ClientLanguage.French => o.FrenchName,
-                    ClientLanguage.Japanese => o.JapaneseName,
-                    _ => o.EnglishName
-                };
-                ImGui.TextUnformatted(name);
-
-                if (cost > 0)
-                {
-                    ImGui.TableNextColumn();
-                    ImGui.TextUnformatted($"{cost}");
-                }
-
-                foreach (Character currChar in chars)
-                {
-                    ImGui.TableNextColumn();
-                    ImGui.PushFont(UiBuilder.IconFont);
-                    if(currChar.HasOrchestrionRoll(id))
-                    {
-                        characterNeededTomestone?[currChar.CharacterId] = characterNeededTomestone[currChar.CharacterId] - cost;
-                        ImGui.TextUnformatted(FontAwesomeIcon.Check.ToIconString());
-                    }
-                    ImGui.PopFont();
-                    if (ImGui.IsItemHovered())
-                    {
-                        ImGui.BeginTooltip();
-                        ImGui.TextUnformatted(name);
-                        ImGui.TextUnformatted(
-                            $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
-                        ImGui.EndTooltip();
-                    }
-                }
-            }
-        }
-        private void DrawAllCharsFramerKit(List<Character> chars, uint id, int cost, Dictionary<ulong, int>? characterNeededTomestone = null)
-        {
-            ImGui.TableNextRow();
-            ImGui.TableSetColumnIndex(0);
-            uint? fkId = _globalCache.FramerKitStorage.GetFramerKitIdFromItemId(id);
-            if (fkId != null)
-            {
-                FramerKit? fk = _globalCache.FramerKitStorage.LoadItem(_currentLocale, fkId.Value);
-                if (fk != null)
-                {
-                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(fk.Icon), new Vector2(32, 32));
-                    if (ImGui.IsItemHovered())
-                    {
-                        Utils.DrawFramerKitTooltip(_currentLocale, ref _globalCache, fk);
-                    }
-
-                    ImGui.SameLine();
-                    string name = _currentLocale switch
-                    {
-                        ClientLanguage.German => fk.GermanName,
-                        ClientLanguage.English => fk.EnglishName,
-                        ClientLanguage.French => fk.FrenchName,
-                        ClientLanguage.Japanese => fk.JapaneseName,
-                        _ => fk.EnglishName
-                    };
-                    ImGui.TextUnformatted(name);
-
-                    if (cost > 0)
-                    {
-                        ImGui.TableNextColumn();
-                        ImGui.TextUnformatted($"{cost}");
-                    }
-
-                    foreach (Character currChar in chars)
-                    {
-                        ImGui.TableNextColumn();
-                        ImGui.PushFont(UiBuilder.IconFont);
-                        if (currChar.HasFramerKit(fk.Id))
-                        {
-                            characterNeededTomestone?[currChar.CharacterId] = characterNeededTomestone[currChar.CharacterId] - cost;
-                            ImGui.TextUnformatted(FontAwesomeIcon.Check.ToIconString());
-                        }
-                        ImGui.PopFont();
-                        if (ImGui.IsItemHovered())
-                        {
-                            ImGui.BeginTooltip();
-                            ImGui.TextUnformatted(name);
-                            ImGui.TextUnformatted(
-                                $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
-                            ImGui.EndTooltip();
-                        }
-                    }
-                }
-            }
-        }
-        private void DrawAllCharsBarding(List<Character> chars, uint id, int cost, Dictionary<ulong, int>? characterNeededTomestone = null)
-        {
-            ImGui.TableNextRow();
-            ImGui.TableSetColumnIndex(0);
-            Barding? b = _globalCache.BardingStorage.GetBarding(_currentLocale, id);
-            if (b != null)
-            {
-                Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(b.Icon), new Vector2(32, 32));
-                if (ImGui.IsItemHovered())
-                {
-                    Utils.DrawBardingTooltip(_currentLocale, ref _globalCache, b);
-                }
-
-                ImGui.SameLine();
-                string name = _currentLocale switch
-                {
-                    ClientLanguage.German => b.GermanName,
-                    ClientLanguage.English => b.EnglishName,
-                    ClientLanguage.French => b.FrenchName,
-                    ClientLanguage.Japanese => b.JapaneseName,
-                    _ => b.EnglishName
-                };
-                ImGui.TextUnformatted(name);
-
-                if (cost > 0)
-                {
-                    ImGui.TableNextColumn();
-                    ImGui.TextUnformatted($"{cost}");
-                }
-
-                foreach (Character currChar in chars)
-                {
-                    ImGui.TableNextColumn();
-                    ImGui.PushFont(UiBuilder.IconFont);
-                    if(currChar.HasBarding(id))
-                    {
-                        characterNeededTomestone?[currChar.CharacterId] = characterNeededTomestone[currChar.CharacterId] - cost;
-                        ImGui.TextUnformatted(FontAwesomeIcon.Check.ToIconString());
-                    }
-                    ImGui.PopFont();
-                    if (ImGui.IsItemHovered())
-                    {
-                        ImGui.BeginTooltip();
-                        ImGui.TextUnformatted(name);
-                        ImGui.TextUnformatted(
-                            $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
-                        ImGui.EndTooltip();
-                    }
-                }
-            }
-        }
-        private void DrawAllCharsTripleTriadCard(List<Character> chars, uint id, int cost, Dictionary<ulong, int>? characterNeededTomestone = null)
-        {
-            ImGui.TableNextRow();
-            ImGui.TableSetColumnIndex(0);
-            TripleTriadCard? ttc = _globalCache.TripleTriadCardStorage.GetTripleTriadCard(_currentLocale, id);
-            if (ttc != null)
-            {
-                Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(027672), new Vector2(32, 32));
-                if (ImGui.IsItemHovered())
-                {
-                    Utils.DrawTTCTooltip(_currentLocale, ref _globalCache, ttc);
-                }
-
-                ImGui.SameLine();
-                string name = _currentLocale switch
-                {
-                    ClientLanguage.German => ttc.GermanName,
-                    ClientLanguage.English => ttc.EnglishName,
-                    ClientLanguage.French => ttc.FrenchName,
-                    ClientLanguage.Japanese => ttc.JapaneseName,
-                    _ => ttc.EnglishName
-                };
-                ImGui.TextUnformatted(name);
-
-                if (cost > 0)
-                {
-                    ImGui.TableNextColumn();
-                    ImGui.TextUnformatted($"{cost}");
-                }
-
-                foreach (Character currChar in chars)
-                {
-                    ImGui.TableNextColumn();
-                    ImGui.PushFont(UiBuilder.IconFont);
-                    if(currChar.HasTTC(id))
-                    {
-                        characterNeededTomestone?[currChar.CharacterId] = characterNeededTomestone[currChar.CharacterId] - cost;
-                        ImGui.TextUnformatted(FontAwesomeIcon.Check.ToIconString());
-                    }
-                    ImGui.PopFont();
-                    if (ImGui.IsItemHovered())
-                    {
-                        ImGui.BeginTooltip();
-                        ImGui.TextUnformatted(name);
-                        ImGui.TextUnformatted(
-                            $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
-                        ImGui.EndTooltip();
-                    }
-                }
-            }
-        }
-        private void DrawAllCharsOrnament(List<Character> chars, uint id, int cost, Dictionary<ulong, int>? characterNeededTomestone = null)
-        {
-            ImGui.TableNextRow();
-            ImGui.TableSetColumnIndex(0);
-            Ornament? o = _globalCache.OrnamentStorage.GetOrnament(_currentLocale, id);
-            if (o != null)
-            {
-                Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(o.Icon), new Vector2(32, 32));
-                if (ImGui.IsItemHovered())
-                {
-                    Utils.DrawOrnamentTooltip(_currentLocale, ref _globalCache, o);
-                }
-
-                ImGui.SameLine();
-                string name = _currentLocale switch
-                {
-                    ClientLanguage.German => o.GermanName,
-                    ClientLanguage.English => o.EnglishName,
-                    ClientLanguage.French => o.FrenchName,
-                    ClientLanguage.Japanese => o.JapaneseName,
-                    _ => o.EnglishName
-                };
-                ImGui.TextUnformatted(name);
-
-                if (cost > 0)
-                {
-                    ImGui.TableNextColumn();
-                    ImGui.TextUnformatted($"{cost}");
-                }
-
-                foreach (Character currChar in chars)
-                {
-                    ImGui.TableNextColumn();
-                    ImGui.PushFont(UiBuilder.IconFont);
-                    if(currChar.HasOrnament(id))
-                    {
-                        characterNeededTomestone?[currChar.CharacterId] = characterNeededTomestone[currChar.CharacterId] - cost;
-                        ImGui.TextUnformatted(FontAwesomeIcon.Check.ToIconString());
-                    }
-                    ImGui.PopFont();
-                    if (ImGui.IsItemHovered())
-                    {
-                        ImGui.BeginTooltip();
-                        ImGui.TextUnformatted(name);
-                        ImGui.TextUnformatted(
-                            $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
-                        ImGui.EndTooltip();
-                    }
-                }
-            }
-        }
-        private void DrawAllCharsHairstyle(List<Character> chars, uint itemId, int cost, Dictionary<ulong, int>? characterNeededTomestone = null)
-        {
-            ImGui.TableNextRow();
-            ImGui.TableSetColumnIndex(0);
-            Item? itm = _globalCache.ItemStorage.LoadItem(_currentLocale, itemId);
-            if (itm == null)
-            {
-                return;
-            }
-            Item i = itm.Value;
-            ushort unlockLink = i.ItemAction.Value.Data[0];
-            List<uint> ids = _globalCache.HairstyleStorage.GetIdsFromUnlockLink(unlockLink);
-            Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(i.Icon), new Vector2(32, 32));
-            if (ImGui.IsItemHovered())
-            {
-                Utils.DrawItemTooltip(_currentLocale, ref _globalCache, i);
-            }
-
-            ImGui.SameLine();
-            ImGui.TextUnformatted(i.Name.ExtractText());
-
-            if (cost > 0)
-            {
-                ImGui.TableNextColumn();
-                ImGui.TextUnformatted($"{cost}");
-            }
-
-            foreach (Character currChar in chars)
-            {
-                ImGui.TableNextColumn();
-                ImGui.PushFont(UiBuilder.IconFont);
-                if (currChar.HasHairstyleFromIds(ids))
-                {
-                    characterNeededTomestone?[currChar.CharacterId] = characterNeededTomestone[currChar.CharacterId] - cost;
-                    ImGui.TextUnformatted(FontAwesomeIcon.Check.ToIconString());
-                }
-                ImGui.PopFont();
-                if (ImGui.IsItemHovered())
-                {
-                    ImGui.BeginTooltip();
-                    ImGui.TextUnformatted(i.Name.ExtractText());
-                    ImGui.TextUnformatted(
-                        $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
-                    ImGui.EndTooltip();
-                }
-            }
-        }
-        private void DrawAllCharsFacewear(List<Character> chars, uint id, int cost, Dictionary<ulong, int>? characterNeededTomestone = null)
-        {
-            ImGui.TableNextRow();
-            ImGui.TableSetColumnIndex(0);
-            Models.Glasses? g = _globalCache.GlassesStorage.GetGlasses(_currentLocale, id);
-            if (g == null)
-            {
-                return;
-            }
-
-            Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(g.Icon), new Vector2(32, 32));
-            if (ImGui.IsItemHovered())
-            {
-                Utils.DrawGlassesTooltip(_currentLocale, ref _globalCache, g);
-            }
-            ImGui.SameLine();
-            string name = _currentLocale switch
-            {
-                ClientLanguage.German => g.GermanName,
-                ClientLanguage.English => g.EnglishName,
-                ClientLanguage.French => g.FrenchName,
-                ClientLanguage.Japanese => g.JapaneseName,
-                _ => g.EnglishName
-            };
-            ImGui.TextUnformatted(Utils.CapitalizeSentence(name));
-
-            if (cost > 0)
-            {
-                ImGui.TableNextColumn(); ImGui.TextUnformatted($"{cost}");
-            }
-
-            foreach (Character currChar in chars)
-            {
-                ImGui.TableNextColumn();
-                ImGui.PushFont(UiBuilder.IconFont);
-                if(currChar.HasGlasses(id))
-                {
-                    characterNeededTomestone?[currChar.CharacterId] = characterNeededTomestone[currChar.CharacterId] - cost;
-                    ImGui.TextUnformatted(FontAwesomeIcon.Check.ToIconString());
-                }
-                ImGui.PopFont();
-                if (ImGui.IsItemHovered())
-                {
-                    ImGui.BeginTooltip();
-                    ImGui.TextUnformatted(Utils.CapitalizeSentence(name));
-                    ImGui.TextUnformatted(
-                        $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
-                    ImGui.EndTooltip();
-                }
-            }
-        }
-
-        private void DrawAllCharsTotal(List<Character> chars, int total, Dictionary<ulong, int>? characterNeededTomestone = null)
-        {
-            string totalStr = _currentLocale switch
-            {
-                ClientLanguage.German => "Gesamtbedarf",
-                ClientLanguage.English => "Total required",
-                ClientLanguage.French => "Total requis",
-                ClientLanguage.Japanese => "必要合計",
-                _ => "Total required"
-            };
-            ImGui.TableNextRow();
-            ImGui.TableSetColumnIndex(0);
-            ImGui.TextUnformatted($"{totalStr}");
-            ImGui.TableSetColumnIndex(1);
-            ImGui.TextUnformatted($"{total}");
-            foreach (Character currChar in chars)
-            {
-                ImGui.TableNextColumn();
-                ImGui.TextUnformatted($"{(characterNeededTomestone is not null ? characterNeededTomestone[currChar.CharacterId] : "")}");
-                if (ImGui.IsItemHovered())
-                {
-                    ImGui.BeginTooltip();
-                    ImGui.TextUnformatted(
-                        $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
-                    ImGui.TextUnformatted($"{currChar.Currencies?.Irregular_Tomestone_Of_Aphorism}{(characterNeededTomestone is not null ? "/" + characterNeededTomestone[currChar.CharacterId] : "")}");
-                    ImGui.EndTooltip();
-                }
-            }
+            Helpers.Event.DrawEventReward(_currentLocale, _globalCache, chars, msqIndex);
         }
 
         private void DrawBlundervilleRewards(List<Character> chars)
         {
-            DrawAllCharsEmote(chars, 276, 410);
-            DrawAllCharsMount(chars, 330, 410);
-            DrawAllCharsMinion(chars, 499, 350);
-            DrawAllCharsMinion(chars, 500, 350);
-            DrawAllCharsOrchestrion(chars, 657, 220);
-            DrawAllCharsFramerKit(chars, 41377, 200);
-            DrawAllCharsFramerKit(chars, 41378, 200);
-            DrawAllCharsFramerKit(chars, 41379, 200);
+            Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Emote, 276, 410);
+            Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 330, 410);
+            Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Minion, 499, 350);
+            Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Minion, 500, 350);
+            Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Orchestrion, 657, 220);
+            Helpers.Reward.DrawAllCharsFramerKit(_currentLocale, _globalCache, chars, 41377, 200);
+            Helpers.Reward.DrawAllCharsFramerKit(_currentLocale, _globalCache, chars, 41378, 200);
+            Helpers.Reward.DrawAllCharsFramerKit(_currentLocale, _globalCache, chars, 41379, 200);
         }
 
         private void DrawHildibrandQuest(List<Character> chars)
@@ -4969,24 +4408,24 @@ namespace Altoholic.Windows
                                 ImGuiTableColumnFlags.WidthFixed, 36);
                             ImGui.TableNextRow();
                             ImGui.TableSetColumnIndex(0);
-                            DrawOrchestrion(85, currentCharacter.HasOrchestrionRoll(85));
+                            Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Orchestrion, _isSpoilerEnabled, 85, currentCharacter.HasOrchestrionRoll(85));
                             ImGui.TableSetColumnIndex(1);
                             uint? fkId = _globalCache.FramerKitStorage.GetFramerKitIdFromItemId(43957);
                             if (fkId == null) return;
-                            DrawFramerKit(fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
+                            Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.FramerKit, _isSpoilerEnabled, fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
 
                             if (rank >= 4)
                             {
                                 ImGui.TableSetColumnIndex(2);
-                                DrawMinion(58, currentCharacter.HasMinion(58));
+                                Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Minion, _isSpoilerEnabled, 58, currentCharacter.HasMinion(58));
                                 ImGui.TableSetColumnIndex(3);
-                                DrawMount(19, currentCharacter.HasMount(19));
+                                Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Mount, _isSpoilerEnabled, 19, currentCharacter.HasMount(19));
                             }
 
                             if (isAllied)
                             {
                                 ImGui.TableSetColumnIndex(4);
-                                DrawMinion(124, currentCharacter.HasMinion(124));
+                                Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Minion, _isSpoilerEnabled, 124, currentCharacter.HasMinion(124));
                             }
                         }
 
@@ -5011,24 +4450,24 @@ namespace Altoholic.Windows
                                 ImGuiTableColumnFlags.WidthFixed, 36);
                             ImGui.TableNextRow();
                             ImGui.TableSetColumnIndex(0);
-                            DrawOrchestrion(117, currentCharacter.HasOrchestrionRoll(117));
+                            Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Orchestrion, _isSpoilerEnabled, 117, currentCharacter.HasOrchestrionRoll(117));
                             ImGui.TableSetColumnIndex(1);
                             uint? fkId = _globalCache.FramerKitStorage.GetFramerKitIdFromItemId(43956);
                             if (fkId == null) return;
-                            DrawFramerKit(fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
+                            Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.FramerKit, _isSpoilerEnabled, fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
 
                             if (rank >= 4)
                             {
                                 ImGui.TableSetColumnIndex(2);
-                                DrawMinion(50, currentCharacter.HasMinion(50));
+                                Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Minion, _isSpoilerEnabled, 50, currentCharacter.HasMinion(50));
                                 ImGui.TableSetColumnIndex(3);
-                                DrawMount(20, currentCharacter.HasMount(20));
+                                Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Mount, _isSpoilerEnabled, 20, currentCharacter.HasMount(20));
                             }
 
                             if (isAllied)
                             {
                                 ImGui.TableSetColumnIndex(4);
-                                DrawMinion(123, currentCharacter.HasMinion(123));
+                                Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Minion, _isSpoilerEnabled, 123, currentCharacter.HasMinion(123));
                             }
                         }
 
@@ -5053,19 +4492,19 @@ namespace Altoholic.Windows
                             ImGui.TableSetColumnIndex(0);
                             uint? fkId = _globalCache.FramerKitStorage.GetFramerKitIdFromItemId(43955);
                             if (fkId == null) return;
-                            DrawFramerKit(fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
+                            Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.FramerKit, _isSpoilerEnabled, fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
                             if (rank >= 4)
                             {
                                 ImGui.TableSetColumnIndex(1);
-                                DrawMinion(60, currentCharacter.HasMinion(60));
+                                Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Minion, _isSpoilerEnabled, 60, currentCharacter.HasMinion(60));
                                 ImGui.TableSetColumnIndex(2);
-                                DrawMount(27, currentCharacter.HasMount(27));
+                                Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Mount, _isSpoilerEnabled, 27, currentCharacter.HasMount(27));
                             }
 
                             if (isAllied)
                             {
                                 ImGui.TableSetColumnIndex(3);
-                                DrawMinion(126, currentCharacter.HasMinion(126));
+                                Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Minion, _isSpoilerEnabled, 126, currentCharacter.HasMinion(126));
                             }
                         }
 
@@ -5089,18 +4528,18 @@ namespace Altoholic.Windows
                                 ImGuiTableColumnFlags.WidthFixed, 36);
                             ImGui.TableNextRow();
                             ImGui.TableSetColumnIndex(0);
-                            DrawMinion(61, currentCharacter.HasMinion(61));
+                            Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Minion, _isSpoilerEnabled, 61, currentCharacter.HasMinion(61));
                             ImGui.TableSetColumnIndex(1);
-                            DrawMount(26, currentCharacter.HasMount(26));
+                            Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Mount, _isSpoilerEnabled, 26, currentCharacter.HasMount(26));
                             ImGui.TableSetColumnIndex(2);
                             uint? fkId = _globalCache.FramerKitStorage.GetFramerKitIdFromItemId(43958);
                             if (fkId == null) return;
-                            DrawFramerKit(fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
+                            Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.FramerKit, _isSpoilerEnabled, fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
 
                             if (isAllied)
                             {
                                 ImGui.TableSetColumnIndex(3);
-                                DrawMinion(127, currentCharacter.HasMinion(127));
+                                Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Minion, _isSpoilerEnabled, 127, currentCharacter.HasMinion(127));
                             }
                         }
 
@@ -5124,22 +4563,22 @@ namespace Altoholic.Windows
                                 ImGuiTableColumnFlags.WidthFixed, 36);
                             ImGui.TableNextRow();
                             ImGui.TableSetColumnIndex(0);
-                            DrawMinion(59, currentCharacter.HasMinion(59));
+                            Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Minion, _isSpoilerEnabled, 59, currentCharacter.HasMinion(59));
                             ImGui.TableSetColumnIndex(1);
-                            DrawMount(35, currentCharacter.HasMount(35));
+                            Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Mount, _isSpoilerEnabled, 35, currentCharacter.HasMount(35));
 
                             if (rank >= 5)
                             {
                                 ImGui.TableSetColumnIndex(2);
                                 uint? fkId = _globalCache.FramerKitStorage.GetFramerKitIdFromItemId(43959);
                                 if (fkId == null) return;
-                                DrawFramerKit(fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
+                                Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.FramerKit, _isSpoilerEnabled, fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
                             }
 
                             if (isAllied)
                             {
                                 ImGui.TableSetColumnIndex(3);
-                                DrawMinion(125, currentCharacter.HasMinion(125));
+                                Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Minion, _isSpoilerEnabled, 125, currentCharacter.HasMinion(125));
                             }
                         }
 
@@ -5167,29 +4606,29 @@ namespace Altoholic.Windows
                                 ImGuiTableColumnFlags.WidthFixed, 36);
                             ImGui.TableNextRow();
                             ImGui.TableSetColumnIndex(0);
-                            DrawOrchestrion(86, currentCharacter.HasOrchestrionRoll(86));
+                            Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Orchestrion, _isSpoilerEnabled, 86, currentCharacter.HasOrchestrionRoll(86));
                             ImGui.TableSetColumnIndex(1);
-                            DrawMinion(135, currentCharacter.HasMinion(135));
+                            Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Minion, _isSpoilerEnabled, 135, currentCharacter.HasMinion(135));
 
                             if (rank >= 6)
                             {
                                 ImGui.TableSetColumnIndex(2);
-                                DrawEmote(120, currentCharacter.HasEmote(120));
+                                Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Emote, _isSpoilerEnabled, 120, currentCharacter.HasEmote(120));
                             }
 
                             if (rank >= 7)
                             {
                                 ImGui.TableSetColumnIndex(3);
-                                DrawMinion(172, currentCharacter.HasMinion(172));
+                                Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Minion, _isSpoilerEnabled, 172, currentCharacter.HasMinion(172));
                                 ImGui.TableSetColumnIndex(4);
-                                DrawMount(53, currentCharacter.HasMount(53));
+                                Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Mount, _isSpoilerEnabled, 53, currentCharacter.HasMount(53));
                             }
                             if (rank == 8)
                             {
                                 ImGui.TableSetColumnIndex(5);
                                 uint? fkId = _globalCache.FramerKitStorage.GetFramerKitIdFromItemId(41371);
                                 if (fkId == null) return;
-                                DrawFramerKit(fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
+                                Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.FramerKit, _isSpoilerEnabled, fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
                             }
                         }
 
@@ -5215,23 +4654,23 @@ namespace Altoholic.Windows
                                 ImGuiTableColumnFlags.WidthFixed, 36);
                             ImGui.TableNextRow();
                             ImGui.TableSetColumnIndex(0);
-                            DrawOrchestrion(118, currentCharacter.HasOrchestrionRoll(118));
+                            Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Orchestrion, _isSpoilerEnabled, 118, currentCharacter.HasOrchestrionRoll(118));
                             ImGui.TableSetColumnIndex(1);
-                            DrawMinion(175, currentCharacter.HasMinion(175));
+                            Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Minion, _isSpoilerEnabled, 175, currentCharacter.HasMinion(175));
 
                             if (rank >= 7)
                             {
                                 ImGui.TableSetColumnIndex(2);
-                                DrawMinion(156, currentCharacter.HasMinion(156));
+                                Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Minion, _isSpoilerEnabled, 156, currentCharacter.HasMinion(156));
                                 ImGui.TableSetColumnIndex(3);
-                                DrawMount(72, currentCharacter.HasMount(72));
+                                Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Mount, _isSpoilerEnabled, 72, currentCharacter.HasMount(72));
                             }
                             if (rank == 8)
                             {
                                 ImGui.TableSetColumnIndex(4);
                                 uint? fkId = _globalCache.FramerKitStorage.GetFramerKitIdFromItemId(41372);
                                 if (fkId == null) return;
-                                DrawFramerKit(fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
+                                Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.FramerKit, _isSpoilerEnabled, fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
                             }
                         }
 
@@ -5257,24 +4696,24 @@ namespace Altoholic.Windows
                                 ImGuiTableColumnFlags.WidthFixed, 36);
                             ImGui.TableNextRow();
                             ImGui.TableSetColumnIndex(0);
-                            DrawEmote(126, currentCharacter.HasEmote(126));
+                            Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Emote, _isSpoilerEnabled, 126, currentCharacter.HasEmote(126));
                             ImGui.TableSetColumnIndex(1);
-                            DrawMinion(184, currentCharacter.HasMinion(184));
+                            Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Minion, _isSpoilerEnabled, 184, currentCharacter.HasMinion(184));
                             ImGui.TableSetColumnIndex(2);
-                            DrawMount(86, currentCharacter.HasMount(86));
+                            Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Mount, _isSpoilerEnabled, 86, currentCharacter.HasMount(86));
 
                             if (rank == 8)
                             {
                                 ImGui.TableSetColumnIndex(3);
                                 uint? fkId = _globalCache.FramerKitStorage.GetFramerKitIdFromItemId(41373);
                                 if (fkId == null) return;
-                                DrawFramerKit(fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
+                                Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.FramerKit, _isSpoilerEnabled, fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
                             }
 
                             if (isAllied)
                             {
                                 ImGui.TableSetColumnIndex(4);
-                                DrawMinion(235, currentCharacter.HasMinion(235));
+                                Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Minion, _isSpoilerEnabled, 235, currentCharacter.HasMinion(235));
                             }
                         }
 
@@ -5304,33 +4743,33 @@ namespace Altoholic.Windows
                                 ImGuiTableColumnFlags.WidthFixed, 36);
                             ImGui.TableNextRow();
                             ImGui.TableSetColumnIndex(0);
-                            DrawMinion(266, currentCharacter.HasMinion(266));
+                            Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Minion, _isSpoilerEnabled, 266, currentCharacter.HasMinion(266));
 
                             if (rank >= 6)
                             {
                                 ImGui.TableSetColumnIndex(1);
-                                DrawOrchestrion(179, currentCharacter.HasOrchestrionRoll(179));
+                                Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Orchestrion, _isSpoilerEnabled, 179, currentCharacter.HasOrchestrionRoll(179));
                             }
 
 
                             if (rank >= 8)
                             {
                                 ImGui.TableSetColumnIndex(2);
-                                DrawEmote(167, currentCharacter.HasEmote(167));
+                                Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Emote, _isSpoilerEnabled, 167, currentCharacter.HasEmote(167));
                                 ImGui.TableSetColumnIndex(3);
-                                DrawMount(136, currentCharacter.HasMount(136));
+                                Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Mount, _isSpoilerEnabled, 136, currentCharacter.HasMount(136));
                                 ImGui.TableSetColumnIndex(4);
                                 uint? fkId = _globalCache.FramerKitStorage.GetFramerKitIdFromItemId(40502);
                                 if (fkId == null) return;
-                                DrawFramerKit(fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
+                                Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.FramerKit, _isSpoilerEnabled, fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
                             }
 
                             if (isAllied)
                             {
                                 ImGui.TableSetColumnIndex(5);
-                                DrawMinion(323, currentCharacter.HasMinion(323));
+                                Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Minion, _isSpoilerEnabled, 323, currentCharacter.HasMinion(323));
                                 ImGui.TableSetColumnIndex(6);
-                                DrawMinion(328, currentCharacter.HasMinion(328));
+                                Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Minion, _isSpoilerEnabled, 328, currentCharacter.HasMinion(328));
                             }
                         }
 
@@ -5360,36 +4799,36 @@ namespace Altoholic.Windows
                                 ImGuiTableColumnFlags.WidthFixed, 36);
                             ImGui.TableNextRow();
                             ImGui.TableSetColumnIndex(0);
-                            DrawMinion(277, currentCharacter.HasMinion(277));
+                            Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Minion, _isSpoilerEnabled, 277, currentCharacter.HasMinion(277));
 
                             if (rank >= 5)
                             {
                                 ImGui.TableSetColumnIndex(1);
-                                DrawEmote(64, currentCharacter.HasEmote(64));
+                                Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Emote, _isSpoilerEnabled, 64, currentCharacter.HasEmote(64));
                                 ImGui.TableSetColumnIndex(2);
-                                DrawOrchestrion(207, currentCharacter.HasOrchestrionRoll(207));
+                                Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Orchestrion, _isSpoilerEnabled, 207, currentCharacter.HasOrchestrionRoll(207));
                             }
 
                             if (rank >= 7)
                             {
                                 ImGui.TableSetColumnIndex(3);
-                                DrawMount(146, currentCharacter.HasMount(146));
+                                Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Mount, _isSpoilerEnabled, 146, currentCharacter.HasMount(146));
                             }
 
                             if (rank >= 8)
                             {
                                 ImGui.TableSetColumnIndex(4);
-                                DrawMount(148, currentCharacter.HasMount(148));
+                                Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Mount, _isSpoilerEnabled, 148, currentCharacter.HasMount(148));
                                 ImGui.TableSetColumnIndex(5);
                                 uint? fkId = _globalCache.FramerKitStorage.GetFramerKitIdFromItemId(40503);
                                 if (fkId == null) return;
-                                DrawFramerKit(fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
+                                Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.FramerKit, _isSpoilerEnabled, fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
                             }
 
                             if (isAllied)
                             {
                                 ImGui.TableSetColumnIndex(6);
-                                DrawMinion(322, currentCharacter.HasMinion(322));
+                                Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Minion, _isSpoilerEnabled, 322, currentCharacter.HasMinion(322));
                             }
                         }
 
@@ -5415,24 +4854,24 @@ namespace Altoholic.Windows
                                 ImGuiTableColumnFlags.WidthFixed, 36);
                             ImGui.TableNextRow();
                             ImGui.TableSetColumnIndex(0);
-                            DrawMinion(302, currentCharacter.HasMinion(302));
+                            Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Minion, _isSpoilerEnabled, 302, currentCharacter.HasMinion(302));
 
                             if (rank >= 6)
                             {
                                 ImGui.TableSetColumnIndex(1);
-                                DrawEmote(176, currentCharacter.HasEmote(176));
+                                Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Emote, _isSpoilerEnabled, 176, currentCharacter.HasEmote(176));
                                 ImGui.TableSetColumnIndex(2);
-                                DrawOrchestrion(231, currentCharacter.HasOrchestrionRoll(231));
+                                Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Orchestrion, _isSpoilerEnabled, 231, currentCharacter.HasOrchestrionRoll(231));
                             }
 
                             if (rank >= 8)
                             {
                                 ImGui.TableSetColumnIndex(3);
-                                DrawMount(164, currentCharacter.HasMount(164));
+                                Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Mount, _isSpoilerEnabled, 164, currentCharacter.HasMount(164));
                                 ImGui.TableSetColumnIndex(4);
                                 uint? fkId = _globalCache.FramerKitStorage.GetFramerKitIdFromItemId(40504);
                                 if (fkId == null) return;
-                                DrawFramerKit(fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
+                                Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.FramerKit, _isSpoilerEnabled, fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
                             }
                         }
 
@@ -5456,22 +4895,22 @@ namespace Altoholic.Windows
                                 ImGuiTableColumnFlags.WidthFixed, 36);
                             ImGui.TableNextRow();
                             ImGui.TableSetColumnIndex(0);
-                            DrawMinion(354, currentCharacter.HasMinion(354));
+                            Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Minion, _isSpoilerEnabled, 354, currentCharacter.HasMinion(354));
 
                             if (rank >= 7)
                             {
                                 ImGui.TableSetColumnIndex(1);
-                                DrawMount(201, currentCharacter.HasMount(201));
+                                Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Mount, _isSpoilerEnabled, 201, currentCharacter.HasMount(201));
                             }
 
                             if (rank >= 8)
                             {
                                 ImGui.TableSetColumnIndex(2);
-                                DrawOrchestrion(345, currentCharacter.HasOrchestrionRoll(345));
+                                Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Orchestrion, _isSpoilerEnabled, 345, currentCharacter.HasOrchestrionRoll(345));
                                 ImGui.TableSetColumnIndex(3);
                                 uint? fkId = _globalCache.FramerKitStorage.GetFramerKitIdFromItemId(39572);
                                 if (fkId == null) return;
-                                DrawFramerKit(fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
+                                Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.FramerKit, _isSpoilerEnabled, fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
                             }
                         }
 
@@ -5497,28 +4936,28 @@ namespace Altoholic.Windows
                                 ImGuiTableColumnFlags.WidthFixed, 36);
                             ImGui.TableNextRow();
                             ImGui.TableSetColumnIndex(0);
-                            DrawMinion(369, currentCharacter.HasMinion(369));
+                            Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Minion, _isSpoilerEnabled, 369, currentCharacter.HasMinion(369));
 
                             if (rank >= 6)
                             {
                                 ImGui.TableSetColumnIndex(1);
-                                DrawOrchestrion(371, currentCharacter.HasOrchestrionRoll(371));
+                                Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Orchestrion, _isSpoilerEnabled, 371, currentCharacter.HasOrchestrionRoll(371));
                             }
 
                             if (rank >= 7)
                             {
                                 ImGui.TableSetColumnIndex(2);
-                                DrawMount(215, currentCharacter.HasMount(215));
+                                Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Mount, _isSpoilerEnabled, 215, currentCharacter.HasMount(215));
                             }
 
                             if (rank >= 8)
                             {
                                 ImGui.TableSetColumnIndex(3);
-                                DrawMinion(370, currentCharacter.HasMinion(370));
+                                Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Minion, _isSpoilerEnabled, 370, currentCharacter.HasMinion(370));
                                 ImGui.TableSetColumnIndex(4);
                                 uint? fkId = _globalCache.FramerKitStorage.GetFramerKitIdFromItemId(39573);
                                 if (fkId == null) return;
-                                DrawFramerKit(fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
+                                Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.FramerKit, _isSpoilerEnabled, fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
                             }
                         }
 
@@ -5544,28 +4983,28 @@ namespace Altoholic.Windows
                                 ImGuiTableColumnFlags.WidthFixed, 36);
                             ImGui.TableNextRow();
                             ImGui.TableSetColumnIndex(0);
-                            DrawMinion(380, currentCharacter.HasMinion(380));
+                            Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Minion, _isSpoilerEnabled, 380, currentCharacter.HasMinion(380));
 
                             if (rank >= 6)
                             {
                                 ImGui.TableSetColumnIndex(1);
-                                DrawOrchestrion(383, currentCharacter.HasOrchestrionRoll(383));
+                                Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Orchestrion, _isSpoilerEnabled, 383, currentCharacter.HasOrchestrionRoll(383));
                             }
 
                             if (rank >= 7)
                             {
                                 ImGui.TableSetColumnIndex(2);
-                                DrawMount(223, currentCharacter.HasMount(223));
+                                Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Mount, _isSpoilerEnabled, 223, currentCharacter.HasMount(223));
                             }
 
                             if (rank >= 8)
                             {
                                 ImGui.TableSetColumnIndex(3);
-                                DrawEmote(199, currentCharacter.HasEmote(199));
+                                Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Emote, _isSpoilerEnabled, 199, currentCharacter.HasEmote(199));
                                 ImGui.TableSetColumnIndex(4);
                                 uint? fkId = _globalCache.FramerKitStorage.GetFramerKitIdFromItemId(39574);
                                 if (fkId == null) return;
-                                DrawFramerKit(fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
+                                Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.FramerKit, _isSpoilerEnabled, fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
                             }
                         }
 
@@ -5591,28 +5030,28 @@ namespace Altoholic.Windows
                                 ImGuiTableColumnFlags.WidthFixed, 36);
                             ImGui.TableNextRow();
                             ImGui.TableSetColumnIndex(0);
-                            DrawMinion(444, currentCharacter.HasMinion(444));
+                            Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Minion, _isSpoilerEnabled, 444, currentCharacter.HasMinion(444));
 
                             if (rank >= 5)
                             {
                                 ImGui.TableSetColumnIndex(1);
-                                DrawTripleTriadCard(349, currentCharacter.HasTTC(349));
+                                Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.TripleTriadCard, _isSpoilerEnabled, 349, currentCharacter.HasTTC(349));
                             }
 
                             if (rank >= 7)
                             {
                                 ImGui.TableSetColumnIndex(2);
-                                DrawMount(287, currentCharacter.HasMount(287));
+                                Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Mount, _isSpoilerEnabled, 287, currentCharacter.HasMount(287));
                             }
 
                             if (rank >= 8)
                             {
                                 ImGui.TableSetColumnIndex(3);
-                                DrawOrchestrion(514, currentCharacter.HasOrchestrionRoll(514));
+                                Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Orchestrion, _isSpoilerEnabled, 514, currentCharacter.HasOrchestrionRoll(514));
                                 ImGui.TableSetColumnIndex(4);
                                 uint? fkId = _globalCache.FramerKitStorage.GetFramerKitIdFromItemId(39575);
                                 if (fkId == null) return;
-                                DrawFramerKit(fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
+                                Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.FramerKit, _isSpoilerEnabled, fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
                             }
                         }
 
@@ -5638,18 +5077,18 @@ namespace Altoholic.Windows
                                 ImGuiTableColumnFlags.WidthFixed, 36);
                             ImGui.TableNextRow();
                             ImGui.TableSetColumnIndex(0);
-                            DrawTripleTriadCard(357, currentCharacter.HasTTC(357));
+                            Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.TripleTriadCard, _isSpoilerEnabled, 357, currentCharacter.HasTTC(357));
 
                             if (rank >= 5)
                             {
                                 ImGui.TableSetColumnIndex(1);
-                                DrawMinion(457, currentCharacter.HasMinion(457));
+                                Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Minion, _isSpoilerEnabled, 457, currentCharacter.HasMinion(457));
                             }
 
                             if (rank >= 7)
                             {
                                 ImGui.TableSetColumnIndex(2);
-                                DrawMount(298, currentCharacter.HasMount(298));
+                                Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Mount, _isSpoilerEnabled, 298, currentCharacter.HasMount(298));
                             }
 
                             if (rank >= 8)
@@ -5657,9 +5096,9 @@ namespace Altoholic.Windows
                                 ImGui.TableSetColumnIndex(3);
                                 uint? fkId = _globalCache.FramerKitStorage.GetFramerKitIdFromItemId(38466);
                                 if (fkId == null) return;
-                                DrawFramerKit(fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
+                                Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.FramerKit, _isSpoilerEnabled, fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
                                 ImGui.TableSetColumnIndex(4);
-                                DrawOrchestrion(514, currentCharacter.HasOrchestrionRoll(514));
+                                Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Orchestrion, _isSpoilerEnabled, 514, currentCharacter.HasOrchestrionRoll(514));
                             }
                         }
 
@@ -5687,30 +5126,30 @@ namespace Altoholic.Windows
                                 ImGuiTableColumnFlags.WidthFixed, 36);
                             ImGui.TableNextRow();
                             ImGui.TableSetColumnIndex(0);
-                            DrawMinion(472, currentCharacter.HasMinion(472));
+                            Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Minion, _isSpoilerEnabled, 472, currentCharacter.HasMinion(472));
 
                             if (rank >= 6)
                             {
                                 ImGui.TableSetColumnIndex(1);
-                                DrawOrchestrion(582, currentCharacter.HasOrchestrionRoll(582));
+                                Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Orchestrion, _isSpoilerEnabled, 582, currentCharacter.HasOrchestrionRoll(582));
                             }
 
                             if (rank >= 7)
                             {
                                 ImGui.TableSetColumnIndex(2);
-                                DrawMount(285, currentCharacter.HasMount(285));
+                                Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Mount, _isSpoilerEnabled, 285, currentCharacter.HasMount(285));
                             }
 
                             if (rank >= 8)
                             {
                                 ImGui.TableSetColumnIndex(3);
-                                DrawEmote(252, currentCharacter.HasEmote(252));
+                                Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Emote, _isSpoilerEnabled, 252, currentCharacter.HasEmote(252));
                                 ImGui.TableSetColumnIndex(4);
                                 uint? fkId = _globalCache.FramerKitStorage.GetFramerKitIdFromItemId(39576);
                                 if (fkId == null) return;
-                                DrawFramerKit(fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
+                                Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.FramerKit, _isSpoilerEnabled, fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
                                 ImGui.TableSetColumnIndex(5);
-                                DrawOrchestrion(566, currentCharacter.HasOrchestrionRoll(566));
+                                Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Orchestrion, _isSpoilerEnabled, 566, currentCharacter.HasOrchestrionRoll(566));
                             }
                         }
 
@@ -5738,20 +5177,20 @@ namespace Altoholic.Windows
                                 ImGuiTableColumnFlags.WidthFixed, 36);
                             ImGui.TableNextRow();
                             ImGui.TableSetColumnIndex(0);
-                            DrawMinion(534, currentCharacter.HasMinion(534));
+                            Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Minion, _isSpoilerEnabled, 534, currentCharacter.HasMinion(534));
                             ImGui.TableSetColumnIndex(1);
-                            DrawOrchestrion(708, currentCharacter.HasOrchestrionRoll(708));
+                            Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Orchestrion, _isSpoilerEnabled, 708, currentCharacter.HasOrchestrionRoll(708));
 
                             if (rank >= 5)
                             {
                                 ImGui.TableSetColumnIndex(2);
-                                DrawMount(358, currentCharacter.HasMount(358));
+                                Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Mount, _isSpoilerEnabled, 358, currentCharacter.HasMount(358));
                             }
 
                             if (rank >= 6)
                             {
                                 ImGui.TableSetColumnIndex(3);
-                                DrawOrnament(44, currentCharacter.HasOrnament(44));
+                                Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Ornament, _isSpoilerEnabled, 44, currentCharacter.HasOrnament(44));
                             }
 
                             if (rank >= 7)
@@ -5759,7 +5198,7 @@ namespace Altoholic.Windows
                                 ImGui.TableSetColumnIndex(4);
                                 uint? fkId = _globalCache.FramerKitStorage.GetFramerKitIdFromItemId(44944);
                                 if (fkId == null) return;
-                                DrawFramerKit(fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
+                                Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.FramerKit, _isSpoilerEnabled, fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
                             }
                         }
 
@@ -5787,18 +5226,18 @@ namespace Altoholic.Windows
                                 ImGuiTableColumnFlags.WidthFixed, 36);
                             ImGui.TableNextRow();
                             ImGui.TableSetColumnIndex(0);
-                            DrawMount(381, currentCharacter.HasMount(381));
+                            Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Mount, _isSpoilerEnabled, 381, currentCharacter.HasMount(381));
 
                             if (rank >= 5)
                             {
                                 ImGui.TableSetColumnIndex(1);
-                                DrawOrchestrion(728, currentCharacter.HasOrchestrionRoll(728));
+                                Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Orchestrion, _isSpoilerEnabled, 728, currentCharacter.HasOrchestrionRoll(728));
                             }
 
                             if (rank >= 6)
                             {
                                 ImGui.TableSetColumnIndex(2);
-                                DrawMinion(545, currentCharacter.HasMinion(545));
+                                Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Minion, _isSpoilerEnabled, 545, currentCharacter.HasMinion(545));
                             }
 
                             if (rank >= 8)
@@ -5806,9 +5245,9 @@ namespace Altoholic.Windows
                                 ImGui.TableSetColumnIndex(3);
                                 uint? fkId = _globalCache.FramerKitStorage.GetFramerKitIdFromItemId(48085);
                                 if (fkId == null) return;
-                                DrawFramerKit(fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
+                                Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.FramerKit, _isSpoilerEnabled, fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
                                 ImGui.TableSetColumnIndex(4);
-                                DrawTripleTriadCard(441, currentCharacter.HasTTC(441));
+                                Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.TripleTriadCard, _isSpoilerEnabled, 441, currentCharacter.HasTTC(441));
                             }
                         }
 
@@ -5836,18 +5275,18 @@ namespace Altoholic.Windows
                                 ImGuiTableColumnFlags.WidthFixed, 36);
                             ImGui.TableNextRow();
                             ImGui.TableSetColumnIndex(0);
-                            DrawOrchestrion(770, currentCharacter.HasOrchestrionRoll(770));
+                            Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Orchestrion, _isSpoilerEnabled, 770, currentCharacter.HasOrchestrionRoll(770));
 
                             if (rank >= 5)
                             {
                                 ImGui.TableSetColumnIndex(1);
-                                DrawMinion(554, currentCharacter.HasMinion(554));
+                                Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Minion, _isSpoilerEnabled, 554, currentCharacter.HasMinion(554));
                             }
 
                             if (rank >= 7)
                             {
                                 ImGui.TableSetColumnIndex(2);
-                                DrawMount(393, currentCharacter.HasMount(393));
+                                Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Mount, _isSpoilerEnabled, 393, currentCharacter.HasMount(393));
                             }
 
                             if (rank >= 8)
@@ -5855,310 +5294,14 @@ namespace Altoholic.Windows
                                 ImGui.TableSetColumnIndex(3);
                                 uint? fkId = _globalCache.FramerKitStorage.GetFramerKitIdFromItemId(46767);
                                 if (fkId == null) return;
-                                DrawFramerKit(fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
+                                Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.FramerKit, _isSpoilerEnabled, fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
                                 ImGui.TableSetColumnIndex(4);
-                                DrawTripleTriadCard(453, currentCharacter.HasTTC(453));
+                                Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.TripleTriadCard, _isSpoilerEnabled, 453, currentCharacter.HasTTC(453));
                             }
                         }
 
                         break;
                     }
-            }
-        }
-
-        private void DrawMinion(uint id, bool hasMinion)
-        {
-            Vector2 p = ImGui.GetCursorPos();
-            Minion? m = _globalCache.MinionStorage.GetMinion(_currentLocale, id);
-            if (m == null)
-            {
-                return;
-            }
-
-            if (!hasMinion)
-            {
-                if (_isSpoilerEnabled)
-                {
-                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(m.Icon), new Vector2(32, 32),
-                        new Vector4(1, 1, 1, 0.5f));
-                    if (ImGui.IsItemHovered())
-                    {
-                        Utils.DrawMinionTooltip(_currentLocale, ref _globalCache, m);
-                    }
-                }
-                else
-                {
-                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(000786), new Vector2(32, 32));
-                }
-            }
-            else
-            {
-                Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(m.Icon), new Vector2(32, 32));
-                if (ImGui.IsItemHovered())
-                {
-                    Utils.DrawMinionTooltip(_currentLocale, ref _globalCache, m);
-                }
-
-                ImGui.SetCursorPos(new Vector2(p.X + 26, p.Y + 20));
-                //ImGui.TextUnformatted("\u2713");
-                ImGui.PushFont(UiBuilder.IconFont);
-                ImGui.TextUnformatted(FontAwesomeIcon.Check.ToIconString());
-                ImGui.PopFont();
-                ImGui.SetCursorPos(p);
-            }
-        }
-
-        private void DrawMount(uint id, bool hasMount)
-        {
-            Vector2 p = ImGui.GetCursorPos();
-            Mount? m = _globalCache.MountStorage.GetMount(_currentLocale, id);
-            if (m == null)
-            {
-                return;
-            }
-
-            if (!hasMount)
-            {
-                if (_isSpoilerEnabled)
-                {
-                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(m.Icon), new Vector2(32, 32),
-                        new Vector4(1, 1, 1, 0.5f));
-                    if (ImGui.IsItemHovered())
-                    {
-                        Utils.DrawMountTooltip(_currentLocale, ref _globalCache, m);
-                    }
-                }
-                else
-                {
-                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(000786), new Vector2(32, 32));
-                }
-            }
-            else
-            {
-                Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(m.Icon), new Vector2(32, 32));
-                if (ImGui.IsItemHovered())
-                {
-                    Utils.DrawMountTooltip(_currentLocale, ref _globalCache, m);
-                }
-
-                ImGui.SetCursorPos(new Vector2(p.X + 26, p.Y + 20));
-                //ImGui.TextUnformatted("\u2713");
-                ImGui.PushFont(UiBuilder.IconFont);
-                ImGui.TextUnformatted(FontAwesomeIcon.Check.ToIconString());
-                ImGui.PopFont();
-                ImGui.SetCursorPos(p);
-            }
-        }
-
-        private void DrawEmote(uint id, bool hasEmote)
-        {
-            Vector2 p = ImGui.GetCursorPos();
-            Emote? e = _globalCache.EmoteStorage.GetEmote(_currentLocale, id);
-            if (e == null)
-            {
-                return;
-            }
-
-            if (!hasEmote)
-            {
-                if (_isSpoilerEnabled)
-                {
-                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(e.Icon), new Vector2(32, 32),
-                        new Vector4(1, 1, 1, 0.5f));
-                    if (ImGui.IsItemHovered())
-                    {
-                        Utils.DrawEmoteTooltip(_currentLocale, ref _globalCache, e);
-                    }
-                }
-                else
-                {
-                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(000786), new Vector2(32, 32));
-                }
-            }
-            else
-            {
-                Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(e.Icon), new Vector2(32, 32));
-                if (ImGui.IsItemHovered())
-                {
-                    Utils.DrawEmoteTooltip(_currentLocale, ref _globalCache, e);
-                }
-
-                ImGui.SetCursorPos(new Vector2(p.X + 26, p.Y + 20));
-                //ImGui.TextUnformatted("\u2713");
-                ImGui.PushFont(UiBuilder.IconFont);
-                ImGui.TextUnformatted(FontAwesomeIcon.Check.ToIconString());
-                ImGui.PopFont();
-                ImGui.SetCursorPos(p);
-            }
-        }
-
-        private void DrawOrchestrion(uint id, bool hasOrchestrion)
-        {
-            Vector2 p = ImGui.GetCursorPos();
-            OrchestrionRoll? o = _globalCache.OrchestrionRollStorage.GetOrchestrionRoll(_currentLocale, id);
-            if (o == null)
-            {
-                return;
-            }
-
-            if (!hasOrchestrion)
-            {
-                if (_isSpoilerEnabled)
-                {
-                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(o.Icon), new Vector2(32, 32),
-                        new Vector4(1, 1, 1, 0.5f));
-                    if (ImGui.IsItemHovered())
-                    {
-                        Utils.DrawOrchestrionRollTooltip(_currentLocale, ref _globalCache, o);
-                    }
-                }
-                else
-                {
-                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(000786), new Vector2(32, 32));
-                }
-            }
-            else
-            {
-                Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(o.Icon), new Vector2(32, 32));
-                if (ImGui.IsItemHovered())
-                {
-                    Utils.DrawOrchestrionRollTooltip(_currentLocale, ref _globalCache, o);
-                }
-
-                ImGui.SetCursorPos(new Vector2(p.X + 26, p.Y + 20));
-                //ImGui.TextUnformatted("\u2713");
-                ImGui.PushFont(UiBuilder.IconFont);
-                ImGui.TextUnformatted(FontAwesomeIcon.Check.ToIconString());
-                ImGui.PopFont();
-                ImGui.SetCursorPos(p);
-            }
-        }
-
-        private void DrawFramerKit(uint id, bool hasFramerKit)
-        {
-            Vector2 p = ImGui.GetCursorPos();
-            FramerKit? f = _globalCache.FramerKitStorage.LoadItem(_currentLocale, id);
-            if (f == null)
-            {
-                return;
-            }
-            //Plugin.Log.Debug($"fk: {f.Id} name:{f.EnglishName}, icon:{f.Icon} itemId:{f.ItemId}");
-            if (!hasFramerKit)
-            {
-                if (_isSpoilerEnabled)
-                {
-                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(f.Icon), new Vector2(32, 32),
-                        new Vector4(1, 1, 1, 0.5f));
-                    if (ImGui.IsItemHovered())
-                    {
-                        Utils.DrawFramerKitTooltip(_currentLocale, ref _globalCache, f);
-                    }
-                }
-                else
-                {
-                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(000786), new Vector2(32, 32));
-                }
-            }
-            else
-            {
-                Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(f.Icon), new Vector2(32, 32));
-                if (ImGui.IsItemHovered())
-                {
-                    Utils.DrawFramerKitTooltip(_currentLocale, ref _globalCache, f);
-                }
-
-                ImGui.SetCursorPos(new Vector2(p.X + 26, p.Y + 20));
-                //ImGui.TextUnformatted("\u2713");
-                ImGui.PushFont(UiBuilder.IconFont);
-                ImGui.TextUnformatted(FontAwesomeIcon.Check.ToIconString());
-                ImGui.PopFont();
-                ImGui.SetCursorPos(p);
-            }
-        }
-
-        private void DrawTripleTriadCard(uint id, bool hasTripleTriadCard)
-        {
-            Vector2 p = ImGui.GetCursorPos();
-            TripleTriadCard? t = _globalCache.TripleTriadCardStorage.GetTripleTriadCard(_currentLocale, id);
-            if (t == null)
-            {
-                return;
-            }
-            //Plugin.Log.Debug($"fk: {f.Id} name:{f.EnglishName}, icon:{f.Icon} itemId:{f.ItemId}");
-            if (!hasTripleTriadCard)
-            {
-                if (_isSpoilerEnabled)
-                {
-                    //Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(t.Icon), new Vector2(32, 32),
-                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(027672), new Vector2(32, 32),
-                        new Vector4(1, 1, 1, 0.5f));
-                    if (ImGui.IsItemHovered())
-                    {
-                        Utils.DrawTTCTooltip(_currentLocale, ref _globalCache, t);
-                    }
-                }
-                else
-                {
-                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(000786), new Vector2(32, 32));
-                }
-            }
-            else
-            {
-                //Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(t.Icon), new Vector2(32, 32));
-                Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(027672), new Vector2(32, 32));
-                if (ImGui.IsItemHovered())
-                {
-                    Utils.DrawTTCTooltip(_currentLocale, ref _globalCache, t);
-                }
-
-                ImGui.SetCursorPos(new Vector2(p.X + 26, p.Y + 20));
-                //ImGui.TextUnformatted("\u2713");
-                ImGui.PushFont(UiBuilder.IconFont);
-                ImGui.TextUnformatted(FontAwesomeIcon.Check.ToIconString());
-                ImGui.PopFont();
-                ImGui.SetCursorPos(p);
-            }
-        }
-
-        private void DrawOrnament(uint id, bool hasOrnament)
-        {
-            Vector2 p = ImGui.GetCursorPos();
-            Ornament? o = _globalCache.OrnamentStorage.GetOrnament(_currentLocale, id);
-            if (o == null)
-            {
-                return;
-            }
-
-            if (!hasOrnament)
-            {
-                if (_isSpoilerEnabled)
-                {
-                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(o.Icon), new Vector2(32, 32),
-                        new Vector4(1, 1, 1, 0.5f));
-                    if (ImGui.IsItemHovered())
-                    {
-                        Utils.DrawOrnamentTooltip(_currentLocale, ref _globalCache, o);
-                    }
-                }
-                else
-                {
-                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(000786), new Vector2(32, 32));
-                }
-            }
-            else
-            {
-                Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(o.Icon), new Vector2(32, 32));
-                if (ImGui.IsItemHovered())
-                {
-                    Utils.DrawOrnamentTooltip(_currentLocale, ref _globalCache, o);
-                }
-
-                ImGui.SetCursorPos(new Vector2(p.X + 26, p.Y + 20));
-                //ImGui.TextUnformatted("\u2713");
-                ImGui.PushFont(UiBuilder.IconFont);
-                ImGui.TextUnformatted(FontAwesomeIcon.Check.ToIconString());
-                ImGui.PopFont();
-                ImGui.SetCursorPos(p);
             }
         }
     }

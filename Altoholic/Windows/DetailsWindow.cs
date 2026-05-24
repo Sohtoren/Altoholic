@@ -438,6 +438,7 @@ namespace Altoholic.Windows
                 ImGui.TableSetColumnIndex(2);
                 ImGui.PushFont(UiBuilder.IconFont);
                 ImGui.TextUnformatted(FontAwesomeIcon.Ban.ToIconString());
+                ImGui.PopFont();
                 if (ImGui.IsItemClicked())
                 {
                     ImGui.OpenPopup(
@@ -446,7 +447,6 @@ namespace Altoholic.Windows
                         $"Remove {_globalCache.AddonStorage.LoadAddonString(_currentLocale, 14312)}: {house.Plot + 1} hit");
                 }
 
-                ImGui.PopFont();
                 if (ImGui.IsItemHovered())
                 {
                     ImGui.BeginTooltip();

@@ -545,17 +545,17 @@ namespace Altoholic.Windows
                                     ImGuiTableColumnFlags.WidthFixed, 36);
                                 ImGui.TableNextRow();
                                 ImGui.TableSetColumnIndex(0);
-                                DrawEmote(329, currentCharacter.HasEmote(329));
+                                Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Emote, _isSpoilerEnabled, 329, currentCharacter.HasEmote(329));
                                 uint? fkId = _globalCache.FramerKitStorage.GetFramerKitIdFromItemId(51688);
                                 if (fkId == null) return;
                                 ImGui.TableSetColumnIndex(1);
-                                DrawFramerKit(fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
+                                Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.FramerKit, _isSpoilerEnabled, fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
                                 ImGui.TableSetColumnIndex(2);
-                                DrawMinion(580, currentCharacter.HasMinion(580));
+                                Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Minion, _isSpoilerEnabled, 580, currentCharacter.HasMinion(580));
                                 ImGui.TableSetColumnIndex(3);
                                 uint? fkId2 = _globalCache.FramerKitStorage.GetFramerKitIdFromItemId(51689);
                                 if (fkId2 == null) return;
-                                DrawFramerKit(fkId2.Value, currentCharacter.HasFramerKit(fkId2.Value));
+                                Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.FramerKit, _isSpoilerEnabled, fkId2.Value, currentCharacter.HasFramerKit(fkId2.Value));
                             }
                         }
 
@@ -606,19 +606,19 @@ namespace Altoholic.Windows
                                         ImGuiTableColumnFlags.WidthFixed, 36);
                                     ImGui.TableNextRow();
                                     ImGui.TableSetColumnIndex(0);
-                                    DrawEmote(317, currentCharacter.HasEmote(317));
+                                    Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Emote, _isSpoilerEnabled, 317, currentCharacter.HasEmote(317));
                                     uint? fkId = _globalCache.FramerKitStorage.GetFramerKitIdFromItemId(49172);
                                     if (fkId == null) return;
                                     ImGui.TableSetColumnIndex(1);
-                                    DrawFramerKit(fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
+                                    Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.FramerKit, _isSpoilerEnabled, fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
                                     ImGui.TableSetColumnIndex(2);
-                                    DrawMinion(556, currentCharacter.HasMinion(556));
+                                    Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Minion, _isSpoilerEnabled, 556, currentCharacter.HasMinion(556));
                                     ImGui.TableSetColumnIndex(3);
                                     uint? fkId2 = _globalCache.FramerKitStorage.GetFramerKitIdFromItemId(49173);
                                     if (fkId2 == null) return;
-                                    DrawFramerKit(fkId2.Value, currentCharacter.HasFramerKit(fkId2.Value));
+                                    Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.FramerKit, _isSpoilerEnabled, fkId2.Value, currentCharacter.HasFramerKit(fkId2.Value));
                                     ImGui.TableSetColumnIndex(4);
-                                    DrawMount(394, currentCharacter.HasMount(394));
+                                    Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Mount, _isSpoilerEnabled, 394, currentCharacter.HasMount(394));
                                 }
                             }
 
@@ -655,19 +655,19 @@ namespace Altoholic.Windows
                                         ImGuiTableColumnFlags.WidthFixed, 36);
                                     ImGui.TableNextRow();
                                     ImGui.TableSetColumnIndex(0);
-                                    DrawEmote(307, currentCharacter.HasEmote(307));
+                                    Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Emote, _isSpoilerEnabled, 307, currentCharacter.HasEmote(307));
                                     uint? fkId = _globalCache.FramerKitStorage.GetFramerKitIdFromItemId(46736);
                                     if (fkId == null) return;
                                     ImGui.TableSetColumnIndex(1);
-                                    DrawFramerKit(fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
+                                    Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.FramerKit, _isSpoilerEnabled, fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
                                     ImGui.TableSetColumnIndex(2);
-                                    DrawMinion(556, currentCharacter.HasMinion(556));
+                                    Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Minion, _isSpoilerEnabled, 556, currentCharacter.HasMinion(556));
                                     ImGui.TableSetColumnIndex(3);
-                                    DrawMinion(555, currentCharacter.HasMinion(555));
+                                    Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Minion, _isSpoilerEnabled, 555, currentCharacter.HasMinion(555));
                                     ImGui.TableSetColumnIndex(4);
                                     uint? fkId2 = _globalCache.FramerKitStorage.GetFramerKitIdFromItemId(46737);
                                     if (fkId2 == null) return;
-                                    DrawFramerKit(fkId2.Value, currentCharacter.HasFramerKit(fkId2.Value));
+                                    Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.FramerKit, _isSpoilerEnabled, fkId2.Value, currentCharacter.HasFramerKit(fkId2.Value));
                                 }
                             }
 
@@ -704,19 +704,19 @@ namespace Altoholic.Windows
                                         ImGuiTableColumnFlags.WidthFixed, 36);
                                     ImGui.TableNextRow();
                                     ImGui.TableSetColumnIndex(0);
-                                    DrawEmote(293, currentCharacter.HasEmote(293));
+                                    Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Emote, _isSpoilerEnabled, 293, currentCharacter.HasEmote(293));
                                     uint? fkId = _globalCache.FramerKitStorage.GetFramerKitIdFromItemId(46335);
                                     if (fkId == null) return;
                                     ImGui.TableSetColumnIndex(1);
-                                    DrawFramerKit(fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
+                                    Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.FramerKit, _isSpoilerEnabled, fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
                                     ImGui.TableSetColumnIndex(2);
-                                    DrawMinion(544, currentCharacter.HasMinion(544));
+                                    Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Minion, _isSpoilerEnabled, 544, currentCharacter.HasMinion(544));
                                     ImGui.TableSetColumnIndex(3);
                                     uint? fkId2 = _globalCache.FramerKitStorage.GetFramerKitIdFromItemId(46336);
                                     if (fkId2 == null) return;
-                                    DrawFramerKit(fkId2.Value, currentCharacter.HasFramerKit(fkId2.Value));
+                                    Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.FramerKit, _isSpoilerEnabled, fkId2.Value, currentCharacter.HasFramerKit(fkId2.Value));
                                     ImGui.TableSetColumnIndex(4);
-                                    DrawMount(390, currentCharacter.HasMount(390));
+                                    Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Mount, _isSpoilerEnabled, 390, currentCharacter.HasMount(390));
                                 }
                             }
                             ImGui.TableNextRow();
@@ -752,17 +752,17 @@ namespace Altoholic.Windows
                                         ImGuiTableColumnFlags.WidthFixed, 36);
                                     ImGui.TableNextRow();
                                     ImGui.TableSetColumnIndex(0);
-                                    DrawEmote(279, currentCharacter.HasEmote(279));
+                                    Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Emote, _isSpoilerEnabled, 279, currentCharacter.HasEmote(279));
                                     uint? fkId = _globalCache.FramerKitStorage.GetFramerKitIdFromItemId(44350);
                                     if (fkId == null) return;
                                     ImGui.TableSetColumnIndex(1);
-                                    DrawFramerKit(fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
+                                    Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.FramerKit, _isSpoilerEnabled, fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
                                     ImGui.TableSetColumnIndex(2);
-                                    DrawMinion(530, currentCharacter.HasMinion(530));
+                                    Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Minion, _isSpoilerEnabled, 530, currentCharacter.HasMinion(530));
                                     ImGui.TableSetColumnIndex(3);
                                     uint? fkId2 = _globalCache.FramerKitStorage.GetFramerKitIdFromItemId(44351);
                                     if (fkId2 == null) return;
-                                    DrawFramerKit(fkId2.Value, currentCharacter.HasFramerKit(fkId2.Value));
+                                    Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.FramerKit, _isSpoilerEnabled, fkId2.Value, currentCharacter.HasFramerKit(fkId2.Value));
                                     ImGui.TableSetColumnIndex(4);
                                     DrawItem(44352, 25, series7Claimed);
                                 }
@@ -800,19 +800,19 @@ namespace Altoholic.Windows
                                         ImGuiTableColumnFlags.WidthFixed, 36);
                                     ImGui.TableNextRow();
                                     ImGui.TableSetColumnIndex(0);
-                                    DrawOrnament(41, currentCharacter.HasOrnament(41));
+                                    Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Ornament, _isSpoilerEnabled, 41, currentCharacter.HasOrnament(41));
                                     uint? fkId = _globalCache.FramerKitStorage.GetFramerKitIdFromItemId(43565);
                                     if (fkId == null) return;
                                     ImGui.TableSetColumnIndex(1);
-                                    DrawFramerKit(fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
+                                    Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.FramerKit, _isSpoilerEnabled, fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
                                     ImGui.TableSetColumnIndex(2);
-                                    DrawMinion(514, currentCharacter.HasMinion(514));
+                                    Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Minion, _isSpoilerEnabled, 514, currentCharacter.HasMinion(514));
                                     ImGui.TableSetColumnIndex(3);
                                     uint? fkId2 = _globalCache.FramerKitStorage.GetFramerKitIdFromItemId(43566);
                                     if (fkId2 == null) return;
-                                    DrawFramerKit(fkId2.Value, currentCharacter.HasFramerKit(fkId2.Value));
+                                    Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.FramerKit, _isSpoilerEnabled, fkId2.Value, currentCharacter.HasFramerKit(fkId2.Value));
                                     ImGui.TableSetColumnIndex(4);
-                                    DrawMount(331, currentCharacter.HasMount(331));
+                                    Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Mount, _isSpoilerEnabled, 331, currentCharacter.HasMount(331));
                                 }
                             }
 
@@ -848,17 +848,17 @@ namespace Altoholic.Windows
                                         ImGuiTableColumnFlags.WidthFixed, 36);
                                     ImGui.TableNextRow();
                                     ImGui.TableSetColumnIndex(0);
-                                    DrawEmote(273, currentCharacter.HasEmote(273));
+                                    Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Emote, _isSpoilerEnabled, 273, currentCharacter.HasEmote(273));
                                     uint? fkId = _globalCache.FramerKitStorage.GetFramerKitIdFromItemId(41367);
                                     if (fkId == null) return;
                                     ImGui.TableSetColumnIndex(1);
-                                    DrawFramerKit(fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
+                                    Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.FramerKit, _isSpoilerEnabled, fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
                                     ImGui.TableSetColumnIndex(2);
-                                    DrawMinion(493, currentCharacter.HasMinion(493));
+                                    Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Minion, _isSpoilerEnabled, 493, currentCharacter.HasMinion(493));
                                     ImGui.TableSetColumnIndex(3);
                                     uint? fkId2 = _globalCache.FramerKitStorage.GetFramerKitIdFromItemId(41368);
                                     if (fkId2 == null) return;
-                                    DrawFramerKit(fkId2.Value, currentCharacter.HasFramerKit(fkId2.Value));
+                                    Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.FramerKit, _isSpoilerEnabled, fkId2.Value, currentCharacter.HasFramerKit(fkId2.Value));
                                     ImGui.TableSetColumnIndex(4);
                                     DrawItem(41523, 25, series5Claimed);
                                 }
@@ -896,19 +896,19 @@ namespace Altoholic.Windows
                                         ImGuiTableColumnFlags.WidthFixed, 36);
                                     ImGui.TableNextRow();
                                     ImGui.TableSetColumnIndex(0);
-                                    DrawEmote(263, currentCharacter.HasEmote(263));
+                                    Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Emote, _isSpoilerEnabled, 263, currentCharacter.HasEmote(263));
                                     uint? fkId = _globalCache.FramerKitStorage.GetFramerKitIdFromItemId(40498);
                                     if (fkId == null) return;
                                     ImGui.TableSetColumnIndex(1);
-                                    DrawFramerKit(fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
+                                    Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.FramerKit, _isSpoilerEnabled, fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
                                     ImGui.TableSetColumnIndex(2);
-                                    DrawMinion(482, currentCharacter.HasMinion(482));
+                                    Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Minion, _isSpoilerEnabled, 482, currentCharacter.HasMinion(482));
                                     ImGui.TableSetColumnIndex(3);
                                     uint? fkId2 = _globalCache.FramerKitStorage.GetFramerKitIdFromItemId(40499);
                                     if (fkId2 == null) return;
-                                    DrawFramerKit(fkId2.Value, currentCharacter.HasFramerKit(fkId2.Value));
+                                    Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.FramerKit, _isSpoilerEnabled, fkId2.Value, currentCharacter.HasFramerKit(fkId2.Value));
                                     ImGui.TableSetColumnIndex(4);
-                                    DrawMount(297, currentCharacter.HasMount(297));
+                                    Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Mount, _isSpoilerEnabled, 297, currentCharacter.HasMount(297));
                                 }
                             }
 
@@ -945,17 +945,17 @@ namespace Altoholic.Windows
                                         ImGuiTableColumnFlags.WidthFixed, 36);
                                     ImGui.TableNextRow();
                                     ImGui.TableSetColumnIndex(0);
-                                    DrawEmote(251, currentCharacter.HasEmote(251));
+                                    Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Emote, _isSpoilerEnabled, 251, currentCharacter.HasEmote(251));
                                     uint? fkId = _globalCache.FramerKitStorage.GetFramerKitIdFromItemId(39570);
                                     if (fkId == null) return;
                                     ImGui.TableSetColumnIndex(1);
-                                    DrawFramerKit(fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
+                                    Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.FramerKit, _isSpoilerEnabled, fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
                                     ImGui.TableSetColumnIndex(2);
-                                    DrawMount(167, currentCharacter.HasMount(167));
+                                    Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Mount, _isSpoilerEnabled, 167, currentCharacter.HasMount(167));
                                     ImGui.TableSetColumnIndex(3);
                                     uint? fkId2 = _globalCache.FramerKitStorage.GetFramerKitIdFromItemId(39571);
                                     if (fkId2 == null) return;
-                                    DrawFramerKit(fkId2.Value, currentCharacter.HasFramerKit(fkId2.Value));
+                                    Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.FramerKit, _isSpoilerEnabled, fkId2.Value, currentCharacter.HasFramerKit(fkId2.Value));
                                     ImGui.TableSetColumnIndex(4);
                                     DrawItem(39364, 25, series3Claimed);
                                 }
@@ -996,21 +996,21 @@ namespace Altoholic.Windows
                                         ImGuiTableColumnFlags.WidthFixed, 36);
                                     ImGui.TableNextRow();
                                     ImGui.TableSetColumnIndex(0);
-                                    DrawEmote(248, currentCharacter.HasEmote(248));
+                                    Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Emote, _isSpoilerEnabled, 248, currentCharacter.HasEmote(248));
                                     uint? fkId = _globalCache.FramerKitStorage.GetFramerKitIdFromItemId(38348);
                                     if (fkId == null) return;
                                     ImGui.TableSetColumnIndex(1);
-                                    DrawFramerKit(fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
+                                    Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.FramerKit, _isSpoilerEnabled, fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
                                     ImGui.TableSetColumnIndex(2);
-                                    DrawMinion(459, currentCharacter.HasMinion(459));
+                                    Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Minion, _isSpoilerEnabled, 459, currentCharacter.HasMinion(459));
                                     ImGui.TableSetColumnIndex(3);
-                                    DrawMinion(458, currentCharacter.HasMinion(458));
+                                    Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Minion, _isSpoilerEnabled, 458, currentCharacter.HasMinion(458));
                                     ImGui.TableSetColumnIndex(4);
                                     uint? fkId2 = _globalCache.FramerKitStorage.GetFramerKitIdFromItemId(38349);
                                     if (fkId2 == null) return;
-                                    DrawFramerKit(fkId2.Value, currentCharacter.HasFramerKit(fkId2.Value));
+                                    Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.FramerKit, _isSpoilerEnabled, fkId2.Value, currentCharacter.HasFramerKit(fkId2.Value));
                                     ImGui.TableSetColumnIndex(5);
-                                    DrawMount(280, currentCharacter.HasMount(280));
+                                    Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Mount, _isSpoilerEnabled, 280, currentCharacter.HasMount(280));
                                 }
                             }
 
@@ -1047,17 +1047,17 @@ namespace Altoholic.Windows
                                         ImGuiTableColumnFlags.WidthFixed, 36);
                                     ImGui.TableNextRow();
                                     ImGui.TableSetColumnIndex(0);
-                                    DrawEmote(240, currentCharacter.HasEmote(240));
+                                    Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Emote, _isSpoilerEnabled, 240, currentCharacter.HasEmote(240));
                                     uint? fkId = _globalCache.FramerKitStorage.GetFramerKitIdFromItemId(37266);
                                     if (fkId == null) return;
                                     ImGui.TableSetColumnIndex(1);
-                                    DrawFramerKit(fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
+                                    Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.FramerKit, _isSpoilerEnabled, fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
                                     ImGui.TableSetColumnIndex(2);
-                                    DrawFacewear(13, currentCharacter.HasGlasses(13));
+                                    Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Glass, _isSpoilerEnabled, 13, currentCharacter.HasGlasses(13));
                                     ImGui.TableSetColumnIndex(3);
                                     uint? fkId1 = _globalCache.FramerKitStorage.GetFramerKitIdFromItemId(37267);
                                     if (fkId1 == null) return;
-                                    DrawFramerKit(fkId1.Value, currentCharacter.HasFramerKit(fkId1.Value));
+                                    Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.FramerKit, _isSpoilerEnabled, fkId1.Value, currentCharacter.HasFramerKit(fkId1.Value));
                                     ImGui.TableSetColumnIndex(4);
                                     DrawItem(37268, 25, series1Claimed);
                                 }
@@ -1193,341 +1193,6 @@ namespace Altoholic.Windows
                 },
                 _ => ""
             };
-        }
-
-        private void DrawMinion(uint id, bool hasMinion)
-        {
-            Vector2 p = ImGui.GetCursorPos();
-            Minion? m = _globalCache.MinionStorage.GetMinion(_currentLocale, id);
-            if (m == null)
-            {
-                return;
-            }
-
-            if (!hasMinion)
-            {
-                if (_isSpoilerEnabled)
-                {
-                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(m.Icon), new Vector2(32, 32),
-                        new Vector4(1, 1, 1, 0.5f));
-                    if (ImGui.IsItemHovered())
-                    {
-                        Utils.DrawMinionTooltip(_currentLocale, ref _globalCache, m);
-                    }
-                }
-                else
-                {
-                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(000786), new Vector2(32, 32));
-                }
-            }
-            else
-            {
-                Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(m.Icon), new Vector2(32, 32));
-                if (ImGui.IsItemHovered())
-                {
-                    Utils.DrawMinionTooltip(_currentLocale, ref _globalCache, m);
-                }
-
-                ImGui.SetCursorPos(new Vector2(p.X + 20, p.Y + 20));
-                ImGui.PushFont(UiBuilder.IconFont);
-                ImGui.TextUnformatted(FontAwesomeIcon.Check.ToIconString());
-                ImGui.PopFont();
-                ImGui.SetCursorPos(p);
-            }
-        }
-
-        private void DrawMount(uint id, bool hasMount)
-        {
-            Vector2 p = ImGui.GetCursorPos();
-            Mount? m = _globalCache.MountStorage.GetMount(_currentLocale, id);
-            if (m == null)
-            {
-                return;
-            }
-
-            if (!hasMount)
-            {
-                if (_isSpoilerEnabled)
-                {
-                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(m.Icon), new Vector2(32, 32),
-                        new Vector4(1, 1, 1, 0.5f));
-                    if (ImGui.IsItemHovered())
-                    {
-                        Utils.DrawMountTooltip(_currentLocale, ref _globalCache, m);
-                    }
-                }
-                else
-                {
-                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(000786), new Vector2(32, 32));
-                }
-            }
-            else
-            {
-                Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(m.Icon), new Vector2(32, 32));
-                if (ImGui.IsItemHovered())
-                {
-                    Utils.DrawMountTooltip(_currentLocale, ref _globalCache, m);
-                }
-
-                ImGui.SetCursorPos(new Vector2(p.X + 20, p.Y + 20));
-                ImGui.PushFont(UiBuilder.IconFont);
-                ImGui.TextUnformatted(FontAwesomeIcon.Check.ToIconString());
-                ImGui.PopFont();
-                ImGui.SetCursorPos(p);
-            }
-        }
-
-        private void DrawEmote(uint id, bool hasEmote)
-        {
-            Vector2 p = ImGui.GetCursorPos();
-            Emote? e = _globalCache.EmoteStorage.GetEmote(_currentLocale, id);
-            if (e == null)
-            {
-                return;
-            }
-
-            if (!hasEmote)
-            {
-                if (_isSpoilerEnabled)
-                {
-                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(e.Icon), new Vector2(32, 32),
-                        new Vector4(1, 1, 1, 0.5f));
-                    if (ImGui.IsItemHovered())
-                    {
-                        Utils.DrawEmoteTooltip(_currentLocale, ref _globalCache, e);
-                    }
-                }
-                else
-                {
-                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(000786), new Vector2(32, 32));
-                }
-            }
-            else
-            {
-                Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(e.Icon), new Vector2(32, 32));
-                if (ImGui.IsItemHovered())
-                {
-                    Utils.DrawEmoteTooltip(_currentLocale, ref _globalCache, e);
-                }
-
-                ImGui.SetCursorPos(new Vector2(p.X + 20, p.Y + 20));
-                //ImGui.TextUnformatted("\u2713");
-                ImGui.PushFont(UiBuilder.IconFont);
-                ImGui.TextUnformatted(FontAwesomeIcon.Check.ToIconString());
-                ImGui.PopFont();
-                ImGui.SetCursorPos(p);
-            }
-        }
-
-        private void DrawOrchestrion(uint id, bool hasOrchestrion)
-        {
-            Vector2 p = ImGui.GetCursorPos();
-            OrchestrionRoll? o = _globalCache.OrchestrionRollStorage.GetOrchestrionRoll(_currentLocale, id);
-            if (o == null)
-            {
-                return;
-            }
-
-            if (!hasOrchestrion)
-            {
-                if (_isSpoilerEnabled)
-                {
-                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(o.Icon), new Vector2(32, 32),
-                        new Vector4(1, 1, 1, 0.5f));
-                    if (ImGui.IsItemHovered())
-                    {
-                        Utils.DrawOrchestrionRollTooltip(_currentLocale, ref _globalCache, o);
-                    }
-                }
-                else
-                {
-                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(000786), new Vector2(32, 32));
-                }
-            }
-            else
-            {
-                Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(o.Icon), new Vector2(32, 32));
-                if (ImGui.IsItemHovered())
-                {
-                    Utils.DrawOrchestrionRollTooltip(_currentLocale, ref _globalCache, o);
-                }
-
-                ImGui.SetCursorPos(new Vector2(p.X + 20, p.Y + 20));
-                //ImGui.TextUnformatted("\u2713");
-                ImGui.PushFont(UiBuilder.IconFont);
-                ImGui.TextUnformatted(FontAwesomeIcon.Check.ToIconString());
-                ImGui.PopFont();
-                ImGui.SetCursorPos(p);
-            }
-        }
-
-        private void DrawFramerKit(uint id, bool hasFramerKit)
-        {
-            Vector2 p = ImGui.GetCursorPos();
-            FramerKit? f = _globalCache.FramerKitStorage.LoadItem(_currentLocale, id);
-            if (f == null)
-            {
-                return;
-            }
-            //Plugin.Log.Debug($"fk: {f.Id} name:{f.EnglishName}, icon:{f.Icon} itemId:{f.ItemId}");
-            if (!hasFramerKit)
-            {
-                if (_isSpoilerEnabled)
-                {
-                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(f.Icon), new Vector2(32, 32),
-                        new Vector4(1, 1, 1, 0.5f));
-                    if (ImGui.IsItemHovered())
-                    {
-                        Utils.DrawFramerKitTooltip(_currentLocale, ref _globalCache, f);
-                    }
-                }
-                else
-                {
-                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(000786), new Vector2(32, 32));
-                }
-            }
-            else
-            {
-                Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(f.Icon), new Vector2(32, 32));
-                if (ImGui.IsItemHovered())
-                {
-                    Utils.DrawFramerKitTooltip(_currentLocale, ref _globalCache, f);
-                }
-
-                ImGui.SetCursorPos(new Vector2(p.X + 20, p.Y + 20));
-                //ImGui.TextUnformatted("\u2713");
-                ImGui.PushFont(UiBuilder.IconFont);
-                ImGui.TextUnformatted(FontAwesomeIcon.Check.ToIconString());
-                ImGui.PopFont();
-                ImGui.SetCursorPos(p);
-            }
-        }
-
-        private void DrawTripleTriadCard(uint id, bool hasTripleTriadCard)
-        {
-            Vector2 p = ImGui.GetCursorPos();
-            TripleTriadCard? t = _globalCache.TripleTriadCardStorage.GetTripleTriadCard(_currentLocale, id);
-            if (t == null)
-            {
-                return;
-            }
-            //Plugin.Log.Debug($"fk: {f.Id} name:{f.EnglishName}, icon:{f.Icon} itemId:{f.ItemId}");
-            if (!hasTripleTriadCard)
-            {
-                if (_isSpoilerEnabled)
-                {
-                    //Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(t.Icon), new Vector2(32, 32),
-                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(027672), new Vector2(32, 32),
-                        new Vector4(1, 1, 1, 0.5f));
-                    if (ImGui.IsItemHovered())
-                    {
-                        Utils.DrawTTCTooltip(_currentLocale, ref _globalCache, t);
-                    }
-                }
-                else
-                {
-                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(000786), new Vector2(32, 32));
-                }
-            }
-            else
-            {
-                //Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(t.Icon), new Vector2(32, 32));
-                Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(027672), new Vector2(32, 32));
-                if (ImGui.IsItemHovered())
-                {
-                    Utils.DrawTTCTooltip(_currentLocale, ref _globalCache, t);
-                }
-
-                ImGui.SetCursorPos(new Vector2(p.X + 20, p.Y + 20));
-                //ImGui.TextUnformatted("\u2713");
-                ImGui.PushFont(UiBuilder.IconFont);
-                ImGui.TextUnformatted(FontAwesomeIcon.Check.ToIconString());
-                ImGui.PopFont();
-                ImGui.SetCursorPos(p);
-            }
-        }
-
-        private void DrawOrnament(uint id, bool hasOrnament)
-        {
-            Vector2 p = ImGui.GetCursorPos();
-            Ornament? o = _globalCache.OrnamentStorage.GetOrnament(_currentLocale, id);
-            if (o == null)
-            {
-                return;
-            }
-
-            if (!hasOrnament)
-            {
-                if (_isSpoilerEnabled)
-                {
-                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(o.Icon), new Vector2(32, 32),
-                        new Vector4(1, 1, 1, 0.5f));
-                    if (ImGui.IsItemHovered())
-                    {
-                        Utils.DrawOrnamentTooltip(_currentLocale, ref _globalCache, o);
-                    }
-                }
-                else
-                {
-                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(000786), new Vector2(32, 32));
-                }
-            }
-            else
-            {
-                Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(o.Icon), new Vector2(32, 32));
-                if (ImGui.IsItemHovered())
-                {
-                    Utils.DrawOrnamentTooltip(_currentLocale, ref _globalCache, o);
-                }
-
-                ImGui.SetCursorPos(new Vector2(p.X + 20, p.Y + 20));
-                //ImGui.TextUnformatted("\u2713");
-                ImGui.PushFont(UiBuilder.IconFont);
-                ImGui.TextUnformatted(FontAwesomeIcon.Check.ToIconString());
-                ImGui.PopFont();
-                ImGui.SetCursorPos(p);
-            }
-        }
-        private void DrawFacewear(uint id, bool hasFacewear)
-        {
-            Vector2 p = ImGui.GetCursorPos();
-            Models.Glasses? g = _globalCache.GlassesStorage.GetGlasses(_currentLocale, id);
-            if (g == null)
-            {
-                return;
-            }
-
-            if (!hasFacewear)
-            {
-                if (_isSpoilerEnabled)
-                {
-                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(g.Icon), new Vector2(32, 32),
-                        new Vector4(1, 1, 1, 0.5f));
-                    if (ImGui.IsItemHovered())
-                    {
-                        Utils.DrawGlassesTooltip(_currentLocale, ref _globalCache, g);
-                    }
-                }
-                else
-                {
-                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(000786), new Vector2(32, 32));
-                }
-            }
-            else
-            {
-                Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(g.Icon), new Vector2(32, 32));
-                if (ImGui.IsItemHovered())
-                {
-                    Utils.DrawGlassesTooltip(_currentLocale, ref _globalCache, g);
-                }
-
-                ImGui.SetCursorPos(new Vector2(p.X + 20, p.Y + 20));
-                //ImGui.TextUnformatted("\u2713");
-                ImGui.PushFont(UiBuilder.IconFont);
-                ImGui.TextUnformatted(FontAwesomeIcon.Check.ToIconString());
-                ImGui.PopFont();
-                ImGui.SetCursorPos(p);
-            }
         }
 
         private void DrawItem(uint id, uint requiredRank, uint? claimedRank)
