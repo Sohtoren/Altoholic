@@ -115,6 +115,46 @@ namespace Altoholic.Models
             return HasQuest(id) && Quests.First(q => q.Id == id).Completed;
         }*/
 
+        public bool HasCollectible(Helpers.CharacterCollectible collectible, uint id)
+        {
+            switch (collectible)
+            {
+                case Helpers.CharacterCollectible.Barding:
+                    {
+                        return HasBarding(id);
+                    }
+                case Helpers.CharacterCollectible.Emote:
+                    {
+                        return HasEmote(id);
+                    }
+                case Helpers.CharacterCollectible.Glass:
+                    {
+                        return HasGlasses(id);
+                    }
+                case Helpers.CharacterCollectible.Minion:
+                    {
+                        return HasMinion(id);
+                    }
+                case Helpers.CharacterCollectible.Mount:
+                    {
+                        return HasMount(id);
+                    }
+                case Helpers.CharacterCollectible.Orchestrion:
+                    {
+                        return HasOrchestrionRoll(id);
+                    }
+                case Helpers.CharacterCollectible.Ornament:
+                    {
+                        return HasOrnament(id);
+                    }
+                case Helpers.CharacterCollectible.TripleTriadCard:
+                    {
+                        return HasTTC(id);
+                    }
+            }
+            return false;
+        }
+
         public bool HasMinion(uint id)
         {
             return Minions.Count > 0 && Minions.Contains(id);

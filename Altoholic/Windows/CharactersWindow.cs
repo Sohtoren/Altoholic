@@ -382,6 +382,7 @@ namespace Altoholic.Windows
 
             ImGui.PushFont(UiBuilder.IconFont);
             ImGui.TextUnformatted(FontAwesomeIcon.Ban.ToIconString());
+            ImGui.PopFont();
             if (ImGui.IsItemClicked())
             {
                 ImGui.OpenPopup(
@@ -391,8 +392,6 @@ namespace Altoholic.Windows
                 Plugin.Log.Debug(
                     $"Altoholic : Blacklist button for char {character.FirstName} {character.LastName}{(char)SeIconChar.CrossWorld}{character.HomeWorld} hitted");
             }
-
-            ImGui.PopFont();
             if (ImGui.IsItemHovered())
             {
                 ImGui.BeginTooltip();

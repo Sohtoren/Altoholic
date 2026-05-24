@@ -16,6 +16,7 @@ using Glasses = Altoholic.Models.Glasses;
 using Mount = Altoholic.Models.Mount;
 using Ornament = Altoholic.Models.Ornament;
 using TripleTriadCard = Altoholic.Models.TripleTriadCard;
+using Dalamud.Interface.Textures.TextureWraps;
 
 namespace Altoholic.Windows
 {
@@ -470,7 +471,7 @@ namespace Altoholic.Windows
                 {
                     continue;
                 }
-
+                (string name, string transientOrDescription, IDalamudTextureWrap? icon) = Helpers.Reward.GetCollectibleNameTransientDescriptionIcon(_currentLocale, _globalCache, Helpers.CharacterCollectible.Minion, m.Id);
                 if (currentCharacter.HasMinion(minionId))
                 {
                     Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(m.Icon), new Vector2(48, 48));
@@ -489,7 +490,7 @@ namespace Altoholic.Windows
                 }
                 if (ImGui.IsItemHovered())
                 {
-                    Utils.DrawMinionTooltip(_currentLocale, ref _globalCache, m);
+                    Helpers.Reward.DrawCollectibleTooltip(_currentLocale, ref _globalCache, m.Id, icon, name, transientOrDescription);
                 }
 
                 i++;
@@ -626,15 +627,16 @@ namespace Altoholic.Windows
                     continue;
                 }
 
+                (string name, string transientOrDescription, IDalamudTextureWrap? icon) = Helpers.Reward.GetCollectibleNameTransientDescriptionIcon(_currentLocale, _globalCache, Helpers.CharacterCollectible.Mount, m.Id);
                 if (currentCharacter.HasMount(mountId))
                 {
-                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(m.Icon), new Vector2(48, 48));
+                    Utils.DrawIcon(icon, new Vector2(48, 48));
                 }
                 else
                 {
                     if (_isSpoilerEnabled)
                     {
-                        Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(m.Icon), new Vector2(48, 48),
+                        Utils.DrawIcon(icon, new Vector2(48, 48),
                             new Vector4(1, 1, 1, 0.5f));
                     }
                     else
@@ -644,7 +646,7 @@ namespace Altoholic.Windows
                 }
                 if (ImGui.IsItemHovered())
                 {
-                    Utils.DrawMountTooltip(_currentLocale, ref _globalCache, m);
+                    Helpers.Reward.DrawCollectibleTooltip(_currentLocale, ref _globalCache, m.Id, icon, name, transientOrDescription);
                 }
 
                 i++;
@@ -765,16 +767,16 @@ namespace Altoholic.Windows
                     continue;
                 }
 
-
+                (string name, string transientOrDescription, IDalamudTextureWrap? icon) = Helpers.Reward.GetCollectibleNameTransientDescriptionIcon(_currentLocale, _globalCache, Helpers.CharacterCollectible.TripleTriadCard, ttc.Id);
                 if (currentCharacter.HasTTC(ttcId))
                 {
-                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(ttc.Icon), new Vector2(48, 48));
+                    Utils.DrawIcon(icon, new Vector2(48, 48));
                 }
                 else
                 {
                     if (_isSpoilerEnabled)
                     {
-                        Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(ttc.Icon), new Vector2(48, 48),
+                        Utils.DrawIcon(icon, new Vector2(48, 48),
                             new Vector4(1, 1, 1, 0.5f));
                     }
                     else
@@ -784,7 +786,7 @@ namespace Altoholic.Windows
                 }
                 if (ImGui.IsItemHovered())
                 {
-                    Utils.DrawTTCTooltip(_currentLocale, ref _globalCache, ttc);
+                    Helpers.Reward.DrawCollectibleTooltip(_currentLocale, ref _globalCache, ttc.Id, icon, name, transientOrDescription);
                 }
 
                 i++;
@@ -928,16 +930,16 @@ namespace Altoholic.Windows
                 {
                     continue;
                 }
-
+                (string name, string transientOrDescription, IDalamudTextureWrap? icon) = Helpers.Reward.GetCollectibleNameTransientDescriptionIcon(_currentLocale, _globalCache, Helpers.CharacterCollectible.Emote, emote.Id);
                 if (currentCharacter.HasEmote(emoteId))
                 {
-                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(emote.Icon), new Vector2(48, 48));
+                    Utils.DrawIcon(icon, new Vector2(48, 48));
                 }
                 else
                 {
                     if (_isSpoilerEnabled)
                     {
-                        Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(emote.Icon), new Vector2(48, 48),
+                        Utils.DrawIcon(icon, new Vector2(48, 48),
                             new Vector4(1, 1, 1, 0.5f));
                     }
                     else
@@ -947,7 +949,7 @@ namespace Altoholic.Windows
                 }
                 if (ImGui.IsItemHovered())
                 {
-                    Utils.DrawEmoteTooltip(_currentLocale, ref _globalCache, emote);
+                    Helpers.Reward.DrawCollectibleTooltip(_currentLocale, ref _globalCache, emote.Id, icon, name, transientOrDescription);
                 }
 
                 i++;
@@ -1082,7 +1084,7 @@ namespace Altoholic.Windows
                 {
                     continue;
                 }
-
+                (string name, string transientOrDescription, IDalamudTextureWrap? icon) = Helpers.Reward.GetCollectibleNameTransientDescriptionIcon(_currentLocale, _globalCache, Helpers.CharacterCollectible.Barding, b.Id);
                 if (currentCharacter.HasBarding(bId))
                 {
                     Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(b.Icon), new Vector2(48, 48));
@@ -1101,7 +1103,7 @@ namespace Altoholic.Windows
                 }
                 if (ImGui.IsItemHovered())
                 {
-                    Utils.DrawBardingTooltip(_currentLocale, ref _globalCache, b);
+                    Helpers.Reward.DrawCollectibleTooltip(_currentLocale, ref _globalCache, b.Id, icon, name, transientOrDescription);
                 }
 
                 i++;
@@ -1236,7 +1238,7 @@ namespace Altoholic.Windows
                 {
                     continue;
                 }
-
+                (string name, string transientOrDescription, IDalamudTextureWrap? icon) = Helpers.Reward.GetCollectibleNameTransientDescriptionIcon(_currentLocale, _globalCache, Helpers.CharacterCollectible.FramerKit, f.Id);
                 if (currentCharacter.HasFramerKit(fkId))
                 {
                     Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(f.Icon), new Vector2(48, 48));
@@ -1255,7 +1257,7 @@ namespace Altoholic.Windows
                 }
                 if (ImGui.IsItemHovered())
                 {
-                    Utils.DrawFramerKitTooltip(_currentLocale, ref _globalCache, f);
+                    Helpers.Reward.DrawCollectibleTooltip(_currentLocale, ref _globalCache, f.Id, icon, name, transientOrDescription);
                 }
 
                 i++;
@@ -1387,21 +1389,21 @@ namespace Altoholic.Windows
                 }
 
                 ImGui.TableNextColumn();
-                OrchestrionRoll? f = _globalCache.OrchestrionRollStorage.GetOrchestrionRoll(_currentLocale, fkId);
-                if (f == null)
+                OrchestrionRoll? o = _globalCache.OrchestrionRollStorage.GetOrchestrionRoll(_currentLocale, fkId);
+                if (o == null)
                 {
                     continue;
                 }
-
+                (string name, string transientOrDescription, IDalamudTextureWrap? icon) = Helpers.Reward.GetCollectibleNameTransientDescriptionIcon(_currentLocale, _globalCache, Helpers.CharacterCollectible.Orchestrion, o.Id);
                 if (currentCharacter.HasOrchestrionRoll(fkId))
                 {
-                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(f.Icon), new Vector2(48, 48));
+                    Utils.DrawIcon(icon, new Vector2(48, 48));
                 }
                 else
                 {
                     if (_isSpoilerEnabled)
                     {
-                        Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(f.Icon), new Vector2(48, 48),
+                        Utils.DrawIcon(icon, new Vector2(48, 48),
                             new Vector4(1, 1, 1, 0.5f));
                     }
                     else
@@ -1411,7 +1413,7 @@ namespace Altoholic.Windows
                 }
                 if (ImGui.IsItemHovered())
                 {
-                    Utils.DrawOrchestrionRollTooltip(_currentLocale, ref _globalCache, f);
+                    Helpers.Reward.DrawCollectibleTooltip(_currentLocale, ref _globalCache, o.Id, icon, name, transientOrDescription);
                 }
 
                 i++;
@@ -1547,17 +1549,17 @@ namespace Altoholic.Windows
                 {
                     continue;
                 }
-
+                (string name, string transientOrDescription, IDalamudTextureWrap? icon) = Helpers.Reward.GetCollectibleNameTransientDescriptionIcon(_currentLocale, _globalCache, Helpers.CharacterCollectible.Ornament, o.Id);
                 if (currentCharacter.HasOrnament(ornamentId))
                 {
-                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(o.Icon), new Vector2(48, 48));
+                    Utils.DrawIcon(icon, new Vector2(48, 48));
                 }
                 else
                 {
                     //Plugin.Log.Debug($"Ornament {ornamentId} not found");
                     if (_isSpoilerEnabled)
                     {
-                        Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(o.Icon), new Vector2(48, 48),
+                        Utils.DrawIcon(icon, new Vector2(48, 48),
                             new Vector4(1, 1, 1, 0.5f));
                     }
                     else
@@ -1567,7 +1569,7 @@ namespace Altoholic.Windows
                 }
                 if (ImGui.IsItemHovered())
                 {
-                    Utils.DrawOrnamentTooltip(_currentLocale, ref _globalCache, o);
+                    Helpers.Reward.DrawCollectibleTooltip(_currentLocale, ref _globalCache, o.Id, icon, name, transientOrDescription);
                 }
 
                 i++;
@@ -1703,17 +1705,17 @@ namespace Altoholic.Windows
                 {
                     continue;
                 }
-
+                (string name, string transientOrDescription, IDalamudTextureWrap? icon) = Helpers.Reward.GetCollectibleNameTransientDescriptionIcon(_currentLocale, _globalCache, Helpers.CharacterCollectible.Glass, g.Id);
                 if (currentCharacter.HasGlasses(glasseId))
                 {
-                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(g.Icon), new Vector2(48, 48));
+                    Utils.DrawIcon(icon, new Vector2(48, 48));
                 }
                 else
                 {
                     //Plugin.Log.Debug($"Glasses {glasseId} not found");
                     if (_isSpoilerEnabled)
                     {
-                        Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(g.Icon), new Vector2(48, 48),
+                        Utils.DrawIcon(icon, new Vector2(48, 48),
                             new Vector4(1, 1, 1, 0.5f));
                     }
                     else
@@ -1723,7 +1725,7 @@ namespace Altoholic.Windows
                 }
                 if (ImGui.IsItemHovered())
                 {
-                    Utils.DrawGlassesTooltip(_currentLocale, ref _globalCache, g);
+                    Helpers.Reward.DrawCollectibleTooltip(_currentLocale, ref _globalCache, g.Id, icon, name, transientOrDescription);
                 }
 
                 i++;
