@@ -76,14 +76,14 @@ namespace Altoholic.Windows
 
         public void Clear()
         {
-            Plugin.Log.Info("GearSetWindow, Clear() called");
+            Utils.LogMessage(LogLevel.Debug, _plugin.Configuration.EnableDebugMessages, "GearSetWindow, Clear() called");
             _currentGearSet = null;
             _currentCharacter = null;
         }
 
         public void Dispose()
         {
-            Plugin.Log.Info("GearSetWindow, Dispose() called");
+            Utils.LogMessage(LogLevel.Debug, _plugin.Configuration.EnableDebugMessages, "GearSetWindow, Dispose() Called");
             _currentGearSet = null;
             _currentCharacter = null;
             foreach (KeyValuePair<GearSlot, IDalamudTextureWrap?> loadedTexture in _characterTextures)

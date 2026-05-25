@@ -409,7 +409,7 @@ namespace Altoholic.Windows
 
                 if (ImGui.Button("OK", new Vector2(120, 0)))
                 {
-                    int result = Database.Database.BlacklistCharacter(_db, character.CharacterId);
+                    int result = Database.Database.BlacklistCharacter(_plugin, _db, character.CharacterId);
                     //SetBlacklistedCharacter(character.CharacterId);
                     //this.SetOthersCharactersList(oC);
                     Utils.ChatMessage(

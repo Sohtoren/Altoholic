@@ -150,43 +150,7 @@ namespace Altoholic
             _frameworkEventHook.Enable();
             _onJumboCactpotReceiveEventHook = Hook.HookFromAddress<AgentInterface.Delegates.ReceiveEvent>(AgentModule.Instance()->GetAgentByInternalId(AgentId.LotteryWeekly)->VirtualTable->ReceiveEvent, OnJumboCacpotReceiveEvent);
             _onJumboCactpotReceiveEventHook?.Enable();
-#if DEBUG
-            string dbpath = Path.Combine(PluginInterface.AssemblyLocation.Directory?.FullName!, "altoholic.db");
-            Log.Info($"dbpath = {dbpath}");
-#else
-            string dbpath = Path.Combine(PluginInterface.GetPluginConfigDirectory(), "altoholic.db");
-#endif
-            if (File.Exists(dbpath))
-            {
-                bool isSQliteDb = Database.Database.IsSqLiteDatabase(dbpath);
-                if (!isSQliteDb)
-                {
-                    Log.Info("Database is not SQLite, potential old version (litedb) found. Deleting...");
-                    File.Delete(dbpath);
-                }
 
-                _db = Database.Database.CreateDatabaseConnection(dbpath);
-                _db.Open();
-                Database.Database.CheckOrCreateDatabases(_db);
-                Log.Info("Database creation check finished");
-            }
-            else
-            {
-                _db = Database.Database.CreateDatabaseConnection(dbpath);
-                _db.Open();
-                Database.Database.CheckOrCreateDatabases(_db);
-            }
-
-            Database.Database.CheckAndBackup(_db, PluginInterface.Manifest.AssemblyVersion);
-
-            _blacklistedCharacters = Database.Database.GetBlacklists(_db);
-#if DEBUG
-            Log.Debug("BlacklistedCharacters.Count: ", _blacklistedCharacters.Count);
-            foreach (Blacklist blacklistedCharacter in _blacklistedCharacters)
-            {
-                Log.Debug($"Blacklisted id: {blacklistedCharacter.CharacterId}");
-            }
-#endif
             Configuration = PluginInterface.GetPluginConfig() as Configuration ?? new Configuration
             {
                 EnabledTimers =
@@ -225,6 +189,44 @@ namespace Altoholic
             }
             ClientLanguage currentLocale = Configuration.Language;
             _localization.SetupWithLangCode(PluginInterface.UiLanguage);
+
+#if DEBUG
+            string dbpath = Path.Combine(PluginInterface.AssemblyLocation.Directory?.FullName!, "altoholic.db");
+            Log.Info($"dbpath = {dbpath}");
+#else
+            string dbpath = Path.Combine(PluginInterface.GetPluginConfigDirectory(), "altoholic.db");
+#endif
+            if (File.Exists(dbpath))
+            {
+                bool isSQliteDb = Database.Database.IsSqLiteDatabase(dbpath);
+                if (!isSQliteDb)
+                {
+                    Log.Info("Database is not SQLite, potential old version (litedb) found. Deleting...");
+                    File.Delete(dbpath);
+                }
+
+                _db = Database.Database.CreateDatabaseConnection(dbpath);
+                _db.Open();
+                Database.Database.CheckOrCreateDatabases(this, _db);
+                Log.Info("Database creation check finished");
+            }
+            else
+            {
+                _db = Database.Database.CreateDatabaseConnection(dbpath);
+                _db.Open();
+                Database.Database.CheckOrCreateDatabases(this, _db);
+            }
+
+            Database.Database.CheckAndBackup(this, _db, PluginInterface.Manifest.AssemblyVersion);
+
+            _blacklistedCharacters = Database.Database.GetBlacklists(_db);
+#if DEBUG
+            Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, "BlacklistedCharacters.Count: ", _blacklistedCharacters.Count);
+            foreach (Blacklist blacklistedCharacter in _blacklistedCharacters)
+            {
+                Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"Blacklisted id: {blacklistedCharacter.CharacterId}");
+            }
+#endif
 
             _globalCache.IconStorage.Init();
             _globalCache.BardingStorage.Init(currentLocale, _globalCache);
@@ -375,7 +377,7 @@ namespace Altoholic
 
             _autoSaveWatch.Start();
             Log.Info("Starting altoholic autosave timer");
-            Log.Info($"Database version: {Database.Database.GetDbVersion(_db)}");
+            Log.Info($"Database version: {Database.Database.GetDbVersion(this, _db)}");
             if (Configuration.TimerStandaloneShowAtStartup)
             {
                 DrawTimerUI();
@@ -455,21 +457,21 @@ namespace Altoholic
 
         private void OnUnblacklistCommand()
         {
-            Log.Debug("OnBlacklistCommand called");
+            Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, "OnBlacklistCommand called");
             Blacklist? blacklist = _blacklistedCharacters.Find(b => b.CharacterId == PlayerState.ContentId);
             if (blacklist is null)
             {
                 Utils.ChatMessage("Character not found in the blacklist");
                 return;
             }
-            Database.Database.DeleteBlacklist(_db, blacklist.CharacterId);
+            Database.Database.DeleteBlacklist(this, _db, blacklist.CharacterId);
             _blacklistedCharacters.Remove(blacklist);
             ChatGui.Print("Character removed from blacklist");
         }
 
         private void OnCommand(string command, string args)
         {
-            Log.Debug($"OnCommand called {(args.Length > 0 ? args : "")}");
+            Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"OnCommand called {(args.Length > 0 ? args : "")}");
             args = args.Replace("<", "").Replace(">", "");
             string[] argsArray = args.Split(" ");
 
@@ -532,7 +534,7 @@ namespace Altoholic
                     DrawTimerUI();
                     break;
                 case "window":
-                    //Log.Debug($"Window position: {MainWindow.Position}");
+                    //Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"Window position: {MainWindow.Position}");
                     MainWindow.Position = new Vector2(100, 100);
                     DrawMainUI();
                     break;
@@ -543,7 +545,7 @@ namespace Altoholic
                     }
                     else
                     {
-                        Log.Debug("No argument, opening window");
+                        Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, "No argument, opening window");
                         DrawMainUI();
                     }
                     break;
@@ -572,7 +574,7 @@ namespace Altoholic
             }
             if (_localPlayer.CharacterId != 0)
             {
-                _otherCharacters = Database.Database.GetOthersCharacters(_db, _localPlayer.CharacterId);
+                _otherCharacters = Database.Database.GetOthersCharacters(this, _db, _localPlayer.CharacterId);
             }
 
             //TimerWindow.Position = new Vector2(Configuration.TimerStandaloneWindowPositionX, Configuration.TimerStandaloneWindowPositionY);
@@ -604,7 +606,7 @@ namespace Altoholic
                 });
                 return;
             }
-            //Log.Debug($"localPlayerName : {_localPlayer.CharacterId} {_localPlayer.FirstName} {_localPlayer.LastName}");
+            //Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"localPlayerName : {_localPlayer.CharacterId} {_localPlayer.FirstName} {_localPlayer.LastName}");
             if (_localPlayer.CharacterId == 0 || string.IsNullOrEmpty(_localPlayer.FirstName))
             {
                 Character? p = GetCharacterFromGameOrDatabase();
@@ -620,24 +622,24 @@ namespace Altoholic
                 };
 
                 _localPlayer = p;
-                //Plugin.Log.Debug($"localPlayerPlayTime : {localPlayerPlayTime}");
+                //Plugin.Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"localPlayerPlayTime : {localPlayerPlayTime}");
                 GetCharacterPlaytime();
 
 #if DEBUG
-                Log.Debug($"Character localLastPlayTimeUpdate : {_localPlayer.LastPlayTimeUpdate}");
+                Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"Character localLastPlayTimeUpdate : {_localPlayer.LastPlayTimeUpdate}");
 
                 /*foreach (Inventory inventory in _localPlayer.Inventory)
                 {
-                    Plugin.Log.Debug($"{inventory.ItemId} {lumina.Singular} {inventory.HQ} {inventory.Quantity}");
+                    Plugin.Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"{inventory.ItemId} {lumina.Singular} {inventory.HQ} {inventory.Quantity}");
                 }*/
 #endif
             }
 
             if (_localPlayer.CharacterId != 0)
             {
-                _otherCharacters = Database.Database.GetOthersCharacters(_db, _localPlayer.CharacterId);
+                _otherCharacters = Database.Database.GetOthersCharacters(this, _db, _localPlayer.CharacterId);
 
-                //Plugin.Log.Debug($"otherCharacters count {otherCharacters.Count}");
+                //Plugin.Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"otherCharacters count {otherCharacters.Count}");
                 if (_altoholicService.GetBlacklistedCharacters()
                     .Exists(b => b.CharacterId == _localPlayer.CharacterId))
                 {
@@ -659,27 +661,27 @@ namespace Altoholic
                     Utils.ChatMessage(Loc.Localize("NoPlaytimeFound", "No playtime found, use /playtime"));
                 }
 
-                //Plugin.Log.Debug($"localPlayer.Quests.Count: {localPlayer.Quests.Count}");
+                //Plugin.Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"localPlayer.Quests.Count: {localPlayer.Quests.Count}");
                 if (_localPlayer.Quests.Count == 0)
                 {
-                    //Plugin.Log.Debug("No quest found, fetching from db");
-                    Character? chara = Database.Database.GetCharacter(_db, _localPlayer.CharacterId);
+                    //Plugin.Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, "No quest found, fetching from db");
+                    Character? chara = Database.Database.GetCharacter(this, _db, _localPlayer.CharacterId);
                     if (chara != null)
                     {
                         _localPlayer.Quests = chara.Quests;
                     }
                 }
-                //Plugin.Log.Debug($"localPlayer.Quests.Count: {localPlayer.Quests.Count}");
+                //Plugin.Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"localPlayer.Quests.Count: {localPlayer.Quests.Count}");
                 if (_localPlayer.Retainers.Count == 0)
                 {
-                    Character? chara = Database.Database.GetCharacter(_db, _localPlayer.CharacterId);
+                    Character? chara = Database.Database.GetCharacter(this, _db, _localPlayer.CharacterId);
                     if (chara != null)
                     {
                         _localPlayer.Retainers = chara.Retainers;
                     }
                 }
 
-                Character? character = Database.Database.GetCharacter(_db, _localPlayer.CharacterId);
+                Character? character = Database.Database.GetCharacter(this, _db, _localPlayer.CharacterId);
                 if(character != null)
                 {
                     foreach (Housing housing in character.Houses.Where(housing => !_localPlayer.Houses.Exists(h => h.Id == housing.Id)))
@@ -691,20 +693,20 @@ namespace Altoholic
 #if DEBUG
                 foreach (Gear i in _localPlayer.Gear)
                 {
-                    Log.Debug($"Gear: {i.ItemId} {Enum.GetName(typeof(GearSlot), i.Slot)} {i.Slot}");
+                    Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"Gear: {i.ItemId} {Enum.GetName(typeof(GearSlot), i.Slot)} {i.Slot}");
                 }
 
-                /*Plugin.Log.Debug($"Title {localPlayer.Profile.Title}");
-                Plugin.Log.Debug($"Title Length {localPlayer.Profile.Title.Length}");
-                Plugin.Log.Debug($"Grand Company {localPlayer.Profile.Grand_Company}");
-                Plugin.Log.Debug($"Grand Company Rank {localPlayer.Profile.Grand_Company_Rank}");
-                Plugin.Log.Debug($"Gender {Utils.GetGender(localPlayer.Profile.Gender)}");
-                Plugin.Log.Debug($"Race {Utils.GetRace(localPlayer.Profile.Gender, localPlayer.Profile.Race)}");
-                Plugin.Log.Debug($"Tribe {Utils.GetTribe(localPlayer.Profile.Gender, localPlayer.Profile.Tribe)}");
-                Plugin.Log.Debug($"City State {Utils.GetTown(localPlayer.Profile.City_State)}");
-                Plugin.Log.Debug($"Nameday_Day {localPlayer.Profile.Nameday_Day}");
-                Plugin.Log.Debug($"Nameday_Month {localPlayer.Profile.Nameday_Month}");
-                Plugin.Log.Debug($"Guardian {Utils.GetGuardian(localPlayer.Profile.Guardian)}");*/
+                /*Plugin.Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"Title {localPlayer.Profile.Title}");
+                Plugin.Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"Title Length {localPlayer.Profile.Title.Length}");
+                Plugin.Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"Grand Company {localPlayer.Profile.Grand_Company}");
+                Plugin.Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"Grand Company Rank {localPlayer.Profile.Grand_Company_Rank}");
+                Plugin.Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"Gender {Utils.GetGender(localPlayer.Profile.Gender)}");
+                Plugin.Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"Race {Utils.GetRace(localPlayer.Profile.Gender, localPlayer.Profile.Race)}");
+                Plugin.Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"Tribe {Utils.GetTribe(localPlayer.Profile.Gender, localPlayer.Profile.Tribe)}");
+                Plugin.Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"City State {Utils.GetTown(localPlayer.Profile.City_State)}");
+                Plugin.Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"Nameday_Day {localPlayer.Profile.Nameday_Day}");
+                Plugin.Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"Nameday_Month {localPlayer.Profile.Nameday_Month}");
+                Plugin.Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"Guardian {Utils.GetGuardian(localPlayer.Profile.Guardian)}");*/
 #endif
                 IPlayerCharacter? lPlayer = ObjectTable.LocalPlayer;
                 if (lPlayer != null)
@@ -726,36 +728,36 @@ namespace Altoholic
                     GetDuties();
                     GetCollectionFromState();
                     /*
-                    Log.Debug($"localPlayer.Inventory.Count : {localPlayer.Inventory.Count}");
-                    Log.Debug($"localPlayer.Saddle.Count: {localPlayer.Saddle.Count}");
+                    Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"localPlayer.Inventory.Count : {localPlayer.Inventory.Count}");
+                    Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"localPlayer.Saddle.Count: {localPlayer.Saddle.Count}");
                     foreach (var inventory in localPlayer.Saddle)
                     {
-                        Log.Debug($"{inventory.ItemId} {inventory.HQ} {inventory.Quantity}");
+                        Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"{inventory.ItemId} {inventory.HQ} {inventory.Quantity}");
                     }
                     */
-                    /*Log.Debug($"localPlayer retainers count : {localPlayer.Retainers.Count}");
+                    /*Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"localPlayer retainers count : {localPlayer.Retainers.Count}");
                     foreach(Retainer retainer in localPlayer.Retainers)
                     {
-                        Log.Debug($"{retainer.Name} job:{Enum.GetName(typeof(ClassJob), retainer.ClassJob)}, displayorder: {retainer.DisplayOrder}, items: {retainer.Inventory.Count}, gils: {retainer.Gils}");
+                        Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"{retainer.Name} job:{Enum.GetName(typeof(ClassJob), retainer.ClassJob)}, displayorder: {retainer.DisplayOrder}, items: {retainer.Inventory.Count}, gils: {retainer.Gils}");
                     }*/
 #if DEBUG
                     if (_localPlayer.ArmoryInventory != null)
                     {
-                        Log.Debug($"localPlayer.ArmoryInventory.MainHand.Count : {_localPlayer.ArmoryInventory.MainHand.FindAll(i => i.ItemId != 0).Count}");
-                        Log.Debug($"localPlayer.ArmoryInventory.Head.Count : {_localPlayer.ArmoryInventory.Head.FindAll(i => i.ItemId != 0).Count}");
-                        Log.Debug($"localPlayer.ArmoryInventory.Body.Count : {_localPlayer.ArmoryInventory.Body.FindAll(i => i.ItemId != 0).Count}");
-                        Log.Debug($"localPlayer.ArmoryInventory.Hands.Count : {_localPlayer.ArmoryInventory.Hands.FindAll(i => i.ItemId != 0).Count}");
-                        Log.Debug($"localPlayer.ArmoryInventory.Legs.Count : {_localPlayer.ArmoryInventory.Legs.FindAll(i => i.ItemId != 0).Count}");
-                        Log.Debug($"localPlayer.ArmoryInventory.Feets.Count : {_localPlayer.ArmoryInventory.Feets.FindAll(i => i.ItemId != 0).Count}");
-                        Log.Debug($"localPlayer.ArmoryInventory.OffHand.Count : {_localPlayer.ArmoryInventory.OffHand.FindAll(i => i.ItemId != 0).Count}");
-                        Log.Debug($"localPlayer.ArmoryInventory.Ear.Count : {_localPlayer.ArmoryInventory.Ear.FindAll(i => i.ItemId != 0).Count}");
-                        Log.Debug($"localPlayer.ArmoryInventory.Neck.Count : {_localPlayer.ArmoryInventory.Neck.FindAll(i => i.ItemId != 0).Count}");
-                        Log.Debug($"localPlayer.ArmoryInventory.Wrist.Count : {_localPlayer.ArmoryInventory.Wrist.FindAll(i => i.ItemId != 0).Count}");
-                        Log.Debug($"localPlayer.ArmoryInventory.Rings.Count : {_localPlayer.ArmoryInventory.Rings.FindAll(i => i.ItemId != 0).Count}");
-                        Log.Debug($"localPlayer.ArmoryInventory.SoulCrystal.Count : {_localPlayer.ArmoryInventory.SoulCrystal.FindAll(i => i.ItemId != 0).Count}");
+                        Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"localPlayer.ArmoryInventory.MainHand.Count : {_localPlayer.ArmoryInventory.MainHand.FindAll(i => i.ItemId != 0).Count}");
+                        Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"localPlayer.ArmoryInventory.Head.Count : {_localPlayer.ArmoryInventory.Head.FindAll(i => i.ItemId != 0).Count}");
+                        Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"localPlayer.ArmoryInventory.Body.Count : {_localPlayer.ArmoryInventory.Body.FindAll(i => i.ItemId != 0).Count}");
+                        Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"localPlayer.ArmoryInventory.Hands.Count : {_localPlayer.ArmoryInventory.Hands.FindAll(i => i.ItemId != 0).Count}");
+                        Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"localPlayer.ArmoryInventory.Legs.Count : {_localPlayer.ArmoryInventory.Legs.FindAll(i => i.ItemId != 0).Count}");
+                        Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"localPlayer.ArmoryInventory.Feets.Count : {_localPlayer.ArmoryInventory.Feets.FindAll(i => i.ItemId != 0).Count}");
+                        Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"localPlayer.ArmoryInventory.OffHand.Count : {_localPlayer.ArmoryInventory.OffHand.FindAll(i => i.ItemId != 0).Count}");
+                        Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"localPlayer.ArmoryInventory.Ear.Count : {_localPlayer.ArmoryInventory.Ear.FindAll(i => i.ItemId != 0).Count}");
+                        Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"localPlayer.ArmoryInventory.Neck.Count : {_localPlayer.ArmoryInventory.Neck.FindAll(i => i.ItemId != 0).Count}");
+                        Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"localPlayer.ArmoryInventory.Wrist.Count : {_localPlayer.ArmoryInventory.Wrist.FindAll(i => i.ItemId != 0).Count}");
+                        Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"localPlayer.ArmoryInventory.Rings.Count : {_localPlayer.ArmoryInventory.Rings.FindAll(i => i.ItemId != 0).Count}");
+                        Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"localPlayer.ArmoryInventory.SoulCrystal.Count : {_localPlayer.ArmoryInventory.SoulCrystal.FindAll(i => i.ItemId != 0).Count}");
                         /*foreach (var inventory in localPlayer.ArmoryInventory.Hands)
                         {
-                            Log.Debug($"{inventory.ItemId} {Utils.GetItemNameFromId(inventory.ItemId)} {inventory.HQ}");
+                            Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"{inventory.ItemId} {Utils.GetItemNameFromId(inventory.ItemId)} {inventory.HQ}");
                         }*/
                     }
 #endif
@@ -766,55 +768,55 @@ namespace Altoholic
                     _localPlayer.LastOnline = 0;
                 }
 #if DEBUG
-                /*Plugin.Log.Debug($"Gladiator : {localPlayer.Jobs.Gladiator.Level}");
-                Plugin.Log.Debug($"Pugilist : {localPlayer.Jobs.Pugilist.Level}");
-                Plugin.Log.Debug($"Marauder : {localPlayer.Jobs.Marauder.Level}");
-                Plugin.Log.Debug($"Lancer : {localPlayer.Jobs.Lancer.Level}");
-                Plugin.Log.Debug($"Archer : {localPlayer.Jobs.Archer.Level}");
-                Plugin.Log.Debug($"Conjurer : {localPlayer.Jobs.Conjurer.Level}");
-                Plugin.Log.Debug($"Thaumaturge : {localPlayer.Jobs.Thaumaturge.Level}");
-                Plugin.Log.Debug($"Carpenter : {localPlayer.Jobs.Carpenter.Level}");
-                Plugin.Log.Debug($"Blacksmith : {localPlayer.Jobs.Blacksmith.Level}");
-                Plugin.Log.Debug($"Armorer : {localPlayer.Jobs.Armorer.Level}");
-                Plugin.Log.Debug($"Goldsmith : {localPlayer.Jobs.Goldsmith.Level}");
-                Plugin.Log.Debug($"Leatherworker : {localPlayer.Jobs.Leatherworker.Level}");
-                Plugin.Log.Debug($"Weaver : {localPlayer.Jobs.Weaver.Level}");
-                Plugin.Log.Debug($"Alchemist : {localPlayer.Jobs.Alchemist.Level}");
-                Plugin.Log.Debug($"Culinarian : {localPlayer.Jobs.Culinarian.Level}");
-                Plugin.Log.Debug($"Miner : {localPlayer.Jobs.Miner.Level}");
-                Plugin.Log.Debug($"Botanist : {localPlayer.Jobs.Botanist.Level}");
-                Plugin.Log.Debug($"Fisher : {localPlayer.Jobs.Fisher.Level}");
-                Plugin.Log.Debug($"Paladin : {localPlayer.Jobs.Paladin.Level}");
-                Plugin.Log.Debug($"Monk : {localPlayer.Jobs.Monk.Level}");
-                Plugin.Log.Debug($"Warrior : {localPlayer.Jobs.Warrior.Level}");
-                Plugin.Log.Debug($"Dragoon : {localPlayer.Jobs.Dragoon.Level}");
-                Plugin.Log.Debug($"Bard : {localPlayer.Jobs.Bard.Level}");
-                Plugin.Log.Debug($"WhiteMage : {localPlayer.Jobs.WhiteMage.Level}");
-                Plugin.Log.Debug($"BlackMage : {localPlayer.Jobs.BlackMage.Level}");
-                Plugin.Log.Debug($"Arcanist : {localPlayer.Jobs.Arcanist.Level}");
-                Plugin.Log.Debug($"Summoner : {localPlayer.Jobs.Summoner.Level}");
-                Plugin.Log.Debug($"Scholar : {localPlayer.Jobs.Scholar.Level}");
-                Plugin.Log.Debug($"Rogue : {localPlayer.Jobs.Rogue.Level}");
-                Plugin.Log.Debug($"Ninja : {localPlayer.Jobs.Ninja.Level}");
-                Plugin.Log.Debug($"Machinist : {localPlayer.Jobs.Machinist.Level}");
-                Plugin.Log.Debug($"DarkKnight : {localPlayer.Jobs.DarkKnight.Level}");
-                Plugin.Log.Debug($"Astrologian : {localPlayer.Jobs.Astrologian.Level}");
-                Plugin.Log.Debug($"Samurai : {localPlayer.Jobs.Samurai.Level}");
-                Plugin.Log.Debug($"RedMage : {localPlayer.Jobs.RedMage.Level}");
-                Plugin.Log.Debug($"BlueMage : {localPlayer.Jobs.BlueMage.Level}");
-                Plugin.Log.Debug($"Gunbreaker : {localPlayer.Jobs.Gunbreaker.Level}");
-                Plugin.Log.Debug($"Dancer : {localPlayer.Jobs.Dancer.Level}");
-                Plugin.Log.Debug($"Reaper : {localPlayer.Jobs.Reaper.Level}");
-                Plugin.Log.Debug($"Sage : {localPlayer.Jobs.Sage.Level}");*/
+                /*Plugin.Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"Gladiator : {localPlayer.Jobs.Gladiator.Level}");
+                Plugin.Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"Pugilist : {localPlayer.Jobs.Pugilist.Level}");
+                Plugin.Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"Marauder : {localPlayer.Jobs.Marauder.Level}");
+                Plugin.Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"Lancer : {localPlayer.Jobs.Lancer.Level}");
+                Plugin.Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"Archer : {localPlayer.Jobs.Archer.Level}");
+                Plugin.Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"Conjurer : {localPlayer.Jobs.Conjurer.Level}");
+                Plugin.Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"Thaumaturge : {localPlayer.Jobs.Thaumaturge.Level}");
+                Plugin.Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"Carpenter : {localPlayer.Jobs.Carpenter.Level}");
+                Plugin.Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"Blacksmith : {localPlayer.Jobs.Blacksmith.Level}");
+                Plugin.Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"Armorer : {localPlayer.Jobs.Armorer.Level}");
+                Plugin.Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"Goldsmith : {localPlayer.Jobs.Goldsmith.Level}");
+                Plugin.Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"Leatherworker : {localPlayer.Jobs.Leatherworker.Level}");
+                Plugin.Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"Weaver : {localPlayer.Jobs.Weaver.Level}");
+                Plugin.Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"Alchemist : {localPlayer.Jobs.Alchemist.Level}");
+                Plugin.Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"Culinarian : {localPlayer.Jobs.Culinarian.Level}");
+                Plugin.Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"Miner : {localPlayer.Jobs.Miner.Level}");
+                Plugin.Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"Botanist : {localPlayer.Jobs.Botanist.Level}");
+                Plugin.Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"Fisher : {localPlayer.Jobs.Fisher.Level}");
+                Plugin.Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"Paladin : {localPlayer.Jobs.Paladin.Level}");
+                Plugin.Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"Monk : {localPlayer.Jobs.Monk.Level}");
+                Plugin.Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"Warrior : {localPlayer.Jobs.Warrior.Level}");
+                Plugin.Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"Dragoon : {localPlayer.Jobs.Dragoon.Level}");
+                Plugin.Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"Bard : {localPlayer.Jobs.Bard.Level}");
+                Plugin.Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"WhiteMage : {localPlayer.Jobs.WhiteMage.Level}");
+                Plugin.Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"BlackMage : {localPlayer.Jobs.BlackMage.Level}");
+                Plugin.Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"Arcanist : {localPlayer.Jobs.Arcanist.Level}");
+                Plugin.Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"Summoner : {localPlayer.Jobs.Summoner.Level}");
+                Plugin.Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"Scholar : {localPlayer.Jobs.Scholar.Level}");
+                Plugin.Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"Rogue : {localPlayer.Jobs.Rogue.Level}");
+                Plugin.Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"Ninja : {localPlayer.Jobs.Ninja.Level}");
+                Plugin.Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"Machinist : {localPlayer.Jobs.Machinist.Level}");
+                Plugin.Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"DarkKnight : {localPlayer.Jobs.DarkKnight.Level}");
+                Plugin.Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"Astrologian : {localPlayer.Jobs.Astrologian.Level}");
+                Plugin.Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"Samurai : {localPlayer.Jobs.Samurai.Level}");
+                Plugin.Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"RedMage : {localPlayer.Jobs.RedMage.Level}");
+                Plugin.Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"BlueMage : {localPlayer.Jobs.BlueMage.Level}");
+                Plugin.Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"Gunbreaker : {localPlayer.Jobs.Gunbreaker.Level}");
+                Plugin.Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"Dancer : {localPlayer.Jobs.Dancer.Level}");
+                Plugin.Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"Reaper : {localPlayer.Jobs.Reaper.Level}");
+                Plugin.Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"Sage : {localPlayer.Jobs.Sage.Level}");*/
 #endif
             }
 
-            /*Log.Debug("Checking glamour dresser item cache");
-            Log.Debug($"Cache size: {_localPlayer.GlamourDresser.Length}");
+            /*Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, "Checking glamour dresser item cache");
+            Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"Cache size: {_localPlayer.GlamourDresser.Length}");
             foreach (GlamourItem glamourItem in _localPlayer.GlamourDresser)
             {
                 if (glamourItem.ItemId == 0) continue;
-                Log.Debug($"Glam dresser item {glamourItem.ItemId}, {glamourItem.Slot}");
+                Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"Glam dresser item {glamourItem.ItemId}, {glamourItem.Slot}");
             }*/
 
             MainWindow.IsOpen = true;
@@ -833,7 +835,7 @@ namespace Altoholic
                 return;
             }
 
-            Character? chara = Database.Database.GetCharacter(_db, _localPlayer.CharacterId);
+            Character? chara = Database.Database.GetCharacter(this, _db, _localPlayer.CharacterId);
             if (chara is null || chara.PlayTime == 0)
             {
                 return;
@@ -933,7 +935,7 @@ namespace Altoholic
                     {
                         var selectedDuty = agent->SelectedDuty.Id;
                         var numRewards = agent->NumCollectedRewards;
-                        //Log.Debug($"GetRaidsRewards: {selectedDuty}, {numRewards}");
+                        //Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"GetRaidsRewards: {selectedDuty}, {numRewards}");
                         if (_localPlayer.RaidRewards.TryGetValue(selectedDuty, out var reward))
                         {
                             _localPlayer.RaidRewards[selectedDuty].Reward = numRewards;
@@ -958,7 +960,7 @@ namespace Altoholic
             foreach (GearsetEntry gearset in raptureGearsetModule->Entries)
             {
                 if (gearset.ItemLevel == 0) continue;
-                //Log.Debug($"{gearset.Id} {gearset.NameString} exist?:{gearset.Flags.HasFlag(GearsetFlag.Exists)}");
+                //Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"{gearset.Id} {gearset.NameString} exist?:{gearset.Flags.HasFlag(GearsetFlag.Exists)}");
                 if (!gearset.Flags.HasFlag(GearsetFlag.Exists))
                 {
                     _localPlayer.GearSets.Remove(gearset.Id);
@@ -1103,7 +1105,7 @@ namespace Altoholic
                         }
 
                         string t = namePlateInfo.Title.ToString();//this sometime get player name??? to recheck
-                        //Plugin.Log.Debug($"t: {t}");
+                        //Plugin.Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"t: {t}");
                         if (t == $"{_localPlayer.FirstName} {_localPlayer.LastName}")
                         {
                             continue;
@@ -1247,7 +1249,7 @@ namespace Altoholic
 
             /*foreach (uint i in Enumerable.Range(1001,79))
             {
-                Log.Debug($"uistate.IsUnlockLinkUnlocked(i): {uistate.IsUnlockLinkUnlocked(i)}");
+                Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"uistate.IsUnlockLinkUnlocked(i): {uistate.IsUnlockLinkUnlocked(i)}");
             }*/
         }
 
@@ -1340,8 +1342,8 @@ namespace Altoholic
             _localPlayer.SightseeingLogUnlockState = player.SightseeingLogUnlockState;
             _localPlayer.SightseeingLogUnlockStateEx = player.SightseeingLogUnlockStateEx;
             GetWondrousTailFromState(player);
-            //Log.Debug($"sightseeing: {player.SightseeingLogUnlockState}");// 0 = Not Unlocked, 1 = ARR Part 1, 2 = ARR Part 2
-            //Log.Debug($"sightseeing ex: {player.SightseeingLogUnlockStateEx}");// 3 = Quest "Sights of the North" completed (= AdventureExPhase unlocked?)
+            //Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"sightseeing: {player.SightseeingLogUnlockState}");// 0 = Not Unlocked, 1 = ARR Part 1, 2 = ARR Part 2
+            //Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"sightseeing ex: {player.SightseeingLogUnlockStateEx}");// 3 = Quest "Sights of the North" completed (= AdventureExPhase unlocked?)
         }
 
         private void GetWondrousTailFromState(PlayerState player)
@@ -1424,7 +1426,7 @@ namespace Altoholic
 
         private void GetBeastTribeReputationFromState(PlayerState player)
         {
-            //Log.Debug("GetBeastTribeReputationFromState entered");
+            //Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, "GetBeastTribeReputationFromState entered");
             int btCount = _globalCache.BeastTribesStorage.Count();
             if (_localPlayer.BeastReputations.Count > btCount) _localPlayer.BeastReputations.Clear();
 
@@ -1602,31 +1604,31 @@ namespace Altoholic
         {
             foreach (int id in _questIds)
             {
-                Log.Debug($"Checking quest {id}");
+                Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"Checking quest {id}");
                 /*if(localPlayer.HasQuest(id) && localPlayer.IsQuestCompleted(id))
-                    Plugin.Log.Debug($"{id} is completed");*/
+                    Plugin.Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"{id} is completed");*/
 
                 if (_localPlayer.HasQuest(id)/* && _localPlayer.IsQuestCompleted(id)*/)
                 {
 #if DEBUG
-                    Log.Debug($"Has quest {id}");
+                    Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"Has quest {id}");
 #endif
                     continue;
                 }
 
 #if DEBUG
-                Log.Debug($"Quest not in store or not completed, checking if quest {id} is completed");
+                Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"Quest not in store or not completed, checking if quest {id} is completed");
 #endif
                 bool complete = Utils.IsQuestCompleted(id);
                 if (!complete)
                 {
 #if DEBUG
-                    Log.Debug($"Quest {id} not completed");
+                    Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"Quest {id} not completed");
 #endif
                     continue;
                 }
 #if DEBUG
-                Log.Debug($"Quest {id} completed, adding");
+                Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"Quest {id} completed, adding");
 #endif
                 _localPlayer.Quests.Add(id);
             }
@@ -1716,7 +1718,7 @@ namespace Altoholic
                         currInv.Materia[j] = materiaId;
                         currInv.MateriaGrade[j] = ii.MateriaGrades[j];
                     }
-                    //Plugin.Log.Debug($"{currInv.ItemId}");
+                    //Plugin.Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"{currInv.ItemId}");
                     items.Add(currInv);
                 }
             }
@@ -1761,7 +1763,7 @@ namespace Altoholic
                         HQ = flags.HasFlag(InventoryItem.ItemFlags.HighQuality),
                         Quantity = (uint)ii.Quantity,
                     };
-                    //Plugin.Log.Debug($"{currInv.ItemId}");
+                    //Plugin.Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"{currInv.ItemId}");
                     items.Add(currInv);
                 }
             }
@@ -1943,7 +1945,7 @@ namespace Altoholic
                 }
                 else
                 { 
-                    Log.Debug($"Glamour chest appears to be longer than {_localPlayer.GlamourDresser.Length}, hit {index}.");
+                    Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"Glamour chest appears to be longer than {_localPlayer.GlamourDresser.Length}, hit {index}.");
                 }
                 index++;
             }
@@ -1983,7 +1985,7 @@ namespace Altoholic
             ref readonly RetainerManager retainerManager = ref *RetainerManager.Instance();
             byte retainersCount = retainerManager.GetRetainerCount();
             if (retainersCount == 0) return;
-            //Log.Debug($"Retainers count {retainersCount}");
+            //Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"Retainers count {retainersCount}");
             for (uint i = 0; i < 10; i++)
             {
                 RetainerManager.Retainer* currentRetainer = retainerManager.GetRetainerBySortedIndex(i);
@@ -1991,7 +1993,7 @@ namespace Altoholic
                 ulong retainerId = currentRetainer->RetainerId;
                 string name = currentRetainer->NameString;
 
-                //Log.Debug($"current_retainer name: {name} id: {retainerId}");
+                //Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"current_retainer name: {name} id: {retainerId}");
                 if (name == "RETAINER") continue;
                 if (_localPlayer.BlacklistedRetainers.ContainsKey(retainerId)) continue;
 
@@ -2062,7 +2064,7 @@ namespace Altoholic
                         HQ = flags.HasFlag(InventoryItem.ItemFlags.HighQuality),
                         Quantity = (uint)ii.Quantity,
                     };
-                    //Plugin.Log.Debug($"{currInv.ItemId}");
+                    //Plugin.Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"{currInv.ItemId}");
                     items.Add(currInv);
                 }
             }
@@ -2092,7 +2094,7 @@ namespace Altoholic
                     HQ = flags.HasFlag(InventoryItem.ItemFlags.HighQuality),
                     Quantity = (uint)ii.Quantity,
                 };
-                //Plugin.Log.Debug($"{currInv.ItemId}");
+                //Plugin.Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"{currInv.ItemId}");
                 marketItems.Add(currInv);
             }
             return marketItems;
@@ -2210,7 +2212,7 @@ namespace Altoholic
                 });
             }
 
-            //Log.Debug($"Add house: tt:{tt}, mId:{mId}, w:{ward + 1}, d:{division}, plot: {p}, room: {room}, id: {id}");
+            //Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"Add house: tt:{tt}, mId:{mId}, w:{ward + 1}, d:{division}, plot: {p}, room: {room}, id: {id}");
         }
 
         private unsafe void GetPlayerIsland()
@@ -2246,8 +2248,8 @@ namespace Altoholic
 
         private void OnCharacterLogin()
         {
-            Log.Info("Altoholic : OnCharacterLogin called");
-            _otherCharacters = Database.Database.GetOthersCharacters(_db, _localPlayer.CharacterId);
+            Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, "Altoholic : OnCharacterLogin called");
+            _otherCharacters = Database.Database.GetOthersCharacters(this, _db, _localPlayer.CharacterId);
 
             Character? p = GetCharacterFromGameOrDatabase();
             if (p is null)
@@ -2286,7 +2288,7 @@ namespace Altoholic
             if (addon->AtkValues[112] is not { Type: FFXIVClientStructs.FFXIV.Component.GUI.ValueType.UInt, UInt: var completionIndex }) return;
             if (addon->AtkValues[114] is not { Type: FFXIVClientStructs.FFXIV.Component.GUI.ValueType.Bool, Byte: var completionStatus }) return;
 
-            Log.Debug($"AozContentResultPopSetup index: {completionIndex}, status:{completionStatus}");
+            Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"AozContentResultPopSetup index: {completionIndex}, status:{completionStatus}");
 
             switch(completionIndex)
             {
@@ -2306,12 +2308,12 @@ namespace Altoholic
                 {
                     if (Utils.IsDutyUnlocked(i.Content))
                     {
-                        Log.Debug($"Duty {i.Id}:{i.EnglishName} unlocked");
+                        Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"Duty {i.Id}:{i.EnglishName} unlocked");
                         _localPlayer.DutiesUnlocked.Add(i.Id);
                     }
                     else
                     {
-                        Log.Debug($"Duty {i.Id}:{i.EnglishName} not unlocked");
+                        Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"Duty {i.Id}:{i.EnglishName} not unlocked");
                     }
                 }
 
@@ -2322,12 +2324,12 @@ namespace Altoholic
 
                 if (Utils.IsDutyCompleted(i.Content))
                 {
-                    Log.Debug($"Duty {i.Id}:{i.EnglishName} completed");
+                    Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"Duty {i.Id}:{i.EnglishName} completed");
                     _localPlayer.Duties.Add(i.Id);
                 }
                 else
                 {
-                    Log.Debug($"Duty {i.Id}:{i.EnglishName} not completed");
+                    Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"Duty {i.Id}:{i.EnglishName} not completed");
                 }
             }
             GetRoulette();
@@ -2351,10 +2353,10 @@ namespace Altoholic
 
         private void OnCharacterLogout(int type, int code)
         {
-            Log.Debug("Altoholic : OnCharacterLogout called");
+            Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, "Altoholic : OnCharacterLogout called");
             GetPlayerCompletedQuests();
             UpdateCharacter();
-            Database.Database.UpdateCharacterCurrencyHistory(_db, _localPlayer);
+            Database.Database.UpdateCharacterCurrencyHistory(this, _db, _localPlayer);
             CleanLastLocalCharacter();
 
             GlamourPlateWindow.IsOpen = false;
@@ -2388,7 +2390,7 @@ namespace Altoholic
         {
             if (!args.TerritoryType.IsValid) return;
 
-            Log.Debug($"OnDutyCompleted entered with e: {args.TerritoryType.Value.RowId}");
+            Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"OnDutyCompleted entered with e: {args.TerritoryType.Value.RowId}");
             Duty? d = _globalCache.DutyStorage.GetFromTerritory(args.TerritoryType.Value.RowId);
             if (d == null || d.Id == 0)
             {
@@ -2398,7 +2400,7 @@ namespace Altoholic
             _localPlayer.LastCompletedDutyDatetime[d.Id] = DateTime.UtcNow;
 
             if (_localPlayer.IsDutyCompleted(d.Id)) return;
-            Log.Debug($"Duty {d.Id}:<{d.EnglishName}> completed, adding it to the completed list");
+            Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"Duty {d.Id}:<{d.EnglishName}> completed, adding it to the completed list");
             _localPlayer.Duties.Add(d.Id);
         }
 
@@ -2439,10 +2441,10 @@ namespace Altoholic
 
         private void OnGameInventoryItemEvent(GameInventoryEvent type, InventoryEventArgs data)
         {
-            //Log.Debug($"Condition[ConditionFlag.LoggingOut]: {Condition[ConditionFlag.LoggingOut]}");
+            //Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"Condition[ConditionFlag.LoggingOut]: {Condition[ConditionFlag.LoggingOut]}");
             if (Condition[ConditionFlag.LoggingOut]) return;
 #if DEBUG
-            Log.Debug($"OnGameInventoryItemEvent entered, item {type}: {data.Item.ItemId}");
+            Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"OnGameInventoryItemEvent entered, item {type}: {data.Item.ItemId}");
 #endif
             GameInventoryItem i = data.Item;
             if (i.ItemId is 0) return;
@@ -2537,12 +2539,12 @@ namespace Altoholic
             if (player.Item1.Length == 0)
                 return;
 
-            //Log.Debug($"Extracted Player Name: {player.Item1}{(char)SeIconChar.CrossWorld}{player.Item2}");
+            //Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"Extracted Player Name: {player.Item1}{(char)SeIconChar.CrossWorld}{player.Item2}");
 
             uint totalPlaytime = (uint)Marshal.ReadInt32((nint)packet + 0x10);
-            //Log.Debug($"Value from address {totalPlaytime}");
+            //Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"Value from address {totalPlaytime}");
             TimeSpan playtime = TimeSpan.FromMinutes(totalPlaytime);
-            //Log.Debug($"Value from timespan {playtime}");
+            //Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"Value from timespan {playtime}");
 
             string[] names = player.Item1.Split(' ');
             if (names.Length == 0)
@@ -2555,7 +2557,7 @@ namespace Altoholic
             long newPlayTimeUpdate = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
             _localPlayer.LastPlayTimeUpdate = newPlayTimeUpdate;
             Log.Info($"Updating playtime with {player.Item1}, {player.Item2}, {totalPlaytime}, {newPlayTimeUpdate}.");
-            Database.Database.UpdatePlaytime(_db, id, totalPlaytime, newPlayTimeUpdate);
+            Database.Database.UpdatePlaytime(this, _db, id, totalPlaytime, newPlayTimeUpdate);
         }
 
         private (string, string, string) GetLocalPlayerNameWorldRegion()
@@ -2575,8 +2577,8 @@ namespace Altoholic
             Log.Info($"Updating character with {_localPlayer.CharacterId} {_localPlayer.FirstName} {_localPlayer.LastName}{(char)SeIconChar.CrossWorld}{_localPlayer.HomeWorld}, {Utils.GetRegionFromWorld(_localPlayer.HomeWorld)}.");
             Blacklist? b = Database.Database.GetBlacklist(_db, _localPlayer.CharacterId);
             if (b != null) return;
-            Character? charExist = Database.Database.GetCharacter(_db, _localPlayer.CharacterId);
-            int returnedRows = charExist == null ? Database.Database.AddCharacter(_db, _localPlayer) : Database.Database.UpdateCharacter(_db, _localPlayer);
+            Character? charExist = Database.Database.GetCharacter(this, _db, _localPlayer.CharacterId);
+            int returnedRows = charExist == null ? Database.Database.AddCharacter(this, _db, _localPlayer) : Database.Database.UpdateCharacter(this, _db, _localPlayer);
             if (returnedRows == 1)
             {
                 if (Configuration.IsAutoSaveChatMessageEnabled)
@@ -2596,7 +2598,7 @@ namespace Altoholic
             builder.Append(" to remove it from the list");
 
             XivChatEntry chatEntry = new() { Message = builder.ToReadOnlySeString().ToDalamudString(), Type = XivChatType.Echo };
-            Log.Debug("Character is blacklisted");
+            Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, "Character is blacklisted");
             ChatGui.Print(chatEntry);
         }
 
@@ -2608,18 +2610,18 @@ namespace Altoholic
             (string, string, string) player = GetLocalPlayerNameWorldRegion();
             if (string.IsNullOrEmpty(player.Item1) || string.IsNullOrEmpty(player.Item2) || string.IsNullOrEmpty(player.Item3)) return null;
 
-            //Plugin.Log.Debug($"Altoholic : Character names => 0: {player.Item1}{(char)SeIconChar.CrossWorld}{player.Item2});
+            //Plugin.Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"Altoholic : Character names => 0: {player.Item1}{(char)SeIconChar.CrossWorld}{player.Item2});
             string[] names = player.Item1.Split(' ');
             if (names.Length != 2)
             {
                 return null;
             }
 
-            //Plugin.Log.Debug("Altoholic : Character names : 0 : {0}, 1: {1}, 2: {2}, 3: {3}", names[0], names[1], player.Item2, player.Item3);
-            Character? chara = Database.Database.GetCharacter(_db, PlayerState.ContentId);
+            //Plugin.Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, "Altoholic : Character names : 0 : {0}, 1: {1}, 2: {2}, 3: {3}", names[0], names[1], player.Item2, player.Item3);
+            Character? chara = Database.Database.GetCharacter(this, _db, PlayerState.ContentId);
             if (chara != null)
             {
-                //Plugin.Log.Debug($"GetCharacterFromDB : id = {chara.Id}, FirstName = {chara.FirstName}, LastName = {chara.LastName}, HomeWorld = {chara.HomeWorld}, DataCenter = {chara.Datacenter}, LastJob = {chara.LastJob}, LastJobLevel = {chara.LastJobLevel}, FCTag = {chara.FCTag}, FreeCompany = {chara.FreeCompany}, LastOnline = {chara.LastOnline}, PlayTime = {chara.PlayTime}, LastPlayTimeUpdate = {chara.LastPlayTimeUpdate}");
+                //Plugin.Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"GetCharacterFromDB : id = {chara.Id}, FirstName = {chara.FirstName}, LastName = {chara.LastName}, HomeWorld = {chara.HomeWorld}, DataCenter = {chara.Datacenter}, LastJob = {chara.LastJob}, LastJobLevel = {chara.LastJobLevel}, FCTag = {chara.FCTag}, FreeCompany = {chara.FreeCompany}, LastOnline = {chara.LastOnline}, PlayTime = {chara.PlayTime}, LastPlayTimeUpdate = {chara.LastPlayTimeUpdate}");
                 return chara;
             }
 
@@ -2713,7 +2715,7 @@ namespace Altoholic
 
         private void OnZoneChange(uint territoryTypeId)
         {
-            Log.Debug($"ZoneChanged:{territoryTypeId}");
+            Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"ZoneChanged:{territoryTypeId}");
             CheckCurrentTerritoryType(territoryTypeId);
             if (Configuration.TimerRemainderOnZoneChange)
             {
@@ -2723,7 +2725,7 @@ namespace Altoholic
 
         private void TimerChatReminder()
         {
-            Log.Debug("TimerChatReminder enter");
+            Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, "TimerChatReminder enter");
             if (Configuration.EnabledTimers is null || Configuration.EnabledTimers.Count == 0) return;
             SeStringBuilder builder = new();
             builder.Append($"[{Name}] Timers Status:");
@@ -2794,7 +2796,7 @@ namespace Altoholic
             {
                 if (Configuration.EnabledTimers.Contains(TimersStatus.DomanEnclave) && (_localPlayer.Timers.DomanEnclaveLastCheck < Utils.GetLastWeeklyReset() || _localPlayer.Timers.DomanEnclaveLastCheck > Utils.GetLastWeeklyReset() && _localPlayer.Timers.DomanEnclaveWeeklyDonation != _localPlayer.Timers.DomanEnclaveWeeklyAllowances))
                 {
-                    //Log.Debug($"Showing Doman Enclave remainder");
+                    //Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"Showing Doman Enclave remainder");
                     builder.PushColorRgba(KnownColor.Orange.Vector());
                     builder.Append($"\n{_globalCache.AddonStorage.LoadAddonString(Configuration.Language, 8821)}: ");
                     builder.PopColor();
@@ -2979,7 +2981,7 @@ namespace Altoholic
             if (ClientState.IsPvP) return;
             if (!ClientState.IsLoggedIn) return;
 
-            //Log.Debug($"territoryTypeId: {territoryTypeId}");
+            //Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"territoryTypeId: {territoryTypeId}");
             switch (territoryTypeId)
             {
                 // Doman Enclave
@@ -3029,7 +3031,7 @@ namespace Altoholic
             _localPlayer.Timers.DomanEnclaveWeeklyDonation = dem->State.Donated;
             _localPlayer.Timers.DomanEnclaveLastCheck = DateTime.UtcNow;
 
-            //Log.Debug($"{_localPlayer.Timers.DomanEnclaveWeeklyDonation}/{_localPlayer.Timers.DomanEnclaveWeeklyAllowances}");
+            //Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"{_localPlayer.Timers.DomanEnclaveWeeklyDonation}/{_localPlayer.Timers.DomanEnclaveWeeklyAllowances}");
         }
 
         private void ResetCommand(string arg)
@@ -3280,7 +3282,7 @@ namespace Altoholic
         private unsafe void OnNpcInteraction(EventFramework* thisPtr, GameObject* gameObject, EventId eventId, short scene, ulong sceneFlags, uint* sceneData, byte sceneDataCount)
         {
             uint baseId = gameObject->BaseId;
-            Log.Debug($"OnNpcInteraction: {baseId}");
+            Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"OnNpcInteraction: {baseId}");
             switch (baseId)
             {
                 case 1010445:
@@ -3297,7 +3299,7 @@ namespace Altoholic
 
         private unsafe void GetMiniCactpot(uint* sceneData, byte sceneDataCount)
         {
-            //Log.Debug($"GetMiniCactpot: {sceneData[0]},{sceneData[1]},{sceneData[2]},{sceneData[3]},{sceneData[4]}, count: {sceneDataCount}");
+            //Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"GetMiniCactpot: {sceneData[0]},{sceneData[1]},{sceneData[2]},{sceneData[3]},{sceneData[4]}, count: {sceneDataCount}");
             if (sceneDataCount == 5)
             {
                 _localPlayer.Timers.MinicacpotAllowances = (int)sceneData[4];
@@ -3316,7 +3318,7 @@ namespace Altoholic
 
         private unsafe void GetFashionReport(short scene, uint* sceneData)
         {
-            //Log.Debug($"GetFashionReport scene:{scene}, sceneData 0: {sceneData[0]}, 1: {sceneData[1]}");
+            //Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"GetFashionReport scene:{scene}, sceneData 0: {sceneData[0]}, 1: {sceneData[1]}");
             switch (scene)
             {
                 case 1: // Talking to Masked Rose
@@ -3359,7 +3361,7 @@ namespace Altoholic
 
         private unsafe void GetJumboCactpot(uint* sceneData)
         {
-            Log.Debug($"GetJumboCactpot: {sceneData[0]},{sceneData[1]},{sceneData[2]},{sceneData[3]},{sceneData[4]}");
+            Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"GetJumboCactpot: {sceneData[0]},{sceneData[1]},{sceneData[2]},{sceneData[3]},{sceneData[4]}");
             _localPlayer.Timers.JumboCacpotTickets.Clear();
             for (int i = 0; i < 3; ++i)
             {
@@ -3382,7 +3384,7 @@ namespace Altoholic
         private unsafe AtkValue* OnJumboCacpotReceiveEvent(AgentInterface* agent, AtkValue* returnValue, AtkValue* args, uint argCount, ulong sender)
         {
             var result = _onJumboCactpotReceiveEventHook!.Original(agent, returnValue, args, argCount, sender);
-            //Log.Debug("OnJumboCacpotReceiveEvent called");
+            //Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, "OnJumboCacpotReceiveEvent called");
             try
             {
                 var data = args->Int;

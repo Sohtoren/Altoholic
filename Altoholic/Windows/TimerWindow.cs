@@ -56,7 +56,7 @@ namespace Altoholic.Windows
 
             /*if (Position != null && (Position.Value.X != OldWindowPosition.X || Position.Value.Y != OldWindowPosition.Y))
             {
-                Plugin.Log.Debug("New window position");
+                Utils.LogMessage(LogLevel.Debug, _plugin.Configuration.EnableDebugMessages, "New window position");
                 _plugin.Configuration.TimerStandaloneWindowPositionX = Position.Value.X;
                 _plugin.Configuration.TimerStandaloneWindowPositionY = Position.Value.Y;
                 _plugin.Configuration.TrySave();
@@ -928,7 +928,6 @@ namespace Altoholic.Windows
                         bool hasThisWeekReward = false;
                         RaidReward? reward;
                         bool charHasRaidRewards = currChar.RaidRewards.TryGetValue(id, out reward);
-                        //if (reward is null) continue;
                         hasThisWeekReward = charHasRaidRewards && (reward is not null && reward.Reward > 0 && reward.LastCheck >= Utils.GetLastWeeklyReset());
 
                         bool hasCompletedDutyDatetime = currChar.LastCompletedDutyDatetime.TryGetValue(id, out DateTime lastCompletion);

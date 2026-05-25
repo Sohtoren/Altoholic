@@ -104,7 +104,7 @@ namespace Altoholic.Windows
 
         public void Clear()
         {
-            Plugin.Log.Info("GlamourPlateWindow, Clear() called");
+            Utils.LogMessage(LogLevel.Debug, _plugin.Configuration.EnableDebugMessages, "GlamourPlateWindow, Clear() called");
             _currentGlamourPlate = null;
             _currentCharacter = null;
             ResetCurrentTexture();
@@ -112,7 +112,7 @@ namespace Altoholic.Windows
 
         public void Dispose()
         {
-            Plugin.Log.Info("GlamourPlateWindow, Dispose() called");
+            Utils.LogMessage(LogLevel.Debug, _plugin.Configuration.EnableDebugMessages, "GlamourPlateWindow, Dispose() called");
             _currentGlamourPlate = null;
             _currentCharacter = null;
             ResetCurrentTexture();

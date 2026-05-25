@@ -85,7 +85,7 @@ namespace Altoholic.Windows
         }*/
         public void Clear()
         {
-            Plugin.Log.Info("RetainerWindow, Clear() called");
+            Utils.LogMessage(LogLevel.Debug, _plugin.Configuration.EnableDebugMessages, "RetainerWindow, Clear() called");
             _currentCharacter = null;
             _currentRetainer = null;
             _currentItem = null;
@@ -96,7 +96,7 @@ namespace Altoholic.Windows
 
         public void Dispose()
         {
-            Plugin.Log.Info("RetainerWindow, Dispose() called");
+            Utils.LogMessage(LogLevel.Debug, _plugin.Configuration.EnableDebugMessages, "RetainerWindow, Dispose() called");
             _currentCharacter = null;
             _currentRetainer = null;
             _currentItem = null;
@@ -357,7 +357,7 @@ namespace Altoholic.Windows
                             Utils.ChatMessage(
                                 $"{retDictionary.Value} has been removed from the blacklist.");
                             _currentCharacter.BlacklistedRetainers.Remove(retDictionary.Key);
-                            Database.Database.UpdateCharacter(_db, _currentCharacter);
+                            Database.Database.UpdateCharacter(_plugin, _db, _currentCharacter);
                             _selectedRetainerId = null;
                         }
                     }
@@ -439,7 +439,7 @@ namespace Altoholic.Windows
                                         currentCharacter.BlacklistedRetainers.Add(_currentRetainer.Id,
                                             _currentRetainer.Name);
                                         currentCharacter.Retainers.Remove(_currentRetainer);
-                                        Database.Database.UpdateCharacter(_db, currentCharacter);
+                                        Database.Database.UpdateCharacter(_plugin, _db, currentCharacter);
                                         ImGui.CloseCurrentPopup();
                                     }
 

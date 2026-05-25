@@ -18,7 +18,7 @@ namespace Altoholic.Cache
 
         public void Init()
         {
-            Plugin.Log.Debug("IconStorage Init() called");
+            Plugin.Log.Info("IconStorage Init() called");
             _retainerIconsTextureWrap = Plugin.TextureProvider.GetFromGame("ui/uld/Retainer_hr1.tex").RentAsync().Result;
             _rolesTextureWrap = Plugin.TextureProvider.GetFromGame("ui/uld/img03/ToggleButton_hr1.tex").RentAsync().Result;
             _itemDetailsUld = Plugin.PluginInterface.UiBuilder.LoadUld("ui/uld/ItemDetail.uld");
@@ -29,7 +29,7 @@ namespace Altoholic.Cache
                 _itemDetailsTextures.Add(i,
                     _itemDetailsUld.LoadTexturePart("ui/uld/ItemDetail_hr1.tex", i));
             }
-            Plugin.Log.Debug("IconStorage Init() done");
+            Plugin.Log.Info("IconStorage Init() done");
         }
 
         public IDalamudTextureWrap this[uint id]

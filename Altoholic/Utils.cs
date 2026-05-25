@@ -35,6 +35,12 @@ using Vector4 = FFXIVClientStructs.FFXIV.Common.Math.Vector4;
 
 namespace Altoholic
 {
+    enum LogLevel
+    {
+        Debug,
+        Error,
+        Info
+    }
     internal abstract class Utils
     {
         // ReSharper disable once InconsistentNaming
@@ -4567,6 +4573,28 @@ namespace Altoholic
             DateTime lastXReset = lastX.AddHours(addHours);
 
             return lastXReset;
+        }
+
+        public static void LogMessage(LogLevel logLevel, bool debugLogsEnabled, string message)
+        {
+            if(debugLogsEnabled)
+            {
+                switch (logLevel)
+                {
+                    case LogLevel.Debug:
+                        Plugin.Log.Debug(message);
+                        break;
+                    case LogLevel.Error:
+                        Plugin.Log.Error(message);
+                        break;
+                    case LogLevel.Info:
+                        Plugin.Log.Info(message);
+                        break;
+                    default:
+                        Plugin.Log.Debug(message);
+                        break;
+                }
+            }
         }
     }
 }

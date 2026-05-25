@@ -70,14 +70,14 @@ namespace Altoholic.Windows
 
         public void Clear()
         {
-            Plugin.Log.Info("DetailsWindow, Clear() called");
+            Utils.LogMessage(LogLevel.Debug, _plugin.Configuration.EnableDebugMessages, "DetailsWindow, Clear() called");
             _currentCharacter = null;
             _isSpoilerEnabled = false;
         }
 
         public void Dispose()
         {
-            Plugin.Log.Info("DetailsWindow, Dispose() called");
+            Utils.LogMessage(LogLevel.Debug, _plugin.Configuration.EnableDebugMessages, "DetailsWindow, Dispose() called");
             _currentCharacter = null;
             _isSpoilerEnabled = false;
             foreach (KeyValuePair<uint, IDalamudTextureWrap?> loadedTexture in _companyTextures) loadedTexture.Value?.Dispose();

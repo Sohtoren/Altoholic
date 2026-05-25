@@ -44,11 +44,12 @@ namespace Altoholic.Windows
 
         public void Dispose()
         {
-
+            Utils.LogMessage(LogLevel.Debug, _plugin.Configuration.EnableDebugMessages, "JobsWindow, Dispose() called");
+            _currentCharacter = null;
         }
         public void Clear()
         {
-            Plugin.Log.Info("JobsWindow, Clear() called");
+            Utils.LogMessage(LogLevel.Debug, _plugin.Configuration.EnableDebugMessages, "JobsWindow, Clear() called");
             _currentCharacter = null;
         }
 

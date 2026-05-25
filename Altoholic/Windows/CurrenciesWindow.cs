@@ -56,7 +56,7 @@ namespace Altoholic.Windows
 
         public void Dispose()
         {
-            Plugin.Log.Info("CurrenciesWindow, Dispose() called");
+            Utils.LogMessage(LogLevel.Debug, _plugin.Configuration.EnableDebugMessages, "CurrenciesWindow, Dispose() called");
             _currentCharacter = null;
             _currentCurrency = string.Empty;
             _selectedCurrency = string.Empty;
@@ -65,7 +65,7 @@ namespace Altoholic.Windows
 
         public void Clear()
         {
-            Plugin.Log.Info("CurrenciesWindow, Clear() called");
+            Utils.LogMessage(LogLevel.Debug, _plugin.Configuration.EnableDebugMessages, "CurrenciesWindow, Clear() called");
             _currentCharacter = null;
             _currentCurrency = string.Empty;
             _selectedCurrency = string.Empty;

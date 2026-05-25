@@ -90,7 +90,7 @@ namespace Altoholic.Windows
 
         public void Dispose()
         {
-            Plugin.Log.Info("CollectionWindow, Dispose() called");
+            Utils.LogMessage(LogLevel.Debug, _plugin.Configuration.EnableDebugMessages, "CollectionWindow, Dispose() called");
             _currentCharacter = null;
             _obtainedBardingsOnly = false;
             _obtainedEmotesOnly = false;
@@ -109,7 +109,7 @@ namespace Altoholic.Windows
 
         public void Clear()
         {
-            Plugin.Log.Info("CollectionWindow, Clear() called");
+            Utils.LogMessage(LogLevel.Debug, _plugin.Configuration.EnableDebugMessages, "CollectionWindow, Clear() called");
             _currentCharacter = null;
             _obtainedBardingsOnly = false;
             _obtainedEmotesOnly = false;

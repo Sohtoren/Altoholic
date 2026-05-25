@@ -77,13 +77,13 @@ namespace Altoholic.Windows
 
         public void Clear()
         {
-            Plugin.Log.Info("DetailsWindow, Clear() called");
+            Utils.LogMessage(LogLevel.Debug, _plugin.Configuration.EnableDebugMessages, "DetailsWindow, Clear() called");
             _currentCharacter = null;
         }
 
         public void Dispose()
         {
-            Plugin.Log.Info("DetailsWindow, Dispose() called");
+            Utils.LogMessage(LogLevel.Debug, _plugin.Configuration.EnableDebugMessages, "DetailsWindow, Dispose() called");
             _currentCharacter = null;
             foreach (KeyValuePair<GearSlot, IDalamudTextureWrap?> loadedTexture in _characterTextures)
                 loadedTexture.Value?.Dispose();
@@ -469,7 +469,7 @@ namespace Altoholic.Windows
                 if (ImGui.Button("OK", new Vector2(120, 0)))
                 {
                     bool r = selectedCharacter.Houses.Remove(house);
-                    int result = Database.Database.UpdateCharacter(_db, selectedCharacter);
+                    int result = Database.Database.UpdateCharacter(_plugin, _db, selectedCharacter);
                     Utils.ChatMessage("Housing removed");
                     ImGui.CloseCurrentPopup();
                 }

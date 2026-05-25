@@ -333,12 +333,25 @@ namespace Altoholic.Windows
 
             }
             ImGui.PopItemWidth();
-
             if (ImGui.IsItemHovered())
             {
                 using var tooltip = ImRaii.Tooltip();
                 ImGui.TextUnformatted(
                     $"{Loc.Localize("ConfigHousingLastEntryNotificationDaysMessage", "Number of days before showing the housing notification")}");
+            }
+
+            bool enableDebugMessages = _configuration.EnableDebugMessages;
+            if (ImGui.Checkbox($"{Loc.Localize("EnableDebugMessages", "Enable debug message")}###enableDebugMessages", ref enableDebugMessages))
+            {
+                _configuration.EnableDebugMessages = enableDebugMessages;
+                _configuration.TrySave();
+
+            }
+            if (ImGui.IsItemHovered())
+            {
+                using var tooltip = ImRaii.Tooltip();
+                ImGui.TextUnformatted(
+                    $"{Loc.Localize("ConfigenableDebugMessagesMessage", "Enable debug messages")}");
             }
         }
 

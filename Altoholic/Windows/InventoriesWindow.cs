@@ -106,7 +106,7 @@ namespace Altoholic.Windows
 
         public void Dispose()
         {
-            Plugin.Log.Info("InventoriesWindow, Dispose() called");
+            Utils.LogMessage(LogLevel.Debug, _plugin.Configuration.EnableDebugMessages, "InventoriesWindow, Dispose() called");
             _currentCharacter = null;
             _currentItem = null;
             _currentItems = null;
@@ -124,7 +124,7 @@ namespace Altoholic.Windows
 
         public void Clear()
         {
-            Plugin.Log.Info("InventoriesWindow, Clear() called");
+            Utils.LogMessage(LogLevel.Debug, _plugin.Configuration.EnableDebugMessages, "InventoriesWindow, Clear() called");
             _currentCharacter = null;
             _currentItem = null;
             _currentItems = null;

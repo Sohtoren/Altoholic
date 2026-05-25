@@ -47,13 +47,13 @@ namespace Altoholic.Database
             return new SqliteConnection("Data Source=" + dbPath);
         }
 
-        private static bool DoesTableExist(SqliteConnection db, string tableName)
+        private static bool DoesTableExist(Plugin plugin, SqliteConnection db, string tableName)
         {
-            Plugin.Log.Debug($"DoesTableExist: {tableName}");
+            Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, $"DoesTableExist: {tableName}");
             string sql = $"SELECT name FROM sqlite_master WHERE type = 'table' AND name = '{tableName}';";
             string? name = db.QueryFirstOrDefault<string>(sql);
-            Plugin.Log.Debug($"DoesTableExist returned name: {name}");
-            Plugin.Log.Debug($"DoesTableExist? : {(name != null && name == tableName)}");
+            Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, $"DoesTableExist returned name: {name}");
+            Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, $"DoesTableExist? : {(name != null && name == tableName)}");
             return (name != null && name == tableName);
         }
 
@@ -64,9 +64,9 @@ namespace Altoholic.Database
         /// <param name="columnName">The column in the given table to look for.</param>
         /// <param name="connection">The SQLiteConnection for this database.</param>
         /// <returns>True if the given table contains a column with the given name.</returns>
-        private static bool DoesColumnExist(SqliteConnection connection, string tableName, string columnName)
+        private static bool DoesColumnExist(Plugin plugin, SqliteConnection connection, string tableName, string columnName)
         {
-            Plugin.Log.Debug($"Entering DoesColumnExist: {tableName}, {columnName}");
+            Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, $"Entering DoesColumnExist: {tableName}, {columnName}");
             IDataReader dr = connection.ExecuteReader("PRAGMA table_info(" + tableName + ")");
             while (dr.Read()) //loop through the various columns and their info
             {
@@ -77,18 +77,18 @@ namespace Altoholic.Database
                 }
 
                 dr.Close();
-                Plugin.Log.Debug($"DoesColumnExist: {tableName}, {columnName} yes");
+                Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, $"DoesColumnExist: {tableName}, {columnName} yes");
                 return true;
             }
 
             dr.Close();
-            Plugin.Log.Debug($"DoesColumnExist: {tableName}, {columnName} no");
+            Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, $"DoesColumnExist: {tableName}, {columnName} no");
             return false;
         }
 
-        public static void CheckOrCreateDatabases(SqliteConnection db)
+        public static void CheckOrCreateDatabases(Plugin plugin, SqliteConnection db)
         {
-            if (!DoesTableExist(db, CharacterTableName))
+            if (!DoesTableExist(plugin, db, CharacterTableName))
             {
                 const string sql = $"""
                                     CREATE TABLE IF NOT EXISTS {CharacterTableName} (
@@ -164,260 +164,260 @@ namespace Altoholic.Database
                                                 );
                                     """;
                 int result = db.Execute(sql);
-                Plugin.Log.Debug($"CREATE TABLE {CharacterTableName} result: {result}");
+                Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, $"CREATE TABLE {CharacterTableName} result: {result}");
                 if (result == 0)
                 {
                     int result2 =
                         db.Execute(
                             $"CREATE INDEX idx_{CharacterTableName}_CharacterID ON {CharacterTableName}(CharacterId)");
-                    Plugin.Log.Debug(
+                    Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages,
                         $"CREATE INDEX idx_{CharacterTableName}_CharacterID ON {CharacterTableName}(CharacterId) result: {result2}");
                 }
             }
             else
             {
-                if (!DoesColumnExist(db, CharacterTableName, "Duties"))
+                if (!DoesColumnExist(plugin, db, CharacterTableName, "Duties"))
                 {
-                    Plugin.Log.Debug($"Column {CharacterTableName}.Duties does not exist");
+                    Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, $"Column {CharacterTableName}.Duties does not exist");
                     const string sql11 = $"ALTER TABLE {CharacterTableName} ADD COLUMN Duties TEXT";
                     int result11 = db.Execute(sql11);
-                    Plugin.Log.Debug($"ALTER TABLE {CharacterTableName} ADD COLUMN Duties TEXT result: {result11}");
+                    Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, $"ALTER TABLE {CharacterTableName} ADD COLUMN Duties TEXT result: {result11}");
                 }
 
-                if (!DoesColumnExist(db, CharacterTableName, "DutiesUnlocked"))
+                if (!DoesColumnExist(plugin, db, CharacterTableName, "DutiesUnlocked"))
                 {
-                    Plugin.Log.Debug($"Column {CharacterTableName}.DutiesUnlocked does not exist");
+                    Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, $"Column {CharacterTableName}.DutiesUnlocked does not exist");
                     const string sql12 = $"ALTER TABLE {CharacterTableName} ADD COLUMN DutiesUnlocked TEXT";
                     int result12 = db.Execute(sql12);
-                    Plugin.Log.Debug(
+                    Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages,
                         $"ALTER TABLE {CharacterTableName} ADD COLUMN DutiesUnlocked TEXT result: {result12}");
                 }
 
-                if (!DoesColumnExist(db, CharacterTableName, "Hairstyles"))
+                if (!DoesColumnExist(plugin, db, CharacterTableName, "Hairstyles"))
                 {
-                    Plugin.Log.Debug($"Column {CharacterTableName}.Hairstyles does not exist");
+                    Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, $"Column {CharacterTableName}.Hairstyles does not exist");
                     const string sql17 = $"ALTER TABLE {CharacterTableName} ADD COLUMN Hairstyles TEXT";
                     int result17 = db.Execute(sql17);
-                    Plugin.Log.Debug($"ALTER TABLE {CharacterTableName} ADD COLUMN Hairstyles TEXT result: {result17}");
+                    Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, $"ALTER TABLE {CharacterTableName} ADD COLUMN Hairstyles TEXT result: {result17}");
                 }
 
-                if (!DoesColumnExist(db, CharacterTableName, "Facepaints"))
+                if (!DoesColumnExist(plugin, db, CharacterTableName, "Facepaints"))
                 {
-                    Plugin.Log.Debug($"Column {CharacterTableName}.Facepaints does not exist");
+                    Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, $"Column {CharacterTableName}.Facepaints does not exist");
                     const string sql18 = $"ALTER TABLE {CharacterTableName} ADD COLUMN Facepaints TEXT";
                     int result18 = db.Execute(sql18);
-                    Plugin.Log.Debug($"ALTER TABLE {CharacterTableName} ADD COLUMN Facepaints TEXT result: {result18}");
+                    Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, $"ALTER TABLE {CharacterTableName} ADD COLUMN Facepaints TEXT result: {result18}");
                 }
 
-                if (!DoesColumnExist(db, CharacterTableName, "SecretRecipeBooks"))
+                if (!DoesColumnExist(plugin, db, CharacterTableName, "SecretRecipeBooks"))
                 {
-                    Plugin.Log.Debug($"Column {CharacterTableName}.SecretRecipeBooks does not exist");
+                    Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, $"Column {CharacterTableName}.SecretRecipeBooks does not exist");
                     const string sql19 = $"ALTER TABLE {CharacterTableName} ADD COLUMN SecretRecipeBooks TEXT";
                     int result19 = db.Execute(sql19);
-                    Plugin.Log.Debug(
+                    Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages,
                         $"ALTER TABLE {CharacterTableName} ADD COLUMN SecretRecipeBooks TEXT result: {result19}");
                 }
 
-                if (!DoesColumnExist(db, CharacterTableName, "Vistas"))
+                if (!DoesColumnExist(plugin, db, CharacterTableName, "Vistas"))
                 {
-                    Plugin.Log.Debug($"Column {CharacterTableName}.Vistas does not exist");
+                    Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, $"Column {CharacterTableName}.Vistas does not exist");
                     const string sql20 = $"ALTER TABLE {CharacterTableName} ADD COLUMN Vistas TEXT";
                     int result20 = db.Execute(sql20);
-                    Plugin.Log.Debug($"ALTER TABLE {CharacterTableName} ADD COLUMN Vistas TEXT result: {result20}");
+                    Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, $"ALTER TABLE {CharacterTableName} ADD COLUMN Vistas TEXT result: {result20}");
                 }
 
-                if (!DoesColumnExist(db, CharacterTableName, "SightseeingLogUnlockState"))
+                if (!DoesColumnExist(plugin, db, CharacterTableName, "SightseeingLogUnlockState"))
                 {
-                    Plugin.Log.Debug($"Column {CharacterTableName}.SightseeingLogUnlockState does not exist");
+                    Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, $"Column {CharacterTableName}.SightseeingLogUnlockState does not exist");
                     const string sql21 =
                         $"ALTER TABLE {CharacterTableName} ADD COLUMN SightseeingLogUnlockState SMALLINT";
                     int result21 = db.Execute(sql21);
-                    Plugin.Log.Debug(
+                    Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages,
                         $"ALTER TABLE {CharacterTableName} ADD COLUMN SightseeingLogUnlockState SMALLINT result: {result21}");
                 }
 
-                if (!DoesColumnExist(db, CharacterTableName, "SightseeingLogUnlockStateEx"))
+                if (!DoesColumnExist(plugin, db, CharacterTableName, "SightseeingLogUnlockStateEx"))
                 {
-                    Plugin.Log.Debug($"Column {CharacterTableName}.SightseeingLogUnlockStateEx does not exist");
+                    Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, $"Column {CharacterTableName}.SightseeingLogUnlockStateEx does not exist");
                     const string sql22 =
                         $"ALTER TABLE {CharacterTableName} ADD COLUMN SightseeingLogUnlockStateEx SMALLINT";
                     int result22 = db.Execute(sql22);
-                    Plugin.Log.Debug(
+                    Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages,
                         $"ALTER TABLE {CharacterTableName} ADD COLUMN SightseeingLogUnlockStateEx SMALLINT result: {result22}");
                 }
 
-                if (!DoesColumnExist(db, CharacterTableName, "Armoire"))
+                if (!DoesColumnExist(plugin, db, CharacterTableName, "Armoire"))
                 {
-                    Plugin.Log.Debug($"Column {CharacterTableName}.Armoire does not exist");
+                    Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, $"Column {CharacterTableName}.Armoire does not exist");
                     const string sql23 = $"ALTER TABLE {CharacterTableName} ADD COLUMN Armoire TEXT";
                     int result23 = db.Execute(sql23);
-                    Plugin.Log.Debug($"ALTER TABLE {CharacterTableName} ADD COLUMN Armoire TEXT result: {result23}");
+                    Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, $"ALTER TABLE {CharacterTableName} ADD COLUMN Armoire TEXT result: {result23}");
                 }
 
-                if (!DoesColumnExist(db, CharacterTableName, "GlamourDresser"))
+                if (!DoesColumnExist(plugin, db, CharacterTableName, "GlamourDresser"))
                 {
-                    Plugin.Log.Debug($"Column {CharacterTableName}.GlamourDresser does not exist");
+                    Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, $"Column {CharacterTableName}.GlamourDresser does not exist");
                     const string sql24 = $"ALTER TABLE {CharacterTableName} ADD COLUMN GlamourDresser TEXT";
                     int result24 = db.Execute(sql24);
-                    Plugin.Log.Debug(
+                    Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages,
                         $"ALTER TABLE {CharacterTableName} ADD COLUMN GlamourDresser TEXT result: {result24}");
                 }
 
-                if (!DoesColumnExist(db, CharacterTableName, "PvPProfile"))
+                if (!DoesColumnExist(plugin, db, CharacterTableName, "PvPProfile"))
                 {
-                    Plugin.Log.Debug($"Column {CharacterTableName}.PvPProfile does not exist");
+                    Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, $"Column {CharacterTableName}.PvPProfile does not exist");
                     const string sql25 = $"ALTER TABLE {CharacterTableName} ADD COLUMN PvPProfile TEXT";
                     int result25 = db.Execute(sql25);
-                    Plugin.Log.Debug($"ALTER TABLE {CharacterTableName} ADD COLUMN PvPProfile TEXT result: {result25}");
+                    Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, $"ALTER TABLE {CharacterTableName} ADD COLUMN PvPProfile TEXT result: {result25}");
                 }
 
                 //Prevent old typo to mess up
-                if (DoesColumnExist(db, CharacterTableName, "CurrentFawear"))
+                if (DoesColumnExist(plugin, db, CharacterTableName, "CurrentFawear"))
                 {
-                    Plugin.Log.Debug($"Column {CharacterTableName}.CurrentFawear exist");
+                    Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, $"Column {CharacterTableName}.CurrentFawear exist");
                     const string sql131 = $"ALTER TABLE {CharacterTableName} DROP COLUMN CurrentFawear";
                     int result131 = db.Execute(sql131);
-                    Plugin.Log.Debug($"ALTER TABLE {CharacterTableName} DROP COLUMN CurrentFawear result: {result131}");
+                    Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, $"ALTER TABLE {CharacterTableName} DROP COLUMN CurrentFawear result: {result131}");
                 }
 
-                if (!DoesColumnExist(db, CharacterTableName, "CurrentFacewear"))
+                if (!DoesColumnExist(plugin, db, CharacterTableName, "CurrentFacewear"))
                 {
-                    Plugin.Log.Debug($"Column {CharacterTableName}.CurrentFacewear does not exist");
+                    Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, $"Column {CharacterTableName}.CurrentFacewear does not exist");
                     const string sql13 = $"ALTER TABLE {CharacterTableName} ADD COLUMN CurrentFacewear TEXT";
                     int result13 = db.Execute(sql13);
-                    Plugin.Log.Debug(
+                    Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages,
                         $"ALTER TABLE {CharacterTableName} ADD COLUMN CurrentFacewear TEXT result: {result13}");
                 }
 
-                if (!DoesColumnExist(db, CharacterTableName, "CurrentOrnament"))
+                if (!DoesColumnExist(plugin, db, CharacterTableName, "CurrentOrnament"))
                 {
-                    Plugin.Log.Debug($"Column {CharacterTableName}.CurrentOrnament does not exist");
+                    Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, $"Column {CharacterTableName}.CurrentOrnament does not exist");
                     const string sql14 = $"ALTER TABLE {CharacterTableName} ADD COLUMN CurrentOrnament SMALLINT";
                     int result14 = db.Execute(sql14);
-                    Plugin.Log.Debug(
+                    Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages,
                         $"ALTER TABLE {CharacterTableName} ADD COLUMN CurrentOrnament SMALLINT result: {result14}");
                 }
 
-                if (!DoesColumnExist(db, CharacterTableName, "UnreadLetters"))
+                if (!DoesColumnExist(plugin, db, CharacterTableName, "UnreadLetters"))
                 {
-                    Plugin.Log.Debug($"Column {CharacterTableName}.UnreadLetters does not exist");
+                    Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, $"Column {CharacterTableName}.UnreadLetters does not exist");
                     const string sql16 = $"ALTER TABLE {CharacterTableName} ADD COLUMN UnreadLetters SMALLINT";
                     int result16 = db.Execute(sql16);
-                    Plugin.Log.Debug(
+                    Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages,
                         $"ALTER TABLE {CharacterTableName} ADD COLUMN UnreadLetters SMALLINT result: {result16}");
                 }
 
-                if (!DoesColumnExist(db, CharacterTableName, "IslandSanctuaryUnlocked"))
+                if (!DoesColumnExist(plugin, db, CharacterTableName, "IslandSanctuaryUnlocked"))
                 {
-                    Plugin.Log.Debug($"Column {CharacterTableName}.IslandSanctuaryUnlocked does not exist");
+                    Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, $"Column {CharacterTableName}.IslandSanctuaryUnlocked does not exist");
                     const string sql27 = $"ALTER TABLE {CharacterTableName} ADD COLUMN IslandSanctuaryUnlocked BIT";
                     int result27 = db.Execute(sql27);
-                    Plugin.Log.Debug(
+                    Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages,
                         $"ALTER TABLE {CharacterTableName} ADD COLUMN IslandSanctuaryUnlocked BIT result: {result27}");
                 }
-                if (!DoesColumnExist(db, CharacterTableName, "IslandSanctuaryLevel"))
+                if (!DoesColumnExist(plugin, db, CharacterTableName, "IslandSanctuaryLevel"))
                 {
-                    Plugin.Log.Debug($"Column {CharacterTableName}.IslandSanctuaryUnlocked does not exist");
+                    Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, $"Column {CharacterTableName}.IslandSanctuaryUnlocked does not exist");
                     const string sql27 = $"ALTER TABLE {CharacterTableName} ADD COLUMN IslandSanctuaryLevel INT";
                     int result27 = db.Execute(sql27);
-                    Plugin.Log.Debug(
+                    Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages,
                         $"ALTER TABLE {CharacterTableName} ADD COLUMN IslandSanctuaryLevel INT result: {result27}");
                 }
 
-                if (!DoesColumnExist(db, CharacterTableName, "Houses"))
+                if (!DoesColumnExist(plugin, db, CharacterTableName, "Houses"))
                 {
-                    Plugin.Log.Debug($"Column {CharacterTableName}.Houses does not exist");
+                    Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, $"Column {CharacterTableName}.Houses does not exist");
                     const string sql15 = $"ALTER TABLE {CharacterTableName} ADD COLUMN Houses TEXT";
                     int result15 = db.Execute(sql15);
-                    Plugin.Log.Debug($"ALTER TABLE {CharacterTableName} ADD COLUMN Houses TEXT result: {result15}");
+                    Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, $"ALTER TABLE {CharacterTableName} ADD COLUMN Houses TEXT result: {result15}");
                 }
 
-                if (!DoesColumnExist(db, CharacterTableName, "BlacklistedRetainers"))
+                if (!DoesColumnExist(plugin, db, CharacterTableName, "BlacklistedRetainers"))
                 {
-                    Plugin.Log.Debug($"Column {CharacterTableName}.BlacklistedRetainers does not exist");
+                    Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, $"Column {CharacterTableName}.BlacklistedRetainers does not exist");
                     const string sql26 = $"ALTER TABLE {CharacterTableName} ADD COLUMN BlacklistedRetainers TEXT";
                     int result26 = db.Execute(sql26);
-                    Plugin.Log.Debug(
+                    Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages,
                         $"ALTER TABLE {CharacterTableName} ADD COLUMN BlacklistedRetainers TEXT result: {result26}");
                 }
 
-                if (!DoesColumnExist(db, CharacterTableName, "Timers"))
+                if (!DoesColumnExist(plugin, db, CharacterTableName, "Timers"))
                 {
-                    Plugin.Log.Debug($"Column {CharacterTableName}.Timers does not exist");
+                    Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, $"Column {CharacterTableName}.Timers does not exist");
                     const string sql28 = $"ALTER TABLE {CharacterTableName} ADD COLUMN Timers TEXT";
                     int result28 = db.Execute(sql28);
-                    Plugin.Log.Debug(
+                    Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages,
                         $"ALTER TABLE {CharacterTableName} ADD COLUMN Timers TEXT result: {result28}");
                 }
 
-                if (!DoesColumnExist(db, CharacterTableName, "CurrentGearSet"))
+                if (!DoesColumnExist(plugin, db, CharacterTableName, "CurrentGearSet"))
                 {
-                    Plugin.Log.Debug($"Column {CharacterTableName}.CurrentGearSet does not exist");
+                    Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, $"Column {CharacterTableName}.CurrentGearSet does not exist");
                     const string sql29 = $"ALTER TABLE {CharacterTableName} ADD COLUMN CurrentGearSet TEXT";
                     int result29 = db.Execute(sql29);
-                    Plugin.Log.Debug(
+                    Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages,
                         $"ALTER TABLE {CharacterTableName} ADD COLUMN CurrentGearSet TEXT result: {result29}");
                 }
-                if (!DoesColumnExist(db, CharacterTableName, "GearSets"))
+                if (!DoesColumnExist(plugin, db, CharacterTableName, "GearSets"))
                 {
-                    Plugin.Log.Debug($"Column {CharacterTableName}.GearSets does not exist");
+                    Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, $"Column {CharacterTableName}.GearSets does not exist");
                     const string sql30 = $"ALTER TABLE {CharacterTableName} ADD COLUMN GearSets TEXT";
                     int result30 = db.Execute(sql30);
-                    Plugin.Log.Debug(
+                    Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages,
                         $"ALTER TABLE {CharacterTableName} ADD COLUMN GearSets TEXT result: {result30}");
                 }
 
-                if (!DoesColumnExist(db, CharacterTableName, "GlamourPlates"))
+                if (!DoesColumnExist(plugin, db, CharacterTableName, "GlamourPlates"))
                 {
-                    Plugin.Log.Debug($"Column {CharacterTableName}.GlamourPlates does not exist");
+                    Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, $"Column {CharacterTableName}.GlamourPlates does not exist");
                     const string sql31 = $"ALTER TABLE {CharacterTableName} ADD COLUMN GlamourPlates TEXT";
                     int result31 = db.Execute(sql31);
-                    Plugin.Log.Debug(
+                    Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages,
                         $"ALTER TABLE {CharacterTableName} ADD COLUMN GlamourPlates TEXT result: {result31}");
                 }
-                if (!DoesColumnExist(db, CharacterTableName, "CompletedRoulettes"))
+                if (!DoesColumnExist(plugin, db, CharacterTableName, "CompletedRoulettes"))
                 {
-                    Plugin.Log.Debug($"Column {CharacterTableName}.CompletedRoulettes does not exist");
+                    Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, $"Column {CharacterTableName}.CompletedRoulettes does not exist");
                     const string sql32 = $"ALTER TABLE {CharacterTableName} ADD COLUMN CompletedRoulettes TEXT";
                     int result32 = db.Execute(sql32);
-                    Plugin.Log.Debug(
+                    Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages,
                         $"ALTER TABLE {CharacterTableName} ADD COLUMN CompletedRoulettes TEXT result: {result32}");
                 }
-                if (!DoesColumnExist(db, CharacterTableName, "UnlockedRoulettes"))
+                if (!DoesColumnExist(plugin, db, CharacterTableName, "UnlockedRoulettes"))
                 {
-                    Plugin.Log.Debug($"Column {CharacterTableName}.UnlockedRoulettes does not exist");
+                    Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, $"Column {CharacterTableName}.UnlockedRoulettes does not exist");
                     const string sql35 = $"ALTER TABLE {CharacterTableName} ADD COLUMN UnlockedRoulettes TEXT";
                     int result35 = db.Execute(sql35);
-                    Plugin.Log.Debug(
+                    Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages,
                         $"ALTER TABLE {CharacterTableName} ADD COLUMN UnlockedRoulettes TEXT result: {result35}");
                 }
-                if (!DoesColumnExist(db, CharacterTableName, "RaidRewards"))
+                if (!DoesColumnExist(plugin, db, CharacterTableName, "RaidRewards"))
                 {
-                    Plugin.Log.Debug($"Column {CharacterTableName}.RaidRewards does not exist");
+                    Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, $"Column {CharacterTableName}.RaidRewards does not exist");
                     const string sql33 = $"ALTER TABLE {CharacterTableName} ADD COLUMN RaidRewards TEXT";
                     int result33 = db.Execute(sql33);
-                    Plugin.Log.Debug(
+                    Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages,
                         $"ALTER TABLE {CharacterTableName} ADD COLUMN RaidRewards TEXT result: {result33}");
                 }
-                if (!DoesColumnExist(db, CharacterTableName, "WondrousTails"))
+                if (!DoesColumnExist(plugin, db, CharacterTableName, "WondrousTails"))
                 {
-                    Plugin.Log.Debug($"Column {CharacterTableName}.WondrousTails does not exist");
+                    Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, $"Column {CharacterTableName}.WondrousTails does not exist");
                     const string sql34 = $"ALTER TABLE {CharacterTableName} ADD COLUMN WondrousTails TEXT";
                     int result34 = db.Execute(sql34);
-                    Plugin.Log.Debug(
+                    Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages,
                         $"ALTER TABLE {CharacterTableName} ADD COLUMN WondrousTails TEXT result: {result34}");
                 }
-                if (!DoesColumnExist(db, CharacterTableName, "LastCompletedDutyDatetime"))
+                if (!DoesColumnExist(plugin, db, CharacterTableName, "LastCompletedDutyDatetime"))
                 {
-                    Plugin.Log.Debug($"Column {CharacterTableName}.LastCompletedDutyDatetime does not exist");
+                    Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, $"Column {CharacterTableName}.LastCompletedDutyDatetime does not exist");
                     const string sql36 = $"ALTER TABLE {CharacterTableName} ADD COLUMN LastCompletedDutyDatetime TEXT";
                     int result36 = db.Execute(sql36);
-                    Plugin.Log.Debug(
+                    Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages,
                         $"ALTER TABLE {CharacterTableName} ADD COLUMN LastCompletedDutyDatetime TEXT result: {result36}");
                 }
             }
 
-            if (!DoesTableExist(db, CharactersCurrenciesHistoryTableName))
+            if (!DoesTableExist(plugin, db, CharactersCurrenciesHistoryTableName))
             {
                 const string sql2 = $"""
                                         CREATE TABLE IF NOT EXISTS {CharactersCurrenciesHistoryTableName}(
@@ -428,19 +428,19 @@ namespace Altoholic.Database
                                        );
                                      """;
                 int result2 = db.Execute(sql2);
-                Plugin.Log.Debug($"CREATE TABLE {CharactersCurrenciesHistoryTableName} result: {result2}");
+                Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, $"CREATE TABLE {CharactersCurrenciesHistoryTableName} result: {result2}");
 
                 if (result2 == 0)
                 {
                     int result22 =
                         db.Execute(
                             $"CREATE INDEX idx_{CharactersCurrenciesHistoryTableName}_CharacterID ON {CharactersCurrenciesHistoryTableName}(CharacterId)");
-                    Plugin.Log.Debug(
+                    Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages,
                         $"CREATE INDEX idx_{CharactersCurrenciesHistoryTableName}_CharacterID ON {CharactersCurrenciesHistoryTableName}(CharacterId) result: {result22}");
                 }
             }
 
-            if (!DoesTableExist(db, BlacklistTableName))
+            if (!DoesTableExist(plugin, db, BlacklistTableName))
             {
                 const string sql3 = $"""
                                         CREATE TABLE IF NOT EXISTS {BlacklistTableName}(
@@ -449,19 +449,19 @@ namespace Altoholic.Database
                                        );
                                      """;
                 int result3 = db.Execute(sql3);
-                Plugin.Log.Debug($"CREATE TABLE {BlacklistTableName} result: {result3}");
+                Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, $"CREATE TABLE {BlacklistTableName} result: {result3}");
                 if (result3 == 0)
                 {
                     int result32 =
                         db.Execute(
                             $"CREATE INDEX idx_{BlacklistTableName}_CharacterID ON {BlacklistTableName}(CharacterId)");
-                    Plugin.Log.Debug(
+                    Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages,
                         $"CREATE INDEX idx_{BlacklistTableName}_CharacterID ON {BlacklistTableName}(CharacterId) result: {result32}");
                 }
             }
 
             /********************************/
-            if (!DoesTableExist(db, VersionTableName))
+            if (!DoesTableExist(plugin, db, VersionTableName))
             {
                 const string sql4 = $"""
                                         CREATE TABLE IF NOT EXISTS {VersionTableName}(
@@ -469,41 +469,41 @@ namespace Altoholic.Database
                                        );
                                      """;
                 int result4 = db.Execute(sql4);
-                Plugin.Log.Debug($"CREATE TABLE {VersionTableName} result: {result4}");
+                Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, $"CREATE TABLE {VersionTableName} result: {result4}");
 
                 // This is needed because we only check uncompleted duties but a bug put unlocked data in previous versions
                 const string sql5 = $"UPDATE {CharacterTableName} SET Duties = '', DutiesUnlocked = '';";
                 int result5 = db.Execute(sql5);
-                Plugin.Log.Debug($"Reset characters (unlocked)duties. Result: {result5}");
+                Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, $"Reset characters (unlocked)duties. Result: {result5}");
             }
 
-            if (DoesTableExist(db, VersionTableName))
+            if (DoesTableExist(plugin, db, VersionTableName))
             {
-                Plugin.Log.Debug("Check version migration 0 to 1");
-                int? version = GetDbVersion(db);
-                Plugin.Log.Debug($"Current DB version is:{version}");
+                Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, "Check version migration 0 to 1");
+                int? version = GetDbVersion(plugin, db);
+                Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, $"Current DB version is:{version}");
                 if (version is (null or 0))
                 {
                     // This is needed because the previous versions didn't check for subrace and gender
                     const string sql6 = $"UPDATE {CharacterTableName} SET Hairstyles = ''";
                     int result6 = db.Execute(sql6);
-                    Plugin.Log.Debug($"Reset characters hairstyles. Result: {result6}");
+                    Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, $"Reset characters hairstyles. Result: {result6}");
 
                     const string sql7 = $"INSERT INTO {VersionTableName} (Version) VALUES(1)";
                     int result7 = db.Execute(sql7);
-                    Plugin.Log.Debug($"Set db version to 1. Result: {result7}");
+                    Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, $"Set db version to 1. Result: {result7}");
                 }
                 else
                 {
-                    Plugin.Log.Info("Skipping migration");
+                    Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, "Skipping migration");
                 }
             }
 
-            if (DoesTableExist(db, VersionTableName))
+            if (DoesTableExist(plugin, db, VersionTableName))
             {
-                Plugin.Log.Debug("Check version migration 1 to 2");
-                int? version = GetDbVersion(db);
-                Plugin.Log.Debug($"Current DB version is:{version}");
+                Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, "Check version migration 1 to 2");
+                int? version = GetDbVersion(plugin, db);
+                Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, $"Current DB version is:{version}");
                 if (version is 1)
                 {
                     bool result = Migrations.MigrateFromVersionOneToVersionTwo.Do(db, CharacterTableName);
@@ -511,54 +511,54 @@ namespace Altoholic.Database
                     {
                         const string sql9 = $"UPDATE {VersionTableName} SET Version = 2";
                         int result9 = db.Execute(sql9);
-                        Plugin.Log.Debug($"Set db version to 2. Result: {result9}");
+                        Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, $"Set db version to 2. Result: {result9}");
                     }
                 }
                 else
                 {
-                    Plugin.Log.Info("Skipping migration");
+                    Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, "Skipping migration");
                 }
             }
 
-            if (DoesTableExist(db, VersionTableName))
+            if (DoesTableExist(plugin, db, VersionTableName))
             {
-                Plugin.Log.Debug("Check version migration 2 to 3");
-                int? version = GetDbVersion(db);
-                Plugin.Log.Debug($"Current DB version is:{version}");
+                Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, "Check version migration 2 to 3");
+                int? version = GetDbVersion(plugin, db);
+                Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, $"Current DB version is:{version}");
                 if (version is 2)
                 {
                     // This is needed because the previous versions didn't check for subrace and gender
                     const string sql = $"UPDATE {CharacterTableName} SET BeastReputations = ''";
                     int result = db.Execute(sql);
-                    Plugin.Log.Debug($"Reset characters BeastReputations. Result: {result}");
+                    Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, $"Reset characters BeastReputations. Result: {result}");
 
                     const string sql2 = $"DELETE from {VersionTableName}";
                     int result2 = db.Execute(sql2);
-                    Plugin.Log.Debug($"Reset {VersionTableName}. Result: {result2}");
+                    Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, $"Reset {VersionTableName}. Result: {result2}");
 
                     const string sql3 = $"INSERT INTO {VersionTableName} (Version) VALUES(3)";
                     int result3 = db.Execute(sql3);
-                    Plugin.Log.Debug($"Set db version to 3. Result: {result3}");
+                    Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, $"Set db version to 3. Result: {result3}");
                 }
                 else
                 {
-                    Plugin.Log.Info("Skipping migration");
+                    Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, "Skipping migration");
                 }
             }
 
-            BackupAndUpgradeDbVersion(db, 3, 4);
+            BackupAndUpgradeDbVersion(plugin, db, 3, 4);
 
-            BackupAndUpgradeDbVersion(db, 4, 5);
-            if (DoesTableExist(db, "db_version"))
+            BackupAndUpgradeDbVersion(plugin, db, 4, 5);
+            if (DoesTableExist(plugin, db, "db_version"))
             {
                 const string oldName = "db_version";
                 const string sql = $"DROP TABLE IF EXISTS [{oldName}]";
                 int result = db.Execute(sql);
-                Plugin.Log.Debug("Drop old version table name");
-                BackupAndUpgradeDbVersion(db, 1, 6);
+                Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, "Drop old version table name");
+                BackupAndUpgradeDbVersion(plugin, db, 1, 6);
             }
-            BackupAndUpgradeDbVersion(db, 5, 6);
-            if (!DoesTableExist(db, PluginVersionTableName))
+            BackupAndUpgradeDbVersion(plugin, db, 5, 6);
+            if (!DoesTableExist(plugin, db, PluginVersionTableName))
             {
                 const string defaultVersion = "0.0.0.0";
                 const string sql = $"""
@@ -567,65 +567,65 @@ namespace Altoholic.Database
                                        );
                                      """;
                 int result = db.Execute(sql);
-                Plugin.Log.Debug($"CREATE TABLE {PluginVersionTableName} result: {result}");
+                Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, $"CREATE TABLE {PluginVersionTableName} result: {result}");
 
                 const string sql2 = $"INSERT INTO {PluginVersionTableName} ([Version]) VALUES(@Version)";
                 int result2 = db.Execute(sql2, new { Version = defaultVersion });
-                Plugin.Log.Debug($"Set plugin db version to {defaultVersion} Result: {result2}");
+                Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, $"Set plugin db version to {defaultVersion} Result: {result2}");
             }
 
-            if (DoesTableExist(db, VersionTableName))
+            if (DoesTableExist(plugin, db, VersionTableName))
             {
-                Plugin.Log.Debug("Check version migration 6 to 7");
-                int? version = GetDbVersion(db);
-                Plugin.Log.Debug($"Current DB version is:{version}");
+                Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, "Check version migration 6 to 7");
+                int? version = GetDbVersion(plugin, db);
+                Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, $"Current DB version is:{version}");
                 if (version is 6)
                 {
                     const string sql = $"UPDATE {CharacterTableName} SET Timers = json_remove(json_insert(Timers, '$.JumboCacpotTickets', json_extract(Timers, '$.JumpboCacpotTickets')),'$.JumpboCacpotTickets');";
                     int result = db.Execute(sql);
-                    Plugin.Log.Debug($"Rename characters Timers property JumpboCacpotTickets to JumboCacpotTickets. Result: {result}");
+                    Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, $"Rename characters Timers property JumpboCacpotTickets to JumboCacpotTickets. Result: {result}");
 
                     const string sql2 = $"UPDATE {CharacterTableName} SET Timers = json_remove(Timers, '$.JumboCacpotTickets');";
                     int result2 = db.Execute(sql2);
-                    Plugin.Log.Debug($"Remove characters Timers JumboCacpotTickets. Result: {result2}");
+                    Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, $"Remove characters Timers JumboCacpotTickets. Result: {result2}");
 
                     const string sql3 = $"UPDATE {VersionTableName} SET Version = 7";
                     int result3 = db.Execute(sql3);
-                    Plugin.Log.Debug($"Set db version to 7 Result: {result3}");
+                    Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, $"Set db version to 7 Result: {result3}");
                 }
                 else
                 {
-                    Plugin.Log.Info("Skipping migration");
+                    Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, "Skipping migration");
                 }
             }
         }
 
-        private static void BackupAndUpgradeDbVersion(SqliteConnection db, int oldVer, int newVer)
+        private static void BackupAndUpgradeDbVersion(Plugin plugin, SqliteConnection db, int oldVer, int newVer)
         {
-            if (!DoesTableExist(db, VersionTableName))
+            if (!DoesTableExist(plugin, db, VersionTableName))
             {
                 return;
             }
 
-            Plugin.Log.Info($"Check version migration {oldVer} to {newVer}");
-            int? version = GetDbVersion(db);
-            Plugin.Log.Info($"Current DB version is:{version}");
+            Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, $"Check version migration {oldVer} to {newVer}");
+            int? version = GetDbVersion(plugin, db);
+            Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, $"Current DB version is:{version}");
             if (version == oldVer)
             {
                 BackupDatabase();
                 string sql = $"UPDATE {VersionTableName} SET Version = {newVer}";
                 int result = db.Execute(sql);
-                Plugin.Log.Info($"Set db version to {newVer}. Result: {result}");
+                Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, $"Set db version to {newVer}. Result: {result}");
             }
             else
             {
-                Plugin.Log.Info("Skipping migration");
+                Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, "Skipping migration");
             }
         }
 
-        public static int? GetDbVersion(SqliteConnection db)
+        public static int? GetDbVersion(Plugin plugin, SqliteConnection db)
         {
-            Plugin.Log.Debug("Database/GetDbVersion entered");
+            Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, "Database/GetDbVersion entered");
             try
             {
                 const string sql = $"SELECT Version FROM {VersionTableName}";
@@ -638,9 +638,9 @@ namespace Altoholic.Database
             }
         }
 
-        public static Character? GetCharacter(SqliteConnection db, ulong id)
+        public static Character? GetCharacter(Plugin plugin, SqliteConnection db, ulong id)
         {
-            Plugin.Log.Debug($"Database/GetCharacter entered with id = {id}");
+            Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, $"Database/GetCharacter entered with id = {id}");
             try
             {
                 Blacklist? b = GetBlacklist(db, id);
@@ -650,7 +650,7 @@ namespace Altoholic.Database
                 DatabaseCharacter? dbCharacter = db.QueryFirstOrDefault<DatabaseCharacter>(sql, new { id });
                 if (dbCharacter == null) return null;
 
-                Character character = FormatDatabaseCharacterFromDatabase(dbCharacter);
+                Character character = FormatDatabaseCharacterFromDatabase(plugin, dbCharacter);
                 character.CurrenciesHistory = GetCharacterCurrenciesHistories(db, id);
                 return character;
             }
@@ -683,14 +683,16 @@ namespace Altoholic.Database
                 if (currencies == null) continue;
                 currenciesHistories.Add(new CurrenciesHistory()
                 {
-                    CharacterId = dch.CharacterId, Datetime = dch.Datetime, Currencies = currencies
+                    CharacterId = dch.CharacterId,
+                    Datetime = dch.Datetime,
+                    Currencies = currencies
                 });
             }
 
             return currenciesHistories;
         }
 
-        public static List<Character> GetOthersCharacters(SqliteConnection db, ulong id)
+        public static List<Character> GetOthersCharacters(Plugin plugin, SqliteConnection db, ulong id)
         {
             try
             {
@@ -700,7 +702,7 @@ namespace Altoholic.Database
                 List<Character> cList = [];
                 foreach (DatabaseCharacter dbCharacter in dbCharacters)
                 {
-                    Character character = FormatDatabaseCharacterFromDatabase(dbCharacter);
+                    Character character = FormatDatabaseCharacterFromDatabase(plugin, dbCharacter);
                     character.CurrenciesHistory = GetCharacterCurrenciesHistories(db, id);
 
                     cList.Add(character);
@@ -715,17 +717,17 @@ namespace Altoholic.Database
             }
         }
 
-        private static int DeleteCharacter(SqliteConnection db, ulong id)
+        private static int DeleteCharacter(Plugin plugin, SqliteConnection db, ulong id)
         {
-            Plugin.Log.Debug($"Database/DeleteCharacter entered with params: db = {db}, id = {id}");
+            Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, $"Database/DeleteCharacter entered with params: db = {db}, id = {id}");
             try
             {
                 const string sql = $"DELETE FROM {CharacterTableName} WHERE CharacterId = @id";
                 int result = db.Execute(sql, new { id });
-                Plugin.Log.Debug($"Database/DeleteCharacter DeleteCharacter result: {result}");
+                Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, $"Database/DeleteCharacter DeleteCharacter result: {result}");
                 if (result == 1)
                 {
-                    int result2 = DeleteCharacterCurrenciesHistories(db, id);
+                    int result2 = DeleteCharacterCurrenciesHistories(plugin, db, id);
                 }
 
                 return result;
@@ -737,18 +739,18 @@ namespace Altoholic.Database
             }
         }
 
-        private static int DeleteCharacterCurrenciesHistories(SqliteConnection db, ulong id)
+        private static int DeleteCharacterCurrenciesHistories(Plugin plugin, SqliteConnection db, ulong id)
         {
-            Plugin.Log.Debug($"Entering DeleteCharacterCurrenciesHistories with character id = {id}");
+            Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, $"Entering DeleteCharacterCurrenciesHistories with character id = {id}");
             const string sql = $"DELETE FROM {CharactersCurrenciesHistoryTableName} WHERE characterId = @id";
             int result = db.Execute(sql, new { id });
-            //Plugin.Log.Debug($"DeleteCharacterCurrenciesHistories result: {result}");
+            //Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, $"DeleteCharacterCurrenciesHistories result: {result}");
             return result;
         }
 
-        public static int UpdateCharacter(SqliteConnection db, Character character, bool updateLastOnline = true)
+        public static int UpdateCharacter(Plugin plugin, SqliteConnection db, Character character, bool updateLastOnline = true)
         {
-            Plugin.Log.Debug(
+            Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages,
                 $"Entering UpdateCharacter with character : id = {character.CharacterId}, FirstName = {character.FirstName}, LastName = {character.LastName}, HomeWorld = {character.HomeWorld}, DataCenter = {character.Datacenter}, LastJob = {character.LastJob}, LastJobLevel = {character.LastJobLevel}, FCTag = {character.FCTag}, FreeCompany = {character.FreeCompany}, LastOnline = {character.LastOnline}, PlayTime = {character.PlayTime}, LastPlayTimeUpdate = {character.LastPlayTimeUpdate}");
             if (character.CharacterId == 0) return 0;
 
@@ -765,9 +767,9 @@ namespace Altoholic.Database
                 return 0;
             }
         }
-        public static int UpdateCharacterCurrencyHistory(SqliteConnection db, Character character)
+        public static int UpdateCharacterCurrencyHistory(Plugin plugin, SqliteConnection db, Character character)
         {
-            Plugin.Log.Debug(
+            Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages,
                 $"Entering UpdateCharacterCurrencyHistory with character : id = {character.CharacterId}, FirstName = {character.FirstName}, LastName = {character.LastName}, HomeWorld = {character.HomeWorld}, DataCenter = {character.Datacenter}, LastJob = {character.LastJob}, LastJobLevel = {character.LastJobLevel}, FCTag = {character.FCTag}, FreeCompany = {character.FreeCompany}, LastOnline = {character.LastOnline}, PlayTime = {character.PlayTime}, LastPlayTimeUpdate = {character.LastPlayTimeUpdate}");
             if (character.CharacterId == 0) return 0;
 
@@ -778,8 +780,8 @@ namespace Altoholic.Database
                     return 0;
                 }
 
-                int result = AddCharacterCurrencyHistory(db, character.CharacterId, character.Currencies);
-                //Plugin.Log.Debug($"UpdateCharacterCurrencyHistory => AddCharacterCurrencyHistory result: {result}");
+                int result = AddCharacterCurrencyHistory(plugin, db, character.CharacterId, character.Currencies);
+                //Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, $"UpdateCharacterCurrencyHistory => AddCharacterCurrencyHistory result: {result}");
                 return result;
             }
             catch (Exception ex)
@@ -789,13 +791,13 @@ namespace Altoholic.Database
             }
         }
 
-        public static int UpdatePlaytime(SqliteConnection db, ulong id, uint playTime, long playTimeUpdate)
+        public static int UpdatePlaytime(Plugin plugin, SqliteConnection db, ulong id, uint playTime, long playTimeUpdate)
         {
             if (playTime == 0) return 0;
-            //Plugin.Log.Debug($"UpdatePlayTime {id} {playTime} {playTimeUpdate}");
+            //Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, $"UpdatePlayTime {id} {playTime} {playTimeUpdate}");
             try
             {
-                Character? c = GetCharacter(db, id);
+                Character? c = GetCharacter(plugin, db, id);
                 if (c == null) return 0;
 
                 const string updateSql =
@@ -811,7 +813,7 @@ namespace Altoholic.Database
             }
         }
 
-        private static Character FormatDatabaseCharacterFromDatabase(DatabaseCharacter databaseCharacter)
+        private static Character FormatDatabaseCharacterFromDatabase(Plugin plugin, DatabaseCharacter databaseCharacter)
         {
             ushort[] currentFacewear = string.IsNullOrEmpty(databaseCharacter.CurrentFacewear)
                 ? [0, 0]
@@ -819,174 +821,174 @@ namespace Altoholic.Database
             Attributes? attributes = string.IsNullOrEmpty(databaseCharacter.Attributes)
                 ? null
                 : System.Text.Json.JsonSerializer.Deserialize<Attributes>(databaseCharacter.Attributes);
-            Plugin.Log.Debug("Attribes deserialized");
+            Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, "Attribes deserialized");
             PlayerCurrencies? currencies = string.IsNullOrEmpty(databaseCharacter.Currencies)
                 ? null
                 : System.Text.Json.JsonSerializer.Deserialize<PlayerCurrencies>(databaseCharacter.Currencies);
-            Plugin.Log.Debug("Currencies deserialized");
+            Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, "Currencies deserialized");
             Jobs? jobs = string.IsNullOrEmpty(databaseCharacter.Jobs)
                 ? null
                 : System.Text.Json.JsonSerializer.Deserialize<Jobs>(databaseCharacter.Jobs);
-            Plugin.Log.Debug("Jobs deserialized");
+            Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, "Jobs deserialized");
             Profile? profile = string.IsNullOrEmpty(databaseCharacter.Profile)
                 ? null
                 : System.Text.Json.JsonSerializer.Deserialize<Profile>(databaseCharacter.Profile);
-            Plugin.Log.Debug("Profile deserialized");
+            Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, "Profile deserialized");
             List<int> quests = string.IsNullOrEmpty(databaseCharacter.Quests)
                 ? []
                 : System.Text.Json.JsonSerializer.Deserialize<List<int>>(databaseCharacter.Quests) ?? [];
-            Plugin.Log.Debug("Quests deserialized");
+            Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, "Quests deserialized");
             List<Inventory> inventory = string.IsNullOrEmpty(databaseCharacter.Inventory)
                 ? []
                 : System.Text.Json.JsonSerializer.Deserialize<List<Inventory>>(databaseCharacter.Inventory) ?? [];
-            Plugin.Log.Debug("Inventory deserialized");
+            Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, "Inventory deserialized");
             ArmoryGear? armoryInventory = string.IsNullOrEmpty(databaseCharacter.ArmoryInventory)
                 ? null
                 : System.Text.Json.JsonSerializer.Deserialize<ArmoryGear>(databaseCharacter.ArmoryInventory);
-            Plugin.Log.Debug("ArmoryInventory deserialized");
+            Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, "ArmoryInventory deserialized");
             List<Inventory> saddle = string.IsNullOrEmpty(databaseCharacter.Saddle)
                 ? []
                 : System.Text.Json.JsonSerializer.Deserialize<List<Inventory>>(databaseCharacter.Saddle) ?? [];
-            Plugin.Log.Debug("Saddle deserialized");
+            Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, "Saddle deserialized");
             List<Gear> gear = string.IsNullOrEmpty(databaseCharacter.Gear)
                 ? []
                 : System.Text.Json.JsonSerializer.Deserialize<List<Gear>>(databaseCharacter.Gear) ?? [];
-            Plugin.Log.Debug("Gear deserialized");
+            Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, "Gear deserialized");
             List<Retainer> retainers = string.IsNullOrEmpty(databaseCharacter.Retainers)
                 ? []
                 : System.Text.Json.JsonSerializer.Deserialize<List<Retainer>>(databaseCharacter.Retainers) ?? [];
-            Plugin.Log.Debug("Retainers deserialized");
+            Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, "Retainers deserialized");
             Dictionary<ulong, string> blacklistedRetainers = string.IsNullOrEmpty(databaseCharacter.BlacklistedRetainers)
                 ? []
                 : System.Text.Json.JsonSerializer.Deserialize<Dictionary<ulong, string>>(databaseCharacter.BlacklistedRetainers) ?? [];
-            Plugin.Log.Debug("BlacklistedRetainers deserialized");
+            Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, "BlacklistedRetainers deserialized");
             List<uint> minions = string.IsNullOrEmpty(databaseCharacter.Minions)
                 ? []
                 : System.Text.Json.JsonSerializer.Deserialize<List<uint>>(databaseCharacter.Minions) ?? [];
-            Plugin.Log.Debug("Minions deserialized");
+            Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, "Minions deserialized");
             List<uint> mounts = string.IsNullOrEmpty(databaseCharacter.Mounts)
                 ? []
                 : System.Text.Json.JsonSerializer.Deserialize<List<uint>>(databaseCharacter.Mounts) ?? [];
-            Plugin.Log.Debug("Mounts deserialized");
+            Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, "Mounts deserialized");
             List<uint> tripleTriadCards = string.IsNullOrEmpty(databaseCharacter.TripleTriadCards)
                 ? []
                 : System.Text.Json.JsonSerializer.Deserialize<List<uint>>(databaseCharacter.TripleTriadCards) ?? [];
-            Plugin.Log.Debug("TripleTriadCards deserialized");
+            Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, "TripleTriadCards deserialized");
             List<uint> emotes = string.IsNullOrEmpty(databaseCharacter.Emotes)
                 ? []
                 : System.Text.Json.JsonSerializer.Deserialize<List<uint>>(databaseCharacter.Emotes) ?? [];
-            Plugin.Log.Debug("Emotes deserialized");
+            Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, "Emotes deserialized");
             List<uint> bardings = (string.IsNullOrEmpty(databaseCharacter.Bardings))
                 ? []
                 : System.Text.Json.JsonSerializer.Deserialize<List<uint>>(databaseCharacter.Bardings) ?? [];
-            Plugin.Log.Debug("Bardings deserialized");
+            Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, "Bardings deserialized");
             List<uint> framerkits = string.IsNullOrEmpty(databaseCharacter.FramerKits)
                 ? []
                 : System.Text.Json.JsonSerializer.Deserialize<List<uint>>(databaseCharacter.FramerKits) ?? [];
-            Plugin.Log.Debug("FramerKits deserialized");
+            Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, "FramerKits deserialized");
             List<uint> orchestrionRolls = string.IsNullOrEmpty(databaseCharacter.OrchestrionRolls)
                 ? []
                 : System.Text.Json.JsonSerializer.Deserialize<List<uint>>(databaseCharacter.OrchestrionRolls) ?? [];
-            Plugin.Log.Debug("OrchestrionRolls deserialized");
+            Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, "OrchestrionRolls deserialized");
             List<uint> ornaments = string.IsNullOrEmpty(databaseCharacter.Ornaments)
                 ? []
                 : System.Text.Json.JsonSerializer.Deserialize<List<uint>>(databaseCharacter.Ornaments) ?? [];
-            Plugin.Log.Debug("Ornaments deserialized");
+            Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, "Ornaments deserialized");
             List<uint> glasses = string.IsNullOrEmpty(databaseCharacter.Glasses)
                 ? []
                 : System.Text.Json.JsonSerializer.Deserialize<List<uint>>(databaseCharacter.Glasses) ?? [];
-            Plugin.Log.Debug("Glasses deserialized");
+            Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, "Glasses deserialized");
             List<BeastTribeRank> beastReputations = string.IsNullOrEmpty(databaseCharacter.BeastReputations)
                 ? []
                 : System.Text.Json.JsonSerializer.Deserialize<List<BeastTribeRank>>(databaseCharacter
                     .BeastReputations) ?? [];
-            Plugin.Log.Debug("BeastReputations deserialized");
+            Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, "BeastReputations deserialized");
             List<uint> duties = string.IsNullOrEmpty(databaseCharacter.Duties)
                 ? []
                 : System.Text.Json.JsonSerializer.Deserialize<List<uint>>(databaseCharacter.Duties) ?? [];
-            Plugin.Log.Debug("Duties deserialized");
+            Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, "Duties deserialized");
             List<uint> dutiesUnlocked = string.IsNullOrEmpty(databaseCharacter.DutiesUnlocked)
                 ? []
                 : System.Text.Json.JsonSerializer.Deserialize<List<uint>>(databaseCharacter.DutiesUnlocked) ?? [];
-            Plugin.Log.Debug("DutiesUnlocked deserialized");
+            Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, "DutiesUnlocked deserialized");
             List<Housing> houses = string.IsNullOrEmpty(databaseCharacter.Houses)
                 ? []
                 : System.Text.Json.JsonSerializer.Deserialize<List<Housing>>(databaseCharacter
                     .Houses) ?? [];
-            Plugin.Log.Debug("Houses deserialized");
+            Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, "Houses deserialized");
             List<uint> hairstyles = string.IsNullOrEmpty(databaseCharacter.Hairstyles)
                 ? []
                 : System.Text.Json.JsonSerializer.Deserialize<List<uint>>(databaseCharacter
                     .Hairstyles) ?? [];
-            Plugin.Log.Debug("Hairstyles deserialized");
+            Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, "Hairstyles deserialized");
             List<uint> facepaints = string.IsNullOrEmpty(databaseCharacter.Facepaints)
                 ? []
                 : System.Text.Json.JsonSerializer.Deserialize<List<uint>>(databaseCharacter
                     .Facepaints) ?? [];
-            Plugin.Log.Debug("Facepaints deserialized");
+            Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, "Facepaints deserialized");
             List<uint> secretRecipeBooks = string.IsNullOrEmpty(databaseCharacter.SecretRecipeBooks)
                 ? []
                 : System.Text.Json.JsonSerializer.Deserialize<List<uint>>(databaseCharacter
                     .SecretRecipeBooks) ?? [];
-            Plugin.Log.Debug("SecretRecipeBooks deserialized");
+            Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, "SecretRecipeBooks deserialized");
             List<uint> vistas = string.IsNullOrEmpty(databaseCharacter.Vistas)
                 ? []
                 : System.Text.Json.JsonSerializer.Deserialize<List<uint>>(databaseCharacter
                     .Vistas) ?? [];
-            Plugin.Log.Debug("Vistas deserialized");
+            Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, "Vistas deserialized");
             List<uint> armoire = string.IsNullOrEmpty(databaseCharacter.Armoire)
                 ? []
                 : System.Text.Json.JsonSerializer.Deserialize<List<uint>>(databaseCharacter
                     .Armoire) ?? [];
-            Plugin.Log.Debug("Armoire deserialized");
+            Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, "Armoire deserialized");
             GlamourItem[] glamourDresser = string.IsNullOrEmpty(databaseCharacter.GlamourDresser)
                 ? []
                 : System.Text.Json.JsonSerializer.Deserialize<GlamourItem[]>(databaseCharacter
                     .GlamourDresser) ?? [];
-            Plugin.Log.Debug("GlamourDresser deserialized");
+            Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, "GlamourDresser deserialized");
             PvPProfile? pvPProfile = string.IsNullOrEmpty(databaseCharacter.PvPProfile)
                 ? null
                 : System.Text.Json.JsonSerializer.Deserialize<PvPProfile>(databaseCharacter
                     .PvPProfile) ?? null;
-            Plugin.Log.Debug("PvPProfile deserialized");
+            Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, "PvPProfile deserialized");
             Timers? timers = string.IsNullOrEmpty(databaseCharacter.Timers)
                 ? new Timers()
                 : System.Text.Json.JsonSerializer.Deserialize<Timers>(databaseCharacter
                     .Timers) ?? new Timers();
-            Plugin.Log.Debug("Timers deserialized");
+            Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, "Timers deserialized");
             GearSet? currentGearSet = string.IsNullOrEmpty(databaseCharacter.CurrentGearSet)
                 ? null
                 : System.Text.Json.JsonSerializer.Deserialize<GearSet>(databaseCharacter
                     .CurrentGearSet) ?? null;
-            Plugin.Log.Debug("CurrentGearSet deserialized");
+            Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, "CurrentGearSet deserialized");
             Dictionary<int, GearSet> gearSets = string.IsNullOrEmpty(databaseCharacter.GearSets)
                 ? []
                 : System.Text.Json.JsonSerializer.Deserialize<Dictionary<int, GearSet>>(databaseCharacter.GearSets) ?? [];
-            Plugin.Log.Debug("GearSets deserialized");
+            Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, "GearSets deserialized");
             Dictionary<byte, GlamourPlate> glamourPlates = string.IsNullOrEmpty(databaseCharacter.GlamourPlates)
                 ? []
                 : System.Text.Json.JsonSerializer.Deserialize<Dictionary<byte, GlamourPlate>>(databaseCharacter.GlamourPlates) ?? [];
-            Plugin.Log.Debug("GlamourPlates deserialized");
+            Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, "GlamourPlates deserialized");
             Dictionary<uint, DateTime> completedRoulettes = string.IsNullOrEmpty(databaseCharacter.CompletedRoulettes)
                 ? []
                 : System.Text.Json.JsonSerializer.Deserialize<Dictionary<uint, DateTime>>(databaseCharacter.CompletedRoulettes) ?? [];
-            Plugin.Log.Debug("CompletedRoulettes deserialized");
+            Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, "CompletedRoulettes deserialized");
             HashSet<uint> unlockedRoulettes = string.IsNullOrEmpty(databaseCharacter.UnlockedRoulettes)
                 ? []
                 : System.Text.Json.JsonSerializer.Deserialize<HashSet<uint>>(databaseCharacter.UnlockedRoulettes) ?? [];
-            Plugin.Log.Debug("UnlockedRoulettes deserialized");
+            Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, "UnlockedRoulettes deserialized");
             Dictionary<uint, RaidReward> raidRewards = string.IsNullOrEmpty(databaseCharacter.RaidRewards)
                 ? []
                 : System.Text.Json.JsonSerializer.Deserialize<Dictionary<uint, RaidReward>>(databaseCharacter.RaidRewards) ?? [];
-            Plugin.Log.Debug("RaidRewards deserialized");
+            Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, "RaidRewards deserialized");
             WondrousTails? wondrousTails = string.IsNullOrEmpty(databaseCharacter.WondrousTails)
                 ? null
                 : System.Text.Json.JsonSerializer.Deserialize<WondrousTails>(databaseCharacter.WondrousTails) ?? null;
-            Plugin.Log.Debug("WondrousTails deserialized");
+            Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, "WondrousTails deserialized");
             Dictionary<uint, DateTime> lastCompletedDutyDatetime = string.IsNullOrEmpty(databaseCharacter.LastCompletedDutyDatetime)
                 ? []
                 : System.Text.Json.JsonSerializer.Deserialize<Dictionary<uint, DateTime>>(databaseCharacter.LastCompletedDutyDatetime) ?? [];
-            Plugin.Log.Debug("LastCompletedDutyDatetime deserialized");
+            Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, "LastCompletedDutyDatetime deserialized");
 
             return new Character()
             {
@@ -1180,16 +1182,16 @@ namespace Altoholic.Database
             };
         }
 
-        public static int AddCharacter(SqliteConnection db, Character character)
+        public static int AddCharacter(Plugin plugin, SqliteConnection db, Character character)
         {
-            Plugin.Log.Debug("Entering AddCharacter()");
+            Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, "Entering AddCharacter()");
             const string insertQuery =
                 $"INSERT INTO {CharacterTableName}([CharacterId], [FirstName], [LastName], [HomeWorld], [Datacenter], [Region], [IsSprout], [IsBattleMentor], [IsTradeMentor], [IsReturner], [LastJob], [LastJobLevel], [FCTag], [FreeCompany], [LastOnline], [PlayTime], [LastPlayTimeUpdate], [HasPremiumSaddlebag], [PlayerCommendations], [CurrentFacewear], [CurrentOrnament], [UnreadLetters], [IslandSanctuaryUnlocked], [IslandSanctuaryLevel], [Attributes], [Currencies], [Jobs], [Profile], [Quests], [Inventory], [ArmoryInventory], [Saddle], [Gear], [Retainers], [BlacklistedRetainers], [Minions], [Mounts], [TripleTriadCards], [Emotes], [Bardings], [FramerKits], [OrchestrionRolls], [Ornaments], [Glasses], [BeastReputations], [Duties], [DutiesUnlocked], [Houses], [Hairstyles], [Facepaints], [SecretRecipeBooks], [Vistas], [SightseeingLogUnlockState], [SightseeingLogUnlockStateEx], [Armoire], [GlamourDresser], [PvPProfile], [Timers], [CurrentGearSet], [GearSets], [GlamourPlates], [CompletedRoulettes], [UnlockedRoulettes], [RaidRewards], [WondrousTails], [LastCompletedDutyDatetime]) " +
                 "VALUES (@CharacterId, @FirstName, @LastName, @HomeWorld, @Datacenter, @Region, @IsSprout, @IsBattleMentor, @IsTradeMentor, @IsReturner, @LastJob, @LastJobLevel, @FCTag, @FreeCompany, @LastOnline, @PlayTime, @LastPlayTimeUpdate, @HasPremiumSaddlebag, @PlayerCommendations, @CurrentFacewear, @CurrentOrnament, @UnreadLetters, @IslandSanctuaryUnlocked, @IslandSanctuaryLevel, @Attributes, @Currencies, @Jobs, @Profile, @Quests, @Inventory, @ArmoryInventory, @Saddle, @Gear, @Retainers, @BlacklistedRetainers, @Minions, @Mounts, @TripleTriadCards, @Emotes, @Bardings, @FramerKits, @OrchestrionRolls, @Ornaments, @Glasses, @BeastReputations, @Duties, @DutiesUnlocked, @Houses, @Hairstyles, @Facepaints, @SecretRecipeBooks, @Vistas, @SightseeingLogUnlockState, @SightseeingLogUnlockStateEx, @Armoire, @GlamourDresser, @PvPProfile, @Timers, @CurrentGearSet, @GearSets, @GlamourPlates, @CompletedRoulettes, @UnlockedRoulettes, @RaidRewards, @WondrousTails, @LastCompletedDutyDatetime)";
 
             int result = db.Execute(insertQuery, FormatCharacterForDatabase(character));
 
-            Plugin.Log.Debug($"AddCharacter result: {result}");
+            Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, $"AddCharacter result: {result}");
             if (result != 1)
             {
                 return result;
@@ -1200,54 +1202,54 @@ namespace Altoholic.Database
                 return result;
             }
 
-            int result2 = AddCharacterCurrencyHistory(db, character.CharacterId, character.Currencies);
-            Plugin.Log.Debug($"AddCharacter => AddCharacterCurrencyHistory result: {result2}");
+            int result2 = AddCharacterCurrencyHistory(plugin, db, character.CharacterId, character.Currencies);
+            Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, $"AddCharacter => AddCharacterCurrencyHistory result: {result2}");
             return result;
         }
 
-        private static int AddCharacterWithCurrenciesHistories(SqliteConnection db, Character character)
+        private static int AddCharacterWithCurrenciesHistories(Plugin plugin, SqliteConnection db, Character character)
         {
-            Plugin.Log.Debug("Entering AddCharacterWithCurrenciesHistories()");
+            Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, "Entering AddCharacterWithCurrenciesHistories()");
 
-            int result = AddCharacter(db, character);
+            int result = AddCharacter(plugin, db, character);
 
-            Plugin.Log.Debug($"AddCharacterWithCurrenciesHistories result: {result}");
+            Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, $"AddCharacterWithCurrenciesHistories result: {result}");
             if (result != 1)
             {
                 return result;
             }
 
             foreach (int result2 in character.CurrenciesHistory.Select(currenciesHistory =>
-                         AddCharacterCurrencyHistory(db, currenciesHistory)))
+                         AddCharacterCurrencyHistory(plugin, db, currenciesHistory)))
             {
-                Plugin.Log.Debug(
+                Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages,
                     $"AddCharacterWithCurrenciesHistories => AddCharacterCurrencyHistory result: {result2}");
             }
 
             return result;
         }
 
-        public static void AddCharacters(SqliteConnection db, List<Character> characters)
+        public static void AddCharacters(Plugin plugin, SqliteConnection db, List<Character> characters)
         {
             SqliteTransaction transaction = db.BeginTransaction();
             foreach (Character character in characters)
             {
                 if (character.CurrenciesHistory.Count == 0)
                 {
-                    AddCharacter(db, character);
+                    AddCharacter(plugin, db, character);
                 }
                 else
                 {
-                    AddCharacterWithCurrenciesHistories(db, character);
+                    AddCharacterWithCurrenciesHistories(plugin, db, character);
                 }
             }
 
             transaction.Commit();
         }
 
-        private static int AddCharacterCurrencyHistory(SqliteConnection db, CurrenciesHistory ch)
+        private static int AddCharacterCurrencyHistory(Plugin plugin, SqliteConnection db, CurrenciesHistory ch)
         {
-            Plugin.Log.Debug(
+            Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages,
                 $"AddCharacterCurrencyHistory with params: {ch.CharacterId}, {ch.Currencies}, {ch.Datetime}");
             string currencies = System.Text.Json.JsonSerializer.Serialize(ch.Currencies);
             const string insertHistoryQuery =
@@ -1256,15 +1258,15 @@ namespace Altoholic.Database
             return result;
         }
 
-        private static int AddCharacterCurrencyHistory(SqliteConnection db, ulong id, PlayerCurrencies pc)
+        private static int AddCharacterCurrencyHistory(Plugin plugin, SqliteConnection db, ulong id, PlayerCurrencies pc)
         {
-            Plugin.Log.Debug("Entering AddCharacterCurrencyHistory()");
+            Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, "Entering AddCharacterCurrencyHistory()");
             long datetime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
             string currencies = System.Text.Json.JsonSerializer.Serialize(pc);
             const string insertHistoryQuery =
                 $"INSERT INTO {CharactersCurrenciesHistoryTableName}([CharacterId], [DateTime], [Currencies]) VALUES (@CharacterId, @Datetime, @Currencies)";
 #if DEBUG
-            Plugin.Log.Debug($"AddCharacter => AddCharacterCurrencyHistory: values: {id}, {datetime}, {currencies}");
+            Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, $"AddCharacter => AddCharacterCurrencyHistory: values: {id}, {datetime}, {currencies}");
 #endif
 
             int result = db.Execute(insertHistoryQuery,
@@ -1272,21 +1274,21 @@ namespace Altoholic.Database
             return result;
         }
 
-        public static int BlacklistCharacter(SqliteConnection db, ulong id)
+        public static int BlacklistCharacter(Plugin plugin, SqliteConnection db, ulong id)
         {
-            Plugin.Log.Debug($"Database/BlacklistCharacter entered with params: db = {db}, id = {id}");
+            Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, $"Database/BlacklistCharacter entered with params: db = {db}, id = {id}");
             try
             {
                 Blacklist? bl = GetBlacklist(db, id);
                 if (bl != null)
                 {
-                    return DeleteCharacter(db, id);
+                    return DeleteCharacter(plugin, db, id);
                 }
 
                 const string blsql = $"INSERT INTO {BlacklistTableName}('CharacterId') VALUES (@id)";
                 db.Execute(blsql, new { id });
 
-                return DeleteCharacter(db, id);
+                return DeleteCharacter(plugin, db, id);
             }
             catch (Exception ex)
             {
@@ -1307,9 +1309,9 @@ namespace Altoholic.Database
             return db.Query<Blacklist>(sql).AsList();
         }
 
-        public static bool DeleteBlacklist(SqliteConnection db, ulong id)
+        public static bool DeleteBlacklist(Plugin plugin, SqliteConnection db, ulong id)
         {
-            Plugin.Log.Debug($"Database/DeleteBlacklist entered with params: db = {db}, id = {id}");
+            Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, $"Database/DeleteBlacklist entered with params: db = {db}, id = {id}");
             const string sql = $"SELECT * FROM {BlacklistTableName} WHERE CharacterId = @id";
             Blacklist? character = db.QueryFirstOrDefault<Blacklist>(sql, new { id });
             if (character == null)
@@ -1328,15 +1330,15 @@ namespace Altoholic.Database
             string dbpath = Path.Combine(Plugin.PluginInterface.GetPluginConfigDirectory(), "altoholic.db");
             string backupdbpath = Path.Combine(Plugin.PluginInterface.GetPluginConfigDirectory(), "backups",
                 $"altoholic.db.{date:yyyyMMddHHmmss}");
-            if(File.Exists(backupdbpath)) return;
+            if (File.Exists(backupdbpath)) return;
             Directory.CreateDirectory(Path.Combine(Plugin.PluginInterface.GetPluginConfigDirectory(), "backups"));
             File.Copy(dbpath, backupdbpath);
         }
 
-        private static void DeleteAndKeepLastFiveBackup()
+        private static void DeleteAndKeepLastFiveBackup(Plugin plugin)
         {
-            Plugin.Log.Debug("Database/DeleteAndKeepLastFiveBackup entered");
-            Plugin.Log.Info("Cleaning old backups");
+            Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, "Database/DeleteAndKeepLastFiveBackup entered");
+            Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, "Cleaning old backups");
             string backupdbpath = Path.Combine(Plugin.PluginInterface.GetPluginConfigDirectory(), "backups");
             if (!Directory.Exists(backupdbpath))
             {
@@ -1380,14 +1382,15 @@ namespace Altoholic.Database
             }
         }
 
-        public static void CheckAndBackup(SqliteConnection db, Version version)
+        public static void CheckAndBackup(Plugin plugin, SqliteConnection db, Version version)
         {
-            Plugin.Log.Debug("Database/CheckAndBackup entered");
+            Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, "Database/CheckAndBackup entered");
             try
             {
                 const string sql = $"SELECT Version FROM {PluginVersionTableName}";
                 string? pluginVersionInDb = db.QueryFirstOrDefault<string?>(sql);
-                if (string.IsNullOrEmpty(pluginVersionInDb)) {
+                if (string.IsNullOrEmpty(pluginVersionInDb))
+                {
                     pluginVersionInDb = "0.0.0.0";
                 }
                 if (!Version.TryParse(pluginVersionInDb, out Version? pluginVersion))
@@ -1400,12 +1403,12 @@ namespace Altoholic.Database
                     int compare = version.CompareTo(pluginVersion); // < 0 if v1 < v2, 0 if equal, > 0 if v1 > v2
                     if (compare > 0)
                     {
-                        Plugin.Log.Info($"Plugin version is newer than db plugin version, updating db plugin version");
-                        SetPluginVersionInDb(db, version.ToString());
+                        Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, $"Plugin version is newer than db plugin version, updating db plugin version");
+                        SetPluginVersionInDb(plugin, db, version.ToString());
                         BackupDatabase();
                     }
                 }
-                DeleteAndKeepLastFiveBackup();
+                DeleteAndKeepLastFiveBackup(plugin);
             }
             catch (Exception ex)
             {
@@ -1413,20 +1416,21 @@ namespace Altoholic.Database
             }
         }
 
-        private static void SetPluginVersionInDb(SqliteConnection db, string version)
+        private static void SetPluginVersionInDb(Plugin plugin, SqliteConnection db, string version)
         {
-            if (!DoesTableExist(db, PluginVersionTableName))
+            if (!DoesTableExist(plugin, db, PluginVersionTableName))
             {
                 return;
             }
-            try{
-                Plugin.Log.Info($"Current plugin DB version is:{version}");
+            try
+            {
+                Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, $"Current plugin DB version is:{version}");
 
                 string sql = $"UPDATE {PluginVersionTableName} SET Version = '{version}'";
                 int result = db.Execute(sql);
-                Plugin.Log.Info($"Set plugin db version to {version}. Result: {result}");
+                Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, $"Set plugin db version to {version}. Result: {result}");
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Plugin.Log.Error($"Set plugin DB version error: {ex}");
             }
