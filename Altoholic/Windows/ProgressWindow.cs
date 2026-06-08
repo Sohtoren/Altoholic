@@ -395,10 +395,18 @@ namespace Altoholic.Windows
             }
 
             Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 401, 29000);
+            Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 425, 20000);
+            Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 426, 20000);
+            Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 445, 20000);
+            Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 446, 20000);
             Helpers.Reward.DrawAllCharsFramerKit(_currentLocale, _globalCache, chars, 48091, 6000);
             Helpers.Reward.DrawAllCharsFramerKit(_currentLocale, _globalCache, chars, 46768, 6000);
+            Helpers.Reward.DrawAllCharsFramerKit(_currentLocale, _globalCache, chars, 50019, 6000);
+            Helpers.Reward.DrawAllCharsFramerKit(_currentLocale, _globalCache, chars, 51996, 6000);
             Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.TripleTriadCard, 449, 4000);
             Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.TripleTriadCard, 450, 6000);
+            Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.TripleTriadCard, 458, 4000);
+            Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.TripleTriadCard, 474, 4000);
             Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Emote, 294, 9600);
             Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Glass, 289, 6000);
             Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Glass, 373, 3000);
@@ -3489,6 +3497,7 @@ namespace Altoholic.Windows
                 ImGui.EndTooltip();
             }
 
+            ImGui.SetNextWindowSize(new Vector2(800, 250));
             using var rewardModal = ImRaii.PopupModal($"###CharactersProgress#All#Event#RewardModal#{msqIndex}");
             if (!rewardModal)
             {
@@ -3527,7 +3536,7 @@ namespace Altoholic.Windows
                     ImGuiTableColumnFlags.WidthFixed, 20);
             }
 
-            ImGui.TableSetupScrollFreeze(-1, 1); //Freeze header so it shows while scrolling
+            ImGui.TableSetupScrollFreeze(columns, 1); //Freeze header so it shows while scrolling
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
             ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 1885));
@@ -3880,7 +3889,10 @@ namespace Altoholic.Windows
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
             ImGui.TextUnformatted(name);
-            DrawEventRewardsModal(chars, msqIndex);
+            if(Helpers.Event.GetEventCurrencyFromEventId(msqIndex) != 0)
+            {
+                DrawEventRewardsModal(chars, msqIndex);
+            }
             foreach ((List<bool> cq, int index) charactersQuest in charactersQuests.Select((cq, index) => (cq, index)))
             {
                 ImGui.TableNextColumn();

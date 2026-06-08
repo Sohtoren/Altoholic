@@ -735,7 +735,7 @@ namespace Altoholic.Windows
                                 TribeLastCheck: not null
                             } || !(currChar.Timers.TribeLastCheck > Utils.GetLastDailyReset()))
                     {
-                        if (!currChar.HasAnyCustomDeliveryUnlocked() && timerCrossMarkForNotUnlocked)
+                        if (!currChar.HasAnyBeastReputationUnlocked() && timerCrossMarkForNotUnlocked)
                         {
                             ImGui.PushFont(UiBuilder.IconFont);
                             ImGui.TextUnformatted($"{FontAwesomeIcon.Times.ToIconString()}");

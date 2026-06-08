@@ -30,6 +30,7 @@ namespace Altoholic.Models
         public int Allied_Seal { get; init; }
         public int Ananta_Dreamstaff { get; init; }
         public int Arkasodara_Pana { get; init; }
+        public int Auxesia_Credit { get; init; }
         public int Bicolor_Gemstone { get; init; }
         public int Black_Copper_Gil { get; init; }
         public int Bozjan_Cluster { get; init; }
@@ -82,6 +83,7 @@ namespace Altoholic.Models
         public int MGF { get; init; }
         public int MGP { get; init; }
         public int Namazu_Koban { get; init; }
+        public int Oizys_Credit { get; init; }
         public int Omicron_Omnitoken { get; init; }
         public int Orange_Crafters_Scrip { get; init; }
         public int Orange_Gatherers_Scrip { get; init; }
