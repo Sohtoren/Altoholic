@@ -1432,13 +1432,6 @@ namespace Altoholic
 
             for (uint i = 1; i <= btCount; i++)
             {
-                BeastTribeRank? btr = _localPlayer.GetBeastReputation(i);
-                if (btr != null && btr.Rank ==
-                    _globalCache.BeastTribesStorage.GetBeastTribe(ClientLanguage.English, i)?.MaxRank)
-                {
-                    continue;
-                }
-
                 byte rank = player.GetBeastTribeRank((byte)i);
                 ushort val = player.GetBeastTribeCurrentReputation((byte)i);
                 BeastTribeRank? b = _localPlayer.BeastReputations.Find(br => br.Id == i);
@@ -1453,7 +1446,6 @@ namespace Altoholic
                 }
                 else
                 {
-                    //if (rank != 0 && (val == 0 && b.Value != 0)) continue;
                     b.Value = val;
                     b.Rank = rank;
                 }
