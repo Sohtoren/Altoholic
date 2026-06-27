@@ -1098,6 +1098,8 @@ namespace Altoholic.Windows
                     DrawAllEventLine(chars, charactersQuests,
                         $"{Loc.Localize("Event_TheMakeItRainCampaign", "The Make It Rain Campaign")} (2026)",
                         135);
+                    DrawAllEventLine(chars, charactersQuests,
+                        $"{Loc.Localize("Event_BreakingBrickMountains", "Breaking Brick Mountains")} (2026)", 136);
                 }
             }
 
@@ -3512,7 +3514,7 @@ namespace Altoholic.Windows
             uint eventCurrencyId = Helpers.Event.GetEventCurrencyFromEventId(msqIndex);
 
             int columns = chars.Count + 1;
-            if (eventCurrencyId != 0)
+            if (eventCurrencyId > 1)
             {
                 columns += 1;
             }
@@ -3525,7 +3527,7 @@ namespace Altoholic.Windows
             if (!charactersEventTable) return;
             ImGui.TableSetupColumn($"###CharactersProgress#All#Event#RewardTable#{msqIndex}#Name",
                 ImGuiTableColumnFlags.WidthFixed, 270);
-            if (eventCurrencyId != 0)
+            if (eventCurrencyId > 1)
             {
                 ImGui.TableSetupColumn($"###CharactersProgress#All#Event#RewardTable#{msqIndex}#Currency",
                     ImGuiTableColumnFlags.WidthFixed, 20);
@@ -3541,7 +3543,7 @@ namespace Altoholic.Windows
             ImGui.TableSetColumnIndex(0);
             ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 1885));
 
-            if (eventCurrencyId != 0)
+            if (eventCurrencyId > 1)
             {
                 Item? itm = _globalCache.ItemStorage.LoadItem(_currentLocale, eventCurrencyId);
                 if (itm != null)
@@ -3586,7 +3588,8 @@ namespace Altoholic.Windows
         private void DrawHildibrandQuest(List<Character> chars)
         {
             if (chars.Count == 0) return;
-            using var charactersHildibrandQuestAll = ImRaii.Table("###CharactersProgress#All#Hildibrand", chars.Count + 1,
+            int columns = chars.Count + 1;
+            using var charactersHildibrandQuestAll = ImRaii.Table("###CharactersProgress#All#Hildibrand", columns,
                 ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner |
                 ImGuiTableFlags.ScrollX | ImGuiTableFlags.ScrollY);
             if (!charactersHildibrandQuestAll) return;
@@ -3596,7 +3599,7 @@ namespace Altoholic.Windows
                 ImGui.TableSetupColumn($"###CharactersProgress#All#Hildibrand#{c.CharacterId}",
                     ImGuiTableColumnFlags.WidthFixed, 20);
             }
-            ImGui.TableSetupScrollFreeze(-1, 1);//Freeze header so it shows while scrolling
+            ImGui.TableSetupScrollFreeze(columns, 1);//Freeze header so it shows while scrolling
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
             ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 1898));

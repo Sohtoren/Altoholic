@@ -117,6 +117,18 @@ namespace Altoholic.Models
 
         public bool HasCollectible(Helpers.CharacterCollectible collectible, uint id)
         {
+            /*
+                Barding,
+                Emote,
+                FramerKit,
+                Glass,
+                Minion,
+                Mount,
+                Orchestrion,
+                Ornament,
+                TripleTriadCard
+            */
+
             switch (collectible)
             {
                 case Helpers.CharacterCollectible.Barding:
@@ -126,6 +138,10 @@ namespace Altoholic.Models
                 case Helpers.CharacterCollectible.Emote:
                     {
                         return HasEmote(id);
+                    }
+                case Helpers.CharacterCollectible.FramerKit:
+                    {
+                        return HasFramerKit(id);
                     }
                 case Helpers.CharacterCollectible.Glass:
                     {
