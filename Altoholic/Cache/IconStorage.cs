@@ -13,6 +13,7 @@ namespace Altoholic.Cache
 
         private IDalamudTextureWrap? _retainerIconsTextureWrap;
         private IDalamudTextureWrap? _rolesTextureWrap;
+        private IDalamudTextureWrap? _customDeliveriesTextureWrap;
         private readonly Dictionary<int, IDalamudTextureWrap?> _itemDetailsTextures = [];
         private UldWrapper? _itemDetailsUld;
 
@@ -21,6 +22,7 @@ namespace Altoholic.Cache
             Plugin.Log.Info("IconStorage Init() called");
             _retainerIconsTextureWrap = Plugin.TextureProvider.GetFromGame("ui/uld/Retainer_hr1.tex").RentAsync().Result;
             _rolesTextureWrap = Plugin.TextureProvider.GetFromGame("ui/uld/img03/ToggleButton_hr1.tex").RentAsync().Result;
+            _customDeliveriesTextureWrap = Plugin.TextureProvider.GetFromGame("ui/uld/SatisfactionSupplyRank_hr1.tex").RentAsync().Result;
             _itemDetailsUld = Plugin.PluginInterface.UiBuilder.LoadUld("ui/uld/ItemDetail.uld");
             if (_itemDetailsUld is null) return;
 
@@ -66,6 +68,12 @@ namespace Altoholic.Cache
         {
             return _rolesTextureWrap;
         }
+
+        public IDalamudTextureWrap? LoadCustomDeliveriesTexture()
+        {
+            return _customDeliveriesTextureWrap;
+        }
+
         public IDalamudTextureWrap? LoadItemDetailsTexture(int i)
         {
             return _itemDetailsTextures[i];
@@ -78,6 +86,7 @@ namespace Altoholic.Cache
 
             _retainerIconsTextureWrap?.Dispose();
             _rolesTextureWrap?.Dispose();
+            _customDeliveriesTextureWrap?.Dispose();
             foreach (var loadedTexture in _itemDetailsTextures) loadedTexture.Value?.Dispose();
             _itemDetailsUld?.Dispose();
         }

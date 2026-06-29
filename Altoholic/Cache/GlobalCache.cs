@@ -28,5 +28,6 @@
         public required PvPStorage PvPStorage { get; init; } = null!;
         public required MateriaStorage MateriaStorage { get; init; } = null!;
         public required BaseParamStorage BaseParamStorage { get; init; } = null!;
+        public required CustomDeliveryStorage CustomDeliveryStorage { get; init; } = null!;
     }
 }

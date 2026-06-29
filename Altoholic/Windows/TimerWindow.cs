@@ -180,7 +180,7 @@ namespace Altoholic.Windows
                 .Aggregate("", (max, cur) => max.Length > cur.Length ? max : cur);
 
             ImGui.TableSetupColumn("###CharactersTimers#All#Names", ImGuiTableColumnFlags.WidthFixed,
-                ImGui.CalcTextSize(longestName).X + 10);
+                ImGui.CalcTextSize(longestName).X + 20);
             if (enabledTimers.Contains(TimersStatus.MiniCacpot))
             {
                 ImGui.TableSetupColumn($"###CharactersTimers#All#Timer_0", ImGuiTableColumnFlags.WidthFixed,

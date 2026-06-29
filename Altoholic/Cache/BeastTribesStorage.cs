@@ -89,6 +89,7 @@ namespace Altoholic.Cache
         public void Dispose()
         {
             _beastTribes.Clear();
+            _beastTribeRanks.Clear();
         }
     }
 }

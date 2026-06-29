@@ -85,6 +85,7 @@ namespace Altoholic.Models
         public WondrousTails? WondrousTails { get; set; }
         public Dictionary<uint, DateTime> LastCompletedDutyDatetime { get; init; } = [];
 
+        public Dictionary<int, CustomDeliveryRank> CustomDeliveries { get; init; } = [];
 
         public bool HasAnyLevelJob(int level)
         {
@@ -251,6 +252,11 @@ namespace Altoholic.Models
                    HasQuest((int)QuestIds.TRIBE_DT_YOK_HUY);
         }
 
+        public bool HasCustomDelivery(int id)
+        {
+            return CustomDeliveries.Count > 0 && CustomDeliveries.ContainsKey(id);
+        }
+
         public bool HasAnyCustomDeliveryUnlocked()
         {
             return HasQuest((int)QuestIds.CUSTOM_DELIVERIES_ZHLOE_ALIAPOH) ||
@@ -263,7 +269,8 @@ namespace Altoholic.Models
                    HasQuest((int)QuestIds.CUSTOM_DELIVERIES_AMELIANCE) ||
                    HasQuest((int)QuestIds.CUSTOM_DELIVERIES_ANDEN) ||
                    HasQuest((int)QuestIds.CUSTOM_DELIVERIES_MARGRAT) ||
-                   HasQuest((int)QuestIds.CUSTOM_DELIVERIES_NITOWIKWE);
+                   HasQuest((int)QuestIds.CUSTOM_DELIVERIES_NITOWIKWE) ||
+                   HasQuest((int)QuestIds.CUSTOM_DELIVERIES_TIISOL_JA);
         }
 
         public bool HasWondrousTailUnlocked()

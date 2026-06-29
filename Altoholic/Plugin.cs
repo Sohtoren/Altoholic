@@ -141,7 +141,8 @@ namespace Altoholic
                 MirageSetStorage = new MirageSetStorage(),
                 PvPStorage = new PvPStorage(),
                 MateriaStorage = new MateriaStorage(),
-                BaseParamStorage = new BaseParamStorage()
+                BaseParamStorage = new BaseParamStorage(),
+                CustomDeliveryStorage = new CustomDeliveryStorage(),
             };
 
             _playtimeHook = Hook.HookFromAddress<UIModule.Delegates.HandlePacket>(UIModule.StaticVirtualTablePointer->HandlePacket, PlaytimePacket);
@@ -250,6 +251,7 @@ namespace Altoholic
             _globalCache.PvPStorage.Init(currentLocale);
             _globalCache.MateriaStorage.Init();
             _globalCache.BaseParamStorage.Init(currentLocale);
+            _globalCache.CustomDeliveryStorage.Init(currentLocale, _globalCache);
 
             _altoholicService = new(
                 () => _localPlayer,
@@ -727,6 +729,7 @@ namespace Altoholic
                     GetPlayerRetainer();
                     GetDuties();
                     GetCollectionFromState();
+                    GetCustomDeliveries();
                     /*
                     Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"localPlayer.Inventory.Count : {localPlayer.Inventory.Count}");
                     Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"localPlayer.Saddle.Count: {localPlayer.Saddle.Count}");
@@ -914,6 +917,7 @@ namespace Altoholic
             {
                 GetCollectionFromState();
                 GetDuties();
+                GetCustomDeliveries();
             }
             if (_autoSaveWatch.Elapsed.Minutes < Configuration.AutoSaveTimer)
             {
@@ -922,6 +926,45 @@ namespace Altoholic
 
             UpdateCharacter();
             _autoSaveWatch.Restart();
+        }
+
+        private unsafe void GetCustomDeliveries()
+        {
+            int cdCount = _globalCache.CustomDeliveryStorage.Count();
+            if (_localPlayer.CustomDeliveries.Count > cdCount) _localPlayer.CustomDeliveries.Clear();
+
+            SatisfactionSupplyManager* ssm = SatisfactionSupplyManager.Instance();
+            if (ssm == null) return;
+            var npcCount = ssm->SatisfactionRanks.Length;
+
+            for (int i = 0; i < npcCount; i++)
+            {
+                byte heartCount = ssm->SatisfactionRanks[i];
+                ushort usedAllowance = ssm->UsedAllowances[i];
+
+                CustomDelivery? npc = _globalCache.CustomDeliveryStorage.GetCustomDeliveryNPC(ClientLanguage.English, (uint)i + 1);
+                if (npc is null) continue;
+
+                if(!_localPlayer.HasQuest((int)npc.QuestRequired))
+                {
+                    heartCount = 0;
+                }
+
+                if(_localPlayer.CustomDeliveries.TryGetValue(i, out CustomDeliveryRank? cdr))
+                {
+                    _localPlayer.CustomDeliveries[i].HeartCount = heartCount;
+                    _localPlayer.CustomDeliveries[i].UsedAllowance = usedAllowance;
+                    _localPlayer.CustomDeliveries[i].LastCheck = DateTime.UtcNow;
+                }
+                else {
+                    _localPlayer.CustomDeliveries.Add(i, new CustomDeliveryRank
+                    {
+                        HeartCount = heartCount,
+                        UsedAllowance = usedAllowance,
+                        LastCheck = DateTime.UtcNow
+                    });
+                }
+            }
         }
 
         private unsafe void GetRaidsRewards()
@@ -1289,7 +1332,6 @@ namespace Altoholic
                     _localPlayer.Bardings.Add(i);
                 }
             }
-
 
             if (uistate.Cabinet.IsCabinetLoaded())
             {

@@ -51,6 +51,7 @@ namespace Altoholic.Windows
             _currentLocale = _plugin.Configuration.Language;
             _selectedExpansion = _globalCache.AddonStorage.LoadAddonString(_currentLocale, 5752);
             _rolesTextureWrap = _globalCache.IconStorage.LoadRoleIconTexture();
+            _customDeliveriesTextureWrap = _globalCache.IconStorage.LoadCustomDeliveriesTexture();
         }
 
         public Func<Character> GetPlayer { get; set; } = null!;
@@ -62,6 +63,7 @@ namespace Altoholic.Windows
         private readonly IDalamudTextureWrap? _commendationIcon;
         private readonly IDalamudTextureWrap? _chevronTexture;
         private IDalamudTextureWrap? _rolesTextureWrap;
+        private IDalamudTextureWrap? _customDeliveriesTextureWrap;
 
         private bool _rightChevron = true;
         private bool _downChevron;
@@ -78,6 +80,8 @@ namespace Altoholic.Windows
             _selectedExpansion = string.Empty;
             _commendationIcon?.Dispose();
             _chevronTexture?.Dispose();
+            _rolesTextureWrap?.Dispose();
+            _customDeliveriesTextureWrap?.Dispose();
         }
 
         public void Clear()
@@ -237,6 +241,16 @@ namespace Altoholic.Windows
                 if (rolequestTab)
                 {
                     DrawRoleQuestQuest(chars);
+                }
+            }
+
+            using (var customDeliveryTab =
+                   ImRaii.TabItem(
+                       $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 5700)}###CharactersProgressTable#All#TabBar#CustomDelivery"))
+            {
+                if (customDeliveryTab)
+                {
+                    Helpers.CustomDelivery.DrawAll(_globalCache, _currentLocale, chars);
                 }
             }
         }
@@ -4021,12 +4035,23 @@ namespace Altoholic.Windows
                 ImRaii.TabBar($"###CharactersProgressTable#ProgressTabs#{selectedCharacter.CharacterId}#TabBar");
             if (!tab) return;
 
-            using var reputationTab =
+            using (var reputationTab =
                 ImRaii.TabItem(
-                    $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 102512)}###CharactersProgressTable#ProgressTabs#{selectedCharacter.CharacterId}#TabBar#Tabs#Reputation");
-            if (reputationTab.Success)
+                    $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 102512)}###CharactersProgressTable#ProgressTabs#{selectedCharacter.CharacterId}#TabBar#Tabs#Reputation"))
             {
-                DrawReputations(selectedCharacter);
+                if (reputationTab.Success)
+                {
+                    DrawReputations(selectedCharacter);
+                }
+            }
+            using (var customDeliveriesTab =
+                ImRaii.TabItem(
+                    $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 5700)}###CharactersProgressTable#ProgressTabs#{selectedCharacter.CharacterId}#TabBar#Tabs#CustomDeliveries"))
+            {
+                if (customDeliveriesTab.Success)
+                {
+                    Helpers.CustomDelivery.Draw(_customDeliveriesTextureWrap, _globalCache, _currentLocale, _isSpoilerEnabled, selectedCharacter);
+                }
             }
         }
 

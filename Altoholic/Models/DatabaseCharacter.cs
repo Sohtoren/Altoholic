@@ -73,5 +73,6 @@ namespace Altoholic.Models
         public string RaidRewards { get; init; } = string.Empty;
         public string WondrousTails { get; init; } = string.Empty;
         public string LastCompletedDutyDatetime { get; init; } = string.Empty;
+        public string CustomDeliveries { get; init; } = string.Empty;
     }
 }
