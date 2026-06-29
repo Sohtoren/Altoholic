@@ -27,7 +27,7 @@ namespace Altoholic.Helpers
             SatisfactionNpc? lumina = dc?.GetRow(id);
             if (lumina is null || !lumina.HasValue) return null;
             if (!lumina.Value.Npc.IsValid) return null;
-            Models.CustomDelivery c = new() { Id = lumina.Value.RowId, Icon = (uint)lumina.Value.Icon, GlamourIndex = lumina.Value.GlamourIndex, LevelUnlock = lumina.Value.LevelUnlock, DeliveriesPerWeek = lumina.Value.DeliveriesPerWeek, QuestRequired = lumina.Value.QuestRequired.Value.RowId };
+            Models.CustomDelivery c = new() { Id = lumina.Value.RowId, /*Icon = (uint)lumina.Value.Icon*/ Icon = (uint)lumina.Value.RankParams[1].ImageId, GlamourIndex = lumina.Value.GlamourIndex, LevelUnlock = lumina.Value.LevelUnlock, DeliveriesPerWeek = lumina.Value.DeliveriesPerWeek, QuestRequired = lumina.Value.QuestRequired.Value.RowId };
             switch (currentLocale)
             {
                 case ClientLanguage.German:
@@ -59,7 +59,7 @@ namespace Altoholic.Helpers
                 if (!sNPC.Npc.IsValid) continue;
                 if (sNPC.Npc.Value.Singular.IsEmpty) continue;
                 //if (sNPC.Icon == 0) continue;
-                Models.CustomDelivery c = new() { Id = sNPC.RowId, Icon = (uint)sNPC.Icon, GlamourIndex = sNPC.GlamourIndex, LevelUnlock = sNPC.LevelUnlock, DeliveriesPerWeek = sNPC.DeliveriesPerWeek, QuestRequired = sNPC.QuestRequired.Value.RowId };
+                Models.CustomDelivery c = new() { Id = sNPC.RowId, /*Icon = (uint)sNPC.Icon*/ Icon = (uint)sNPC.RankParams[1].ImageId, GlamourIndex = sNPC.GlamourIndex, LevelUnlock = sNPC.LevelUnlock, DeliveriesPerWeek = sNPC.DeliveriesPerWeek, QuestRequired = sNPC.QuestRequired.Value.RowId };
                 switch (currentLocale)
                 {
                     case ClientLanguage.German:
@@ -290,7 +290,6 @@ namespace Altoholic.Helpers
                         ImGui.EndTooltip();
                     }
                 }
-
             }
         }
 
