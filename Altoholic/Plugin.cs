@@ -536,9 +536,7 @@ namespace Altoholic
                     DrawTimerUI();
                     break;
                 case "window":
-                    //Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"Window position: {MainWindow.Position}");
-                    MainWindow.Position = new Vector2(100, 100);
-                    DrawMainUI();
+                    ResetWindowPosition($"{Name} v{PluginInterface.Manifest.AssemblyVersion}");
                     break;
                 default:
                     if (MainWindow.IsOpen)
@@ -552,6 +550,13 @@ namespace Altoholic
                     }
                     break;
             }
+        }
+        private void ResetWindowPosition(string windowName)
+        {
+            ImGui.SetNextWindowPos(new Vector2(150, 150), ImGuiCond.Always);
+            ImGui.SetNextWindowCollapsed(false);
+            ImGui.Begin(windowName, ImGuiWindowFlags.NoSavedSettings);
+            ImGui.End();
         }
 
         private void DrawTimerUI()

@@ -5040,7 +5040,7 @@ namespace Altoholic.Windows
                             if (rank >= 8)
                             {
                                 ImGui.TableSetColumnIndex(3);
-                                Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Emote, _isSpoilerEnabled, 199, currentCharacter.HasEmote(199));
+                                Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Emote, _isSpoilerEnabled, 217, currentCharacter.HasEmote(217));
                                 ImGui.TableSetColumnIndex(4);
                                 uint? fkId = _globalCache.FramerKitStorage.GetFramerKitIdFromItemId(39574);
                                 if (fkId == null) return;
