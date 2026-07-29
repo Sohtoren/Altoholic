@@ -323,6 +323,7 @@ namespace Altoholic.Models
         TRIBE_DT_PELUPELU = 70729,
         TRIBE_DT_MAMOOL_JA = 70791,
         TRIBE_DT_YOK_HUY = 70866,
+        TRIBE_DT_ALLIED = 70999,
         WONDROUS_TAILS = 67928,
     }
 }

@@ -3945,7 +3945,7 @@ namespace Altoholic.Windows
             BeastReputationRank? allied = _globalCache.BeastTribesStorage.GetRank(_currentLocale, 8);
             string alliedName = (allied == null) ? string.Empty : allied.Value.Name.ExtractText();
             name = $"{Utils.Capitalize(name)}";
-            if (alliedName != string.Empty && tribeIndex != 12 && tribeIndex != 13 && tribeIndex != 14 && tribeIndex != 18)
+            if (alliedName != string.Empty && tribeIndex != 12 && tribeIndex != 13 && tribeIndex != 14)
                 name = $"{name} ({alliedName})";
 
             ImGui.TableNextRow();
@@ -3954,7 +3954,6 @@ namespace Altoholic.Windows
             foreach ((List<bool> cq, int index) charactersQuest in charactersQuests.Select((cq, index) => (cq, index)))
             {
                 ImGui.TableNextColumn();
-                //ImGui.TextUnformatted(charactersQuest.cq[tribeIndex-1] ? "\u2713" : "");
                 ImGui.PushFont(UiBuilder.IconFont);
                 ImGui.TextUnformatted(charactersQuest.cq[tribeIndex - 1] ? FontAwesomeIcon.Check.ToIconString() : "");
                 ImGui.PopFont();
@@ -3980,7 +3979,6 @@ namespace Altoholic.Windows
             foreach ((List<bool> cq, int index) charactersQuest in charactersQuests.Select((cq, index) => (cq, index)))
             {
                 ImGui.TableNextColumn();
-                //ImGui.TextUnformatted(charactersQuest.cq[msqIndex] ? "\u2713" : "");
                 ImGui.PushFont(UiBuilder.IconFont);
                 ImGui.TextUnformatted(charactersQuest.cq[msqIndex] ? FontAwesomeIcon.Check.ToIconString() : "");
                 ImGui.PopFont();
@@ -4367,8 +4365,7 @@ namespace Altoholic.Windows
                 case "Dawntrail":
                 case "黄金編":
                     {
-                        //bool dtAllied = selectedCharacter.HasQuest((int)QuestIds.TRIBE_DT_ALLIED);
-                        bool dtAllied = false;
+                        bool dtAllied = selectedCharacter.HasQuest((int)QuestIds.TRIBE_DT_ALLIED);
                         for (uint i = 18; i <= 20; i++)
                         {
                             if (

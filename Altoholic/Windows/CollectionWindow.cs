@@ -211,97 +211,60 @@ namespace Altoholic.Windows
             using var tabBar = ImRaii.TabBar("###CollectionWindow#Tabs");
             if (!tabBar.Success) return;
 
-            using (var bardingsTab =
-                   ImRaii.TabItem(
-                       $"{Loc.Localize("CollectionTabBarding", "Barding")}###CollectionWindow#Tabs#Bardings")) // Harnisch Barding Barde バード
+            string adventure = _currentLocale switch
             {
-                if (bardingsTab.Success)
+                ClientLanguage.German => "Abenteuer",
+                ClientLanguage.English => "Adventure",
+                ClientLanguage.French => "Aventure",
+                ClientLanguage.Japanese => "Adventure",
+                _ => "Adventure",
+            };
+            using (var adventureTab =
+                   ImRaii.TabItem(
+                       $"{adventure}###CollectionWindow#Tabs#Adventure"))
+            {
+                if (adventureTab.Success)
                 {
-                    DrawBardings(currentCharacter);
+                    DrawLifestyleTabs(currentCharacter);
                 }
             }
 
-            using (var emotesTab =
+            using (var companionTab =
                    ImRaii.TabItem(
-                       $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 780)}###CollectionWindow#Tabs#Emotes"))
+                       $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 13167)}###CollectionWindow#Tabs#Companion"))
             {
-                if (emotesTab.Success)
+                if (companionTab.Success)
                 {
-                    DrawEmotes(currentCharacter);
+                    DrawCompanionTabs(currentCharacter);
                 }
             }
 
-            using (var fashionAccessoriesTab =
-                   ImRaii.TabItem(
-                       $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 13671)}###CollectionWindow#Tabs#Fashion"))
+            string customization = _currentLocale switch
             {
-                if (fashionAccessoriesTab.Success)
-                {
-                    DrawOrnaments(currentCharacter);
-                }
-            }
+                ClientLanguage.German => "Personalisierung",
+                ClientLanguage.English => "Customization",
+                ClientLanguage.French => "Customisation",
+                ClientLanguage.Japanese => "カスタマイズシーン",
+                _ => "Customization",
+            };
 
-            using (var facepaintTab =
-                   ImRaii.TabItem($"{Loc.Localize("CollectionTabFacepaint", "Facepaint")}###CollectionWindow#Tabs#Facepaints"))
-            {
-                if (facepaintTab.Success)
-                {
-                    DrawFacepaints(currentCharacter);
-                }
-            }
-
-            using (var framerKitTab =
+            using (var customizationTab =
                    ImRaii.TabItem(
-                       $"{Loc.Localize("CollectionTabFramerKit", "Framer's kit")}###CollectionWindow#Tabs#Framerkits")) // Portraitmaterial[p] / Framer's kit / Portrait / ポートレート
+                       $"{customization}###CollectionWindow#Tabs#Customization"))
             {
-                if (framerKitTab.Success)
+                if (customizationTab.Success)
                 {
-                    DrawFramerKits(currentCharacter);
+                    DrawCustomizationTabs(currentCharacter);
                 }
             }
-
-            using (var glassesTab =
-                   ImRaii.TabItem(
-                       $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 16051)}###CollectionWindow#Tabs#Glasses"))
-            {
-                if (glassesTab.Success)
-                {
-                    DrawGlasses(currentCharacter);
-                }
-            }
-
-            using (var hairsTab =
-                   ImRaii.TabItem(
-                       $"{Loc.Localize("CollectionTabHairstyle", "Hairstyle")}###CollectionWindow#Tabs#Hairstyles")) // Frisur Hairstyle Coupe de cheveux 髪型
-            {
-                if (hairsTab.Success)
-                {
-                    DrawHairstyles(currentCharacter);
-                }
-            }
-
-            using (var minionsTab =
-                   ImRaii.TabItem(
-                       $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 8303)}###CollectionWindow#Tabs#Minions")) //Minions // 7595 for Katakana
-            {
-                if (minionsTab.Success)
-                {
-                    DrawMinions(currentCharacter);
-                }
-            }
-
-            using (var mountsTab =
-                   ImRaii.TabItem(
-                       $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 8302)}###CollectionWindow#Tabs#Mounts")) // Mounts // 13971 for Katakana
-            {
-                if (mountsTab.Success)
-                {
-                    DrawMounts(currentCharacter);
-                }
-            }
+        }
+        private void DrawLifestyleTabs(Character currentCharacter)
+        {
+            using var lifestyleTabBar = ImRaii.TabBar("###CollectionWindow#Tabs#LifestyleTabs");
+            if (!lifestyleTabBar.Success) return;
 
             using (var orchestrionsTab =
-                   ImRaii.TabItem("Orchestrions###CollectionWindow#Tabs#Orchestrion")) // same name in all languages
+                   ImRaii.TabItem("Orchestrions###CollectionWindow#Tabs#LifestyleTabs#Orchestrion")) // same name in all languages
             {
                 if (orchestrionsTab.Success)
                 {
@@ -309,7 +272,7 @@ namespace Altoholic.Windows
                 }
             }
 
-            using (var tomesTab = ImRaii.TabItem("Tomes###CollectionWindow#Tabs#Tomes"))
+            using (var tomesTab = ImRaii.TabItem("Tomes###CollectionWindow#Tabs#LifestyleTabs#Tomes"))
             {
                 if (tomesTab.Success)
                 {
@@ -319,7 +282,7 @@ namespace Altoholic.Windows
 
             using (var tripleTriadTab =
                    ImRaii.TabItem(
-                       $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 9529)}###CollectionWindow#Tabs#TTC")) //9991 for katakana
+                       $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 9529)}###CollectionWindow#Tabs#LifestyleTabs#TTC")) //9991 for katakana
             {
                 if (tripleTriadTab.Success)
                 {
@@ -328,17 +291,116 @@ namespace Altoholic.Windows
             }
 
             using (var vistaTab =
-                   ImRaii.TabItem("Vista###CollectionWindow#Tabs#Vista"))
+                   ImRaii.TabItem("Vista###CollectionWindow#Tabs#LifestyleTabs#Vista"))
             {
                 if (vistaTab.Success)
                 {
                     DrawVistas(currentCharacter);
                 }
             }
+        }
 
-            if (ImGui.IsItemHovered())
+        private void DrawCompanionTabs(Character currentCharacter)
+        {
+            using (var companionTabBar = ImRaii.TabBar("###CollectionWindow#Tabs#CompanionTabs"))
             {
-                ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 8616)}");
+                if (companionTabBar.Success)
+                {
+                    using (var bardingsTab =
+                   ImRaii.TabItem(
+                       $"{Loc.Localize("CollectionTabBarding", "Barding")}###CollectionWindow#Tabs#CompanionTabs#Bardings")) // Harnisch Barding Barde バード
+                    {
+                        if (bardingsTab.Success)
+                        {
+                            DrawBardings(currentCharacter);
+                        }
+                    }
+
+                    using (var minionsTab =
+                           ImRaii.TabItem(
+                               $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 8303)}###CollectionWindow#Tabs#CompanionTabs#Minions")) //Minions // 7595 for Katakana
+                    {
+                        if (minionsTab.Success)
+                        {
+                            DrawMinions(currentCharacter);
+                        }
+                    }
+
+                    using (var mountsTab =
+                           ImRaii.TabItem(
+                               $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 8302)}###CollectionWindow#Tabs#CompanionTabs#Mounts")) // Mounts // 13971 for Katakana
+                    {
+                        if (mountsTab.Success)
+                        {
+                            DrawMounts(currentCharacter);
+                        }
+                    }
+                }
+            }
+        }
+
+        private void DrawCustomizationTabs(Character currentCharacter)
+        {
+            using var customizationTabBar = ImRaii.TabBar("###CollectionWindow#Tabs#CustomizationTabs");
+            if (!customizationTabBar.Success) return;
+
+            using (var emotesTab =
+                ImRaii.TabItem(
+                    $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 780)}###CollectionWindow#Tabs#CustomizationTabs#Emotes"))
+            {
+                if (emotesTab.Success)
+                {
+                    DrawEmotes(currentCharacter);
+                }
+            }
+
+            using (var fashionAccessoriesTab =
+               ImRaii.TabItem(
+                   $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 13671)}###CollectionWindow#Tabs#CustomizationTabs#Fashion"))
+            {
+                if (fashionAccessoriesTab.Success)
+                {
+                    DrawOrnaments(currentCharacter);
+                }
+            }
+
+            using (var facepaintTab =
+            ImRaii.TabItem($"{Loc.Localize("CollectionTabFacepaint", "Facepaint")}###CollectionWindow#Tabs#CustomizationTabs#Facepaints"))
+            {
+                if (facepaintTab.Success)
+                {
+                    DrawFacepaints(currentCharacter);
+                }
+            }
+
+            using (var glassesTab =
+                ImRaii.TabItem(
+                    $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 16051)}###CollectionWindow#Tabs#CustomizationTabs#Glasses"))
+            {
+                if (glassesTab.Success)
+                {
+                    DrawGlasses(currentCharacter);
+                }
+            }
+
+            using (var framerKitTab =
+                ImRaii.TabItem(
+                       $"{Loc.Localize("CollectionTabFramerKit", "Framer's kit")}###CollectionWindow#Tabs#CustomizationTabs#Framerkits")) // Portraitmaterial[p] / Framer's kit / Portrait / ポートレート
+            {
+                if (framerKitTab.Success)
+                {
+                    DrawFramerKits(currentCharacter);
+                }
+            }
+
+            using (var hairsTab =
+                   ImRaii.TabItem(
+                       $"{Loc.Localize("CollectionTabHairstyle", "Hairstyle")}###CollectionWindow#Tabs#CustomizationTabs#Hairstyles")) // Frisur Hairstyle Coupe de cheveux 髪型
+            {
+                if (hairsTab.Success)
+                {
+                    DrawHairstyles(currentCharacter);
+                }
             }
         }
 
