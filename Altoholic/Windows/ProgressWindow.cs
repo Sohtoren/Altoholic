@@ -3679,6 +3679,7 @@ namespace Altoholic.Windows
             DrawAllLine(chars, charactersQuests, $"{_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.HILDIBRAND_DT_THE_CASE_OF_THE_FIENDISH_FUGITIVES)}", 20);
             DrawAllLine(chars, charactersQuests, $"{_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.HILDIBRAND_DT_ON_THE_TRAIL_OF_DESTRUCTION)}", 21);
             DrawAllLine(chars, charactersQuests, $"{_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.HILDIBRAND_DT_METEORITES_AND_METEOR_WRONGS)}", 22);
+            DrawAllLine(chars, charactersQuests, $"{_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.HILDIBRAND_DT_CLOTTED_CRIME)}", 23);
         }
 
         private void DrawRoleQuestQuest(List<Character> chars)
@@ -3821,7 +3822,8 @@ namespace Altoholic.Windows
                 }
             }
 
-            List<List<bool>> charactersQuests = Utils.GetCharactersTribeQuests(chars, _globalCache, _currentLocale);
+            //List<List<bool>> charactersQuests = Utils.GetCharactersTribeQuests(chars, _globalCache, _currentLocale);
+            List<List<int>> charactersQuests = Utils.GetCharactersTribeQuests(chars, _globalCache, _currentLocale);
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
             ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 5752));
@@ -3929,7 +3931,7 @@ namespace Altoholic.Windows
             }
         }
 
-        private void DrawAllTribes(List<Character> chars, List<List<bool>> charactersQuests, int tribeIndex)
+        private void DrawAllTribes(List<Character> chars, List<List<int>> charactersQuests, int tribeIndex)
         {
             //Plugin.Log.Debug($"DrawAlDrawAllTribeslLine: {chars.Count}, msqIndex: {tribeIndex}");
             BeastTribes? beastTribe = _globalCache.BeastTribesStorage.GetBeastTribe(_currentLocale, (uint)tribeIndex);
@@ -3945,22 +3947,32 @@ namespace Altoholic.Windows
             BeastReputationRank? allied = _globalCache.BeastTribesStorage.GetRank(_currentLocale, 8);
             string alliedName = (allied == null) ? string.Empty : allied.Value.Name.ExtractText();
             name = $"{Utils.Capitalize(name)}";
+            string alliedFullName = string.Empty;
             if (alliedName != string.Empty && tribeIndex != 12 && tribeIndex != 13 && tribeIndex != 14)
-                name = $"{name} ({alliedName})";
+                alliedFullName = $"{name} ({alliedName})";
 
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
             ImGui.TextUnformatted(name);
-            foreach ((List<bool> cq, int index) charactersQuest in charactersQuests.Select((cq, index) => (cq, index)))
+            foreach ((List<int> cq, int index) charactersQuest in charactersQuests.Select((cq, index) => (cq, index)))
             {
+                int done = charactersQuest.cq[tribeIndex - 1];
                 ImGui.TableNextColumn();
                 ImGui.PushFont(UiBuilder.IconFont);
-                ImGui.TextUnformatted(charactersQuest.cq[tribeIndex - 1] ? FontAwesomeIcon.Check.ToIconString() : "");
+                ImGui.TextUnformatted(done == 2 ? FontAwesomeIcon.Check.ToIconString() : done == 1 ? FontAwesomeIcon.Circle.ToIconString() : "");
                 ImGui.PopFont();
                 if (ImGui.IsItemHovered())
                 {
                     ImGui.BeginTooltip();
-                    ImGui.TextUnformatted(name);
+                    if (tribeIndex is not 12 and not 13 and not 14 && done == 1)
+                    {
+                        ImGui.TextUnformatted(name);
+                        ImGui.TextUnformatted($"{Loc.Localize("AlliedNotUnlocked", "Allied not completed")}");
+                    }
+                    else
+                    {
+                        ImGui.TextUnformatted(alliedFullName);
+                    }
                     ImGui.TextUnformatted(
                         $"{chars[charactersQuest.index].FirstName} {chars[charactersQuest.index].LastName}{(char)SeIconChar.CrossWorld}{chars[charactersQuest.index].HomeWorld}");
                     ImGui.EndTooltip();

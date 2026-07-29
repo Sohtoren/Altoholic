@@ -3856,6 +3856,7 @@ namespace Altoholic
                     character.HasQuest((int)QuestIds.HILDIBRAND_DT_THE_CASE_OF_THE_FIENDISH_FUGITIVES),
                     character.HasQuest((int)QuestIds.HILDIBRAND_DT_ON_THE_TRAIL_OF_DESTRUCTION),
                     character.HasQuest((int)QuestIds.HILDIBRAND_DT_METEORITES_AND_METEOR_WRONGS),
+                    character.HasQuest((int)QuestIds.HILDIBRAND_DT_CLOTTED_CRIME),
                 ];
                 result.Add(completedQuests);
             }
@@ -3894,12 +3895,12 @@ namespace Altoholic
             return result;
         }
 
-        public static List<List<bool>> GetCharactersTribeQuests(List<Character> characters, GlobalCache globalCache, ClientLanguage currentLocale)
+        public static List<List<int>> GetCharactersTribeQuests(List<Character> characters, GlobalCache globalCache, ClientLanguage currentLocale)
         {
-            List<List<bool>> result = [];
+            List<List<int>> result = [];
             foreach (Character character in characters)
             {
-                List<bool> completedQuests = [];
+                List<int> completedQuests = [];
 
                 for (uint i = 1; i <= 20; i++)
                 {
@@ -3907,12 +3908,21 @@ namespace Altoholic
                     BeastTribes? beastTribe = globalCache.BeastTribesStorage.GetBeastTribe(currentLocale, i);
                     if (beastTribe == null || rep == null)
                     {
-                        completedQuests.Add(false);
+                        completedQuests.Add(0);
                         continue;
                     }
 
-                    uint maxRank = (i is 12 or 13 or 14 or 18) ? beastTribe.MaxRank : 8;
-                    bool done = maxRank == rep.Rank;
+                    uint maxRank = (i is 12 or 13 or 14) ? beastTribe.MaxRank : 8;
+                    int done = i switch
+                    {
+                        >= 1 and <= 5 => character.HasQuest((int)QuestIds.TRIBE_ARR_ALLIED) ? 2 : maxRank == rep.Rank ? 1 : 0,
+                        >= 6 and <= 8 => character.HasQuest((int)QuestIds.TRIBE_HW_ALLIED) ? 2 : maxRank == rep.Rank ? 1 : 0,
+                        >= 9 and <= 11 => character.HasQuest((int)QuestIds.TRIBE_SB_ALLIED) ? 2 : maxRank == rep.Rank ? 1 : 0,
+                        >= 12 and <= 14 => maxRank == rep.Rank ? 2 : 0,
+                        >= 15 and <= 17 => character.HasQuest((int)QuestIds.TRIBE_EW_ALLIED) ? 2 : maxRank == rep.Rank ? 1 : 0,
+                        >= 18 and <= 20 => character.HasQuest((int)QuestIds.TRIBE_DT_ALLIED) ? 2 : maxRank == rep.Rank ? 1 : 0,
+                        _ => 0
+                    };
                     /*Plugin.Log.Debug(
                         $"{i}, cname: {character.FirstName}, name: {beastTribe?.EnglishName}, rep.Rank: {rep?.Rank}, maxrank: {beastTribe?.MaxRank}");*/
 
