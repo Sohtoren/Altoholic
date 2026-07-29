@@ -35,12 +35,16 @@ namespace Altoholic.Windows
             //_currentLocale = currentLocale;
 
             _rolesTextureWrap = _globalCache.IconStorage.LoadRoleIconTexture();
+            _phantomJobTexture = _globalCache.IconStorage.LoadPhantomJobsTexture();
+            _phantomJobsIconsTexture = _globalCache.IconStorage.LoadPhantomJobsIconsTexture();
         }
 
         public Func<Character> GetPlayer { get; init; } = null!;
         public Func<List<Character>> GetOthersCharactersList { get; set; } = null!;
         private Character? _currentCharacter;
         private IDalamudTextureWrap? _rolesTextureWrap;
+        private IDalamudTextureWrap? _phantomJobTexture;
+        private IDalamudTextureWrap? _phantomJobsIconsTexture;
 
         public void Dispose()
         {
@@ -522,6 +526,14 @@ namespace Altoholic.Windows
                 if (DoHDoLTab)
                 {
                     DrawDoHDoLJobs(selectedCharacter);
+                }
+            }
+            if(selectedCharacter.HasQuest((int)QuestIds.OCCULT_CRESCENT_UNFAMILIAR_TERRITORY) && selectedCharacter.OccultCrescent is not null)
+            using (var phantomJobsTab = ImRaii.TabItem($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 16611)}###CharactersJobs#JobsTabs#Phantom#{selectedCharacter.CharacterId}"))
+            {
+                if (phantomJobsTab)
+                {
+                    Helpers.Jobs.DrawPhantomJobs(_phantomJobTexture, _phantomJobsIconsTexture, _globalCache, _currentLocale, selectedCharacter);
                 }
             }
         }

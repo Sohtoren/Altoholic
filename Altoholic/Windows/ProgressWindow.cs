@@ -1114,6 +1114,8 @@ namespace Altoholic.Windows
                         135);
                     DrawAllEventLine(chars, charactersQuests,
                         $"{Loc.Localize("Event_BreakingBrickMountains", "Breaking Brick Mountains")} (2026)", 136);
+                    DrawAllEventLine(chars, charactersQuests,
+                        $"{Loc.Localize("Event_YoKai", "Yo-kai Watch: Gather One, Gather All!")} (2026) *", 137);
                 }
             }
 
@@ -3513,7 +3515,7 @@ namespace Altoholic.Windows
                 ImGui.EndTooltip();
             }
 
-            ImGui.SetNextWindowSize(new Vector2(800, 250));
+            ImGui.SetNextWindowSize(new Vector2(800, 400));
             using var rewardModal = ImRaii.PopupModal($"###CharactersProgress#All#Event#RewardModal#{msqIndex}");
             if (!rewardModal)
             {
@@ -3537,7 +3539,7 @@ namespace Altoholic.Windows
             $"###CharactersProgress#All#Event#RewardTable#{msqIndex}",
             columns,
             ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner |
-            ImGuiTableFlags.ScrollX | ImGuiTableFlags.ScrollY, new Vector2(-1, 200));
+            ImGuiTableFlags.ScrollX | ImGuiTableFlags.ScrollY, new Vector2(-1, 330));
             if (!charactersEventTable) return;
             ImGui.TableSetupColumn($"###CharactersProgress#All#Event#RewardTable#{msqIndex}#Name",
                 ImGuiTableColumnFlags.WidthFixed, 270);
@@ -3900,21 +3902,21 @@ namespace Altoholic.Windows
         }
 
         private void DrawAllEventLine(List<Character> chars, List<List<bool>> charactersQuests, string name,
-            int msqIndex)
+            int eventIndex)
         {
             //Plugin.Log.Debug($"DrawAllLine: {chars.Count}, name: {name}, msqIndex: {msqIndex}");
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
             ImGui.TextUnformatted(name);
-            if(Helpers.Event.GetEventCurrencyFromEventId(msqIndex) != 0)
+            if(Helpers.Event.GetEventCurrencyFromEventId(eventIndex) != 0 || eventIndex is 29 or 41 or 113 or 137)
             {
-                DrawEventRewardsModal(chars, msqIndex);
+                DrawEventRewardsModal(chars, eventIndex);
             }
             foreach ((List<bool> cq, int index) charactersQuest in charactersQuests.Select((cq, index) => (cq, index)))
             {
                 ImGui.TableNextColumn();
                 ImGui.PushFont(UiBuilder.IconFont);
-                ImGui.TextUnformatted(charactersQuest.cq[msqIndex] ? FontAwesomeIcon.Check.ToIconString() : "");
+                ImGui.TextUnformatted(charactersQuest.cq[eventIndex] ? FontAwesomeIcon.Check.ToIconString() : "");
                 ImGui.PopFont();
                 if (ImGui.IsItemHovered())
                 {

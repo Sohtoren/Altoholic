@@ -25,6 +25,7 @@ using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.Game.Character;
 using FFXIVClientStructs.FFXIV.Client.Game.Control;
 using FFXIVClientStructs.FFXIV.Client.Game.Event;
+using FFXIVClientStructs.FFXIV.Client.Game.InstanceContent;
 using FFXIVClientStructs.FFXIV.Client.Game.MJI;
 using FFXIVClientStructs.FFXIV.Client.Game.Object;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
@@ -920,9 +921,17 @@ namespace Altoholic
 
             if (_autoSaveWatch.Elapsed.Minutes >= 1 && _autoSaveWatch.Elapsed.Minutes <= Configuration.AutoSaveTimer && _autoSaveWatch.Elapsed.Seconds == 0)
             {
-                GetCollectionFromState();
+                GetPlayerCompletedQuests();
                 GetDuties();
+                GetCollectionFromState();
                 GetCustomDeliveries();
+            }
+            if (_autoSaveWatch.Elapsed.Minutes >= 1 && _autoSaveWatch.Elapsed.Minutes <= Configuration.AutoSaveTimer && _autoSaveWatch.Elapsed.Seconds == 15)
+            {
+                GetPlayerEquippedGear();
+                GetPlayerInventory();
+                GetPlayerSaddleInventory();
+                GetPlayerArmoryInventory();
             }
             if (_autoSaveWatch.Elapsed.Minutes < Configuration.AutoSaveTimer)
             {
@@ -1299,6 +1308,39 @@ namespace Altoholic
             {
                 Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"uistate.IsUnlockLinkUnlocked(i): {uistate.IsUnlockLinkUnlocked(i)}");
             }*/
+
+            GetOccultCrescent();
+        }
+
+        private unsafe void GetOccultCrescent()
+        {
+            if (ClientState.IsPvP) return;
+            if (ClientState.TerritoryType is 1252 or 1346)
+            {
+                PublicContentOccultCrescent* instance = FFXIVClientStructs.FFXIV.Client.Game.InstanceContent.PublicContentOccultCrescent.GetInstance();
+                if (instance is null) return;
+                if (!instance->StateLoaded) return;
+                OccultCrescentState state = instance->State;
+                OccultCrescent oc = new OccultCrescent
+                {
+                    KnowledgeLevel = instance->State.CurrentKnowledge,
+                    KnowledgeExperience = instance->State.NeededKnowledge,
+                    Jobs = instance->State.SupportJobLevels.ToArray(),
+                    JobsExperiences = instance->State.SupportJobExperience.ToArray(),
+                    //LoreBooks =
+                };
+                if (ClientState.TerritoryType is 1252)
+                {
+                    oc.EnlightenmentSilverPieces = instance->State.Silver;
+                    oc.EnlightenmentGoldPieces = instance->State.Gold;
+                }
+                if (ClientState.TerritoryType is 1346)
+                {
+                    oc.EnlightenmentSilverObols = instance->State.Silver;
+                    oc.EnlightenmentGoldObols = instance->State.Gold;
+                }
+                _localPlayer.OccultCrescent = oc;
+            }
         }
 
         private unsafe void GetCollectionFromState()
@@ -1585,6 +1627,11 @@ namespace Altoholic
                 MGF = inventoryManager.GetInventoryItemCount((uint)Currencies.MGF, false, false, false),
                 MGP = inventoryManager.GetInventoryItemCount((uint)Currencies.MGP, false, false, false),
                 Namazu_Koban = inventoryManager.GetInventoryItemCount((uint)Currencies.NAMAZU_KOBAN, false, false, false),
+                Occult_Enlightenment_Silver_Piece = inventoryManager.GetInventoryItemCount((uint)Currencies.OCCULT_ENLIGHTENMENT_SILVER_PIECE, false, false, false),
+                Occult_Enlightenment_Gold_Piece = inventoryManager.GetInventoryItemCount((uint)Currencies.OCCULT_ENLIGHTENMENT_GOLD_PIECE, false, false, false),
+                Occult_Enlightenment_Silver_Obol = inventoryManager.GetInventoryItemCount((uint)Currencies.OCCULT_ENLIGHTENMENT_SILVER_OBOL, false, false, false),
+                Occult_Enlightenment_Gold_Obol = inventoryManager.GetInventoryItemCount((uint)Currencies.OCCULT_ENLIGHTENMENT_GOLD_OBOL, false, false, false),
+                Occult_Sanguine_Cipher = inventoryManager.GetInventoryItemCount((uint)Currencies.OCCULT_SANGUINE_CIPHER, false, false, false),
                 Oizys_Credit =  inventoryManager.GetInventoryItemCount((uint)Currencies.OISYS_CREDIT, false, false, false),
                 Omicron_Omnitoken = inventoryManager.GetInventoryItemCount((uint)Currencies.OMICRON_OMNITOKEN, false, false, false),
                 Orange_Crafters_Scrip = inventoryManager.GetInventoryItemCount((uint)Currencies.ORANGE_CRAFTERS_SCRIP, false, false, false),

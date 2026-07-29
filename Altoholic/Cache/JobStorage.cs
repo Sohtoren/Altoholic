@@ -1,29 +1,21 @@
-﻿using Dalamud.Game;
+﻿using Altoholic.Models;
+using Dalamud.Game;
 using System;
 using System.Collections.Generic;
 using ClassJob = Lumina.Excel.Sheets.ClassJob;
 
 namespace Altoholic.Cache
 {
-    internal class JobName
-    {
-        public string GermanName { get; init; } = string.Empty;
-        public string GermanAbbreviation { get; init; } = string.Empty;
-        public string EnglishName { get; init; } = string.Empty;
-        public string EnglishAbbreviation { get; init; } = string.Empty;
-        public string FrenchName { get; init; } = string.Empty;
-        public string FrenchAbbreviation { get; init; } = string.Empty;
-        public string JapaneseName { get; init; } = string.Empty;
-        public string JapaneseAbbreviation { get; init; } = string.Empty;
-    }
     public class JobStorage : IDisposable
     {
-        private readonly Dictionary<uint, JobName> _jobs;
+        private readonly Dictionary<uint, Models.JobName> _jobs;
         private readonly Dictionary<int, int> _level = new(101);
+        private readonly Dictionary<uint, Models.PhantomJob> _phantomJobs;
+        private readonly Dictionary<uint, uint[]> _phantomJobLevelExperiences = new(51);
 
         public JobStorage(int size = 120)
         {
-            _jobs = new Dictionary<uint, JobName>(size);
+            _jobs = new Dictionary<uint, Models.JobName>(size);
             for (uint i = 0; i <= 42; i++)
             {
                 ClassJob? jobde = Utils.GetClassJobFromId(i, ClientLanguage.German);
@@ -46,7 +38,7 @@ namespace Altoholic.Cache
                 string ja = jobja.Value.Name.ExtractText();
                 string abbja = jobja.Value.Abbreviation.ExtractText();
 
-                _jobs.Add(i, new JobName
+                _jobs.Add(i, new Models.JobName
                 {
                     GermanName = de,
                     GermanAbbreviation = abbde,
@@ -63,8 +55,11 @@ namespace Altoholic.Cache
                 int exp = Utils.GetJobNextLevelExp(i);
                 _level.Add(i, exp);
             }
+
+            _phantomJobs = Helpers.Jobs.GetPhantomJobs();
+            _phantomJobLevelExperiences = Helpers.Jobs.GetPhantomJobsLevelExperience();
         }
-        
+
         public string GetName(ClientLanguage lang, uint job, bool abbreviation = false)
         {
             return lang switch
@@ -79,6 +74,16 @@ namespace Altoholic.Cache
         public int GetNextLevelExp(int level)
         {
             return _level[level];
+        }
+
+        public PhantomJob GetPhantomJob(uint id)
+        {
+            return _phantomJobs[id];
+        }
+
+        public uint GetPhantomJobExperience(uint id, uint level)
+        {
+            return _phantomJobLevelExperiences[id][level];
         }
 
         public void Dispose()

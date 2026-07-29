@@ -4,7 +4,7 @@
     {
         public required IconStorage IconStorage { get; init; } = null!;
         public required ItemStorage ItemStorage { get; init; } = null!;
-        public required JobStorage JobStorage{ get; init; } = null!;
+        public required JobStorage JobStorage { get; init; } = null!;
         public required AddonStorage AddonStorage { get; init; } = null!;
         public required StainStorage StainStorage { get; init; } = null!;
         public required MinionStorage MinionStorage { get; init; } = null!;

@@ -84,8 +84,8 @@ namespace Altoholic.Models
         public Dictionary<uint, RaidReward> RaidRewards { get; init; } = [];
         public WondrousTails? WondrousTails { get; set; }
         public Dictionary<uint, DateTime> LastCompletedDutyDatetime { get; init; } = [];
-
         public Dictionary<int, CustomDeliveryRank> CustomDeliveries { get; init; } = [];
+        public OccultCrescent? OccultCrescent { get; set; }
 
         public bool HasAnyLevelJob(int level)
         {

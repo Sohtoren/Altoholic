@@ -189,6 +189,7 @@ namespace Altoholic.Helpers
                     character.HasQuest((int)QuestIds.EVENT_HATCHING_TIDE_2026),
                     character.HasQuest((int)QuestIds.EVENT_THE_MAKE_IT_RAIN_CAMPAIGN_2026),
                     character.HasQuest((int)QuestIds.EVENT_BREAKING_BRICK_MOUNTAINS_2026),
+                    character.HasQuest((int)QuestIds.EVENT_YO_KAI_WATCH_GATHER_ONE_GATHER_ALL_2026),
                 ];
                 result.Add(completedQuests);
             }
@@ -779,6 +780,32 @@ namespace Altoholic.Helpers
                 case 136: /*Breaking Brick Mountains (2026)*/
                     {
                         uint? fkId = globalCache.FramerKitStorage.GetFramerKitIdFromItemId(51998);
+                        if (fkId is not null)
+                        {
+                            Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.FramerKit, fkId.Value, 0);
+                        }
+                        break;
+                    }
+                case 137: /*Yo-kai Watch: Gather One, Gather All (2026)*/
+                    {
+                        Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Minion, 200, 0);
+                        Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Minion, 201, 0);
+                        Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Minion, 202, 0);
+                        Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Minion, 203, 0);
+                        Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Minion, 204, 0);
+                        Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Minion, 205, 0);
+                        Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Minion, 206, 0);
+                        Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Minion, 207, 0);
+                        Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Minion, 208, 0);
+                        Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Minion, 209, 0);
+                        Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Minion, 210, 0);
+                        Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Minion, 211, 0);
+                        Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Minion, 212, 0);
+                        Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Minion, 390, 0);
+                        Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Minion, 391, 0);
+                        Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Minion, 392, 0);
+                        Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Minion, 393, 0);
+                        uint? fkId = globalCache.FramerKitStorage.GetFramerKitIdFromItemId(41797);
                         if (fkId is not null)
                         {
                             Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.FramerKit, fkId.Value, 0);

@@ -2817,7 +2817,7 @@ namespace Altoholic
         private static string GetExtractableString(ClientLanguage currentLocale, GlobalCache globalCache, Item item)
         {
             string str = globalCache.AddonStorage.LoadAddonString(currentLocale, 1361);
-            Plugin.Log.Debug($"extract str: {str} => item desynth {item.Desynth}");
+            //Plugin.Log.Debug($"extract str: {str} => item desynth {item.Desynth}");
             //str = str.Replace("<If(GreaterThan(IntegerParameter(1),0))>Y<Else/>N</If>", (item.AdditionalData) ? "Y" : "N");
             //str = str.Replace("<If(GreaterThan(IntegerParameter(2),0))>Y<Else/>N</If>", (item.IsGlamourous) ? "Y" : "N");
             str = str.Replace("Extractable: YN", "Extractable: ");

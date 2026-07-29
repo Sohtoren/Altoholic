@@ -1,9 +1,39 @@
-﻿namespace Altoholic.Models
+﻿using Altoholic.Cache;
+
+namespace Altoholic.Models
 {
+    public class PhantomJob
+    {
+        public uint JobIndex { get; set; }
+        public uint LevelMax { get; set; }
+        public uint[] LevelUnlock { get; set; } = new uint[5];
+        public uint[] Action { get; set; } = new uint[5];
+        public JobName Names { get; set; } = new JobName();
+    }
+
     public class Job
     {
         public int Level { get; set; } = 0;
         public int Exp { get; set; } = 0;
+    }
+    public class JobName
+    {
+        public string GermanName { get; set; } = string.Empty;
+        public string GermanNameShort { get; set; } = string.Empty;
+        public string GermanAbbreviation { get; set; } = string.Empty;
+        public string GermanDescription { get; set; } = string.Empty;
+        public string EnglishName { get; set; } = string.Empty;
+        public string EnglishNameShort { get; set; } = string.Empty;
+        public string EnglishAbbreviation { get; set; } = string.Empty;
+        public string EnglishDescription { get; set; } = string.Empty;
+        public string FrenchName { get; set; } = string.Empty;
+        public string FrenchNameShort { get; set; } = string.Empty;
+        public string FrenchAbbreviation { get; set; } = string.Empty;
+        public string FrenchDescription { get; set; } = string.Empty;
+        public string JapaneseName { get; set; } = string.Empty;
+        public string JapaneseNameShort { get; set; } = string.Empty;
+        public string JapaneseAbbreviation { get; set; } = string.Empty;
+        public string JapaneseDescription { get; set; } = string.Empty;
     }
 
     public class Jobs
