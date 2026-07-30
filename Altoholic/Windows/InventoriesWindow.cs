@@ -210,6 +210,9 @@ namespace Altoholic.Windows
 
         private void DrawAll(List<Character> chars)
         {
+            ImGui.TextUnformatted($"{Loc.Localize("InventoryGlobalSearch", "Search in all inventories")}");
+            ImGui.SameLine();
+            ImGui.TextUnformatted($"({_globalCache.AddonStorage.LoadAddonString(_currentLocale, 3734)}, { _globalCache.AddonStorage.LoadAddonString(_currentLocale, 1370)}, { _globalCache.AddonStorage.LoadAddonString(_currentLocale, 3735)}, {_globalCache.AddonStorage.LoadAddonString(_currentLocale, 520)}, { _globalCache.AddonStorage.LoadAddonString(_currentLocale, 532)})");
             if (ImGui.InputText(Utils.Capitalize(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 3635)),
                     ref _searchedItem, 512,
                     ImGuiInputTextFlags.EnterReturnsTrue))
