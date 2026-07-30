@@ -188,13 +188,13 @@ namespace Altoholic.Windows
                 }
             }
 
-            using (var hildibrandTab =
-                   ImRaii.TabItem(
-                       $"{(_currentLocale == ClientLanguage.Japanese ? "ヒルディブランド" : "Hildibrand")}###CharactersProgressTable#All#TabBar#Hildibrand"))
+            using (var firmamentTab =
+               ImRaii.TabItem(
+                   $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 12750)}###CharactersProgressTable#All#TabBar#IshgardianRestoration"))
             {
-                if (hildibrandTab)
+                if (firmamentTab)
                 {
-                    DrawHildibrandQuest(chars);
+                    Helpers.IshgardianRestoration.Draw(_globalCache, _currentLocale, chars);
                 }
             }
 
@@ -208,11 +208,11 @@ namespace Altoholic.Windows
                 }
             }
 
-            using (var msqTab = ImRaii.TabItem($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 13357)}###CharactersProgressTable#All#TabBar#MSQ"))
+            using (var questsTab = ImRaii.TabItem($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 454)}###CharactersProgressTable#All#TabBar#Quests"))
             {
-                if (msqTab)
+                if (questsTab)
                 {
-                    DrawMainScenarioQuest(chars);
+                    DrawQuests(chars);
                 }
             }
 
@@ -226,6 +226,39 @@ namespace Altoholic.Windows
                 }
             }
 
+            using (var customDeliveryTab =
+                   ImRaii.TabItem(
+                       $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 5700)}###CharactersProgressTable#All#TabBar#CustomDelivery"))
+            {
+                if (customDeliveryTab)
+                {
+                    Helpers.CustomDelivery.DrawAll(_globalCache, _currentLocale, chars);
+                }
+            }
+        }
+
+        private void DrawQuests(List<Character> chars)
+        {
+            using var tab = ImRaii.TabBar("###CharactersProgressTable#All#Quests#TabBar");
+            if (!tab) return;
+            using (var msqTab = ImRaii.TabItem($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 13357)}###CharactersProgressTable#All#Quests#TabBar#MSQ"))
+            {
+                if (msqTab)
+                {
+                    DrawMainScenarioQuest(chars);
+                }
+            }
+
+            using (var hildibrandTab =
+                   ImRaii.TabItem(
+                       $"{(_currentLocale == ClientLanguage.Japanese ? "ヒルディブランド" : "Hildibrand")}###CharactersProgressTable#All#Quests#TabBar#Hildibrand"))
+            {
+                if (hildibrandTab)
+                {
+                    DrawHildibrandQuest(chars);
+                }
+            }
+
             string rqText = _currentLocale switch
             {
                 ClientLanguage.German => "Rollenauftrag",
@@ -236,21 +269,11 @@ namespace Altoholic.Windows
             };
             using (var rolequestTab =
                    ImRaii.TabItem(
-                       $"{rqText}###CharactersProgressTable#All#TabBar#RoleQuest"))
+                       $"{rqText}###CharactersProgressTable#All#TabBar#Quests#RoleQuest"))
             {
                 if (rolequestTab)
                 {
                     DrawRoleQuestQuest(chars);
-                }
-            }
-
-            using (var customDeliveryTab =
-                   ImRaii.TabItem(
-                       $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 5700)}###CharactersProgressTable#All#TabBar#CustomDelivery"))
-            {
-                if (customDeliveryTab)
-                {
-                    Helpers.CustomDelivery.DrawAll(_globalCache, _currentLocale, chars);
                 }
             }
         }
