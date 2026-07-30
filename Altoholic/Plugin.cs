@@ -1240,6 +1240,7 @@ namespace Altoholic
                 Sage = new Job { Level = player.ClassJobLevels[29], Exp = player.ClassJobExperience[29] },
                 Viper = new Job { Level = player.ClassJobLevels[30], Exp = player.ClassJobExperience[30] },
                 Pictomancer = new Job { Level = player.ClassJobLevels[31], Exp = player.ClassJobExperience[31] },
+                Beastmaster = new Job { Level = player.ClassJobLevels[32], Exp = player.ClassJobExperience[32] },
             };
 
             ref readonly BattleChara lp = ref *Control.GetLocalPlayer();

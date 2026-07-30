@@ -63,6 +63,7 @@ namespace Altoholic.Models
         public Job Samurai { get; set; } = new();
         public Job Reaper { get; set; } = new();
         public Job Viper { get; set; } = new();
+        public Job Beastmaster { get; set; } = new();
         // Physical Ranged
         public Job Bard { get; set; } = new();
         public Job Archer { get; set; } = new();

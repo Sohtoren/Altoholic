@@ -321,5 +321,57 @@ namespace Altoholic.Helpers
                 }
             }
         }
+
+        public static Job? GetCharacterJob(uint i, Character character)
+        {
+            if (character.Jobs is null) return null;
+            return i switch
+            {
+                1 => character.Jobs.Gladiator,
+                19 => character.Jobs.Paladin,
+                3 => character.Jobs.Marauder,
+                21 => character.Jobs.Warrior,
+                32 => character.Jobs.DarkKnight,
+                37 => character.Jobs.Gunbreaker,
+                6 => character.Jobs.Conjurer,
+                24 => character.Jobs.WhiteMage,
+                28 => character.Jobs.Scholar,
+                33 => character.Jobs.Astrologian,
+                40 => character.Jobs.Sage,
+                2 => character.Jobs.Pugilist,
+                20 => character.Jobs.Monk,
+                4 => character.Jobs.Lancer,
+                22 => character.Jobs.Dragoon,
+                29 => character.Jobs.Rogue,
+                30 => character.Jobs.Ninja,
+                34 => character.Jobs.Samurai,
+                39 => character.Jobs.Reaper,
+                41 => character.Jobs.Viper,
+                43 => character.Jobs.Beastmaster,
+                5 => character.Jobs.Archer,
+                31 => character.Jobs.Machinist,
+                23 => character.Jobs.Bard,
+                38 => character.Jobs.Dancer,
+                7 => character.Jobs.Thaumaturge,
+                25 => character.Jobs.BlackMage,
+                26 => character.Jobs.Arcanist,
+                27 => character.Jobs.Summoner,
+                35 => character.Jobs.RedMage,
+                42 => character.Jobs.Pictomancer,
+                36 => character.Jobs.BlueMage,
+                8 => character.Jobs.Carpenter,
+                9 => character.Jobs.Blacksmith,
+                10 => character.Jobs.Armorer,
+                11 => character.Jobs.Goldsmith,
+                12 => character.Jobs.Leatherworker,
+                13 => character.Jobs.Weaver,
+                14 => character.Jobs.Alchemist,
+                15 => character.Jobs.Culinarian,
+                16 => character.Jobs.Miner,
+                17 => character.Jobs.Botanist,
+                18 => character.Jobs.Fisher,
+                _ => null
+            };
+        }
     }
 }

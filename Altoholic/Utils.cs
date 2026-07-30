@@ -701,6 +701,7 @@ namespace Altoholic
                 40 => 062040,
                 41 => 062041,
                 42 => 062042,
+                43 => 062043,
                 _ => FALLBACK_ICON,
             };
         }
@@ -751,6 +752,7 @@ namespace Altoholic
                 40 => 062140,
                 41 => 062141,
                 42 => 062142,
+                43 => 062143,
                 _ => FALLBACK_ICON,
             };
         }
@@ -801,6 +803,7 @@ namespace Altoholic
                 40 => 062265,
                 41 => 062266,
                 42 => 062267,
+                43 => 062268,
                 _ => FALLBACK_ICON,
             };
         }

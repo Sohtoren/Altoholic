@@ -45,5 +45,6 @@ namespace Altoholic.Models
         SGE = 40,
         VPR = 41,
         PCT = 42,
+        BST = 43,
     }
 }

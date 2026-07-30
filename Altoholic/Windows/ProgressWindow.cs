@@ -3822,7 +3822,6 @@ namespace Altoholic.Windows
                 }
             }
 
-            //List<List<bool>> charactersQuests = Utils.GetCharactersTribeQuests(chars, _globalCache, _currentLocale);
             List<List<int>> charactersQuests = Utils.GetCharactersTribeQuests(chars, _globalCache, _currentLocale);
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);

@@ -16,7 +16,7 @@ namespace Altoholic.Cache
         public JobStorage(int size = 120)
         {
             _jobs = new Dictionary<uint, Models.JobName>(size);
-            for (uint i = 0; i <= 42; i++)
+            for (uint i = 0; i <= 43; i++)
             {
                 ClassJob? jobde = Utils.GetClassJobFromId(i, ClientLanguage.German);
                 if (jobde == null) continue;
