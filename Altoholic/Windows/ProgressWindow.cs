@@ -160,15 +160,6 @@ namespace Altoholic.Windows
             using var tab = ImRaii.TabBar("###CharactersProgressTable#All#TabBar");
             if (!tab) return;
 
-            using (var cosmicExplorationTab =
-                   ImRaii.TabItem(
-                       $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 3849)}###CharactersProgressTable#All#TabBar#CosmicExploration"))
-            {
-                if (cosmicExplorationTab)
-                {
-                    DrawCosmicExploration(chars);
-                }
-            }
             using (var dutyTab =
                    ImRaii.TabItem(
                        $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 2225)}###CharactersProgressTable#All#TabBar#Duty"))
@@ -187,6 +178,22 @@ namespace Altoholic.Windows
                     DrawEventQuest(chars);
                 }
             }
+
+            using (var fieldOperationsTab =
+                   ImRaii.TabItem(
+                       $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 2307)}###CharactersProgressTable#All#TabBar#FieldOperations"))
+            {
+                if (fieldOperationsTab)
+                {
+                    Helpers.FieldOperations.Draw(_globalCache, _currentLocale, chars);
+                }
+            }
+            /*if(ImGui.IsItemHovered())
+            {
+                ImGui.BeginTooltip();
+                ImGui.TextUnformatted($"Bozja & {_globalCache.AddonStorage.LoadAddonString(_currentLocale, 3849)} & {_globalCache.AddonStorage.LoadAddonString(_currentLocale, 2305)}");
+                ImGui.EndTooltip();
+            }*/
 
             using (var firmamentTab =
                ImRaii.TabItem(
@@ -215,6 +222,20 @@ namespace Altoholic.Windows
                     DrawQuests(chars);
                 }
             }
+            /*if (ImGui.IsItemHovered())
+            {
+                ImGui.BeginTooltip();
+                string rqText = _currentLocale switch
+                {
+                    ClientLanguage.German => "Rollenauftrag",
+                    ClientLanguage.English => "Role quest",
+                    ClientLanguage.French => "Quête de rôle",
+                    ClientLanguage.Japanese => "ロールクエスト",
+                    _ => "Role quest",
+                };
+                ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 13357)} & {(_currentLocale == ClientLanguage.Japanese ? "ヒルディブランド" : "Hildibrand")} & {rqText}");
+                ImGui.EndTooltip();
+            }*/
 
             using (var tribeTab =
                    ImRaii.TabItem(
@@ -361,213 +382,6 @@ namespace Altoholic.Windows
             Helpers.Reward.DrawAllCharsFramerKit(_currentLocale, _globalCache, chars, 39578, 3000);
             Helpers.Reward.DrawAllCharsFramerKit(_currentLocale, _globalCache, chars, 39579, 3000);
             Helpers.Reward.DrawAllCharsFramerKit(_currentLocale, _globalCache, chars, 46822, 3000);
-        }
-
-        private void DrawCosmicExploration(List<Character> chars)
-        {
-            using var tab = ImRaii.TabBar("###CharactersProgressTable#All#TabBar#CosmicExploration");
-            if (!tab) return;
-
-            using (var cosmicExplorationTab =
-                   ImRaii.TabItem(
-                       $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 3460)}###CharactersProgressTable#All#TabBar#CosmicExploration#Vendor"))
-            {
-                if (cosmicExplorationTab)
-                {
-                    DrawCosmicExplorationVendor(chars);
-                }
-            }
-            using (var cosmicExplorationShuffleTab =
-                   ImRaii.TabItem(
-                       $"Cosmic Fortunes###CharactersProgressTable#All#TabBar#CosmicExploration#Shuffle"))
-            {
-                if (cosmicExplorationShuffleTab)
-                {
-                    DrawCosmicExplorationShuffle(chars);
-                }
-            }
-        }
-        private void DrawCosmicExplorationVendor(List<Character> chars)
-        {
-            using var charactersEventTable = ImRaii.Table(
-                $"###CharactersProgress#All#Event#CosmicExplorationRewards#Table",
-                chars.Count + 2,
-                ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner |
-                ImGuiTableFlags.ScrollX | ImGuiTableFlags.ScrollY);
-            if (!charactersEventTable) return;
-            ImGui.TableSetupColumn($"###CharactersProgress#All#Event#CosmicExplorationRewards#Name",
-                ImGuiTableColumnFlags.WidthFixed, 260);
-            ImGui.TableSetupColumn($"###CharactersProgress#All#Event#CosmicExplorationRewards#Currency",
-                ImGuiTableColumnFlags.WidthFixed, 33);
-            foreach (Character c in chars)
-            {
-                ImGui.TableSetupColumn($"###CharactersProgress#All#Event#CosmicExplorationRewards#{c.CharacterId}",
-                    ImGuiTableColumnFlags.WidthFixed, 20);
-            }
-
-            ImGui.TableNextRow();
-            ImGui.TableSetColumnIndex(0);
-            ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 1885));
-
-            ImGui.TableSetColumnIndex(1);
-            Item? itm = _globalCache.ItemStorage.LoadItem(_currentLocale, (uint)Currencies.COSMOCREDIT);
-            if (itm == null) return;
-            Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Value.Icon), new Vector2(16, 16));
-            if (ImGui.IsItemHovered())
-            {
-                Utils.DrawItemTooltip(_currentLocale, ref _globalCache, itm.Value);
-            }
-
-            foreach (Character currChar in chars)
-            {
-                ImGui.TableNextColumn();
-                ImGui.TextUnformatted($"{currChar.FirstName[0]}.{currChar.LastName[0]}");
-                if (ImGui.IsItemHovered())
-                {
-                    ImGui.BeginTooltip();
-                    ImGui.TextUnformatted(
-                        $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
-                    ImGui.EndTooltip();
-                }
-            }
-
-            Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 401, 29000);
-            Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 425, 20000);
-            Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 426, 20000);
-            Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 445, 20000);
-            Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 446, 20000);
-            Helpers.Reward.DrawAllCharsFramerKit(_currentLocale, _globalCache, chars, 48091, 6000);
-            Helpers.Reward.DrawAllCharsFramerKit(_currentLocale, _globalCache, chars, 46768, 6000);
-            Helpers.Reward.DrawAllCharsFramerKit(_currentLocale, _globalCache, chars, 50019, 6000);
-            Helpers.Reward.DrawAllCharsFramerKit(_currentLocale, _globalCache, chars, 51996, 6000);
-            Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.TripleTriadCard, 449, 4000);
-            Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.TripleTriadCard, 450, 6000);
-            Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.TripleTriadCard, 458, 4000);
-            Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.TripleTriadCard, 474, 4000);
-            Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Emote, 294, 9600);
-            Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Glass, 289, 6000);
-            Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Glass, 373, 3000);
-            Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Glass, 385, 3000);
-            Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Orchestrion, 737, 6000);
-            Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Orchestrion, 738, 6000);
-            Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Orchestrion, 777, 6000);
-        }
-        private void DrawCosmicExplorationShuffle(List<Character> chars)
-        {
-            using var tab = ImRaii.TabBar("###CharactersProgressTable#All#TabBar#CosmicExplorationShuffle");
-            if (!tab) return;
-
-            using (var cosmicExplorationShuffleSinusArdorumTab =
-                   ImRaii.TabItem(
-                       $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 16780)}###CharactersProgressTable#All#TabBar#CosmicExploration#Shuffle#SinusArdorum"))
-            {
-                if (cosmicExplorationShuffleSinusArdorumTab)
-                {
-                    using var charactersEventTable = ImRaii.Table(
-                $"###CharactersProgress#All#Event#CosmicExplorationRewards#Table",
-                chars.Count + 2,
-                ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner |
-                ImGuiTableFlags.ScrollX | ImGuiTableFlags.ScrollY);
-                    if (!charactersEventTable) return;
-                    ImGui.TableSetupColumn($"###CharactersProgress#All#Event#CosmicExplorationRewards#Name",
-                        ImGuiTableColumnFlags.WidthFixed, 260);
-                    ImGui.TableSetupColumn($"###CharactersProgress#All#Event#CosmicExplorationRewards#Currency",
-                        ImGuiTableColumnFlags.WidthFixed, 25);
-                    foreach (Character c in chars)
-                    {
-                        ImGui.TableSetupColumn($"###CharactersProgress#All#Event#CosmicExplorationRewards#{c.CharacterId}",
-                            ImGuiTableColumnFlags.WidthFixed, 20);
-                    }
-
-                    ImGui.TableNextRow();
-                    ImGui.TableSetColumnIndex(0);
-                    ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 1885));
-
-                    /*ImGui.TableSetColumnIndex(1);
-                    Item? itm = _globalCache.ItemStorage.LoadItem(_currentLocale, (uint)Currencies.COSMOCREDIT);
-                    if (itm == null) return;
-                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Value.Icon), new Vector2(16, 16));
-                    if (ImGui.IsItemHovered())
-                    {
-                        Utils.DrawItemTooltip(_currentLocale, ref _globalCache, itm.Value);
-                    }*/
-
-                    foreach (Character currChar in chars)
-                    {
-                        ImGui.TableNextColumn();
-                        ImGui.TextUnformatted($"{currChar.FirstName[0]}.{currChar.LastName[0]}");
-                        if (ImGui.IsItemHovered())
-                        {
-                            ImGui.BeginTooltip();
-                            ImGui.TextUnformatted(
-                                $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
-                            ImGui.EndTooltip();
-                        }
-                    }
-
-                    Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Glass, 301, 0);
-                    Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Ornament, 47, 0);
-                    Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 364, 0);
-                    Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Minion, 547, 0);
-                    Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Emote, 286, 0);
-                    Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Orchestrion, 745, 0);
-                }
-            }
-            using (var cosmicExplorationShufflePhaennaTab =
-                   ImRaii.TabItem(
-                       $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 16904)}###CharactersProgressTable#All#TabBar#CosmicExploration#Shuffle#Phaenna"))
-            {
-                if (cosmicExplorationShufflePhaennaTab)
-                {
-                    using var charactersEventTable = ImRaii.Table(
-                        $"###CharactersProgress#All#Event#CosmicExplorationRewards#Table",
-                        chars.Count + 2,
-                        ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner |
-                        ImGuiTableFlags.ScrollX | ImGuiTableFlags.ScrollY);
-                    if (!charactersEventTable) return;
-                    ImGui.TableSetupColumn($"###CharactersProgress#All#Event#CosmicExplorationRewards#Name",
-                        ImGuiTableColumnFlags.WidthFixed, 260);
-                    ImGui.TableSetupColumn($"###CharactersProgress#All#Event#CosmicExplorationRewards#Currency",
-                        ImGuiTableColumnFlags.WidthFixed, 25);
-                    foreach (Character c in chars)
-                    {
-                        ImGui.TableSetupColumn($"###CharactersProgress#All#Event#CosmicExplorationRewards#{c.CharacterId}",
-                            ImGuiTableColumnFlags.WidthFixed, 20);
-                    }
-
-                    ImGui.TableNextRow();
-                    ImGui.TableSetColumnIndex(0);
-                    ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 1885));
-
-                    /*ImGui.TableSetColumnIndex(1);
-                    Item? itm = _globalCache.ItemStorage.LoadItem(_currentLocale, (uint)Currencies.COSMOCREDIT);
-                    if (itm == null) return;
-                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Value.Icon), new Vector2(16, 16));
-                    if (ImGui.IsItemHovered())
-                    {
-                        Utils.DrawItemTooltip(_currentLocale, ref _globalCache, itm.Value);
-                    }*/
-
-                    foreach (Character currChar in chars)
-                    {
-                        ImGui.TableNextColumn();
-                        ImGui.TextUnformatted($"{currChar.FirstName[0]}.{currChar.LastName[0]}");
-                        if (ImGui.IsItemHovered())
-                        {
-                            ImGui.BeginTooltip();
-                            ImGui.TextUnformatted(
-                                $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
-                            ImGui.EndTooltip();
-                        }
-                    }
-
-                    Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 386, 0);
-                    Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Minion, 553, 0);
-                    Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Orchestrion, 776, 0);
-                    Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Emote, 304, 0);
-                    Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Glass, 397, 0);
-                }
-            }
         }
 
         private void DrawDuties(List<Character> chars)

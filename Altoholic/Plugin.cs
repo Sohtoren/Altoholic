@@ -46,6 +46,7 @@ using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Runtime.InteropServices;
+using static FFXIVClientStructs.FFXIV.Client.Game.FashionCheckManager.Delegates;
 using static FFXIVClientStructs.FFXIV.Client.Game.UI.InstanceContent;
 using static FFXIVClientStructs.FFXIV.Client.Game.UI.UIState.Delegates;
 using static FFXIVClientStructs.FFXIV.Client.UI.Misc.RaptureGearsetModule;
@@ -661,7 +662,7 @@ namespace Altoholic
                     Utils.GetLastPlayTimeUpdateDiff(_localPlayer.LastPlayTimeUpdate) >= lastPlaytimeDaysConfig)
                 {
                     Utils.ChatMessage($"{Loc.Localize("LastPlaytimeOutdatedStart",
-                        "More than")} {lastPlaytimeDaysConfig} {Loc.Localize("LastPlaytimeOutdatedEnd","days since the last update, consider using the /playtime command")}");
+                        "More than")} {lastPlaytimeDaysConfig} {Loc.Localize("LastPlaytimeOutdatedEnd", "days since the last update, consider using the /playtime command")}");
                 }
 
                 if (_localPlayer.PlayTime == 0)
@@ -690,7 +691,7 @@ namespace Altoholic
                 }
 
                 Character? character = Database.Database.GetCharacter(this, _db, _localPlayer.CharacterId);
-                if(character != null)
+                if (character != null)
                 {
                     foreach (Housing housing in character.Houses.Where(housing => !_localPlayer.Houses.Exists(h => h.Id == housing.Id)))
                     {
@@ -885,7 +886,7 @@ namespace Altoholic
                 _localPlayer.Datacenter = Utils.GetDatacenterFromWorld(_localPlayer.HomeWorld);
                 _localPlayer.Region = Utils.GetRegionFromWorld(_localPlayer.HomeWorld);
             }
-            
+
             World? cw = lPlayer.CurrentWorld.ValueNullable;
             if (cw != null)
             {
@@ -959,12 +960,12 @@ namespace Altoholic
                 CustomDelivery? npc = _globalCache.CustomDeliveryStorage.GetCustomDeliveryNPC(ClientLanguage.English, (uint)i + 1);
                 if (npc is null) continue;
 
-                if(!_localPlayer.HasQuest((int)npc.QuestRequired))
+                if (!_localPlayer.HasQuest((int)npc.QuestRequired))
                 {
                     heartCount = 0;
                 }
 
-                if(_localPlayer.CustomDeliveries.TryGetValue(i, out CustomDeliveryRank? cdr))
+                if (_localPlayer.CustomDeliveries.TryGetValue(i, out CustomDeliveryRank? cdr))
                 {
                     _localPlayer.CustomDeliveries[i].HeartCount = heartCount;
                     _localPlayer.CustomDeliveries[i].UsedAllowance = usedAllowance;
@@ -1094,7 +1095,7 @@ namespace Altoholic
         {
             ref readonly MirageManager mm = ref *MirageManager.Instance();
             if (!mm.GlamourPlatesLoaded) return;
-            for (byte i=0;i<mm.GlamourPlates.Length;i++)
+            for (byte i = 0; i < mm.GlamourPlates.Length; i++)
             {
                 MirageManager.GlamourPlate glamourPlate = mm.GlamourPlates[i];
                 GlamourPlate gp = new()
@@ -1298,11 +1299,11 @@ namespace Altoholic
             uint lastId = _globalCache.PvPStorage.GetLastSeriesId();
             _localPlayer.PvPProfile.SeriesPersonalRanks[lastId] =
                 pvpprofile.SeriesCurrentRank;
-            _localPlayer.PvPProfile.SeriesPersonalRanks[lastId-1] =
+            _localPlayer.PvPProfile.SeriesPersonalRanks[lastId - 1] =
                 pvpprofile.PreviousSeriesRank;
             _localPlayer.PvPProfile.SeriesPersonalRanksClaimed[lastId] =
                 pvpprofile.SeriesClaimedRank;
-            _localPlayer.PvPProfile.SeriesPersonalRanksClaimed[lastId-1] =
+            _localPlayer.PvPProfile.SeriesPersonalRanksClaimed[lastId - 1] =
                 pvpprofile.PreviousSeriesClaimedRank;
 
             /*foreach (uint i in Enumerable.Range(1001,79))
@@ -1311,6 +1312,52 @@ namespace Altoholic
             }*/
 
             GetOccultCrescent();
+            GetBozja();
+            GetEureka();
+        }
+
+        private unsafe void GetEureka()
+        {
+            if (ClientState.IsPvP) return;
+            if (ClientState.TerritoryType is 732 or 763 or 795 or 827)
+            {
+                EurekaState* state = FFXIVClientStructs.FFXIV.Client.Game.InstanceContent.PublicContentEureka.GetState();
+                if (state is null) return;
+
+                Models.Eureka eureka = new()
+                {
+                    CurrentExperience = state->CurrentExperience,
+                    NeededExperience = state->NeededExperience,
+                    //Logos = instance->State..ToArray(),
+                };
+                eureka.CurrentLevel = (uint)eureka.GetCurrentLevel() + 1;
+                if (_localPlayer.Eureka is not null && (_localPlayer.Eureka.MaxLevel == 0 || eureka.GetCurrentLevel() > _localPlayer.Eureka.MaxLevel))
+                {
+                    eureka.MaxLevel = (uint)eureka.GetCurrentLevel() + 1;
+                }
+                //Log.Debug($"{eureka.CurrentLevel}, {eureka.MaxLevel}, {eureka.CurrentExperience}, {eureka.NeededExperience}");
+                _localPlayer.Eureka = eureka;
+            }
+        }
+
+        private unsafe void GetBozja()
+        {
+            if (ClientState.IsPvP) return;
+            if (ClientState.TerritoryType is 920 or 975)
+            {
+                PublicContentBozja* instance = FFXIVClientStructs.FFXIV.Client.Game.InstanceContent.PublicContentBozja.GetInstance();
+                if (instance is null) return;
+                if (!instance->StateInitialized) return;
+
+                _localPlayer.Bozja = new Bozja()
+                {
+                    CurrentLevel = instance->GetCurrentLevel(),
+                    MaxLevel = instance->GetMaxLevel(),
+                    CurrentExperience = instance->State.CurrentExperience,
+                    NeededExperience = instance->State.NeededExperience,
+                    HolsterActions = instance->State.HolsterActions.ToArray(),
+                };
+            }
         }
 
         private unsafe void GetOccultCrescent()
@@ -1321,7 +1368,6 @@ namespace Altoholic
                 PublicContentOccultCrescent* instance = FFXIVClientStructs.FFXIV.Client.Game.InstanceContent.PublicContentOccultCrescent.GetInstance();
                 if (instance is null) return;
                 if (!instance->StateLoaded) return;
-                OccultCrescentState state = instance->State;
                 OccultCrescent oc = new OccultCrescent
                 {
                     KnowledgeLevel = instance->State.CurrentKnowledge,

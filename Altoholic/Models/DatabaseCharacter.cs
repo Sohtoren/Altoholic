@@ -75,5 +75,7 @@ namespace Altoholic.Models
         public string LastCompletedDutyDatetime { get; init; } = string.Empty;
         public string CustomDeliveries { get; init; } = string.Empty;
         public string OccultCrescent { get; init; } = string.Empty;
+        public string Bozja { get; init; } = string.Empty;
+        public string Eureka { get; init; } = string.Empty;
     }
 }

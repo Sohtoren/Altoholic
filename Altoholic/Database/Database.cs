@@ -162,7 +162,9 @@ namespace Altoholic.Database
                                                     WondrousTails TEXT,
                                                     LastCompletedDutyDatetime TEXT,
                                                     CustomDeliveries TEXT,
-                                                    OccultCrescent TEXT
+                                                    OccultCrescent TEXT,
+                                                    Bozja TEXT,
+                                                    Eureka TEXT
                                                 );
                                     """;
                 int result = db.Execute(sql);
@@ -432,6 +434,22 @@ namespace Altoholic.Database
                     int result38 = db.Execute(sql38);
                     Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages,
                         $"ALTER TABLE {CharacterTableName} ADD COLUMN OccultCrescent TEXT result: {result38}");
+                }
+                if (!DoesColumnExist(plugin, db, CharacterTableName, "Bozja"))
+                {
+                    Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, $"Column {CharacterTableName}.Bozja does not exist");
+                    const string sql39 = $"ALTER TABLE {CharacterTableName} ADD COLUMN Bozja TEXT";
+                    int result39 = db.Execute(sql39);
+                    Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages,
+                        $"ALTER TABLE {CharacterTableName} ADD COLUMN Bozja TEXT result: {result39}");
+                }
+                if (!DoesColumnExist(plugin, db, CharacterTableName, "Eureka"))
+                {
+                    Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, $"Column {CharacterTableName}.Eureka does not exist");
+                    const string sql40 = $"ALTER TABLE {CharacterTableName} ADD COLUMN Eureka TEXT";
+                    int result40 = db.Execute(sql40);
+                    Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages,
+                        $"ALTER TABLE {CharacterTableName} ADD COLUMN Eureka TEXT result: {result40}");
                 }
             }
 
@@ -775,7 +793,7 @@ namespace Altoholic.Database
             try
             {
                 const string updateSql =
-                    $"UPDATE {CharacterTableName} SET [FirstName] = @FirstName, [LastName] = @LastName, [HomeWorld] = @HomeWorld, [Datacenter] = @Datacenter, [Region] = @Region, [IsSprout] = @IsSprout, [IsBattleMentor] = @IsBattleMentor, [IsTradeMentor] = @IsTradeMentor, [IsReturner] = @IsReturner, [LastJob] = @LastJob, [LastJobLevel] = @LastJobLevel, [FCTag] = @FCTag, [FreeCompany] = @FreeCompany, [LastOnline] = @LastOnline, [PlayTime] = @PlayTime, [LastPlayTimeUpdate] = @LastPlayTimeUpdate, [HasPremiumSaddlebag] = @HasPremiumSaddlebag, [PlayerCommendations] = @PlayerCommendations, [CurrentFacewear] = @CurrentFacewear, [CurrentOrnament] = @CurrentOrnament, [UnreadLetters] = @UnreadLetters, [IslandSanctuaryUnlocked] = @IslandSanctuaryUnlocked, [IslandSanctuaryLevel] = @IslandSanctuaryLevel, [Attributes] = @Attributes, [Currencies] = @Currencies, [Jobs] = @Jobs, [Profile] = @Profile, [Quests] = @Quests, [Inventory] = @Inventory, [ArmoryInventory] = @ArmoryInventory, [Saddle] = @Saddle, [Gear] = @Gear, [Retainers] = @Retainers, [BlacklistedRetainers] = @BlacklistedRetainers, [Minions] = @Minions, [Mounts] = @Mounts, [TripleTriadCards] = @TripleTriadCards, [Emotes] = @Emotes, [Bardings] = @Bardings, [FramerKits] = @FramerKits, [OrchestrionRolls] = @OrchestrionRolls, [Ornaments] = @Ornaments, [Glasses] = @Glasses, [BeastReputations] = @BeastReputations, [Duties] = @Duties, [DutiesUnlocked] = @DutiesUnlocked, [Houses] = @Houses, [Hairstyles] = @Hairstyles, [Facepaints] = @Facepaints, [SecretRecipeBooks] = @SecretRecipeBooks, [Vistas] = @Vistas, [SightseeingLogUnlockState] = @SightseeingLogUnlockState, [SightseeingLogUnlockStateEx] = @SightseeingLogUnlockStateEx, [Armoire] = @Armoire, [GlamourDresser] = @GlamourDresser, [PvPProfile] = @PvPProfile, [Timers] = @Timers, [CurrentGearSet] = @CurrentGearSet, [GearSets] = @GearSets, [GlamourPlates] = @GlamourPlates, [CompletedRoulettes] = @CompletedRoulettes, [UnlockedRoulettes] = @UnlockedRoulettes, [RaidRewards] = @RaidRewards, [WondrousTails] = @WondrousTails, [LastCompletedDutyDatetime] = @LastCompletedDutyDatetime, [CustomDeliveries] = @CustomDeliveries, [OccultCrescent] = @OccultCrescent WHERE [CharacterId] = @CharacterId";
+                    $"UPDATE {CharacterTableName} SET [FirstName] = @FirstName, [LastName] = @LastName, [HomeWorld] = @HomeWorld, [Datacenter] = @Datacenter, [Region] = @Region, [IsSprout] = @IsSprout, [IsBattleMentor] = @IsBattleMentor, [IsTradeMentor] = @IsTradeMentor, [IsReturner] = @IsReturner, [LastJob] = @LastJob, [LastJobLevel] = @LastJobLevel, [FCTag] = @FCTag, [FreeCompany] = @FreeCompany, [LastOnline] = @LastOnline, [PlayTime] = @PlayTime, [LastPlayTimeUpdate] = @LastPlayTimeUpdate, [HasPremiumSaddlebag] = @HasPremiumSaddlebag, [PlayerCommendations] = @PlayerCommendations, [CurrentFacewear] = @CurrentFacewear, [CurrentOrnament] = @CurrentOrnament, [UnreadLetters] = @UnreadLetters, [IslandSanctuaryUnlocked] = @IslandSanctuaryUnlocked, [IslandSanctuaryLevel] = @IslandSanctuaryLevel, [Attributes] = @Attributes, [Currencies] = @Currencies, [Jobs] = @Jobs, [Profile] = @Profile, [Quests] = @Quests, [Inventory] = @Inventory, [ArmoryInventory] = @ArmoryInventory, [Saddle] = @Saddle, [Gear] = @Gear, [Retainers] = @Retainers, [BlacklistedRetainers] = @BlacklistedRetainers, [Minions] = @Minions, [Mounts] = @Mounts, [TripleTriadCards] = @TripleTriadCards, [Emotes] = @Emotes, [Bardings] = @Bardings, [FramerKits] = @FramerKits, [OrchestrionRolls] = @OrchestrionRolls, [Ornaments] = @Ornaments, [Glasses] = @Glasses, [BeastReputations] = @BeastReputations, [Duties] = @Duties, [DutiesUnlocked] = @DutiesUnlocked, [Houses] = @Houses, [Hairstyles] = @Hairstyles, [Facepaints] = @Facepaints, [SecretRecipeBooks] = @SecretRecipeBooks, [Vistas] = @Vistas, [SightseeingLogUnlockState] = @SightseeingLogUnlockState, [SightseeingLogUnlockStateEx] = @SightseeingLogUnlockStateEx, [Armoire] = @Armoire, [GlamourDresser] = @GlamourDresser, [PvPProfile] = @PvPProfile, [Timers] = @Timers, [CurrentGearSet] = @CurrentGearSet, [GearSets] = @GearSets, [GlamourPlates] = @GlamourPlates, [CompletedRoulettes] = @CompletedRoulettes, [UnlockedRoulettes] = @UnlockedRoulettes, [RaidRewards] = @RaidRewards, [WondrousTails] = @WondrousTails, [LastCompletedDutyDatetime] = @LastCompletedDutyDatetime, [CustomDeliveries] = @CustomDeliveries, [OccultCrescent] = @OccultCrescent, [Bozja] = @Bozja, [Eureka] = @Eureka WHERE [CharacterId] = @CharacterId";
                 int result = db.Execute(updateSql, FormatCharacterForDatabase(character));
                 return result;
             }
@@ -1015,6 +1033,14 @@ namespace Altoholic.Database
                 ? null
                 : System.Text.Json.JsonSerializer.Deserialize<OccultCrescent>(databaseCharacter.OccultCrescent) ?? null;
             Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, "OccultCrescent deserialized");
+            Bozja? bozja = string.IsNullOrEmpty(databaseCharacter.Bozja)
+                ? null
+                : System.Text.Json.JsonSerializer.Deserialize<Bozja>(databaseCharacter.Bozja) ?? null;
+            Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, "Bozja deserialized");
+            Eureka? eureka = string.IsNullOrEmpty(databaseCharacter.Eureka)
+                ? null
+                : System.Text.Json.JsonSerializer.Deserialize<Eureka>(databaseCharacter.Eureka) ?? null;
+            Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, "Eureka deserialized");
 
             return new Character()
             {
@@ -1088,7 +1114,9 @@ namespace Altoholic.Database
                 WondrousTails = wondrousTails,
                 LastCompletedDutyDatetime = lastCompletedDutyDatetime,
                 CustomDeliveries = customDeliveries,
-                OccultCrescent = occultCrescent
+                OccultCrescent = occultCrescent,
+                Bozja = bozja,
+                Eureka = eureka
             };
         }
 
@@ -1137,6 +1165,8 @@ namespace Altoholic.Database
             string lastCompletedDutyDatetime = System.Text.Json.JsonSerializer.Serialize(character.LastCompletedDutyDatetime);
             string customDeliveries = System.Text.Json.JsonSerializer.Serialize(character.CustomDeliveries);
             string occultCrescent = System.Text.Json.JsonSerializer.Serialize(character.OccultCrescent);
+            string bozja = System.Text.Json.JsonSerializer.Serialize(character.Bozja);
+            string eureka = System.Text.Json.JsonSerializer.Serialize(character.Eureka);
 
             return new DatabaseCharacter()
             {
@@ -1210,7 +1240,9 @@ namespace Altoholic.Database
                 WondrousTails = wondrousTails,
                 LastCompletedDutyDatetime = lastCompletedDutyDatetime,
                 CustomDeliveries = customDeliveries,
-                OccultCrescent = occultCrescent
+                OccultCrescent = occultCrescent,
+                Bozja = bozja,
+                Eureka = eureka
             };
         }
 
@@ -1218,8 +1250,8 @@ namespace Altoholic.Database
         {
             Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, "Entering AddCharacter()");
             const string insertQuery =
-                $"INSERT INTO {CharacterTableName}([CharacterId], [FirstName], [LastName], [HomeWorld], [Datacenter], [Region], [IsSprout], [IsBattleMentor], [IsTradeMentor], [IsReturner], [LastJob], [LastJobLevel], [FCTag], [FreeCompany], [LastOnline], [PlayTime], [LastPlayTimeUpdate], [HasPremiumSaddlebag], [PlayerCommendations], [CurrentFacewear], [CurrentOrnament], [UnreadLetters], [IslandSanctuaryUnlocked], [IslandSanctuaryLevel], [Attributes], [Currencies], [Jobs], [Profile], [Quests], [Inventory], [ArmoryInventory], [Saddle], [Gear], [Retainers], [BlacklistedRetainers], [Minions], [Mounts], [TripleTriadCards], [Emotes], [Bardings], [FramerKits], [OrchestrionRolls], [Ornaments], [Glasses], [BeastReputations], [Duties], [DutiesUnlocked], [Houses], [Hairstyles], [Facepaints], [SecretRecipeBooks], [Vistas], [SightseeingLogUnlockState], [SightseeingLogUnlockStateEx], [Armoire], [GlamourDresser], [PvPProfile], [Timers], [CurrentGearSet], [GearSets], [GlamourPlates], [CompletedRoulettes], [UnlockedRoulettes], [RaidRewards], [WondrousTails], [LastCompletedDutyDatetime], [CustomDeliveries], [OccultCrescent]) " +
-                "VALUES (@CharacterId, @FirstName, @LastName, @HomeWorld, @Datacenter, @Region, @IsSprout, @IsBattleMentor, @IsTradeMentor, @IsReturner, @LastJob, @LastJobLevel, @FCTag, @FreeCompany, @LastOnline, @PlayTime, @LastPlayTimeUpdate, @HasPremiumSaddlebag, @PlayerCommendations, @CurrentFacewear, @CurrentOrnament, @UnreadLetters, @IslandSanctuaryUnlocked, @IslandSanctuaryLevel, @Attributes, @Currencies, @Jobs, @Profile, @Quests, @Inventory, @ArmoryInventory, @Saddle, @Gear, @Retainers, @BlacklistedRetainers, @Minions, @Mounts, @TripleTriadCards, @Emotes, @Bardings, @FramerKits, @OrchestrionRolls, @Ornaments, @Glasses, @BeastReputations, @Duties, @DutiesUnlocked, @Houses, @Hairstyles, @Facepaints, @SecretRecipeBooks, @Vistas, @SightseeingLogUnlockState, @SightseeingLogUnlockStateEx, @Armoire, @GlamourDresser, @PvPProfile, @Timers, @CurrentGearSet, @GearSets, @GlamourPlates, @CompletedRoulettes, @UnlockedRoulettes, @RaidRewards, @WondrousTails, @LastCompletedDutyDatetime, @CustomDeliveries, @OccultCrescent)";
+                $"INSERT INTO {CharacterTableName}([CharacterId], [FirstName], [LastName], [HomeWorld], [Datacenter], [Region], [IsSprout], [IsBattleMentor], [IsTradeMentor], [IsReturner], [LastJob], [LastJobLevel], [FCTag], [FreeCompany], [LastOnline], [PlayTime], [LastPlayTimeUpdate], [HasPremiumSaddlebag], [PlayerCommendations], [CurrentFacewear], [CurrentOrnament], [UnreadLetters], [IslandSanctuaryUnlocked], [IslandSanctuaryLevel], [Attributes], [Currencies], [Jobs], [Profile], [Quests], [Inventory], [ArmoryInventory], [Saddle], [Gear], [Retainers], [BlacklistedRetainers], [Minions], [Mounts], [TripleTriadCards], [Emotes], [Bardings], [FramerKits], [OrchestrionRolls], [Ornaments], [Glasses], [BeastReputations], [Duties], [DutiesUnlocked], [Houses], [Hairstyles], [Facepaints], [SecretRecipeBooks], [Vistas], [SightseeingLogUnlockState], [SightseeingLogUnlockStateEx], [Armoire], [GlamourDresser], [PvPProfile], [Timers], [CurrentGearSet], [GearSets], [GlamourPlates], [CompletedRoulettes], [UnlockedRoulettes], [RaidRewards], [WondrousTails], [LastCompletedDutyDatetime], [CustomDeliveries], [OccultCrescent], [Bozja], [Eureka]) " +
+                "VALUES (@CharacterId, @FirstName, @LastName, @HomeWorld, @Datacenter, @Region, @IsSprout, @IsBattleMentor, @IsTradeMentor, @IsReturner, @LastJob, @LastJobLevel, @FCTag, @FreeCompany, @LastOnline, @PlayTime, @LastPlayTimeUpdate, @HasPremiumSaddlebag, @PlayerCommendations, @CurrentFacewear, @CurrentOrnament, @UnreadLetters, @IslandSanctuaryUnlocked, @IslandSanctuaryLevel, @Attributes, @Currencies, @Jobs, @Profile, @Quests, @Inventory, @ArmoryInventory, @Saddle, @Gear, @Retainers, @BlacklistedRetainers, @Minions, @Mounts, @TripleTriadCards, @Emotes, @Bardings, @FramerKits, @OrchestrionRolls, @Ornaments, @Glasses, @BeastReputations, @Duties, @DutiesUnlocked, @Houses, @Hairstyles, @Facepaints, @SecretRecipeBooks, @Vistas, @SightseeingLogUnlockState, @SightseeingLogUnlockStateEx, @Armoire, @GlamourDresser, @PvPProfile, @Timers, @CurrentGearSet, @GearSets, @GlamourPlates, @CompletedRoulettes, @UnlockedRoulettes, @RaidRewards, @WondrousTails, @LastCompletedDutyDatetime, @CustomDeliveries, @OccultCrescent, @Bozja, @Eureka)";
 
             int result = db.Execute(insertQuery, FormatCharacterForDatabase(character));
 

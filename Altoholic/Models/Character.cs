@@ -86,6 +86,8 @@ namespace Altoholic.Models
         public Dictionary<uint, DateTime> LastCompletedDutyDatetime { get; init; } = [];
         public Dictionary<int, CustomDeliveryRank> CustomDeliveries { get; init; } = [];
         public OccultCrescent? OccultCrescent { get; set; }
+        public Bozja? Bozja { get; set; }
+        public Eureka? Eureka { get; set; }
 
         public bool HasAnyLevelJob(int level)
         {
