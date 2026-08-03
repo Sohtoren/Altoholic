@@ -10,6 +10,7 @@ using FFXIVClientStructs.FFXIV.Common.Math;
 using Lumina.Excel.Sheets;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Altoholic.Helpers
@@ -458,6 +459,97 @@ namespace Altoholic.Helpers
                 ImGui.TextUnformatted(FontAwesomeIcon.Check.ToIconString());
                 ImGui.PopFont();
                 ImGui.SetCursorPos(p);
+            }
+        }
+
+        public static void DrawAllCharsItemAcquired(ClientLanguage currentLocale, GlobalCache globalCache, List<Character> chars, uint itemId, uint cost = 0)
+        {
+            Lumina.Excel.Sheets.Item? item = globalCache.ItemStorage.LoadItem(currentLocale, itemId);
+            if (item is null) return;
+            string name = item.Value.Name.ToString();
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            Utils.DrawIcon(globalCache.IconStorage.LoadIcon(item.Value.Icon), new Vector2(32, 32));
+            if (ImGui.IsItemHovered())
+            {
+                Utils.DrawItemTooltip(currentLocale, ref globalCache, item.Value);
+            }
+
+            ImGui.SameLine();
+            ImGui.TextUnformatted(name);
+
+            if (cost > 0)
+            {
+                ImGui.TableNextColumn();
+                ImGui.TextUnformatted($"{cost}");
+            }
+
+            foreach (Models.Character currChar in chars)
+            {
+                ImGui.TableNextColumn();
+                Models.CharacterInventories? ci = currChar.HasItemInAnyInventory(globalCache, itemId);
+                if (ci is null) continue;
+                long retainerAmount = ci.Retainers.Sum(c => c.Item2);
+                if (ci.Inventory.Item1 || ci.Armory.Item1 || retainerAmount > 0 || ci.Dresser || ci.Armoire)
+                {
+                    ImGui.PushFont(UiBuilder.IconFont);
+                    ImGui.TextUnformatted(FontAwesomeIcon.Check.ToIconString());
+                    ImGui.PopFont();
+                    if (ImGui.IsItemHovered())
+                    {
+                        ImGui.BeginTooltip();
+                        ImGui.TextUnformatted(name);
+                        ImGui.TextUnformatted(
+                            $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
+                        if (ci.Inventory.Item1)
+                        {
+                            ImGui.TextUnformatted(
+                                $"{globalCache.AddonStorage.LoadAddonString(currentLocale, 520)}");
+                            ImGui.SameLine();
+                            ImGui.TextUnformatted($"{ci.Inventory.Item2:N0}");
+                        }
+
+                        if (ci.Armory.Item1)
+                        {
+                            ImGui.TextUnformatted(
+                                $"{globalCache.AddonStorage.LoadAddonString(currentLocale, 1370)}");
+                            ImGui.SameLine();
+                            ImGui.TextUnformatted($"{ci.Armory.Item2:N0}");
+                        }
+
+                        if (retainerAmount > 0)
+                        {
+                            ImGui.TextUnformatted(
+                                $"{globalCache.AddonStorage.LoadAddonString(currentLocale, 532)}");
+                            ImGui.SameLine();
+                            ImGui.TextUnformatted($"{retainerAmount:N0}");
+
+                            foreach (Tuple<string, uint> characterInventoriesRetainer in ci
+                                         .Retainers)
+                            {
+                                ImGui.TextUnformatted(
+                                    $"----- {characterInventoriesRetainer.Item1}: {characterInventoriesRetainer.Item2:N0}");
+                            }
+                        }
+
+                        if (ci.Dresser)
+                        {
+                            ImGui.TextUnformatted(
+                                $"{globalCache.AddonStorage.LoadAddonString(currentLocale, 3735)}");
+                            ImGui.SameLine();
+                            ImGui.TextUnformatted($"{(ci.Dresser ? 1 : 0)}");
+                        }
+
+                        if (ci.Armoire)
+                        {
+                            ImGui.TextUnformatted(
+                                $"{globalCache.AddonStorage.LoadAddonString(currentLocale, 3734)}");
+                            ImGui.SameLine();
+                            ImGui.TextUnformatted($"{(ci.Armoire ? 1 : 0)}");
+                        }
+                        ImGui.EndTooltip();
+                    }
+                }
             }
         }
     }

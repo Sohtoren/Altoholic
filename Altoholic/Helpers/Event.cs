@@ -1,9 +1,7 @@
 ﻿using Altoholic.Cache;
 using Altoholic.Models;
 using Dalamud.Game;
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Altoholic.Helpers
 {
@@ -810,9 +808,27 @@ namespace Altoholic.Helpers
                         {
                             Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.FramerKit, fkId.Value, 0);
                         }
+
+                        Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 15208);
+                        Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 15221);
+                        Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 15209);
+                        Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 15210);
+                        Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 15211);
+                        Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 15212);
+                        Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 15213);
+                        Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 15214);
+                        Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 15215);
+                        Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 15216);
+                        Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 15217);
+                        Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 15218);
+                        Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 15219);
+                        Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 15220);
+                        Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 30807);
+                        Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 30808);
+                        Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 30809);
+                        Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 30810);
                         break;
                     }
-
             }
         }
     }

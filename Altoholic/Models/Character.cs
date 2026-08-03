@@ -1,3 +1,5 @@
+using Altoholic.Cache;
+using FFXIVClientStructs.FFXIV.Client.Game.Character;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +11,18 @@ namespace Altoholic.Models
     {
         public int Reward { get; set; }
         public DateTime LastCheck { get; set; }
+    }
+
+    public class CharacterInventories
+    {
+        public string FirstName = string.Empty;
+        public string LastName = string.Empty;
+        public string World = string.Empty;
+        public Tuple<bool, uint> Inventory = new(false, 0);
+        public Tuple<bool, uint> Armory = new(false, 0);
+        public List<Tuple<string, uint>> Retainers = [];
+        public bool Dresser = false;
+        public bool Armoire = false;
     }
 
     public class Character
@@ -342,6 +356,114 @@ namespace Altoholic.Models
                 throw new InvalidOperationException("Dictionary size limit reached.");
 
             GlamourPlates[key] = gp;
+        }
+
+        public CharacterInventories? HasItemInAnyInventory(GlobalCache globalCache, uint? searchedItem)
+        {
+            if (searchedItem is null) return null;
+            CharacterInventories ci = new();
+            uint inventoryCount = Inventory.FindAll(i => i.ItemId == searchedItem).Aggregate<Inventory, uint>(0, (current, inv) => current + inv.Quantity);
+            //Plugin.Log.Debug($"inventory count: {inventoryCount}");
+            if (inventoryCount > 0)
+            {
+                ci.Inventory = new Tuple<bool, uint>(true, inventoryCount);
+            }
+
+            if (ArmoryInventory != null)
+            {
+                uint armoryCount = 0;
+                uint armoryMainHandCount = ArmoryInventory.MainHand.FindAll(i => i.ItemId == searchedItem)
+                    .Aggregate<Gear, uint>(0, (current, inv) => current + 1);
+                //Plugin.Log.Debug($"armory main hand count: {armoryMainHandCount}");
+                armoryCount += armoryMainHandCount;
+                uint armoryHeadCount = ArmoryInventory.Head.FindAll(i => i.ItemId == searchedItem)
+                    .Aggregate<Gear, uint>(0, (current, inv) => current + 1);
+                //Plugin.Log.Debug($"armory head count: {armoryHeadCount}");
+                armoryCount += armoryHeadCount;
+                uint armoryBodyCount = ArmoryInventory.Body.FindAll(i => i.ItemId == searchedItem)
+                    .Aggregate<Gear, uint>(0, (current, inv) => current + 1);
+                //Plugin.Log.Debug($"armory count: {armoryBodyCount}");
+                armoryCount += armoryBodyCount;
+                uint armoryHandsCount = ArmoryInventory.Hands.FindAll(i => i.ItemId == searchedItem)
+                    .Aggregate<Gear, uint>(0, (current, inv) => current + 1);
+                //Plugin.Log.Debug($"armory hands count: {armoryHandsCount}");
+                armoryCount += armoryHandsCount;
+                uint armoryLegsCount = ArmoryInventory.Legs.FindAll(i => i.ItemId == searchedItem)
+                    .Aggregate<Gear, uint>(0, (current, inv) => current + 1);
+                //Plugin.Log.Debug($"armory Legs count: {armoryLegsCount}");
+                armoryCount += armoryLegsCount;
+                uint armoryFeetsCount = ArmoryInventory.Feets.FindAll(i => i.ItemId == searchedItem)
+                    .Aggregate<Gear, uint>(0, (current, inv) => current + 1);
+                //Plugin.Log.Debug($"armory Feets count: {armoryFeetsCount}");
+                armoryCount += armoryFeetsCount;
+                uint armoryOffHandCount = ArmoryInventory.OffHand.FindAll(i => i.ItemId == searchedItem)
+                    .Aggregate<Gear, uint>(0, (current, inv) => current + 1);
+                //Plugin.Log.Debug($"armory OffHand count: {armoryOffHandCount}");
+                armoryCount += armoryOffHandCount;
+                uint armoryEarCount = ArmoryInventory.Ear.FindAll(i => i.ItemId == searchedItem)
+                    .Aggregate<Gear, uint>(0, (current, inv) => current + 1);
+                //Plugin.Log.Debug($"armory Earrings count: {armoryEarCount}");
+                armoryCount += armoryEarCount;
+                uint armoryNeckCount = ArmoryInventory.Neck.FindAll(i => i.ItemId == searchedItem)
+                    .Aggregate<Gear, uint>(0, (current, inv) => current + 1);
+                //Plugin.Log.Debug($"armory Neck count: {armoryNeckCount}");
+                armoryCount += armoryNeckCount;
+                uint armoryWristCount = ArmoryInventory.Wrist.FindAll(i => i.ItemId == searchedItem)
+                    .Aggregate<Gear, uint>(0, (current, inv) => current + 1);
+                //Plugin.Log.Debug($"armory Wrist count: {armoryWristCount}");
+                armoryCount += armoryWristCount;
+                uint armoryRingsCount = ArmoryInventory.Rings.FindAll(i => i.ItemId == searchedItem)
+                    .Aggregate<Gear, uint>(0, (current, inv) => current + 1);
+                //Plugin.Log.Debug($"armory Rings count: {armoryRingsCount}");
+                armoryCount += armoryRingsCount;
+
+                if (armoryCount > 0)
+                {
+                    ci.Armory = new Tuple<bool, uint>(true, armoryCount);
+                }
+            }
+
+            uint retainerCount = 0;
+            foreach (Retainer characterRetainer in Retainers)
+            {
+                uint currentRetainerItemCount = characterRetainer.Inventory.FindAll(ri => ri.ItemId == searchedItem).Aggregate<Inventory, uint>(0, (current, inv) => current + inv.Quantity);
+                if (currentRetainerItemCount <= 0)
+                {
+                    continue;
+                }
+
+                retainerCount += currentRetainerItemCount;
+                ci.Retainers.Add(new Tuple<string, uint>($"{characterRetainer.Name}", currentRetainerItemCount));
+            }
+            //Plugin.Log.Debug($"retainer count: {retainerCount}");
+
+            foreach (GlamourItem glamourItem in GlamourDresser)
+            {
+                if (glamourItem == null) //While this shouldn't be null, some weird case happen where it is
+                {
+                    continue;
+                }
+                if (glamourItem.ItemId != searchedItem)
+                {
+                    continue;
+                }
+
+                ci.Dresser = true;
+            }
+            //Plugin.Log.Debug($"Dresser count: {(dresser ? 1 : 0)}");
+            uint? armoireId = globalCache.ArmoireStorage.GetArmoireIdFromItemId(searchedItem.Value);
+            ci.Armoire = (armoireId != null) && HasArmoire((uint)armoireId);
+            //Plugin.Log.Debug($"{_currentItem} Armoire count: {(armoire ? 1 : 0)}");
+
+            if (inventoryCount <= 0 && retainerCount <= 0 && !ci.Dresser && !ci.Armoire)
+            {
+                return null;
+            }
+            ci.FirstName = FirstName;
+            ci.LastName = LastName;
+            ci.World = HomeWorld;
+
+            return ci;
         }
     }
 }

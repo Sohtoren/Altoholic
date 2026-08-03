@@ -300,112 +300,11 @@ namespace Altoholic.Windows
             foreach (Character character in chars)
             {
                 //Plugin.Log.Debug($"{character.FirstName} {character.LastName}{(char)SeIconChar.CrossWorld}{character.HomeWorld}");
-                bool dresser = false;
-                CharacterInventories ci = new();
-                uint inventoryCount = character.Inventory.FindAll(i => i.ItemId == _currentItem).Aggregate<Inventory, uint>(0, (current, inv) => current + inv.Quantity);
-                //Plugin.Log.Debug($"inventory count: {inventoryCount}");
-                if (inventoryCount > 0)
+                Models.CharacterInventories? ci = character.HasItemInAnyInventory(_globalCache, _currentItem);
+                if (ci is not null)
                 {
-                    ci.Inventory = new Tuple<bool, uint>(true, inventoryCount);
+                    inventories.Add(ci);
                 }
-
-                if (character.ArmoryInventory != null)
-                {
-                    uint armoryCount = 0;
-                    uint armoryMainHandCount = character.ArmoryInventory.MainHand.FindAll(i => i.ItemId == _currentItem)
-                        .Aggregate<Gear, uint>(0, (current, inv) => current + 1);
-                    //Plugin.Log.Debug($"armory main hand count: {armoryMainHandCount}");
-                    armoryCount += armoryMainHandCount;
-                    uint armoryHeadCount = character.ArmoryInventory.Head.FindAll(i => i.ItemId == _currentItem)
-                        .Aggregate<Gear, uint>(0, (current, inv) => current + 1);
-                    //Plugin.Log.Debug($"armory head count: {armoryHeadCount}");
-                    armoryCount += armoryHeadCount;
-                    uint armoryBodyCount = character.ArmoryInventory.Body.FindAll(i => i.ItemId == _currentItem)
-                        .Aggregate<Gear, uint>(0, (current, inv) => current + 1);
-                    //Plugin.Log.Debug($"armory count: {armoryBodyCount}");
-                    armoryCount += armoryBodyCount;
-                    uint armoryHandsCount = character.ArmoryInventory.Hands.FindAll(i => i.ItemId == _currentItem)
-                        .Aggregate<Gear, uint>(0, (current, inv) => current + 1);
-                    //Plugin.Log.Debug($"armory hands count: {armoryHandsCount}");
-                    armoryCount += armoryHandsCount;
-                    uint armoryLegsCount = character.ArmoryInventory.Legs.FindAll(i => i.ItemId == _currentItem)
-                        .Aggregate<Gear, uint>(0, (current, inv) => current + 1);
-                    //Plugin.Log.Debug($"armory Legs count: {armoryLegsCount}");
-                    armoryCount += armoryLegsCount;
-                    uint armoryFeetsCount = character.ArmoryInventory.Feets.FindAll(i => i.ItemId == _currentItem)
-                        .Aggregate<Gear, uint>(0, (current, inv) => current + 1);
-                    //Plugin.Log.Debug($"armory Feets count: {armoryFeetsCount}");
-                    armoryCount += armoryFeetsCount;
-                    uint armoryOffHandCount = character.ArmoryInventory.OffHand.FindAll(i => i.ItemId == _currentItem)
-                        .Aggregate<Gear, uint>(0, (current, inv) => current + 1);
-                    //Plugin.Log.Debug($"armory OffHand count: {armoryOffHandCount}");
-                    armoryCount += armoryOffHandCount;
-                    uint armoryEarCount = character.ArmoryInventory.Ear.FindAll(i => i.ItemId == _currentItem)
-                        .Aggregate<Gear, uint>(0, (current, inv) => current + 1);
-                    //Plugin.Log.Debug($"armory Earrings count: {armoryEarCount}");
-                    armoryCount += armoryEarCount;
-                    uint armoryNeckCount = character.ArmoryInventory.Neck.FindAll(i => i.ItemId == _currentItem)
-                        .Aggregate<Gear, uint>(0, (current, inv) => current + 1);
-                    //Plugin.Log.Debug($"armory Neck count: {armoryNeckCount}");
-                    armoryCount += armoryNeckCount;
-                    uint armoryWristCount = character.ArmoryInventory.Wrist.FindAll(i => i.ItemId == _currentItem)
-                        .Aggregate<Gear, uint>(0, (current, inv) => current + 1);
-                    //Plugin.Log.Debug($"armory Wrist count: {armoryWristCount}");
-                    armoryCount += armoryWristCount;
-                    uint armoryRingsCount = character.ArmoryInventory.Rings.FindAll(i => i.ItemId == _currentItem)
-                        .Aggregate<Gear, uint>(0, (current, inv) => current + 1);
-                    //Plugin.Log.Debug($"armory Rings count: {armoryRingsCount}");
-                    armoryCount += armoryRingsCount;
-
-                    if (armoryCount > 0)
-                    {
-                        ci.Armory = new Tuple<bool, uint>(true, armoryCount);
-                    }
-                }
-
-                uint retainerCount = 0;
-                foreach (Retainer characterRetainer in character.Retainers)
-                {
-                    uint currentRetainerCount = characterRetainer.Inventory.FindAll(ri => ri.ItemId == _currentItem).Aggregate<Inventory, uint>(0, (current, inv) => current + inv.Quantity);
-                    if (currentRetainerCount <= 0)
-                    {
-                        continue;
-                    }
-
-                    retainerCount += currentRetainerCount;
-                    ci.Retainers.Add(new Tuple<string, uint>($"{characterRetainer.Name}", currentRetainerCount));
-                }
-                //Plugin.Log.Debug($"retainer count: {retainerCount}");
-
-                foreach (GlamourItem glamourItem in character.GlamourDresser)
-                {
-                    if (glamourItem == null) //While this shouldn't be null, some weird case happen where it is
-                    {
-                        continue;
-                    }
-                    if (glamourItem.ItemId != _currentItem)
-                    {
-                        continue;
-                    }
-
-                    dresser = true;
-                    ci.Dresser = true;
-                }
-                //Plugin.Log.Debug($"Dresser count: {(dresser ? 1 : 0)}");
-                uint? armoireId = _globalCache.ArmoireStorage.GetArmoireIdFromItemId((uint)_currentItem);
-                bool armoire = (armoireId != null) && character.HasArmoire((uint)armoireId);
-                ci.Armoire = armoire;
-                //Plugin.Log.Debug($"{_currentItem} Armoire count: {(armoire ? 1 : 0)}");
-
-                if (inventoryCount <= 0 && retainerCount <= 0 && !dresser && !armoire)
-                {
-                    continue;
-                }
-                ci.FirstName = character.FirstName;
-                ci.LastName = character.LastName;
-                ci.World = character.HomeWorld;
-
-                inventories.Add(ci);
             }
             if (inventories.Count == 0)
             {
@@ -1569,18 +1468,6 @@ namespace Altoholic.Windows
             ImGui.SetCursorPos(p with { X = p.X + 20 });
             ImGui.Image(_miragePrismBoxSetIcon.Handle, new Vector2(20, 20), _miragePrismBoxSetIconUv2, _miragePrismBoxSetIconUv3);
             ImGui.SetCursorPos(p);
-        }
-
-        private class CharacterInventories
-        {
-            public string FirstName = string.Empty;
-            public string LastName = string.Empty;
-            public string World = string.Empty;
-            public Tuple<bool, uint> Inventory = new(false, 0);
-            public Tuple<bool, uint> Armory = new(false, 0);
-            public List<Tuple<string, uint>> Retainers = [];
-            public bool Dresser = false;
-            public bool Armoire = false;
         }
     }
 }
