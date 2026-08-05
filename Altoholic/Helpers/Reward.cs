@@ -462,7 +462,7 @@ namespace Altoholic.Helpers
             }
         }
 
-        public static void DrawAllCharsItemAcquired(ClientLanguage currentLocale, GlobalCache globalCache, List<Character> chars, uint itemId, uint cost = 0)
+        public static void  DrawAllCharsItemAcquired(ClientLanguage currentLocale, GlobalCache globalCache, List<Character> chars, uint itemId, uint cost = 0)
         {
             Lumina.Excel.Sheets.Item? item = globalCache.ItemStorage.LoadItem(currentLocale, itemId);
             if (item is null) return;

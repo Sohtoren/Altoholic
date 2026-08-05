@@ -953,6 +953,9 @@ namespace Altoholic.Windows
                         $"{Loc.Localize("Event_BreakingBrickMountains", "Breaking Brick Mountains")} (2026)", 136);
                     DrawAllEventLine(chars, charactersQuests,
                         $"{Loc.Localize("Event_YoKai", "Yo-kai Watch: Gather One, Gather All!")} (2026) *", 137);
+                    DrawAllEventLine(chars, charactersQuests,
+                        $"{Loc.Localize("Event_MoonfireFaire", "Moonfire Faire")} (2026)",
+                        138);
                 }
             }
 
@@ -3367,10 +3370,12 @@ namespace Altoholic.Windows
             uint eventCurrencyId = Helpers.Event.GetEventCurrencyFromEventId(msqIndex);
 
             int columns = chars.Count + 1;
-            if (eventCurrencyId > 1)
+            if (eventCurrencyId > 0)
             {
                 columns += 1;
             }
+
+            float nameSize = Helpers.Event.GetEventRewardLongestName(_currentLocale, _globalCache, msqIndex);
 
             using var charactersEventTable = ImRaii.Table(
             $"###CharactersProgress#All#Event#RewardTable#{msqIndex}",
@@ -3379,11 +3384,11 @@ namespace Altoholic.Windows
             ImGuiTableFlags.ScrollX | ImGuiTableFlags.ScrollY, new Vector2(-1, 330));
             if (!charactersEventTable) return;
             ImGui.TableSetupColumn($"###CharactersProgress#All#Event#RewardTable#{msqIndex}#Name",
-                ImGuiTableColumnFlags.WidthFixed, 270);
-            if (eventCurrencyId > 1)
+                ImGuiTableColumnFlags.WidthFixed, nameSize + 5+32); // text + margin + icon sizes
+            if (eventCurrencyId > 0)
             {
                 ImGui.TableSetupColumn($"###CharactersProgress#All#Event#RewardTable#{msqIndex}#Currency",
-                    ImGuiTableColumnFlags.WidthFixed, 20);
+                    ImGuiTableColumnFlags.WidthFixed, ImGui.CalcTextSize("1000").X + 5);
             }
             foreach (Character c in chars)
             {
@@ -3396,7 +3401,7 @@ namespace Altoholic.Windows
             ImGui.TableSetColumnIndex(0);
             ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 1885));
 
-            if (eventCurrencyId > 1)
+            if (eventCurrencyId > 0)
             {
                 Item? itm = _globalCache.ItemStorage.LoadItem(_currentLocale, eventCurrencyId);
                 if (itm != null)

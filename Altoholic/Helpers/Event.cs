@@ -1,5 +1,6 @@
 ﻿using Altoholic.Cache;
 using Altoholic.Models;
+using Dalamud.Bindings.ImGui;
 using Dalamud.Game;
 using System.Collections.Generic;
 
@@ -188,6 +189,7 @@ namespace Altoholic.Helpers
                     character.HasQuest((int)QuestIds.EVENT_THE_MAKE_IT_RAIN_CAMPAIGN_2026),
                     character.HasQuest((int)QuestIds.EVENT_BREAKING_BRICK_MOUNTAINS_2026),
                     character.HasQuest((int)QuestIds.EVENT_YO_KAI_WATCH_GATHER_ONE_GATHER_ALL_2026),
+                    character.HasQuest((int)QuestIds.EVENT_MOONFIRE_FAIRE_2026),
                 ];
                 result.Add(completedQuests);
             }
@@ -201,7 +203,7 @@ namespace Altoholic.Helpers
                 132 => 47863,
                 133 => 50082,
                 134 => 50089,
-                136 => 1,
+                136 or 138 => 1,
                 _ => 0
             };
         }
@@ -758,6 +760,13 @@ namespace Altoholic.Helpers
                         Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Emote, 322, 1);
                         Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Emote, 324, 1);
                         Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Orchestrion, 805, 2);
+                        Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 50848, 2);
+                        Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 50849, 2);
+                        Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 50850, 2);
+                        Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 50851, 2);
+                        Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 49862, 1);
+                        Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 49863, 1);
+                        Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 47352, 3);
                         break;
                     }
                 case 134: /*Hatching-tide (2026)*/
@@ -780,8 +789,9 @@ namespace Altoholic.Helpers
                         uint? fkId = globalCache.FramerKitStorage.GetFramerKitIdFromItemId(51998);
                         if (fkId is not null)
                         {
-                            Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.FramerKit, fkId.Value, 0);
+                            Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.FramerKit, fkId.Value, 1282);
                         }
+                        Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 8576, 57);
                         break;
                     }
                 case 137: /*Yo-kai Watch: Gather One, Gather All (2026)*/
@@ -829,7 +839,26 @@ namespace Altoholic.Helpers
                         Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 30810);
                         break;
                     }
+                case 138: /*Moonfire Faire (2026)*/
+                    {
+                        Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 49873, 5000);
+                        Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 49874, 5000);
+                        Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 49875, 5000);
+                        Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 50083, 2000);
+                        Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 50084, 3000);
+                        Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 50085, 2000);
+                        break;
+                    }
             }
+        }
+
+        internal static float GetEventRewardLongestName(ClientLanguage currentLocale, GlobalCache globalCache, int msqIndex)
+        {
+            return msqIndex switch
+            {
+                138 => ImGui.CalcTextSize(globalCache.ItemStorage.LoadItem(currentLocale, 50084)?.Name.ToString()).X + 5,
+                _ => 270
+            };
         }
     }
 }
