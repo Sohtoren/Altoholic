@@ -212,7 +212,7 @@ namespace Altoholic.Windows
         {
             ImGui.TextUnformatted($"{Loc.Localize("InventoryGlobalSearch", "Search in all inventories")}");
             ImGui.SameLine();
-            ImGui.TextUnformatted($"({_globalCache.AddonStorage.LoadAddonString(_currentLocale, 3734)}, { _globalCache.AddonStorage.LoadAddonString(_currentLocale, 1370)}, { _globalCache.AddonStorage.LoadAddonString(_currentLocale, 3735)}, {_globalCache.AddonStorage.LoadAddonString(_currentLocale, 520)}, { _globalCache.AddonStorage.LoadAddonString(_currentLocale, 532)})");
+            ImGui.TextUnformatted($"({_globalCache.AddonStorage.LoadAddonString(_currentLocale, 3734)}, { _globalCache.AddonStorage.LoadAddonString(_currentLocale, 1370)}, { _globalCache.AddonStorage.LoadAddonString(_currentLocale, 3735)}, {_globalCache.AddonStorage.LoadAddonString(_currentLocale, 520)}, {_globalCache.AddonStorage.LoadAddonString(_currentLocale, 882)}, { _globalCache.AddonStorage.LoadAddonString(_currentLocale, 532)})");
             if (ImGui.InputText(Utils.Capitalize(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 3635)),
                     ref _searchedItem, 512,
                     ImGuiInputTextFlags.EnterReturnsTrue))
@@ -332,6 +332,10 @@ namespace Altoholic.Windows
                     {
                         totalAmount += characterInventories.Inventory.Item2;
                     }
+                    if (characterInventories.SaddleInventory.Item1)
+                    {
+                        totalAmount += characterInventories.SaddleInventory.Item2;
+                    }
                     if (characterInventories.Armory.Item1)
                     {
                         totalAmount += characterInventories.Inventory.Item2;
@@ -368,6 +372,13 @@ namespace Altoholic.Windows
                                 $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 520)}");
                             ImGui.SameLine();
                             ImGui.TextUnformatted($"{characterInventories.Inventory.Item2:N0}");
+                        }
+                        if (characterInventories.SaddleInventory.Item1)
+                        {
+                            ImGui.TextUnformatted(
+                                $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 882)}");
+                            ImGui.SameLine();
+                            ImGui.TextUnformatted($"{characterInventories.SaddleInventory.Item2:N0}");
                         }
 
                         if (characterInventories.Armory.Item1)

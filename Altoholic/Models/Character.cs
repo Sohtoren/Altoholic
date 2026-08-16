@@ -19,6 +19,7 @@ namespace Altoholic.Models
         public string LastName = string.Empty;
         public string World = string.Empty;
         public Tuple<bool, uint> Inventory = new(false, 0);
+        public Tuple<bool, uint> SaddleInventory = new(false, 0);
         public Tuple<bool, uint> Armory = new(false, 0);
         public List<Tuple<string, uint>> Retainers = [];
         public bool Dresser = false;
@@ -367,6 +368,11 @@ namespace Altoholic.Models
             if (inventoryCount > 0)
             {
                 ci.Inventory = new Tuple<bool, uint>(true, inventoryCount);
+            }
+            uint saddleInventoryCount = Saddle.FindAll(i => i.ItemId == searchedItem).Aggregate<Inventory, uint>(0, (current, inv) => current + inv.Quantity);
+            if (saddleInventoryCount > 0)
+            {
+                ci.SaddleInventory = new Tuple<bool, uint>(true, saddleInventoryCount);
             }
 
             if (ArmoryInventory != null)

@@ -490,7 +490,7 @@ namespace Altoholic.Helpers
                 Models.CharacterInventories? ci = currChar.HasItemInAnyInventory(globalCache, itemId);
                 if (ci is null) continue;
                 long retainerAmount = ci.Retainers.Sum(c => c.Item2);
-                if (ci.Inventory.Item1 || ci.Armory.Item1 || retainerAmount > 0 || ci.Dresser || ci.Armoire)
+                if (ci.Inventory.Item1 || ci.SaddleInventory.Item1 || ci.Armory.Item1 || retainerAmount > 0 || ci.Dresser || ci.Armoire)
                 {
                     ImGui.PushFont(UiBuilder.IconFont);
                     ImGui.TextUnformatted(FontAwesomeIcon.Check.ToIconString());
@@ -507,6 +507,13 @@ namespace Altoholic.Helpers
                                 $"{globalCache.AddonStorage.LoadAddonString(currentLocale, 520)}");
                             ImGui.SameLine();
                             ImGui.TextUnformatted($"{ci.Inventory.Item2:N0}");
+                        }
+                        if (ci.SaddleInventory.Item1)
+                        {
+                            ImGui.TextUnformatted(
+                                $"{globalCache.AddonStorage.LoadAddonString(currentLocale, 882)}");
+                            ImGui.SameLine();
+                            ImGui.TextUnformatted($"{ci.SaddleInventory.Item2:N0}");
                         }
 
                         if (ci.Armory.Item1)
