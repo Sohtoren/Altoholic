@@ -190,6 +190,7 @@ namespace Altoholic.Helpers
                     character.HasQuest((int)QuestIds.EVENT_BREAKING_BRICK_MOUNTAINS_2026),
                     character.HasQuest((int)QuestIds.EVENT_YO_KAI_WATCH_GATHER_ONE_GATHER_ALL_2026),
                     character.HasQuest((int)QuestIds.EVENT_MOONFIRE_FAIRE_2026),
+                    character.HasQuest((int)QuestIds.EVENT_RISING_2026),
                 ];
                 result.Add(completedQuests);
             }
