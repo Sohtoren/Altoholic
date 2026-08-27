@@ -204,7 +204,7 @@ namespace Altoholic.Helpers
                 132 => 47863,
                 133 => 50082,
                 134 => 50089,
-                136 or 138 => 1,
+                136 or 138 or 139 => 1,
                 _ => 0
             };
         }
@@ -848,6 +848,13 @@ namespace Altoholic.Helpers
                         Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 50083, 2000);
                         Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 50084, 3000);
                         Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 50085, 2000);
+                        break;
+                    }
+                case 139: /*The Rising (2026)*/
+                    {
+                        Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 51300, 3000);
+                        Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 51299, 2000);
+                        Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 51301, 2000);
                         break;
                     }
             }
