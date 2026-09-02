@@ -54,6 +54,8 @@ namespace Altoholic.Models
         public int Ice_Shard { get; init; }
         public int Irregular_Tomestone_Of_Allegory { get; init; }
         public int Irregular_Tomestone_Of_Aphorism { get; init; }
+        public int Irregular_Tomestone_Of_Astronomy_I { get; init; }
+        public int Irregular_Tomestone_Of_Astronomy_II { get; init; }
         public int Irregular_Tomestone_Of_Creation { get; init; }
         public int Irregular_Tomestone_Of_Esoterics { get; init; }
         public int Irregular_Tomestone_Of_Genesis_i { get; init; }

@@ -1645,6 +1645,8 @@ namespace Altoholic
                 Ice_Shard = inventoryManager.GetInventoryItemCount((uint)Currencies.ICE_SHARD, false, false, false),
                 Irregular_Tomestone_Of_Allegory = inventoryManager.GetInventoryItemCount((uint)Currencies.IRREGULAR_TOMESTONE_OF_ALLEGORY, false, false, false),
                 Irregular_Tomestone_Of_Aphorism = inventoryManager.GetInventoryItemCount((uint)Currencies.IRREGULAR_TOMESTONE_OF_APHORISM, false, false, false),
+                Irregular_Tomestone_Of_Astronomy_I = inventoryManager.GetInventoryItemCount((uint)Currencies.IRREGULAR_TOMESTONE_OF_ASTRONOMY_I, false, false, false),
+                Irregular_Tomestone_Of_Astronomy_II = inventoryManager.GetInventoryItemCount((uint)Currencies.IRREGULAR_TOMESTONE_OF_ASTRONOMY_II, false, false, false),
                 Irregular_Tomestone_Of_Creation = inventoryManager.GetInventoryItemCount((uint)Currencies.IRREGULAR_TOMESTONE_OF_CREATION, false, false, false),
                 Irregular_Tomestone_Of_Esoterics = inventoryManager.GetInventoryItemCount((uint)Currencies.IRREGULAR_TOMESTONE_OF_ESOTERICS, false, false, false),
                 Irregular_Tomestone_Of_Genesis_i = inventoryManager.GetInventoryItemCount((uint)Currencies.IRREGULAR_TOMESTONE_OF_GENESIS_I, false, false, false),
