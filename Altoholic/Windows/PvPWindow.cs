@@ -97,18 +97,24 @@ namespace Altoholic.Windows
             chars.Insert(0, GetPlayer.Invoke());
             chars.AddRange(GetOthersCharactersList.Invoke());
 
-            using var characterDetailsTable = ImRaii.Table("###CharactersDetailsTable", 2);
+            using var characterDetailsTable = ImRaii.Table("###PvPTable", 2);
             if (!characterDetailsTable) return;
-            ImGui.TableSetupColumn("###CharactersDetailsTable#CharacterLists", ImGuiTableColumnFlags.WidthFixed,
+            ImGui.TableSetupColumn("###PvPTable#CharacterLists", ImGuiTableColumnFlags.WidthFixed,
                 200);
-            ImGui.TableSetupColumn("###CharactersDetailsTable#Details", ImGuiTableColumnFlags.WidthStretch);
+            ImGui.TableSetupColumn("###PvPTable#Details", ImGuiTableColumnFlags.WidthStretch);
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
             using (var listBox =
-                   ImRaii.ListBox("###CharactersDetailsTable#CharactersListBox", new Vector2(200, -1)))
+                   ImRaii.ListBox("###PvPTable#CharactersListBox", new Vector2(200, -1)))
             {
                 if (listBox)
                 {
+                    if (ImGui.Selectable(
+                            $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 970)}###PvPTable#CharactersListBox#All",
+                            _currentCharacter == null))
+                    {
+                        _currentCharacter = null;
+                    }
 #if DEBUG
                         for (int i = 0; i < 15; i++)
                         {
@@ -135,6 +141,53 @@ namespace Altoholic.Windows
             {
                 DrawPvP(_currentCharacter);
             }
+            else
+            {
+                DrawAll(chars);
+            }
+        }
+
+        private void DrawAll(List<Character> chars)
+        {
+            if (chars.Count == 0) return;
+            int columns = chars.Count + 1;
+            using var pvpAll = ImRaii.Table("###PvP#All#Table", columns,
+                ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner |
+                ImGuiTableFlags.ScrollX | ImGuiTableFlags.ScrollY);
+            if (!pvpAll) return;
+            ImGui.TableSetupColumn($"###PvP#All#Table#Job", ImGuiTableColumnFlags.WidthFixed, 230);
+            foreach (Character c in chars)
+            {
+                ImGui.TableSetupColumn($"###PvP#All#Table#Name#{c.CharacterId}",
+                    ImGuiTableColumnFlags.WidthFixed, ImGui.CalcTextSize("100").X + 5);
+            }
+            ImGui.TableSetupScrollFreeze(columns, 1);//Freeze header so it shows while scrolling
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 1885));
+            if (ImGui.IsItemHovered())
+            {
+                ImGui.BeginTooltip();
+                ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 294));
+                ImGui.EndTooltip();
+            }
+
+            foreach (Character currChar in chars)
+            {
+                ImGui.TableNextColumn();
+                ImGui.TextUnformatted($"{currChar.FirstName[0]}.{currChar.LastName[0]}");
+                if (ImGui.IsItemHovered())
+                {
+                    ImGui.BeginTooltip();
+                    ImGui.TextUnformatted(
+                        $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
+                    ImGui.EndTooltip();
+                }
+            }
+            Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Emote, 329,0);
+            Helpers.Reward.DrawAllCharsFramerKit(_currentLocale, _globalCache, chars, 51688, 0);
+            Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Minion, 580,0);
+            Helpers.Reward.DrawAllCharsFramerKit(_currentLocale, _globalCache, chars, 51689, 0);
         }
 
         private void DrawPvP(Character currentCharacter)
