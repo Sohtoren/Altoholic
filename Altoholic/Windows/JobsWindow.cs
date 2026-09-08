@@ -578,7 +578,7 @@ namespace Altoholic.Windows
                     }
                 case ClassJob.BST:
                     {
-                        bool active = (selectedCharacter.Jobs.Beastmaster.Level >= 70);
+                        bool active = (selectedCharacter.Jobs.Beastmaster.Level > 0);
                         DrawJob(selectedCharacter.Jobs.Beastmaster, ClassJob.BST, _globalCache.JobStorage.GetName(_currentLocale, (uint)ClassJob.BST), active);
 
                         break;

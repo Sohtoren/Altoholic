@@ -184,10 +184,11 @@ namespace Altoholic.Windows
                     ImGui.EndTooltip();
                 }
             }
-            Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Emote, 329,0);
-            Helpers.Reward.DrawAllCharsFramerKit(_currentLocale, _globalCache, chars, 51688, 0);
-            Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Minion, 580,0);
-            Helpers.Reward.DrawAllCharsFramerKit(_currentLocale, _globalCache, chars, 51689, 0);
+            Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Glass, 721, 0);
+            Helpers.Reward.DrawAllCharsFramerKit(_currentLocale, _globalCache, chars, 51690, 0);
+            Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Minion, 581, 0);
+            Helpers.Reward.DrawAllCharsFramerKit(_currentLocale, _globalCache, chars, 51691, 0);
+            Helpers.Reward.DrawAllCharsCollectible(_currentLocale, _globalCache, chars, Helpers.CharacterCollectible.Mount, 432, 0);
         }
 
         private void DrawPvP(Character currentCharacter)
@@ -560,7 +561,7 @@ namespace Altoholic.Windows
                         ImGui.TableNextRow();
                         ImGui.TableSetColumnIndex(0);
                         ImGui.TextUnformatted(
-                            $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 14900).ToUpper()} 11");
+                            $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 14900).ToUpper()} 12");
                         using (var pvpProfileSeriesCurrentExperienceTabTable =
                                ImRaii.Table("###pvpProfileSeriesCurrentExperienceTabTable ", 2,
                                    ImGuiTableFlags.None, new Vector2(400, 40)))
@@ -584,31 +585,35 @@ namespace Altoholic.Windows
 
                         ImGui.TextUnformatted(
                             $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 16432)}");
-                        using (var t = ImRaii.Table("###Series#Rewards#11#Table", 5))
+                        using (var t = ImRaii.Table("###Series#Rewards#12#Table", 5))
                         {
                             if (t)
                             {
-                                ImGui.TableSetupColumn("###Series#Rewards#11#Table#Reward#Emote",
+                                ImGui.TableSetupColumn("###Series#Rewards#12#Table#Reward#Glass",
                                     ImGuiTableColumnFlags.WidthFixed, 36);
-                                ImGui.TableSetupColumn("###Series#Rewards#11#Table#Reward#FramerKit",
+                                ImGui.TableSetupColumn("###Series#Rewards#12#Table#Reward#FramerKit",
                                     ImGuiTableColumnFlags.WidthFixed, 36);
-                                ImGui.TableSetupColumn($"###Series#Rewards#11#Table#Reward#Minion",
+                                ImGui.TableSetupColumn($"###Series#Rewards#12#Table#Reward#Minion",
                                     ImGuiTableColumnFlags.WidthFixed, 36);
-                                ImGui.TableSetupColumn($"###Series#Rewards#11#Table#Reward#Framerkit2",
+                                ImGui.TableSetupColumn($"###Series#Rewards#12#Table#Reward#Framerkit2",
+                                    ImGuiTableColumnFlags.WidthFixed, 36);
+                                ImGui.TableSetupColumn($"###Series#Rewards#12#Table#Reward#Mount",
                                     ImGuiTableColumnFlags.WidthFixed, 36);
                                 ImGui.TableNextRow();
                                 ImGui.TableSetColumnIndex(0);
-                                Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Emote, _isSpoilerEnabled, 329, currentCharacter.HasEmote(329));
-                                uint? fkId = _globalCache.FramerKitStorage.GetFramerKitIdFromItemId(51688);
+                                Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Glass, _isSpoilerEnabled, 721, currentCharacter.HasEmote(721));
+                                uint? fkId = _globalCache.FramerKitStorage.GetFramerKitIdFromItemId(51690);
                                 if (fkId == null) return;
                                 ImGui.TableSetColumnIndex(1);
                                 Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.FramerKit, _isSpoilerEnabled, fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
                                 ImGui.TableSetColumnIndex(2);
-                                Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Minion, _isSpoilerEnabled, 580, currentCharacter.HasMinion(580));
+                                Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Minion, _isSpoilerEnabled, 581, currentCharacter.HasMinion(581));
                                 ImGui.TableSetColumnIndex(3);
-                                uint? fkId2 = _globalCache.FramerKitStorage.GetFramerKitIdFromItemId(51689);
+                                uint? fkId2 = _globalCache.FramerKitStorage.GetFramerKitIdFromItemId(51691);
                                 if (fkId2 == null) return;
                                 Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.FramerKit, _isSpoilerEnabled, fkId2.Value, currentCharacter.HasFramerKit(fkId2.Value));
+                                ImGui.TableSetColumnIndex(4);
+                                Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Mount, _isSpoilerEnabled, 432, currentCharacter.HasMount(432));
                             }
                         }
 
@@ -629,13 +634,59 @@ namespace Altoholic.Windows
                             ImGui.TableNextRow();
                             ImGui.TableSetColumnIndex(0);
                             if (ImGui.CollapsingHeader(
+                                $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 14900)} 11###Series#Rewards#11"))
+                            {
+                                uint? series11Rank =
+                                currentCharacter.PvPProfile.SeriesPersonalRanks.GetValueOrDefault((uint)11);
+                                uint? series11Claimed =
+                                    currentCharacter.PvPProfile.SeriesPersonalRanksClaimed.GetValueOrDefault(
+                                        (uint)11);
+                                if (series11Rank is not null)
+                                {
+                                    ImGui.TextUnformatted(
+                                        $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 14860).ToUpper()} {series11Rank.Value}");
+                                }
+                                ImGui.TextUnformatted(
+                                    $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 16432)}");
+                                using (var t = ImRaii.Table("###Series#Rewards#11#Table", 4))
+                                {
+                                    if (t)
+                                    {
+                                        ImGui.TableSetupColumn("###Series#Rewards#11#Table#Reward#Emote",
+                                            ImGuiTableColumnFlags.WidthFixed, 36);
+                                        ImGui.TableSetupColumn("###Series#Rewards#11#Table#Reward#FramerKit",
+                                            ImGuiTableColumnFlags.WidthFixed, 36);
+                                        ImGui.TableSetupColumn($"###Series#Rewards#11#Table#Reward#Minion",
+                                            ImGuiTableColumnFlags.WidthFixed, 36);
+                                        ImGui.TableSetupColumn($"###Series#Rewards#11#Table#Reward#Framerkit2",
+                                            ImGuiTableColumnFlags.WidthFixed, 36);
+                                        ImGui.TableNextRow();
+                                        ImGui.TableSetColumnIndex(0);
+                                        Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Emote, _isSpoilerEnabled, 329, currentCharacter.HasEmote(329));
+                                        uint? fkId = _globalCache.FramerKitStorage.GetFramerKitIdFromItemId(51688);
+                                        if (fkId == null) return;
+                                        ImGui.TableSetColumnIndex(1);
+                                        Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.FramerKit, _isSpoilerEnabled, fkId.Value, currentCharacter.HasFramerKit(fkId.Value));
+                                        ImGui.TableSetColumnIndex(2);
+                                        Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.Minion, _isSpoilerEnabled, 580, currentCharacter.HasMinion(580));
+                                        ImGui.TableSetColumnIndex(3);
+                                        uint? fkId2 = _globalCache.FramerKitStorage.GetFramerKitIdFromItemId(51689);
+                                        if (fkId2 == null) return;
+                                        Helpers.Reward.DrawCollectible(_currentLocale, _globalCache, Helpers.CharacterCollectible.FramerKit, _isSpoilerEnabled, fkId2.Value, currentCharacter.HasFramerKit(fkId2.Value));
+                                    }
+                                }
+                            }
+
+                            ImGui.TableNextRow();
+                            ImGui.TableSetColumnIndex(0);
+                            if (ImGui.CollapsingHeader(
                                 $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 14900)} 10###Series#Rewards#10"))
                             {
                                 uint? series10Rank =
                                     currentCharacter.PvPProfile.SeriesPersonalRanks.GetValueOrDefault((uint)10);
                                 uint? series10Claimed =
                                     currentCharacter.PvPProfile.SeriesPersonalRanksClaimed.GetValueOrDefault(
-                                        (uint)7);
+                                        (uint)10);
                                 if (series10Rank is not null)
                                 {
                                     ImGui.TextUnformatted(
