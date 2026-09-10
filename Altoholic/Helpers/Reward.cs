@@ -273,7 +273,10 @@ namespace Altoholic.Helpers
                 ImGui.TableNextColumn();
                 if (currChar.HasCollectible(collectible, id))
                 {
-                    characterNeededTomestone?[currChar.CharacterId] = characterNeededTomestone[currChar.CharacterId] - cost;
+                    if (characterNeededTomestone != null)
+                    {
+                        characterNeededTomestone[currChar.CharacterId] = characterNeededTomestone[currChar.CharacterId] - cost;
+                    }
                     ImGui.PushFont(UiBuilder.IconFont);
                     ImGui.TextUnformatted(FontAwesomeIcon.Check.ToIconString());
                     ImGui.PopFont();
@@ -409,7 +412,7 @@ namespace Altoholic.Helpers
                     ImGui.BeginTooltip();
                     ImGui.TextUnformatted(
                         $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
-                    ImGui.TextUnformatted($"{currChar.Currencies?.Irregular_Tomestone_Of_Aphorism}{(characterNeededTomestone is not null ? "/" + characterNeededTomestone[currChar.CharacterId] : "")}");
+                    ImGui.TextUnformatted($"{currChar.Currencies?.Irregular_Tomestone_Of_Astronomy_I}{(characterNeededTomestone is not null ? "/" + characterNeededTomestone[currChar.CharacterId] : "")}");
                     ImGui.EndTooltip();
                 }
             }
@@ -462,7 +465,7 @@ namespace Altoholic.Helpers
             }
         }
 
-        public static void  DrawAllCharsItemAcquired(ClientLanguage currentLocale, GlobalCache globalCache, List<Character> chars, uint itemId, uint cost = 0)
+        public static void  DrawAllCharsItemAcquired(ClientLanguage currentLocale, GlobalCache globalCache, List<Character> chars, uint itemId, int cost = 0, Dictionary<ulong, int>? characterNeededTomestone = null)
         {
             Lumina.Excel.Sheets.Item? item = globalCache.ItemStorage.LoadItem(currentLocale, itemId);
             if (item is null) return;
@@ -492,6 +495,10 @@ namespace Altoholic.Helpers
                 long retainerAmount = ci.Retainers.Sum(c => c.Item2);
                 if (ci.Inventory.Item1 || ci.SaddleInventory.Item1 || ci.Armory.Item1 || retainerAmount > 0 || ci.Dresser || ci.Armoire)
                 {
+                    if (characterNeededTomestone != null)
+                    {
+                        characterNeededTomestone[currChar.CharacterId] = characterNeededTomestone[currChar.CharacterId] - cost;
+                    }
                     ImGui.PushFont(UiBuilder.IconFont);
                     ImGui.TextUnformatted(FontAwesomeIcon.Check.ToIconString());
                     ImGui.PopFont();

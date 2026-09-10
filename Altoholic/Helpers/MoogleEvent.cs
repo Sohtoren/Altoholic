@@ -162,14 +162,14 @@ namespace Altoholic.Helpers
 
                                     charactersTotalNeededTomestone[currChar.CharacterId] = neededTomestone;
                                 }
-                                Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 24615, 50);
-                                Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 32794, 30);
-                                Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 30052, 30);
-                                Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 27936, 30);
-                                Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 27937, 30);
-                                Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 13162, 15);
-                                Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 13174, 15);
-                                Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 13186, 15);
+                                Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 24615, 50, charactersTotalNeededTomestone);
+                                Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 32794, 30, charactersTotalNeededTomestone);
+                                Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 30052, 30, charactersTotalNeededTomestone);
+                                Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 27936, 30, charactersTotalNeededTomestone);
+                                Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 27937, 30, charactersTotalNeededTomestone);
+                                Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 13162, 15, charactersTotalNeededTomestone);
+                                Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 13174, 15, charactersTotalNeededTomestone);
+                                Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 13186, 15, charactersTotalNeededTomestone);
                                 Helpers.Reward.DrawAllCharsTotal(currentLocale, globalCache, chars, neededTomestone, charactersTotalNeededTomestone);
                             }
                         }
@@ -229,13 +229,13 @@ namespace Altoholic.Helpers
 
                                 charactersTotalNeededTomestone[currChar.CharacterId] = neededTomestone;
                             }
-                            Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 16784, 30);
-                            Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 38585, 20);
-                            Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 38605, 20);
-                            Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 38622, 20);                          
-                            Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 39918, 15);
-                            Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 44349, 15);
-                            Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 25005, 1);
+                            Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 16784, 30, charactersTotalNeededTomestone);
+                            Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 38585, 20, charactersTotalNeededTomestone);
+                            Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 38605, 20, charactersTotalNeededTomestone);
+                            Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 38622, 20, charactersTotalNeededTomestone);                          
+                            Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 39918, 15, charactersTotalNeededTomestone);
+                            Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 44349, 15, charactersTotalNeededTomestone);
+                            Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 25005, 1, charactersTotalNeededTomestone);
                             Helpers.Reward.DrawAllCharsTotal(currentLocale, globalCache, chars, neededTomestone, charactersTotalNeededTomestone);
                         }
                     }
