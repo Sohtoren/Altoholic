@@ -234,7 +234,7 @@ namespace Altoholic.Helpers
                             Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 38605, 20);
                             Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 38622, 20);                          
                             Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 39918, 15);
-                            //Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, , 15);//Presumably Special Timeworn Map
+                            Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 44349, 15);
                             Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 25005, 1);
                             Helpers.Reward.DrawAllCharsTotal(currentLocale, globalCache, chars, neededTomestone, charactersTotalNeededTomestone);
                         }
