@@ -93,7 +93,7 @@ namespace Altoholic.Helpers
                                 Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, Helpers.CharacterCollectible.Emote, 182, 30, charactersTotalNeededTomestone);
                                 Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, Helpers.CharacterCollectible.Minion, 318, 30, charactersTotalNeededTomestone);
                                 Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, Helpers.CharacterCollectible.Barding, 31, 30, charactersTotalNeededTomestone);
-                                Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, Helpers.CharacterCollectible.Mount, 185, 30, charactersTotalNeededTomestone);
+                                Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, Helpers.CharacterCollectible.Mount, 182, 30, charactersTotalNeededTomestone);
                                 Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, Helpers.CharacterCollectible.Orchestrion, 441, 15, charactersTotalNeededTomestone);
                                 Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, Helpers.CharacterCollectible.TripleTriadCard, 185, 10, charactersTotalNeededTomestone);
                                 Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, Helpers.CharacterCollectible.TripleTriadCard, 187, 10, charactersTotalNeededTomestone);
