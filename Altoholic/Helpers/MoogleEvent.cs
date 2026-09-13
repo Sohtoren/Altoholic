@@ -16,8 +16,10 @@ namespace Altoholic.Helpers
 {
     public class MoogleEvent
     {
-        public static void DrawRewards(ClientLanguage currentLocale, GlobalCache globalCache, List<Character> chars, int currentOldMoogleReward)
+        public static int CurrentOldMoogleReward;
+        public static void DrawRewards(ClientLanguage currentLocale, GlobalCache globalCache, List<Character> chars)
         {
+            int currentOldMoogleReward = CurrentOldMoogleReward;
             Dictionary<int, string> mooglesNames = [];
             mooglesNames[0] = Loc.Localize("PreviousMoogleEvent", "Previous Events");
             string astronomyName = currentLocale switch
@@ -38,9 +40,10 @@ namespace Altoholic.Helpers
                 {
                     if (collectableTab.Success)
                     {
+                        int columns = chars.Count + 2;
                         using (var charactersEventTable = ImRaii.Table(
                         $"###CharactersProgress#All#Event#MogRewards#Table#Event2026_2#Collectable#Table",
-                        chars.Count + 2,
+                        columns,
                         ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner |
                         ImGuiTableFlags.ScrollX | ImGuiTableFlags.ScrollY))
                         {
@@ -56,7 +59,7 @@ namespace Altoholic.Helpers
                                         ImGuiTableColumnFlags.WidthFixed, 20);
                                 }
 
-                                ImGui.TableSetupScrollFreeze(-1, 1); //Freeze header so it shows while scrolling
+                                ImGui.TableSetupScrollFreeze(columns, 1); //Freeze header so it shows while scrolling
                                 ImGui.TableNextRow();
                                 ImGui.TableSetColumnIndex(0);
                                 ImGui.TextUnformatted(globalCache.AddonStorage.LoadAddonString(currentLocale, 1885));
@@ -113,9 +116,10 @@ namespace Altoholic.Helpers
                 {
                     if (gearsTab.Success)
                     {
+                        int columns = chars.Count + 2;
                         using (var charactersEventTable = ImRaii.Table(
                         $"###CharactersProgress#All#Event#MogRewards#Table#Event2026_2#Gears#Table",
-                        chars.Count + 2,
+                        columns,
                         ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner |
                         ImGuiTableFlags.ScrollX | ImGuiTableFlags.ScrollY))
                         {
@@ -131,7 +135,7 @@ namespace Altoholic.Helpers
                                         ImGuiTableColumnFlags.WidthFixed, 20);
                                 }
 
-                                ImGui.TableSetupScrollFreeze(-1, 1); //Freeze header so it shows while scrolling
+                                ImGui.TableSetupScrollFreeze(columns, 1); //Freeze header so it shows while scrolling
                                 ImGui.TableNextRow();
                                 ImGui.TableSetColumnIndex(0);
                                 ImGui.TextUnformatted(globalCache.AddonStorage.LoadAddonString(currentLocale, 1885));
@@ -180,9 +184,10 @@ namespace Altoholic.Helpers
                       $"{globalCache.AddonStorage.LoadAddonString(currentLocale, 832)}###CharactersProgress#All#Event#MogRewards#Event2026_2#NonCollectable");
                 if (nonCollectableTab.Success)
                 {
+                    int columns = chars.Count + 2;
                     using (var charactersEventTable = ImRaii.Table(
                     $"###CharactersProgress#All#Event#MogRewards#Table#Event2026_2#NonCollectable#Table",
-                    chars.Count + 2,
+                    columns,
                     ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner |
                     ImGuiTableFlags.ScrollX | ImGuiTableFlags.ScrollY))
                     {
@@ -198,7 +203,7 @@ namespace Altoholic.Helpers
                                     ImGuiTableColumnFlags.WidthFixed, 20);
                             }
 
-                            ImGui.TableSetupScrollFreeze(-1, 1); //Freeze header so it shows while scrolling
+                            ImGui.TableSetupScrollFreeze(columns, 1); //Freeze header so it shows while scrolling
                             ImGui.TableNextRow();
                             ImGui.TableSetColumnIndex(0);
                             ImGui.TextUnformatted(globalCache.AddonStorage.LoadAddonString(currentLocale, 1885));
@@ -232,7 +237,7 @@ namespace Altoholic.Helpers
                             Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 16784, 30, charactersTotalNeededTomestone);
                             Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 38585, 20, charactersTotalNeededTomestone);
                             Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 38605, 20, charactersTotalNeededTomestone);
-                            Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 38622, 20, charactersTotalNeededTomestone);                          
+                            Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 38622, 20, charactersTotalNeededTomestone);
                             Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 39918, 15, charactersTotalNeededTomestone);
                             Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 44349, 15, charactersTotalNeededTomestone);
                             Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 25005, 1, charactersTotalNeededTomestone);
@@ -431,7 +436,7 @@ namespace Altoholic.Helpers
                     foreach (KeyValuePair<int, string> name in mooglesNames.Where(name =>
                                  ImGui.Selectable(name.Value, name.Value == n)))
                     {
-                        currentOldMoogleReward = name.Key;
+                        CurrentOldMoogleReward = name.Key;
                     }
                 }
             }
@@ -442,9 +447,10 @@ namespace Altoholic.Helpers
                     {
                         if (ImGui.CollapsingHeader($"2026 - {aphorismName}"))
                         {
+                            int columns = chars.Count + 2;
                             using var charactersEventTable = ImRaii.Table(
                                 $"###CharactersProgress#All#Event#MogRewards#Table#Event2026_1",
-                                chars.Count + 2,
+                                columns,
                                 ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner |
                                 ImGuiTableFlags.ScrollX | ImGuiTableFlags.ScrollY);
                             if (!charactersEventTable) return;
@@ -458,7 +464,7 @@ namespace Altoholic.Helpers
                                     ImGuiTableColumnFlags.WidthFixed, 20);
                             }
 
-                            ImGui.TableSetupScrollFreeze(-1, 1); //Freeze header so it shows while scrolling
+                            ImGui.TableSetupScrollFreeze(columns, 1); //Freeze header so it shows while scrolling
                             ImGui.TableNextRow();
                             ImGui.TableSetColumnIndex(0);
                             ImGui.TextUnformatted(globalCache.AddonStorage.LoadAddonString(currentLocale, 1885));
@@ -517,9 +523,10 @@ namespace Altoholic.Helpers
                     }
                 case 2025_3:
                     {
+                        int columns = chars.Count + 2;
                         using var charactersEventTable = ImRaii.Table(
                             $"###CharactersProgress#All#Event#MogRewards#Table#Event2025_3",
-                            chars.Count + 2,
+                            columns,
                             ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner |
                             ImGuiTableFlags.ScrollX | ImGuiTableFlags.ScrollY);
                         if (!charactersEventTable) return;
@@ -533,7 +540,7 @@ namespace Altoholic.Helpers
                                 ImGuiTableColumnFlags.WidthFixed, 20);
                         }
 
-                        ImGui.TableSetupScrollFreeze(-1, 1); //Freeze header so it shows while scrolling
+                        ImGui.TableSetupScrollFreeze(columns, 1); //Freeze header so it shows while scrolling
                         ImGui.TableNextRow();
                         ImGui.TableSetColumnIndex(0);
                         ImGui.TextUnformatted(globalCache.AddonStorage.LoadAddonString(currentLocale, 1885));
@@ -585,9 +592,10 @@ namespace Altoholic.Helpers
                     }
                 case 2025_2:
                     {
+                        int columns = chars.Count + 2;
                         using var charactersEventTable = ImRaii.Table(
                     $"###CharactersProgress#All#Event#MogRewards#Table#Event2025_2",
-                    chars.Count + 2,
+                    columns,
                     ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner |
                     ImGuiTableFlags.ScrollX | ImGuiTableFlags.ScrollY);
                         if (!charactersEventTable) return;
@@ -600,7 +608,7 @@ namespace Altoholic.Helpers
                             ImGui.TableSetupColumn($"###CharactersProgress#All#Event#MogRewards#Event2025_2#{c.CharacterId}",
                                 ImGuiTableColumnFlags.WidthFixed, 20);
                         }
-                        ImGui.TableSetupScrollFreeze(-1, 1);//Freeze header so it shows while scrolling
+                        ImGui.TableSetupScrollFreeze(columns, 1);//Freeze header so it shows while scrolling
                         ImGui.TableNextRow();
                         ImGui.TableSetColumnIndex(0);
                         ImGui.TextUnformatted(globalCache.AddonStorage.LoadAddonString(currentLocale, 1885));
@@ -1155,7 +1163,6 @@ namespace Altoholic.Helpers
                         Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, Helpers.CharacterCollectible.Minion, 256, 7);
                         Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, Helpers.CharacterCollectible.Orchestrion, 85, 7);
                         Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, Helpers.CharacterCollectible.Orchestrion, 86, 7);
-
 
                         break;
                     }

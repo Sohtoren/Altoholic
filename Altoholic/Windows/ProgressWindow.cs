@@ -542,9 +542,10 @@ namespace Altoholic.Windows
                 if (expDuties.Count == 0) continue;
                 if (ImGui.CollapsingHeader($"{ex.value}###Exp{ex.i}"))
                 {
+                    int columns = chars.Count + 1;
                     using var charactersEventTable = ImRaii.Table(
                         $"###CharactersProgress#All#Duty#{duName}_{ex.i}#Table",
-                        chars.Count + 1,
+                        columns,
                         ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner |
                         ImGuiTableFlags.ScrollX | ImGuiTableFlags.ScrollY);
                     if (!charactersEventTable) return;
@@ -556,7 +557,7 @@ namespace Altoholic.Windows
                             $"###CharactersProgress#All#Duty#{duName}_{ex.i}#Table#{c.CharacterId}",
                             ImGuiTableColumnFlags.WidthFixed, 20);
                     }
-                    ImGui.TableSetupScrollFreeze(-1, 1);//Freeze header so it shows while scrolling
+                    ImGui.TableSetupScrollFreeze(columns, 1);//Freeze header so it shows while scrolling
                     ImGui.TableNextRow();
                     ImGui.TableSetColumnIndex(0);
                     ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 2225));
@@ -701,7 +702,8 @@ namespace Altoholic.Windows
         private void DrawMainScenarioQuest(List<Character> chars)
         {
             if (chars.Count == 0) return;
-            using var charactersMainScenarioQuestAll = ImRaii.Table("###CharactersProgress#All#MSQ", chars.Count + 1,
+            int columns = chars.Count + 1;
+            using var charactersMainScenarioQuestAll = ImRaii.Table("###CharactersProgress#All#MSQ", columns,
                 ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner |
                 ImGuiTableFlags.ScrollX | ImGuiTableFlags.ScrollY);
             if (!charactersMainScenarioQuestAll) return;
@@ -711,7 +713,7 @@ namespace Altoholic.Windows
                 ImGui.TableSetupColumn($"###CharactersProgress#All#MSQ#{c.CharacterId}",
                     ImGuiTableColumnFlags.WidthFixed, 20);
             }
-            ImGui.TableSetupScrollFreeze(-1, 1);//Freeze header so it shows while scrolling
+            ImGui.TableSetupScrollFreeze(columns, 1);//Freeze header so it shows while scrolling
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
             ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 1898));
@@ -1604,9 +1606,10 @@ namespace Altoholic.Windows
             {
                 if (progressEvent2013141516Tab.Success)
                 {
+                    int columns = chars.Count + 1;
                     using var charactersEventTable = ImRaii.Table(
                         $"###CharactersProgress#All#Event#2013141516#Table",
-                        chars.Count + 1,
+                        columns,
                         ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner |
                         ImGuiTableFlags.ScrollX | ImGuiTableFlags.ScrollY);
                     if (!charactersEventTable) return;
@@ -1617,7 +1620,7 @@ namespace Altoholic.Windows
                         ImGui.TableSetupColumn($"###CharactersProgress#All#Event#2013141516#{c.CharacterId}",
                             ImGuiTableColumnFlags.WidthFixed, 20);
                     }
-                    ImGui.TableSetupScrollFreeze(-1, 1);//Freeze header so it shows while scrolling
+                    ImGui.TableSetupScrollFreeze(columns, 1);//Freeze header so it shows while scrolling
                     ImGui.TableNextRow();
                     ImGui.TableSetColumnIndex(0);
                     ImGui.TextUnformatted($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 1898)} ({Loc.Localize("ClickToDisplayRewards", "Click to display rewards")})");
@@ -1742,9 +1745,10 @@ namespace Altoholic.Windows
             {
                 if (blundervilleRewards.Success)
                 {
+                    int columns = chars.Count + 2;
                     using var charactersEventTable = ImRaii.Table(
                         $"###CharactersProgress#All#Event#blundervilleRewards#Table",
-                        chars.Count + 2,
+                        columns,
                         ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner |
                         ImGuiTableFlags.ScrollX | ImGuiTableFlags.ScrollY);
                     if (!charactersEventTable) return;
@@ -1757,7 +1761,7 @@ namespace Altoholic.Windows
                         ImGui.TableSetupColumn($"###CharactersProgress#All#Event#blundervilleRewards#{c.CharacterId}",
                             ImGuiTableColumnFlags.WidthFixed, 20);
                     }
-                    ImGui.TableSetupScrollFreeze(-1, 1);//Freeze header so it shows while scrolling
+                    ImGui.TableSetupScrollFreeze(columns, 1);//Freeze header so it shows while scrolling
                     ImGui.TableNextRow();
                     ImGui.TableSetColumnIndex(0);
                     ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 1885));
@@ -1800,7 +1804,7 @@ namespace Altoholic.Windows
             using var moogleRewards = ImRaii.TabItem($"{mogEventName}");
             if (moogleRewards.Success)
             {
-                Helpers.MoogleEvent.DrawRewards(_currentLocale, _globalCache, chars, _currentOldMoogleReward);
+                Helpers.MoogleEvent.DrawRewards(_currentLocale, _globalCache, chars);
             }
         }
 
@@ -1992,7 +1996,8 @@ namespace Altoholic.Windows
         private void DrawRoleQuestQuest(List<Character> chars)
         {
             if (chars.Count == 0) return;
-            using var charactersRoleQuestQuestAll = ImRaii.Table("###CharactersProgress#All#RoleQuest", chars.Count + 1,
+            int columns = chars.Count + 1;
+            using var charactersRoleQuestQuestAll = ImRaii.Table("###CharactersProgress#All#RoleQuest", columns,
                 ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner |
                 ImGuiTableFlags.ScrollX | ImGuiTableFlags.ScrollY);
             if (!charactersRoleQuestQuestAll) return;
@@ -2002,7 +2007,7 @@ namespace Altoholic.Windows
                 ImGui.TableSetupColumn($"###CharactersProgress#All#RoleQuest#{c.CharacterId}",
                     ImGuiTableColumnFlags.WidthFixed, 20);
             }
-            ImGui.TableSetupScrollFreeze(-1, 1);//Freeze header so it shows while scrolling
+            ImGui.TableSetupScrollFreeze(columns, 1);//Freeze header so it shows while scrolling
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
             ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 1898));
@@ -2095,7 +2100,8 @@ namespace Altoholic.Windows
         private void DrawTribes(List<Character> chars)
         {
             if (chars.Count == 0) return;
-            using var charactersTribeQuestAll = ImRaii.Table("###CharactersProgress#All#Tribe", chars.Count + 1,
+            int columns = chars.Count + 1;
+            using var charactersTribeQuestAll = ImRaii.Table("###CharactersProgress#All#Tribe", columns,
                 ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner |
                 ImGuiTableFlags.ScrollX | ImGuiTableFlags.ScrollY);
             if (!charactersTribeQuestAll) return;
@@ -2105,7 +2111,7 @@ namespace Altoholic.Windows
                 ImGui.TableSetupColumn($"###CharactersProgress#All#Tribe#{c.CharacterId}",
                     ImGuiTableColumnFlags.WidthFixed, 20);
             }
-            ImGui.TableSetupScrollFreeze(-1, 1);//Freeze header so it shows while scrolling
+            ImGui.TableSetupScrollFreeze(columns, 1);//Freeze header so it shows while scrolling
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
             ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 1898));

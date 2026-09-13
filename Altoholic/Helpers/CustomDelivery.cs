@@ -216,7 +216,8 @@ namespace Altoholic.Helpers
         internal static void DrawAll(GlobalCache globalCache, ClientLanguage currentLocale, List<Character> chars)
         {
             if (chars.Count == 0) return;
-            using var charactersCustomDeliveryQuestAll = ImRaii.Table("###CharactersProgress#All#CustomDelivery", chars.Count + 1,
+            int columns = chars.Count + 1;
+            using var charactersCustomDeliveryQuestAll = ImRaii.Table("###CharactersProgress#All#CustomDelivery", columns,
                 ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner |
                 ImGuiTableFlags.ScrollX | ImGuiTableFlags.ScrollY);
             if (!charactersCustomDeliveryQuestAll) return;
@@ -226,7 +227,7 @@ namespace Altoholic.Helpers
                 ImGui.TableSetupColumn($"###CharactersProgress#All#CustomDelivery#{c.CharacterId}",
                     ImGuiTableColumnFlags.WidthFixed, 20);
             }
-            ImGui.TableSetupScrollFreeze(chars.Count + 1, 1);//Freeze header so it shows while scrolling
+            ImGui.TableSetupScrollFreeze(columns, 1);//Freeze header so it shows while scrolling
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
             ImGui.TextUnformatted(globalCache.AddonStorage.LoadAddonString(currentLocale, 1898));
