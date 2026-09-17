@@ -101,7 +101,7 @@ namespace Altoholic
         private ProgressWindow ProgressWindow { get; }
         private PvPWindow PvPWindow { get; }
         private TimerWindow TimerWindow { get; }
-
+        private TodoWindow TodoWindow { get; }
         private readonly SqliteConnection _db;
 
         private Character _localPlayer = new();
@@ -338,6 +338,16 @@ namespace Altoholic
                 GetOthersCharactersList = () => _altoholicService.GetOthersCharacters(),
             };
 
+            TodoWindow = new TodoWindow(
+                this,
+                $"{Name} v{PluginInterface.Manifest.AssemblyVersion}###Todo",
+                _globalCache
+            )
+            {
+                GetPlayer = () => _altoholicService.GetPlayer(),
+                GetOthersCharactersList = () => _altoholicService.GetOthersCharacters(),
+            };
+
             MainWindow = new MainWindow(
                 this,
                 $"{Name} v{PluginInterface.Manifest.AssemblyVersion}",
@@ -354,6 +364,7 @@ namespace Altoholic
                 ProgressWindow,
                 PvPWindow,
                 TimerWindow,
+                TodoWindow,
                 ConfigWindow);
 
             _windowSystem.AddWindow(ConfigWindow);
@@ -3134,6 +3145,14 @@ namespace Altoholic
                     }
                 // Gold Saucer
                 case 144:
+                case 388:
+                case 389:
+                case 390:
+                case 391:
+                case 579:
+                case 792:
+                case 899:
+                case 941:
                     {
                         //GetGoldSaucer();
                         break;
@@ -3507,7 +3526,7 @@ namespace Altoholic
 
                 if (ticketValue != 10000)
                 {
-                    JumboCacpotTicket jct = new JumboCacpotTicket
+                    JumboCacpotTicket jct = new()
                     {
                         Value = (int)ticketValue,
                         LastCheck = DateTime.UtcNow
@@ -3544,7 +3563,7 @@ namespace Altoholic
                                 break;
 
                             case 0 when _ticketData >= 0:
-                                JumboCacpotTicket jct = new JumboCacpotTicket
+                                JumboCacpotTicket jct = new()
                                 {
                                     Value = _ticketData,
                                     LastCheck = DateTime.UtcNow

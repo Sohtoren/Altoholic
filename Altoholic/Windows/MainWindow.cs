@@ -25,6 +25,7 @@ namespace Altoholic.Windows
         private ProgressWindow ProgressWindow { get; }
         private PvPWindow PvPWindow { get; }
         private TimerWindow TimerWindow { get; }
+        private TodoWindow TodoWindow { get; }
         private ConfigWindow ConfigWindow { get; }
 
         private ClientLanguage _currentLocale;
@@ -47,6 +48,7 @@ namespace Altoholic.Windows
             ProgressWindow progressWindow,
             PvPWindow pvPWindow,
             TimerWindow timerWindow,
+            TodoWindow todoWindow,
             ConfigWindow configWindow
         )
             : base(name, ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse)
@@ -69,6 +71,7 @@ namespace Altoholic.Windows
             ProgressWindow = progressWindow;
             PvPWindow = pvPWindow;
             TimerWindow = timerWindow;
+            TodoWindow = todoWindow;
             ConfigWindow = configWindow;
         }
         public override void OnClose()
@@ -221,6 +224,14 @@ namespace Altoholic.Windows
                     TimerWindow.DrawNotHovered();
                 }
             }
+
+            /*using (var todoTab = ImRaii.TabItem($"Todo###Todo"))
+            {
+                if (todoTab.Success)
+                {
+                    TodoWindow.Draw();
+                }
+            }*/
 
             using var settingsTab = ImRaii.TabItem($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 10119)}");
             if (settingsTab.Success)

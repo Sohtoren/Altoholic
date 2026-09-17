@@ -1,7 +1,12 @@
 ﻿using Altoholic.Cache;
 using Altoholic.Models;
+using CheapLoc;
 using Dalamud.Bindings.ImGui;
 using Dalamud.Game;
+using Dalamud.Game.Text;
+using Dalamud.Interface.Utility.Raii;
+using FFXIVClientStructs.FFXIV.Common.Math;
+using Lumina.Excel.Sheets;
 using System.Collections.Generic;
 
 namespace Altoholic.Helpers
@@ -191,6 +196,7 @@ namespace Altoholic.Helpers
                     character.HasQuest((int)QuestIds.EVENT_YO_KAI_WATCH_GATHER_ONE_GATHER_ALL_2026),
                     character.HasQuest((int)QuestIds.EVENT_MOONFIRE_FAIRE_2026),
                     character.HasQuest((int)QuestIds.EVENT_RISING_2026),
+                    character.HasQuest((int)QuestIds.EVENT_A_NOCTURNE_FOR_HEROES_2026),
                 ];
                 result.Add(completedQuests);
             }
@@ -208,9 +214,292 @@ namespace Altoholic.Helpers
                 _ => 0
             };
         }
-
-        public static void DrawEventReward(ClientLanguage currentLocale, GlobalCache globalCache, List<Character> chars, int msqIndex)
+        public static (uint, uint) GetEventCurrenciesFromEventId(int msqIndex)
         {
+            return msqIndex switch
+            {
+                140 => (29,25007),
+                _ => (0,0)
+            };
+        }
+
+        public static void DrawRewardsModal(ClientLanguage currentLocale, GlobalCache globalCache, List<Character> chars, int msqIndex)
+        {
+            if (ImGui.IsItemClicked())
+            {
+                ImGui.OpenPopup(
+                    $"###CharactersProgress#All#Event#RewardModal#{msqIndex}");
+            }
+
+            if (ImGui.IsItemHovered())
+            {
+                ImGui.BeginTooltip();
+                ImGui.TextUnformatted(
+                    $"{Loc.Localize("ClickToDisplayRewards", "Click to display rewards")}");
+                ImGui.EndTooltip();
+            }
+
+            ImGui.SetNextWindowSize(new Vector2(800, 400));
+            using var rewardModal = ImRaii.PopupModal($"###CharactersProgress#All#Event#RewardModal#{msqIndex}");
+            if (!rewardModal)
+            {
+                return;
+            }
+
+            if (ImGui.Button(globalCache.AddonStorage.LoadAddonString(currentLocale, 1219), new Vector2(120, 0)))
+            {
+                ImGui.CloseCurrentPopup();
+            }
+
+            uint eventCurrencyId = GetEventCurrencyFromEventId(msqIndex);
+
+            int columns = chars.Count + 1;
+            if (eventCurrencyId > 0)
+            {
+                columns += 1;
+            }
+
+            float nameSize = GetEventRewardLongestName(currentLocale, globalCache, msqIndex);
+
+            using var charactersEventTable = ImRaii.Table(
+            $"###CharactersProgress#All#Event#RewardTable#{msqIndex}",
+            columns,
+            ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner |
+            ImGuiTableFlags.ScrollX | ImGuiTableFlags.ScrollY, new Vector2(-1, 330));
+            if (!charactersEventTable) return;
+            ImGui.TableSetupColumn($"###CharactersProgress#All#Event#RewardTable#{msqIndex}#Name",
+                ImGuiTableColumnFlags.WidthFixed, nameSize + 5 + 32); // text + margin + icon sizes
+            if (eventCurrencyId > 0)
+            {
+                if (eventCurrencyId is 29)
+                {
+                    ImGui.TableSetupColumn($"###CharactersProgress#All#Event#RewardTable#{msqIndex}#Currency",
+                        ImGuiTableColumnFlags.WidthFixed, ImGui.CalcTextSize("100000").X + 5);
+                }
+                else
+                {
+                    ImGui.TableSetupColumn($"###CharactersProgress#All#Event#RewardTable#{msqIndex}#Currency",
+                        ImGuiTableColumnFlags.WidthFixed, ImGui.CalcTextSize("1000").X + 5);
+                }
+            }
+            foreach (Character c in chars)
+            {
+                ImGui.TableSetupColumn($"###CharactersProgress#All#Event#RewardTable#{msqIndex}#{c.CharacterId}",
+                    ImGuiTableColumnFlags.WidthFixed, 20);
+            }
+
+            ImGui.TableSetupScrollFreeze(columns, 1); //Freeze header so it shows while scrolling
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            ImGui.TextUnformatted(globalCache.AddonStorage.LoadAddonString(currentLocale, 1885));
+
+            if (eventCurrencyId > 0)
+            {
+                Item? itm = globalCache.ItemStorage.LoadItem(currentLocale, eventCurrencyId);
+                if (itm != null)
+                {
+                    ImGui.TableSetColumnIndex(1);
+                    Utils.DrawIcon(globalCache.IconStorage.LoadIcon(itm.Value.Icon), new Vector2(16, 16));
+                    if (ImGui.IsItemHovered())
+                    {
+                        Utils.DrawItemTooltip(currentLocale, ref globalCache, itm.Value);
+                    }
+                }
+            }
+
+            foreach (Character currChar in chars)
+            {
+                ImGui.TableNextColumn();
+                ImGui.TextUnformatted($"{currChar.FirstName[0]}.{currChar.LastName[0]}");
+                if (ImGui.IsItemHovered())
+                {
+                    ImGui.BeginTooltip();
+                    ImGui.TextUnformatted(
+                        $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
+                    ImGui.EndTooltip();
+                }
+            }
+
+            DrawEventReward(currentLocale, globalCache, chars, msqIndex);
+        }
+        public static void DrawMultiTabRewardsModal(ClientLanguage currentLocale, GlobalCache globalCache, List<Character> chars, int msqIndex)
+        {
+            if (ImGui.IsItemClicked())
+            {
+                ImGui.OpenPopup(
+                    $"###CharactersProgress#All#Event#MultiRewardModal#{msqIndex}");
+            }
+
+            if (ImGui.IsItemHovered())
+            {
+                ImGui.BeginTooltip();
+                ImGui.TextUnformatted(
+                    $"{Loc.Localize("ClickToDisplayRewards", "Click to display rewards")}");
+                ImGui.EndTooltip();
+            }
+
+            ImGui.SetNextWindowSize(new Vector2(800, 400));
+            using var rewardModal = ImRaii.PopupModal($"###CharactersProgress#All#Event#MultiRewardModal#{msqIndex}");
+            if (!rewardModal)
+            {
+                return;
+            }
+
+            if (ImGui.Button(globalCache.AddonStorage.LoadAddonString(currentLocale, 1219), new Vector2(120, 0)))
+            {
+                ImGui.CloseCurrentPopup();
+            }
+
+            (uint, uint) eventCurrencyIds = GetEventCurrenciesFromEventId(msqIndex);
+
+            int columns = chars.Count + 1;
+            if (eventCurrencyIds.Item1 > 0)
+            {
+                columns += 1;
+            }
+
+            float nameSize = GetEventRewardLongestName(currentLocale, globalCache, msqIndex);
+
+            using var tabBar = ImRaii.TabBar($"###CharactersProgress#All#Event#MultiRewardModal#{msqIndex}#TabBar");
+            if (!tabBar.Success) return;
+
+            using (var collectableTab =
+                ImRaii.TabItem(
+                    $"{globalCache.AddonStorage.LoadAddonString(currentLocale, 1456)}###CharactersProgress#All#Event#MultiRewardModal#{msqIndex}#1#Collectable"))
+            {
+                if (collectableTab.Success)
+                {
+                    using var charactersEventTable = ImRaii.Table(
+                        $"###CharactersProgress#All#Event#MultiRewardModal#{msqIndex}#1",
+                        columns,
+                        ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner |
+                        ImGuiTableFlags.ScrollX | ImGuiTableFlags.ScrollY, new Vector2(-1, 330));
+                    if (!charactersEventTable) return;
+                    ImGui.TableSetupColumn($"###CharactersProgress#All#Event#MultiRewardModal#{msqIndex}#1#Name",
+                        ImGuiTableColumnFlags.WidthFixed, nameSize + 5 + 32); // text + margin + icon sizes
+                    if (eventCurrencyIds.Item1 > 0)
+                    {
+                        if (eventCurrencyIds.Item1 is 29)
+                        {
+                            ImGui.TableSetupColumn($"###CharactersProgress#All#Event#MultiRewardModal#{msqIndex}#1#Currency",
+                                ImGuiTableColumnFlags.WidthFixed, ImGui.CalcTextSize("100000").X + 5);
+                        }
+                        else
+                        {
+                            ImGui.TableSetupColumn($"###CharactersProgress#All#Event#MultiRewardModal#{msqIndex}#1#Currency",
+                                ImGuiTableColumnFlags.WidthFixed, ImGui.CalcTextSize("1000").X + 5);
+                        }
+                    }
+                    foreach (Character c in chars)
+                    {
+                        ImGui.TableSetupColumn($"###CharactersProgress#All#Event#MultiRewardModal#{msqIndex}#1#{c.CharacterId}",
+                            ImGuiTableColumnFlags.WidthFixed, 20);
+                    }
+
+                    ImGui.TableSetupScrollFreeze(columns, 1); //Freeze header so it shows while scrolling
+                    ImGui.TableNextRow();
+                    ImGui.TableSetColumnIndex(0);
+                    ImGui.TextUnformatted(globalCache.AddonStorage.LoadAddonString(currentLocale, 1885));
+
+                    if (eventCurrencyIds.Item1 > 0)
+                    {
+                        Item? itm = globalCache.ItemStorage.LoadItem(currentLocale, eventCurrencyIds.Item1);
+                        if (itm != null)
+                        {
+                            ImGui.TableSetColumnIndex(1);
+                            Utils.DrawIcon(globalCache.IconStorage.LoadIcon(itm.Value.Icon), new Vector2(16, 16));
+                            if (ImGui.IsItemHovered())
+                            {
+                                Utils.DrawItemTooltip(currentLocale, ref globalCache, itm.Value);
+                            }
+                        }
+                    }
+
+                    foreach (Character currChar in chars)
+                    {
+                        ImGui.TableNextColumn();
+                        ImGui.TextUnformatted($"{currChar.FirstName[0]}.{currChar.LastName[0]}");
+                        if (ImGui.IsItemHovered())
+                        {
+                            ImGui.BeginTooltip();
+                            ImGui.TextUnformatted(
+                                $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
+                            ImGui.EndTooltip();
+                        }
+                    }
+                    DrawEventReward(currentLocale, globalCache, chars, msqIndex);
+                }
+            }
+            using (var OrchestrionsTab =
+            ImRaii.TabItem(
+                $"{globalCache.AddonStorage.LoadAddonString(currentLocale, 832)}###CharactersProgress#All#Event#MultiRewardModal#{msqIndex}#2#Orchestrions"))
+            {
+                if (OrchestrionsTab.Success)
+                {
+                    using var charactersEventTable = ImRaii.Table(
+                        $"###CharactersProgress#All#Event#MultiRewardModal#{msqIndex}#2",
+                        columns,
+                        ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner |
+                        ImGuiTableFlags.ScrollX | ImGuiTableFlags.ScrollY, new Vector2(-1, 330));
+                    if (!charactersEventTable) return;
+                    ImGui.TableSetupColumn($"###CharactersProgress#All#Event#MultiRewardModal#{msqIndex}#2#Name",
+                        ImGuiTableColumnFlags.WidthFixed, nameSize + 5 + 32); // text + margin + icon sizes
+                    if (eventCurrencyIds.Item2 > 0)
+                    {
+                        if (eventCurrencyIds.Item2 is 29)
+                        {
+                            ImGui.TableSetupColumn($"###CharactersProgress#All#Event#MultiRewardModal#{msqIndex}#2#Currency",
+                                ImGuiTableColumnFlags.WidthFixed, ImGui.CalcTextSize("100000").X + 5);
+                        }
+                        else
+                        {
+                            ImGui.TableSetupColumn($"###CharactersProgress#All#Event#MultiRewardModal#{msqIndex}#2#Currency",
+                                ImGuiTableColumnFlags.WidthFixed, ImGui.CalcTextSize("1000").X + 5);
+                        }
+                    }
+                    foreach (Character c in chars)
+                    {
+                        ImGui.TableSetupColumn($"###CharactersProgress#All#Event#MultiRewardModal#{msqIndex}#2#{c.CharacterId}",
+                            ImGuiTableColumnFlags.WidthFixed, 20);
+                    }
+
+                    ImGui.TableSetupScrollFreeze(columns, 1); //Freeze header so it shows while scrolling
+                    ImGui.TableNextRow();
+                    ImGui.TableSetColumnIndex(0);
+                    ImGui.TextUnformatted(globalCache.AddonStorage.LoadAddonString(currentLocale, 1885));
+
+                    if (eventCurrencyIds.Item2 > 0)
+                    {
+                        Item? itm = globalCache.ItemStorage.LoadItem(currentLocale, eventCurrencyIds.Item2);
+                        if (itm != null)
+                        {
+                            ImGui.TableSetColumnIndex(1);
+                            Utils.DrawIcon(globalCache.IconStorage.LoadIcon(itm.Value.Icon), new Vector2(16, 16));
+                            if (ImGui.IsItemHovered())
+                            {
+                                Utils.DrawItemTooltip(currentLocale, ref globalCache, itm.Value);
+                            }
+                        }
+                    }
+
+                    foreach (Character currChar in chars)
+                    {
+                        ImGui.TableNextColumn();
+                        ImGui.TextUnformatted($"{currChar.FirstName[0]}.{currChar.LastName[0]}");
+                        if (ImGui.IsItemHovered())
+                        {
+                            ImGui.BeginTooltip();
+                            ImGui.TextUnformatted(
+                                $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
+                            ImGui.EndTooltip();
+                        }
+                    }
+                    DrawEventReward(currentLocale, globalCache, chars, -msqIndex);
+                }
+            }
+        }
+         public static void DrawEventReward(ClientLanguage currentLocale, GlobalCache globalCache, List<Character> chars, int msqIndex)
+         {
             switch (msqIndex)
 
             {
@@ -855,6 +1144,23 @@ namespace Altoholic.Helpers
                         Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 51300, 3000);
                         Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 51299, 2000);
                         Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 51301, 2000);
+                        break;
+                    }
+                case 140: /*A Nocturne for Heroes (2026)*/
+                    {
+                        Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Mount, 151, 200000);
+                        Helpers.Reward.DrawAllCharsHairstyle(currentLocale, globalCache, chars, 24802, 20000);
+                        Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.TripleTriadCard, 252, 10000);
+                        break;
+                    }
+                case -140:
+                    {
+                        Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Orchestrion, 299, 1);
+                        Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Orchestrion, 300, 1);
+                        Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Orchestrion, 301, 1);
+                        Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Orchestrion, 302, 1);
+                        Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Orchestrion, 303, 1);
+                        Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Orchestrion, 304, 1);
                         break;
                     }
             }

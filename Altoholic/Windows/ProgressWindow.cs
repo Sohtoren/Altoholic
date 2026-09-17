@@ -68,7 +68,6 @@ namespace Altoholic.Windows
         private bool _rightChevron = true;
         private bool _downChevron;
         private bool _hasValueBeenSelected;
-        private int _currentOldMoogleReward;
 
         public override void OnClose()
         {
@@ -89,7 +88,7 @@ namespace Altoholic.Windows
             Plugin.Log.Debug("ProgressWindow Clear() called");
             _currentCharacter = null;
             _selectedExpansion = _globalCache.AddonStorage.LoadAddonString(_currentLocale, 5752);
-            _currentOldMoogleReward = 0;
+            Helpers.MoogleEvent.CurrentOldMoogleReward = 0;
         }
 
         public override void Draw()
@@ -960,6 +959,8 @@ namespace Altoholic.Windows
                         138);
                     DrawAllEventLine(chars, charactersQuests, $"{Loc.Localize("Event_TheRising", "The Rising")} (2026)",
                         139);
+                    DrawAllEventLine(chars, charactersQuests, $"{Loc.Localize("Event_ANocturneforHeroes", "A Nocturne for Heroes")} (2026) *",
+                        140);
                 }
             }
 
@@ -1808,97 +1809,7 @@ namespace Altoholic.Windows
             }
         }
 
-        private void DrawEventRewardsModal(List<Character> chars, int msqIndex)
-        {
-            if (ImGui.IsItemClicked())
-            {
-                ImGui.OpenPopup(
-                    $"###CharactersProgress#All#Event#RewardModal#{msqIndex}");
-            }
-
-            if (ImGui.IsItemHovered())
-            {
-                ImGui.BeginTooltip();
-                ImGui.TextUnformatted(
-                    $"{Loc.Localize("ClickToDisplayRewards", "Click to display rewards")}");
-                ImGui.EndTooltip();
-            }
-
-            ImGui.SetNextWindowSize(new Vector2(800, 400));
-            using var rewardModal = ImRaii.PopupModal($"###CharactersProgress#All#Event#RewardModal#{msqIndex}");
-            if (!rewardModal)
-            {
-                return;
-            }
-
-            if (ImGui.Button(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 1219), new Vector2(120, 0)))
-            {
-                ImGui.CloseCurrentPopup();
-            }
-
-            uint eventCurrencyId = Helpers.Event.GetEventCurrencyFromEventId(msqIndex);
-
-            int columns = chars.Count + 1;
-            if (eventCurrencyId > 0)
-            {
-                columns += 1;
-            }
-
-            float nameSize = Helpers.Event.GetEventRewardLongestName(_currentLocale, _globalCache, msqIndex);
-
-            using var charactersEventTable = ImRaii.Table(
-            $"###CharactersProgress#All#Event#RewardTable#{msqIndex}",
-            columns,
-            ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner |
-            ImGuiTableFlags.ScrollX | ImGuiTableFlags.ScrollY, new Vector2(-1, 330));
-            if (!charactersEventTable) return;
-            ImGui.TableSetupColumn($"###CharactersProgress#All#Event#RewardTable#{msqIndex}#Name",
-                ImGuiTableColumnFlags.WidthFixed, nameSize + 5+32); // text + margin + icon sizes
-            if (eventCurrencyId > 0)
-            {
-                ImGui.TableSetupColumn($"###CharactersProgress#All#Event#RewardTable#{msqIndex}#Currency",
-                    ImGuiTableColumnFlags.WidthFixed, ImGui.CalcTextSize("1000").X + 5);
-            }
-            foreach (Character c in chars)
-            {
-                ImGui.TableSetupColumn($"###CharactersProgress#All#Event#RewardTable#{msqIndex}#{c.CharacterId}",
-                    ImGuiTableColumnFlags.WidthFixed, 20);
-            }
-
-            ImGui.TableSetupScrollFreeze(columns, 1); //Freeze header so it shows while scrolling
-            ImGui.TableNextRow();
-            ImGui.TableSetColumnIndex(0);
-            ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 1885));
-
-            if (eventCurrencyId > 0)
-            {
-                Item? itm = _globalCache.ItemStorage.LoadItem(_currentLocale, eventCurrencyId);
-                if (itm != null)
-                {
-                    ImGui.TableSetColumnIndex(1);
-                    Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(itm.Value.Icon), new Vector2(16, 16));
-                    if (ImGui.IsItemHovered())
-                    {
-                        Utils.DrawItemTooltip(_currentLocale, ref _globalCache, itm.Value);
-                    }
-                }
-            }
-
-            foreach (Character currChar in chars)
-            {
-                ImGui.TableNextColumn();
-                ImGui.TextUnformatted($"{currChar.FirstName[0]}.{currChar.LastName[0]}");
-                if (ImGui.IsItemHovered())
-                {
-                    ImGui.BeginTooltip();
-                    ImGui.TextUnformatted(
-                        $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
-                    ImGui.EndTooltip();
-                }
-            }
-
-            Helpers.Event.DrawEventReward(_currentLocale, _globalCache, chars, msqIndex);
-        }
+        
 
         private void DrawBlundervilleRewards(List<Character> chars)
         {
@@ -2222,9 +2133,13 @@ namespace Altoholic.Windows
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
             ImGui.TextUnformatted(name);
-            if(Helpers.Event.GetEventCurrencyFromEventId(eventIndex) != 0 || eventIndex is 29 or 41 or 113 or 137)
+            if (eventIndex is 140)
             {
-                DrawEventRewardsModal(chars, eventIndex);
+                Helpers.Event.DrawMultiTabRewardsModal(_currentLocale, _globalCache, chars, eventIndex);
+            }
+            if (eventIndex is not 140 && (Helpers.Event.GetEventCurrencyFromEventId(eventIndex) != 0 || eventIndex is 29 or 41 or 113 or 137))
+            {
+                Helpers.Event.DrawRewardsModal(_currentLocale, _globalCache, chars, eventIndex);
             }
             foreach ((List<bool> cq, int index) charactersQuest in charactersQuests.Select((cq, index) => (cq, index)))
             {
