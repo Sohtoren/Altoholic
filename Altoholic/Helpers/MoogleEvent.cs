@@ -103,7 +103,7 @@ namespace Altoholic.Helpers
                                 Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, Helpers.CharacterCollectible.TripleTriadCard, 85, 7, charactersTotalNeededTomestone);
                                 Helpers.Reward.DrawAllCharsHairstyle(currentLocale, globalCache, chars, 16703, 7, charactersTotalNeededTomestone);
                                 Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, Helpers.CharacterCollectible.Minion, 359, 7, charactersTotalNeededTomestone);
-                                Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, Helpers.CharacterCollectible.Mount, 401, 7, charactersTotalNeededTomestone);
+                                Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, Helpers.CharacterCollectible.Mount, 208, 7, charactersTotalNeededTomestone);
                                 Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, Helpers.CharacterCollectible.Barding, 78, 5, charactersTotalNeededTomestone);
                                 Helpers.Reward.DrawAllCharsTotal(currentLocale, globalCache, chars, neededTomestone, charactersTotalNeededTomestone);
                             }
