@@ -3460,6 +3460,10 @@ namespace Altoholic
             if (sceneDataCount == 5)
             {
                 _localPlayer.Timers.MinicacpotAllowances = (int)sceneData[4];
+                if(_localPlayer.Timers.MinicacpotAllowances < 0)
+                {
+                    _localPlayer.Timers.MinicacpotAllowances = 0;
+                }
             }
             else
             {
@@ -3470,6 +3474,10 @@ namespace Altoholic
         private void LotteryDailyPreSetup(AddonEvent type, AddonArgs args)
         {
             _localPlayer.Timers.MinicacpotAllowances -= 1;
+            if (_localPlayer.Timers.MinicacpotAllowances < 0)
+            {
+                _localPlayer.Timers.MinicacpotAllowances = 0;
+            }
             _localPlayer.Timers.MinicacpotLastCheck = DateTime.UtcNow;
         } 
 
@@ -3513,6 +3521,10 @@ namespace Altoholic
                     _localPlayer.Timers.FashionReportAllowances = (int)sceneData[0];
                     _localPlayer.Timers.FashionReportLastCheck = DateTime.UtcNow;
                     break;
+            }
+            if(_localPlayer.Timers.FashionReportAllowances < 0)
+            {
+                _localPlayer.Timers.FashionReportAllowances = 0;
             }
         }
 
