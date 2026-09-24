@@ -3456,6 +3456,7 @@ namespace Altoholic
 
         private unsafe void GetMiniCactpot(uint* sceneData, byte sceneDataCount)
         {
+            _localPlayer.Timers.MinicacpotAllowances = 3;
             //Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"GetMiniCactpot: {sceneData[0]},{sceneData[1]},{sceneData[2]},{sceneData[3]},{sceneData[4]}, count: {sceneDataCount}");
             if (sceneDataCount == 5)
             {
