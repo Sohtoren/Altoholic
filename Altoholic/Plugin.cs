@@ -3460,10 +3460,9 @@ namespace Altoholic
             //Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"GetMiniCactpot: {sceneData[0]},{sceneData[1]},{sceneData[2]},{sceneData[3]},{sceneData[4]}, count: {sceneDataCount}");
             if (sceneDataCount == 5)
             {
-                _localPlayer.Timers.MinicacpotAllowances = (int)sceneData[4];
-                if(_localPlayer.Timers.MinicacpotAllowances < 0)
-                {
-                    _localPlayer.Timers.MinicacpotAllowances = 0;
+                int newAllowances = (int)sceneData[4];
+                if (newAllowances >= 0) {
+                    _localPlayer.Timers.MinicacpotAllowances = newAllowances;
                 }
             }
             else
@@ -3474,11 +3473,8 @@ namespace Altoholic
         }
         private void LotteryDailyPreSetup(AddonEvent type, AddonArgs args)
         {
-            _localPlayer.Timers.MinicacpotAllowances -= 1;
-            if (_localPlayer.Timers.MinicacpotAllowances < 0)
-            {
-                _localPlayer.Timers.MinicacpotAllowances = 0;
-            }
+            //Log.Debug("LotteryDailyPreSetup hit");
+            _localPlayer.Timers.MinicacpotAllowances = (_localPlayer.Timers.MinicacpotAllowances - 1 >= 0) ? _localPlayer.Timers.MinicacpotAllowances - 1 : 0;
             _localPlayer.Timers.MinicacpotLastCheck = DateTime.UtcNow;
         } 
 
@@ -3522,10 +3518,6 @@ namespace Altoholic
                     _localPlayer.Timers.FashionReportAllowances = (int)sceneData[0];
                     _localPlayer.Timers.FashionReportLastCheck = DateTime.UtcNow;
                     break;
-            }
-            if(_localPlayer.Timers.FashionReportAllowances < 0)
-            {
-                _localPlayer.Timers.FashionReportAllowances = 0;
             }
         }
 
