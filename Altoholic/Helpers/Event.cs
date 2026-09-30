@@ -1582,7 +1582,7 @@ namespace Altoholic.Helpers
             }
             using var nonCollectableTab =
             ImRaii.TabItem(
-                $"{globalCache.AddonStorage.LoadAddonString(currentLocale, 832)}###CharactersProgress#All#Event#Blunderville#NonCollectable");
+                $"{globalCache.AddonStorage.LoadAddonString(currentLocale, 6315)}###CharactersProgress#All#Event#Blunderville#NonCollectable");
             if (nonCollectableTab.Success)
             {
                 int columns = chars.Count + 2;
