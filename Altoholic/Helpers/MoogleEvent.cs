@@ -32,7 +32,7 @@ namespace Altoholic.Helpers
             };
             if (ImGui.CollapsingHeader($"2026 - {astronomyName}"))
             {
-                using var tabBar = ImRaii.TabBar("###CharactersDetailsTable#ProfileTable#ProfileCol#ProfileTabBar");
+                using var tabBar = ImRaii.TabBar("###CharactersProgress#All#Event#MogRewards#Event2026_2#TabBar");
                 if (!tabBar.Success) return;
                 using (var collectableTab =
                    ImRaii.TabItem(

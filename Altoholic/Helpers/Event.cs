@@ -4,10 +4,12 @@ using CheapLoc;
 using Dalamud.Bindings.ImGui;
 using Dalamud.Game;
 using Dalamud.Game.Text;
+using Dalamud.Interface;
 using Dalamud.Interface.Utility.Raii;
 using FFXIVClientStructs.FFXIV.Common.Math;
 using Lumina.Excel.Sheets;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Altoholic.Helpers
 {
@@ -197,6 +199,7 @@ namespace Altoholic.Helpers
                     character.HasQuest((int)QuestIds.EVENT_MOONFIRE_FAIRE_2026),
                     character.HasQuest((int)QuestIds.EVENT_RISING_2026),
                     character.HasQuest((int)QuestIds.EVENT_A_NOCTURNE_FOR_HEROES_2026),
+                    character.HasQuest((int)QuestIds.EVENT_BLUNDERVILLE_2026),
                 ];
                 result.Add(completedQuests);
             }
@@ -498,7 +501,1152 @@ namespace Altoholic.Helpers
                 }
             }
         }
-         public static void DrawEventReward(ClientLanguage currentLocale, GlobalCache globalCache, List<Character> chars, int msqIndex)
+
+        public static void DrawQuest(ClientLanguage currentLocale, GlobalCache globalCache, List<Character> chars)
+        {
+            if (chars.Count == 0) return;
+            List<List<bool>> charactersQuests = Helpers.Event.GetCharactersEventsQuests(chars);
+            ImGui.TextUnformatted($"* {Loc.Localize("ProgressRecurringEvent",
+                "As certain event do not change when reoccuring, completing them once will mark all of them done.")}");
+
+            ImGui.TextUnformatted($"** {Loc.Localize("ProgressEventBlundervilleMessage",
+                "For the Blunderville event, the introduction quest is used for completion.")}");
+
+            using var tabBar = ImRaii.TabBar("###progressEvent#Tabs", ImGuiTabBarFlags.Reorderable);
+            if (!tabBar.Success) return;
+            //Plugin.Log.Debug($"charactersEventQuests: {charactersQuests.Count}");
+            /*DrawAllLine(currentLocale, globalCache, chars, charactersQuests, $"{Loc.Localize("Event_Starlight", "Starlight Celebration")} (2010)", 0);
+            DrawAllLine(currentLocale, globalCache, chars, charactersQuests, $"{Loc.Localize("Event_Heavensturn", "Heavensturn")} (2011)", 1);
+            DrawAllLine(currentLocale, globalCache, chars, charactersQuests, $"{Loc.Localize("Event_ValentioneDay", "Valentione's Day")} (2011)", 2);
+            DrawAllLine(currentLocale, globalCache, chars, charactersQuests, $"{Loc.Localize("Event_LittleLadiesDay", "Little Ladies' Day")} (2011)", 3);
+            DrawAllLine(currentLocale, globalCache, chars, charactersQuests, $"{Loc.Localize("Event_HatchingTide", "Hatching-tide")} (2011)", 4);
+            DrawAllLine(currentLocale, globalCache, chars, charactersQuests, $"{Loc.Localize("Event_FirefallFaire", "Firefall Faire")} (2011)", 5);
+            DrawAllLine(currentLocale, globalCache, chars, charactersQuests, $"{Loc.Localize("Event_HuntersMoon", "Hunter's Moon")} (2011)", 6);
+            DrawAllLine(currentLocale, globalCache, chars, charactersQuests, $"{Loc.Localize("Event_FoundationDay", "Foundation Day")} (2011)", 7);
+            DrawAllLine(currentLocale, globalCache, chars, charactersQuests, $"{Loc.Localize("Event_AllSaintsWake", "All Saints' Wake")} (2011) *", 8);
+            DrawAllLine(currentLocale, globalCache, chars, charactersQuests, $"{Loc.Localize("Event_Starlight", "Starlight Celebration")} (2011)", 9);
+            DrawAllLine(currentLocale, globalCache, chars, charactersQuests, $"{Loc.Localize("Event_Heavensturn", "Heavensturn")} (2012)", 10);
+            DrawAllLine(currentLocale, globalCache, chars, charactersQuests, $"{Loc.Localize("Event_ValentioneDay", "Valentione's Day")} (2012)", 11);
+            DrawAllLine(currentLocale, globalCache, chars, charactersQuests, $"{Loc.Localize("Event_LittleLadiesDay", "Little Ladies' Day")} (2012)", 12);
+            DrawAllLine(currentLocale, globalCache, chars, charactersQuests, $"{Loc.Localize("Event_HatchingTide", "Hatching-tide")} (2012)", 13);
+            DrawAllLine(currentLocale, globalCache, chars, charactersQuests, $"{Loc.Localize("Event_MoonfireFaire", "Moonfire Faire")} (2012)", 14);
+            DrawAllLine(currentLocale, globalCache, chars, charactersQuests, $"{Loc.Localize("Event_FoundationDay", "Foundation Day")} (2012)", 15);
+            DrawAllLine(currentLocale, globalCache, chars, charactersQuests, $"{Loc.Localize("Event_MoonfireFaire", "Moonfire Faire")} (2013)", 16);*/
+
+            using (var progressEvent2026Tab = ImRaii.TabItem("2026###progressEvent#Tabs#2026"))
+            {
+                if (progressEvent2026Tab.Success)
+                {
+                    using var charactersEventTable = ImRaii.Table(
+                        $"###CharactersProgress#All#Event#2026#Table",
+                        chars.Count + 1,
+                        ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner |
+                        ImGuiTableFlags.ScrollX, new Vector2(-1, 335));
+                    if (!charactersEventTable) return;
+
+                    ImGui.TableSetupColumn($"###CharactersProgress#All#Event#2026#Name",
+                        ImGuiTableColumnFlags.WidthFixed, 260);
+                    foreach (Character c in chars)
+                    {
+                        ImGui.TableSetupColumn($"###CharactersProgress#All#Event#2026#{c.CharacterId}",
+                            ImGuiTableColumnFlags.WidthFixed, 20);
+                    }
+
+                    ImGui.TableNextRow();
+                    ImGui.TableSetColumnIndex(0);
+                    ImGui.TextUnformatted($"{globalCache.AddonStorage.LoadAddonString(currentLocale, 1898)} ({Loc.Localize("ClickToDisplayRewards", "Click to display rewards")})");
+                    if (ImGui.IsItemHovered())
+                    {
+                        ImGui.BeginTooltip();
+                        ImGui.TextUnformatted(globalCache.AddonStorage.LoadAddonString(currentLocale, 665));
+                        ImGui.EndTooltip();
+                    }
+
+                    foreach (Character currChar in chars)
+                    {
+                        ImGui.TableNextColumn();
+                        ImGui.TextUnformatted($"{currChar.FirstName[0]}.{currChar.LastName[0]}");
+                        if (ImGui.IsItemHovered())
+                        {
+                            ImGui.BeginTooltip();
+                            ImGui.TextUnformatted(
+                                $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
+                            ImGui.EndTooltip();
+                        }
+                    }
+
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_Heavensturn", "Heavensturn")} (2026)",
+                        131);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_ValentioneDay", "Valentione's Day")} (2026)",
+                        132);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_LittleLadiesDay", "Little Ladies' Day")} (2026)",
+                        133);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_HatchingTide", "Hatching-tide")} (2026)",
+                        134);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_TheMakeItRainCampaign", "The Make It Rain Campaign")} (2026)",
+                        135);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_BreakingBrickMountains", "Breaking Brick Mountains")} (2026)", 136);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_YoKai", "Yo-kai Watch: Gather One, Gather All!")} (2026) *", 137);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_MoonfireFaire", "Moonfire Faire")} (2026)",
+                        138);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests, $"{Loc.Localize("Event_TheRising", "The Rising")} (2026)",
+                        139);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests, $"{Loc.Localize("Event_ANocturneforHeroes", "A Nocturne for Heroes")} (2026) *",
+                        140);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests, $"{Loc.Localize("Event_Blunderville", "Blunderville")} **",
+                        141);
+                }
+            }
+
+            using (var progressEvent2025Tab = ImRaii.TabItem("2025###progressEvent#Tabs#2025"))
+            {
+                if (progressEvent2025Tab.Success)
+                {
+                    using var charactersEventTable = ImRaii.Table(
+                        $"###CharactersProgress#All#Event#2025#Table",
+                        chars.Count + 1,
+                        ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner |
+                        ImGuiTableFlags.ScrollX, new Vector2(-1, 335));
+                    if (!charactersEventTable) return;
+
+                    ImGui.TableSetupColumn($"###CharactersProgress#All#Event#2025#Name",
+                        ImGuiTableColumnFlags.WidthFixed, 260);
+                    foreach (Character c in chars)
+                    {
+                        ImGui.TableSetupColumn($"###CharactersProgress#All#Event#2025#{c.CharacterId}",
+                            ImGuiTableColumnFlags.WidthFixed, 20);
+                    }
+
+                    ImGui.TableNextRow();
+                    ImGui.TableSetColumnIndex(0);
+                    ImGui.TextUnformatted($"{globalCache.AddonStorage.LoadAddonString(currentLocale, 1898)} ({Loc.Localize("ClickToDisplayRewards", "Click to display rewards")})");
+                    if (ImGui.IsItemHovered())
+                    {
+                        ImGui.BeginTooltip();
+                        ImGui.TextUnformatted(globalCache.AddonStorage.LoadAddonString(currentLocale, 665));
+                        ImGui.EndTooltip();
+                    }
+
+                    foreach (Character currChar in chars)
+                    {
+                        ImGui.TableNextColumn();
+                        ImGui.TextUnformatted($"{currChar.FirstName[0]}.{currChar.LastName[0]}");
+                        if (ImGui.IsItemHovered())
+                        {
+                            ImGui.BeginTooltip();
+                            ImGui.TextUnformatted(
+                                $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
+                            ImGui.EndTooltip();
+                        }
+                    }
+
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_Heavensturn", "Heavensturn")} (2025)",
+                        122);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_ValentioneDay", "Valentione's Day")} (2025)",
+                        123);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_LittleLadiesDay", "Little Ladies' Day")} (2025)",
+                        124);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_HatchingTide", "Hatching-tide")} (2025)",
+                        125);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_TheMakeItRainCampaign", "The Make It Rain Campaign")} (2025)",
+                        126);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_MoonfireFaire", "Moonfire Faire")} (2025)",
+                        127);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests, $"{Loc.Localize("Event_TheRising", "The Rising")} (2025)",
+                        128);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_AllSaintsWake", "All Saints' Wake")} (2025)",
+                        129);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests, $"{Loc.Localize("Event_Starlight", "Starlight Celebration")} (2025)",
+                        130);
+                }
+            }
+
+            using (var progressEvent2024Tab = ImRaii.TabItem("2024###progressEvent#Tabs#2024"))
+            {
+                if (progressEvent2024Tab.Success)
+                {
+                    using var charactersEventTable = ImRaii.Table(
+                        $"###CharactersProgress#All#Event#2024#Table",
+                        chars.Count + 1,
+                        ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner |
+                        ImGuiTableFlags.ScrollX, new Vector2(-1, 335));
+                    if (!charactersEventTable) return;
+
+                    ImGui.TableSetupColumn($"###CharactersProgress#All#Event#2024#Name",
+                        ImGuiTableColumnFlags.WidthFixed, 260);
+                    foreach (Character c in chars)
+                    {
+                        ImGui.TableSetupColumn($"###CharactersProgress#All#Event#2024#{c.CharacterId}",
+                            ImGuiTableColumnFlags.WidthFixed, 20);
+                    }
+
+                    ImGui.TableNextRow();
+                    ImGui.TableSetColumnIndex(0);
+                    ImGui.TextUnformatted($"{globalCache.AddonStorage.LoadAddonString(currentLocale, 1898)} ({Loc.Localize("ClickToDisplayRewards", "Click to display rewards")})");
+                    if (ImGui.IsItemHovered())
+                    {
+                        ImGui.BeginTooltip();
+                        ImGui.TextUnformatted(globalCache.AddonStorage.LoadAddonString(currentLocale, 665));
+                        ImGui.EndTooltip();
+                    }
+
+                    foreach (Character currChar in chars)
+                    {
+                        ImGui.TableNextColumn();
+                        ImGui.TextUnformatted($"{currChar.FirstName[0]}.{currChar.LastName[0]}");
+                        if (ImGui.IsItemHovered())
+                        {
+                            ImGui.BeginTooltip();
+                            ImGui.TextUnformatted(
+                                $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
+                            ImGui.EndTooltip();
+                        }
+                    }
+
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_Heavensturn", "Heavensturn")} (2024)", 107);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_MaidensRhapsody", "The Maiden's Rhapsody")} (2024)", 108);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_ValentioneDay", "Valentione's Day")} (2024)",
+                        109);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_ANocturneforHeroes", "A Nocturne for Heroes")} (2024) *", 110);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_LittleLadiesAndHatchingTideDay", "Little Ladies' Day & Hatching-tide")} (2024)",
+                        111);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_ThePathInterfal", "The Path Infernal")} (2024)",
+                        112);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_YoKai", "Yo-kai Watch: Gather One, Gather All!")} (2024) *", 113);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_TheMakeItRainCampaign", "The Make It Rain Campaign")} 2024", 114);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_BreakingBrickMountains", "Breaking Brick Mountains")} (2024)", 115);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests, $"{Loc.Localize("Event_Blunderville", "Blunderville")} **",
+                        116);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_MoonfireFaire", "Moonfire Faire")} (2024)",
+                        117);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests, $"{Loc.Localize("Event_TheRising", "The Rising")} (2024)",
+                        118);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_AllSaintsWake", "All Saints' Wake")} (2024)",
+                        119);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests, $"{Loc.Localize("Event_Blunderville", "Blunderville")} **",
+                        120);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests, $"{Loc.Localize("Event_Starlight", "Starlight Celebration")} (2024)",
+                        121);
+                }
+            }
+
+            using (var progressEvent2023Tab = ImRaii.TabItem("2023###progressEvent#Tabs#2023"))
+            {
+                if (progressEvent2023Tab.Success)
+                {
+                    using var charactersEventTable = ImRaii.Table(
+                        "###CharactersProgress#All#Event#2023#Table",
+                        chars.Count + 1,
+                        ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner |
+                        ImGuiTableFlags.ScrollX, new Vector2(-1, 250));
+                    if (!charactersEventTable) return;
+                    ImGui.TableSetupColumn("###CharactersProgress#All#Event#2023#Name",
+                        ImGuiTableColumnFlags.WidthFixed, 200);
+                    foreach (Character c in chars)
+                    {
+                        ImGui.TableSetupColumn($"###CharactersProgress#All#Event#2023#{c.CharacterId}",
+                            ImGuiTableColumnFlags.WidthFixed, 20);
+                    }
+
+                    ImGui.TableNextRow();
+                    ImGui.TableSetColumnIndex(0);
+                    ImGui.TextUnformatted($"{globalCache.AddonStorage.LoadAddonString(currentLocale, 1898)} ({Loc.Localize("ClickToDisplayRewards", "Click to display rewards")})");
+                    if (ImGui.IsItemHovered())
+                    {
+                        ImGui.BeginTooltip();
+                        ImGui.TextUnformatted(globalCache.AddonStorage.LoadAddonString(currentLocale, 665));
+                        ImGui.EndTooltip();
+                    }
+
+                    foreach (Character currChar in chars)
+                    {
+                        ImGui.TableNextColumn();
+                        ImGui.TextUnformatted($"{currChar.FirstName[0]}.{currChar.LastName[0]}");
+                        if (ImGui.IsItemHovered())
+                        {
+                            ImGui.BeginTooltip();
+                            ImGui.TextUnformatted(
+                                $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
+                            ImGui.EndTooltip();
+                        }
+                    }
+
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_Heavensturn", "Heavensturn")} (2023)", 97);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_ValentioneDay", "Valentione's Day")} (2023)",
+                        98);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_LittleLadiesDay", "Little Ladies' Day")} (2023)", 99);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_HatchingTide", "Hatching-tide")} (2023)",
+                        100);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_TheMakeItRainCampaign", "The Make It Rain Campaign")} (2023)", 101);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_MoonfireFaire", "Moonfire Faire")} (2023)",
+                        102);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests, $"{Loc.Localize("Event_TheRising", "The Rising")} (2023)",
+                        103);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_AllSaintsWake", "All Saints' Wake")} (2023)",
+                        104);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests, $"{Loc.Localize("Event_Blunderville", "Blunderville")} **",
+                        105);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_Starlight", "Starlight Celebration")} (2023)",
+                        106);
+                }
+            }
+
+            using (var progressEvent2022Tab = ImRaii.TabItem("2022###progressEvent#Tabs#2022"))
+            {
+                if (progressEvent2022Tab.Success)
+                {
+                    using var charactersEventTable = ImRaii.Table(
+                        $"###CharactersProgress#All#Event#2022#Table",
+                        chars.Count + 1,
+                        ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner |
+                        ImGuiTableFlags.ScrollX, new Vector2(-1, 270));
+                    if (!charactersEventTable) return;
+                    ImGui.TableSetupColumn($"###CharactersProgress#All#Event#2022#Name",
+                        ImGuiTableColumnFlags.WidthFixed, 200);
+                    foreach (Character c in chars)
+                    {
+                        ImGui.TableSetupColumn($"###CharactersProgress#All#Event#2022#{c.CharacterId}",
+                            ImGuiTableColumnFlags.WidthFixed, 20);
+                    }
+
+                    ImGui.TableNextRow();
+                    ImGui.TableSetColumnIndex(0);
+                    ImGui.TextUnformatted($"{globalCache.AddonStorage.LoadAddonString(currentLocale, 1898)} ({Loc.Localize("ClickToDisplayRewards", "Click to display rewards")})");
+                    if (ImGui.IsItemHovered())
+                    {
+                        ImGui.BeginTooltip();
+                        ImGui.TextUnformatted(globalCache.AddonStorage.LoadAddonString(currentLocale, 665));
+                        ImGui.EndTooltip();
+                    }
+
+                    foreach (Character currChar in chars)
+                    {
+                        ImGui.TableNextColumn();
+                        ImGui.TextUnformatted($"{currChar.FirstName[0]}.{currChar.LastName[0]}");
+                        if (ImGui.IsItemHovered())
+                        {
+                            ImGui.BeginTooltip();
+                            ImGui.TextUnformatted(
+                                $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
+                            ImGui.EndTooltip();
+                        }
+                    }
+
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_Heavensturn", "Heavensturn")} (2022)", 86);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_AllSaintsWake", "All Saints' Wake")} (2021 delayed)",
+                        87);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_ValentioneDay", "Valentione's Day")} (2022)",
+                        88);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_LittleLadiesDay", "Little Ladies' Day")} (2022)", 89);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_HatchingTide", "Hatching-tide")} (2022)",
+                        90);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_MaidensRhapsody", "The Maiden's Rhapsody")} (2022)", 91);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_TheMakeItRainCampaign", "The Make It Rain Campaign")} 2022", 92);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_MoonfireFaire", "Moonfire Faire")} (2022)",
+                        93);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests, $"{Loc.Localize("Event_TheRising", "The Rising")} (2022)",
+                        94);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_AllSaintsWake", "All Saints' Wake")} (2022)",
+                        95);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_Starlight", "Starlight Celebration")} (2022)",
+                        96);
+                }
+            }
+
+            using (var progressEvent2021Tab = ImRaii.TabItem("2021###progressEvent#Tabs#2021"))
+            {
+                if (progressEvent2021Tab.Success)
+                {
+                    using var charactersEventTable = ImRaii.Table(
+                        $"###CharactersProgress#All#Event#2021#Table",
+                        chars.Count + 1,
+                        ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner |
+                        ImGuiTableFlags.ScrollX, new Vector2(-1, 230));
+                    if (!charactersEventTable) return;
+                    ImGui.TableSetupColumn($"###CharactersProgress#All#Event#2021#Name",
+                        ImGuiTableColumnFlags.WidthFixed, 260);
+                    foreach (Character c in chars)
+                    {
+                        ImGui.TableSetupColumn($"###CharactersProgress#All#Event#2021#{c.CharacterId}",
+                            ImGuiTableColumnFlags.WidthFixed, 20);
+                    }
+
+                    ImGui.TableNextRow();
+                    ImGui.TableSetColumnIndex(0);
+                    ImGui.TextUnformatted($"{globalCache.AddonStorage.LoadAddonString(currentLocale, 1898)} ({Loc.Localize("ClickToDisplayRewards", "Click to display rewards")})");
+                    if (ImGui.IsItemHovered())
+                    {
+                        ImGui.BeginTooltip();
+                        ImGui.TextUnformatted(globalCache.AddonStorage.LoadAddonString(currentLocale, 665));
+                        ImGui.EndTooltip();
+                    }
+
+                    foreach (Character currChar in chars)
+                    {
+                        ImGui.TableNextColumn();
+                        ImGui.TextUnformatted($"{currChar.FirstName[0]}.{currChar.LastName[0]}");
+                        if (ImGui.IsItemHovered())
+                        {
+                            ImGui.BeginTooltip();
+                            ImGui.TextUnformatted(
+                                $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
+                            ImGui.EndTooltip();
+                        }
+                    }
+
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_Heavensturn", "Heavensturn")} (2021)", 77);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_ValentioneAndLittleLadiesDays", "Valentione's and Little Ladies' Day")} (2021)",
+                        78);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_HatchingTide", "Hatching-tide")} (2021)",
+                        79);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_TheMakeItRainCampaign", "The Make It Rain Campaign")} 2021", 80);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_MoonfireFaire", "Moonfire Faire")} (2021)",
+                        81);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests, $"{Loc.Localize("Event_TheRising", "The Rising")} (2021)",
+                        82);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_ANocturneforHeroes", "A Nocturne for Heroes")} (2021) *", 83);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_BreakingBrickMountains", "Breaking Brick Mountains")} (2021)", 84);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_Starlight", "Starlight Celebration")} (2021)",
+                        85);
+                }
+            }
+
+            using (var progressEvent2020Tab = ImRaii.TabItem("2020###progressEvent#Tabs#2020"))
+            {
+                if (progressEvent2020Tab.Success)
+                {
+                    using var charactersEventTable = ImRaii.Table(
+                        $"###CharactersProgress#All#Event#2020#Table",
+                        chars.Count + 1,
+                        ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner |
+                        ImGuiTableFlags.ScrollX, new Vector2(-1, 270));
+                    if (!charactersEventTable) return;
+                    ImGui.TableSetupColumn($"###CharactersProgress#All#Event#2020#Name",
+                        ImGuiTableColumnFlags.WidthFixed, 260);
+                    foreach (Character c in chars)
+                    {
+                        ImGui.TableSetupColumn($"###CharactersProgress#All#Event#2020#{c.CharacterId}",
+                            ImGuiTableColumnFlags.WidthFixed, 20);
+                    }
+
+                    ImGui.TableNextRow();
+                    ImGui.TableSetColumnIndex(0);
+                    ImGui.TextUnformatted($"{globalCache.AddonStorage.LoadAddonString(currentLocale, 1898)} ({Loc.Localize("ClickToDisplayRewards", "Click to display rewards")})");
+                    if (ImGui.IsItemHovered())
+                    {
+                        ImGui.BeginTooltip();
+                        ImGui.TextUnformatted(globalCache.AddonStorage.LoadAddonString(currentLocale, 665));
+                        ImGui.EndTooltip();
+                    }
+
+                    foreach (Character currChar in chars)
+                    {
+                        ImGui.TableNextColumn();
+                        ImGui.TextUnformatted($"{currChar.FirstName[0]}.{currChar.LastName[0]}");
+                        if (ImGui.IsItemHovered())
+                        {
+                            ImGui.BeginTooltip();
+                            ImGui.TextUnformatted(
+                                $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
+                            ImGui.EndTooltip();
+                        }
+                    }
+
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_Heavensturn", "Heavensturn")} (2020)", 66);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_ValentioneDay", "Valentione's Day")} (2020)",
+                        67);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_LittleLadiesDay", "Little Ladies' Day")} (2020)", 68);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_HatchingTide", "Hatching-tide")} (2020)",
+                        69);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_MaidensRhapsody", "The Maiden's Rhapsody")} (2020)", 70);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_BreakingBrickMountains", "Breaking Brick Mountains")} (2020)", 71);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_MoonfireFaire", "Moonfire Faire")} (2020)",
+                        72);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_YoKai", "Yo-kai Watch: Gather One, Gather All!")} (2020) *", 73);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests, $"{Loc.Localize("Event_TheRising", "The Rising")} (2020)",
+                        74);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_TheMakeItRainCampaign", "The Make It Rain Campaign")} (2020)", 75);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_Starlight", "Starlight Celebration")} (2020)",
+                        76);
+                }
+            }
+
+            using (var progressEvent2019Tab = ImRaii.TabItem("2019##progressEvent#Tabs#2019"))
+            {
+                if (progressEvent2019Tab.Success)
+                {
+                    using var charactersEventTable = ImRaii.Table(
+                        $"###CharactersProgress#All#Event#2019#Table",
+                        chars.Count + 1,
+                        ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner |
+                        ImGuiTableFlags.ScrollX, new Vector2(-1, 250));
+                    if (!charactersEventTable) return;
+                    ImGui.TableSetupColumn($"###CharactersProgress#All#Event#2019#Name",
+                        ImGuiTableColumnFlags.WidthFixed, 200);
+                    foreach (Character c in chars)
+                    {
+                        ImGui.TableSetupColumn($"###CharactersProgress#All#Event#2019#{c.CharacterId}",
+                            ImGuiTableColumnFlags.WidthFixed, 20);
+                    }
+
+                    ImGui.TableNextRow();
+                    ImGui.TableSetColumnIndex(0);
+                    ImGui.TextUnformatted($"{globalCache.AddonStorage.LoadAddonString(currentLocale, 1898)} ({Loc.Localize("ClickToDisplayRewards", "Click to display rewards")})");
+                    if (ImGui.IsItemHovered())
+                    {
+                        ImGui.BeginTooltip();
+                        ImGui.TextUnformatted(globalCache.AddonStorage.LoadAddonString(currentLocale, 665));
+                        ImGui.EndTooltip();
+                    }
+
+                    foreach (Character currChar in chars)
+                    {
+                        ImGui.TableNextColumn();
+                        ImGui.TextUnformatted($"{currChar.FirstName[0]}.{currChar.LastName[0]}");
+                        if (ImGui.IsItemHovered())
+                        {
+                            ImGui.BeginTooltip();
+                            ImGui.TextUnformatted(
+                                $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
+                            ImGui.EndTooltip();
+                        }
+                    }
+
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_Heavensturn", "Heavensturn")} (2019)", 56);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_ValentioneDay", "Valentione's Day")} (2019)",
+                        57);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_LittleLadiesDay", "Little Ladies' Day")} (2019)", 58);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_HatchingTide", "Hatching-tide")} (2019)",
+                        59);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_ANocturneforHeroes", "A Nocturne for Heroes")} (2019) *", 60);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_TheMakeItRainCampaign", "The Make It Rain Campaign")} (2019)", 61);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_MoonfireFaire", "Moonfire Faire")} (2019)",
+                        62);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests, $"{Loc.Localize("Event_TheRising", "The Rising")} (2019)",
+                        63);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_AllSaintsWake", "All Saints' Wake")} (2019)",
+                        64);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_Starlight", "Starlight Celebration")} (2019)",
+                        65);
+                }
+            }
+
+            using (var progressEvent2018Tab = ImRaii.TabItem("2018###progressEvent#Tabs#2018"))
+            {
+                if (progressEvent2018Tab.Success)
+                {
+                    using var charactersEventTable = ImRaii.Table(
+                        $"###CharactersProgress#All#Event#2018#Table",
+                        chars.Count + 1,
+                        ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner |
+                        ImGuiTableFlags.ScrollX, new Vector2(-1, 250));
+                    if (!charactersEventTable) return;
+                    ImGui.TableSetupColumn($"###CharactersProgress#All#Event#2018#Name",
+                        ImGuiTableColumnFlags.WidthFixed, 200);
+                    foreach (Character c in chars)
+                    {
+                        ImGui.TableSetupColumn($"###CharactersProgress#All#Event#2018#{c.CharacterId}",
+                            ImGuiTableColumnFlags.WidthFixed, 20);
+                    }
+
+                    ImGui.TableNextRow();
+                    ImGui.TableSetColumnIndex(0);
+                    ImGui.TextUnformatted($"{globalCache.AddonStorage.LoadAddonString(currentLocale, 1898)} ({Loc.Localize("ClickToDisplayRewards", "Click to display rewards")})");
+                    if (ImGui.IsItemHovered())
+                    {
+                        ImGui.BeginTooltip();
+                        ImGui.TextUnformatted(globalCache.AddonStorage.LoadAddonString(currentLocale, 665));
+                        ImGui.EndTooltip();
+                    }
+
+                    foreach (Character currChar in chars)
+                    {
+                        ImGui.TableNextColumn();
+                        ImGui.TextUnformatted($"{currChar.FirstName[0]}.{currChar.LastName[0]}");
+                        if (ImGui.IsItemHovered())
+                        {
+                            ImGui.BeginTooltip();
+                            ImGui.TextUnformatted(
+                                $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
+                            ImGui.EndTooltip();
+                        }
+                    }
+
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_Heavensturn", "Heavensturn")} (2018)", 46);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_ValentioneDay", "Valentione's Day")} (2018)",
+                        47);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_LittleLadiesDay", "Little Ladies' Day")} (2018)", 48);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_HatchingTide", "Hatching-tide")} (2018)",
+                        49);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_TheMakeItRainCampaign", "The Make It Rain Campaign")} (2018)", 50);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_MoonfireFaire", "Moonfire Faire")} (2018)",
+                        51);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests, $"{Loc.Localize("Event_TheRising", "The Rising")} (2018)",
+                        52);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_AllSaintsWake", "All Saints' Wake")} (2018)",
+                        53);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_TheHuntForRathalos", "The Hunt For Rathalos")}",
+                        54);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_Starlight", "Starlight Celebration")} (2018)",
+                        55);
+                }
+            }
+
+            using (var progressEvent2017Tab = ImRaii.TabItem("2017###progressEvent#Tabs#2017"))
+            {
+                if (progressEvent2017Tab.Success)
+                {
+                    using var charactersEventTable = ImRaii.Table(
+                        $"###CharactersProgress#All#Event#2017#Table",
+                        chars.Count + 1,
+                        ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner |
+                        ImGuiTableFlags.ScrollX, new Vector2(-1, 290));
+                    if (!charactersEventTable) return;
+                    ImGui.TableSetupColumn($"###CharactersProgress#All#Event#2017#Name",
+                        ImGuiTableColumnFlags.WidthFixed, 260);
+                    foreach (Character c in chars)
+                    {
+                        ImGui.TableSetupColumn($"###CharactersProgress#All#Event#2017#{c.CharacterId}",
+                            ImGuiTableColumnFlags.WidthFixed, 20);
+                    }
+
+                    ImGui.TableNextRow();
+                    ImGui.TableSetColumnIndex(0);
+                    ImGui.TextUnformatted($"{globalCache.AddonStorage.LoadAddonString(currentLocale, 1898)} ({Loc.Localize("ClickToDisplayRewards", "Click to display rewards")})");
+                    if (ImGui.IsItemHovered())
+                    {
+                        ImGui.BeginTooltip();
+                        ImGui.TextUnformatted(globalCache.AddonStorage.LoadAddonString(currentLocale, 665));
+                        ImGui.EndTooltip();
+                    }
+
+                    foreach (Character currChar in chars)
+                    {
+                        ImGui.TableNextColumn();
+                        ImGui.TextUnformatted($"{currChar.FirstName[0]}.{currChar.LastName[0]}");
+                        if (ImGui.IsItemHovered())
+                        {
+                            ImGui.BeginTooltip();
+                            ImGui.TextUnformatted(
+                                $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
+                            ImGui.EndTooltip();
+                        }
+                    }
+
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_Heavensturn", "Heavensturn")} (2017)", 34);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_ValentioneDay", "Valentione's Day")} (2017)",
+                        35);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_LittleLadiesDay", "Little Ladies' Day")} (2017)", 36);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_HatchingTide", "Hatching-tide")} (2017)",
+                        37);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_TheMakeItRainCampaign", "The Make It Rain Campaign")} (2017)", 38);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_MoonfireFaire", "Moonfire Faire")} (2017)",
+                        39);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests, $"{Loc.Localize("Event_TheRising", "The Rising")} (2017)",
+                        40);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_YoKai", "Yo-kai Watch: Gather One, Gather All!")} (2017) *", 41);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_AllSaintsWake", "All Saints' Wake")} (2017)",
+                        42);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_MaidensRhapsody", "The Maiden's Rhapsody")} (2017)", 43);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_BreakingBrickMountains", "Breaking Brick Mountains")} (2017)", 44);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_Starlight", "Starlight Celebration")} (2017)",
+                        45);
+                }
+            }
+
+            using (var progressEvent2013141516Tab = ImRaii.TabItem("2013-14-15-16###progressEvent#Tabs#2013141516"))
+            {
+                if (progressEvent2013141516Tab.Success)
+                {
+                    int columns = chars.Count + 1;
+                    using var charactersEventTable = ImRaii.Table(
+                        $"###CharactersProgress#All#Event#2013141516#Table",
+                        columns,
+                        ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner |
+                        ImGuiTableFlags.ScrollX | ImGuiTableFlags.ScrollY);
+                    if (!charactersEventTable) return;
+                    ImGui.TableSetupColumn($"###CharactersProgress#All#Event#2013141516#Name",
+                        ImGuiTableColumnFlags.WidthFixed, 260);
+                    foreach (Character c in chars)
+                    {
+                        ImGui.TableSetupColumn($"###CharactersProgress#All#Event#2013141516#{c.CharacterId}",
+                            ImGuiTableColumnFlags.WidthFixed, 20);
+                    }
+                    ImGui.TableSetupScrollFreeze(columns, 1);//Freeze header so it shows while scrolling
+                    ImGui.TableNextRow();
+                    ImGui.TableSetColumnIndex(0);
+                    ImGui.TextUnformatted($"{globalCache.AddonStorage.LoadAddonString(currentLocale, 1898)} ({Loc.Localize("ClickToDisplayRewards", "Click to display rewards")})");
+                    if (ImGui.IsItemHovered())
+                    {
+                        ImGui.BeginTooltip();
+                        ImGui.TextUnformatted(globalCache.AddonStorage.LoadAddonString(currentLocale, 665));
+                        ImGui.EndTooltip();
+                    }
+
+                    foreach (Character currChar in chars)
+                    {
+                        ImGui.TableNextColumn();
+                        ImGui.TextUnformatted($"{currChar.FirstName[0]}.{currChar.LastName[0]}");
+                        if (ImGui.IsItemHovered())
+                        {
+                            ImGui.BeginTooltip();
+                            ImGui.TextUnformatted(
+                                $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
+                            ImGui.EndTooltip();
+                        }
+                    }
+
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_AllSaintsWake", "All Saints' Wake")} (2013)",
+                        0);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_LightningStrikes", "Lightning Strikes")} (2013)", 1);
+                    //DrawAllLine(currentLocale, globalCache, chars, charactersQuests, $"{Loc.Localize("Event_Starlight", "Starlight Celebration")} (2013)", 2);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_Heavensturn", "Heavensturn")} (2014)", 2);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_BurgeoningDread", "Burgeoning Dread")} (2014)",
+                        3);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_BreakingBrickMountains", "Breaking Brick Mountains")} (2014)",
+                        4);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_ValentioneDay", "Valentione's Day")} (2014)",
+                        5);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_LittleLadiesDay", "Little Ladies' Day")} (2014)", 6);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_HatchingTide", "Hatching-tide")} (2014)",
+                        7);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_MoonfireFaire", "Moonfire Faire")} (2014)",
+                        8);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_ThatOldBlackMagic", "That Old Black Magic")} (2014)", 9);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_TheRising", "The Rising")} (2014)",
+                        10);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_LightningReturns", "Lightning Returns")}",
+                        11);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_BreakingBrickMountains", "Breaking Brick Mountains")} (2014)",
+                        12);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_AllSaintsWake", "All Saints' Wake")} (2014)",
+                        13);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_Starlight", "Starlight Celebration")} (2014)",
+                        14);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_Heavensturn", "Heavensturn")} (2015)", 15);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_ValentioneDay", "Valentione's Day")} (2015)",
+                        16);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_LittleLadiesDay", "Little Ladies' Day")} (2015)", 17);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_HatchingTide", "Hatching-tide")} (2015)",
+                        18);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_MoonfireFaire", "Moonfire Faire")} (2015)",
+                        19);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_TheRising", "The Rising")} (2015)",
+                        20);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_AllSaintsWake", "All Saints' Wake")} (2015)",
+                        21);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_MaidensRhapsody", "The Maiden's Rhapsody")} (2015)", 22);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_Starlight", "Starlight Celebration")} (2015)",
+                        23);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_Heavensturn", "Heavensturn")} (2016)", 24);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_ValentioneDay", "Valentione's Day")} (2016)",
+                        25);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_LittleLadiesDay", "Little Ladies' Day")} (2016)", 26);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_HatchingTide", "Hatching-tide")} (2016)",
+                        27);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_TheMakeItRainCampaign", "The Make It Rain Campaign")} 2016", 28);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_YoKai", "Yo-kai Watch: Gather One, Gather All!")} (2016) *", 29);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_MoonfireFaire", "Moonfire Faire")} (2016)",
+                        30);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_TheRising", "The Rising")} (2016)",
+                        31);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_AllSaintsWake", "All Saints' Wake")} (2016)",
+                        32);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_Starlight", "Starlight Celebration")} (2016)",
+                        33);
+                }
+            }
+
+            using (var blundervilleRewards =
+                   ImRaii.TabItem(
+                       $"{Loc.Localize("Event_Blunderville", "Blunderville")} {globalCache.AddonStorage.LoadAddonString(currentLocale, 1885)}"))
+            {
+                if (blundervilleRewards.Success)
+                {
+                    DrawBlundervilleRewards(currentLocale, globalCache, chars);
+                }
+            }
+
+            string mogEventName = currentLocale switch
+            {
+                ClientLanguage.German => "Mog Mog-Kollektion",
+                ClientLanguage.English => "Moogle Treasure Trove",
+                ClientLanguage.French => "Collection Mog Mog",
+                ClientLanguage.Japanese => "モグモグ★コレクション",
+                _ => "Moogle Treasure Trove"
+            };
+            using var moogleRewards = ImRaii.TabItem($"{mogEventName}");
+            if (moogleRewards.Success)
+            {
+                Helpers.MoogleEvent.DrawRewards(currentLocale, globalCache, chars);
+            }
+        }
+
+        private static void DrawAllLine(ClientLanguage currentLocale, GlobalCache globalCache, List<Character> chars, List<List<bool>> charactersQuests, string name,
+            int eventIndex)
+        {
+            //Plugin.Log.Debug($"DrawAllLine: {chars.Count}, name: {name}, msqIndex: {msqIndex}");
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            ImGui.TextUnformatted(name);
+            if (eventIndex is 140)
+            {
+                Helpers.Event.DrawMultiTabRewardsModal(currentLocale, globalCache, chars, eventIndex);
+            }
+            if (eventIndex is not 140 && (Helpers.Event.GetEventCurrencyFromEventId(eventIndex) != 0 || eventIndex is 29 or 41 or 113 or 137))
+            {
+                Helpers.Event.DrawRewardsModal(currentLocale, globalCache, chars, eventIndex);
+            }
+            foreach ((List<bool> cq, int index) charactersQuest in charactersQuests.Select((cq, index) => (cq, index)))
+            {
+                ImGui.TableNextColumn();
+                ImGui.PushFont(UiBuilder.IconFont);
+                ImGui.TextUnformatted(charactersQuest.cq[eventIndex] ? FontAwesomeIcon.Check.ToIconString() : "");
+                ImGui.PopFont();
+                if (ImGui.IsItemHovered())
+                {
+                    ImGui.BeginTooltip();
+                    ImGui.TextUnformatted(name);
+                    ImGui.TextUnformatted(
+                        $"{chars[charactersQuest.index].FirstName} {chars[charactersQuest.index].LastName}{(char)SeIconChar.CrossWorld}{chars[charactersQuest.index].HomeWorld}");
+                    ImGui.EndTooltip();
+                }
+            }
+        }
+
+        private static void DrawBlundervilleRewards(ClientLanguage currentLocale, GlobalCache globalCache, List<Character> chars)
+        {
+            using var tabBar = ImRaii.TabBar("###CharactersProgress#All#Event#Blunderville#TabBar");
+            if (!tabBar.Success) return;
+            using (var collectableTab =
+               ImRaii.TabItem(
+                   $"{globalCache.AddonStorage.LoadAddonString(currentLocale, 1456)}###CharactersProgress#All#Event#Blunderville#Collectable"))
+            {
+                if (collectableTab.Success)
+                {
+                    int columns = chars.Count + 2;
+                    using (var charactersEventTable = ImRaii.Table(
+                    $"###CharactersProgress#All#Event#Blunderville#Table#Collectable#Table",
+                    columns,
+                    ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner |
+                    ImGuiTableFlags.ScrollX | ImGuiTableFlags.ScrollY))
+                    {
+                        if (charactersEventTable)
+                        {
+                            ImGui.TableSetupColumn($"###CharactersProgress#All#Event#Blunderville#Collectable#Table#Name",
+                                ImGuiTableColumnFlags.WidthFixed, 270);
+                            ImGui.TableSetupColumn($"###CharactersProgress#All#Event#Blunderville#Collectable#Table#Currency",
+                                ImGuiTableColumnFlags.WidthFixed, ImGui.CalcTextSize("1000").X + 5);
+                            foreach (Character c in chars)
+                            {
+                                ImGui.TableSetupColumn($"###CharactersProgress#All#Event#Blunderville#Collectable#Table#{c.CharacterId}",
+                                    ImGuiTableColumnFlags.WidthFixed, 25);
+                            }
+
+                            ImGui.TableSetupScrollFreeze(columns, 1); //Freeze header so it shows while scrolling
+                            ImGui.TableNextRow();
+                            ImGui.TableSetColumnIndex(0);
+                            ImGui.TextUnformatted(globalCache.AddonStorage.LoadAddonString(currentLocale, 1885));
+
+                            ImGui.TableSetColumnIndex(1);
+                            Item? itm = globalCache.ItemStorage.LoadItem(currentLocale,
+                                (uint)Currencies.MGF);
+                            if (itm == null) return;
+                            Utils.DrawIcon(globalCache.IconStorage.LoadIcon(itm.Value.Icon), new Vector2(16, 16));
+                            if (ImGui.IsItemHovered())
+                            {
+                                Utils.DrawItemTooltip(currentLocale, ref globalCache, itm.Value);
+                            }
+
+                            int neededMGF = 2340;
+                            Dictionary<ulong, int> charactersTotalNeededMGF = [];
+                            foreach (Character currChar in chars)
+                            {
+                                ImGui.TableNextColumn();
+                                ImGui.TextUnformatted($"{currChar.FirstName[0]}.{currChar.LastName[0]}");
+                                if (ImGui.IsItemHovered())
+                                {
+                                    ImGui.BeginTooltip();
+                                    ImGui.TextUnformatted(
+                                        $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
+                                    ImGui.EndTooltip();
+                                }
+
+                                charactersTotalNeededMGF[currChar.CharacterId] = neededMGF;
+                            }
+
+                            Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, Helpers.CharacterCollectible.Emote, 276, 410, charactersTotalNeededMGF);
+                            Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, Helpers.CharacterCollectible.Mount, 330, 410, charactersTotalNeededMGF);
+                            Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, Helpers.CharacterCollectible.Minion, 499, 350, charactersTotalNeededMGF);
+                            Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, Helpers.CharacterCollectible.Minion, 500, 350, charactersTotalNeededMGF);
+                            Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, Helpers.CharacterCollectible.Orchestrion, 657, 220, charactersTotalNeededMGF);
+                            Helpers.Reward.DrawAllCharsFramerKit(currentLocale, globalCache, chars, 41377, 200, charactersTotalNeededMGF);
+                            Helpers.Reward.DrawAllCharsFramerKit(currentLocale, globalCache, chars, 41378, 200, charactersTotalNeededMGF);
+                            Helpers.Reward.DrawAllCharsFramerKit(currentLocale, globalCache, chars, 41379, 200, charactersTotalNeededMGF);
+                            Helpers.Reward.DrawAllCharsTotal(currentLocale, globalCache, chars, neededMGF, charactersTotalNeededMGF);
+                        }
+                    }
+                }
+            }
+            using (var gearsTab =
+            ImRaii.TabItem(
+                $"{globalCache.AddonStorage.LoadAddonString(currentLocale, 852)}###CharactersProgress#All#Event#Blunderville#Gears"))
+            {
+                if (gearsTab.Success)
+                {
+                    int columns = chars.Count + 2;
+                    using (var charactersEventTable = ImRaii.Table(
+                    $"###CharactersProgress#All#Event#Blunderville#Table#Gears#Table",
+                    columns,
+                    ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner |
+                    ImGuiTableFlags.ScrollX | ImGuiTableFlags.ScrollY))
+                    {
+                        if (charactersEventTable)
+                        {
+                            ImGui.TableSetupColumn($"###CharactersProgress#All#Event#Blunderville#Gears#Table#Name",
+                                ImGuiTableColumnFlags.WidthFixed, 270);
+                            ImGui.TableSetupColumn($"###CharactersProgress#All#Event#Blunderville#Gears#Table#Currency",
+                                ImGuiTableColumnFlags.WidthFixed, ImGui.CalcTextSize("1000").X + 5);
+                            foreach (Character c in chars)
+                            {
+                                ImGui.TableSetupColumn($"###CharactersProgress#All#Event#Blunderville#Gears#Table#{c.CharacterId}",
+                                    ImGuiTableColumnFlags.WidthFixed, 25);
+                            }
+
+                            ImGui.TableSetupScrollFreeze(columns, 1); //Freeze header so it shows while scrolling
+                            ImGui.TableNextRow();
+                            ImGui.TableSetColumnIndex(0);
+                            ImGui.TextUnformatted(globalCache.AddonStorage.LoadAddonString(currentLocale, 1885));
+
+                            ImGui.TableSetColumnIndex(1);
+                            Item? itm = globalCache.ItemStorage.LoadItem(currentLocale,
+                                (uint)Currencies.MGF);
+                            if (itm == null) return;
+                            Utils.DrawIcon(globalCache.IconStorage.LoadIcon(itm.Value.Icon), new Vector2(16, 16));
+                            if (ImGui.IsItemHovered())
+                            {
+                                Utils.DrawItemTooltip(currentLocale, ref globalCache, itm.Value);
+                            }
+
+                            int neededMGF = 2460;
+                            Dictionary<ulong, int> charactersTotalNeededMGF = [];
+                            foreach (Character currChar in chars)
+                            {
+                                ImGui.TableNextColumn();
+                                ImGui.TextUnformatted($"{currChar.FirstName[0]}.{currChar.LastName[0]}");
+                                if (ImGui.IsItemHovered())
+                                {
+                                    ImGui.BeginTooltip();
+                                    ImGui.TextUnformatted(
+                                        $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
+                                    ImGui.EndTooltip();
+                                }
+
+                                charactersTotalNeededMGF[currChar.CharacterId] = neededMGF;
+                            }
+                            Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 41560, 410, charactersTotalNeededMGF);
+                            Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 41561, 410, charactersTotalNeededMGF);
+                            Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 41562, 410, charactersTotalNeededMGF);
+                            Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 41563, 410, charactersTotalNeededMGF);
+                            Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 41564, 410, charactersTotalNeededMGF);
+                            Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 41796, 410, charactersTotalNeededMGF);
+                            Helpers.Reward.DrawAllCharsTotal(currentLocale, globalCache, chars, neededMGF, charactersTotalNeededMGF);
+                        }
+                    }
+                }
+            }
+            using var nonCollectableTab =
+            ImRaii.TabItem(
+                $"{globalCache.AddonStorage.LoadAddonString(currentLocale, 832)}###CharactersProgress#All#Event#Blunderville#NonCollectable");
+            if (nonCollectableTab.Success)
+            {
+                int columns = chars.Count + 2;
+                using (var charactersEventTable = ImRaii.Table(
+                $"###CharactersProgress#All#Event#Blunderville#Table#NonCollectable#Table",
+                columns,
+                ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner |
+                ImGuiTableFlags.ScrollX | ImGuiTableFlags.ScrollY))
+                {
+                    if (charactersEventTable)
+                    {
+                        ImGui.TableSetupColumn($"###CharactersProgress#All#Event#Blunderville#NonCollectable#Table#Name",
+                            ImGuiTableColumnFlags.WidthFixed, 270);
+                        ImGui.TableSetupColumn($"###CharactersProgress#All#Event#Blunderville#NonCollectable#Table#Currency",
+                            ImGuiTableColumnFlags.WidthFixed, ImGui.CalcTextSize("1000").X + 5);
+                        foreach (Character c in chars)
+                        {
+                            ImGui.TableSetupColumn($"###CharactersProgress#All#Event#Blunderville#NonCollectable#Table#{c.CharacterId}",
+                                ImGuiTableColumnFlags.WidthFixed, 25);
+                        }
+
+                        ImGui.TableSetupScrollFreeze(columns, 1); //Freeze header so it shows while scrolling
+                        ImGui.TableNextRow();
+                        ImGui.TableSetColumnIndex(0);
+                        ImGui.TextUnformatted(globalCache.AddonStorage.LoadAddonString(currentLocale, 1885));
+
+                        ImGui.TableSetColumnIndex(1);
+                        Item? itm = globalCache.ItemStorage.LoadItem(currentLocale,
+                            (uint)Currencies.MGF);
+                        if (itm == null) return;
+                        Utils.DrawIcon(globalCache.IconStorage.LoadIcon(itm.Value.Icon), new Vector2(16, 16));
+                        if (ImGui.IsItemHovered())
+                        {
+                            Utils.DrawItemTooltip(currentLocale, ref globalCache, itm.Value);
+                        }
+
+                        int neededMGF = 1100;
+                        Dictionary<ulong, int> charactersTotalNeededMGF = [];
+                        foreach (Character currChar in chars)
+                        {
+                            ImGui.TableNextColumn();
+                            ImGui.TextUnformatted($"{currChar.FirstName[0]}.{currChar.LastName[0]}");
+                            if (ImGui.IsItemHovered())
+                            {
+                                ImGui.BeginTooltip();
+                                ImGui.TextUnformatted(
+                                    $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
+                                ImGui.EndTooltip();
+                            }
+
+                            charactersTotalNeededMGF[currChar.CharacterId] = neededMGF;
+                        }
+                        Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 41437, 220, charactersTotalNeededMGF);
+                        Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 41438, 220, charactersTotalNeededMGF);
+                        Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 41439, 220, charactersTotalNeededMGF);
+                        Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 41440, 220, charactersTotalNeededMGF);
+                        Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 41441, 220, charactersTotalNeededMGF);
+                        Helpers.Reward.DrawAllCharsTotal(currentLocale, globalCache, chars, neededMGF, charactersTotalNeededMGF);
+                    }
+                }
+            }
+        }
+
+        public static void DrawEventReward(ClientLanguage currentLocale, GlobalCache globalCache, List<Character> chars, int msqIndex)
          {
             switch (msqIndex)
 
