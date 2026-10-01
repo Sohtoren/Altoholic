@@ -373,8 +373,8 @@ namespace Altoholic.Helpers
                 ImGui.TableNextColumn();
                 if (currChar.HasHairstyleFromIds(ids))
                 {
-                    ImGui.PushFont(UiBuilder.IconFont);
                     characterNeededTomestone?[currChar.CharacterId] = characterNeededTomestone[currChar.CharacterId] - cost;
+                    ImGui.PushFont(UiBuilder.IconFont);
                     ImGui.TextUnformatted(FontAwesomeIcon.Check.ToIconString());
                     ImGui.PopFont();
                     if (ImGui.IsItemHovered())
@@ -384,6 +384,14 @@ namespace Altoholic.Helpers
                         ImGui.TextUnformatted(
                             $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
                         ImGui.EndTooltip();
+                    }
+                }
+                else
+                {
+                    if (currChar.Profile is not null &&
+                        !globalCache.HairstyleStorage.IsHairstyleAvailableForRaceGender(currChar.Profile.Tribe, currChar.Profile.Gender, globalCache.HairstyleStorage.GetHairstyleFromItemId(itemId)))
+                    {
+                        ImGui.TextUnformatted($"N/A");
                     }
                 }
             }

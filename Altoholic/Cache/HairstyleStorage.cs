@@ -155,6 +155,12 @@ namespace Altoholic.Cache
         {
             return _hairstylesAndFaces.Keys.ToList();
         }
+
+        public uint GetHairstyleFromItemId(uint id)
+        {
+            return _hairstylesAndFaces.First(h => h.Value.ItemId == id).Key;
+        }
+
         public Dictionary<uint, Hairstyle> GetAll()
         {
             return _hairstylesAndFaces;
