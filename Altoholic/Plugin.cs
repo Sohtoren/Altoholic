@@ -1466,12 +1466,12 @@ namespace Altoholic
                     continue;
                 }
 
-                if (_globalCache.HairstyleStorage.IsHairstyleAvailableForRaceGender(_localPlayer.Profile.Tribe,
+                if (_globalCache.HairstyleStorage.IsHairstyleAvailableForTribeGender(_localPlayer.Profile.Tribe,
                         _localPlayer.Profile.Gender, i.Key))
                 {
                     _localPlayer.Hairstyles.Add(i.Key);
                 }
-                if (_globalCache.HairstyleStorage.IsFacepaintAvailableForRaceGender(_localPlayer.Profile.Tribe,
+                if (_globalCache.HairstyleStorage.IsFacepaintAvailableForTribeGender(_localPlayer.Profile.Tribe,
                         _localPlayer.Profile.Gender, i.Key))
                 {
                     _localPlayer.Facepaints.Add(i.Key);
@@ -1660,8 +1660,8 @@ namespace Altoholic
                 Irregular_Tomestone_Of_Astronomy_II = inventoryManager.GetInventoryItemCount((uint)Currencies.IRREGULAR_TOMESTONE_OF_ASTRONOMY_II, false, false, false),
                 Irregular_Tomestone_Of_Creation = inventoryManager.GetInventoryItemCount((uint)Currencies.IRREGULAR_TOMESTONE_OF_CREATION, false, false, false),
                 Irregular_Tomestone_Of_Esoterics = inventoryManager.GetInventoryItemCount((uint)Currencies.IRREGULAR_TOMESTONE_OF_ESOTERICS, false, false, false),
-                Irregular_Tomestone_Of_Genesis_i = inventoryManager.GetInventoryItemCount((uint)Currencies.IRREGULAR_TOMESTONE_OF_GENESIS_I, false, false, false),
-                Irregular_Tomestone_Of_Genesis_ii = inventoryManager.GetInventoryItemCount((uint)Currencies.IRREGULAR_TOMESTONE_OF_GENESIS_II, false, false, false),
+                Irregular_Tomestone_Of_Genesis_I = inventoryManager.GetInventoryItemCount((uint)Currencies.IRREGULAR_TOMESTONE_OF_GENESIS_I, false, false, false),
+                Irregular_Tomestone_Of_Genesis_II = inventoryManager.GetInventoryItemCount((uint)Currencies.IRREGULAR_TOMESTONE_OF_GENESIS_II, false, false, false),
                 Irregular_Tomestone_Of_Goetia = inventoryManager.GetInventoryItemCount((uint)Currencies.IRREGULAR_TOMESTONE_OF_GOETIA, false, false, false),
                 Irregular_Tomestone_Of_Law = inventoryManager.GetInventoryItemCount((uint)Currencies.IRREGULAR_TOMESTONE_OF_LAW, false, false, false),
                 Irregular_Tomestone_Of_Lore = inventoryManager.GetInventoryItemCount((uint)Currencies.IRREGULAR_TOMESTONE_OF_LORE, false, false, false),
@@ -1673,7 +1673,7 @@ namespace Altoholic
                 Irregular_Tomestone_Of_Revelation = inventoryManager.GetInventoryItemCount((uint)Currencies.IRREGULAR_TOMESTONE_OF_REVELATION, false, false, false),
                 Irregular_Tomestone_Of_Scripture = inventoryManager.GetInventoryItemCount((uint)Currencies.IRREGULAR_TOMESTONE_OF_SCRIPTURE, false, false, false),
                 Irregular_Tomestone_Of_Soldiery = inventoryManager.GetInventoryItemCount((uint)Currencies.IRREGULAR_TOMESTONE_OF_SOLDIERY, false, false, false),
-                Irregular_Tomestone_Of_Tenfold_pageantry = inventoryManager.GetInventoryItemCount((uint)Currencies.IRREGULAR_TOMESTONE_OF_TENFOLD_PAGEANTRY, false, false, false),
+                Irregular_Tomestone_Of_Tenfold_Pageantry = inventoryManager.GetInventoryItemCount((uint)Currencies.IRREGULAR_TOMESTONE_OF_TENFOLD_PAGEANTRY, false, false, false),
                 Irregular_Tomestone_Of_Verity = inventoryManager.GetInventoryItemCount((uint)Currencies.IRREGULAR_TOMESTONE_OF_VERITY, false, false, false),
                 Islanders_Cowrie = inventoryManager.GetInventoryItemCount((uint)Currencies.ISLANDERS_COWRIE, false, false, false),
                 Ixali_Oaknot = inventoryManager.GetInventoryItemCount((uint)Currencies.IXALI_OAKNOT, false, false, false),
@@ -1692,7 +1692,7 @@ namespace Altoholic
                 Occult_Enlightenment_Silver_Obol = inventoryManager.GetInventoryItemCount((uint)Currencies.OCCULT_ENLIGHTENMENT_SILVER_OBOL, false, false, false),
                 Occult_Enlightenment_Gold_Obol = inventoryManager.GetInventoryItemCount((uint)Currencies.OCCULT_ENLIGHTENMENT_GOLD_OBOL, false, false, false),
                 Occult_Sanguine_Cipher = inventoryManager.GetInventoryItemCount((uint)Currencies.OCCULT_SANGUINE_CIPHER, false, false, false),
-                Oizys_Credit =  inventoryManager.GetInventoryItemCount((uint)Currencies.OISYS_CREDIT, false, false, false),
+                Oizys_Credit =  inventoryManager.GetInventoryItemCount((uint)Currencies.OIZYS_CREDIT, false, false, false),
                 Omicron_Omnitoken = inventoryManager.GetInventoryItemCount((uint)Currencies.OMICRON_OMNITOKEN, false, false, false),
                 Orange_Crafters_Scrip = inventoryManager.GetInventoryItemCount((uint)Currencies.ORANGE_CRAFTERS_SCRIP, false, false, false),
                 Orange_Gatherers_Scrip = inventoryManager.GetInventoryItemCount((uint)Currencies.ORANGE_GATHERERS_SCRIP, false, false, false),
@@ -1738,8 +1738,8 @@ namespace Altoholic
                 Yo_Kai_Legendary_Robonyan_f_type_Medal = inventoryManager.GetInventoryItemCount((uint)Currencies.YO_KAI_LEGENDARY_ROBONYAN_F_TYPE_MEDAL, false, false, false),
                 Yo_Kai_Legendary_Usapyon_Medal = inventoryManager.GetInventoryItemCount((uint)Currencies.YO_KAI_LEGENDARY_USAPYON_MEDAL, false, false, false),
                 Yo_Kai_Legendary_Zazel_Medal = inventoryManager.GetInventoryItemCount((uint)Currencies.YO_KAI_LEGENDARY_ZAZEL_MEDAL, false, false, false),
-                Yo_Kai_Legendary_lord_ananta_Medal = inventoryManager.GetInventoryItemCount((uint)Currencies.YO_KAI_LEGENDARY_LORD_ANANTA_MEDAL, false, false, false),
-                Yo_Kai_Legendary_Lord_enma_Medal = inventoryManager.GetInventoryItemCount((uint)Currencies.YO_KAI_LEGENDARY_LORD_ENMA_MEDAL, false, false, false),
+                Yo_Kai_Legendary_Lord_Ananta_Medal = inventoryManager.GetInventoryItemCount((uint)Currencies.YO_KAI_LEGENDARY_LORD_ANANTA_MEDAL, false, false, false),
+                Yo_Kai_Legendary_Lord_Enma_Medal = inventoryManager.GetInventoryItemCount((uint)Currencies.YO_KAI_LEGENDARY_LORD_ENMA_MEDAL, false, false, false),
                 Yo_Kai_Legendary_Damona_Medal = inventoryManager.GetInventoryItemCount((uint)Currencies.YO_KAI_LEGENDARY_DAMONA_MEDAL, false, false, false),
                 Yo_Kai_Medal = inventoryManager.GetInventoryItemCount((uint)Currencies.YO_KAI_MEDAL, false, false, false),
                 Yok_Huy_Ward = inventoryManager.GetInventoryItemCount((uint)Currencies.YOK_HUY_WARD, false, false, false),

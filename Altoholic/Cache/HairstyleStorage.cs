@@ -39,7 +39,7 @@ namespace Altoholic.Cache
         //private void LoadHairstylesPerRaces(uint subRace, uint gender)
         private void LoadHairstylesPerRaces(int subRace)
         {
-            //RawRow row = hairMakeType.GetRow((subRace - 1) * 2 - 1 + gender);
+            //RawRow row = _hairMakeType.GetRow(subRace * 2 + gender);
             RawRow row = _hairMakeType.GetRow((uint)subRace);
             // Unknown30 is the number of available hairstyles.
             byte numHairs = row.ReadUInt8Column(30);
@@ -60,6 +60,7 @@ namespace Altoholic.Cache
             }
             _hairstylesPerSubRacesAndGender.Add(subRace, hairList);
         }
+
         private void LoadFacepaintsPerRaces(int subRace)
         {
             RawRow row = _hairMakeType.GetRow((uint)subRace);
@@ -156,9 +157,13 @@ namespace Altoholic.Cache
             return _hairstylesAndFaces.Keys.ToList();
         }
 
-        public uint GetHairstyleFromItemId(uint id)
+        public List<uint> GetHairstylesIdsFromItemId(uint id)
         {
-            return _hairstylesAndFaces.First(h => h.Value.ItemId == id).Key;
+            return _hairstylesAndFaces.Where(h => h.Value.ItemId == id).Select(x =>x.Key).ToList();
+        }
+        public List<Hairstyle> GetHairstylesFromItemId(uint id)
+        {
+            return _hairstylesAndFaces.Where(h => h.Value.ItemId == id).Select(x =>x.Value).ToList();
         }
 
         public Dictionary<uint, Hairstyle> GetAll()
@@ -174,6 +179,8 @@ namespace Altoholic.Cache
         {
             return _hairstylesAndFaces.Where(h => h.Value.UnlockLink == unlockLink).Select(x => x.Key).ToList();
         }
+
+
         public void Dispose()
         {
             _hairstylesAndFaces.Clear();
@@ -181,18 +188,24 @@ namespace Altoholic.Cache
             _facesPerSubRacesAndGender.Clear();
         }
 
-        public bool IsHairstyleAvailableForRaceGender(byte tribe, int gender, uint hairstyleId)
+        public bool IsHairstyleAvailableForTribeGender(byte tribe, int gender, uint hairstyleId)
         {
             int row = GetRowFromTribeGender(tribe, gender);
             List<uint> hlist = _hairstylesPerSubRacesAndGender.Where(h => h.Key == row).Select(h => h.Value).ToList().First();
             return hlist.Contains(hairstyleId);
+        }
+        public bool IsHairstyleAvailableForTribeGender(byte tribe, int gender, List<uint> ids)
+        {
+            int row = GetRowFromTribeGender(tribe, gender);
+            List<uint> hlist = _hairstylesPerSubRacesAndGender.Where(h => h.Key == row).Select(h => h.Value).ToList().First();
+            return hlist.Any(h => ids.Contains(h));
         }
 
         public List<uint> GetAllHairstylesForTribeGender(byte tribe, int gender)
         {
             return _hairstylesPerSubRacesAndGender.Where(h => h.Key == GetRowFromTribeGender(tribe, gender)).Select(h => h.Value).ToList().First();
         }
-        public bool IsFacepaintAvailableForRaceGender(byte tribe, int gender, uint hairstyleId)
+        public bool IsFacepaintAvailableForTribeGender(byte tribe, int gender, uint hairstyleId)
         {
             int row = GetRowFromTribeGender(tribe, gender);
             List<uint> hlist = _facesPerSubRacesAndGender.Where(h => h.Key == row).Select(h => h.Value).ToList().First();

@@ -389,7 +389,7 @@ namespace Altoholic.Helpers
                 else
                 {
                     if (currChar.Profile is not null &&
-                        !globalCache.HairstyleStorage.IsHairstyleAvailableForRaceGender(currChar.Profile.Tribe, currChar.Profile.Gender, globalCache.HairstyleStorage.GetHairstyleFromItemId(itemId)))
+                        !globalCache.HairstyleStorage.IsHairstyleAvailableForTribeGender(currChar.Profile.Tribe, currChar.Profile.Gender, ids))
                     {
                         ImGui.TextUnformatted($"N/A");
                     }

@@ -58,8 +58,8 @@ namespace Altoholic.Models
         public int Irregular_Tomestone_Of_Astronomy_II { get; init; }
         public int Irregular_Tomestone_Of_Creation { get; init; }
         public int Irregular_Tomestone_Of_Esoterics { get; init; }
-        public int Irregular_Tomestone_Of_Genesis_i { get; init; }
-        public int Irregular_Tomestone_Of_Genesis_ii { get; init; }
+        public int Irregular_Tomestone_Of_Genesis_I { get; init; }
+        public int Irregular_Tomestone_Of_Genesis_II { get; init; }
         public int Irregular_Tomestone_Of_Goetia { get; init; }
         public int Irregular_Tomestone_Of_Law { get; init; }
         public int Irregular_Tomestone_Of_Lore { get; init; }
@@ -71,7 +71,7 @@ namespace Altoholic.Models
         public int Irregular_Tomestone_Of_Revelation { get; init; }
         public int Irregular_Tomestone_Of_Scripture { get; init; }
         public int Irregular_Tomestone_Of_Soldiery { get; init; }
-        public int Irregular_Tomestone_Of_Tenfold_pageantry { get; init; }
+        public int Irregular_Tomestone_Of_Tenfold_Pageantry { get; init; }
         public int Irregular_Tomestone_Of_Verity { get; init; }
         public int Islanders_Cowrie { get; init; }
         public int Ixali_Oaknot { get; init; }
@@ -136,8 +136,8 @@ namespace Altoholic.Models
         public int Yo_Kai_Legendary_Robonyan_f_type_Medal { get; init; }
         public int Yo_Kai_Legendary_Usapyon_Medal { get; init; }
         public int Yo_Kai_Legendary_Zazel_Medal { get; init; }
-        public int Yo_Kai_Legendary_lord_ananta_Medal { get; init; }
-        public int Yo_Kai_Legendary_Lord_enma_Medal { get; init; }
+        public int Yo_Kai_Legendary_Lord_Ananta_Medal { get; init; }
+        public int Yo_Kai_Legendary_Lord_Enma_Medal { get; init; }
         public int Yo_Kai_Legendary_Damona_Medal { get; init; }
         public int Yo_Kai_Medal { get; init; }
         public int Yok_Huy_Ward { get; init; }
