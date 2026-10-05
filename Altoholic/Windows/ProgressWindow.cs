@@ -8,17 +8,11 @@ using Dalamud.Interface;
 using Dalamud.Interface.Textures.TextureWraps;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
-using FFXIVClientStructs.FFXIV.Client.Game;
-using FFXIVClientStructs.FFXIV.Client.Game.Event;
 using Lumina.Excel.Sheets;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using Emote = Altoholic.Models.Emote;
-using Mount = Altoholic.Models.Mount;
-using Ornament = Altoholic.Models.Ornament;
-using TripleTriadCard = Altoholic.Models.TripleTriadCard;
 
 namespace Altoholic.Windows
 {
@@ -26,7 +20,7 @@ namespace Altoholic.Windows
     {
         private readonly Plugin _plugin;
         private ClientLanguage _currentLocale;
-        private GlobalCache _globalCache;
+        private readonly GlobalCache _globalCache;
         private bool _isSpoilerEnabled;
 
         public ProgressWindow(
@@ -63,7 +57,7 @@ namespace Altoholic.Windows
         private readonly IDalamudTextureWrap? _commendationIcon;
         private readonly IDalamudTextureWrap? _chevronTexture;
         private IDalamudTextureWrap? _rolesTextureWrap;
-        private IDalamudTextureWrap? _customDeliveriesTextureWrap;
+        private readonly IDalamudTextureWrap? _customDeliveriesTextureWrap;
 
         private bool _rightChevron = true;
         private bool _downChevron;
@@ -98,6 +92,24 @@ namespace Altoholic.Windows
             List<Character> chars = [];
             chars.Insert(0, GetPlayer.Invoke());
             chars.AddRange(GetOthersCharactersList.Invoke());
+
+#if DEBUG
+                    //Dummy generation
+                    for (int i = 0; i < 40; i++)
+                    {
+                        chars.Add(new Character()
+                        {
+                            FirstName = $"Dummy {i}",
+                            LastName = $"LN {i}",
+                            HomeWorld = $"Homeworld {i}",
+                            Datacenter = $"EU",
+                            FCTag = $"FC {i}",
+                            Currencies = [],
+                            LastOnline = 0,
+                            PlayTime = 0,
+                        });
+                    }
+#endif
 
             using var table = ImRaii.Table("###CharactersProgressTable", 2);
             if (!table) return;
@@ -471,7 +483,9 @@ namespace Altoholic.Windows
                             $"###CharactersProgress#All#Duty#{duName}_{ex.i}#Table#{c.CharacterId}",
                             ImGuiTableColumnFlags.WidthFixed, 20);
                     }
-                    ImGui.TableSetupScrollFreeze(columns, 1);//Freeze header so it shows while scrolling
+                    //ImGui.TableSetupScrollFreeze(columns, 1);//Freeze header so it shows while scrolling
+                    ImGui.TableSetupScrollFreeze(1, 1);
+
                     ImGui.TableNextRow();
                     ImGui.TableSetColumnIndex(0);
                     ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 2225));
@@ -627,7 +641,10 @@ namespace Altoholic.Windows
                 ImGui.TableSetupColumn($"###CharactersProgress#All#MSQ#{c.CharacterId}",
                     ImGuiTableColumnFlags.WidthFixed, 20);
             }
-            ImGui.TableSetupScrollFreeze(columns, 1);//Freeze header so it shows while scrolling
+
+            //ImGui.TableSetupScrollFreeze(columns, 1);//Freeze header so it shows while scrolling
+            ImGui.TableSetupScrollFreeze(1, 1);
+
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
             ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 1898));
@@ -791,7 +808,10 @@ namespace Altoholic.Windows
                 ImGui.TableSetupColumn($"###CharactersProgress#All#Hildibrand#{c.CharacterId}",
                     ImGuiTableColumnFlags.WidthFixed, 20);
             }
-            ImGui.TableSetupScrollFreeze(columns, 1);//Freeze header so it shows while scrolling
+
+            //ImGui.TableSetupScrollFreeze(columns, 1);//Freeze header so it shows while scrolling
+            ImGui.TableSetupScrollFreeze(1, 1);
+
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
             ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 1898));
@@ -872,7 +892,10 @@ namespace Altoholic.Windows
                 ImGui.TableSetupColumn($"###CharactersProgress#All#RoleQuest#{c.CharacterId}",
                     ImGuiTableColumnFlags.WidthFixed, 20);
             }
-            ImGui.TableSetupScrollFreeze(columns, 1);//Freeze header so it shows while scrolling
+
+            //ImGui.TableSetupScrollFreeze(columns, 1);//Freeze header so it shows while scrolling
+            ImGui.TableSetupScrollFreeze(1, 1);
+
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
             ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 1898));
@@ -976,7 +999,9 @@ namespace Altoholic.Windows
                 ImGui.TableSetupColumn($"###CharactersProgress#All#Tribe#{c.CharacterId}",
                     ImGuiTableColumnFlags.WidthFixed, 20);
             }
-            ImGui.TableSetupScrollFreeze(columns, 1);//Freeze header so it shows while scrolling
+            //ImGui.TableSetupScrollFreeze(columns, 1);//Freeze header so it shows while scrolling
+            ImGui.TableSetupScrollFreeze(1, 1);
+
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
             ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 1898));

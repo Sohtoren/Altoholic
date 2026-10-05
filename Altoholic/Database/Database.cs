@@ -1444,7 +1444,7 @@ namespace Altoholic.Database
                     return new { f.Path, ParsedDate = goodFormat ? (DateTime?)datetime : null };
                 })
                 .Where(f => f.ParsedDate.HasValue)
-                .OrderByDescending(f => f.ParsedDate.Value)
+                .OrderByDescending(f => f.ParsedDate!.Value)
                 .ToList();
 
             if (files.Count <= 5) return;

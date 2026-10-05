@@ -227,7 +227,10 @@ namespace Altoholic.Helpers
                 ImGui.TableSetupColumn($"###CharactersProgress#All#CustomDelivery#{c.CharacterId}",
                     ImGuiTableColumnFlags.WidthFixed, 20);
             }
-            ImGui.TableSetupScrollFreeze(columns, 1);//Freeze header so it shows while scrolling
+
+            //ImGui.TableSetupScrollFreeze(columns, 1);//Freeze header so it shows while scrolling
+            ImGui.TableSetupScrollFreeze(1, 1);
+
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
             ImGui.TextUnformatted(globalCache.AddonStorage.LoadAddonString(currentLocale, 1898));

@@ -161,7 +161,10 @@ namespace Altoholic.Windows
                 ImGui.TableSetupColumn($"###PvP#All#Table#Name#{c.CharacterId}",
                     ImGuiTableColumnFlags.WidthFixed, ImGui.CalcTextSize("100").X + 5);
             }
-            ImGui.TableSetupScrollFreeze(columns, 1);//Freeze header so it shows while scrolling
+
+            //ImGui.TableSetupScrollFreeze(columns, 1);//Freeze header so it shows while scrolling
+            ImGui.TableSetupScrollFreeze(1, 1);
+
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
             ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 1885));

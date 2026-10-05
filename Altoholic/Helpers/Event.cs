@@ -15,7 +15,7 @@ namespace Altoholic.Helpers
 {
     public abstract class Event
     {
-        public static List<List<bool>> GetCharactersEventsQuests(List<Character> characters)
+        private static List<List<bool>> GetCharactersEventsQuests(List<Character> characters)
         {
             List<List<bool>> result = [];
             foreach (Character character in characters)
@@ -243,8 +243,8 @@ namespace Altoholic.Helpers
                 ImGui.EndTooltip();
             }
 
-            ImGui.SetNextWindowSize(new Vector2(800, 400));
-            //ImGui.SetNextWindowSizeConstraints(new Vector2(800, 400), new Vector2(-1, -1));
+            //ImGui.SetNextWindowSize(new Vector2(800, 400));
+            ImGui.SetNextWindowSizeConstraints(new Vector2(800, 400), new Vector2(2000, 800));
             using var rewardModal = ImRaii.PopupModal($"###CharactersProgress#All#Event#RewardModal#{msqIndex}");
             if (!rewardModal)
             {
@@ -293,7 +293,9 @@ namespace Altoholic.Helpers
                     ImGuiTableColumnFlags.WidthFixed, 20);
             }
 
-            ImGui.TableSetupScrollFreeze(1, 1); //Freeze header so it shows while scrolling
+            //ImGui.TableSetupScrollFreeze(columns, 1); //Freeze header so it shows while scrolling
+            ImGui.TableSetupScrollFreeze(1, 1);
+
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
             ImGui.TextUnformatted(globalCache.AddonStorage.LoadAddonString(currentLocale, 1885));
@@ -327,7 +329,8 @@ namespace Altoholic.Helpers
 
             DrawEventReward(currentLocale, globalCache, chars, msqIndex);
         }
-        public static void DrawMultiTabRewardsModal(ClientLanguage currentLocale, GlobalCache globalCache, List<Character> chars, int msqIndex)
+
+        private static void DrawMultiTabRewardsModal(ClientLanguage currentLocale, GlobalCache globalCache, List<Character> chars, int msqIndex)
         {
             if (ImGui.IsItemClicked())
             {
@@ -343,8 +346,8 @@ namespace Altoholic.Helpers
                 ImGui.EndTooltip();
             }
 
-            ImGui.SetNextWindowSize(new Vector2(800, 400));
-            //ImGui.SetNextWindowSizeConstraints(new Vector2(800, 400), new Vector2(-1,-1));
+            //ImGui.SetNextWindowSize(new Vector2(800, 400));
+            ImGui.SetNextWindowSizeConstraints(new Vector2(800, 400), new Vector2(2000, 800));
             using var rewardModal = ImRaii.PopupModal($"###CharactersProgress#All#Event#MultiRewardModal#{msqIndex}");
             if (!rewardModal)
             {
@@ -402,7 +405,9 @@ namespace Altoholic.Helpers
                             ImGuiTableColumnFlags.WidthFixed, 20);
                     }
 
-                    ImGui.TableSetupScrollFreeze(columns, 1); //Freeze header so it shows while scrolling
+                    //ImGui.TableSetupScrollFreeze(columns, 1); //Freeze header so it shows while scrollingTableSetupScrollFreeze(1, 1);
+                    ImGui.TableSetupScrollFreeze(1, 1);
+
                     ImGui.TableNextRow();
                     ImGui.TableSetColumnIndex(0);
                     ImGui.TextUnformatted(globalCache.AddonStorage.LoadAddonString(currentLocale, 1885));
@@ -469,7 +474,9 @@ namespace Altoholic.Helpers
                             ImGuiTableColumnFlags.WidthFixed, 20);
                     }
 
-                    ImGui.TableSetupScrollFreeze(columns, 1); //Freeze header so it shows while scrolling
+                    //ImGui.TableSetupScrollFreeze(columns, 1); //Freeze header so it shows while scrolling
+                    ImGui.TableSetupScrollFreeze(1, 1);
+
                     ImGui.TableNextRow();
                     ImGui.TableSetColumnIndex(0);
                     ImGui.TextUnformatted(globalCache.AddonStorage.LoadAddonString(currentLocale, 1885));
@@ -1266,7 +1273,9 @@ namespace Altoholic.Helpers
                         ImGui.TableSetupColumn($"###CharactersProgress#All#Event#2013141516#{c.CharacterId}",
                             ImGuiTableColumnFlags.WidthFixed, 20);
                     }
-                    ImGui.TableSetupScrollFreeze(columns, 1);//Freeze header so it shows while scrolling
+                    //ImGui.TableSetupScrollFreeze(columns, 1);//Freeze header so it shows while scrolling
+                    ImGui.TableSetupScrollFreeze(1, 1);
+
                     ImGui.TableNextRow();
                     ImGui.TableSetColumnIndex(0);
                     ImGui.TextUnformatted($"{globalCache.AddonStorage.LoadAddonString(currentLocale, 1898)} ({Loc.Localize("ClickToDisplayRewards", "Click to display rewards")})");
@@ -1406,7 +1415,7 @@ namespace Altoholic.Helpers
             using var moogleRewards = ImRaii.TabItem($"{mogEventName}");
             if (moogleRewards.Success)
             {
-                Helpers.MoogleEvent.DrawRewards(currentLocale, globalCache, chars);
+                MoogleEvent.DrawRewards(currentLocale, globalCache, chars);
             }
         }
 
@@ -1419,11 +1428,11 @@ namespace Altoholic.Helpers
             ImGui.TextUnformatted(name);
             if (eventIndex is 140)
             {
-                Helpers.Event.DrawMultiTabRewardsModal(currentLocale, globalCache, chars, eventIndex);
+                DrawMultiTabRewardsModal(currentLocale, globalCache, chars, eventIndex);
             }
-            if (eventIndex is not 140 && (Helpers.Event.GetEventCurrencyFromEventId(eventIndex) != 0 || eventIndex is 29 or 41 or 113 or 137))
+            if (eventIndex is not 140 && (GetEventCurrencyFromEventId(eventIndex) != 0 || eventIndex is 29 or 41 or 113 or 137))
             {
-                Helpers.Event.DrawRewardsModal(currentLocale, globalCache, chars, eventIndex);
+                DrawRewardsModal(currentLocale, globalCache, chars, eventIndex);
             }
             foreach ((List<bool> cq, int index) charactersQuest in charactersQuests.Select((cq, index) => (cq, index)))
             {
@@ -1471,7 +1480,9 @@ namespace Altoholic.Helpers
                                     ImGuiTableColumnFlags.WidthFixed, 25);
                             }
 
-                            ImGui.TableSetupScrollFreeze(columns, 1); //Freeze header so it shows while scrolling
+                            //ImGui.TableSetupScrollFreeze(columns, 1); //Freeze header so it shows while scrolling
+                            ImGui.TableSetupScrollFreeze(1, 1);
+
                             ImGui.TableNextRow();
                             ImGui.TableSetColumnIndex(0);
                             ImGui.TextUnformatted(globalCache.AddonStorage.LoadAddonString(currentLocale, 1885));
@@ -1541,7 +1552,9 @@ namespace Altoholic.Helpers
                                     ImGuiTableColumnFlags.WidthFixed, 25);
                             }
 
-                            ImGui.TableSetupScrollFreeze(columns, 1); //Freeze header so it shows while scrolling
+                            //ImGui.TableSetupScrollFreeze(columns, 1); //Freeze header so it shows while scrolling
+                            ImGui.TableSetupScrollFreeze(1, 1);
+
                             ImGui.TableNextRow();
                             ImGui.TableSetColumnIndex(0);
                             ImGui.TextUnformatted(globalCache.AddonStorage.LoadAddonString(currentLocale, 1885));
@@ -1589,67 +1602,67 @@ namespace Altoholic.Helpers
             if (nonCollectableTab.Success)
             {
                 int columns = chars.Count + 2;
-                using (var charactersEventTable = ImRaii.Table(
-                $"###CharactersProgress#All#Event#Blunderville#Table#NonCollectable#Table",
-                columns,
-                ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner |
-                ImGuiTableFlags.ScrollX | ImGuiTableFlags.ScrollY))
+                using var charactersEventTable = ImRaii.Table(
+                    $"###CharactersProgress#All#Event#Blunderville#Table#NonCollectable#Table",
+                    columns,
+                    ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner |
+                    ImGuiTableFlags.ScrollX | ImGuiTableFlags.ScrollY);
+                if (charactersEventTable)
                 {
-                    if (charactersEventTable)
+                    ImGui.TableSetupColumn($"###CharactersProgress#All#Event#Blunderville#NonCollectable#Table#Name",
+                        ImGuiTableColumnFlags.WidthFixed, 270);
+                    ImGui.TableSetupColumn($"###CharactersProgress#All#Event#Blunderville#NonCollectable#Table#Currency",
+                        ImGuiTableColumnFlags.WidthFixed, ImGui.CalcTextSize("1000").X + 5);
+                    foreach (Character c in chars)
                     {
-                        ImGui.TableSetupColumn($"###CharactersProgress#All#Event#Blunderville#NonCollectable#Table#Name",
-                            ImGuiTableColumnFlags.WidthFixed, 270);
-                        ImGui.TableSetupColumn($"###CharactersProgress#All#Event#Blunderville#NonCollectable#Table#Currency",
-                            ImGuiTableColumnFlags.WidthFixed, ImGui.CalcTextSize("1000").X + 5);
-                        foreach (Character c in chars)
-                        {
-                            ImGui.TableSetupColumn($"###CharactersProgress#All#Event#Blunderville#NonCollectable#Table#{c.CharacterId}",
-                                ImGuiTableColumnFlags.WidthFixed, 25);
-                        }
+                        ImGui.TableSetupColumn($"###CharactersProgress#All#Event#Blunderville#NonCollectable#Table#{c.CharacterId}",
+                            ImGuiTableColumnFlags.WidthFixed, 25);
+                    }
 
-                        ImGui.TableSetupScrollFreeze(columns, 1); //Freeze header so it shows while scrolling
-                        ImGui.TableNextRow();
-                        ImGui.TableSetColumnIndex(0);
-                        ImGui.TextUnformatted(globalCache.AddonStorage.LoadAddonString(currentLocale, 1885));
+                    //ImGui.TableSetupScrollFreeze(columns, 1); //Freeze header so it shows while scrolling
+                    ImGui.TableSetupScrollFreeze(1, 1);
 
-                        ImGui.TableSetColumnIndex(1);
-                        Item? itm = globalCache.ItemStorage.LoadItem(currentLocale,
-                            (uint)Currencies.MGF);
-                        if (itm == null) return;
-                        Utils.DrawIcon(globalCache.IconStorage.LoadIcon(itm.Value.Icon), new Vector2(16, 16));
+                    ImGui.TableNextRow();
+                    ImGui.TableSetColumnIndex(0);
+                    ImGui.TextUnformatted(globalCache.AddonStorage.LoadAddonString(currentLocale, 1885));
+
+                    ImGui.TableSetColumnIndex(1);
+                    Item? itm = globalCache.ItemStorage.LoadItem(currentLocale,
+                        (uint)Currencies.MGF);
+                    if (itm == null) return;
+                    Utils.DrawIcon(globalCache.IconStorage.LoadIcon(itm.Value.Icon), new Vector2(16, 16));
+                    if (ImGui.IsItemHovered())
+                    {
+                        Utils.DrawItemTooltip(currentLocale, ref globalCache, itm.Value);
+                    }
+
+                    int neededMGF = 1100;
+                    Dictionary<ulong, int> charactersTotalNeededMGF = [];
+                    foreach (Character currChar in chars)
+                    {
+                        ImGui.TableNextColumn();
+                        ImGui.TextUnformatted($"{currChar.FirstName[0]}.{currChar.LastName[0]}");
                         if (ImGui.IsItemHovered())
                         {
-                            Utils.DrawItemTooltip(currentLocale, ref globalCache, itm.Value);
+                            ImGui.BeginTooltip();
+                            ImGui.TextUnformatted(
+                                $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
+                            ImGui.EndTooltip();
                         }
 
-                        int neededMGF = 1100;
-                        Dictionary<ulong, int> charactersTotalNeededMGF = [];
-                        foreach (Character currChar in chars)
-                        {
-                            ImGui.TableNextColumn();
-                            ImGui.TextUnformatted($"{currChar.FirstName[0]}.{currChar.LastName[0]}");
-                            if (ImGui.IsItemHovered())
-                            {
-                                ImGui.BeginTooltip();
-                                ImGui.TextUnformatted(
-                                    $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
-                                ImGui.EndTooltip();
-                            }
-
-                            charactersTotalNeededMGF[currChar.CharacterId] = neededMGF;
-                        }
-                        Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 41437, 220, charactersTotalNeededMGF);
-                        Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 41438, 220, charactersTotalNeededMGF);
-                        Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 41439, 220, charactersTotalNeededMGF);
-                        Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 41440, 220, charactersTotalNeededMGF);
-                        Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 41441, 220, charactersTotalNeededMGF);
-                        Helpers.Reward.DrawAllCharsTotal(currentLocale, globalCache, chars, Currencies.MGF, neededMGF, charactersTotalNeededMGF);
+                        charactersTotalNeededMGF[currChar.CharacterId] = neededMGF;
                     }
+                    Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 41437, 220, charactersTotalNeededMGF);
+                    Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 41438, 220, charactersTotalNeededMGF);
+                    Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 41439, 220, charactersTotalNeededMGF);
+                    Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 41440, 220, charactersTotalNeededMGF);
+                    Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 41441, 220, charactersTotalNeededMGF);
+                    Helpers.Reward.DrawAllCharsTotal(currentLocale, globalCache, chars, Currencies.MGF, neededMGF, charactersTotalNeededMGF);
                 }
             }
         }
 
-        public static void DrawEventReward(ClientLanguage currentLocale, GlobalCache globalCache, List<Character> chars, int msqIndex)
+        private static void DrawEventReward(ClientLanguage currentLocale, GlobalCache globalCache, List<Character> chars, int msqIndex)
          {
             switch (msqIndex)
 
@@ -2165,64 +2178,64 @@ namespace Altoholic.Helpers
                     }
                 case 128: /*The Rising (2025)*/
                     {
-                        Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Emote, 546, 0);
+                        Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Emote, 546, 0);
                         break;
                     }
                 case 129: /*All Saints' Wake (2025)*/
                     {
-                        Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Mount, 396, 0);
+                        Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Mount, 396, 0);
                         break;
                     }
                 case 130: /*Starlight Celebration (2025)*/
                     {
-                        Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Emote, 298, 0);
-                        Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Emote, 299, 0);
-                        Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Emote, 300, 0);
-                        Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Emote, 301, 0);
-                        Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Emote, 302, 0);
-                        Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Emote, 303, 0);
+                        Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Emote, 298, 0);
+                        Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Emote, 299, 0);
+                        Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Emote, 300, 0);
+                        Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Emote, 301, 0);
+                        Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Emote, 302, 0);
+                        Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Emote, 303, 0);
                         break;
                     }
                 case 131: /*Heavensturn (2026)*/
                     {
-                        Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Minion, 529, 0);
+                        Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Minion, 529, 0);
 
                         break;
                     }
                 case 132: /*Valentione's Day (2026)*/
                     {
-                        Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Orchestrion, 825, 2);
-                        Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Orchestrion, 826, 2);
-                        Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Orchestrion, 827, 2);
+                        Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Orchestrion, 825, 2);
+                        Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Orchestrion, 826, 2);
+                        Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Orchestrion, 827, 2);
                         break;
                     }
                 case 133: /*Little Ladies' Day (2026)*/
                     {
-                        Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Emote, 322, 1);
-                        Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Emote, 324, 1);
-                        Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Orchestrion, 805, 2);
-                        Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 50848, 2);
-                        Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 50849, 2);
-                        Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 50850, 2);
-                        Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 50851, 2);
-                        Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 49862, 1);
-                        Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 49863, 1);
-                        Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 47352, 3);
+                        Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Emote, 322, 1);
+                        Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Emote, 324, 1);
+                        Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Orchestrion, 805, 2);
+                        Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 50848, 2);
+                        Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 50849, 2);
+                        Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 50850, 2);
+                        Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 50851, 2);
+                        Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 49862, 1);
+                        Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 49863, 1);
+                        Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 47352, 3);
                         break;
                     }
                 case 134: /*Hatching-tide (2026)*/
                     {
-                        Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Glass, 481, 20);
-                        Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Glass, 505, 20);
-                        Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Glass, 517, 20);
-                        Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Glass, 529, 20);
-                        Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Glass, 541, 20);
+                        Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Glass, 481, 20);
+                        Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Glass, 505, 20);
+                        Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Glass, 517, 20);
+                        Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Glass, 529, 20);
+                        Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Glass, 541, 20);
                         break;
                     }
                 case 135: /*The Make It Rain Campaign (2026)*/
                     {
-                        Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Minion, 579, 0);
-                        Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Ornament, 52, 0);
+                        Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Minion, 579, 0);
+                        Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Ornament, 52, 0);
                         break;
                     }
                 case 136: /*Breaking Brick Mountains (2026)*/
@@ -2230,94 +2243,94 @@ namespace Altoholic.Helpers
                         uint? fkId = globalCache.FramerKitStorage.GetFramerKitIdFromItemId(51998);
                         if (fkId is not null)
                         {
-                            Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.FramerKit, fkId.Value, 1282);
+                            Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.FramerKit, fkId.Value, 1282);
                         }
-                        Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 8576, 57);
+                        Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 8576, 57);
                         break;
                     }
                 case 137: /*Yo-kai Watch: Gather One, Gather All (2026)*/
                     {
-                        Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Minion, 200, 0);
-                        Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Minion, 201, 0);
-                        Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Minion, 202, 0);
-                        Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Minion, 203, 0);
-                        Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Minion, 204, 0);
-                        Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Minion, 205, 0);
-                        Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Minion, 206, 0);
-                        Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Minion, 207, 0);
-                        Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Minion, 208, 0);
-                        Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Minion, 209, 0);
-                        Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Minion, 210, 0);
-                        Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Minion, 211, 0);
-                        Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Minion, 212, 0);
-                        Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Minion, 390, 0);
-                        Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Minion, 391, 0);
-                        Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Minion, 392, 0);
-                        Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Minion, 393, 0);
+                        Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Minion, 200, 0);
+                        Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Minion, 201, 0);
+                        Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Minion, 202, 0);
+                        Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Minion, 203, 0);
+                        Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Minion, 204, 0);
+                        Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Minion, 205, 0);
+                        Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Minion, 206, 0);
+                        Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Minion, 207, 0);
+                        Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Minion, 208, 0);
+                        Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Minion, 209, 0);
+                        Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Minion, 210, 0);
+                        Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Minion, 211, 0);
+                        Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Minion, 212, 0);
+                        Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Minion, 390, 0);
+                        Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Minion, 391, 0);
+                        Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Minion, 392, 0);
+                        Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Minion, 393, 0);
                         uint? fkId = globalCache.FramerKitStorage.GetFramerKitIdFromItemId(41797);
                         if (fkId is not null)
                         {
-                            Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.FramerKit, fkId.Value, 0);
+                            Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.FramerKit, fkId.Value, 0);
                         }
 
-                        Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 15208);
-                        Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 15221);
-                        Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 15209);
-                        Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 15210);
-                        Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 15211);
-                        Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 15212);
-                        Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 15213);
-                        Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 15214);
-                        Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 15215);
-                        Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 15216);
-                        Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 15217);
-                        Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 15218);
-                        Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 15219);
-                        Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 15220);
-                        Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 30807);
-                        Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 30808);
-                        Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 30809);
-                        Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 30810);
+                        Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 15208);
+                        Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 15221);
+                        Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 15209);
+                        Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 15210);
+                        Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 15211);
+                        Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 15212);
+                        Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 15213);
+                        Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 15214);
+                        Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 15215);
+                        Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 15216);
+                        Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 15217);
+                        Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 15218);
+                        Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 15219);
+                        Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 15220);
+                        Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 30807);
+                        Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 30808);
+                        Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 30809);
+                        Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 30810);
                         break;
                     }
                 case 138: /*Moonfire Faire (2026)*/
                     {
-                        Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 49873, 5000);
-                        Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 49874, 5000);
-                        Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 49875, 5000);
-                        Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 50083, 2000);
-                        Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 50084, 3000);
-                        Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 50085, 2000);
+                        Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 49873, 5000);
+                        Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 49874, 5000);
+                        Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 49875, 5000);
+                        Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 50083, 2000);
+                        Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 50084, 3000);
+                        Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 50085, 2000);
                         break;
                     }
                 case 139: /*The Rising (2026)*/
                     {
-                        Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 51300, 3000);
-                        Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 51299, 2000);
-                        Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 51301, 2000);
+                        Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 51300, 3000);
+                        Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 51299, 2000);
+                        Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 51301, 2000);
                         break;
                     }
                 case 140: /*A Nocturne for Heroes (2026)*/
                     {
-                        Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Mount, 151, 200000);
-                        Helpers.Reward.DrawAllCharsHairstyle(currentLocale, globalCache, chars, 24802, 20000);
-                        Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.TripleTriadCard, 252, 10000);
+                        Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Mount, 151, 200000);
+                        Reward.DrawAllCharsHairstyle(currentLocale, globalCache, chars, 24802, 20000);
+                        Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.TripleTriadCard, 252, 10000);
                         break;
                     }
                 case -140:
                     {
-                        Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Orchestrion, 299, 1);
-                        Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Orchestrion, 300, 1);
-                        Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Orchestrion, 301, 1);
-                        Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Orchestrion, 302, 1);
-                        Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Orchestrion, 303, 1);
-                        Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Orchestrion, 304, 1);
+                        Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Orchestrion, 299, 1);
+                        Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Orchestrion, 300, 1);
+                        Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Orchestrion, 301, 1);
+                        Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Orchestrion, 302, 1);
+                        Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Orchestrion, 303, 1);
+                        Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Orchestrion, 304, 1);
                         break;
                     }
             }
         }
 
-        internal static float GetEventRewardLongestName(ClientLanguage currentLocale, GlobalCache globalCache, int msqIndex)
+        private static float GetEventRewardLongestName(ClientLanguage currentLocale, GlobalCache globalCache, int msqIndex)
         {
             return msqIndex switch
             {

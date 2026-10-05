@@ -7,6 +7,7 @@ using Dalamud.Game.Text;
 using Dalamud.Interface;
 using Dalamud.Interface.Utility.Raii;
 using Lumina.Excel.Sheets;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Numerics;
@@ -197,7 +198,10 @@ namespace Altoholic.Helpers
                 ImGui.TableSetupColumn($"###CharactersProgress#All#FieldOperations#Bozja#Rewards#{c.CharacterId}",
                     ImGuiTableColumnFlags.WidthFixed, ImGui.CalcTextSize("10,000,000").X + 5);
             }
-            ImGui.TableSetupScrollFreeze(1, 1);//Freeze header so it shows while scrolling
+
+            //ImGui.TableSetupScrollFreeze(chars.Count + 1, 1);//Freeze header so it shows while scrolling
+            ImGui.TableSetupScrollFreeze(1, 1);
+
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
             ImGui.TextUnformatted("");
@@ -298,7 +302,9 @@ namespace Altoholic.Helpers
                     ImGuiTableColumnFlags.WidthFixed, 20);
             }
 
-            ImGui.TableSetupScrollFreeze(1, 1);//Freeze header so it shows while scrolling
+            //ImGui.TableSetupScrollFreeze(chars.Count, 1);//Freeze header so it shows while scrolling
+            ImGui.TableSetupScrollFreeze(1, 1);
+
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
             ImGui.TextUnformatted(globalCache.AddonStorage.LoadAddonString(currentLocale, 1918));
@@ -430,7 +436,8 @@ namespace Altoholic.Helpers
                         ClientLanguage.French => "Matériaux ultralégers pour équipement bozjien",
                         ClientLanguage.Japanese => "ボズヤ軽量補材",
                         _ => "Bozjan runner's secrets",
-                    }
+                    },
+                    _ => ""
                 };
 
                 using var bozjaRewardsTab =
@@ -459,7 +466,9 @@ namespace Altoholic.Helpers
                             ImGuiTableColumnFlags.WidthFixed, 20);
                     }
 
-                    ImGui.TableSetupScrollFreeze(columns, 1); //Freeze header so it shows while scrolling
+                    //ImGui.TableSetupScrollFreeze(columns, 1); //Freeze header so it shows while scrolling
+                    ImGui.TableSetupScrollFreeze(1, 1);
+
                     ImGui.TableNextRow();
                     ImGui.TableSetColumnIndex(0);
                     ImGui.TextUnformatted(globalCache.AddonStorage.LoadAddonString(currentLocale, 1918));
