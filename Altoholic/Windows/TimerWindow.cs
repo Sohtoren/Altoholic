@@ -847,7 +847,7 @@ namespace Altoholic.Windows
                             {
                                 if (currChar.Currencies is not null)
                                 {
-                                    if (currChar.Currencies.Weekly_Acquired_Tomestone == currChar.Currencies.Weekly_Limit_Tomestone)
+                                    if (currChar.Weekly_Acquired_Tomestone == currChar.Weekly_Limit_Tomestone)
                                     {
                                         ImGui.PushFont(UiBuilder.IconFont);
                                         ImGui.TextUnformatted($"{FontAwesomeIcon.Check.ToIconString()}");

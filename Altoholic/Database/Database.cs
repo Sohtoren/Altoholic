@@ -1,3 +1,4 @@
+using Altoholic.Database.Migrations;
 using Altoholic.Models;
 using Dapper;
 using Microsoft.Data.Sqlite;
@@ -542,7 +543,7 @@ namespace Altoholic.Database
                 Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, $"Current DB version is:{version}");
                 if (version is 1)
                 {
-                    bool result = Migrations.MigrateFromVersionOneToVersionTwo.Do(db, CharacterTableName);
+                    bool result = MigrateFromVersionOneToVersionTwo.Do(db, CharacterTableName);
                     if (result)
                     {
                         const string sql9 = $"UPDATE {VersionTableName} SET Version = 2";
@@ -634,6 +635,25 @@ namespace Altoholic.Database
                     Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, "Skipping migration");
                 }
             }
+
+            if (DoesTableExist(plugin, db, VersionTableName))
+            {
+                Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages,
+                    "Check version migration 7 to 8");
+                int? version = GetDbVersion(plugin, db);
+                Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages,
+                    $"Current DB version is:{version}");
+                if (version is not 7) return;
+
+                bool resultMigration = MigrateFromVersionSevenToVersionEight.Do(db, CharacterTableName,
+                    CharactersCurrenciesHistoryTableName);
+                if (!resultMigration) return;
+
+                const string sqlUpdate = $"UPDATE {VersionTableName} SET Version = 8";
+                int resultUpdate = db.Execute(sqlUpdate);
+
+                Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, $"Set db version to 8. Result: {resultUpdate}");
+            }
         }
 
         private static void BackupAndUpgradeDbVersion(Plugin plugin, SqliteConnection db, int oldVer, int newVer)
@@ -714,9 +734,10 @@ namespace Altoholic.Database
             while (currenciesHistoryEnumerator.MoveNext())
             {
                 DatabaseCurrenciesHistory dch = currenciesHistoryEnumerator.Current;
-                PlayerCurrencies? currencies =
-                    System.Text.Json.JsonSerializer.Deserialize<PlayerCurrencies>(dch.Currencies);
-                if (currencies == null) continue;
+                Dictionary<uint, int> currencies = string.IsNullOrEmpty(dch.Currencies)
+                ? []
+                : System.Text.Json.JsonSerializer.Deserialize<Dictionary<uint, int>>(dch.Currencies) ?? [];
+
                 currenciesHistories.Add(new CurrenciesHistory()
                 {
                     CharacterId = dch.CharacterId,
@@ -811,11 +832,6 @@ namespace Altoholic.Database
 
             try
             {
-                if (character.Currencies == null)
-                {
-                    return 0;
-                }
-
                 int result = AddCharacterCurrencyHistory(plugin, db, character.CharacterId, character.Currencies);
                 //Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, $"UpdateCharacterCurrencyHistory => AddCharacterCurrencyHistory result: {result}");
                 return result;
@@ -858,9 +874,9 @@ namespace Altoholic.Database
                 ? null
                 : System.Text.Json.JsonSerializer.Deserialize<Attributes>(databaseCharacter.Attributes);
             Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, "Attribes deserialized");
-            PlayerCurrencies? currencies = string.IsNullOrEmpty(databaseCharacter.Currencies)
-                ? null
-                : System.Text.Json.JsonSerializer.Deserialize<PlayerCurrencies>(databaseCharacter.Currencies);
+            Dictionary<uint,int> currencies = string.IsNullOrEmpty(databaseCharacter.Currencies)
+                ? []
+                : System.Text.Json.JsonSerializer.Deserialize<Dictionary<uint, int>>(databaseCharacter.Currencies) ?? [];
             Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, "Currencies deserialized");
             Jobs? jobs = string.IsNullOrEmpty(databaseCharacter.Jobs)
                 ? null
@@ -1322,7 +1338,7 @@ namespace Altoholic.Database
             return result;
         }
 
-        private static int AddCharacterCurrencyHistory(Plugin plugin, SqliteConnection db, ulong id, PlayerCurrencies pc)
+        private static int AddCharacterCurrencyHistory(Plugin plugin, SqliteConnection db, ulong id, Dictionary<uint, int> pc)
         {
             Utils.LogMessage(LogLevel.Debug, plugin.Configuration.EnableDebugMessages, "Entering AddCharacterCurrencyHistory()");
             long datetime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();

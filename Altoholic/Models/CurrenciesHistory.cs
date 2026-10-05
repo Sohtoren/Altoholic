@@ -1,9 +1,11 @@
-﻿namespace Altoholic.Models
+﻿using System.Collections.Generic;
+
+namespace Altoholic.Models
 {
     public class CurrenciesHistory
     {
         public ulong CharacterId { get; init; } = 0;
-        public PlayerCurrencies? Currencies { get; set; }
+        public Dictionary<uint, int> Currencies { get; set; } = [];
         public long Datetime { get; init; } = 0;
     }
 }

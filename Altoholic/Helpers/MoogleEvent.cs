@@ -105,7 +105,7 @@ namespace Altoholic.Helpers
                                 Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, Helpers.CharacterCollectible.Minion, 359, 7, charactersTotalNeededTomestone);
                                 Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, Helpers.CharacterCollectible.Mount, 208, 7, charactersTotalNeededTomestone);
                                 Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, Helpers.CharacterCollectible.Barding, 78, 5, charactersTotalNeededTomestone);
-                                Helpers.Reward.DrawAllCharsTotal(currentLocale, globalCache, chars, neededTomestone, charactersTotalNeededTomestone);
+                                Helpers.Reward.DrawAllCharsTotal(currentLocale, globalCache, chars, Currencies.IRREGULAR_TOMESTONE_OF_ASTRONOMY_I, neededTomestone, charactersTotalNeededTomestone);
                             }
                         }
                     }
@@ -174,7 +174,7 @@ namespace Altoholic.Helpers
                                 Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 13162, 15, charactersTotalNeededTomestone);
                                 Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 13174, 15, charactersTotalNeededTomestone);
                                 Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 13186, 15, charactersTotalNeededTomestone);
-                                Helpers.Reward.DrawAllCharsTotal(currentLocale, globalCache, chars, neededTomestone, charactersTotalNeededTomestone);
+                                Helpers.Reward.DrawAllCharsTotal(currentLocale, globalCache, chars, Currencies.IRREGULAR_TOMESTONE_OF_ASTRONOMY_I, neededTomestone, charactersTotalNeededTomestone);
                             }
                         }
                     }
@@ -241,7 +241,7 @@ namespace Altoholic.Helpers
                             Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 39918, 15, charactersTotalNeededTomestone);
                             Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 44349, 15, charactersTotalNeededTomestone);
                             Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 25005, 1, charactersTotalNeededTomestone);
-                            Helpers.Reward.DrawAllCharsTotal(currentLocale, globalCache, chars, neededTomestone, charactersTotalNeededTomestone);
+                            Helpers.Reward.DrawAllCharsTotal(currentLocale, globalCache, chars, Currencies.IRREGULAR_TOMESTONE_OF_ASTRONOMY_I, neededTomestone, charactersTotalNeededTomestone);
                         }
                     }
                 }
@@ -517,7 +517,7 @@ namespace Altoholic.Helpers
                             Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, Helpers.CharacterCollectible.Minion, 82, 7, charactersTotalNeededTomestone);
                             Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, Helpers.CharacterCollectible.Orchestrion, 371, 7, charactersTotalNeededTomestone);
                             Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, Helpers.CharacterCollectible.Barding, 48, 5, charactersTotalNeededTomestone);
-                            Helpers.Reward.DrawAllCharsTotal(currentLocale, globalCache, chars, neededTomestone, charactersTotalNeededTomestone);
+                            Helpers.Reward.DrawAllCharsTotal(currentLocale, globalCache, chars, Currencies.IRREGULAR_TOMESTONE_OF_APHORISM, neededTomestone, charactersTotalNeededTomestone);
                         }
                         break;
                     }

@@ -13,8 +13,8 @@ namespace Altoholic.Models
 
     public class Job
     {
-        public int Level { get; set; } = 0;
-        public int Exp { get; set; } = 0;
+        public int Level { get; init; } = 0;
+        public int Exp { get; init; } = 0;
     }
     public class JobName
     {

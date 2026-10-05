@@ -243,6 +243,7 @@ namespace Altoholic.Helpers
             }
 
             ImGui.SetNextWindowSize(new Vector2(800, 400));
+            //ImGui.SetNextWindowSizeConstraints(new Vector2(800, 400), new Vector2(-1, -1));
             using var rewardModal = ImRaii.PopupModal($"###CharactersProgress#All#Event#RewardModal#{msqIndex}");
             if (!rewardModal)
             {
@@ -342,6 +343,7 @@ namespace Altoholic.Helpers
             }
 
             ImGui.SetNextWindowSize(new Vector2(800, 400));
+            //ImGui.SetNextWindowSizeConstraints(new Vector2(800, 400), new Vector2(-1,-1));
             using var rewardModal = ImRaii.PopupModal($"###CharactersProgress#All#Event#MultiRewardModal#{msqIndex}");
             if (!rewardModal)
             {
@@ -1508,7 +1510,7 @@ namespace Altoholic.Helpers
                             Helpers.Reward.DrawAllCharsFramerKit(currentLocale, globalCache, chars, 41377, 200, charactersTotalNeededMGF);
                             Helpers.Reward.DrawAllCharsFramerKit(currentLocale, globalCache, chars, 41378, 200, charactersTotalNeededMGF);
                             Helpers.Reward.DrawAllCharsFramerKit(currentLocale, globalCache, chars, 41379, 200, charactersTotalNeededMGF);
-                            Helpers.Reward.DrawAllCharsTotal(currentLocale, globalCache, chars, neededMGF, charactersTotalNeededMGF);
+                            Helpers.Reward.DrawAllCharsTotal(currentLocale, globalCache, chars, Currencies.MGF, neededMGF, charactersTotalNeededMGF);
                         }
                     }
                 }
@@ -1575,7 +1577,7 @@ namespace Altoholic.Helpers
                             Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 41563, 410, charactersTotalNeededMGF);
                             Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 41564, 410, charactersTotalNeededMGF);
                             Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 41796, 410, charactersTotalNeededMGF);
-                            Helpers.Reward.DrawAllCharsTotal(currentLocale, globalCache, chars, neededMGF, charactersTotalNeededMGF);
+                            Helpers.Reward.DrawAllCharsTotal(currentLocale, globalCache, chars, Currencies.MGF, neededMGF, charactersTotalNeededMGF);
                         }
                     }
                 }
@@ -1640,7 +1642,7 @@ namespace Altoholic.Helpers
                         Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 41439, 220, charactersTotalNeededMGF);
                         Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 41440, 220, charactersTotalNeededMGF);
                         Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 41441, 220, charactersTotalNeededMGF);
-                        Helpers.Reward.DrawAllCharsTotal(currentLocale, globalCache, chars, neededMGF, charactersTotalNeededMGF);
+                        Helpers.Reward.DrawAllCharsTotal(currentLocale, globalCache, chars, Currencies.MGF, neededMGF, charactersTotalNeededMGF);
                     }
                 }
             }

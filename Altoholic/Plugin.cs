@@ -1599,153 +1599,15 @@ namespace Altoholic
             }
         }
 
-        private unsafe PlayerCurrencies GetPlayerCurrencies()
+        private unsafe void GetPlayerCurrencies()
         {
             ref InventoryManager inventoryManager = ref *InventoryManager.Instance();
-            return new PlayerCurrencies
-            {
-                Achievement_Certificate = inventoryManager.GetInventoryItemCount((uint)Currencies.ACHIEVEMENT_CERTIFICATE, false, false, false),
-                Allagan_Tomestone_Of_Aesthetics = inventoryManager.GetInventoryItemCount((uint)Currencies.ALLAGAN_TOMESTONE_OF_AESTHETICS, false, false, false),
-                Allagan_Tomestone_Of_Allegory = inventoryManager.GetInventoryItemCount((uint)Currencies.ALLAGAN_TOMESTONE_OF_ALLEGORY, false, false, false),
-                Allagan_Tomestone_Of_Aphorism = inventoryManager.GetInventoryItemCount((uint)Currencies.ALLAGAN_TOMESTONE_OF_APHORISM, false, false, false),
-                Allagan_Tomestone_Of_Astronomy = inventoryManager.GetInventoryItemCount((uint)Currencies.ALLAGAN_TOMESTONE_OF_ASTRONOMY, false, false, false),
-                Allagan_Tomestone_Of_Causality = inventoryManager.GetInventoryItemCount((uint)Currencies.ALLAGAN_TOMESTONE_OF_CAUSALITY, false, false, false),
-                Allagan_Tomestone_Of_Comedy = inventoryManager.GetInventoryItemCount((uint)Currencies.ALLAGAN_TOMESTONE_OF_COMEDY, false, false, false),
-                Allagan_Tomestone_Of_Creation = inventoryManager.GetInventoryItemCount((uint)Currencies.ALLAGAN_TOMESTONE_OF_CREATION, false, false, false),
-                Allagan_Tomestone_Of_Esoterics = inventoryManager.GetInventoryItemCount((uint)Currencies.ALLAGAN_TOMESTONE_OF_ESOTERICS, false, false, false),
-                Allagan_Tomestone_Of_Genesis = inventoryManager.GetInventoryItemCount((uint)Currencies.ALLAGAN_TOMESTONE_OF_GENESIS, false, false, false),
-                Allagan_Tomestone_Of_Goetia = inventoryManager.GetInventoryItemCount((uint)Currencies.ALLAGAN_TOMESTONE_OF_GOETIA, false, false, false),
-                Allagan_Tomestone_Of_Heliometry = inventoryManager.GetInventoryItemCount((uint)Currencies.ALLAGAN_TOMESTONE_OF_HELIOMETRY, false, false, false),
-                Allagan_Tomestone_Of_Law = inventoryManager.GetInventoryItemCount((uint)Currencies.ALLAGAN_TOMESTONE_OF_LAW, false, false, false),
-                Allagan_Tomestone_Of_Lore = inventoryManager.GetInventoryItemCount((uint)Currencies.ALLAGAN_TOMESTONE_OF_LORE, false, false, false),
-                Allagan_Tomestone_Of_Mathematics = inventoryManager.GetInventoryItemCount((uint)Currencies.ALLAGAN_TOMESTONE_OF_MATHEMATICS, false, false, false),
-                Allagan_Tomestone_Of_Mendacity = inventoryManager.GetInventoryItemCount((uint)Currencies.ALLAGAN_TOMESTONE_OF_MENDACITY, false, false, false),
-                Allagan_Tomestone_Of_Mnemonics = inventoryManager.GetInventoryItemCount((uint)Currencies.ALLAGAN_TOMESTONE_OF_MNEMONICS, false, false, false),
-                Allagan_Tomestone_Of_Mythology = inventoryManager.GetInventoryItemCount((uint)Currencies.ALLAGAN_TOMESTONE_OF_MYTHOLOGY, false, false, false),
-                Allagan_Tomestone_Of_Phantasmagoria = inventoryManager.GetInventoryItemCount((uint)Currencies.ALLAGAN_TOMESTONE_OF_PHANTASMAGORIA, false, false, false),
-                Allagan_Tomestone_Of_Philosophy = inventoryManager.GetInventoryItemCount((uint)Currencies.ALLAGAN_TOMESTONE_OF_PHILOSOPHY, false, false, false),
-                Allagan_Tomestone_Of_Poetics = inventoryManager.GetInventoryItemCount((uint)Currencies.ALLAGAN_TOMESTONE_OF_POETICS, false, false, false),
-                Allagan_Tomestone_Of_Revelation = inventoryManager.GetInventoryItemCount((uint)Currencies.ALLAGAN_TOMESTONE_OF_REVELATION, false, false, false),
-                Allagan_Tomestone_Of_Scripture = inventoryManager.GetInventoryItemCount((uint)Currencies.ALLAGAN_TOMESTONE_OF_SCRIPTURE, false, false, false),
-                Allagan_Tomestone_Of_Soldiery = inventoryManager.GetInventoryItemCount((uint)Currencies.ALLAGAN_TOMESTONE_OF_SOLDIERY, false, false, false),
-                Allagan_Tomestone_Of_Verity = inventoryManager.GetInventoryItemCount((uint)Currencies.ALLAGAN_TOMESTONE_OF_VERITY, false, false, false),
-                Allied_Seal = inventoryManager.GetInventoryItemCount((uint)Currencies.ALLIED_SEAL, false, false, false),
-                Ananta_Dreamstaff = inventoryManager.GetInventoryItemCount((uint)Currencies.ANANTA_DREAMSTAFF, false, false, false),
-                Arkasodara_Pana = inventoryManager.GetInventoryItemCount((uint)Currencies.ARKASODARA_PANA, false, false, false),
-                Auxesia_Credit = inventoryManager.GetInventoryItemCount((uint)Currencies.AUXESIA_CREDIT, false, false, false),
-                Bicolor_Gemstone = inventoryManager.GetInventoryItemCount((uint)Currencies.BICOLOR_GEMSTONE, false, false, false),
-                Black_Copper_Gil = inventoryManager.GetInventoryItemCount((uint)Currencies.BLACK_COPPER_GIL, false, false, false),
-                Bozjan_Cluster = inventoryManager.GetInventoryItemCount((uint)Currencies.BOZJAN_CLUSTER, false, false, false),
-                Carved_Kupo_Nut = inventoryManager.GetInventoryItemCount((uint)Currencies.CARVED_KUPO_NUT, false, false, false),
-                Centurio_Seal = inventoryManager.GetInventoryItemCount((uint)Currencies.CENTURIO_SEAL, false, false, false),
-                Cosmocredit = inventoryManager.GetInventoryItemCount((uint)Currencies.COSMOCREDIT, false, false, false),
-                Earth_Cluster = inventoryManager.GetInventoryItemCount((uint)Currencies.EARTH_CLUSTER, false, false, false),
-                Earth_Crystal = inventoryManager.GetInventoryItemCount((uint)Currencies.EARTH_CRYSTAL, false, false, false),
-                Earth_Shard = inventoryManager.GetInventoryItemCount((uint)Currencies.EARTH_SHARD, false, false, false),
-                Fae_Fancy = inventoryManager.GetInventoryItemCount((uint)Currencies.FAE_FANCY, false, false, false),
-                Faux_Leaf = inventoryManager.GetInventoryItemCount((uint)Currencies.FAUX_LEAF, false, false, false),
-                Felicitous_Token = inventoryManager.GetInventoryItemCount((uint)Currencies.FELICITOUS_TOKEN, false, false, false),
-                Fire_Cluster = inventoryManager.GetInventoryItemCount((uint)Currencies.FIRE_CLUSTER, false, false, false),
-                Fire_Crystal = inventoryManager.GetInventoryItemCount((uint)Currencies.FIRE_CRYSTAL, false, false, false),
-                Fire_Shard = inventoryManager.GetInventoryItemCount((uint)Currencies.FIRE_SHARD, false, false, false),
-                Flame_Seal = inventoryManager.GetInventoryItemCount((uint)Currencies.FLAME_SEAL, false, false, false),
-                Gil = inventoryManager.GetInventoryItemCount((uint)Currencies.GIL, false, false, false),
-                Hammered_Frogment = inventoryManager.GetInventoryItemCount((uint)Currencies.HAMMERED_FROGMENT, false, false, false),
-                Ice_Cluster = inventoryManager.GetInventoryItemCount((uint)Currencies.ICE_CLUSTER, false, false, false),
-                Ice_Crystal = inventoryManager.GetInventoryItemCount((uint)Currencies.ICE_CRYSTAL, false, false, false),
-                Ice_Shard = inventoryManager.GetInventoryItemCount((uint)Currencies.ICE_SHARD, false, false, false),
-                Irregular_Tomestone_Of_Allegory = inventoryManager.GetInventoryItemCount((uint)Currencies.IRREGULAR_TOMESTONE_OF_ALLEGORY, false, false, false),
-                Irregular_Tomestone_Of_Aphorism = inventoryManager.GetInventoryItemCount((uint)Currencies.IRREGULAR_TOMESTONE_OF_APHORISM, false, false, false),
-                Irregular_Tomestone_Of_Astronomy_I = inventoryManager.GetInventoryItemCount((uint)Currencies.IRREGULAR_TOMESTONE_OF_ASTRONOMY_I, false, false, false),
-                Irregular_Tomestone_Of_Astronomy_II = inventoryManager.GetInventoryItemCount((uint)Currencies.IRREGULAR_TOMESTONE_OF_ASTRONOMY_II, false, false, false),
-                Irregular_Tomestone_Of_Creation = inventoryManager.GetInventoryItemCount((uint)Currencies.IRREGULAR_TOMESTONE_OF_CREATION, false, false, false),
-                Irregular_Tomestone_Of_Esoterics = inventoryManager.GetInventoryItemCount((uint)Currencies.IRREGULAR_TOMESTONE_OF_ESOTERICS, false, false, false),
-                Irregular_Tomestone_Of_Genesis_I = inventoryManager.GetInventoryItemCount((uint)Currencies.IRREGULAR_TOMESTONE_OF_GENESIS_I, false, false, false),
-                Irregular_Tomestone_Of_Genesis_II = inventoryManager.GetInventoryItemCount((uint)Currencies.IRREGULAR_TOMESTONE_OF_GENESIS_II, false, false, false),
-                Irregular_Tomestone_Of_Goetia = inventoryManager.GetInventoryItemCount((uint)Currencies.IRREGULAR_TOMESTONE_OF_GOETIA, false, false, false),
-                Irregular_Tomestone_Of_Law = inventoryManager.GetInventoryItemCount((uint)Currencies.IRREGULAR_TOMESTONE_OF_LAW, false, false, false),
-                Irregular_Tomestone_Of_Lore = inventoryManager.GetInventoryItemCount((uint)Currencies.IRREGULAR_TOMESTONE_OF_LORE, false, false, false),
-                Irregular_Tomestone_Of_Mendacity = inventoryManager.GetInventoryItemCount((uint)Currencies.IRREGULAR_TOMESTONE_OF_MENDACITY, false, false, false),
-                Irregular_Tomestone_Of_Mythology = inventoryManager.GetInventoryItemCount((uint)Currencies.IRREGULAR_TOMESTONE_OF_MYTHOLOGY, false, false, false),
-                Irregular_Tomestone_Of_Pageantry = inventoryManager.GetInventoryItemCount((uint)Currencies.IRREGULAR_TOMESTONE_OF_PAGEANTRY, false, false, false),
-                Irregular_Tomestone_Of_Phantasmagoria = inventoryManager.GetInventoryItemCount((uint)Currencies.IRREGULAR_TOMESTONE_OF_PHANTASMAGORIA, false, false, false),
-                Irregular_Tomestone_Of_Philosophy = inventoryManager.GetInventoryItemCount((uint)Currencies.IRREGULAR_TOMESTONE_OF_PHILOSOPHY, false, false, false),
-                Irregular_Tomestone_Of_Revelation = inventoryManager.GetInventoryItemCount((uint)Currencies.IRREGULAR_TOMESTONE_OF_REVELATION, false, false, false),
-                Irregular_Tomestone_Of_Scripture = inventoryManager.GetInventoryItemCount((uint)Currencies.IRREGULAR_TOMESTONE_OF_SCRIPTURE, false, false, false),
-                Irregular_Tomestone_Of_Soldiery = inventoryManager.GetInventoryItemCount((uint)Currencies.IRREGULAR_TOMESTONE_OF_SOLDIERY, false, false, false),
-                Irregular_Tomestone_Of_Tenfold_Pageantry = inventoryManager.GetInventoryItemCount((uint)Currencies.IRREGULAR_TOMESTONE_OF_TENFOLD_PAGEANTRY, false, false, false),
-                Irregular_Tomestone_Of_Verity = inventoryManager.GetInventoryItemCount((uint)Currencies.IRREGULAR_TOMESTONE_OF_VERITY, false, false, false),
-                Islanders_Cowrie = inventoryManager.GetInventoryItemCount((uint)Currencies.ISLANDERS_COWRIE, false, false, false),
-                Ixali_Oaknot = inventoryManager.GetInventoryItemCount((uint)Currencies.IXALI_OAKNOT, false, false, false),
-                Kojin_Sango = inventoryManager.GetInventoryItemCount((uint)Currencies.KOJIN_SANGO, false, false, false),
-                Lightning_Cluster = inventoryManager.GetInventoryItemCount((uint)Currencies.LIGHTNING_CLUSTER, false, false, false),
-                Lightning_Crystal = inventoryManager.GetInventoryItemCount((uint)Currencies.LIGHTNING_CRYSTAL, false, false, false),
-                Lightning_Shard = inventoryManager.GetInventoryItemCount((uint)Currencies.LIGHTNING_SHARD, false, false, false),
-                Loporrit_Carat = inventoryManager.GetInventoryItemCount((uint)Currencies.LOPORRIT_CARAT, false, false, false),
-                Lunar_Credit = inventoryManager.GetInventoryItemCount((uint)Currencies.LUNAR_CREDIT, false, false, false),
-                Mamool_Ja_Nanook = inventoryManager.GetInventoryItemCount((uint)Currencies.MAMOOL_JA_NANOOK, false, false, false),
-                MGF = inventoryManager.GetInventoryItemCount((uint)Currencies.MGF, false, false, false),
-                MGP = inventoryManager.GetInventoryItemCount((uint)Currencies.MGP, false, false, false),
-                Namazu_Koban = inventoryManager.GetInventoryItemCount((uint)Currencies.NAMAZU_KOBAN, false, false, false),
-                Occult_Enlightenment_Silver_Piece = inventoryManager.GetInventoryItemCount((uint)Currencies.OCCULT_ENLIGHTENMENT_SILVER_PIECE, false, false, false),
-                Occult_Enlightenment_Gold_Piece = inventoryManager.GetInventoryItemCount((uint)Currencies.OCCULT_ENLIGHTENMENT_GOLD_PIECE, false, false, false),
-                Occult_Enlightenment_Silver_Obol = inventoryManager.GetInventoryItemCount((uint)Currencies.OCCULT_ENLIGHTENMENT_SILVER_OBOL, false, false, false),
-                Occult_Enlightenment_Gold_Obol = inventoryManager.GetInventoryItemCount((uint)Currencies.OCCULT_ENLIGHTENMENT_GOLD_OBOL, false, false, false),
-                Occult_Sanguine_Cipher = inventoryManager.GetInventoryItemCount((uint)Currencies.OCCULT_SANGUINE_CIPHER, false, false, false),
-                Oizys_Credit =  inventoryManager.GetInventoryItemCount((uint)Currencies.OIZYS_CREDIT, false, false, false),
-                Omicron_Omnitoken = inventoryManager.GetInventoryItemCount((uint)Currencies.OMICRON_OMNITOKEN, false, false, false),
-                Orange_Crafters_Scrip = inventoryManager.GetInventoryItemCount((uint)Currencies.ORANGE_CRAFTERS_SCRIP, false, false, false),
-                Orange_Gatherers_Scrip = inventoryManager.GetInventoryItemCount((uint)Currencies.ORANGE_GATHERERS_SCRIP, false, false, false),
-                Phaenna_Credit = inventoryManager.GetInventoryItemCount((uint)Currencies.PHAENNA_CREDIT, false, false, false),
-                Pelu_Pelplume = inventoryManager.GetInventoryItemCount((uint)Currencies.PELU_PELPLUME, false, false, false),
-                Purple_Crafters_Scrip = inventoryManager.GetInventoryItemCount((uint)Currencies.PURPLE_CRAFTERS_SCRIP, false, false, false),
-                Purple_Gatherers_Scrip = inventoryManager.GetInventoryItemCount((uint)Currencies.PURPLE_GATHERERS_SCRIP, false, false, false),
-                Qitari_Compliment = inventoryManager.GetInventoryItemCount((uint)Currencies.QITARI_COMPLIMENT, false, false, false),
-                Rainbowtide_Psashp = inventoryManager.GetInventoryItemCount((uint)Currencies.RAINBOWTIDE_PSASHP, false, false, false),
-                Sack_of_Nuts = inventoryManager.GetInventoryItemCount((uint)Currencies.SACK_OF_NUTS, false, false, false),
-                Seafarers_Cowrie = inventoryManager.GetInventoryItemCount((uint)Currencies.SEAFARERS_COWRIE, false, false, false),
-                Serpent_Seal = inventoryManager.GetInventoryItemCount((uint)Currencies.SERPENT_SEAL, false, false, false),
-                Skybuilders_Scrip = inventoryManager.GetInventoryItemCount((uint)Currencies.SKYBUILDERS_SCRIP, false, false, false),
-                Steel_Amaljok = inventoryManager.GetInventoryItemCount((uint)Currencies.STEEL_AMALJOK, false, false, false),
-                Storm_Seal = inventoryManager.GetInventoryItemCount((uint)Currencies.STORM_SEAL, false, false, false),
-                Sylphic_Goldleaf = inventoryManager.GetInventoryItemCount((uint)Currencies.SYLPHIC_GOLDLEAF, false, false, false),
-                Titan_Cobaltpiece = inventoryManager.GetInventoryItemCount((uint)Currencies.TITAN_COBALTPIECE, false, false, false),
-                Trophy_Crystal = inventoryManager.GetInventoryItemCount((uint)Currencies.TROPHY_CRYSTAL, false, false, false),
-                Vanu_Whitebone = inventoryManager.GetInventoryItemCount((uint)Currencies.VANU_WHITEBONE, false, false, false),
-                Venture = inventoryManager.GetInventoryItemCount((uint)Currencies.VENTURE, false, false, false),
-                Water_Cluster = inventoryManager.GetInventoryItemCount((uint)Currencies.WATER_CLUSTER, false, false, false),
-                Water_Crystal = inventoryManager.GetInventoryItemCount((uint)Currencies.WATER_CRYSTAL, false, false, false),
-                Water_Shard = inventoryManager.GetInventoryItemCount((uint)Currencies.WATER_SHARD, false, false, false),
-                White_Crafters_Scrip = inventoryManager.GetInventoryItemCount((uint)Currencies.WHITE_CRAFTERS_SCRIP, false, false, false),
-                White_Gatherers_Scrip = inventoryManager.GetInventoryItemCount((uint)Currencies.WHITE_GATHERERS_SCRIP, false, false, false),
-                Wind_Cluster = inventoryManager.GetInventoryItemCount((uint)Currencies.WIND_CLUSTER, false, false, false),
-                Wind_Crystal = inventoryManager.GetInventoryItemCount((uint)Currencies.WIND_CRYSTAL, false, false, false),
-                Wind_Shard = inventoryManager.GetInventoryItemCount((uint)Currencies.WIND_SHARD, false, false, false),
-                Wolf_Mark = inventoryManager.GetInventoryItemCount((uint)Currencies.WOLF_MARK, false, false, false),
-                Yellow_Crafters_Scrip = inventoryManager.GetInventoryItemCount((uint)Currencies.YELLOW_CRAFTERS_SCRIP, false, false, false),
-                Yellow_Gatherers_Scrip = inventoryManager.GetInventoryItemCount((uint)Currencies.YELLOW_GATHERERS_SCRIP, false, false, false),
-                Yo_Kai_Legendary_Jibanyan_Medal = inventoryManager.GetInventoryItemCount((uint)Currencies.YO_KAI_LEGENDARY_JIBANYAN_MEDAL, false, false, false),
-                Yo_Kai_Legendary_Komasan_Medal = inventoryManager.GetInventoryItemCount((uint)Currencies.YO_KAI_LEGENDARY_KOMASAN_MEDAL, false, false, false),
-                Yo_Kai_Legendary_Whisper_Medal = inventoryManager.GetInventoryItemCount((uint)Currencies.YO_KAI_LEGENDARY_WHISPER_MEDAL, false, false, false),
-                Yo_Kai_Legendary_Blizzaria_Medal = inventoryManager.GetInventoryItemCount((uint)Currencies.YO_KAI_LEGENDARY_BLIZZARIA_MEDAL, false, false, false),
-                Yo_Kai_Legendary_Kyubi_Medal = inventoryManager.GetInventoryItemCount((uint)Currencies.YO_KAI_LEGENDARY_KYUBI_MEDAL, false, false, false),
-                Yo_Kai_Legendary_Komajiro_Medal = inventoryManager.GetInventoryItemCount((uint)Currencies.YO_KAI_LEGENDARY_KOMAJIRO_MEDAL, false, false, false),
-                Yo_Kai_Legendary_Manjimutt_Medal = inventoryManager.GetInventoryItemCount((uint)Currencies.YO_KAI_LEGENDARY_MANJIMUTT_MEDAL, false, false, false),
-                Yo_Kai_Legendary_Noko_Medal = inventoryManager.GetInventoryItemCount((uint)Currencies.YO_KAI_LEGENDARY_NOKO_MEDAL, false, false, false),
-                Yo_Kai_Legendary_Venoct_Medal = inventoryManager.GetInventoryItemCount((uint)Currencies.YO_KAI_LEGENDARY_VENOCT_MEDAL, false, false, false),
-                Yo_Kai_Legendary_Shogunyan_Medal = inventoryManager.GetInventoryItemCount((uint)Currencies.YO_KAI_LEGENDARY_SHOGUNYAN_MEDAL, false, false, false),
-                Yo_Kai_Legendary_Hovernyan_Medal = inventoryManager.GetInventoryItemCount((uint)Currencies.YO_KAI_LEGENDARY_HOVERNYAN_MEDAL, false, false, false),
-                Yo_Kai_Legendary_Robonyan_f_type_Medal = inventoryManager.GetInventoryItemCount((uint)Currencies.YO_KAI_LEGENDARY_ROBONYAN_F_TYPE_MEDAL, false, false, false),
-                Yo_Kai_Legendary_Usapyon_Medal = inventoryManager.GetInventoryItemCount((uint)Currencies.YO_KAI_LEGENDARY_USAPYON_MEDAL, false, false, false),
-                Yo_Kai_Legendary_Zazel_Medal = inventoryManager.GetInventoryItemCount((uint)Currencies.YO_KAI_LEGENDARY_ZAZEL_MEDAL, false, false, false),
-                Yo_Kai_Legendary_Lord_Ananta_Medal = inventoryManager.GetInventoryItemCount((uint)Currencies.YO_KAI_LEGENDARY_LORD_ANANTA_MEDAL, false, false, false),
-                Yo_Kai_Legendary_Lord_Enma_Medal = inventoryManager.GetInventoryItemCount((uint)Currencies.YO_KAI_LEGENDARY_LORD_ENMA_MEDAL, false, false, false),
-                Yo_Kai_Legendary_Damona_Medal = inventoryManager.GetInventoryItemCount((uint)Currencies.YO_KAI_LEGENDARY_DAMONA_MEDAL, false, false, false),
-                Yo_Kai_Medal = inventoryManager.GetInventoryItemCount((uint)Currencies.YO_KAI_MEDAL, false, false, false),
-                Yok_Huy_Ward = inventoryManager.GetInventoryItemCount((uint)Currencies.YOK_HUY_WARD, false, false, false),
-                Weekly_Acquired_Tomestone = inventoryManager.GetWeeklyAcquiredTomestoneCount(),
-                Weekly_Limit_Tomestone = InventoryManager.GetLimitedTomestoneWeeklyLimit(),
-            };
+            _localPlayer.Currencies = [];
+            foreach (uint i in Enum.GetValues<Currencies>()) {
+                _localPlayer.Currencies.Add(i, inventoryManager.GetInventoryItemCount(i, false, false, false));
+            }
+            _localPlayer.Weekly_Acquired_Tomestone = inventoryManager.GetWeeklyAcquiredTomestoneCount();
+            _localPlayer.Weekly_Limit_Tomestone = InventoryManager.GetLimitedTomestoneWeeklyLimit();
         }
 
         private void GetPlayerCompletedQuests()
@@ -1872,7 +1734,7 @@ namespace Altoholic
             }
             _localPlayer.Inventory = items;
 
-            _localPlayer.Currencies = GetPlayerCurrencies();
+            GetPlayerCurrencies();
         }
 
         private unsafe void GetPlayerSaddleInventory()
@@ -3018,7 +2880,7 @@ namespace Altoholic
                             {
                                 if (_localPlayer.Currencies is not null)
                                 {
-                                    if (_localPlayer.Currencies.Weekly_Acquired_Tomestone == _localPlayer.Currencies.Weekly_Limit_Tomestone)
+                                    if (_localPlayer.Weekly_Acquired_Tomestone == _localPlayer.Weekly_Limit_Tomestone)
                                     {
                                         continue;
                                     }

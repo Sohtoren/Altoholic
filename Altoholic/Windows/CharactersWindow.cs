@@ -246,7 +246,7 @@ namespace Altoholic.Windows
                             ImGui.TextUnformatted($"{Loc.Localize("LastVisit", "Last visit: ")}{Utils.FormatDate(dateFormat, house.LastCheck.Value.ToLocalTime())}");
                             ImGui.EndTooltip();
                         }
-                       ImGui.SameLine();
+                        ImGui.SameLine();
                     }
                 }
             }
@@ -291,7 +291,7 @@ namespace Altoholic.Windows
                 ImGui.TableSetColumnIndex(1);
                 if (character.Currencies is not null)
                 {
-                    long characterGils = character.Currencies.Gil;
+                    long characterGils = character.Currencies.GetValueOrDefault((uint)Currencies.GIL);
                     long retainersGils = character.Retainers.Select(r => r.Gils).ToArray().Sum(g => g);
                     string gilText = $"{characterGils+retainersGils:N0}";
                     float posX = ImGui.GetCursorPosX() + ImGui.GetColumnWidth() - ImGui.CalcTextSize(gilText).X -
@@ -466,7 +466,7 @@ namespace Altoholic.Windows
         private void DrawCharacters(List<Character> characters)
         {
             if (characters.Count == 0) return;
-            TotalGils = characters.Select(c => c.Currencies?.Gil ?? 0).ToArray().Sum(g => (long)g);
+            TotalGils = characters.Select(c => c.Currencies.GetValueOrDefault((uint)1)).ToArray().Sum(g => (long)g);
             TotalRetainersGils = 0;
             characters.ForEach(c =>
             {

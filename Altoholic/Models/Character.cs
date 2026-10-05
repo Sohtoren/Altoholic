@@ -51,13 +51,15 @@ namespace Altoholic.Models
         public long LastPlayTimeUpdate {  get; set; }
         public bool HasPremiumSaddlebag { get; set; }
         public short PlayerCommendations { get; set; }
+        public int Weekly_Acquired_Tomestone { get; set; }
+        public int Weekly_Limit_Tomestone { get; set; }
         public ushort[] CurrentFacewear { get; init; } = [0,0];
         public ushort CurrentOrnament { get; set; }
         public ushort UnreadLetters { get; set; }
         public bool IslandSanctuaryUnlocked { get; set; } = false;
         public byte IslandSanctuaryLevel { get; set; }
         public Attributes? Attributes { get; set; }
-        public PlayerCurrencies? Currencies { get; set; }
+        public Dictionary<uint, int> Currencies { get; set; } = [];
         public Jobs? Jobs { get; set; }
         public Profile? Profile { get; set; }
         public HashSet<int> Quests { get; set; } = [];

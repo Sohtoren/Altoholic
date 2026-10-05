@@ -31,16 +31,16 @@ namespace Altoholic.Cache
 
             for (int i = 0; i <= 31; i++)
             {
-                LoadHairstylesPerRaces(i);
-                LoadFacepaintsPerRaces(i);
+                LoadHairstylesPerTribe(i);
+                LoadFacepaintsPerTribe(i);
             }
         }
 
         //private void LoadHairstylesPerRaces(uint subRace, uint gender)
-        private void LoadHairstylesPerRaces(int subRace)
+        private void LoadHairstylesPerTribe(int tribe)
         {
             //RawRow row = _hairMakeType.GetRow(subRace * 2 + gender);
-            RawRow row = _hairMakeType.GetRow((uint)subRace);
+            RawRow row = _hairMakeType.GetRow((uint)tribe);
             // Unknown30 is the number of available hairstyles.
             byte numHairs = row.ReadUInt8Column(30);
             List<uint> hairList = new(numHairs);
@@ -58,12 +58,12 @@ namespace Altoholic.Cache
 
                 hairList.Add(index);
             }
-            _hairstylesPerSubRacesAndGender.Add(subRace, hairList);
+            _hairstylesPerSubRacesAndGender.Add(tribe, hairList);
         }
 
-        private void LoadFacepaintsPerRaces(int subRace)
+        private void LoadFacepaintsPerTribe(int tribe)
         {
-            RawRow row = _hairMakeType.GetRow((uint)subRace);
+            RawRow row = _hairMakeType.GetRow((uint)tribe);
             byte numPaints = row.ReadUInt8Column(37);
             List<uint> facepaintList = new(numPaints);
             for (int i = 0; i < numPaints; ++i)
@@ -78,7 +78,7 @@ namespace Altoholic.Cache
 
                 facepaintList.Add(index);
             }
-            _facesPerSubRacesAndGender.Add(subRace, facepaintList);
+            _facesPerSubRacesAndGender.Add(tribe, facepaintList);
         }
 
         public Hairstyle? GetHairstyle(ClientLanguage lang, uint id)

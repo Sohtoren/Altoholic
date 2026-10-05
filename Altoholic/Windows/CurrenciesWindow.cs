@@ -281,7 +281,7 @@ namespace Altoholic.Windows
             }
 
             if (
-                selectedCharacter.Currencies.Bicolor_Gemstone > 0 ||
+                selectedCharacter.Currencies.GetValueOrDefault((uint)Currencies.BICOLOR_GEMSTONE) > 0 ||
                 selectedCharacter.HasAnyLevelJob(50)
             )
             {
@@ -340,9 +340,7 @@ namespace Altoholic.Windows
 
         private void DrawCommon(Character selectedCharacter)
         {
-            if (selectedCharacter.Currencies is null || selectedCharacter.Profile is null) return;
-
-            PlayerCurrencies pc = selectedCharacter.Currencies;
+            if (selectedCharacter.Profile is null) return;
 
             using var charactersCurrenciesCommonCurrencyTable =
                 ImRaii.Table($"###CharactersCurrencies#CommonCurrencyTable#{selectedCharacter.CharacterId}", 1);
@@ -355,7 +353,7 @@ namespace Altoholic.Windows
             ImGui.Separator();
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
-            DrawCommonCurrency(pc.Gil, Currencies.GIL, 0);
+            DrawCommonCurrency(selectedCharacter.Currencies.GetValueOrDefault((uint)Currencies.GIL), Currencies.GIL, 0);
 
             if (
                 selectedCharacter.HasQuest((int)QuestIds.CURRENCY_UNLOCK_SEAL_TWIN_ADDER) ||
@@ -374,15 +372,15 @@ namespace Altoholic.Windows
                 switch (selectedCharacter.Profile.GrandCompany)
                 {
                     case 1:
-                        val = pc.Storm_Seal;
+                        val = selectedCharacter.Currencies.GetValueOrDefault((uint)Currencies.STORM_SEAL);
                         c = Currencies.STORM_SEAL;
                         break;
                     case 2:
-                        val = pc.Serpent_Seal;
+                        val = selectedCharacter.Currencies.GetValueOrDefault((uint)Currencies.SERPENT_SEAL);
                         c = Currencies.SERPENT_SEAL;
                         break;
                     case 3:
-                        val = pc.Flame_Seal;
+                        val = selectedCharacter.Currencies.GetValueOrDefault((uint)Currencies.FLAME_SEAL);
                         c = Currencies.FLAME_SEAL;
                         break;
                 }
@@ -405,7 +403,7 @@ namespace Altoholic.Windows
                 ImGui.Separator();
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                DrawCommonCurrency(pc.Venture, Currencies.VENTURE, 0);
+                DrawCommonCurrency(selectedCharacter.Currencies.GetValueOrDefault((uint)Currencies.VENTURE), Currencies.VENTURE, 0);
             }
 
             if (!selectedCharacter.HasQuest((int)QuestIds.CURRENCY_UNLOCK_GOLD_SAUCER)) //add quest unlocking. Check if you can get MGP without completing the GC intro quest
@@ -419,7 +417,7 @@ namespace Altoholic.Windows
             ImGui.Separator();
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
-            DrawCommonCurrency(pc.MGP, Currencies.MGP, 0);
+            DrawCommonCurrency(selectedCharacter.Currencies.GetValueOrDefault((uint)Currencies.MGP), Currencies.MGP, 0);
         }
 
         private void DrawCommonCurrency(long currency, Currencies id, uint max)
@@ -505,7 +503,6 @@ namespace Altoholic.Windows
         private void DrawBattle(Character selectedCharacter)
         {
             if (selectedCharacter.Currencies is null) return;
-            PlayerCurrencies pc = selectedCharacter.Currencies;
 
             //Todo: Dunno when this unlock, maybe ARR done?
             if (selectedCharacter.HasAnyLevelJob(50))
@@ -527,34 +524,36 @@ namespace Altoholic.Windows
                     $"{GetTurnIn(_currentLocale)}");
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                DrawBattleCurrency(pc.Allagan_Tomestone_Of_Poetics, Currencies.ALLAGAN_TOMESTONE_OF_POETICS, 2000,
+                DrawBattleCurrency(selectedCharacter.Currencies.GetValueOrDefault((uint)Currencies.ALLAGAN_TOMESTONE_OF_POETICS), Currencies.ALLAGAN_TOMESTONE_OF_POETICS, 2000,
                     true);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                DrawBattleCurrency(pc.Allagan_Tomestone_Of_Mathematics, Currencies.ALLAGAN_TOMESTONE_OF_MATHEMATICS, 2000,
+                DrawBattleCurrency(selectedCharacter.Currencies.GetValueOrDefault((uint)Currencies.ALLAGAN_TOMESTONE_OF_MATHEMATICS), Currencies.ALLAGAN_TOMESTONE_OF_MATHEMATICS, 2000,
                     true);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                DrawBattleCurrency(pc.Allagan_Tomestone_Of_Mnemonics, Currencies.ALLAGAN_TOMESTONE_OF_MNEMONICS, 2000, true);
+                DrawBattleCurrency(selectedCharacter.Currencies.GetValueOrDefault((uint)Currencies.ALLAGAN_TOMESTONE_OF_MNEMONICS), Currencies.ALLAGAN_TOMESTONE_OF_MNEMONICS, 2000, true);
                 ImGui.TableSetColumnIndex(1);
                 ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 3502));
-                ImGui.TextUnformatted($"{pc.Weekly_Acquired_Tomestone}/{pc.Weekly_Limit_Tomestone}");
+                ImGui.TextUnformatted($"{selectedCharacter.Weekly_Acquired_Tomestone}/{selectedCharacter.Weekly_Limit_Tomestone}");
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
                 ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 5756));
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                DrawBattleCurrency(pc.Allagan_Tomestone_Of_Heliometry, Currencies.ALLAGAN_TOMESTONE_OF_HELIOMETRY, 2000,
+                DrawBattleCurrency(selectedCharacter.Currencies.GetValueOrDefault((uint)Currencies.ALLAGAN_TOMESTONE_OF_HELIOMETRY), Currencies.ALLAGAN_TOMESTONE_OF_HELIOMETRY, 2000,
                     true, true);
                 ImGui.TableSetColumnIndex(1);
             }
 
+            int wolf_mark = selectedCharacter.Currencies.GetValueOrDefault((uint)Currencies.WOLF_MARK);
+            int trophy_crystal = selectedCharacter.Currencies.GetValueOrDefault((uint)Currencies.TROPHY_CRYSTAL);
             if (
                 selectedCharacter.HasQuest((int)QuestIds.CURRENCY_UNLOCK_PVP_TWIN_ADDER) ||
                 selectedCharacter.HasQuest((int)QuestIds.CURRENCY_UNLOCK_PVP_MAELSTROM) ||
                 selectedCharacter.HasQuest((int)QuestIds.CURRENCY_UNLOCK_PVP_IMMORTAL_FLAMES) ||
-                pc.Wolf_Mark > 0 ||
-                pc.Trophy_Crystal > 0
+                wolf_mark > 0 ||
+                trophy_crystal > 0
             )
             {
                 ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 834));
@@ -570,19 +569,22 @@ namespace Altoholic.Windows
                     ImGuiTableColumnFlags.WidthStretch);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                DrawBattleCurrency(pc.Wolf_Mark, Currencies.WOLF_MARK, 20000);
+                DrawBattleCurrency(wolf_mark, Currencies.WOLF_MARK, 20000);
                 ImGui.TableSetColumnIndex(1);
-                DrawBattleCurrency(pc.Trophy_Crystal, Currencies.TROPHY_CRYSTAL, 20000);
+                DrawBattleCurrency(trophy_crystal, Currencies.TROPHY_CRYSTAL, 20000);
             }
 
+            int allied_seal = selectedCharacter.Currencies.GetValueOrDefault((uint)Currencies.ALLIED_SEAL);
+            int centurio_seal = selectedCharacter.Currencies.GetValueOrDefault((uint)Currencies.CENTURIO_SEAL);
+            int sack_of_nuts = selectedCharacter.Currencies.GetValueOrDefault((uint)Currencies.SACK_OF_NUTS);
             if (
                 selectedCharacter.HasQuest((int)QuestIds.CURRENCY_UNLOCK_HUNT_ARR_TWIN_ADDER) ||
                 selectedCharacter.HasQuest((int)QuestIds.CURRENCY_UNLOCK_HUNT_ARR_MAELSTROM) ||
                 selectedCharacter.HasQuest((int)QuestIds.CURRENCY_UNLOCK_HUNT_ARR_IMMORTAL_FLAMES) ||
                 selectedCharacter.HasQuest((int)QuestIds.CURRENCY_UNLOCK_BLUE_CARNIVAL) ||
-                pc.Allied_Seal > 0 ||
-                pc.Centurio_Seal > 0 ||
-                pc.Sack_of_Nuts > 0
+                allied_seal > 0 ||
+                centurio_seal > 0 ||
+                sack_of_nuts > 0
             )
             {
                 ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 838));
@@ -606,35 +608,36 @@ namespace Altoholic.Windows
                     selectedCharacter.HasQuest((int)QuestIds.CURRENCY_UNLOCK_HUNT_ARR_MAELSTROM) ||
                     selectedCharacter.HasQuest((int)QuestIds.CURRENCY_UNLOCK_HUNT_ARR_IMMORTAL_FLAMES) ||
                     selectedCharacter.HasQuest((int)QuestIds.CURRENCY_UNLOCK_BLUE_CARNIVAL) ||
-                    pc.Allied_Seal > 0
+                    allied_seal > 0
                 )
                 {
-                    DrawBattleCurrency(pc.Allied_Seal, Currencies.ALLIED_SEAL, 4000);
+                    DrawBattleCurrency(allied_seal, Currencies.ALLIED_SEAL, 4000);
                 }
 
                 if (
                     selectedCharacter.HasQuest((int)QuestIds.CURRENCY_UNLOCK_HUNT_HW) ||
                     selectedCharacter.HasQuest((int)QuestIds.CURRENCY_UNLOCK_HUNT_SB) ||
-                    pc.Centurio_Seal > 0
+                    centurio_seal > 0
                 )
                 {
                     ImGui.TableSetColumnIndex(1);
-                    DrawBattleCurrency(pc.Centurio_Seal, Currencies.CENTURIO_SEAL, 4000);
+                    DrawBattleCurrency(centurio_seal, Currencies.CENTURIO_SEAL, 4000);
                 }
 
                 if (
                     selectedCharacter.HasQuest((int)QuestIds.CURRENCY_UNLOCK_HUNT_SHB) ||
                     selectedCharacter.HasQuest((int)QuestIds.CURRENCY_UNLOCK_HUNT_EW) ||
                     selectedCharacter.HasQuest((int)QuestIds.CURRENCY_UNLOCK_HUNT_DT) ||
-                    pc.Sack_of_Nuts > 0
+                    sack_of_nuts > 0
                 )
                 {
                     ImGui.TableSetColumnIndex(2);
-                    DrawBattleCurrency(pc.Sack_of_Nuts, Currencies.SACK_OF_NUTS, 4000);
+                    DrawBattleCurrency(sack_of_nuts, Currencies.SACK_OF_NUTS, 4000);
                 }
             }
 
-            if (pc.Bicolor_Gemstone <= 0)
+            int bicolor_gemstone = selectedCharacter.Currencies.GetValueOrDefault((uint)Currencies.BICOLOR_GEMSTONE);
+            if (bicolor_gemstone <= 0)
             {
                 return;
             }
@@ -651,7 +654,7 @@ namespace Altoholic.Windows
                 ImGuiTableColumnFlags.WidthStretch);
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
-            DrawBattleCurrency(pc.Bicolor_Gemstone, Currencies.BICOLOR_GEMSTONE, 1000);
+            DrawBattleCurrency(bicolor_gemstone, Currencies.BICOLOR_GEMSTONE, 1000);
         }
 
         private void DrawBattleCurrency(int currency, Currencies id, uint max, bool total = false,
@@ -698,7 +701,6 @@ namespace Altoholic.Windows
         private void DrawOthers(Character selectedCharacter)
         {
             if (selectedCharacter.Currencies is null) return;
-            PlayerCurrencies pc = selectedCharacter.Currencies;
 
             using var charactersCurrenciesOthersCurrencyTable =
                 ImRaii.Table($"###CharactersCurrencies#OthersCurrencyTable#{selectedCharacter.CharacterId}", 1);
@@ -713,14 +715,14 @@ namespace Altoholic.Windows
                 ImGui.Separator();
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                DrawOtherCurrency(pc.Purple_Crafters_Scrip, Currencies.PURPLE_CRAFTERS_SCRIP, 4000, true);
+                DrawOtherCurrency(selectedCharacter.Currencies.GetValueOrDefault((uint)Currencies.PURPLE_CRAFTERS_SCRIP), Currencies.PURPLE_CRAFTERS_SCRIP, 4000, true);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                DrawOtherCurrency(pc.Orange_Crafters_Scrip, Currencies.ORANGE_CRAFTERS_SCRIP, 4000, true);
+                DrawOtherCurrency(selectedCharacter.Currencies.GetValueOrDefault((uint)Currencies.ORANGE_CRAFTERS_SCRIP), Currencies.ORANGE_CRAFTERS_SCRIP, 4000, true);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
                 ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 5756));
-                DrawOtherCurrency(pc.White_Crafters_Scrip, Currencies.WHITE_CRAFTERS_SCRIP, 4000, true, true);
+                DrawOtherCurrency(selectedCharacter.Currencies.GetValueOrDefault((uint)Currencies.WHITE_CRAFTERS_SCRIP), Currencies.WHITE_CRAFTERS_SCRIP, 4000, true, true);
 
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
@@ -728,14 +730,14 @@ namespace Altoholic.Windows
                 ImGui.Separator();
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                DrawOtherCurrency(pc.Purple_Gatherers_Scrip, Currencies.PURPLE_CRAFTERS_SCRIP, 4000, true);
+                DrawOtherCurrency(selectedCharacter.Currencies.GetValueOrDefault((uint)Currencies.PURPLE_GATHERERS_SCRIP), Currencies.PURPLE_CRAFTERS_SCRIP, 4000, true);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                DrawOtherCurrency(pc.Orange_Gatherers_Scrip, Currencies.ORANGE_GATHERERS_SCRIP, 4000, true);
+                DrawOtherCurrency(selectedCharacter.Currencies.GetValueOrDefault((uint)Currencies.ORANGE_GATHERERS_SCRIP), Currencies.ORANGE_GATHERERS_SCRIP, 4000, true);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
                 ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 5756));
-                DrawOtherCurrency(pc.White_Gatherers_Scrip, Currencies.WHITE_GATHERERS_SCRIP, 4000, true, true);
+                DrawOtherCurrency(selectedCharacter.Currencies.GetValueOrDefault((uint)Currencies.WHITE_GATHERERS_SCRIP), Currencies.WHITE_GATHERERS_SCRIP, 4000, true, true);
             }
 
             if (!selectedCharacter.HasQuest((int)QuestIds.CURRENCY_UNLOCK_SKYBUILDERS_SCRIPS))
@@ -749,7 +751,7 @@ namespace Altoholic.Windows
             ImGui.Separator();
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
-            DrawOtherCurrency(pc.Skybuilders_Scrip, Currencies.SKYBUILDERS_SCRIP, 4000, true);
+            DrawOtherCurrency(selectedCharacter.Currencies.GetValueOrDefault((uint)Currencies.SKYBUILDERS_SCRIP), Currencies.SKYBUILDERS_SCRIP, 4000, true);
         }
 
         private void DrawOtherCurrency(int currency, Currencies id, uint max, bool total = false,
@@ -800,8 +802,6 @@ namespace Altoholic.Windows
         {
             if (selectedCharacter.Currencies == null) return;
 
-            PlayerCurrencies pc = selectedCharacter.Currencies;
-
             ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 5751));
             ImGui.Separator();
             using var charactersCurrenciesTribalCurrencyTable =
@@ -828,21 +828,21 @@ namespace Altoholic.Windows
                 {
                     //ImGui.TableSetColumnIndex(0);
                     ImGui.TableNextColumn();
-                    DrawTribalCurrency(pc.Steel_Amaljok, Currencies.STEEL_AMALJOK, Tribal.AMALJ_AA);
+                    DrawTribalCurrency(selectedCharacter.Currencies.GetValueOrDefault((uint)Currencies.STEEL_AMALJOK), Currencies.STEEL_AMALJOK, Tribal.AMALJ_AA);
                 }
 
                 if (selectedCharacter.HasQuest((int)QuestIds.TRIBE_ARR_SYLPHS))
                 {
                     //ImGui.TableSetColumnIndex(1);
                     ImGui.TableNextColumn();
-                    DrawTribalCurrency(pc.Sylphic_Goldleaf, Currencies.SYLPHIC_GOLDLEAF, Tribal.SYLPHS);
+                    DrawTribalCurrency(selectedCharacter.Currencies.GetValueOrDefault((uint)Currencies.SYLPHIC_GOLDLEAF), Currencies.SYLPHIC_GOLDLEAF, Tribal.SYLPHS);
                 }
 
                 if (selectedCharacter.HasQuest((int)QuestIds.TRIBE_ARR_KOBOLDS))
                 {
                     //ImGui.TableSetColumnIndex(2);
                     ImGui.TableNextColumn();
-                    DrawTribalCurrency(pc.Titan_Cobaltpiece, Currencies.TITAN_COBALTPIECE, Tribal.KOBOLDS);
+                    DrawTribalCurrency(selectedCharacter.Currencies.GetValueOrDefault((uint)Currencies.TITAN_COBALTPIECE), Currencies.TITAN_COBALTPIECE, Tribal.KOBOLDS);
                 }
 
                 //ImGui.TableNextRow();
@@ -850,14 +850,14 @@ namespace Altoholic.Windows
                 {
                     //ImGui.TableSetColumnIndex(0);
                     ImGui.TableNextColumn();
-                    DrawTribalCurrency(pc.Rainbowtide_Psashp, Currencies.RAINBOWTIDE_PSASHP, Tribal.SAHAGIN);
+                    DrawTribalCurrency(selectedCharacter.Currencies.GetValueOrDefault((uint)Currencies.RAINBOWTIDE_PSASHP), Currencies.RAINBOWTIDE_PSASHP, Tribal.SAHAGIN);
                 }
 
                 if (selectedCharacter.HasQuest((int)QuestIds.TRIBE_ARR_IXAL))
                 {
                     //ImGui.TableSetColumnIndex(1);
                     ImGui.TableNextColumn();
-                    DrawTribalCurrency(pc.Ixali_Oaknot, Currencies.IXALI_OAKNOT, Tribal.IXAL);
+                    DrawTribalCurrency(selectedCharacter.Currencies.GetValueOrDefault((uint)Currencies.IXALI_OAKNOT), Currencies.IXALI_OAKNOT, Tribal.IXAL);
                 }
             }
 
@@ -874,21 +874,21 @@ namespace Altoholic.Windows
                 {
                     //ImGui.TableSetColumnIndex(0);
                     ImGui.TableNextColumn();
-                    DrawTribalCurrency(pc.Vanu_Whitebone, Currencies.VANU_WHITEBONE, Tribal.VANU_VANU);
+                    DrawTribalCurrency(selectedCharacter.Currencies.GetValueOrDefault((uint)Currencies.VANU_WHITEBONE), Currencies.VANU_WHITEBONE, Tribal.VANU_VANU);
                 }
 
                 if (selectedCharacter.HasQuest((int)QuestIds.TRIBE_HW_VATH))
                 {
                     //ImGui.TableSetColumnIndex(1);
                     ImGui.TableNextColumn();
-                    DrawTribalCurrency(pc.Black_Copper_Gil, Currencies.BLACK_COPPER_GIL, Tribal.VATH);
+                    DrawTribalCurrency(selectedCharacter.Currencies.GetValueOrDefault((uint)Currencies.BLACK_COPPER_GIL), Currencies.BLACK_COPPER_GIL, Tribal.VATH);
                 }
 
                 if (selectedCharacter.HasQuest((int)QuestIds.TRIBE_HW_MOOGLES))
                 {
                     //ImGui.TableSetColumnIndex(2);
                     ImGui.TableNextColumn();
-                    DrawTribalCurrency(pc.Carved_Kupo_Nut, Currencies.CARVED_KUPO_NUT, Tribal.MOOGLES);
+                    DrawTribalCurrency(selectedCharacter.Currencies.GetValueOrDefault((uint)Currencies.CARVED_KUPO_NUT), Currencies.CARVED_KUPO_NUT, Tribal.MOOGLES);
                 }
             }
 
@@ -905,21 +905,21 @@ namespace Altoholic.Windows
                 {
                     //ImGui.TableSetColumnIndex(0);
                     ImGui.TableNextColumn();
-                    DrawTribalCurrency(pc.Kojin_Sango, Currencies.KOJIN_SANGO, Tribal.KOJIN);
+                    DrawTribalCurrency(selectedCharacter.Currencies.GetValueOrDefault((uint)Currencies.KOJIN_SANGO), Currencies.KOJIN_SANGO, Tribal.KOJIN);
                 }
 
                 if (selectedCharacter.HasQuest((int)QuestIds.TRIBE_SB_ANANTA))
                 {
                     //ImGui.TableSetColumnIndex(1);
                     ImGui.TableNextColumn();
-                    DrawTribalCurrency(pc.Ananta_Dreamstaff, Currencies.ANANTA_DREAMSTAFF, Tribal.ANANTA);
+                    DrawTribalCurrency(selectedCharacter.Currencies.GetValueOrDefault((uint)Currencies.ANANTA_DREAMSTAFF), Currencies.ANANTA_DREAMSTAFF, Tribal.ANANTA);
                 }
 
                 if (selectedCharacter.HasQuest((int)QuestIds.TRIBE_SB_NAMAZU))
                 {
                     //ImGui.TableSetColumnIndex(2);
                     ImGui.TableNextColumn();
-                    DrawTribalCurrency(pc.Namazu_Koban, Currencies.NAMAZU_KOBAN, Tribal.NAMAZU);
+                    DrawTribalCurrency(selectedCharacter.Currencies.GetValueOrDefault((uint)Currencies.NAMAZU_KOBAN), Currencies.NAMAZU_KOBAN, Tribal.NAMAZU);
                 }
             }
 
@@ -936,21 +936,21 @@ namespace Altoholic.Windows
                 {
                     //ImGui.TableSetColumnIndex(0);
                     ImGui.TableNextColumn();
-                    DrawTribalCurrency(pc.Fae_Fancy, Currencies.FAE_FANCY, Tribal.PIXIES);
+                    DrawTribalCurrency(selectedCharacter.Currencies.GetValueOrDefault((uint)Currencies.FAE_FANCY), Currencies.FAE_FANCY, Tribal.PIXIES);
                 }
 
                 if (selectedCharacter.HasQuest((int)QuestIds.TRIBE_SHB_QITARI))
                 {
                     //ImGui.TableSetColumnIndex(1);
                     ImGui.TableNextColumn();
-                    DrawTribalCurrency(pc.Qitari_Compliment, Currencies.QITARI_COMPLIMENT, Tribal.QITARI);
+                    DrawTribalCurrency(selectedCharacter.Currencies.GetValueOrDefault((uint)Currencies.QITARI_COMPLIMENT), Currencies.QITARI_COMPLIMENT, Tribal.QITARI);
                 }
 
                 if (selectedCharacter.HasQuest((int)QuestIds.TRIBE_SHB_DWARVES))
                 {
                     //ImGui.TableSetColumnIndex(2);
                     ImGui.TableNextColumn();
-                    DrawTribalCurrency(pc.Hammered_Frogment, Currencies.HAMMERED_FROGMENT, Tribal.DWARVES);
+                    DrawTribalCurrency(selectedCharacter.Currencies.GetValueOrDefault((uint)Currencies.HAMMERED_FROGMENT), Currencies.HAMMERED_FROGMENT, Tribal.DWARVES);
                 }
             }
 
@@ -968,13 +968,13 @@ namespace Altoholic.Windows
             if (selectedCharacter.HasQuest((int)QuestIds.TRIBE_EW_ARKASODARA))
             {
                 ImGui.TableNextColumn();
-                DrawTribalCurrency(pc.Arkasodara_Pana, Currencies.ARKASODARA_PANA, Tribal.ARKASODARA);
+                DrawTribalCurrency(selectedCharacter.Currencies.GetValueOrDefault((uint)Currencies.ARKASODARA_PANA), Currencies.ARKASODARA_PANA, Tribal.ARKASODARA);
             }
 
             if (selectedCharacter.HasQuest((int)QuestIds.TRIBE_EW_OMICRONS))
             {
                 ImGui.TableNextColumn();
-                DrawTribalCurrency(pc.Omicron_Omnitoken, Currencies.OMICRON_OMNITOKEN, Tribal.OMICRONS);
+                DrawTribalCurrency(selectedCharacter.Currencies.GetValueOrDefault((uint)Currencies.OMICRON_OMNITOKEN), Currencies.OMICRON_OMNITOKEN, Tribal.OMICRONS);
             }
 
             if (!selectedCharacter.HasQuest((int)QuestIds.TRIBE_EW_LOPORRITS))
@@ -982,14 +982,12 @@ namespace Altoholic.Windows
                 return;
             }
             ImGui.TableNextColumn();
-            DrawTribalCurrency(pc.Loporrit_Carat, Currencies.LOPORRIT_CARAT, Tribal.LOPORRITS);
+            DrawTribalCurrency(selectedCharacter.Currencies.GetValueOrDefault((uint)Currencies.LOPORRIT_CARAT), Currencies.LOPORRIT_CARAT, Tribal.LOPORRITS);
         }
 
         private void DrawCurrentExpansionTribal(Character selectedCharacter)
         {
             if (selectedCharacter.Currencies == null) return;
-
-            PlayerCurrencies pc = selectedCharacter.Currencies;
 
             ImGui.TextUnformatted(_globalCache.AddonStorage.LoadAddonString(_currentLocale, 5751));
             ImGui.Separator();
@@ -1013,7 +1011,7 @@ namespace Altoholic.Windows
                 {
                     //ImGui.TableSetColumnIndex(0);
                     ImGui.TableNextColumn();
-                    DrawTribalCurrency(pc.Pelu_Pelplume, Currencies.PELU_PELPLUME, Tribal.PELUPELU);
+                    DrawTribalCurrency(selectedCharacter.Currencies.GetValueOrDefault((uint)Currencies.PELU_PELPLUME), Currencies.PELU_PELPLUME, Tribal.PELUPELU);
                 }
             }
             if (selectedCharacter.HasQuest((int)QuestIds.TRIBE_DT_MAMOOL_JA)
@@ -1027,7 +1025,7 @@ namespace Altoholic.Windows
                 {
                     //ImGui.TableSetColumnIndex(0);
                     ImGui.TableNextColumn();
-                    DrawTribalCurrency(pc.Mamool_Ja_Nanook, Currencies.MAMOOL_JA_NANOOK, Tribal.MAMOOL_JA);
+                    DrawTribalCurrency(selectedCharacter.Currencies.GetValueOrDefault((uint)Currencies.MAMOOL_JA_NANOOK), Currencies.MAMOOL_JA_NANOOK, Tribal.MAMOOL_JA);
                 }
             }
             if (selectedCharacter.HasQuest((int)QuestIds.TRIBE_DT_YOK_HUY)
@@ -1041,7 +1039,7 @@ namespace Altoholic.Windows
                 {
                     //ImGui.TableSetColumnIndex(0);
                     ImGui.TableNextColumn();
-                    DrawTribalCurrency(pc.Yok_Huy_Ward, Currencies.YOK_HUY_WARD, Tribal.YOK_HUY);
+                    DrawTribalCurrency(selectedCharacter.Currencies.GetValueOrDefault((uint)Currencies.YOK_HUY_WARD), Currencies.YOK_HUY_WARD, Tribal.YOK_HUY);
                 }
             }
         }

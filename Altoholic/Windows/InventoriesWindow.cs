@@ -856,61 +856,61 @@ namespace Altoholic.Windows
             ImGui.TableSetColumnIndex(0);
             Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(60651), new Vector2(24, 24));
             ImGui.TableSetColumnIndex(1);
-            DrawCrystal(2, selectedCharacter.Currencies.Fire_Shard);
+            DrawCrystal(2, selectedCharacter.Currencies.GetValueOrDefault((uint)Currencies.FIRE_SHARD));
             ImGui.TableSetColumnIndex(2);
-            DrawCrystal(8, selectedCharacter.Currencies.Fire_Crystal);
+            DrawCrystal(8, selectedCharacter.Currencies.GetValueOrDefault((uint)Currencies.FIRE_CRYSTAL));
             ImGui.TableSetColumnIndex(3);
-            DrawCrystal(14, selectedCharacter.Currencies.Fire_Cluster);
+            DrawCrystal(14, selectedCharacter.Currencies.GetValueOrDefault((uint)Currencies.FIRE_CLUSTER));
 
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
             Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(60652), new Vector2(24, 24));
             ImGui.TableSetColumnIndex(1);
-            DrawCrystal(3, selectedCharacter.Currencies.Ice_Shard);
+            DrawCrystal(3, selectedCharacter.Currencies.GetValueOrDefault((uint)Currencies.ICE_SHARD));
             ImGui.TableSetColumnIndex(2);
-            DrawCrystal(9, selectedCharacter.Currencies.Ice_Crystal);
+            DrawCrystal(9, selectedCharacter.Currencies.GetValueOrDefault((uint)Currencies.ICE_CRYSTAL));
             ImGui.TableSetColumnIndex(3);
-            DrawCrystal(15, selectedCharacter.Currencies.Ice_Cluster);
+            DrawCrystal(15, selectedCharacter.Currencies.GetValueOrDefault((uint)Currencies.ICE_CLUSTER));
 
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
             Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(60653), new Vector2(24, 24));
             ImGui.TableSetColumnIndex(1);
-            DrawCrystal(4, selectedCharacter.Currencies.Wind_Shard);
+            DrawCrystal(4, selectedCharacter.Currencies.GetValueOrDefault((uint)Currencies.WIND_SHARD));
             ImGui.TableSetColumnIndex(2);
-            DrawCrystal(10, selectedCharacter.Currencies.Wind_Crystal);
+            DrawCrystal(10, selectedCharacter.Currencies.GetValueOrDefault((uint)Currencies.WIND_CRYSTAL));
             ImGui.TableSetColumnIndex(3);
-            DrawCrystal(16, selectedCharacter.Currencies.Wind_Cluster);
+            DrawCrystal(16, selectedCharacter.Currencies.GetValueOrDefault((uint)Currencies.WIND_CLUSTER));
 
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
             Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(60654), new Vector2(24, 24));
             ImGui.TableSetColumnIndex(1);
-            DrawCrystal(5, selectedCharacter.Currencies.Earth_Shard);
+            DrawCrystal(5, selectedCharacter.Currencies.GetValueOrDefault((uint)Currencies.EARTH_SHARD));
             ImGui.TableSetColumnIndex(2);
-            DrawCrystal(11, selectedCharacter.Currencies.Earth_Crystal);
+            DrawCrystal(11, selectedCharacter.Currencies.GetValueOrDefault((uint)Currencies.EARTH_CRYSTAL));
             ImGui.TableSetColumnIndex(3);
-            DrawCrystal(17, selectedCharacter.Currencies.Earth_Cluster);
+            DrawCrystal(17, selectedCharacter.Currencies.GetValueOrDefault((uint)Currencies.EARTH_CLUSTER));
 
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
             Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(60655), new Vector2(24, 24));
             ImGui.TableSetColumnIndex(1);
-            DrawCrystal(6, selectedCharacter.Currencies.Lightning_Shard);
+            DrawCrystal(6, selectedCharacter.Currencies.GetValueOrDefault((uint)Currencies.LIGHTNING_SHARD));
             ImGui.TableSetColumnIndex(2);
-            DrawCrystal(12, selectedCharacter.Currencies.Lightning_Crystal);
+            DrawCrystal(12, selectedCharacter.Currencies.GetValueOrDefault((uint)Currencies.LIGHTNING_CRYSTAL));
             ImGui.TableSetColumnIndex(3);
-            DrawCrystal(18, selectedCharacter.Currencies.Lightning_Cluster);
+            DrawCrystal(18, selectedCharacter.Currencies.GetValueOrDefault((uint)Currencies.LIGHTNING_CLUSTER));
 
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
             Utils.DrawIcon(_globalCache.IconStorage.LoadIcon(60656), new Vector2(24, 24));
             ImGui.TableSetColumnIndex(1);
-            DrawCrystal(7, selectedCharacter.Currencies.Water_Shard);
+            DrawCrystal(7, selectedCharacter.Currencies.GetValueOrDefault((uint)Currencies.WATER_SHARD));
             ImGui.TableSetColumnIndex(2);
-            DrawCrystal(13, selectedCharacter.Currencies.Water_Crystal);
+            DrawCrystal(13, selectedCharacter.Currencies.GetValueOrDefault((uint)Currencies.WATER_CRYSTAL));
             ImGui.TableSetColumnIndex(3);
-            DrawCrystal(19, selectedCharacter.Currencies.Water_Cluster);
+            DrawCrystal(19, selectedCharacter.Currencies.GetValueOrDefault((uint)Currencies.WATER_CLUSTER));
         }
 
         private void DrawCrystal(uint itemid, int amount)

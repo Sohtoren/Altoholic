@@ -392,11 +392,19 @@ namespace Altoholic.Helpers
                         !globalCache.HairstyleStorage.IsHairstyleAvailableForTribeGender(currChar.Profile.Tribe, currChar.Profile.Gender, ids))
                     {
                         ImGui.TextUnformatted($"N/A");
+                        if (ImGui.IsItemHovered())
+                        {
+                            ImGui.BeginTooltip();
+                            ImGui.TextUnformatted("This hairstyle can be learned but isn't available on this race");
+                            ImGui.TextUnformatted(
+                                $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
+                            ImGui.EndTooltip();
+                        }
                     }
                 }
             }
         }
-        public static void DrawAllCharsTotal(ClientLanguage currentLocale, GlobalCache globalCache, List<Character> chars, int total, Dictionary<ulong, int>? characterNeededTomestone = null)
+        public static void DrawAllCharsTotal(ClientLanguage currentLocale, GlobalCache globalCache, List<Character> chars, Currencies currency, int total, Dictionary<ulong, int> characterNeededTomestone)
         {
             string totalStr = currentLocale switch
             {
@@ -414,13 +422,19 @@ namespace Altoholic.Helpers
             foreach (Character currChar in chars)
             {
                 ImGui.TableNextColumn();
-                ImGui.TextUnformatted($"{(characterNeededTomestone is not null ? characterNeededTomestone[currChar.CharacterId] : "")}");
+                string neededStr = string.Empty;
+                if (characterNeededTomestone is not null)
+                {
+                    int needed = characterNeededTomestone[currChar.CharacterId];
+                    neededStr = (needed > 1000) ? $"{needed / 1_000}k" : needed.ToString();
+                }
+                ImGui.TextUnformatted($"{neededStr:N0}");
                 if (ImGui.IsItemHovered())
                 {
                     ImGui.BeginTooltip();
                     ImGui.TextUnformatted(
                         $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
-                    ImGui.TextUnformatted($"{currChar.Currencies?.Irregular_Tomestone_Of_Astronomy_I}{(characterNeededTomestone is not null ? "/" + characterNeededTomestone[currChar.CharacterId] : "")}");
+                    ImGui.TextUnformatted($"{currChar.Currencies.GetValueOrDefault((uint)currency)}{(characterNeededTomestone is not null ? "/" + characterNeededTomestone[currChar.CharacterId] : "")}");
                     ImGui.EndTooltip();
                 }
             }

@@ -266,7 +266,7 @@ namespace Altoholic.Helpers
                 ImGui.TableNextColumn();
                 if (currChar.Bozja != null)
                 {
-                    ImGui.TextUnformatted($"{currChar.Currencies?.Bozjan_Cluster}/200");
+                    ImGui.TextUnformatted($"{currChar.Currencies.GetValueOrDefault((uint)Currencies.BOZJAN_CLUSTER)}/200");
                 }
             }
 

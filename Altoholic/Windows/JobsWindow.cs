@@ -210,12 +210,17 @@ namespace Altoholic.Windows
                     DrawDoHDoLJobs(selectedCharacter);
                 }
             }
-            if(selectedCharacter.HasQuest((int)QuestIds.OCCULT_CRESCENT_UNFAMILIAR_TERRITORY) && selectedCharacter.OccultCrescent is not null)
-            using (var phantomJobsTab = ImRaii.TabItem($"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 16611)}###CharactersJobs#JobsTabs#Phantom#{selectedCharacter.CharacterId}"))
+
+            if (selectedCharacter.HasQuest((int)QuestIds.OCCULT_CRESCENT_UNFAMILIAR_TERRITORY) &&
+                selectedCharacter.OccultCrescent is not null)
             {
+                using var phantomJobsTab =
+                    ImRaii.TabItem(
+                        $"{_globalCache.AddonStorage.LoadAddonString(_currentLocale, 16611)}###CharactersJobs#JobsTabs#Phantom#{selectedCharacter.CharacterId}");
                 if (phantomJobsTab)
                 {
-                    Helpers.Jobs.DrawPhantomJobs(_phantomJobTexture, _phantomJobsIconsTexture, _globalCache, _currentLocale, selectedCharacter);
+                    Helpers.Jobs.DrawPhantomJobs(_phantomJobTexture, _phantomJobsIconsTexture, _globalCache,
+                        _currentLocale, selectedCharacter);
                 }
             }
         }
