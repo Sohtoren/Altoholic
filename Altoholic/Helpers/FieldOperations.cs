@@ -7,11 +7,9 @@ using Dalamud.Game.Text;
 using Dalamud.Interface;
 using Dalamud.Interface.Utility.Raii;
 using Lumina.Excel.Sheets;
-using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Numerics;
-using System.Text;
 
 namespace Altoholic.Helpers
 {
@@ -163,12 +161,25 @@ namespace Altoholic.Helpers
                     DrawBozjaMain(globalCache, currentLocale, chars);
                 }
             }
-            using var bozjaRewardsTab =
+
+            using (var bozjaDropsTab =
                    ImRaii.TabItem(
-                       $"{globalCache.AddonStorage.LoadAddonString(currentLocale, 1918)}###CharactersProgressTable#All#FieldOperations#Bozja#Rewards");
-            if (bozjaRewardsTab)
+                       $"{globalCache.AddonStorage.LoadAddonString(currentLocale, 1918)}###CharactersProgressTable#All#FieldOperations#Bozja#Rewards"))
             {
-                DrawBozjaRewards(globalCache, currentLocale, chars);
+                if (bozjaDropsTab)
+                {
+                    DrawBozjaDrops(globalCache, currentLocale, chars);
+                }
+            }
+
+            using (var bozjaRewardsTab =
+                   ImRaii.TabItem(
+                       $"{globalCache.AddonStorage.LoadAddonString(currentLocale, 8951)}###CharactersProgressTable#All#FieldOperations#Bozja#Exchange"))
+            {
+                if (bozjaRewardsTab)
+                {
+                    DrawBozjaExchange(globalCache, currentLocale, chars);
+                }
             }
         }
         private static void DrawBozjaMain(GlobalCache globalCache, ClientLanguage currentLocale, List<Character> chars)
@@ -186,7 +197,7 @@ namespace Altoholic.Helpers
                 ImGui.TableSetupColumn($"###CharactersProgress#All#FieldOperations#Bozja#Rewards#{c.CharacterId}",
                     ImGuiTableColumnFlags.WidthFixed, ImGui.CalcTextSize("10,000,000").X + 5);
             }
-
+            ImGui.TableSetupScrollFreeze(1, 1);//Freeze header so it shows while scrolling
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
             ImGui.TextUnformatted("");
@@ -271,7 +282,7 @@ namespace Altoholic.Helpers
             }
 
         }
-        private static void DrawBozjaRewards(GlobalCache globalCache, ClientLanguage currentLocale, List<Character> chars)
+        private static void DrawBozjaDrops(GlobalCache globalCache, ClientLanguage currentLocale, List<Character> chars)
         {
             using var charactersEventTable = ImRaii.Table(
                 $"###CharactersProgress#All#FieldOperations#Bozja#Rewards#Table",
@@ -281,14 +292,13 @@ namespace Altoholic.Helpers
             if (!charactersEventTable) return;
             ImGui.TableSetupColumn($"###CharactersProgress#All#FieldOperations#Bozja#Rewards#Name",
                 ImGuiTableColumnFlags.WidthFixed, 260);
-            ImGui.TableSetupColumn($"###CharactersProgress#All#FieldOperations#Bozja#Rewards#Currency",
-                ImGuiTableColumnFlags.WidthFixed, 33);
             foreach (Character c in chars)
             {
                 ImGui.TableSetupColumn($"###CharactersProgress#All#FieldOperations#Bozja#Rewards#{c.CharacterId}",
                     ImGuiTableColumnFlags.WidthFixed, 20);
             }
 
+            ImGui.TableSetupScrollFreeze(1, 1);//Freeze header so it shows while scrolling
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
             ImGui.TextUnformatted(globalCache.AddonStorage.LoadAddonString(currentLocale, 1918));
@@ -305,7 +315,6 @@ namespace Altoholic.Helpers
                     ImGui.EndTooltip();
                 }
             }
-
             
             Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, Helpers.CharacterCollectible.Barding, 34, 0);
             Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, Helpers.CharacterCollectible.Barding, 35, 0);
@@ -346,6 +355,227 @@ namespace Altoholic.Helpers
             Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, Helpers.CharacterCollectible.Minion, 389, 0);
             Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, Helpers.CharacterCollectible.Mount, 224, 0);
             Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, Helpers.CharacterCollectible.Orchestrion, 387, 0);
+        }
+
+        private static void DrawBozjaExchange(GlobalCache globalCache, ClientLanguage currentLocale,
+            List<Character> chars)
+        {
+            using var tab = ImRaii.TabBar("###CharactersProgressTable#All#FieldOperations#Bozja#Exchange#TabBar");
+            if (!tab) return;
+
+            for (int i = 1; i <= 8; i++)
+            {
+                string name = i switch
+                {
+                    1 => currentLocale switch
+                    {
+                        ClientLanguage.German => "Verteidigung",
+                        ClientLanguage.English => "Fending",
+                        ClientLanguage.French => "Protecteur",
+                        ClientLanguage.Japanese => "ディフェンダー",
+                        _ => "Fending",
+                    },
+                    2 => currentLocale switch
+                    {
+                        ClientLanguage.German => "Verstümmelns",
+                        ClientLanguage.English => "Maiming",
+                        ClientLanguage.French => "Abatteur",
+                        ClientLanguage.Japanese => "スレイヤー",
+                        _ => "Maiming",
+                    },
+                    3 => currentLocale switch
+                    {
+                        ClientLanguage.German => "Schlagens",
+                        ClientLanguage.English => "Striking",
+                        ClientLanguage.French => "Agresseur",
+                        ClientLanguage.Japanese => "ストライカー",
+                        _ => "Striking",
+                    },
+                    4 => currentLocale switch
+                    {
+                        ClientLanguage.German => "Zielens",
+                        ClientLanguage.English => "Aiming",
+                        ClientLanguage.French => "Pisteur",
+                        ClientLanguage.Japanese => "レンジャー",
+                        _ => "Aiming",
+                    },
+                    5 => currentLocale switch
+                    {
+                        ClientLanguage.German => "Spähens",
+                        ClientLanguage.English => "Scouting",
+                        ClientLanguage.French => "Éclaireur",
+                        ClientLanguage.Japanese => "スカウトゴー",
+                        _ => "Scouting",
+                    },
+                    6 => currentLocale switch
+                    {
+                        ClientLanguage.German => "Heilung",
+                        ClientLanguage.English => "Healing",
+                        ClientLanguage.French => "Soigneur",
+                        ClientLanguage.Japanese => "ヒーラー",
+                        _ => "Healing",
+                    },
+                    7 => currentLocale switch
+                    {
+                        ClientLanguage.German => "Magie",
+                        ClientLanguage.English => "Casting",
+                        ClientLanguage.French => "Incantateur",
+                        ClientLanguage.Japanese => "キャスターリング",
+                        _ => "Casting",
+                    },
+                    8 => currentLocale switch
+                    {
+                        ClientLanguage.German => "Bozja-Leichtmetall-Kit",
+                        ClientLanguage.English => "Bozjan runner's secrets",
+                        ClientLanguage.French => "Matériaux ultralégers pour équipement bozjien",
+                        ClientLanguage.Japanese => "ボズヤ軽量補材",
+                        _ => "Bozjan runner's secrets",
+                    }
+                };
+
+                using var bozjaRewardsTab =
+                    ImRaii.TabItem(
+                        $"{name}###CharactersProgressTable#All#FieldOperations#Bozja#Exchange#{i}");
+                if (bozjaRewardsTab)
+                {
+                    int columns = chars.Count + 2;
+                    using var charactersEventTable = ImRaii.Table(
+                        $"###CharactersProgress#All#FieldOperations#Bozja#Exchange#{i}#Table",
+                        columns,
+                        ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner |
+                        ImGuiTableFlags.ScrollX | ImGuiTableFlags.ScrollY);
+                    if (!charactersEventTable) return;
+                    int mainWidth = (i == 8) ? 300 : 260;
+                    ImGui.TableSetupColumn(
+                        $"###CharactersProgress#All#FieldOperations#Bozja#Exchange#{i}#Name",
+                        ImGuiTableColumnFlags.WidthFixed, mainWidth);
+                    ImGui.TableSetupColumn(
+                        $"###CharactersProgress#All#FieldOperations#Bozja#Exchange#{i}#Currency",
+                        ImGuiTableColumnFlags.WidthFixed, 25);
+                    foreach (Character c in chars)
+                    {
+                        ImGui.TableSetupColumn(
+                            $"###CharactersProgress#All#FieldOperations#Bozja#Exchange#{i}#{c.CharacterId}",
+                            ImGuiTableColumnFlags.WidthFixed, 20);
+                    }
+
+                    ImGui.TableSetupScrollFreeze(columns, 1); //Freeze header so it shows while scrolling
+                    ImGui.TableNextRow();
+                    ImGui.TableSetColumnIndex(0);
+                    ImGui.TextUnformatted(globalCache.AddonStorage.LoadAddonString(currentLocale, 1918));
+                    ImGui.TableSetColumnIndex(1);
+                    Item? itm = globalCache.ItemStorage.LoadItem(currentLocale, 31351);
+                    if (itm != null)
+                    {
+                        ImGui.TableSetColumnIndex(1);
+                        Utils.DrawIcon(globalCache.IconStorage.LoadIcon(itm.Value.Icon), new Vector2(16, 16));
+                        if (ImGui.IsItemHovered())
+                        {
+                            Utils.DrawItemTooltip(currentLocale, ref globalCache, itm.Value);
+                        }
+                    }
+
+                    foreach (Character currChar in chars)
+                    {
+                        ImGui.TableNextColumn();
+                        ImGui.TextUnformatted($"{currChar.FirstName[0]}.{currChar.LastName[0]}");
+                        if (ImGui.IsItemHovered())
+                        {
+                            ImGui.BeginTooltip();
+                            ImGui.TextUnformatted(
+                                $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
+                            ImGui.EndTooltip();
+                        }
+                    }
+
+                    switch (i)
+                    {
+                        case 1:
+                            {
+
+                                Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 30715, 14);
+                                Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 30716, 28);
+                                Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 30717, 14);
+                                Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 30718, 28);
+                                Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 30719, 14);
+
+                                break;
+                            }
+                        case 2:
+                            {
+
+                                Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 30720, 14);
+                                Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 30721, 28);
+                                Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 30722, 14);
+                                Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 30723, 28);
+                                Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 30724, 14);
+
+                                break;
+                            }
+                        case 3:
+                            {
+
+                                Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 30725, 14);
+                                Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 30726, 28);
+                                Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 30727, 14);
+                                Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 30728, 28);
+                                Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 30729, 14);
+                                break;
+                            }
+                        case 4:
+                            {
+
+                                Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 30730, 14);
+                                Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 30731, 28);
+                                Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 30732, 14);
+                                Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 30733, 28);
+                                Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 30734, 14);
+                                break;
+                            }
+                        case 5:
+                            {
+
+                                Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 30735, 14);
+                                Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 30736, 28);
+                                Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 30737, 14);
+                                Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 30738, 28);
+                                Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 30739, 14);
+
+                                break;
+                            }
+                        case 6:
+                            {
+
+                                Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 30740, 14);
+                                Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 30741, 28);
+                                Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 30742, 14);
+                                Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 30743, 28);
+                                Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 30744, 14);
+                                break;
+                            }
+                        case 7:
+                            {
+
+                                Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 30745, 14);
+                                Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 30746, 28);
+                                Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 30747, 14);
+                                Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 30748, 28);
+                                Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 30749, 14);
+                                break;
+                            }
+                        case 8:
+                            {
+
+                                Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 31352, 500);
+                                Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 31353, 999);
+                                Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 31354, 500);
+                                Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 31355, 999);
+                                Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 31356, 500);
+                                break;
+                            }
+                    }
+                }
+            }
         }
 
         private static void DrawCosmicExploration(GlobalCache globalCache, ClientLanguage currentLocale, List<Character> chars)

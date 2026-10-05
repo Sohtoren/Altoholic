@@ -217,7 +217,8 @@ namespace Altoholic.Helpers
                 _ => 0
             };
         }
-        public static (uint, uint) GetEventCurrenciesFromEventId(int msqIndex)
+
+        private static (uint, uint) GetEventCurrenciesFromEventId(int msqIndex)
         {
             return msqIndex switch
             {
@@ -226,7 +227,7 @@ namespace Altoholic.Helpers
             };
         }
 
-        public static void DrawRewardsModal(ClientLanguage currentLocale, GlobalCache globalCache, List<Character> chars, int msqIndex)
+        private static void DrawRewardsModal(ClientLanguage currentLocale, GlobalCache globalCache, List<Character> chars, int msqIndex)
         {
             if (ImGui.IsItemClicked())
             {
@@ -292,7 +293,7 @@ namespace Altoholic.Helpers
                     ImGuiTableColumnFlags.WidthFixed, 20);
             }
 
-            ImGui.TableSetupScrollFreeze(columns, 1); //Freeze header so it shows while scrolling
+            ImGui.TableSetupScrollFreeze(1, 1); //Freeze header so it shows while scrolling
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
             ImGui.TextUnformatted(globalCache.AddonStorage.LoadAddonString(currentLocale, 1885));
