@@ -221,29 +221,22 @@ namespace Altoholic.Windows
 #endif
                 foreach (Character character in chars)
                 {
-                    //Plugin.Log.Debug($"{character.Currencies.Gil}");
                     ImGui.TableNextRow();
                     ImGui.TableSetColumnIndex(0);
                     ImGui.TextUnformatted(
                         $"{character.FirstName} {character.LastName}{(char)SeIconChar.CrossWorld}{character.HomeWorld}");
-                    if (character.Currencies is null)
+                    if (character.Currencies.Count == 0)
                     {
                         continue;
                     }
 
-                    PropertyInfo? p = character.Currencies.GetType().GetProperty(_currentCurrency);
-                    //Plugin.Log.Debug($"p: {p}");
-                    if (p == null)
+                    if (!Enum.TryParse($"{_currentCurrency}".ToUpper().Replace(" ", "_"), out Currencies currency))
                     {
                         continue;
                     }
 
-                    object? amount = p.GetValue(character.Currencies, null);
-                    if (amount == null)
-                    {
-                        continue;
-                    }
-                    overallAmount += (int)amount;
+                    int amount = character.Currencies.GetValueOrDefault((uint)currency);
+                    overallAmount += amount;
                     //Plugin.Log.Debug($"v: {p.GetValue(character.Currencies, null):N0}");
                     ImGui.TableSetColumnIndex(1);
                     ImGui.TextUnformatted($"{amount:N0}");

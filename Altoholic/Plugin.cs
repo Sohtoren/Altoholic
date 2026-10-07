@@ -2887,8 +2887,7 @@ namespace Altoholic
                                 }
                             }
 
-                            DateTime lastCheck;
-                            bool charHasRoulette = _localPlayer.CompletedRoulettes.TryGetValue(roulette.Id, out lastCheck);
+                            bool charHasRoulette = _localPlayer.CompletedRoulettes.TryGetValue(roulette.Id, out var lastCheck);
 
                             if (!charHasRoulette || (charHasRoulette && lastCheck < Utils.GetLastDailyReset()))
                             {
