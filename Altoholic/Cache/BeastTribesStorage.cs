@@ -1,10 +1,10 @@
 ﻿using Altoholic.Models;
 using Dalamud.Game;
-using BeastReputationRank = Lumina.Excel.Sheets.BeastReputationRank;
-using BeastTribe = Lumina.Excel.Sheets.BeastTribe;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using BeastReputationRank = Lumina.Excel.Sheets.BeastReputationRank;
+using BeastTribe = Lumina.Excel.Sheets.BeastTribe;
 
 namespace Altoholic.Cache
 {

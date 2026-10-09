@@ -1,9 +1,9 @@
 ﻿using Altoholic.Models;
 using Dalamud.Game;
+using Lumina.Excel.Sheets;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Lumina.Excel.Sheets;
 
 namespace Altoholic.Cache
 {

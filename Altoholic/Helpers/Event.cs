@@ -443,11 +443,11 @@ namespace Altoholic.Helpers
                     DrawEventReward(currentLocale, globalCache, chars, msqIndex);
                 }
             }
-            using (var OrchestrionsTab =
+            using (var orchestrionsTab =
             ImRaii.TabItem(
                 $"{globalCache.AddonStorage.LoadAddonString(currentLocale, 832)}###CharactersProgress#All#Event#MultiRewardModal#{msqIndex}#2#Orchestrions"))
             {
-                if (OrchestrionsTab.Success)
+                if (orchestrionsTab.Success)
                 {
                     using var charactersEventTable = ImRaii.Table(
                         $"###CharactersProgress#All#Event#MultiRewardModal#{msqIndex}#2",
@@ -1519,15 +1519,15 @@ namespace Altoholic.Helpers
                                 charactersTotalNeededMGF[currChar.CharacterId] = neededMGF;
                             }
 
-                            Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, Helpers.CharacterCollectible.Emote, 276, 410, charactersTotalNeededMGF);
-                            Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, Helpers.CharacterCollectible.Mount, 330, 410, charactersTotalNeededMGF);
-                            Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, Helpers.CharacterCollectible.Minion, 499, 350, charactersTotalNeededMGF);
-                            Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, Helpers.CharacterCollectible.Minion, 500, 350, charactersTotalNeededMGF);
-                            Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, Helpers.CharacterCollectible.Orchestrion, 657, 220, charactersTotalNeededMGF);
-                            Helpers.Reward.DrawAllCharsFramerKit(currentLocale, globalCache, chars, 41377, 200, charactersTotalNeededMGF);
-                            Helpers.Reward.DrawAllCharsFramerKit(currentLocale, globalCache, chars, 41378, 200, charactersTotalNeededMGF);
-                            Helpers.Reward.DrawAllCharsFramerKit(currentLocale, globalCache, chars, 41379, 200, charactersTotalNeededMGF);
-                            Helpers.Reward.DrawAllCharsTotal(currentLocale, globalCache, chars, Currencies.MGF, neededMGF, charactersTotalNeededMGF);
+                            Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Emote, 276, 410, charactersTotalNeededMGF);
+                            Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Mount, 330, 410, charactersTotalNeededMGF);
+                            Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Minion, 499, 350, charactersTotalNeededMGF);
+                            Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Minion, 500, 350, charactersTotalNeededMGF);
+                            Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Orchestrion, 657, 220, charactersTotalNeededMGF);
+                            Reward.DrawAllCharsFramerKit(currentLocale, globalCache, chars, 41377, 200, charactersTotalNeededMGF);
+                            Reward.DrawAllCharsFramerKit(currentLocale, globalCache, chars, 41378, 200, charactersTotalNeededMGF);
+                            Reward.DrawAllCharsFramerKit(currentLocale, globalCache, chars, 41379, 200, charactersTotalNeededMGF);
+                            Reward.DrawAllCharsTotal(currentLocale, globalCache, chars, Currencies.MGF, neededMGF, charactersTotalNeededMGF);
                         }
                     }
                 }
@@ -1590,13 +1590,13 @@ namespace Altoholic.Helpers
 
                                 charactersTotalNeededMGF[currChar.CharacterId] = neededMGF;
                             }
-                            Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 41560, 410, charactersTotalNeededMGF);
-                            Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 41561, 410, charactersTotalNeededMGF);
-                            Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 41562, 410, charactersTotalNeededMGF);
-                            Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 41563, 410, charactersTotalNeededMGF);
-                            Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 41564, 410, charactersTotalNeededMGF);
-                            Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 41796, 410, charactersTotalNeededMGF);
-                            Helpers.Reward.DrawAllCharsTotal(currentLocale, globalCache, chars, Currencies.MGF, neededMGF, charactersTotalNeededMGF);
+                            Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 41560, 410, charactersTotalNeededMGF);
+                            Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 41561, 410, charactersTotalNeededMGF);
+                            Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 41562, 410, charactersTotalNeededMGF);
+                            Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 41563, 410, charactersTotalNeededMGF);
+                            Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 41564, 410, charactersTotalNeededMGF);
+                            Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 41796, 410, charactersTotalNeededMGF);
+                            Reward.DrawAllCharsTotal(currentLocale, globalCache, chars, Currencies.MGF, neededMGF, charactersTotalNeededMGF);
                         }
                     }
                 }
@@ -1657,12 +1657,12 @@ namespace Altoholic.Helpers
 
                         charactersTotalNeededMGF[currChar.CharacterId] = neededMGF;
                     }
-                    Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 41437, 220, charactersTotalNeededMGF);
-                    Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 41438, 220, charactersTotalNeededMGF);
-                    Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 41439, 220, charactersTotalNeededMGF);
-                    Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 41440, 220, charactersTotalNeededMGF);
-                    Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 41441, 220, charactersTotalNeededMGF);
-                    Helpers.Reward.DrawAllCharsTotal(currentLocale, globalCache, chars, Currencies.MGF, neededMGF, charactersTotalNeededMGF);
+                    Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 41437, 220, charactersTotalNeededMGF);
+                    Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 41438, 220, charactersTotalNeededMGF);
+                    Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 41439, 220, charactersTotalNeededMGF);
+                    Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 41440, 220, charactersTotalNeededMGF);
+                    Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 41441, 220, charactersTotalNeededMGF);
+                    Reward.DrawAllCharsTotal(currentLocale, globalCache, chars, Currencies.MGF, neededMGF, charactersTotalNeededMGF);
                 }
             }
         }

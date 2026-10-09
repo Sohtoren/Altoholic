@@ -8,7 +8,7 @@ namespace Altoholic.Models
         public uint LevelMax { get; set; }
         public uint[] LevelUnlock { get; set; } = new uint[5];
         public uint[] Action { get; set; } = new uint[5];
-        public JobName Names { get; set; } = new JobName();
+        public JobName Names { get; set; } = new();
     }
 
     public class Job

@@ -162,12 +162,6 @@ namespace Altoholic.Database.Migrations
             }*/
         }
 
-        private class OldCurrenciesHistory
-        {
-            public ulong CharacterId { get; init; }
-            public PlayerCurrencies? Currencies { get; init; }
-            public long Datetime { get; init; }
-        }
         // ReSharper disable once ClassNeverInstantiated.Local
         #pragma warning restore CA1812
 
@@ -230,12 +224,11 @@ namespace Altoholic.Database.Migrations
                 : System.Text.Json.JsonSerializer.Deserialize<PlayerCurrencies>(dbCharacter.Currencies);
 
 
-            if (currencies is not null)
-            {
-                character.Weekly_Acquired_Tomestone = currencies.Weekly_Acquired_Tomestone;
-                character.Weekly_Limit_Tomestone = currencies.Weekly_Limit_Tomestone;
-                character.Currencies = PcToDictionary(currencies);
-            }
+            if (currencies is null) return character;
+
+            character.Weekly_Acquired_Tomestone = currencies.Weekly_Acquired_Tomestone;
+            character.Weekly_Limit_Tomestone = currencies.Weekly_Limit_Tomestone;
+            character.Currencies = PcToDictionary(currencies);
             return character;
         }
 

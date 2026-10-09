@@ -46,9 +46,6 @@ using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Runtime.InteropServices;
-using static FFXIVClientStructs.FFXIV.Client.Game.FashionCheckManager.Delegates;
-using static FFXIVClientStructs.FFXIV.Client.Game.UI.InstanceContent;
-using static FFXIVClientStructs.FFXIV.Client.Game.UI.UIState.Delegates;
 using static FFXIVClientStructs.FFXIV.Client.UI.Misc.RaptureGearsetModule;
 using static FFXIVClientStructs.FFXIV.Client.UI.RaptureAtkModule;
 using Character = Altoholic.Models.Character;
@@ -976,7 +973,7 @@ namespace Altoholic
                     heartCount = 0;
                 }
 
-                if (_localPlayer.CustomDeliveries.TryGetValue(i, out CustomDeliveryRank? cdr))
+                if (_localPlayer.CustomDeliveries.TryGetValue(i, out _))
                 {
                     _localPlayer.CustomDeliveries[i].HeartCount = heartCount;
                     _localPlayer.CustomDeliveries[i].UsedAllowance = usedAllowance;
@@ -995,27 +992,23 @@ namespace Altoholic
 
         private unsafe void GetRaidsRewards()
         {
-            if (Configuration.EnabledTimers is not null)
+            if (Configuration.EnabledTimers is null) return;
+            if (!Configuration.EnabledTimers.Contains(TimersStatus.Raids)) return;
+
+            var agent = AgentContentsFinder.Instance();
+            if (agent is null || !agent->IsAgentActive()) return;
+
+            var selectedDuty = agent->SelectedDuty.Id;
+            var numRewards = agent->NumCollectedRewards;
+            //Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"GetRaidsRewards: {selectedDuty}, {numRewards}");
+            if (_localPlayer.RaidRewards.TryGetValue(selectedDuty, out _))
             {
-                if (Configuration.EnabledTimers.Contains(TimersStatus.Raids))
-                {
-                    var agent = AgentContentsFinder.Instance();
-                    if (agent is not null && agent->IsAgentActive())
-                    {
-                        var selectedDuty = agent->SelectedDuty.Id;
-                        var numRewards = agent->NumCollectedRewards;
-                        //Utils.LogMessage(LogLevel.Debug, Configuration.EnableDebugMessages, $"GetRaidsRewards: {selectedDuty}, {numRewards}");
-                        if (_localPlayer.RaidRewards.TryGetValue(selectedDuty, out var reward))
-                        {
-                            _localPlayer.RaidRewards[selectedDuty].Reward = numRewards;
-                            _localPlayer.RaidRewards[selectedDuty].LastCheck = DateTime.UtcNow;
-                        }
-                        else
-                        {
-                            _localPlayer.RaidRewards.Add(selectedDuty, new() { Reward = numRewards, LastCheck = DateTime.UtcNow });
-                        }
-                    }
-                }
+                _localPlayer.RaidRewards[selectedDuty].Reward = numRewards;
+                _localPlayer.RaidRewards[selectedDuty].LastCheck = DateTime.UtcNow;
+            }
+            else
+            {
+                _localPlayer.RaidRewards.Add(selectedDuty, new RaidReward { Reward = numRewards, LastCheck = DateTime.UtcNow });
             }
         }
 
@@ -1073,7 +1066,7 @@ namespace Altoholic
                         BannerIndex = gearset.BannerIndex,
                         Flags = gearset.Flags,
                         Gears = gearList,
-                        GlassesIds = gearset.GlassesIds.ToArray()
+                        GlassesIds = [.. gearset.GlassesIds]
                     };
 
                     _localPlayer.TryAddGearSet(gearset.Id, gs);
@@ -1112,9 +1105,9 @@ namespace Altoholic
                 GlamourPlate gp = new()
                 {
                     Number = i,
-                    GearsIds = glamourPlate.ItemIds.ToArray(),
-                    Stain0Ids = glamourPlate.Stain0Ids.ToArray(),
-                    Stain1Ids = glamourPlate.Stain1Ids.ToArray(),
+                    GearsIds = [.. glamourPlate.ItemIds],
+                    Stain0Ids = [.. glamourPlate.Stain0Ids],
+                    Stain1Ids = [.. glamourPlate.Stain1Ids],
                 };
                 _localPlayer.TryAddGlamourPlate(i, gp);
             }
@@ -1330,75 +1323,74 @@ namespace Altoholic
         private unsafe void GetEureka()
         {
             if (ClientState.IsPvP) return;
-            if (ClientState.TerritoryType is 732 or 763 or 795 or 827)
-            {
-                EurekaState* state = FFXIVClientStructs.FFXIV.Client.Game.InstanceContent.PublicContentEureka.GetState();
-                if (state is null) return;
+            if (ClientState.TerritoryType is not (732 or 763 or 795 or 827)) return;
 
-                Models.Eureka eureka = new()
-                {
-                    CurrentExperience = state->CurrentExperience,
-                    NeededExperience = state->NeededExperience,
-                    //Logos = instance->State..ToArray(),
-                };
-                eureka.CurrentLevel = (uint)eureka.GetCurrentLevel() + 1;
-                if (_localPlayer.Eureka is not null && (_localPlayer.Eureka.MaxLevel == 0 || eureka.GetCurrentLevel() > _localPlayer.Eureka.MaxLevel))
-                {
-                    eureka.MaxLevel = (uint)eureka.GetCurrentLevel() + 1;
-                }
-                //Log.Debug($"{eureka.CurrentLevel}, {eureka.MaxLevel}, {eureka.CurrentExperience}, {eureka.NeededExperience}");
-                _localPlayer.Eureka = eureka;
+            EurekaState* state = PublicContentEureka.GetState();
+            if (state is null) return;
+
+            Models.Eureka eureka = new()
+            {
+                CurrentExperience = state->CurrentExperience,
+                NeededExperience = state->NeededExperience,
+                //Logos = instance->State..ToArray(),
+            };
+            eureka.CurrentLevel = (uint)eureka.GetCurrentLevel() + 1;
+            if (_localPlayer.Eureka is not null && (_localPlayer.Eureka.MaxLevel == 0 || eureka.GetCurrentLevel() > _localPlayer.Eureka.MaxLevel))
+            {
+                eureka.MaxLevel = (uint)eureka.GetCurrentLevel() + 1;
             }
+            //Log.Debug($"{eureka.CurrentLevel}, {eureka.MaxLevel}, {eureka.CurrentExperience}, {eureka.NeededExperience}");
+            _localPlayer.Eureka = eureka;
         }
 
         private unsafe void GetBozja()
         {
             if (ClientState.IsPvP) return;
-            if (ClientState.TerritoryType is 920 or 975)
-            {
-                PublicContentBozja* instance = FFXIVClientStructs.FFXIV.Client.Game.InstanceContent.PublicContentBozja.GetInstance();
-                if (instance is null) return;
-                if (!instance->StateInitialized) return;
+            if (ClientState.TerritoryType is not (920 or 975)) return;
 
-                _localPlayer.Bozja = new Bozja()
-                {
-                    CurrentLevel = instance->GetCurrentLevel(),
-                    MaxLevel = instance->GetMaxLevel(),
-                    CurrentExperience = instance->State.CurrentExperience,
-                    NeededExperience = instance->State.NeededExperience,
-                    HolsterActions = instance->State.HolsterActions.ToArray(),
-                };
-            }
+            PublicContentBozja* instance = PublicContentBozja.GetInstance();
+            if (instance is null) return;
+            if (!instance->StateInitialized) return;
+
+            _localPlayer.Bozja = new Bozja()
+            {
+                CurrentLevel = instance->GetCurrentLevel(),
+                MaxLevel = instance->GetMaxLevel(),
+                CurrentExperience = instance->State.CurrentExperience,
+                NeededExperience = instance->State.NeededExperience,
+                HolsterActions = [.. instance->State.HolsterActions],
+            };
         }
 
         private unsafe void GetOccultCrescent()
         {
             if (ClientState.IsPvP) return;
-            if (ClientState.TerritoryType is 1252 or 1346)
+            if (ClientState.TerritoryType is not (1252 or 1346)) return;
+
+            PublicContentOccultCrescent* instance = PublicContentOccultCrescent.GetInstance();
+            if (instance is null) return;
+            if (!instance->StateLoaded) return;
+            OccultCrescent oc = new OccultCrescent
             {
-                PublicContentOccultCrescent* instance = FFXIVClientStructs.FFXIV.Client.Game.InstanceContent.PublicContentOccultCrescent.GetInstance();
-                if (instance is null) return;
-                if (!instance->StateLoaded) return;
-                OccultCrescent oc = new OccultCrescent
-                {
-                    KnowledgeLevel = instance->State.CurrentKnowledge,
-                    KnowledgeExperience = instance->State.NeededKnowledge,
-                    Jobs = instance->State.SupportJobLevels.ToArray(),
-                    JobsExperiences = instance->State.SupportJobExperience.ToArray(),
-                    //LoreBooks =
-                };
-                if (ClientState.TerritoryType is 1252)
-                {
+                KnowledgeLevel = instance->State.CurrentKnowledge,
+                KnowledgeExperience = instance->State.NeededKnowledge,
+                Jobs = [.. instance->State.SupportJobLevels],
+                JobsExperiences = [.. instance->State.SupportJobExperience],
+                //LoreBooks =
+            };
+            switch (ClientState.TerritoryType)
+            {
+                case 1252:
                     oc.EnlightenmentSilverPieces = instance->State.Silver;
                     oc.EnlightenmentGoldPieces = instance->State.Gold;
-                }
-                if (ClientState.TerritoryType is 1346)
-                {
+                    break;
+                case 1346:
                     oc.EnlightenmentSilverObols = instance->State.Silver;
                     oc.EnlightenmentGoldObols = instance->State.Gold;
-                }
-                _localPlayer.OccultCrescent = oc;
+                    break;
             }
+
+            _localPlayer.OccultCrescent = oc;
         }
 
         private unsafe void GetCollectionFromState()
@@ -1940,7 +1932,7 @@ namespace Altoholic
                 HashSet<uint>? potentialSets = _globalCache.MirageSetStorage.GetMirageSetItemLookup(itemId);
                 if (potentialSets is not null)
                 {
-                    foreach (uint potentialSet in potentialSets.Where(potentialSet => currentSets.Contains(potentialSet)))
+                    foreach (uint potentialSet in potentialSets.Where(currentSets.Contains))
                     {
                         glamourItem.GlamourId = potentialSet;
                     }
@@ -2421,7 +2413,7 @@ namespace Altoholic
 
             ushort currentDuty = GameMain.Instance()->CurrentContentFinderConditionId;
 
-            uint[] ids = _globalCache.DutyStorage.RewardsRaidIds.Concat(_globalCache.DutyStorage.SavageRaidIds).ToArray();
+            uint[] ids = [.. _globalCache.DutyStorage.RewardsRaidIds, .. _globalCache.DutyStorage.SavageRaidIds];
             if (!ids.Contains(currentDuty)) return;
 
             Item? item = _globalCache.ItemStorage.LoadItem(Configuration.Language, gameInventoryItem.ItemId);
@@ -2566,13 +2558,13 @@ namespace Altoholic
 
             long newPlayTimeUpdate = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
             _localPlayer.LastPlayTimeUpdate = newPlayTimeUpdate;
-            Log.Info($"Updating playtime with {player.Item1}, {player.Item2}, {totalPlaytime}, {newPlayTimeUpdate}.");
+            Utils.LogMessage(LogLevel.Info, Configuration.EnableDebugMessages,$"Updating playtime with {player.Item1}, {player.Item2}, {totalPlaytime}, {newPlayTimeUpdate}.");
             Database.Database.UpdatePlaytime(this, _db, id, totalPlaytime, newPlayTimeUpdate);
         }
 
         private (string, string, string) GetLocalPlayerNameWorldRegion()
         {
-            IPlayerState? local = PlayerState;
+            IPlayerState local = PlayerState;
             if (local.HomeWorld.ValueNullable == null)
                 return (string.Empty, string.Empty, string.Empty);
             string homeworld = local.HomeWorld.Value.Name.ExtractText();
@@ -2779,7 +2771,7 @@ namespace Altoholic
                     builder.PushColorRgba(KnownColor.Red.Vector());
                     if (_localPlayer.Timers.FashionReportLastCheck < Utils.GetFashionReportReset())
                     {
-                        builder.Append($"4/4");
+                        builder.Append("4/4");
                     }
                     else
                     {
@@ -2927,8 +2919,7 @@ namespace Altoholic
                         if (!trackedRaids.Contains(id)) continue;
                         if (!_localPlayer.DutiesUnlocked.Contains(id)) continue;
 
-                        RaidReward? reward;
-                        bool charHasRaidRewards = _localPlayer.RaidRewards.TryGetValue(id, out reward);
+                        bool charHasRaidRewards = _localPlayer.RaidRewards.TryGetValue(id, out var reward);
 
                         if (!charHasRaidRewards || charHasRaidRewards && reward is not null &&
                             ((reward.LastCheck < Utils.GetLastWeeklyReset()) ||
@@ -3038,8 +3029,8 @@ namespace Altoholic
                 return;
             }
 
-            int? lastAllowance = _localPlayer.Timers.DomanEnclaveWeeklyAllowances;
-            int? lastDonation = _localPlayer.Timers.DomanEnclaveWeeklyDonation;
+            //int? lastAllowance = _localPlayer.Timers.DomanEnclaveWeeklyAllowances;
+            //int? lastDonation = _localPlayer.Timers.DomanEnclaveWeeklyDonation;
 
             DomanEnclaveManager* dem = DomanEnclaveManager.Instance();
             if (!dem->IsLoaded) return;
@@ -3354,7 +3345,7 @@ namespace Altoholic
                     int threshold = Configuration.FashionReportThreshold;
                     if (_localPlayer.Timers.FashionReportLastCheck > Utils.GetFashionReportReset())
                     {
-                        int highest = Configuration.FashionReportThreshold switch
+                        int highest = threshold switch
                         {
                             1 => 80,
                             2 => 100,
