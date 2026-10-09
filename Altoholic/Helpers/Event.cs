@@ -200,20 +200,22 @@ namespace Altoholic.Helpers
                     character.HasQuest((int)QuestIds.EVENT_RISING_2026),
                     character.HasQuest((int)QuestIds.EVENT_A_NOCTURNE_FOR_HEROES_2026),
                     character.HasQuest((int)QuestIds.EVENT_BLUNDERVILLE_2026),
+                    character.HasQuest((int)QuestIds.EVENT_ALL_SAINTS_WAKE_2026),
                 ];
                 result.Add(completedQuests);
             }
 
             return result;
         }
-        public static uint GetEventCurrencyFromEventId(int msqIndex)
+
+        private static uint GetEventCurrencyFromEventId(int msqIndex)
         {
             return msqIndex switch
             {
                 132 => 47863,
                 133 => 50082,
                 134 => 50089,
-                136 or 138 or 139 => 1,
+                136 or 138 or 139 or 142 => 1,
                 _ => 0
             };
         }
@@ -613,6 +615,9 @@ namespace Altoholic.Helpers
                         140);
                     DrawAllLine(currentLocale, globalCache, chars, charactersQuests, $"{Loc.Localize("Event_Blunderville", "Blunderville")} **",
                         141);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_AllSaintsWake", "All Saints' Wake")} (2026)",
+                        142);
                 }
             }
 
@@ -2325,6 +2330,21 @@ namespace Altoholic.Helpers
                         Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Orchestrion, 302, 1);
                         Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Orchestrion, 303, 1);
                         Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Orchestrion, 304, 1);
+                        break;
+                    }
+                case 142: /* All Saints' Wake (2026)*/
+                    {
+                        Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 51292, 5000);
+                        Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 51293, 5000);
+                        Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 51294, 8000);
+                        Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 51302, 2000);
+                        Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 51303, 2000);
+                        Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 51304, 2000);
+                        break;
+                    }
+                case 143: /* Starlight? */
+                    {
+                        Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 51292, 51295);
                         break;
                     }
             }
