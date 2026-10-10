@@ -84,7 +84,7 @@ namespace Altoholic.Cache
         }
         public List<uint> Get()
         {
-            return _minions.Keys.ToList();
+            return [.. _minions.Keys];
         }
         public void Dispose()
         {

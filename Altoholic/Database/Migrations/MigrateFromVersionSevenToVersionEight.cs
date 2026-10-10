@@ -3,7 +3,6 @@ using Dapper;
 using Microsoft.Data.Sqlite;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using static Altoholic.Database.Database;
 
 namespace Altoholic.Database.Migrations
@@ -97,11 +96,11 @@ namespace Altoholic.Database.Migrations
             public int MGF { get; init; }
             public int MGP { get; init; }
             public int Namazu_Koban { get; init; }
-            public int Occult_Enlightenment_Silver_Piece { get; set; }
-            public int Occult_Enlightenment_Gold_Piece { get; set; }
-            public int Occult_Enlightenment_Silver_Obol { get; set; }
-            public int Occult_Enlightenment_Gold_Obol { get; set; }
-            public int Occult_Sanguine_Cipher { get; set; }
+            public int Occult_Enlightenment_Silver_Piece { get; init; }
+            public int Occult_Enlightenment_Gold_Piece { get; init; }
+            public int Occult_Enlightenment_Silver_Obol { get; init; }
+            public int Occult_Enlightenment_Gold_Obol { get; init; }
+            public int Occult_Sanguine_Cipher { get; init; }
             public int Oizys_Credit { get; init; }
             public int Omicron_Omnitoken { get; init; }
             public int Orange_Crafters_Scrip { get; init; }

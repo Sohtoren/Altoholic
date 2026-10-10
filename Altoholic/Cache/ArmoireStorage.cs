@@ -55,7 +55,7 @@ namespace Altoholic.Cache
         }
         public List<uint> Get()
         {
-            return _armoire.Keys.ToList();
+            return [.. _armoire.Keys];
         }
 
         public uint? GetArmoireIdFromItemId(uint itemId)

@@ -154,16 +154,16 @@ namespace Altoholic.Cache
         }
         public List<uint> Get()
         {
-            return _hairstylesAndFaces.Keys.ToList();
+            return [.. _hairstylesAndFaces.Keys];
         }
 
         public List<uint> GetHairstylesIdsFromItemId(uint id)
         {
-            return _hairstylesAndFaces.Where(h => h.Value.ItemId == id).Select(x =>x.Key).ToList();
+            return [.. _hairstylesAndFaces.Where(h => h.Value.ItemId == id).Select(x => x.Key)];
         }
         public List<Hairstyle> GetHairstylesFromItemId(uint id)
         {
-            return _hairstylesAndFaces.Where(h => h.Value.ItemId == id).Select(x =>x.Value).ToList();
+            return [.. _hairstylesAndFaces.Where(h => h.Value.ItemId == id).Select(x => x.Value)];
         }
 
         public Dictionary<uint, Hairstyle> GetAll()
@@ -173,11 +173,11 @@ namespace Altoholic.Cache
 
         public List<uint> GetIdsFromStartIndex(int startIndex)
         {
-            return _hairstylesAndFaces.Where(h => h.Value.Id >= startIndex).Select(x => x.Key).ToList();
+            return [.. _hairstylesAndFaces.Where(h => h.Value.Id >= startIndex).Select(x => x.Key)];
         }
         public List<uint> GetIdsFromUnlockLink(ushort unlockLink)
         {
-            return _hairstylesAndFaces.Where(h => h.Value.UnlockLink == unlockLink).Select(x => x.Key).ToList();
+            return [.. _hairstylesAndFaces.Where(h => h.Value.UnlockLink == unlockLink).Select(x => x.Key)];
         }
 
 
@@ -198,7 +198,7 @@ namespace Altoholic.Cache
         {
             int row = GetRowFromTribeGender(tribe, gender);
             List<uint> hlist = _hairstylesPerSubRacesAndGender.Where(h => h.Key == row).Select(h => h.Value).ToList().First();
-            return hlist.Any(h => ids.Contains(h));
+            return hlist.Any(ids.Contains);
         }
 
         public List<uint> GetAllHairstylesForTribeGender(byte tribe, int gender)

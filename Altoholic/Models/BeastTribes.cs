@@ -3,8 +3,8 @@
     public class BeastTribes
     {
         public uint Id { get; init; }
-        public uint Icon { get; set; }
-        public uint MaxRank { get; set; }
+        public uint Icon { get; init; }
+        public uint MaxRank { get; init; }
         public short DisplayOrder { get; set; }
         public string GermanName { get; set; } = string.Empty;
         public string EnglishName { get; set; } = string.Empty;

@@ -3,7 +3,6 @@ using Altoholic.Models;
 using CheapLoc;
 using Dalamud.Bindings.ImGui;
 using Dalamud.Game;
-using Dalamud.Game.ClientState.Objects.SubKinds;
 using Dalamud.Game.Text;
 using Dalamud.Interface;
 using Dalamud.Interface.Textures.TextureWraps;
@@ -11,11 +10,8 @@ using Dalamud.Interface.Utility.Raii;
 using FFXIVClientStructs.FFXIV.Common.Math;
 using Lumina.Excel;
 using Lumina.Excel.Sheets;
-using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
-using System.Text;
 
 namespace Altoholic.Helpers
 {

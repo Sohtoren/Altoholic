@@ -76,7 +76,7 @@ namespace Altoholic.Cache
 
         public List<uint> Get()
         {
-            return _beastTribes.Keys.ToList();
+            return [.. _beastTribes.Keys];
         }
         public int Count()
         {
@@ -84,7 +84,7 @@ namespace Altoholic.Cache
         }
         public List<uint> GetRanks()
         {
-            return _beastTribeRanks.Keys.ToList();
+            return [.. _beastTribeRanks.Keys];
         }
         public void Dispose()
         {

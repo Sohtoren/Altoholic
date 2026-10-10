@@ -77,7 +77,7 @@ namespace Altoholic.Cache
         }
         public List<uint> Get()
         {
-            return _ornaments.Keys.ToList();
+            return [.. _ornaments.Keys];
         }
         public void Dispose()
         {

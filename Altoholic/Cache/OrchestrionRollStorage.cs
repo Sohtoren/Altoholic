@@ -68,7 +68,7 @@ namespace Altoholic.Cache
         }
         public List<uint> Get()
         {
-            return _orchestrionRolls.Keys.ToList();
+            return [.. _orchestrionRolls.Keys];
         }
         public void Dispose()
         {

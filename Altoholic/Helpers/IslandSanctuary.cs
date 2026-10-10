@@ -1,18 +1,15 @@
-﻿using Altoholic.Cache;
-using Altoholic.Models;
+﻿using Altoholic.Models;
 using Dalamud.Bindings.ImGui;
 using Dalamud.Game;
 using Dalamud.Game.Text;
 using Dalamud.Interface.Utility.Raii;
 using FFXIVClientStructs.FFXIV.Common.Math;
 using Lumina.Excel.Sheets;
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Altoholic.Helpers
 {
-    public class IslandSanctuary
+    public static class IslandSanctuary
     {
         public static void DrawRewards(Cache.GlobalCache globalCache, ClientLanguage currentLocale, List<Character> chars)
         {

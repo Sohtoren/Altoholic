@@ -1,6 +1,5 @@
 ﻿using Altoholic.Models;
 using Dalamud.Game;
-using Lumina.Excel.Sheets;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -44,7 +43,7 @@ namespace Altoholic.Cache
 
         public List<uint> Get()
         {
-            return _customDeliveryNPC.Keys.ToList();
+            return [.. _customDeliveryNPC.Keys];
         }
         public int Count()
         {

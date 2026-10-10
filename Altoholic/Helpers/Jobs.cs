@@ -1,19 +1,16 @@
-﻿using Altoholic.Cache;
-using Altoholic.Models;
+﻿using Altoholic.Models;
 using Dalamud.Bindings.ImGui;
 using Dalamud.Game;
 using Dalamud.Interface.Textures.TextureWraps;
 using Dalamud.Interface.Utility.Raii;
 using Lumina.Excel;
 using Lumina.Excel.Sheets;
-using System;
 using System.Collections.Generic;
 using System.Numerics;
-using System.Text;
 
 namespace Altoholic.Helpers
 {
-    public class Jobs
+    public static class Jobs
     {
         /*public static Dictionary<uint, uint> GetPhantomJobsLevelExperience()
         {
@@ -30,30 +27,32 @@ namespace Altoholic.Helpers
         }*/
         public static Dictionary<uint, uint[]> GetPhantomJobsLevelExperience()
         {
-            Dictionary<uint, uint[]> jobsExperiences = new Dictionary<uint, uint[]>();
-            jobsExperiences.Add(1, [400, 2400, 3200, 4800, 6000, 16800]);
-            jobsExperiences.Add(2, [2400, 12000, 0, 0, 0, 14400]);
-            jobsExperiences.Add(3, [400, 2000, 4000, 4800, 5600, 16800]);
-            jobsExperiences.Add(4, [400, 2000, 3200, 4800, 6400, 16800]);
-            jobsExperiences.Add(5, [400, 3600, 6800, 8400, 0, 19200]);
-            jobsExperiences.Add(6, [400, 4400, 9600, 0, 0, 14400]);
-            jobsExperiences.Add(7, [400, 2400, 4800, 6800, 0, 14400]);
-            jobsExperiences.Add(8, [400, 3600, 5600, 7200, 0, 16800]);
-            jobsExperiences.Add(9, [400, 2000, 2800, 4000, 5200, 14400]);
-            jobsExperiences.Add(10, [400, 5200, 8400, 0, 0, 14000]);
-            jobsExperiences.Add(11, [400, 3600, 5600, 7200, 0, 16800]);
-            jobsExperiences.Add(12, [400, 2400, 3200, 4800, 8400, 19200]);
-            jobsExperiences.Add(13, [400, 4400, 9600, 0, 0, 14400]);
-            jobsExperiences.Add(14, [400, 5200, 8800, 0, 0, 14400]);
-            jobsExperiences.Add(15, [400, 6000, 8000, 0, 0, 14400]);
-            jobsExperiences.Add(16, [600, 3600, 6000, 7800, 10800, 28800]);
-            jobsExperiences.Add(17, [600, 5400, 8400, 10800, 0, 25200]);
-            jobsExperiences.Add(18, [600, 5400, 8400, 10800, 0, 25200]);
-            jobsExperiences.Add(19, [600, 9300, 11700, 0, 0, 21600]);
-            jobsExperiences.Add(20, [1200, 6600, 9300, 11700, 0, 28800]);
-            jobsExperiences.Add(21, [9900, 11700, 0, 0, 0, 21600]);
-            jobsExperiences.Add(22, [600, 3600, 7200, 10200, 10200, 31800]);
-            jobsExperiences.Add(23, [600, 7200, 9600, 11400, 0, 28800]);
+            Dictionary<uint, uint[]> jobsExperiences = new Dictionary<uint, uint[]>
+            {
+                { 1, [400, 2400, 3200, 4800, 6000, 16800] }, 
+                { 2, [2400, 12000, 0, 0, 0, 14400] }, 
+                { 3, [400, 2000, 4000, 4800, 5600, 16800] },
+                { 4, [400, 2000, 3200, 4800, 6400, 16800] },
+                { 5, [400, 3600, 6800, 8400, 0, 19200] },
+                { 6, [400, 4400, 9600, 0, 0, 14400] },
+                { 7, [400, 2400, 4800, 6800, 0, 14400] },
+                { 8, [400, 3600, 5600, 7200, 0, 16800] },
+                { 9, [400, 2000, 2800, 4000, 5200, 14400] },
+                { 10, [400, 5200, 8400, 0, 0, 14000] },
+                { 11, [400, 3600, 5600, 7200, 0, 16800] },
+                { 12, [400, 2400, 3200, 4800, 8400, 19200] },
+                { 13, [400, 4400, 9600, 0, 0, 14400] },
+                { 14, [400, 5200, 8800, 0, 0, 14400] },
+                { 15, [400, 6000, 8000, 0, 0, 14400] },
+                { 16, [600, 3600, 6000, 7800, 10800, 28800] },
+                { 17, [600, 5400, 8400, 10800, 0, 25200] },
+                { 18, [600, 5400, 8400, 10800, 0, 25200] },
+                { 19, [600, 9300, 11700, 0, 0, 21600] },
+                { 20, [1200, 6600, 9300, 11700, 0, 28800] },
+                { 21, [9900, 11700, 0, 0, 0, 21600] },
+                { 22, [600, 3600, 7200, 10200, 10200, 31800] },
+                { 23, [600, 7200, 9600, 11400, 0, 28800] }
+            };
             return jobsExperiences;
         }
         /*public static Dictionary<uint, uint> GetPhantomJobsLevelExperience()
@@ -284,41 +283,39 @@ namespace Altoholic.Helpers
                 ClientLanguage.Japanese => (pj.Names.JapaneseName, pj.Names.JapaneseDescription),
                 _ => (pj.Names.EnglishName, pj.Names.EnglishDescription)
             };
-            using (var charactersJobsJobLine = ImRaii.Table("###CharactersJobs#JobLine", 2))
+            using var charactersJobsJobLine = ImRaii.Table("###CharactersJobs#JobLine", 2);
+            if (!charactersJobsJobLine) return;
+            ImGui.TableSetupColumn("###CharactersJobs#Icon", ImGuiTableColumnFlags.WidthFixed, 45);
+            ImGui.TableSetupColumn("###CharactersJobs#LevelNameExp", ImGuiTableColumnFlags.WidthFixed, 200);
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            DrawPhantomJobsFromTexture(ref phantomJobTexture, jobId, new Vector2(40, 58));
+            ImGui.TableSetColumnIndex(1);
+            using (var charactersJobsJobLevelNameExp = ImRaii.Table("###CharactersJobs#JobLevelNameExp", 3))
             {
-                if (!charactersJobsJobLine) return;
-                ImGui.TableSetupColumn("###CharactersJobs#Icon", ImGuiTableColumnFlags.WidthFixed, 45);
-                ImGui.TableSetupColumn("###CharactersJobs#LevelNameExp", ImGuiTableColumnFlags.WidthFixed, 200);
+                if (!charactersJobsJobLevelNameExp) return;
+                ImGui.TableSetupColumn("###CharactersJobs#JobLevelNameExp#Icon", ImGuiTableColumnFlags.WidthFixed, 30);
+                ImGui.TableSetupColumn("###CharactersJobs#JobLevelNameExp#Level", ImGuiTableColumnFlags.WidthFixed, 20);
+                ImGui.TableSetupColumn("###CharactersJobs#JobLevelNameExp#NameExp", ImGuiTableColumnFlags.WidthFixed, 180);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                DrawPhantomJobsFromTexture(ref phantomJobTexture, jobId, new Vector2(40, 58));
+                DrawPhantomJobsIconsFromTexture(ref phantomJobsIconsTexture, jobId, new Vector2(28, 28));
                 ImGui.TableSetColumnIndex(1);
-                using (var charactersJobsJobLevelNameExp = ImRaii.Table("###CharactersJobs#JobLevelNameExp", 3))
-                {
-                    if (!charactersJobsJobLevelNameExp) return;
-                    ImGui.TableSetupColumn("###CharactersJobs#JobLevelNameExp#Icon", ImGuiTableColumnFlags.WidthFixed, 30);
-                    ImGui.TableSetupColumn("###CharactersJobs#JobLevelNameExp#Level", ImGuiTableColumnFlags.WidthFixed, 20);
-                    ImGui.TableSetupColumn("###CharactersJobs#JobLevelNameExp#NameExp", ImGuiTableColumnFlags.WidthFixed, 180);
-                    ImGui.TableNextRow();
-                    ImGui.TableSetColumnIndex(0);
-                    DrawPhantomJobsIconsFromTexture(ref phantomJobsIconsTexture, jobId, new Vector2(28, 28));
-                    ImGui.TableSetColumnIndex(1);
-                    ImGui.TextUnformatted($"{globalCache.AddonStorage.LoadAddonString(currentLocale, 464)}: {selectedCharacter.OccultCrescent.Jobs[jobId]}");
-                    ImGui.TableSetColumnIndex(2);
-                    ImGui.TextUnformatted($"{Utils.Capitalize(name)}");
-                }
-                if (ImGui.IsItemHovered())
-                {
-                    ImGui.BeginTooltip();
-                    ImGui.TextUnformatted(description);
-                    ImGui.EndTooltip();
-                }
-                if (jobId > 0)
-                {
-                    Utils.DrawLevelProgressBar((int)selectedCharacter.OccultCrescent.JobsExperiences[jobId],
-                        (int)globalCache.JobStorage.GetPhantomJobExperience(jobId, selectedCharacter.OccultCrescent.Jobs[jobId]),
-                        name, (int)selectedCharacter.OccultCrescent.JobsExperiences[jobId] > 0, selectedCharacter.OccultCrescent.Jobs[jobId] == pj.LevelMax);
-                }
+                ImGui.TextUnformatted($"{globalCache.AddonStorage.LoadAddonString(currentLocale, 464)}: {selectedCharacter.OccultCrescent.Jobs[jobId]}");
+                ImGui.TableSetColumnIndex(2);
+                ImGui.TextUnformatted($"{Utils.Capitalize(name)}");
+            }
+            if (ImGui.IsItemHovered())
+            {
+                ImGui.BeginTooltip();
+                ImGui.TextUnformatted(description);
+                ImGui.EndTooltip();
+            }
+            if (jobId > 0)
+            {
+                Utils.DrawLevelProgressBar((int)selectedCharacter.OccultCrescent.JobsExperiences[jobId],
+                    (int)globalCache.JobStorage.GetPhantomJobExperience(jobId, selectedCharacter.OccultCrescent.Jobs[jobId]),
+                    name, (int)selectedCharacter.OccultCrescent.JobsExperiences[jobId] > 0, selectedCharacter.OccultCrescent.Jobs[jobId] == pj.LevelMax);
             }
         }
 

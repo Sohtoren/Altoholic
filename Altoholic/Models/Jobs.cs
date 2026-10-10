@@ -1,6 +1,4 @@
-﻿using Altoholic.Cache;
-
-namespace Altoholic.Models
+﻿namespace Altoholic.Models
 {
     public class PhantomJob
     {

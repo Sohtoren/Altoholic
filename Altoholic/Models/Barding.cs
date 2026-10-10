@@ -2,7 +2,7 @@
 {
     public class Barding
     {
-        public uint Id { get; set; }
+        public uint Id { get; init; }
         public string GermanName { get; set; } = string.Empty;
         public string EnglishName { get; set; } = string.Empty;
         public string FrenchName { get; set; } = string.Empty;

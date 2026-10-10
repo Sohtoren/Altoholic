@@ -4,44 +4,44 @@ namespace Altoholic.Models
 {
     public class PvPProfile
     {
-        public byte CrystallineConflictCurrentRank { get; set; }
-        public byte CrystallineConflictCurrentRiser { get; set; }
-        public byte CrystallineConflictCurrentRisingStars { get; set; }
-        public byte CrystallineConflictHighestRank { get; set; }
-        public byte CrystallineConflictHighestRiser { get; set; }
-        public byte CrystallineConflictHighestRisingStars { get; set; }
-        public byte CrystallineConflictSeason { get; set; }
-        public byte PreviousSeriesClaimedRank { get; set; }
-        public byte PreviousSeriesRank { get; set; }
-        public byte RankImmortalFlames { get; set; }
-        public byte RankMaelstrom { get; set; }
-        public byte RankTwinAdder { get; set; }
-        public byte Series { get; set; }
-        public byte SeriesClaimedRank { get; set; }
-        public byte SeriesCurrentRank { get; set; }
-        public uint ExperienceImmortalFlames { get; set; }
-        public uint ExperienceMaelstrom { get; set; }
-        public uint ExperienceTwinAdder { get; set; }
-        public uint FrontlineTotalFirstPlace { get; set; }
-        public uint FrontlineTotalMatches { get; set; }
-        public uint FrontlineTotalSecondPlace { get; set; }
-        public uint FrontlineTotalThirdPlace { get; set; }
-        public uint RivalWingsTotalMatches { get; set; }
-        public uint RivalWingsTotalMatchesWon { get; set; }
-        public uint RivalWingsWeeklyMatches { get; set; }
-        public uint RivalWingsWeeklyMatchesWon { get; set; }
-        public ushort CrystallineConflictCasualMatches { get; set; }
-        public ushort CrystallineConflictCasualMatchesWon { get; set; }
-        public ushort CrystallineConflictCurrentCrystalCredit { get; set; }
-        public ushort CrystallineConflictHighestCrystalCredit { get; set; }
-        public ushort CrystallineConflictRankedMatches { get; set; }
-        public ushort CrystallineConflictRankedMatchesWon { get; set; }
-        public ushort FrontlineWeeklyFirstPlace { get; set; }
-        public ushort FrontlineWeeklyMatches { get; set; }
-        public ushort FrontlineWeeklySecondPlace { get; set; }
-        public ushort FrontlineWeeklyThirdPlace { get; set; }
-        public ushort SeriesExperience { get; set; }
-        public Dictionary<uint, uint> SeriesPersonalRanks { get; set; } = [];
-        public Dictionary<uint, uint> SeriesPersonalRanksClaimed { get; set; } = [];
+        public byte CrystallineConflictCurrentRank { get; init; }
+        public byte CrystallineConflictCurrentRiser { get; init; }
+        public byte CrystallineConflictCurrentRisingStars { get; init; }
+        public byte CrystallineConflictHighestRank { get; init; }
+        public byte CrystallineConflictHighestRiser { get; init; }
+        public byte CrystallineConflictHighestRisingStars { get; init; }
+        public byte CrystallineConflictSeason { get; init; }
+        public byte PreviousSeriesClaimedRank { get; init; }
+        public byte PreviousSeriesRank { get; init; }
+        public byte RankImmortalFlames { get; init; }
+        public byte RankMaelstrom { get; init; }
+        public byte RankTwinAdder { get; init; }
+        public byte Series { get; init; }
+        public byte SeriesClaimedRank { get; init; }
+        public byte SeriesCurrentRank { get; init; }
+        public uint ExperienceImmortalFlames { get; init; }
+        public uint ExperienceMaelstrom { get; init; }
+        public uint ExperienceTwinAdder { get; init; }
+        public uint FrontlineTotalFirstPlace { get; init; }
+        public uint FrontlineTotalMatches { get; init; }
+        public uint FrontlineTotalSecondPlace { get; init; }
+        public uint FrontlineTotalThirdPlace { get; init; }
+        public uint RivalWingsTotalMatches { get; init; }
+        public uint RivalWingsTotalMatchesWon { get; init; }
+        public uint RivalWingsWeeklyMatches { get; init; }
+        public uint RivalWingsWeeklyMatchesWon { get; init; }
+        public ushort CrystallineConflictCasualMatches { get; init; }
+        public ushort CrystallineConflictCasualMatchesWon { get; init; }
+        public ushort CrystallineConflictCurrentCrystalCredit { get; init; }
+        public ushort CrystallineConflictHighestCrystalCredit { get; init; }
+        public ushort CrystallineConflictRankedMatches { get; init; }
+        public ushort CrystallineConflictRankedMatchesWon { get; init; }
+        public ushort FrontlineWeeklyFirstPlace { get; init; }
+        public ushort FrontlineWeeklyMatches { get; init; }
+        public ushort FrontlineWeeklySecondPlace { get; init; }
+        public ushort FrontlineWeeklyThirdPlace { get; init; }
+        public ushort SeriesExperience { get; init; }
+        public Dictionary<uint, uint> SeriesPersonalRanks { get; init; } = [];
+        public Dictionary<uint, uint> SeriesPersonalRanksClaimed { get; init; } = [];
     }
 }

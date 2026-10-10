@@ -1,5 +1,4 @@
 ﻿using Altoholic.Models;
-using Lumina.Excel.Sheets;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,9 +10,9 @@ namespace Altoholic.Cache
         private readonly Dictionary<uint, Duty> _duties = new(size);
         private readonly Dictionary<uint, Roulette> _roulettes = new(size);
 
-        public uint[] RewardsRaidIds = [1117, 1068, 1070, 1072, 1074];
-        public uint[] SavageRaidIds = [1069, 1071, 1073, 1075];
-        public uint DoubleRaidLootId = 0;
+        public readonly uint[] RewardsRaidIds = [1117, 1068, 1070, 1072, 1074];
+        public readonly uint[] SavageRaidIds = [1069, 1071, 1073, 1075];
+        public readonly uint DoubleRaidLootId = 0;
 
         public void Init(GlobalCache globalCache)
         {
@@ -70,16 +69,16 @@ namespace Altoholic.Cache
         }
         public List<uint> Get()
         {
-            return _duties.Keys.ToList();
+            return [.. _duties.Keys];
         }
 
         public List<Duty> GetAll()
         {
-            return _duties.Values.ToList();
+            return [.. _duties.Values];
         }
         public List<Roulette> GetAllRoulettes()
         {
-            return _roulettes.Values.ToList();
+            return [.. _roulettes.Values];
         }
         public void Dispose()
         {

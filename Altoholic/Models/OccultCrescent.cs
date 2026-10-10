@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Altoholic.Models
+﻿namespace Altoholic.Models
 {
     public class OccultCrescent
     {

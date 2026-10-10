@@ -1467,68 +1467,66 @@ namespace Altoholic.Helpers
                 if (collectableTab.Success)
                 {
                     int columns = chars.Count + 2;
-                    using (var charactersEventTable = ImRaii.Table(
-                    $"###CharactersProgress#All#Event#Blunderville#Table#Collectable#Table",
-                    columns,
-                    ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner |
-                    ImGuiTableFlags.ScrollX | ImGuiTableFlags.ScrollY))
+                    using var charactersEventTable = ImRaii.Table(
+                        $"###CharactersProgress#All#Event#Blunderville#Table#Collectable#Table",
+                        columns,
+                        ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner |
+                        ImGuiTableFlags.ScrollX | ImGuiTableFlags.ScrollY);
+                    if (charactersEventTable)
                     {
-                        if (charactersEventTable)
+                        ImGui.TableSetupColumn($"###CharactersProgress#All#Event#Blunderville#Collectable#Table#Name",
+                            ImGuiTableColumnFlags.WidthFixed, 270);
+                        ImGui.TableSetupColumn($"###CharactersProgress#All#Event#Blunderville#Collectable#Table#Currency",
+                            ImGuiTableColumnFlags.WidthFixed, ImGui.CalcTextSize("1000").X + 5);
+                        foreach (Character c in chars)
                         {
-                            ImGui.TableSetupColumn($"###CharactersProgress#All#Event#Blunderville#Collectable#Table#Name",
-                                ImGuiTableColumnFlags.WidthFixed, 270);
-                            ImGui.TableSetupColumn($"###CharactersProgress#All#Event#Blunderville#Collectable#Table#Currency",
-                                ImGuiTableColumnFlags.WidthFixed, ImGui.CalcTextSize("1000").X + 5);
-                            foreach (Character c in chars)
-                            {
-                                ImGui.TableSetupColumn($"###CharactersProgress#All#Event#Blunderville#Collectable#Table#{c.CharacterId}",
-                                    ImGuiTableColumnFlags.WidthFixed, 25);
-                            }
+                            ImGui.TableSetupColumn($"###CharactersProgress#All#Event#Blunderville#Collectable#Table#{c.CharacterId}",
+                                ImGuiTableColumnFlags.WidthFixed, 25);
+                        }
 
-                            //ImGui.TableSetupScrollFreeze(columns, 1); //Freeze header so it shows while scrolling
-                            ImGui.TableSetupScrollFreeze(1, 1);
+                        //ImGui.TableSetupScrollFreeze(columns, 1); //Freeze header so it shows while scrolling
+                        ImGui.TableSetupScrollFreeze(1, 1);
 
-                            ImGui.TableNextRow();
-                            ImGui.TableSetColumnIndex(0);
-                            ImGui.TextUnformatted(globalCache.AddonStorage.LoadAddonString(currentLocale, 1885));
+                        ImGui.TableNextRow();
+                        ImGui.TableSetColumnIndex(0);
+                        ImGui.TextUnformatted(globalCache.AddonStorage.LoadAddonString(currentLocale, 1885));
 
-                            ImGui.TableSetColumnIndex(1);
-                            Item? itm = globalCache.ItemStorage.LoadItem(currentLocale,
-                                (uint)Currencies.MGF);
-                            if (itm == null) return;
-                            Utils.DrawIcon(globalCache.IconStorage.LoadIcon(itm.Value.Icon), new Vector2(16, 16));
+                        ImGui.TableSetColumnIndex(1);
+                        Item? itm = globalCache.ItemStorage.LoadItem(currentLocale,
+                            (uint)Currencies.MGF);
+                        if (itm == null) return;
+                        Utils.DrawIcon(globalCache.IconStorage.LoadIcon(itm.Value.Icon), new Vector2(16, 16));
+                        if (ImGui.IsItemHovered())
+                        {
+                            Utils.DrawItemTooltip(currentLocale, ref globalCache, itm.Value);
+                        }
+
+                        int neededMGF = 2340;
+                        Dictionary<ulong, int> charactersTotalNeededMGF = [];
+                        foreach (Character currChar in chars)
+                        {
+                            ImGui.TableNextColumn();
+                            ImGui.TextUnformatted($"{currChar.FirstName[0]}.{currChar.LastName[0]}");
                             if (ImGui.IsItemHovered())
                             {
-                                Utils.DrawItemTooltip(currentLocale, ref globalCache, itm.Value);
+                                ImGui.BeginTooltip();
+                                ImGui.TextUnformatted(
+                                    $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
+                                ImGui.EndTooltip();
                             }
 
-                            int neededMGF = 2340;
-                            Dictionary<ulong, int> charactersTotalNeededMGF = [];
-                            foreach (Character currChar in chars)
-                            {
-                                ImGui.TableNextColumn();
-                                ImGui.TextUnformatted($"{currChar.FirstName[0]}.{currChar.LastName[0]}");
-                                if (ImGui.IsItemHovered())
-                                {
-                                    ImGui.BeginTooltip();
-                                    ImGui.TextUnformatted(
-                                        $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
-                                    ImGui.EndTooltip();
-                                }
-
-                                charactersTotalNeededMGF[currChar.CharacterId] = neededMGF;
-                            }
-
-                            Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Emote, 276, 410, charactersTotalNeededMGF);
-                            Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Mount, 330, 410, charactersTotalNeededMGF);
-                            Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Minion, 499, 350, charactersTotalNeededMGF);
-                            Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Minion, 500, 350, charactersTotalNeededMGF);
-                            Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Orchestrion, 657, 220, charactersTotalNeededMGF);
-                            Reward.DrawAllCharsFramerKit(currentLocale, globalCache, chars, 41377, 200, charactersTotalNeededMGF);
-                            Reward.DrawAllCharsFramerKit(currentLocale, globalCache, chars, 41378, 200, charactersTotalNeededMGF);
-                            Reward.DrawAllCharsFramerKit(currentLocale, globalCache, chars, 41379, 200, charactersTotalNeededMGF);
-                            Reward.DrawAllCharsTotal(currentLocale, globalCache, chars, Currencies.MGF, neededMGF, charactersTotalNeededMGF);
+                            charactersTotalNeededMGF[currChar.CharacterId] = neededMGF;
                         }
+
+                        Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Emote, 276, 410, charactersTotalNeededMGF);
+                        Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Mount, 330, 410, charactersTotalNeededMGF);
+                        Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Minion, 499, 350, charactersTotalNeededMGF);
+                        Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Minion, 500, 350, charactersTotalNeededMGF);
+                        Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Orchestrion, 657, 220, charactersTotalNeededMGF);
+                        Reward.DrawAllCharsFramerKit(currentLocale, globalCache, chars, 41377, 200, charactersTotalNeededMGF);
+                        Reward.DrawAllCharsFramerKit(currentLocale, globalCache, chars, 41378, 200, charactersTotalNeededMGF);
+                        Reward.DrawAllCharsFramerKit(currentLocale, globalCache, chars, 41379, 200, charactersTotalNeededMGF);
+                        Reward.DrawAllCharsTotal(currentLocale, globalCache, chars, Currencies.MGF, neededMGF, charactersTotalNeededMGF);
                     }
                 }
             }
@@ -1539,65 +1537,63 @@ namespace Altoholic.Helpers
                 if (gearsTab.Success)
                 {
                     int columns = chars.Count + 2;
-                    using (var charactersEventTable = ImRaii.Table(
-                    $"###CharactersProgress#All#Event#Blunderville#Table#Gears#Table",
-                    columns,
-                    ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner |
-                    ImGuiTableFlags.ScrollX | ImGuiTableFlags.ScrollY))
+                    using var charactersEventTable = ImRaii.Table(
+                        $"###CharactersProgress#All#Event#Blunderville#Table#Gears#Table",
+                        columns,
+                        ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner |
+                        ImGuiTableFlags.ScrollX | ImGuiTableFlags.ScrollY);
+                    if (charactersEventTable)
                     {
-                        if (charactersEventTable)
+                        ImGui.TableSetupColumn($"###CharactersProgress#All#Event#Blunderville#Gears#Table#Name",
+                            ImGuiTableColumnFlags.WidthFixed, 270);
+                        ImGui.TableSetupColumn($"###CharactersProgress#All#Event#Blunderville#Gears#Table#Currency",
+                            ImGuiTableColumnFlags.WidthFixed, ImGui.CalcTextSize("1000").X + 5);
+                        foreach (Character c in chars)
                         {
-                            ImGui.TableSetupColumn($"###CharactersProgress#All#Event#Blunderville#Gears#Table#Name",
-                                ImGuiTableColumnFlags.WidthFixed, 270);
-                            ImGui.TableSetupColumn($"###CharactersProgress#All#Event#Blunderville#Gears#Table#Currency",
-                                ImGuiTableColumnFlags.WidthFixed, ImGui.CalcTextSize("1000").X + 5);
-                            foreach (Character c in chars)
-                            {
-                                ImGui.TableSetupColumn($"###CharactersProgress#All#Event#Blunderville#Gears#Table#{c.CharacterId}",
-                                    ImGuiTableColumnFlags.WidthFixed, 25);
-                            }
+                            ImGui.TableSetupColumn($"###CharactersProgress#All#Event#Blunderville#Gears#Table#{c.CharacterId}",
+                                ImGuiTableColumnFlags.WidthFixed, 25);
+                        }
 
-                            //ImGui.TableSetupScrollFreeze(columns, 1); //Freeze header so it shows while scrolling
-                            ImGui.TableSetupScrollFreeze(1, 1);
+                        //ImGui.TableSetupScrollFreeze(columns, 1); //Freeze header so it shows while scrolling
+                        ImGui.TableSetupScrollFreeze(1, 1);
 
-                            ImGui.TableNextRow();
-                            ImGui.TableSetColumnIndex(0);
-                            ImGui.TextUnformatted(globalCache.AddonStorage.LoadAddonString(currentLocale, 1885));
+                        ImGui.TableNextRow();
+                        ImGui.TableSetColumnIndex(0);
+                        ImGui.TextUnformatted(globalCache.AddonStorage.LoadAddonString(currentLocale, 1885));
 
-                            ImGui.TableSetColumnIndex(1);
-                            Item? itm = globalCache.ItemStorage.LoadItem(currentLocale,
-                                (uint)Currencies.MGF);
-                            if (itm == null) return;
-                            Utils.DrawIcon(globalCache.IconStorage.LoadIcon(itm.Value.Icon), new Vector2(16, 16));
+                        ImGui.TableSetColumnIndex(1);
+                        Item? itm = globalCache.ItemStorage.LoadItem(currentLocale,
+                            (uint)Currencies.MGF);
+                        if (itm == null) return;
+                        Utils.DrawIcon(globalCache.IconStorage.LoadIcon(itm.Value.Icon), new Vector2(16, 16));
+                        if (ImGui.IsItemHovered())
+                        {
+                            Utils.DrawItemTooltip(currentLocale, ref globalCache, itm.Value);
+                        }
+
+                        int neededMGF = 2460;
+                        Dictionary<ulong, int> charactersTotalNeededMGF = [];
+                        foreach (Character currChar in chars)
+                        {
+                            ImGui.TableNextColumn();
+                            ImGui.TextUnformatted($"{currChar.FirstName[0]}.{currChar.LastName[0]}");
                             if (ImGui.IsItemHovered())
                             {
-                                Utils.DrawItemTooltip(currentLocale, ref globalCache, itm.Value);
+                                ImGui.BeginTooltip();
+                                ImGui.TextUnformatted(
+                                    $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
+                                ImGui.EndTooltip();
                             }
 
-                            int neededMGF = 2460;
-                            Dictionary<ulong, int> charactersTotalNeededMGF = [];
-                            foreach (Character currChar in chars)
-                            {
-                                ImGui.TableNextColumn();
-                                ImGui.TextUnformatted($"{currChar.FirstName[0]}.{currChar.LastName[0]}");
-                                if (ImGui.IsItemHovered())
-                                {
-                                    ImGui.BeginTooltip();
-                                    ImGui.TextUnformatted(
-                                        $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
-                                    ImGui.EndTooltip();
-                                }
-
-                                charactersTotalNeededMGF[currChar.CharacterId] = neededMGF;
-                            }
-                            Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 41560, 410, charactersTotalNeededMGF);
-                            Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 41561, 410, charactersTotalNeededMGF);
-                            Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 41562, 410, charactersTotalNeededMGF);
-                            Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 41563, 410, charactersTotalNeededMGF);
-                            Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 41564, 410, charactersTotalNeededMGF);
-                            Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 41796, 410, charactersTotalNeededMGF);
-                            Reward.DrawAllCharsTotal(currentLocale, globalCache, chars, Currencies.MGF, neededMGF, charactersTotalNeededMGF);
+                            charactersTotalNeededMGF[currChar.CharacterId] = neededMGF;
                         }
+                        Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 41560, 410, charactersTotalNeededMGF);
+                        Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 41561, 410, charactersTotalNeededMGF);
+                        Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 41562, 410, charactersTotalNeededMGF);
+                        Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 41563, 410, charactersTotalNeededMGF);
+                        Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 41564, 410, charactersTotalNeededMGF);
+                        Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 41796, 410, charactersTotalNeededMGF);
+                        Reward.DrawAllCharsTotal(currentLocale, globalCache, chars, Currencies.MGF, neededMGF, charactersTotalNeededMGF);
                     }
                 }
             }

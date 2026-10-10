@@ -85,7 +85,7 @@ namespace Altoholic.Cache
         }
         public List<uint> Get()
         {
-            return _mounts.Keys.ToList();
+            return [.. _mounts.Keys];
         }
         public void Dispose()
         {

@@ -92,7 +92,7 @@ namespace Altoholic.Cache
         }
         public List<uint> Get()
         {
-            return _emotes.Keys.ToList();
+            return [.. _emotes.Keys];
         }
         public Dictionary<uint, Emote> GetAll()
         {

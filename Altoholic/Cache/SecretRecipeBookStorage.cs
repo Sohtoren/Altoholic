@@ -67,7 +67,7 @@ namespace Altoholic.Cache
         }
         public List<uint> Get()
         {
-            return _secretRecipeBooks.Keys.ToList();
+            return [.. _secretRecipeBooks.Keys];
         }
         public void Dispose()
         {

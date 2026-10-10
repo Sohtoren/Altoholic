@@ -1,5 +1,4 @@
 using Altoholic.Cache;
-using FFXIVClientStructs.FFXIV.Client.Game.Character;
 using System;
 using System.Collections.Generic;
 using System.Linq;

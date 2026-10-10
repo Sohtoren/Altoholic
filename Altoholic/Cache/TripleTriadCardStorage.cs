@@ -73,7 +73,7 @@ namespace Altoholic.Cache
         }
         public List<uint> Get()
         {
-            return _tripleTriadCard.Keys.ToList();
+            return [.. _tripleTriadCard.Keys];
         }
         public void Dispose()
         {

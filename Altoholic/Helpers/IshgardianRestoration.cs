@@ -6,16 +6,14 @@ using Dalamud.Game;
 using Dalamud.Game.Text;
 using Dalamud.Interface.Utility.Raii;
 using Lumina.Excel.Sheets;
-using System;
 using System.Collections.Generic;
 using System.Numerics;
-using System.Text;
 
 namespace Altoholic.Helpers
 {
-    internal class IshgardianRestoration
+    internal static class IshgardianRestoration
     {
-        public static void DrawRewards(ClientLanguage currentLocale, GlobalCache globalCache, List<Character> chars, uint eventCurrencyId = 0)
+        private static void DrawRewards(ClientLanguage currentLocale, GlobalCache globalCache, List<Character> chars, uint eventCurrencyId = 0)
         {
             int columns = chars.Count + 1;
             if (eventCurrencyId > 0)

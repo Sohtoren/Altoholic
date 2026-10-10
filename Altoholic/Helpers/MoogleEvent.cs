@@ -7,14 +7,12 @@ using Dalamud.Game.Text;
 using Dalamud.Interface.Utility.Raii;
 using FFXIVClientStructs.FFXIV.Common.Math;
 using Lumina.Excel.Sheets;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Altoholic.Helpers
 {
-    public class MoogleEvent
+    public static class MoogleEvent
     {
         public static int CurrentOldMoogleReward;
         public static void DrawRewards(ClientLanguage currentLocale, GlobalCache globalCache, List<Character> chars)
@@ -41,74 +39,72 @@ namespace Altoholic.Helpers
                     if (collectableTab.Success)
                     {
                         int columns = chars.Count + 2;
-                        using (var charactersEventTable = ImRaii.Table(
-                        $"###CharactersProgress#All#Event#MogRewards#Table#Event2026_2#Collectable#Table",
-                        columns,
-                        ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner |
-                        ImGuiTableFlags.ScrollX | ImGuiTableFlags.ScrollY))
+                        using var charactersEventTable = ImRaii.Table(
+                            $"###CharactersProgress#All#Event#MogRewards#Table#Event2026_2#Collectable#Table",
+                            columns,
+                            ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner |
+                            ImGuiTableFlags.ScrollX | ImGuiTableFlags.ScrollY);
+                        if (charactersEventTable)
                         {
-                            if (charactersEventTable)
+                            ImGui.TableSetupColumn($"###CharactersProgress#All#Event#MogRewards#Event2026_2#Collectable#Table#Name",
+                                ImGuiTableColumnFlags.WidthFixed, 270);
+                            ImGui.TableSetupColumn($"###CharactersProgress#All#Event#MogRewards#Event2026_2#Collectable#Table#Currency",
+                                ImGuiTableColumnFlags.WidthFixed, 20);
+                            foreach (Character c in chars)
                             {
-                                ImGui.TableSetupColumn($"###CharactersProgress#All#Event#MogRewards#Event2026_2#Collectable#Table#Name",
-                                    ImGuiTableColumnFlags.WidthFixed, 270);
-                                ImGui.TableSetupColumn($"###CharactersProgress#All#Event#MogRewards#Event2026_2#Collectable#Table#Currency",
+                                ImGui.TableSetupColumn($"###CharactersProgress#All#Event#MogRewards#Event2026_2#Collectable#Table#{c.CharacterId}",
                                     ImGuiTableColumnFlags.WidthFixed, 20);
-                                foreach (Character c in chars)
-                                {
-                                    ImGui.TableSetupColumn($"###CharactersProgress#All#Event#MogRewards#Event2026_2#Collectable#Table#{c.CharacterId}",
-                                        ImGuiTableColumnFlags.WidthFixed, 20);
-                                }
+                            }
 
-                                //ImGui.TableSetupScrollFreeze(columns, 1); //Freeze header so it shows while scrolling
-                                ImGui.TableSetupScrollFreeze(1, 1);
+                            //ImGui.TableSetupScrollFreeze(columns, 1); //Freeze header so it shows while scrolling
+                            ImGui.TableSetupScrollFreeze(1, 1);
 
-                                ImGui.TableNextRow();
-                                ImGui.TableSetColumnIndex(0);
-                                ImGui.TextUnformatted(globalCache.AddonStorage.LoadAddonString(currentLocale, 1885));
+                            ImGui.TableNextRow();
+                            ImGui.TableSetColumnIndex(0);
+                            ImGui.TextUnformatted(globalCache.AddonStorage.LoadAddonString(currentLocale, 1885));
 
-                                ImGui.TableSetColumnIndex(1);
-                                Item? itm = globalCache.ItemStorage.LoadItem(currentLocale,
-                                    (uint)Currencies.IRREGULAR_TOMESTONE_OF_ASTRONOMY_I);
-                                if (itm == null) return;
-                                Utils.DrawIcon(globalCache.IconStorage.LoadIcon(itm.Value.Icon), new Vector2(16, 16));
+                            ImGui.TableSetColumnIndex(1);
+                            Item? itm = globalCache.ItemStorage.LoadItem(currentLocale,
+                                (uint)Currencies.IRREGULAR_TOMESTONE_OF_ASTRONOMY_I);
+                            if (itm == null) return;
+                            Utils.DrawIcon(globalCache.IconStorage.LoadIcon(itm.Value.Icon), new Vector2(16, 16));
+                            if (ImGui.IsItemHovered())
+                            {
+                                Utils.DrawItemTooltip(currentLocale, ref globalCache, itm.Value);
+                            }
+
+                            int neededTomestone = 288;
+                            Dictionary<ulong, int> charactersTotalNeededTomestone = [];
+                            foreach (Character currChar in chars)
+                            {
+                                ImGui.TableNextColumn();
+                                ImGui.TextUnformatted($"{currChar.FirstName[0]}.{currChar.LastName[0]}");
                                 if (ImGui.IsItemHovered())
                                 {
-                                    Utils.DrawItemTooltip(currentLocale, ref globalCache, itm.Value);
+                                    ImGui.BeginTooltip();
+                                    ImGui.TextUnformatted(
+                                        $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
+                                    ImGui.EndTooltip();
                                 }
 
-                                int neededTomestone = 288;
-                                Dictionary<ulong, int> charactersTotalNeededTomestone = [];
-                                foreach (Character currChar in chars)
-                                {
-                                    ImGui.TableNextColumn();
-                                    ImGui.TextUnformatted($"{currChar.FirstName[0]}.{currChar.LastName[0]}");
-                                    if (ImGui.IsItemHovered())
-                                    {
-                                        ImGui.BeginTooltip();
-                                        ImGui.TextUnformatted(
-                                            $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
-                                        ImGui.EndTooltip();
-                                    }
-
-                                    charactersTotalNeededTomestone[currChar.CharacterId] = neededTomestone;
-                                }
-
-                                Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, Helpers.CharacterCollectible.Mount, 219, 50, charactersTotalNeededTomestone);
-                                Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, Helpers.CharacterCollectible.Orchestrion, 418, 50, charactersTotalNeededTomestone);
-                                Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, Helpers.CharacterCollectible.Emote, 182, 30, charactersTotalNeededTomestone);
-                                Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, Helpers.CharacterCollectible.Minion, 318, 30, charactersTotalNeededTomestone);
-                                Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, Helpers.CharacterCollectible.Barding, 31, 30, charactersTotalNeededTomestone);
-                                Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, Helpers.CharacterCollectible.Mount, 182, 30, charactersTotalNeededTomestone);
-                                Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, Helpers.CharacterCollectible.Orchestrion, 441, 15, charactersTotalNeededTomestone);
-                                Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, Helpers.CharacterCollectible.TripleTriadCard, 185, 10, charactersTotalNeededTomestone);
-                                Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, Helpers.CharacterCollectible.TripleTriadCard, 187, 10, charactersTotalNeededTomestone);
-                                Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, Helpers.CharacterCollectible.TripleTriadCard, 85, 7, charactersTotalNeededTomestone);
-                                Helpers.Reward.DrawAllCharsHairstyle(currentLocale, globalCache, chars, 16703, 7, charactersTotalNeededTomestone);
-                                Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, Helpers.CharacterCollectible.Minion, 359, 7, charactersTotalNeededTomestone);
-                                Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, Helpers.CharacterCollectible.Mount, 208, 7, charactersTotalNeededTomestone);
-                                Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, Helpers.CharacterCollectible.Barding, 78, 5, charactersTotalNeededTomestone);
-                                Helpers.Reward.DrawAllCharsTotal(currentLocale, globalCache, chars, Currencies.IRREGULAR_TOMESTONE_OF_ASTRONOMY_I, neededTomestone, charactersTotalNeededTomestone);
+                                charactersTotalNeededTomestone[currChar.CharacterId] = neededTomestone;
                             }
+
+                            Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, Helpers.CharacterCollectible.Mount, 219, 50, charactersTotalNeededTomestone);
+                            Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, Helpers.CharacterCollectible.Orchestrion, 418, 50, charactersTotalNeededTomestone);
+                            Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, Helpers.CharacterCollectible.Emote, 182, 30, charactersTotalNeededTomestone);
+                            Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, Helpers.CharacterCollectible.Minion, 318, 30, charactersTotalNeededTomestone);
+                            Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, Helpers.CharacterCollectible.Barding, 31, 30, charactersTotalNeededTomestone);
+                            Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, Helpers.CharacterCollectible.Mount, 182, 30, charactersTotalNeededTomestone);
+                            Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, Helpers.CharacterCollectible.Orchestrion, 441, 15, charactersTotalNeededTomestone);
+                            Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, Helpers.CharacterCollectible.TripleTriadCard, 185, 10, charactersTotalNeededTomestone);
+                            Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, Helpers.CharacterCollectible.TripleTriadCard, 187, 10, charactersTotalNeededTomestone);
+                            Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, Helpers.CharacterCollectible.TripleTriadCard, 85, 7, charactersTotalNeededTomestone);
+                            Helpers.Reward.DrawAllCharsHairstyle(currentLocale, globalCache, chars, 16703, 7, charactersTotalNeededTomestone);
+                            Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, Helpers.CharacterCollectible.Minion, 359, 7, charactersTotalNeededTomestone);
+                            Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, Helpers.CharacterCollectible.Mount, 208, 7, charactersTotalNeededTomestone);
+                            Helpers.Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, Helpers.CharacterCollectible.Barding, 78, 5, charactersTotalNeededTomestone);
+                            Helpers.Reward.DrawAllCharsTotal(currentLocale, globalCache, chars, Currencies.IRREGULAR_TOMESTONE_OF_ASTRONOMY_I, neededTomestone, charactersTotalNeededTomestone);
                         }
                     }
                 }
@@ -189,66 +185,64 @@ namespace Altoholic.Helpers
                 if (nonCollectableTab.Success)
                 {
                     int columns = chars.Count + 2;
-                    using (var charactersEventTable = ImRaii.Table(
-                    $"###CharactersProgress#All#Event#MogRewards#Table#Event2026_2#NonCollectable#Table",
-                    columns,
-                    ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner |
-                    ImGuiTableFlags.ScrollX | ImGuiTableFlags.ScrollY))
+                    using var charactersEventTable = ImRaii.Table(
+                        $"###CharactersProgress#All#Event#MogRewards#Table#Event2026_2#NonCollectable#Table",
+                        columns,
+                        ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner |
+                        ImGuiTableFlags.ScrollX | ImGuiTableFlags.ScrollY);
+                    if (charactersEventTable)
                     {
-                        if (charactersEventTable)
+                        ImGui.TableSetupColumn($"###CharactersProgress#All#Event#MogRewards#Event2026_2#NonCollectable#Table#Name",
+                            ImGuiTableColumnFlags.WidthFixed, 270);
+                        ImGui.TableSetupColumn($"###CharactersProgress#All#Event#MogRewards#Event2026_2#NonCollectable#Table#Currency",
+                            ImGuiTableColumnFlags.WidthFixed, 20);
+                        foreach (Character c in chars)
                         {
-                            ImGui.TableSetupColumn($"###CharactersProgress#All#Event#MogRewards#Event2026_2#NonCollectable#Table#Name",
-                                ImGuiTableColumnFlags.WidthFixed, 270);
-                            ImGui.TableSetupColumn($"###CharactersProgress#All#Event#MogRewards#Event2026_2#NonCollectable#Table#Currency",
+                            ImGui.TableSetupColumn($"###CharactersProgress#All#Event#MogRewards#Event2026_2#NonCollectable#Table#{c.CharacterId}",
                                 ImGuiTableColumnFlags.WidthFixed, 20);
-                            foreach (Character c in chars)
-                            {
-                                ImGui.TableSetupColumn($"###CharactersProgress#All#Event#MogRewards#Event2026_2#NonCollectable#Table#{c.CharacterId}",
-                                    ImGuiTableColumnFlags.WidthFixed, 20);
-                            }
+                        }
 
-                            //ImGui.TableSetupScrollFreeze(columns, 1); //Freeze header so it shows while scrolling
-                            ImGui.TableSetupScrollFreeze(1, 1);
+                        //ImGui.TableSetupScrollFreeze(columns, 1); //Freeze header so it shows while scrolling
+                        ImGui.TableSetupScrollFreeze(1, 1);
 
-                            ImGui.TableNextRow();
-                            ImGui.TableSetColumnIndex(0);
-                            ImGui.TextUnformatted(globalCache.AddonStorage.LoadAddonString(currentLocale, 1885));
+                        ImGui.TableNextRow();
+                        ImGui.TableSetColumnIndex(0);
+                        ImGui.TextUnformatted(globalCache.AddonStorage.LoadAddonString(currentLocale, 1885));
 
-                            ImGui.TableSetColumnIndex(1);
-                            Item? itm = globalCache.ItemStorage.LoadItem(currentLocale,
-                                (uint)Currencies.IRREGULAR_TOMESTONE_OF_ASTRONOMY_I);
-                            if (itm == null) return;
-                            Utils.DrawIcon(globalCache.IconStorage.LoadIcon(itm.Value.Icon), new Vector2(16, 16));
+                        ImGui.TableSetColumnIndex(1);
+                        Item? itm = globalCache.ItemStorage.LoadItem(currentLocale,
+                            (uint)Currencies.IRREGULAR_TOMESTONE_OF_ASTRONOMY_I);
+                        if (itm == null) return;
+                        Utils.DrawIcon(globalCache.IconStorage.LoadIcon(itm.Value.Icon), new Vector2(16, 16));
+                        if (ImGui.IsItemHovered())
+                        {
+                            Utils.DrawItemTooltip(currentLocale, ref globalCache, itm.Value);
+                        }
+
+                        int neededTomestone = 121;
+                        Dictionary<ulong, int> charactersTotalNeededTomestone = [];
+                        foreach (Character currChar in chars)
+                        {
+                            ImGui.TableNextColumn();
+                            ImGui.TextUnformatted($"{currChar.FirstName[0]}.{currChar.LastName[0]}");
                             if (ImGui.IsItemHovered())
                             {
-                                Utils.DrawItemTooltip(currentLocale, ref globalCache, itm.Value);
+                                ImGui.BeginTooltip();
+                                ImGui.TextUnformatted(
+                                    $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
+                                ImGui.EndTooltip();
                             }
 
-                            int neededTomestone = 121;
-                            Dictionary<ulong, int> charactersTotalNeededTomestone = [];
-                            foreach (Character currChar in chars)
-                            {
-                                ImGui.TableNextColumn();
-                                ImGui.TextUnformatted($"{currChar.FirstName[0]}.{currChar.LastName[0]}");
-                                if (ImGui.IsItemHovered())
-                                {
-                                    ImGui.BeginTooltip();
-                                    ImGui.TextUnformatted(
-                                        $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
-                                    ImGui.EndTooltip();
-                                }
-
-                                charactersTotalNeededTomestone[currChar.CharacterId] = neededTomestone;
-                            }
-                            Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 16784, 30, charactersTotalNeededTomestone);
-                            Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 38585, 20, charactersTotalNeededTomestone);
-                            Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 38605, 20, charactersTotalNeededTomestone);
-                            Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 38622, 20, charactersTotalNeededTomestone);
-                            Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 39918, 15, charactersTotalNeededTomestone);
-                            Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 44349, 15, charactersTotalNeededTomestone);
-                            Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 25005, 1, charactersTotalNeededTomestone);
-                            Helpers.Reward.DrawAllCharsTotal(currentLocale, globalCache, chars, Currencies.IRREGULAR_TOMESTONE_OF_ASTRONOMY_I, neededTomestone, charactersTotalNeededTomestone);
+                            charactersTotalNeededTomestone[currChar.CharacterId] = neededTomestone;
                         }
+                        Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 16784, 30, charactersTotalNeededTomestone);
+                        Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 38585, 20, charactersTotalNeededTomestone);
+                        Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 38605, 20, charactersTotalNeededTomestone);
+                        Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 38622, 20, charactersTotalNeededTomestone);
+                        Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 39918, 15, charactersTotalNeededTomestone);
+                        Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 44349, 15, charactersTotalNeededTomestone);
+                        Helpers.Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 25005, 1, charactersTotalNeededTomestone);
+                        Helpers.Reward.DrawAllCharsTotal(currentLocale, globalCache, chars, Currencies.IRREGULAR_TOMESTONE_OF_ASTRONOMY_I, neededTomestone, charactersTotalNeededTomestone);
                     }
                 }
             }

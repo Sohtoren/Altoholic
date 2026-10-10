@@ -91,7 +91,7 @@ namespace Altoholic.Cache
 
         public List<uint> Get()
         {
-            return _framerKits.Keys.ToList();
+            return [.. _framerKits.Keys];
         }
 
         public void Dispose()

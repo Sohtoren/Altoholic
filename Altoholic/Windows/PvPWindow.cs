@@ -14,11 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using Emote = Altoholic.Models.Emote;
-using Mount = Altoholic.Models.Mount;
-using Ornament = Altoholic.Models.Ornament;
 using PvPRank = Altoholic.Models.PvPRank;
-using TripleTriadCard = Altoholic.Models.TripleTriadCard;
 
 namespace Altoholic.Windows
 {

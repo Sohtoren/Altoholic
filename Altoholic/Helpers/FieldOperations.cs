@@ -7,14 +7,13 @@ using Dalamud.Game.Text;
 using Dalamud.Interface;
 using Dalamud.Interface.Utility.Raii;
 using Lumina.Excel.Sheets;
-using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Numerics;
 
 namespace Altoholic.Helpers
 {
-    public class FieldOperations
+    public static class FieldOperations
     {
         public static void Draw(GlobalCache globalCache, ClientLanguage currentLocale, List<Character> chars)
         {

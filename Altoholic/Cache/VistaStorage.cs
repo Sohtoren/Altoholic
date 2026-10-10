@@ -89,7 +89,7 @@ namespace Altoholic.Cache
         }
         public List<uint> Get()
         {
-            return _vistas.Keys.ToList();
+            return [.. _vistas.Keys];
         }
         public void Dispose()
         {

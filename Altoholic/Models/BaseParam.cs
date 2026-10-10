@@ -2,7 +2,7 @@
 {
     public class BaseParam
     {
-        public uint Id { get; set; }
+        public uint Id { get; init; }
         public string GermanName { get; set; } = string.Empty;
         public string GermanDescription { get; set; } = string.Empty;
         public string EnglishName { get; set; } = string.Empty;
