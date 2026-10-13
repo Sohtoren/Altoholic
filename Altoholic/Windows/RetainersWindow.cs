@@ -704,7 +704,7 @@ namespace Altoholic.Windows
             ImGui.TableSetColumnIndex(7);
             ImGui.TableSetColumnIndex(8);
             ImGui.TableSetColumnIndex(9);
-            ImGui.TableSetColumnIndex(10);
+
         }
 
         private void DrawCrystals(Retainer selectedRetainer)
