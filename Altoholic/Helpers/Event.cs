@@ -2333,8 +2333,8 @@ namespace Altoholic.Helpers
                         Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 51292, 5000);
                         Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 51293, 5000);
                         Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 51294, 8000);
+                        Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 51303, 3000);
                         Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 51302, 2000);
-                        Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 51303, 2000);
                         Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 51304, 2000);
                         break;
                     }
