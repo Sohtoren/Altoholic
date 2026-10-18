@@ -73,7 +73,7 @@ namespace Altoholic.Helpers
                                 Utils.DrawItemTooltip(currentLocale, ref globalCache, itm.Value);
                             }
 
-                            int neededTomestone = 288;
+                            int neededTomestone = 388;
                             Dictionary<ulong, int> charactersTotalNeededTomestone = [];
                             foreach (Character currChar in chars)
                             {
