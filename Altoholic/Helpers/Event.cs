@@ -391,7 +391,6 @@ namespace Altoholic.Helpers
                     ? eventCurrencyIds[tabI]
                     : eventCurrencyIds[0];
 
-                Plugin.Log.Debug($"Checkpoint B:{tabI}");
                 using var tab =
                     ImRaii.TabItem(
                         $"{tabs[tabI]}###CharactersProgress#All#Event#MultiRewardModal#{msqIndex}#{tabI}");
