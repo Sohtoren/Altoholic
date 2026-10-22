@@ -6,8 +6,10 @@ using Dalamud.Game;
 using Dalamud.Game.Text;
 using Dalamud.Interface;
 using Dalamud.Interface.Utility.Raii;
+using Dalamud.Interface.Utility.Table;
 using FFXIVClientStructs.FFXIV.Common.Math;
 using Lumina.Excel.Sheets;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -201,6 +203,7 @@ namespace Altoholic.Helpers
                     character.HasQuest((int)QuestIds.EVENT_A_NOCTURNE_FOR_HEROES_2026),
                     character.HasQuest((int)QuestIds.EVENT_BLUNDERVILLE_2026),
                     character.HasQuest((int)QuestIds.EVENT_ALL_SAINTS_WAKE_2026),
+                    character.HasQuest((int)QuestIds.EVENT_KEYWARD_BOUND_2026),
                 ];
                 result.Add(completedQuests);
             }
@@ -220,12 +223,13 @@ namespace Altoholic.Helpers
             };
         }
 
-        private static (uint, uint) GetEventCurrenciesFromEventId(int msqIndex)
+        private static uint[] GetEventCurrenciesFromEventId(int msqIndex)
         {
             return msqIndex switch
             {
-                140 => (29,25007),
-                _ => (0,0)
+                140 => [29,25007],
+                143 => [52322],
+                _ => []
             };
         }
 
@@ -361,156 +365,103 @@ namespace Altoholic.Helpers
                 ImGui.CloseCurrentPopup();
             }
 
-            (uint, uint) eventCurrencyIds = GetEventCurrenciesFromEventId(msqIndex);
+            using var tabBar = ImRaii.TabBar($"###CharactersProgress#All#Event#MultiRewardModal#{msqIndex}#TabBar");
+            if (!tabBar.Success) return;
 
+            DrawMultiTabRewardsTabs(currentLocale, globalCache, chars, msqIndex);
+        }
+
+        private static void DrawMultiTabRewardsTabs(ClientLanguage currentLocale, GlobalCache globalCache,
+            List<Character> chars, int msqIndex)
+        {
+            string[] tabs = GetEventMultiTabs(currentLocale, globalCache, msqIndex);
+
+            uint[] eventCurrencyIds = GetEventCurrenciesFromEventId(msqIndex);
             int columns = chars.Count + 1;
-            if (eventCurrencyIds.Item1 > 0)
+            if (eventCurrencyIds.Length > 0)
             {
                 columns += 1;
             }
 
             float nameSize = GetEventRewardLongestName(currentLocale, globalCache, msqIndex);
 
-            using var tabBar = ImRaii.TabBar($"###CharactersProgress#All#Event#MultiRewardModal#{msqIndex}#TabBar");
-            if (!tabBar.Success) return;
-
-            using (var collectableTab =
-                ImRaii.TabItem(
-                    $"{globalCache.AddonStorage.LoadAddonString(currentLocale, 1456)}###CharactersProgress#All#Event#MultiRewardModal#{msqIndex}#1#Collectable"))
+            for(int tabI = 0; tabI < tabs.Length; tabI++)
             {
-                if (collectableTab.Success)
+                uint tabEventCurrency = eventCurrencyIds.Length == tabs.Length
+                    ? eventCurrencyIds[tabI]
+                    : eventCurrencyIds[0];
+
+                Plugin.Log.Debug($"Checkpoint B:{tabI}");
+                using var tab =
+                    ImRaii.TabItem(
+                        $"{tabs[tabI]}###CharactersProgress#All#Event#MultiRewardModal#{msqIndex}#{tabI}");
+                if (!tab.Success) continue;
+                using var charactersEventTable = ImRaii.Table(
+                    $"###CharactersProgress#All#Event#MultiRewardModal#{msqIndex}#{tabI}",
+                    columns,
+                    ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner |
+                    ImGuiTableFlags.ScrollX | ImGuiTableFlags.ScrollY, new Vector2(-1, 330));
+                if (!charactersEventTable) return;
+                ImGui.TableSetupColumn(
+                    $"###CharactersProgress#All#Event#MultiRewardModal#{msqIndex}#{tabI}#Name",
+                    ImGuiTableColumnFlags.WidthFixed, nameSize + 5 + 32); // text + margin + icon sizes
+                if (tabEventCurrency > 0)
                 {
-                    using var charactersEventTable = ImRaii.Table(
-                        $"###CharactersProgress#All#Event#MultiRewardModal#{msqIndex}#1",
-                        columns,
-                        ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner |
-                        ImGuiTableFlags.ScrollX | ImGuiTableFlags.ScrollY, new Vector2(-1, 330));
-                    if (!charactersEventTable) return;
-                    ImGui.TableSetupColumn($"###CharactersProgress#All#Event#MultiRewardModal#{msqIndex}#1#Name",
-                        ImGuiTableColumnFlags.WidthFixed, nameSize + 5 + 32); // text + margin + icon sizes
-                    if (eventCurrencyIds.Item1 > 0)
+                    if (tabEventCurrency is 29)
                     {
-                        if (eventCurrencyIds.Item1 is 29)
-                        {
-                            ImGui.TableSetupColumn($"###CharactersProgress#All#Event#MultiRewardModal#{msqIndex}#1#Currency",
-                                ImGuiTableColumnFlags.WidthFixed, ImGui.CalcTextSize("100000").X + 5);
-                        }
-                        else
-                        {
-                            ImGui.TableSetupColumn($"###CharactersProgress#All#Event#MultiRewardModal#{msqIndex}#1#Currency",
-                                ImGuiTableColumnFlags.WidthFixed, ImGui.CalcTextSize("1000").X + 5);
-                        }
+                        ImGui.TableSetupColumn(
+                            $"###CharactersProgress#All#Event#MultiRewardModal#{msqIndex}#{tabI}#Currency",
+                            ImGuiTableColumnFlags.WidthFixed, ImGui.CalcTextSize("100000").X + 5);
                     }
-                    foreach (Character c in chars)
+                    else
                     {
-                        ImGui.TableSetupColumn($"###CharactersProgress#All#Event#MultiRewardModal#{msqIndex}#1#{c.CharacterId}",
-                            ImGuiTableColumnFlags.WidthFixed, 20);
+                        ImGui.TableSetupColumn(
+                            $"###CharactersProgress#All#Event#MultiRewardModal#{msqIndex}#{tabI}#Currency",
+                            ImGuiTableColumnFlags.WidthFixed, ImGui.CalcTextSize("1000").X + 5);
                     }
+                }
 
-                    //ImGui.TableSetupScrollFreeze(columns, 1); //Freeze header so it shows while scrollingTableSetupScrollFreeze(1, 1);
-                    ImGui.TableSetupScrollFreeze(1, 1);
+                foreach (Character c in chars)
+                {
+                    ImGui.TableSetupColumn(
+                        $"###CharactersProgress#All#Event#MultiRewardModal#{msqIndex}#{tabI}#{c.CharacterId}",
+                        ImGuiTableColumnFlags.WidthFixed, 20);
+                }
 
-                    ImGui.TableNextRow();
-                    ImGui.TableSetColumnIndex(0);
-                    ImGui.TextUnformatted(globalCache.AddonStorage.LoadAddonString(currentLocale, 1885));
+                ImGui.TableSetupScrollFreeze(1, 1);
 
-                    if (eventCurrencyIds.Item1 > 0)
+                ImGui.TableNextRow();
+                ImGui.TableSetColumnIndex(0);
+                ImGui.TextUnformatted(globalCache.AddonStorage.LoadAddonString(currentLocale, 1885));
+
+                if (tabEventCurrency > 0)
+                {
+                    Item? itm = globalCache.ItemStorage.LoadItem(currentLocale, tabEventCurrency);
+                    if (itm != null)
                     {
-                        Item? itm = globalCache.ItemStorage.LoadItem(currentLocale, eventCurrencyIds.Item1);
-                        if (itm != null)
-                        {
-                            ImGui.TableSetColumnIndex(1);
-                            Utils.DrawIcon(globalCache.IconStorage.LoadIcon(itm.Value.Icon), new Vector2(16, 16));
-                            if (ImGui.IsItemHovered())
-                            {
-                                Utils.DrawItemTooltip(currentLocale, ref globalCache, itm.Value);
-                            }
-                        }
-                    }
-
-                    foreach (Character currChar in chars)
-                    {
-                        ImGui.TableNextColumn();
-                        ImGui.TextUnformatted($"{currChar.FirstName[0]}.{currChar.LastName[0]}");
+                        ImGui.TableSetColumnIndex(1);
+                        Utils.DrawIcon(globalCache.IconStorage.LoadIcon(itm.Value.Icon), new Vector2(16, 16));
                         if (ImGui.IsItemHovered())
                         {
-                            ImGui.BeginTooltip();
-                            ImGui.TextUnformatted(
-                                $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
-                            ImGui.EndTooltip();
+                            Utils.DrawItemTooltip(currentLocale, ref globalCache, itm.Value);
                         }
                     }
-                    DrawEventReward(currentLocale, globalCache, chars, msqIndex);
                 }
-            }
-            using (var orchestrionsTab =
-            ImRaii.TabItem(
-                $"{globalCache.AddonStorage.LoadAddonString(currentLocale, 832)}###CharactersProgress#All#Event#MultiRewardModal#{msqIndex}#2#Orchestrions"))
-            {
-                if (orchestrionsTab.Success)
+
+                foreach (Character currChar in chars)
                 {
-                    using var charactersEventTable = ImRaii.Table(
-                        $"###CharactersProgress#All#Event#MultiRewardModal#{msqIndex}#2",
-                        columns,
-                        ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner |
-                        ImGuiTableFlags.ScrollX | ImGuiTableFlags.ScrollY, new Vector2(-1, 330));
-                    if (!charactersEventTable) return;
-                    ImGui.TableSetupColumn($"###CharactersProgress#All#Event#MultiRewardModal#{msqIndex}#2#Name",
-                        ImGuiTableColumnFlags.WidthFixed, nameSize + 5 + 32); // text + margin + icon sizes
-                    if (eventCurrencyIds.Item2 > 0)
+                    ImGui.TableNextColumn();
+                    ImGui.TextUnformatted($"{currChar.FirstName[0]}.{currChar.LastName[0]}");
+                    if (ImGui.IsItemHovered())
                     {
-                        if (eventCurrencyIds.Item2 is 29)
-                        {
-                            ImGui.TableSetupColumn($"###CharactersProgress#All#Event#MultiRewardModal#{msqIndex}#2#Currency",
-                                ImGuiTableColumnFlags.WidthFixed, ImGui.CalcTextSize("100000").X + 5);
-                        }
-                        else
-                        {
-                            ImGui.TableSetupColumn($"###CharactersProgress#All#Event#MultiRewardModal#{msqIndex}#2#Currency",
-                                ImGuiTableColumnFlags.WidthFixed, ImGui.CalcTextSize("1000").X + 5);
-                        }
+                        ImGui.BeginTooltip();
+                        ImGui.TextUnformatted(
+                            $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
+                        ImGui.EndTooltip();
                     }
-                    foreach (Character c in chars)
-                    {
-                        ImGui.TableSetupColumn($"###CharactersProgress#All#Event#MultiRewardModal#{msqIndex}#2#{c.CharacterId}",
-                            ImGuiTableColumnFlags.WidthFixed, 20);
-                    }
-
-                    //ImGui.TableSetupScrollFreeze(columns, 1); //Freeze header so it shows while scrolling
-                    ImGui.TableSetupScrollFreeze(1, 1);
-
-                    ImGui.TableNextRow();
-                    ImGui.TableSetColumnIndex(0);
-                    ImGui.TextUnformatted(globalCache.AddonStorage.LoadAddonString(currentLocale, 1885));
-
-                    if (eventCurrencyIds.Item2 > 0)
-                    {
-                        Item? itm = globalCache.ItemStorage.LoadItem(currentLocale, eventCurrencyIds.Item2);
-                        if (itm != null)
-                        {
-                            ImGui.TableSetColumnIndex(1);
-                            Utils.DrawIcon(globalCache.IconStorage.LoadIcon(itm.Value.Icon), new Vector2(16, 16));
-                            if (ImGui.IsItemHovered())
-                            {
-                                Utils.DrawItemTooltip(currentLocale, ref globalCache, itm.Value);
-                            }
-                        }
-                    }
-
-                    foreach (Character currChar in chars)
-                    {
-                        ImGui.TableNextColumn();
-                        ImGui.TextUnformatted($"{currChar.FirstName[0]}.{currChar.LastName[0]}");
-                        if (ImGui.IsItemHovered())
-                        {
-                            ImGui.BeginTooltip();
-                            ImGui.TextUnformatted(
-                                $"{currChar.FirstName} {currChar.LastName}{(char)SeIconChar.CrossWorld}{currChar.HomeWorld}");
-                            ImGui.EndTooltip();
-                        }
-                    }
-                    DrawEventReward(currentLocale, globalCache, chars, -msqIndex);
                 }
+
+                DrawEventMultipleTabReward(currentLocale, globalCache, chars, msqIndex, tabI);
             }
         }
 
@@ -618,6 +569,9 @@ namespace Altoholic.Helpers
                     DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
                         $"{Loc.Localize("Event_AllSaintsWake", "All Saints' Wake")} (2026)",
                         142);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_KeyboundBrawler", "Keybound Brawler")} (2026)",
+                        143);
                 }
             }
 
@@ -1431,11 +1385,11 @@ namespace Altoholic.Helpers
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
             ImGui.TextUnformatted(name);
-            if (eventIndex is 140)
+            if (eventIndex is 140 or 143)
             {
                 DrawMultiTabRewardsModal(currentLocale, globalCache, chars, eventIndex);
             }
-            if (eventIndex is not 140 && (GetEventCurrencyFromEventId(eventIndex) != 0 || eventIndex is 29 or 41 or 113 or 137))
+            if (eventIndex is not 140 and not 143 && (GetEventCurrencyFromEventId(eventIndex) != 0 || eventIndex is 29 or 41 or 113 or 137))
             {
                 DrawRewardsModal(currentLocale, globalCache, chars, eventIndex);
             }
@@ -2311,23 +2265,6 @@ namespace Altoholic.Helpers
                         Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 51301, 2000);
                         break;
                     }
-                case 140: /*A Nocturne for Heroes (2026)*/
-                    {
-                        Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Mount, 151, 200000);
-                        Reward.DrawAllCharsHairstyle(currentLocale, globalCache, chars, 24802, 20000);
-                        Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.TripleTriadCard, 252, 10000);
-                        break;
-                    }
-                case -140:
-                    {
-                        Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Orchestrion, 299, 1);
-                        Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Orchestrion, 300, 1);
-                        Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Orchestrion, 301, 1);
-                        Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Orchestrion, 302, 1);
-                        Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Orchestrion, 303, 1);
-                        Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Orchestrion, 304, 1);
-                        break;
-                    }
                 case 142: /* All Saints' Wake (2026)*/
                     {
                         Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 51292, 5000);
@@ -2338,9 +2275,99 @@ namespace Altoholic.Helpers
                         Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 51304, 2000);
                         break;
                     }
-                case 143: /* Starlight? */
+                case 144: /* Starlight? */
                     {
                         Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 51292, 51295);
+                        break;
+                    }
+            }
+        }
+
+        private static string[] GetEventMultiTabs(ClientLanguage currentLocale, GlobalCache globalCache, int msqIndex)
+        {
+            return msqIndex switch
+            {
+                140 => [globalCache.AddonStorage.LoadAddonString(currentLocale, 1456), globalCache.AddonStorage.LoadAddonString(currentLocale, 832)],
+                143 => [globalCache.AddonStorage.LoadAddonString(currentLocale, 1456), globalCache.AddonStorage.LoadAddonString(currentLocale, 852), globalCache.AddonStorage.LoadAddonString(currentLocale, 832)],
+                _ => []
+            };
+        }
+        private static void DrawEventMultipleTabReward(ClientLanguage currentLocale, GlobalCache globalCache,
+            List<Character> chars, int msqIndex, int tab)
+        {
+            switch (msqIndex)
+            {
+                case 140:
+                    {
+                        switch (tab)
+                        {
+                            case 0: /*A Nocturne for Heroes (2026)*/
+                                {
+                                    Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars,
+                                        CharacterCollectible.Mount, 151, 200000);
+                                    Reward.DrawAllCharsHairstyle(currentLocale, globalCache, chars, 24802, 20000);
+                                    Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars,
+                                        CharacterCollectible.TripleTriadCard, 252, 10000);
+                                    break;
+                                }
+                            case 1:
+                                {
+                                    Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars,
+                                        CharacterCollectible.Orchestrion, 299, 1);
+                                    Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars,
+                                        CharacterCollectible.Orchestrion, 300, 1);
+                                    Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars,
+                                        CharacterCollectible.Orchestrion, 301, 1);
+                                    Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars,
+                                        CharacterCollectible.Orchestrion, 302, 1);
+                                    Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars,
+                                        CharacterCollectible.Orchestrion, 303, 1);
+                                    Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars,
+                                        CharacterCollectible.Orchestrion, 304, 1);
+                                    break;
+                                }
+                        }
+
+                        break;
+                    }
+                case 143:
+                    {
+                        switch (tab)
+                        {
+                            case 0:
+                                {
+                                    Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Mount, 430, 430);
+                                    Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Minion, 592, 260);
+                                    Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Orchestrion, 856, 190);
+                                    Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Orchestrion, 857, 190);
+                                    Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Orchestrion, 858, 190);
+                                    Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.FramerKit, 51997, 190);
+                                    Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Emote, 327, 260);
+                                    break;
+                                }
+                            case 1:
+                                {
+
+                                    Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 52323, 430);
+                                    Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 52324, 260);
+                                    Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 52325, 430);
+                                    Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 52326, 260);
+                                    Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 52327, 190);
+                                    Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 52328, 190);
+                                    Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 52329, 430);
+                                    Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 52330, 260);
+                                    Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 52331, 430);
+                                    Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 52332, 260);
+                                    Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 52647, 190);
+                                    break;
+                                }
+                            case 2:
+                                {
+                                    Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 52450, 910);
+                                    break;
+                                }
+                        }
+
                         break;
                     }
             }
