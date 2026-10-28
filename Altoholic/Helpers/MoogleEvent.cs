@@ -216,7 +216,7 @@ namespace Altoholic.Helpers
                             Utils.DrawItemTooltip(currentLocale, ref globalCache, itm.Value);
                         }
 
-                        int neededTomestone = 1%1;
+                        int neededTomestone = 101;
                         Dictionary<ulong, int> charactersTotalNeededTomestone = [];
                         foreach (Character currChar in chars)
                         {
@@ -253,7 +253,7 @@ namespace Altoholic.Helpers
                 ClientLanguage.Japanese => "～天文に至る路 Part1～",
                 _ => "The First Hunt for Astronomy"
             };
-            mooglesNames[2026_3] = astronomyName;
+            mooglesNames[2026_2] = $"2026 {astronomyName}";
             string aphorismName = currentLocale switch
             {
                 ClientLanguage.German => "Allgegenwärtige Aphorismen",
@@ -268,7 +268,7 @@ namespace Altoholic.Helpers
                 ClientLanguage.German => "Aufgezeigte Offenbarungen",
                 ClientLanguage.English => "The Hunt for Revelation",
                 ClientLanguage.French => "Révélation Kupo",
-                ClientLanguage.Japanese => "\uff5e黙示への道標\uff5e",
+                ClientLanguage.Japanese => "～黙示への道標～",
                 _ => "The Hunt for Revelation"
             };
             mooglesNames[2025_3] = $"2025 {revelationName}";
@@ -277,7 +277,7 @@ namespace Altoholic.Helpers
                 ClientLanguage.German => "Fantastische Fachsimpeleien",
                 ClientLanguage.English => "The Hunt for Allegory",
                 ClientLanguage.French => "L'allégorie perdue",
-                ClientLanguage.Japanese => "\uff5e奇譚の探求者\uff5e",
+                ClientLanguage.Japanese => "～奇譚の探求者～",
                 _ => "The Hunt for Allegory"
             };
             mooglesNames[2025_2] = $"2025 {allegoryName}";
@@ -286,7 +286,7 @@ namespace Altoholic.Helpers
                 ClientLanguage.German => "Phantasmagorische Freundschaften",
                 ClientLanguage.English => "The Hunt for Phantasmagoria",
                 ClientLanguage.French => "Fantasmagorie Kupo",
-                ClientLanguage.Japanese => "\uff5e幻想との邂逅\uff5e",
+                ClientLanguage.Japanese => "～幻想との邂逅～",
                 _ => "The Hunt for Phantasmagoria"
             };
             mooglesNames[2025_1] = $"2025 {phantasmagoriaName}";
@@ -322,7 +322,7 @@ namespace Altoholic.Helpers
                 ClientLanguage.German => "10. Jubiläum",
                 ClientLanguage.English => "The 10th Anniversary Hunt",
                 ClientLanguage.French => "Spéciale 10e anniversaire",
-                ClientLanguage.Japanese => "\uff5e新生10周年スペシャル\uff5e",
+                ClientLanguage.Japanese => "～新生10周年スペシャル～",
                 _ => "The 10th Anniversary Hunt"
             };
             mooglesNames[2023_2] = $"2023 - {tenthAnniversaryName}";
@@ -331,7 +331,7 @@ namespace Altoholic.Helpers
                 ClientLanguage.German => "Tratsch aus Quatsch",
                 ClientLanguage.English => "The Hunt for Mendacity",
                 ClientLanguage.French => "Duplicité Kupo",
-                ClientLanguage.Japanese => "\uff5e虚構の刻\uff5e",
+                ClientLanguage.Japanese => "～虚構の刻～",
                 _ => "The Hunt for Mendacity"
             };
             mooglesNames[2023_1] = $"2023 - {mendacityName}";
@@ -340,7 +340,7 @@ namespace Altoholic.Helpers
                 ClientLanguage.German => "Allerlei Erinnerungen",
                 ClientLanguage.English => "The Hunt for Creation",
                 ClientLanguage.French => "Cosmogonie Kupo",
-                ClientLanguage.Japanese => "\uff5e万物の記憶\uff5e",
+                ClientLanguage.Japanese => "～万物の記憶～",
                 _ => "The Hunt for Creation"
             };
             mooglesNames[2022_3] = $"2022 - {theHuntForCreationName}";
@@ -350,7 +350,7 @@ namespace Altoholic.Helpers
                 ClientLanguage.German => "Die Stunde der Wahrheit",
                 ClientLanguage.English => "The Hunt for Verity",
                 ClientLanguage.French => "Véridicité Kupo",
-                ClientLanguage.Japanese => "\uff5e帰ってきた真理\uff5e",
+                ClientLanguage.Japanese => "～帰ってきた真理～",
                 _ => "The Hunt for Verity"
             };
             mooglesNames[2022_2] = $"2022 - {theHuntForVerityName}";
@@ -370,7 +370,7 @@ namespace Altoholic.Helpers
                 ClientLanguage.German => "Sagenhafte Schätze",
                 ClientLanguage.English => "The Hunt for Lore",
                 ClientLanguage.French => "Tradition Kupo",
-                ClientLanguage.Japanese => "\uff5e炎獄の伝承\uff5e",
+                ClientLanguage.Japanese => "～炎獄の伝承～",
                 _ => "The Hunt for Lore"
             };
             mooglesNames[2021_3] = $"2021 - {theHuntForLoreName}";
@@ -380,7 +380,7 @@ namespace Altoholic.Helpers
                 ClientLanguage.German => "Fan Festival",
                 ClientLanguage.English => "The Hunt for Pageantry",
                 ClientLanguage.French => "Festivités Kupo",
-                ClientLanguage.Japanese => "\uff5eファンフェススペシャル2021\uff5e",
+                ClientLanguage.Japanese => "～ファンフェススペシャル2021～",
                 _ => "The Hunt for Pageantry"
             };
             mooglesNames[2021_2] = $"2021 - {theHuntForPageantryName}";
@@ -390,7 +390,7 @@ namespace Altoholic.Helpers
                 ClientLanguage.German => "Esoterische Momente",
                 ClientLanguage.English => "The Hunt for Esoterics",
                 ClientLanguage.French => "Ésotérisme Kupo",
-                ClientLanguage.Japanese => "\uff5eもうひとつの禁書\uff5e",
+                ClientLanguage.Japanese => "～もうひとつの禁書～",
                 _ => "The Hunt for Esoterics"
             };
             mooglesNames[2021_1] = $"2021 - {theHuntForEsotericsName}";
@@ -400,7 +400,7 @@ namespace Altoholic.Helpers
                 ClientLanguage.German => "Emotionale Erinnerungen",
                 ClientLanguage.English => "The Hunt for Law",
                 ClientLanguage.French => "Réminiscence Kupo",
-                ClientLanguage.Japanese => "\uff5e追憶の法典\uff5e",
+                ClientLanguage.Japanese => "～追憶の法典～",
                 _ => "The Hunt for Law"
             };
             mooglesNames[2020_2] = $"2020 - {theHuntForLawName}";
@@ -410,7 +410,7 @@ namespace Altoholic.Helpers
                 ClientLanguage.German => "Strategische Schnitzeljag",
                 ClientLanguage.English => "The Hunt for Soldiery",
                 ClientLanguage.French => "Martialité Kupo",
-                ClientLanguage.Japanese => "\uff5e戦記ューフォーエバー\uff5e",
+                ClientLanguage.Japanese => "～戦記ューフォーエバー～",
                 _ => "The Hunt for Soldiery"
             };
             mooglesNames[2020_1] = $"2020 - {theHuntForSoldieryName}";
@@ -420,7 +420,7 @@ namespace Altoholic.Helpers
                 ClientLanguage.German => "Mythologische Mär",
                 ClientLanguage.English => "The Hunt for Mythology",
                 ClientLanguage.French => "Mythologie Kupo",
-                ClientLanguage.Japanese => "\uff5eそして神話へ…\uff5e",
+                ClientLanguage.Japanese => "～そして神話へ…～",
                 _ => "The Hunt for Mythology"
             };
             mooglesNames[2019_2] = $"2019 - {theHuntForMythologyName}";
@@ -430,7 +430,7 @@ namespace Altoholic.Helpers
                 ClientLanguage.German => "Philosophische Momente",
                 ClientLanguage.English => "The Hunt for Philosophy",
                 ClientLanguage.French => "Philosophie Kupo",
-                ClientLanguage.Japanese => "\uff5e哲学ふたたび\uff5e",
+                ClientLanguage.Japanese => "～哲学ふたたび～",
                 _ => "The Hunt for Philosophy"
             };
             mooglesNames[2019_1] = $"2019 - {theHuntForPhilosophyName}";

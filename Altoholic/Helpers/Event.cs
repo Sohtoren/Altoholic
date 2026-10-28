@@ -2335,34 +2335,46 @@ namespace Altoholic.Helpers
                         {
                             case 0:
                                 {
-                                    Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Mount, 430, 430);
-                                    Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Minion, 592, 260);
-                                    Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Orchestrion, 856, 190);
-                                    Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Orchestrion, 857, 190);
-                                    Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Orchestrion, 858, 190);
-                                    Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.FramerKit, 51997, 190);
-                                    Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Emote, 327, 260);
+                                    const int needed = 1710;
+                                    Dictionary<ulong, int> charTotalNeeded = [];
+                                    chars.ForEach(character => charTotalNeeded.Add(character.CharacterId, needed));
+
+                                    Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Mount, 430, 430, charTotalNeeded);
+                                    Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Minion, 592, 260, charTotalNeeded);
+                                    Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Orchestrion, 856, 190, charTotalNeeded);
+                                    Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Orchestrion, 857, 190, charTotalNeeded);
+                                    Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Orchestrion, 858, 190, charTotalNeeded);
+                                    Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.FramerKit, 51997, 190, charTotalNeeded);
+                                    Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Emote, 327, 260, charTotalNeeded);
+                                    Reward.DrawAllCharsTotal(currentLocale, globalCache, chars, Currencies.MGC, needed, charTotalNeeded);
                                     break;
                                 }
                             case 1:
                                 {
-
-                                    Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 52323, 430);
-                                    Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 52324, 260);
-                                    Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 52325, 430);
-                                    Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 52326, 260);
-                                    Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 52327, 190);
-                                    Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 52328, 190);
-                                    Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 52329, 430);
-                                    Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 52330, 260);
-                                    Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 52331, 430);
-                                    Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 52332, 260);
-                                    Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 52647, 190);
+                                    const int needed = 3330;
+                                    Dictionary<ulong, int> charTotalNeeded = [];
+                                    chars.ForEach(character => charTotalNeeded.Add(character.CharacterId, needed));
+                                    Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 52323, 430, charTotalNeeded);
+                                    Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 52324, 260, charTotalNeeded);
+                                    Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 52325, 430, charTotalNeeded);
+                                    Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 52326, 260, charTotalNeeded);
+                                    Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 52327, 190, charTotalNeeded);
+                                    Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 52328, 190, charTotalNeeded);
+                                    Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 52329, 430, charTotalNeeded);
+                                    Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 52330, 260, charTotalNeeded);
+                                    Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 52331, 430, charTotalNeeded);
+                                    Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 52332, 260, charTotalNeeded);
+                                    Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 52647, 190, charTotalNeeded);
+                                    Reward.DrawAllCharsTotal(currentLocale, globalCache, chars, Currencies.MGC, needed, charTotalNeeded);
                                     break;
                                 }
                             case 2:
                                 {
-                                    Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 52450, 910);
+                                    const int needed = 910;
+                                    Dictionary<ulong, int> charTotalNeeded = [];
+                                    chars.ForEach(character => charTotalNeeded.Add(character.CharacterId, needed));
+                                    Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 52450, 910, charTotalNeeded);
+                                    Reward.DrawAllCharsTotal(currentLocale, globalCache, chars, Currencies.MGC, needed, charTotalNeeded);
                                     break;
                                 }
                         }
