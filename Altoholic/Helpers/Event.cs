@@ -2344,7 +2344,11 @@ namespace Altoholic.Helpers
                                     Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Orchestrion, 856, 190, charTotalNeeded);
                                     Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Orchestrion, 857, 190, charTotalNeeded);
                                     Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Orchestrion, 858, 190, charTotalNeeded);
-                                    Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.FramerKit, 51997, 190, charTotalNeeded);
+                                    uint? fkId = globalCache.FramerKitStorage.GetFramerKitIdFromItemId(51997);
+                                    if (fkId is not null)
+                                    {
+                                        Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.FramerKit, fkId.Value, 190, charTotalNeeded);
+                                    }
                                     Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Emote, 327, 260, charTotalNeeded);
                                     Reward.DrawAllCharsTotal(currentLocale, globalCache, chars, Currencies.MGC, needed, charTotalNeeded);
                                     break;
