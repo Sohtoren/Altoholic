@@ -204,6 +204,7 @@ namespace Altoholic.Helpers
                     character.HasQuest((int)QuestIds.EVENT_BLUNDERVILLE_2026),
                     character.HasQuest((int)QuestIds.EVENT_ALL_SAINTS_WAKE_2026),
                     character.HasQuest((int)QuestIds.EVENT_KEYWARD_BOUND_2026),
+                    character.HasQuest((int)QuestIds.EVENT_THE_PATH_INFERNAL_2026),
                 ];
                 result.Add(completedQuests);
             }
@@ -218,7 +219,8 @@ namespace Altoholic.Helpers
                 132 => 47863,
                 133 => 50082,
                 134 => 50089,
-                136 or 138 or 139 or 142 => 1,
+                136 or 138 or 139 or 142 => (uint)Currencies.GIL,
+                144 => (uint)Currencies.MGP,
                 _ => 0
             };
         }
@@ -571,6 +573,9 @@ namespace Altoholic.Helpers
                     DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
                         $"{Loc.Localize("Event_KeyboundBrawler", "Keybound Brawler")} (2026)",
                         143);
+                    DrawAllLine(currentLocale, globalCache, chars, charactersQuests,
+                        $"{Loc.Localize("Event_ThePathInterfal", "The Path Infernal")} (2026)",
+                        144);
                 }
             }
 
@@ -2274,7 +2279,22 @@ namespace Altoholic.Helpers
                         Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 51304, 2000);
                         break;
                     }
-                case 144: /* Starlight? */
+                case 144:
+                    {
+                        Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.TripleTriadCard, 405, 200000);
+                        Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Orchestrion, 636, 20000);
+                        Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Orchestrion, 637, 20000);
+                        Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Orchestrion, 638, 20000);
+                        Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Orchestrion, 639, 20000);
+                        Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Orchestrion, 640, 20000);
+                        Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Orchestrion, 652, 20000);
+                        Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Orchestrion, 653, 20000);
+                        Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Orchestrion, 654, 20000);
+                        Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Orchestrion, 655, 20000);
+                        Reward.DrawAllCharsCollectible(currentLocale, globalCache, chars, CharacterCollectible.Orchestrion, 656, 20000);
+                        break;
+                    }
+                case 145: /* Starlight? */
                     {
                         Reward.DrawAllCharsItemAcquired(currentLocale, globalCache, chars, 51292, 51295);
                         break;
