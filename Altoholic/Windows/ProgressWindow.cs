@@ -792,6 +792,9 @@ namespace Altoholic.Windows
             DrawAllLine(chars, charactersQuests,
                 $"7.5 - {_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.MSQ_TRAIL_TO_THE_HEAVENS)}",
                 40);
+            DrawAllLine(chars, charactersQuests,
+                $"7.56 - {_globalCache.QuestStorage.GetQuestName(_currentLocale, (int)QuestIds.MSQ_WINDBORNE)}",
+                41);
         }
 
         private void DrawHildibrandQuest(List<Character> chars)
